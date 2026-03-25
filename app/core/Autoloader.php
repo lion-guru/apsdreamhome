@@ -170,6 +170,7 @@ $autoloader->addNamespace('App', APP_ROOT . '/app');
 $autoloader->addClassMap('Database', APP_ROOT . '/app/Core/Database/Database.php');
 $autoloader->addClassMap('SessionManager', APP_ROOT . '/app/Core/Session/SessionManager.php');
 $autoloader->addClassMap('ErrorHandler', APP_ROOT . '/app/Core/ErrorHandler.php');
+$autoloader->addClassMap('Security', APP_ROOT . '/app/Core/Security.php');
 
 // Register consolidated models for seamless migration
 $autoloader->addClassMap('ConsolidatedUser', APP_ROOT . '/app/Models/ConsolidatedUser.php');

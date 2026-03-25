@@ -1,8 +1,5 @@
-<?php
-
-// TODO: Add proper error handling with try-catch blocks
-
-PE html>
+<?php // placeholder ?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

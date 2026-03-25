@@ -2,6 +2,18 @@
 
 namespace App\Services\AI;
 
+use App\Services\AI\Nodes\HTTPNode;
+use App\Services\AI\Nodes\DBNode;
+use App\Services\AI\Nodes\AINode;
+use App\Services\AI\Nodes\NotificationNode;
+use App\Services\AI\Nodes\TelecallingNode;
+use App\Services\AI\Nodes\LogicNode;
+use App\Services\AI\Nodes\EmailNode;
+use App\Services\AI\Nodes\SocialMediaNode;
+use App\Services\AI\Nodes\SMSNode;
+use App\Services\AI\Nodes\CalendarNode;
+use App\Services\AI\Nodes\PaymentNode;
+
 /**
  * Advanced Graph-based Workflow Engine
  * Handles complex node connections and state-aware execution.
@@ -12,7 +24,7 @@ class WorkflowEngine {
     private $executionLog = [];
 
     public function __construct($aiManager) {
-        $this->db = \App\Core\App::database();
+        $this->db = \App\Core\Database\Database::getInstance();
         $this->aiManager = $aiManager;
     }
 
@@ -270,53 +282,3 @@ class WorkflowEngine {
         return $this->db->fetch($sql, [$id]);
     }
 }
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Automation\WorkflowEngine.php
-
-function registerAgent($name, $agentInstance) {
-        $this->agents[$name] = $agentInstance;
-    }
-function executeWorkflow($workflowId, $triggerData = []) {
-        $workflow = $this->getWorkflow($workflowId);
-        if (!$workflow) return false;
-
-        $nodes = json_decode($workflow['nodes'], true);
-        $edges = json_decode($workflow['edges'], true);
-
-        // Start from trigger node
-        $currentNode = $this->findStartNode($nodes);
-        $context = $triggerData;
-
-        while ($currentNode) {
-            $result = $this->executeNode($currentNode, $context);
-            $context = array_merge($context, $result['output'] ?? []);
-
-            if ($result['status'] === 'failed' && !($currentNode['continue_on_fail'] ?? false)) {
-                break;
-            }
-function executeNode($node, &$context) {
-        switch ($node['type']) {
-            case 'agent_action':
-                $agent = $this->agents[$node['agent_name']] ?? null;
-                if ($agent) {
-                    return $agent->process($node['input'], $context);
-                }
-function evaluateCondition($condition, $context) {
-        // Mock condition evaluation
-        // e.g., "context.sentiment < 0"
-        return true;
-    }
-function findStartNode($nodes) {
-        foreach ($nodes as $node) {
-            if ($node['type'] === 'trigger') return $node;
-        }
-function getNextNode($currentNode, $edges, $branch) {
-        foreach ($edges as $edge) {
-            if ($edge['from'] === $currentNode['id'] && (($edge['branch'] ?? 'default') === $branch || ($edge['branch'] ?? 'default') === 'default')) {
-                return $edge['to_node']; // Simplified
-            }
-function makeApiCall($url, $method, $data) {
-        // Implementation for integration agent features
-        return ['status' => 'success'];
-    }

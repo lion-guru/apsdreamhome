@@ -16,7 +16,7 @@ $user_id = $_SESSION['uid'];
 $user_name = h($_SESSION['name'] ?? 'User');
 
 // Page variables
-$page_title = 'My Saved Searches | APS Dream Homes';
+$$page_title = 'My Saved Searches | APS Dream Homes';
 $layout = 'modern';
 
 ob_start();

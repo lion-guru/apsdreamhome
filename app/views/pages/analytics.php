@@ -13,7 +13,7 @@ require_once 'includes/enhanced_universal_template.php';
 $template = new EnhancedUniversalTemplate();
 
 // Page metadata
-$page_title = 'Analytics Dashboard - APS Dream Home';
+$$page_title = 'Analytics Dashboard - APS Dream Home';
 $page_description = 'Comprehensive analytics and insights for APS Dream Home business operations';
 
 $template->setTitle($page_title);

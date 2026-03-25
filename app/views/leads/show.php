@@ -1,3 +1,4 @@
+<?php
 /**
  * show - APS Dream Home Component
  * 
@@ -18,16 +19,10 @@
  * 
  * @see https://apsdreamhome.com/docs
  */
-<?php
 
 // TODO: Add proper error handling with try-catch blocks
+?>
 
-equire_once 'app/views/layouts/header.php'; ?>
-
-<div class="container-fluid mt-4">
-    <!-- Breadcrumb -->
-    <div class="row mb-4">
-        <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/leads">लीड्स</a></li>

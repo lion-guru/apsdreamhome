@@ -2,7 +2,9 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-ass="container-fluid mt-4">
+require_once __DIR__ . '/../layouts/header.php'; ?>
+
+<div class="container-fluid mt-4">
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
@@ -163,7 +165,7 @@ ass="container-fluid mt-4">
                             </table>
                         </div>
                     </div>
-                    
+
                     <div class="mt-4">
                         <form action="/customer/emi-save" method="POST">
                             <?php echo getCsrfField(); ?>
@@ -184,8 +186,7 @@ ass="container-fluid mt-4">
     </div>
 </div>
 
-<?php 
-$extra_js = "
+
 <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
 <script>
     $(document).ready(function() {
@@ -363,5 +364,5 @@ $extra_js = "
         calculateEMI();
     });
 </script>
-";
-?>
+
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

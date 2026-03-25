@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-$page_title = 'WhatsApp Templates - APS Dream Home';
+$$page_title = 'WhatsApp Templates - APS Dream Home';
 $page_description = 'Create and manage WhatsApp message templates';
 include __DIR__ . '/../layouts/base.php';
 ?>

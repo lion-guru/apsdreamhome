@@ -142,4 +142,32 @@ class AdminLogger
             return [];
         }
     }
+
+    /**
+     * Generic log method
+     * @param string $message
+     * @param string $level
+     * @return bool
+     */
+    /**
+     * Generic log method
+     * @param string $message
+     * @param string $level
+     * @return bool
+     */
+    public static function log($message, $level = 'info')
+    {
+        return self::logAction($message, ['level' => $level]);
+    }
+
+    /**
+     * Log a security alert
+     * @param string $type
+     * @param array $context
+     * @return bool
+     */
+    public static function securityAlert($type, $context = [])
+    {
+        return self::logError("SECURITY_ALERT: $type", $context);
+    }
 }

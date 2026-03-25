@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Services\Legacy;
+namespace App\Services\Performance;
+
 /**
  * APS Dream Home Performance Monitoring System
  * Advanced performance tracking, profiling, and optimization
@@ -83,11 +84,45 @@ class PerformanceMonitor {
     }
 
     /**
+     * Record a metric with key/value
+     */
+    public function record($key, $value, $tags = []) {
+        $this->metrics['custom_metrics'][] = [
+            'key' => $key,
+            'value' => $value,
+            'timestamp' => microtime(true),
+            'tags' => $tags
+        ];
+    }
+
+    /**
+     * Time a callback execution
+     */
+    public function time($key, callable $callback, $tags = []) {
+        $start = microtime(true);
+        $result = $callback();
+        $executionTime = microtime(true) - $start;
+
+        $this->record($key, $executionTime, $tags);
+        return $result;
+    }
+
+    /**
+     * Track cache hit/miss
+     */
+    public function cache($key, $hit, $tags = []) {
+        $this->record($key, $hit ? 1 : 0, \array_merge($tags, [
+            'type' => 'cache',
+            'result' => $hit ? 'hit' : 'miss'
+        ]));
+    }
+
+    /**
      * Start system resource monitoring
      */
     private function startResourceMonitoring() {
         // Track memory peak and initial CPU usage
-        $this->metrics['memory_peak'] = memory_get_peak_usage(true);
+        $this->metrics['memory_peak'] = \memory_get_peak_usage(true);
         $this->metrics['cpu_usage'] = $this->getCpuUsage();
     }
 
@@ -95,9 +130,9 @@ class PerformanceMonitor {
      * Stop system resource monitoring
      */
     private function stopResourceMonitoring() {
-        $this->metrics['memory_peak'] = max(
+        $this->metrics['memory_peak'] = \max(
             $this->metrics['memory_peak'], 
-            memory_get_peak_usage(true)
+            \memory_get_peak_usage(true)
         );
         $this->metrics['cpu_usage'] = $this->getCpuUsage();
     }
@@ -108,7 +143,7 @@ class PerformanceMonitor {
      */
     private function getCpuUsage() {
         // Cross-platform CPU usage detection
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        if (\strtoupper(\substr(PHP_OS, 0, 3)) === 'WIN') {
             return $this->getWindowsCpuUsage();
         } else {
             return $this->getUnixCpuUsage();
@@ -120,49 +155,18 @@ class PerformanceMonitor {
      * @return float CPU usage percentage
      */
     private function getWindowsCpuUsage() {
-        // Extreme safety check for COM class
-        $hasCOM = false;
-        try {
-            $hasCOM = class_exists('COM', false);
-        } catch (Throwable $e) {
-            $hasCOM = false;
-        }
-
-        if (!$hasCOM) {
-            // Fallback to wmic via shell_exec if available
-            if (function_exists('shell_exec')) {
-                try {
-                    $output = @shell_exec('wmic cpu get loadpercentage /value');
-                    if ($output && preg_match('/LoadPercentage=(\d+)/', $output, $matches)) {
-                        return (float)$matches[1];
-                    }
-                } catch (Throwable $e) {
-                    // Ignore errors
+        // Fallback to wmic via shell_exec if available
+        if (\function_exists('shell_exec')) {
+            try {
+                $output = @\shell_exec('wmic cpu get loadpercentage /value');
+                if ($output && \preg_match('/LoadPercentage=(\d+)/', $output, $matches)) {
+                    return (float)$matches[1];
                 }
+            } catch (\Throwable $e) {
+                // Ignore errors
             }
-            return 0;
         }
-
-        // Windows-specific CPU usage (requires WMI via COM)
-        try {
-            // Double check inside try-catch to be absolutely sure
-            if (!class_exists('COM')) return 0;
-            
-            $wmi = new COM('WbemScripting.SWbemLocator');
-            $server = $wmi->ConnectServer('.');
-            $cpu_load = $server->ExecQuery('SELECT LoadPercentage FROM Win32_Processor');
-            
-            $total = 0;
-            $count = 0;
-            foreach ($cpu_load as $cpu) {
-                $total += $cpu->LoadPercentage;
-                $count++;
-            }
-            
-            return $count > 0 ? ($total / $count) : 0;
-        } catch (Throwable $e) {
-            return 0;
-        }
+        return 0;
     }
 
     /**
@@ -171,7 +175,7 @@ class PerformanceMonitor {
      */
     private function getUnixCpuUsage() {
         // Unix-like CPU usage via /proc filesystem
-        $load = sys_getloadavg();
+        $load = \sys_getloadavg();
         return ($load[0] / $this->getCpuCoreCount()) * 100;
     }
 
@@ -181,8 +185,8 @@ class PerformanceMonitor {
      */
     private function getCpuCoreCount() {
         return PHP_OS_FAMILY === 'Windows' 
-            ? getenv('NUMBER_OF_PROCESSORS') 
-            : shell_exec('nproc');
+            ? (int)\getenv('NUMBER_OF_PROCESSORS') 
+            : (int)\shell_exec('nproc');
     }
 
     /**
@@ -190,7 +194,7 @@ class PerformanceMonitor {
      */
     private function logPerformanceMetrics() {
         // Probabilistic logging to reduce overhead
-        if (\App\Helpers\SecurityHelper::secureRandomInt(1, 100) / 100 > self::CONFIG['sample_rate']) {
+        if (\mt_rand(1, 100) / 100 > self::CONFIG['sample_rate']) {
             return;
         }
 
@@ -213,9 +217,9 @@ class PerformanceMonitor {
 
         // Write to performance log
         $log_file = self::CONFIG['log_path'] . 'performance_' . date('Y-m-d') . '.json';
-        file_put_contents(
+        \file_put_contents(
             $log_file, 
-            json_encode($log_data, JSON_PRETTY_PRINT) . PHP_EOL, 
+            \json_encode($log_data, JSON_PRETTY_PRINT) . PHP_EOL, 
             FILE_APPEND
         );
     }
@@ -266,14 +270,14 @@ class PerformanceMonitor {
     private function logSlowQuery($query, $execution_time) {
         $log_file = self::CONFIG['log_path'] . 'slow_queries_' . date('Y-m-d') . '.json';
         $log_data = [
-            'timestamp' => date('Y-m-d H:i:s'),
+            'timestamp' => \date('Y-m-d H:i:s'),
             'query' => $query,
             'execution_time' => $execution_time
         ];
 
-        file_put_contents(
+        \file_put_contents(
             $log_file, 
-            json_encode($log_data, JSON_PRETTY_PRINT) . PHP_EOL, 
+            \json_encode($log_data, JSON_PRETTY_PRINT) . PHP_EOL, 
             FILE_APPEND
         );
     }
@@ -285,15 +289,15 @@ class PerformanceMonitor {
      */
     private function anonymizeQuery($query) {
         // Remove sensitive values
-        $anonymized = preg_replace([
+        $anonymized = \preg_replace([
             '/VALUES\s*\(.*\)/i',
             '/SET\s+.*WHERE/i',
             '/WHERE\s+.*$/i'
         ], ['VALUES (***)', 'SET *** WHERE', 'WHERE ***'], $query);
 
         // Truncate very long queries
-        return strlen($anonymized) > 1000 
-            ? substr($anonymized, 0, 1000) . '...' 
+        return \strlen($anonymized) > 1000 
+            ? \substr($anonymized, 0, 1000) . '...' 
             : $anonymized;
     }
 
@@ -301,8 +305,8 @@ class PerformanceMonitor {
      * Create log directory if it doesn't exist
      */
     private function createLogDirectory() {
-        if (!is_dir(self::CONFIG['log_path'])) {
-            mkdir(self::CONFIG['log_path'], 0755, true);
+        if (!\is_dir(self::CONFIG['log_path'])) {
+            @\mkdir(self::CONFIG['log_path'], 0755, true);
         }
     }
 
@@ -314,168 +318,39 @@ class PerformanceMonitor {
         return $this->metrics;
     }
 
-    /**
-     * Generate performance report
-     * @param string $start_date Start date
-     * @param string $end_date End date
-     * @return array Performance report
-     */
-    public function generateReport($start_date = null, $end_date = null) {
-        $start_date = $start_date ?? date('Y-m-d', strtotime('-7 days'));
-        $end_date = $end_date ?? date('Y-m-d');
-
-        $reports = [];
-        $log_files = glob(
-            self::CONFIG['log_path'] . 'performance_' . 
-            '{' . $start_date . ',' . $end_date . '}.json', 
-            GLOB_BRACE
-        );
-
-        foreach ($log_files as $file) {
-            $log_contents = file($file, FILE_IGNORE_NEW_LINES);
-            foreach ($log_contents as $line) {
-                $reports[] = json_decode($line, true);
-            }
-        }
-
-        return $this->analyzePerformanceReports($reports);
+    public function getCacheStats() {
+        $metrics = $this->metrics['custom_metrics'] ?? [];
+        return \array_filter($metrics, function($m) {
+            return ($m['tags']['type'] ?? '') === 'cache';
+        });
     }
 
-    /**
-     * Analyze performance reports
-     * @param array $reports Performance log reports
-     * @return array Analyzed performance metrics
-     */
-    private function analyzePerformanceReports($reports) {
-        $analysis = [
-            'total_requests' => count($reports),
-            'avg_execution_time' => 0,
-            'max_execution_time' => 0,
-            'avg_memory_usage' => 0,
-            'max_memory_usage' => 0,
-            'avg_cpu_usage' => 0,
-            'total_slow_queries' => 0
-        ];
-
-        if (empty($reports)) return $analysis;
-
-        foreach ($reports as $report) {
-            $analysis['avg_execution_time'] += $report['execution_time'];
-            $analysis['max_execution_time'] = max(
-                $analysis['max_execution_time'], 
-                $report['execution_time']
-            );
-
-            $analysis['avg_memory_usage'] += $report['memory_peak'];
-            $analysis['max_memory_usage'] = max(
-                $analysis['max_memory_usage'], 
-                $report['memory_peak']
-            );
-
-            $analysis['avg_cpu_usage'] += $report['cpu_usage'];
-            $analysis['total_slow_queries'] += count($report['slow_queries'] ?? []);
-        }
-
-        $analysis['avg_execution_time'] /= count($reports);
-        $analysis['avg_memory_usage'] /= count($reports);
-        $analysis['avg_cpu_usage'] /= count($reports);
-
-        return $analysis;
+    public function getDatabaseStats() {
+        return $this->queries;
     }
 }
 
 // Global performance tracking helper functions
-function start_performance_monitoring() {
-    PerformanceMonitor::getInstance()->start();
-}
-
-function end_performance_monitoring() {
-    PerformanceMonitor::getInstance()->end();
-}
-
-function track_database_query($query, $execution_time) {
-    PerformanceMonitor::getInstance()->trackQuery($query, $execution_time);
-}
-
-/**
- * Get performance monitor instance
- * @return PerformanceMonitor
- */
-function getPerformanceMonitor() {
-    return PerformanceMonitor::getInstance();
-}
-
-// Automatic performance monitoring setup
-register_shutdown_function('end_performance_monitoring');
-start_performance_monitoring();
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Core\PerformanceMonitor.php
-
-function record($key, $value, $tags = [])
-    {
-        $this->metrics[] = [
-            'key' => $key,
-            'value' => $value,
-            'timestamp' => microtime(true),
-            'tags' => $tags
-        ];
+if (!function_exists('start_performance_monitoring')) {
+    function start_performance_monitoring() {
+        PerformanceMonitor::getInstance()->start();
     }
-function time($key, callable $callback, $tags = [])
-    {
-        $start = microtime(true);
-        $result = $callback();
-        $executionTime = microtime(true) - $start;
+}
 
-        $this->record($key, $executionTime, $tags);
-        return $result;
+if (!function_exists('end_performance_monitoring')) {
+    function end_performance_monitoring() {
+        PerformanceMonitor::getInstance()->end();
     }
-function cache($key, $hit, $tags = [])
-    {
-        $this->record($key, $hit ? 1 : 0, array_merge($tags, [
-            'type' => 'cache',
-            'result' => $hit ? 'hit' : 'miss'
-        ]));
-    }
-function getCacheStats()
-    {
-        $cacheMetrics = array_filter($this->metrics, function($metric) {
-            return isset($metric['tags']['type']) && $metric['tags']['type'] === 'cache';
-        }
-function getDatabaseStats()
-    {
-        $dbMetrics = array_filter($this->metrics, function($metric) {
-            return isset($metric['tags']['type']) && $metric['tags']['type'] === 'database';
-        }
-function exportMetrics()
-    {
-        return [
-            'timestamp' => date('Y-m-d H:i:s'),
-            'performance' => $this->getMetrics(),
-            'cache' => $this->getCacheStats(),
-            'database' => $this->getDatabaseStats()
-        ];
-    }
-function getQueryType($query)
-    {
-        $query = strtolower(trim($query));
+}
 
-        if (strpos($query, 'select') === 0) {
-            return 'SELECT';
-        }
-function performance()
-{
-    return PerformanceMonitor::getInstance();
+if (!function_exists('track_database_query')) {
+    function track_database_query($query, $execution_time) {
+        PerformanceMonitor::getInstance()->trackQuery($query, $execution_time);
+    }
 }
-function benchmark(callable $callback, $label = 'unnamed')
-{
-    return performance()->time($label, $callback);
-}
-function cache_hit($key)
-{
-    performance()->cache($key, true);
-}
-function cache_miss($key)
-{
-    performance()->cache($key, false);
+
+if (!function_exists('performance')) {
+    function performance() {
+        return PerformanceMonitor::getInstance();
+    }
 }

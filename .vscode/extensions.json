@@ -1,19 +1,29 @@
 {
-  "recommendations": [
-    "bmewburn.vscode-intelephense-client",
-    "devsense.composer-php-vscode",
-    "cweijan.vscode-mysql-client2",
-    "esbenp.prettier-vscode",
-    "eamodio.gitlens",
-    "christian-kohler.path-intellisense",
-    "ms-vscode.vscode-json",
-    "formulahendry.auto-rename-tag"
-  ],
-  "unwantedRecommendations": [
-    "ritwickdey.LiveServer",
-    "xdebug.php-debug",
-    "ms-vscode.vscode-typescript-next",
-    "ms-vscode.vscode-javascript",
-    "ms-vscode.node-azure"
-  ]
+    "recommendations": [
+        "bmewburn.vscode-intelephense-client",
+        "devsense.composer-php-vscode",
+        "cweijan.vscode-mysql-client2",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens",
+        "GitHub.vscode-pull-request-github",
+        "GitLab.gitlab-workflow",
+        "bierner.markdown-preview-github-styles",
+        "bierner.markdown-mermaid",
+        "ms-vscode.vscode-keybindings",
+        "ms-vscode.vscode-eclipse-keymap",
+        "christian-kohler.path-intellisense",
+        "ms-vscode.vscode-json",
+        "formulahendry.auto-rename-tag",
+        "bradlc.vscode-tailwindcss",
+        "ritwickdeacon.vscode-live-sass",
+        "ms-vscode.vscode-html-css",
+        "xdebug.php-debug"
+    ],
+    "unwantedRecommendations": [
+        "ritwickdey.LiveServer",
+        "ms-vscode.vscode-typescript-next",
+        "ms-vscode.vscode-javascript",
+        "ms-vscode.node-azure",
+        "codeium.codeium"
+    ]
 }

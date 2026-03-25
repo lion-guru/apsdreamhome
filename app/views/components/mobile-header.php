@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-**
+/**
  * APS Dream Home - Mobile Optimized Header Component
  * Modern responsive header with mobile navigation for all user types
  */

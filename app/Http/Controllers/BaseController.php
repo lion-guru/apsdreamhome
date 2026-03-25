@@ -102,6 +102,22 @@ class BaseController
     }
 
     /**
+     * Get the request object (alias for Consistency)
+     */
+    public function request()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Send JSON response (alias for consistency)
+     */
+    public function json($data, int $status = 200)
+    {
+        return $this->jsonResponse($data, $status);
+    }
+
+    /**
      * Public method to get request header
      */
     public function getHeader($name)

@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/init.php';
 
-$page_title = 'Plots Availability | APS Dream Homes';
+$$page_title = 'Plots Availability | APS Dream Homes';
 $page_description = 'Explore live availability across APS Dream Homes colonies. Check which plots are available, booked, or sold in real time.';
 
 // Sample plot data (to be replaced with dynamic source in future)

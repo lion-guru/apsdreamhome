@@ -42,6 +42,11 @@ class QueryBuilder
     protected $joins = [];
 
     /**
+     * The group by clause for the query.
+     */
+    protected $groups = [];
+
+    /**
      * The maximum number of records to return.
      */
     protected $limit;
@@ -233,6 +238,88 @@ class QueryBuilder
     }
 
     /**
+     * Alias for first()
+     */
+    public function fetch($columns = ['*'])
+    {
+        return $this->first($columns);
+    }
+
+    /**
+     * Alias for get()
+     */
+    public function fetchAll($columns = ['*'])
+    {
+        return $this->get($columns);
+    }
+
+    /**
+     * Add a "group by" clause to the query.
+     */
+    public function groupBy(...$groups): self
+    {
+        foreach ($groups as $group) {
+            $this->groups = array_merge(
+                (array)$this->groups,
+                is_array($group) ? $group : [$group]
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the minimum value of a column.
+     */
+    public function min($column)
+    {
+        return $this->aggregate('min', [$column]);
+    }
+
+    /**
+     * Get the maximum value of a column.
+     */
+    public function max($column)
+    {
+        return $this->aggregate('max', [$column]);
+    }
+
+    /**
+     * Execute an aggregate function on the database.
+     */
+    public function aggregate($function, $columns = ['*'])
+    {
+        $results = $this->cloneWithout(['columns'])
+                        ->setAggregate($function, $columns)
+                        ->get($columns);
+
+        if (!empty($results)) {
+            return array_change_key_case((array)$results[0])['aggregate'];
+        }
+    }
+
+    /**
+     * Set the aggregate property without affecting the original columns.
+     */
+    protected function setAggregate($function, $columns)
+    {
+        $this->columns = [$function . '(' . implode(', ', $columns) . ') as aggregate'];
+        return $this;
+    }
+
+    /**
+     * Clone the query builder without specific properties.
+     */
+    protected function cloneWithout(array $properties)
+    {
+        $clone = clone $this;
+        foreach ($properties as $property) {
+            $clone->{$property} = null;
+        }
+        return $clone;
+    }
+
+    /**
      * Get the count of the total records for the current query.
      */
     public function count($columns = '*'): int
@@ -313,6 +400,10 @@ class QueryBuilder
 
         if (!empty($this->wheres)) {
             $sql .= $this->compileWheres();
+        }
+
+        if (!empty($this->groups)) {
+            $sql .= ' GROUP BY ' . implode(', ', $this->groups);
         }
 
         if (!empty($this->orders)) {

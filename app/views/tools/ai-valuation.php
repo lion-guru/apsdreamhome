@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-page_title = 'AI Property Valuation - APS Dream Home';
+$$page_title = 'AI Property Valuation - APS Dream Home';
 $page_description = 'Advanced AI-powered property valuation and market analysis';
 include __DIR__ . '/../layouts/base.php';
 ?>

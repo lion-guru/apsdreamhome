@@ -11,7 +11,7 @@ if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
 }
 
 // Set page variables
-$page_title = 'AI Properties Management - APS Dream Home';
+$$page_title = 'AI Properties Management - APS Dream Home';
 $active_page = 'properties';
 
 // Content for base layout

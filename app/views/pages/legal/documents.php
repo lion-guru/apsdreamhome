@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/init.php';
 
-$page_title = 'Legal Documents | APS Dream Homes';
+$$page_title = 'Legal Documents | APS Dream Homes';
 $layout = 'modern';
 
 // Dynamic fetch for legal documents if table exists

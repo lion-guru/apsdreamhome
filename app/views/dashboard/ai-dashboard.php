@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-$page_title = 'AI Dashboard - APS Dream Home';
+$$page_title = 'AI Dashboard - APS Dream Home';
 $page_description = 'Advanced AI agent monitoring and management interface';
 include __DIR__ . '/../layouts/base.php';
 ?>

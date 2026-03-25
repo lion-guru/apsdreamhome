@@ -1,8 +1,8 @@
 <?php
-
 // TODO: Add proper error handling with try-catch blocks
+?>
 
-ge Header -->
+Page Header -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">

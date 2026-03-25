@@ -11,7 +11,7 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 // Set page variables
-$page_title = 'Legal Pages Management - Admin';
+$$page_title = 'Legal Pages Management - Admin';
 $active_page = 'legal_pages';
 
 // Content for base layout

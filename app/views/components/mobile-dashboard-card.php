@@ -1,30 +1,42 @@
-<?php echo htmlspecialchars(-- Mobile-Optimized Dashboard Card Component
-     Responsive card component that adapts to mobile screens
---); ?>
+<?php
+/**
+ * Mobile-Optimized Dashboard Card Component
+ * Responsive card component that adapts to mobile screens
+ */
 
-<div class="dashboard-card <?php echo htmlspecialchars($1); ?>">
+// Define component variables if not provided
+$card_class = $card_class ?? '';
+$icon = $icon ?? null;
+$action = $action ?? null;
+$title = $title ?? 'Card Title';
+$action_url = $action_url ?? '#';
+$action_text = $action_text ?? 'View';
+?>
+
+<div class="dashboard-card <?php echo htmlspecialchars($card_class); ?>">
     <div class="card shadow h-100">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">
-                <?php if(isset($icon))
-                    <i class="bi bi-<?php echo htmlspecialchars($1); ?> me-1"></i>
+                <?php if($icon): ?>
+                    <i class="bi bi-<?php echo htmlspecialchars($icon); ?> me-1"></i>
                 <?php endif; ?>
-                <?php echo htmlspecialchars($1); ?>
+                <?php echo htmlspecialchars($title); ?>
             </h6>
-            <?php if(isset($action))
-                <a href="<?php echo htmlspecialchars($1); ?>" class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-<?php echo htmlspecialchars($1); ?> me-1"></i>
-                    <?php echo htmlspecialchars($1); ?>
+            <?php if($action): ?>
+                <a href="<?php echo htmlspecialchars($action_url); ?>" class="btn btn-sm btn-outline-primary">
+                    <?php if(isset($action_icon)): ?>
+                        <i class="bi bi-<?php echo htmlspecialchars($action_icon); ?> me-1"></i>
+                    <?php endif; ?>
+                    <?php echo htmlspecialchars($action_text); ?>
                 </a>
             <?php endif; ?>
         </div>
         <div class="card-body">
-            @yield('card-content')
+            <?php echo $card_content ?? ''; ?>
         </div>
     </div>
 </div>
 
-<?php echo htmlspecialchars(-- Mobile-specific styles for dashboard cards --); ?>
 <style>
 @media (max-width: 768px) {
     .dashboard-card {
@@ -58,13 +70,6 @@
         gap: 0.75rem;
     }
 
-    .stats-grid .col-xl-3 {
-        flex: none;
-        width: 100%;
-        max-width: none;
-        padding: 0.375rem;
-    }
-
     /* Activity feed mobile optimization */
     .activity-item {
         padding: 0.75rem;
@@ -72,10 +77,6 @@
         border-radius: 0.5rem;
         margin-bottom: 0.75rem;
         background: #fff;
-    }
-
-    .activity-item:last-child {
-        margin-bottom: 0;
     }
 
     .activity-meta {
@@ -106,4 +107,3 @@
     }
 }
 </style>
-

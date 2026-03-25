@@ -2,7 +2,9 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-ass="container-fluid mt-4">
+require_once __DIR__ . '/../layouts/header.php'; ?>
+
+<div class="container-fluid mt-4">
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
@@ -93,9 +95,18 @@ ass="container-fluid mt-4">
                                                 $statusClass = 'secondary';
                                                 $statusText = 'पेंडिंग';
                                                 switch ($booking['status']) {
-                                                    case 'confirmed': $statusClass = 'success'; $statusText = 'कन्फर्म्ड'; break;
-                                                    case 'cancelled': $statusClass = 'danger'; $statusText = 'कैंसिल्ड'; break;
-                                                    case 'completed': $statusClass = 'info'; $statusText = 'पूरा हुआ'; break;
+                                                    case 'confirmed':
+                                                        $statusClass = 'success';
+                                                        $statusText = 'कन्फर्म्ड';
+                                                        break;
+                                                    case 'cancelled':
+                                                        $statusClass = 'danger';
+                                                        $statusText = 'कैंसिल्ड';
+                                                        break;
+                                                    case 'completed':
+                                                        $statusClass = 'info';
+                                                        $statusText = 'पूरा हुआ';
+                                                        break;
                                                 }
                                                 ?>
                                                 <span class="badge badge-<?= $statusClass ?>"><?= $statusText ?></span>
@@ -127,13 +138,15 @@ ass="container-fluid mt-4">
 </div>
 
 <script>
-function cancelBooking(bookingId) {
-    if (confirm('क्या आप वाकई इस बुकिंग को कैंसिल करना चाहते हैं?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/customer/cancel-booking/' + bookingId;
-        document.body.appendChild(form);
-        form.submit();
+    function cancelBooking(bookingId) {
+        if (confirm('क्या आप वाकई इस बुकिंग को कैंसिल करना चाहते हैं?')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/customer/cancel-booking/' + bookingId;
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
-}
 </script>
+
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

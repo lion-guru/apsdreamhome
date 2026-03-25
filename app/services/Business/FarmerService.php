@@ -775,12 +775,6 @@ class FarmerService
         $this->db->execute($sql, [$status, $plotId]);
     }
 
-    private function generateCommission(int $farmerId, string $type, array $data): void
-    {
-        $amount = $this->calculateCommissionAmount($type, $data);
-        $this->createCommissionRecord($farmerId, $type, $amount, $data);
-    }
-
     private function sendAllocationNotification(int $farmerId, int $allocationId, array $data): void
     {
         // Mock notification sending

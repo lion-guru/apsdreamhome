@@ -49,7 +49,7 @@ try {
     error_log('Tenant Dashboard stats error: ' . $e->getMessage());
 }
 
-$page_title = 'Tenant Dashboard | APS Dream Homes';
+$$page_title = 'Tenant Dashboard | APS Dream Homes';
 $layout = 'modern';
 
 ob_start();

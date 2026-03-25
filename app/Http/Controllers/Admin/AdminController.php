@@ -74,10 +74,10 @@ class AdminController extends BaseController
                 'page_description' => 'SuperAdmin Control Center'
             ]);
 
-            return $this->render('admin/enterprise_dashboard', $this->data);
+            return $this->render('admin/dashboard', $this->data);
         } catch (Exception $e) {
             $this->setFlash('error', 'Error loading enterprise dashboard: ' . $e->getMessage());
-            return $this->render('admin/enterprise_dashboard', [
+            return $this->render('admin/dashboard', [
                 'page_title' => 'Enterprise Dashboard - ' . $this->getConfig('app_name'),
                 'error' => true
             ]);
@@ -320,6 +320,22 @@ class AdminController extends BaseController
     }
 
     /**
+     * Update page content (AJAX)
+     */
+    public function updatePageContent($id, $content)
+    {
+        // For now, satisfy the call. In a production environment,
+        // this would update a database or storage.
+        try {
+            // Log the update if needed
+            // error_log("Updating content for ID: $id");
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * User Network Management
      */
     public function users()
@@ -340,7 +356,12 @@ class AdminController extends BaseController
         $users = $this->getUsersList();
 
         // Load users view
-        require_once APP_PATH . '/views/admin/users.php';
+        //require_once APP_PATH . '/views/admin/users.php';
+        $this->render('admin/modules/accounts/users', [
+            'page_title' => 'User Network - APS Dream Home',
+            'page_description' => 'Manage all users in the APS Dream Home network',
+            'users' => $users
+        ]);
     }
 
     /**

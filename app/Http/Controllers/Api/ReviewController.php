@@ -135,20 +135,16 @@ class ReviewController extends BaseApiController
             "success" => true,
             "data" => [
                 "review_id" => uniqid(),
-                "property_id" => Security::sanitize($_POST["property_id"]) ?? 1,
-                "rating" => Security::sanitize($_POST["rating"]) ?? 5,
-                "comment" => Security::sanitize($_POST["comment"]) ?? "Great property!",
+                "property_id" => \App\Core\Security::sanitize($_POST["property_id"] ?? 1),
+                "rating" => \App\Core\Security::sanitize($_POST["rating"] ?? 5),
+                "comment" => \App\Core\Security::sanitize($_POST["comment"] ?? "Great property!"),
                 "user_id" => 1,
                 "created_at" => date("Y-m-d H:i:s")
             ]
         ]);
     }
-}
 
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\ReviewController.php
-
-function getPropertyReviews($id)
+    public function getPropertyReviews($id)
     {
         return $this->json([
             "success" => true,
@@ -175,3 +171,7 @@ function getPropertyReviews($id)
             ]
         ]);
     }
+}
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\ReviewController.php

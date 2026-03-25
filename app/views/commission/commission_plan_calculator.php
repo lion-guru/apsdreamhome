@@ -30,7 +30,7 @@ $plans = $plans_result->fetch_all(MYSQLI_ASSOC);
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset(Security::sanitize($_POST['calculate_scenario']))) {
+    if (isset($_POST['calculate_scenario'])) {
         $result = calculateScenario($_POST);
         if ($result['success']) {
             $_SESSION['calculation_result'] = $result;

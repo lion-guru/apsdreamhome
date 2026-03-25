@@ -11,7 +11,7 @@ if (!isset($_SESSION['employee_id'])) {
 }
 
 // Set page variables
-$page_title = 'Employee Dashboard - APS Dream Home';
+$$page_title = 'Employee Dashboard - APS Dream Home';
 $page_description = 'Employee portal dashboard for APS Dream Home';
 $active_page = 'dashboard';
 

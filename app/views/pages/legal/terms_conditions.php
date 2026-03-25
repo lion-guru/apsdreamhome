@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Set page variables
-$page_title = 'Terms and Conditions - APS Dream Home';
+$$page_title = 'Terms and Conditions - APS Dream Home';
 $page_description = 'Terms and conditions for using APS Dream Home real estate services';
 $active_page = 'terms';
 

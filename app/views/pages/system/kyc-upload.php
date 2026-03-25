@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Prepare view data (GET)
-$page_title = 'KYC Upload | APS Dream Homes';
+$$page_title = 'KYC Upload | APS Dream Homes';
 $layout = 'modern';
 
 ob_start();

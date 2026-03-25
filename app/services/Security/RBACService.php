@@ -1,6 +1,13 @@
 <?php
 
-namespace App\Services\Legacy;
+namespace App\Services\Security;
+
+use App\Core\Database\Database;
+use App\Core\Http\Request;
+use App\Core\App;
+use App\Http\Middleware\AdminLogger;
+use Exception;
+use InvalidArgumentException;
 
 /**
  * Advanced Role-Based Access Control (RBAC) Manager
@@ -69,7 +76,7 @@ class RBACManager
         }
 
         try {
-            $db = \App\Core\App::database();
+            $db = App::database();
 
             // Fetch user role and permissions using the query method which handles cross-driver support
             $sql = "
@@ -83,7 +90,7 @@ class RBACManager
 
             if (!$roleData) {
                 // Log unauthorized access attempt
-                if (class_exists('AdminLogger')) {
+                if (class_exists(AdminLogger::class)) {
                     AdminLogger::log('PERMISSION_CHECK_FAILED', [
                         'user_id' => $userId,
                         'requested_permission' => $permission,
@@ -102,7 +109,7 @@ class RBACManager
             $hasPermission = in_array($permission, $userPermissions);
 
             // Log permission check
-            if (class_exists('AdminLogger')) {
+            if (class_exists(AdminLogger::class)) {
                 AdminLogger::log('PERMISSION_CHECK', [
                     'user_id' => $userId,
                     'requested_permission' => $permission,
@@ -112,7 +119,7 @@ class RBACManager
 
             return $hasPermission;
         } catch (Exception $e) {
-            if (class_exists('AdminLogger')) {
+            if (class_exists(AdminLogger::class)) {
                 AdminLogger::logError('PERMISSION_CHECK_ERROR', [
                     'message' => $e->getMessage(),
                     'user_id' => $userId
@@ -135,7 +142,7 @@ class RBACManager
         }
 
         try {
-            $db = \App\Core\App::database();
+            $db = App::database();
 
             // Begin transaction
             $db->beginTransaction();
@@ -169,7 +176,7 @@ class RBACManager
             $db->commit();
 
             // Log role assignment
-            if (class_exists('AdminLogger')) {
+            if (class_exists(AdminLogger::class)) {
                 AdminLogger::log('ROLE_ASSIGNED', [
                     'user_id' => $userId,
                     'role' => $roleName,
@@ -182,7 +189,7 @@ class RBACManager
             // Rollback transaction
             if (isset($db)) $db->rollBack();
 
-            if (class_exists('AdminLogger')) {
+            if (class_exists(AdminLogger::class)) {
                 AdminLogger::logError('ROLE_ASSIGNMENT_ERROR', [
                     'message' => $e->getMessage(),
                     'user_id' => $userId,
@@ -202,7 +209,7 @@ class RBACManager
     public static function getUserRole($userId)
     {
         try {
-            $db = \App\Core\App::database();
+            $db = App::database();
 
             $role = $db->fetch("
                 SELECT r.name 
@@ -213,7 +220,7 @@ class RBACManager
 
             return $role ? $role['name'] : null;
         } catch (Exception $e) {
-            if (class_exists('AdminLogger')) {
+            if (class_exists(AdminLogger::class)) {
                 AdminLogger::logError('GET_USER_ROLE_ERROR', [
                     'message' => $e->getMessage(),
                     'user_id' => $userId
@@ -233,11 +240,13 @@ class RBACManager
     {
         if (!self::hasPermission($userId, $requiredPermission)) {
             // Log access violation
-            AdminLogger::securityAlert('ACCESS_DENIED', [
-                'user_id' => $userId,
-                'requested_permission' => $requiredPermission,
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-            ]);
+            if (class_exists(AdminLogger::class)) {
+                AdminLogger::securityAlert('ACCESS_DENIED', [
+                    'user_id' => $userId,
+                    'requested_permission' => $requiredPermission,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
+                ]);
+            }
 
             // Throw custom exception or redirect
             throw new AccessDeniedException("You do not have permission to access this resource.");
@@ -245,8 +254,12 @@ class RBACManager
     }
 }
 
-// Custom exception for access control
-class AccessDeniedException extends Exception {}
+/**
+ * Access Denied Exception
+ */
+class AccessDeniedException extends Exception
+{
+}
 
 // Global helper functions
 function check_permission($permission)

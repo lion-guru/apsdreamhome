@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/init.php';
 
-$page_title = 'Plot Availability | APS Dream Homes';
+$$page_title = 'Plot Availability | APS Dream Homes';
 $layout = 'modern';
 
 // Database Interaction

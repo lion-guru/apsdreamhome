@@ -67,6 +67,14 @@ class AdminAuthController extends BaseController
             $email = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
 
+            // Validate captcha
+            $submittedCaptcha = $_POST['captcha'] ?? '';
+            $sessionCaptcha = $_SESSION['captcha_result'] ?? '';
+
+            if (empty($submittedCaptcha) || empty($sessionCaptcha) || $submittedCaptcha != $sessionCaptcha) {
+                throw new \Exception('Invalid security answer. Please try again.');
+            }
+
             // Validate input
             if (empty($email) || empty($password)) {
                 throw new \Exception('Please fill in all fields');

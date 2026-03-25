@@ -105,7 +105,7 @@ $user_data['uemail'] = $user_data['email'];
 $user_data['uphone'] = $user_data['phone'];
 
 // Page variables
-$page_title = 'Edit Profile | APS Dream Homes';
+$$page_title = 'Edit Profile | APS Dream Homes';
 $layout = 'modern';
 
 ob_start();
