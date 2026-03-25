@@ -1,0 +1,621 @@
+<?php
+
+namespace App\Core;
+
+/**
+ * APS Dream Home Application Class
+ * Main application bootstrap and routing
+ */
+class App
+{
+    private static $instance = null;
+    private $basePath;
+    private $config = [];
+    private $request;
+    private $response;
+    private $session;
+    private $db;
+    public $router;
+    
+    public function __construct($basePath = null)
+    {
+        $this->basePath = $basePath ?: dirname(__DIR__, 2);
+        $this->loadConfig();
+        
+        // Initialize session
+        $this->session = new \stdClass();
+        $this->session->isStarted = function() {
+            return session_status() !== PHP_SESSION_NONE;
+        };
+    }
+    
+    public static function getInstance($basePath = null)
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($basePath);
+        }
+        return self::$instance;
+    }
+    
+    /**
+     * Get the database connection.
+     */
+    public static function database()
+    {
+        return \App\Core\Database\Database::getInstance();
+    }
+    
+    private function loadConfig()
+    {
+        // Load configuration
+        $configFile = $this->basePath . "/config/database.php";
+        if (file_exists($configFile)) {
+            $this->config = require $configFile;
+        }
+    }
+    
+    public function run()
+    {
+        try {
+            $uri = $_SERVER['REQUEST_URI'] ?? '/';
+            $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+            
+            // Remove query string from URI
+            $uri = strtok($uri, '?');
+            
+            // Remove base path if present
+            $basePath = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
+            if ($basePath !== '/') {
+                $uri = str_replace($basePath, '', $uri);
+            }
+            
+            // Ensure URI starts with /
+            if (empty($uri)) {
+                $uri = '/';
+            }
+            
+            // Debug logging
+            error_log("ROUTING DEBUG: URI = '$uri', Method = '$method'");
+            error_log("ROUTING DEBUG: BasePath = '$basePath'");
+            error_log("ROUTING DEBUG: Original URI = '" . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "'");
+            
+            // Route the request
+            return $this->route($uri, $method);
+            
+        } catch (\Exception $e) {
+            return $this->handleError($e);
+        }
+    }
+    
+    public function handle()
+    {
+        return $this->run();
+    }
+    
+    private function handleRequest()
+    {
+        // Simple routing
+        $uri = $_SERVER["REQUEST_URI"] ?? "/";
+        $method = $_SERVER["REQUEST_METHOD"] ?? "GET";
+        
+        // Debug logging
+        error_log("DEBUG: handleRequest() called with URI: " . $uri . " METHOD: " . $method);
+        
+        // Check if this is an API request
+        if (strpos($uri, '/api') === 0) {
+            error_log("DEBUG: API request detected, calling handleApiRequest");
+            return $this->handleApiRequest($uri, $method);
+        }
+        
+        error_log("DEBUG: Regular request, calling route()");
+        // Route to appropriate controller
+        return $this->route($uri, $method);
+    }
+    
+    private function handleApiRequest($uri, $method)
+    {
+        // Set content type to JSON
+        header('Content-Type: application/json');
+        
+        // Parse URI to get clean path
+        $path = parse_url($uri, PHP_URL_PATH);
+        $path = rtrim($path, '/');
+        
+        // Remove /api prefix
+        $endpoint = str_replace('/api', '', $path);
+        
+        // Basic API routing
+        if ($endpoint === '' || $endpoint === '/') {
+            // API root - show available endpoints
+            echo json_encode([
+                'message' => 'APS Dream Home API',
+                'version' => '1.0.0',
+                'endpoints' => [
+                    'GET /health' => 'Health check',
+                    'GET /properties' => 'List all properties',
+                    'POST /search.php' => 'Search properties',
+                    'GET /leads' => 'List leads (auth required)'
+                ]
+            ]);
+            return;
+        }
+        
+        // Health check
+        if ($endpoint === '/health') {
+            echo json_encode(['status' => 'ok', 'message' => 'API is running']);
+            return;
+        }
+        
+        // Properties endpoint
+        if ($endpoint === '/properties') {
+            if ($method === 'GET') {
+                try {
+                    // Simulate database query for testing
+                    $properties = [
+                        [
+                            'id' => 1,
+                            'title' => 'Sample Property 1',
+                            'price' => 100000,
+                            'location' => 'Gorakhpur',
+                            'type' => 'residential',
+                            'status' => 'active'
+                        ],
+                        [
+                            'id' => 2,
+                            'title' => 'Sample Property 2',
+                            'price' => 150000,
+                            'location' => 'Gorakhpur',
+                            'type' => 'commercial',
+                            'status' => 'active'
+                        ]
+                    ];
+                    echo json_encode(['success' => true, 'data' => $properties]);
+                } catch (\Exception $e) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'error' => 'Database error']);
+                }
+                return;
+            }
+        }
+        
+        // Search endpoint
+        if ($endpoint === '/search.php') {
+            if ($method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $query = $input['query'] ?? '';
+                echo json_encode([
+                    'success' => true,
+                    'query' => $query,
+                    'results' => [
+                        [
+                            'id' => 1,
+                            'title' => 'Sample Property 1',
+                            'price' => 100000,
+                            'location' => 'Gorakhpur'
+                        ]
+                    ]
+                ]);
+                return;
+            }
+        }
+        
+        // Auth endpoints
+        if (strpos($endpoint, '/auth/') === 0) {
+            $authAction = str_replace('/auth/', '', $endpoint);
+            
+            if ($authAction === 'login' && $method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $email = $input['email'] ?? '';
+                $password = $input['password'] ?? '';
+                
+                if ($email === 'test@example.com' && $password === 'test123') {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Login successful',
+                        'token' => 'sample_jwt_token_12345',
+                        'user' => [
+                            'id' => 1,
+                            'name' => 'Test User',
+                            'email' => 'test@example.com'
+                        ]
+                    ]);
+                } else {
+                    http_response_code(401);
+                    echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
+                }
+                return;
+            }
+            
+            if ($authAction === 'register' && $method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $name = $input['name'] ?? '';
+                $email = $input['email'] ?? '';
+                $password = $input['password'] ?? '';
+                
+                if ($name && $email && $password) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Registration successful',
+                        'user' => [
+                            'id' => 2,
+                            'name' => $name,
+                            'email' => $email
+                        ]
+                    ]);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'error' => 'Missing required fields']);
+                }
+                return;
+            }
+        }
+        
+        // Leads endpoint
+        if ($endpoint === '/leads') {
+            if ($method === 'GET') {
+                try {
+                    $leads = [
+                        [
+                            'id' => 1,
+                            'name' => 'Ravi Kumar',
+                            'email' => 'ravi@example.com',
+                            'phone' => '+919876543210',
+                            'property_interest' => 'Luxury Apartment',
+                            'status' => 'new',
+                            'created_at' => '2026-03-01 10:00:00'
+                        ],
+                        [
+                            'id' => 2,
+                            'name' => 'Priya Sharma',
+                            'email' => 'priya@example.com',
+                            'phone' => '+919876543211',
+                            'property_interest' => 'Modern Villa',
+                            'status' => 'contacted',
+                            'created_at' => '2026-03-01 11:30:00'
+                        ]
+                    ];
+                    echo json_encode(['success' => true, 'data' => $leads]);
+                } catch (\Exception $e) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'error' => 'Database error']);
+                }
+                return;
+            }
+        }
+        
+        // Auth endpoint
+        if ($endpoint === '/auth') {
+            if ($method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $email = $input['email'] ?? '';
+                $password = $input['password'] ?? '';
+                
+                // Simulate authentication
+                if ($email && $password) {
+                    echo json_encode([
+                        'success' => true,
+                        'token' => 'sample_token_' . time(),
+                        'user' => [
+                            'id' => 1,
+                            'name' => 'Test User',
+                            'email' => $email,
+                            'role' => 'user'
+                        ]
+                    ]);
+                } else {
+                    http_response_code(401);
+                    echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
+                }
+                return;
+            }
+        }
+        
+        // Analytics endpoint
+        if ($endpoint === '/analytics') {
+            if ($method === 'GET') {
+                try {
+                    $analytics = [
+                        'total_properties' => 24,
+                        'total_leads' => 156,
+                        'total_visits' => 1250,
+                        'conversion_rate' => 12.5,
+                        'popular_properties' => [
+                            ['id' => 1, 'views' => 145],
+                            ['id' => 2, 'views' => 98]
+                        ]
+                    ];
+                    echo json_encode(['success' => true, 'data' => $analytics]);
+                } catch (\Exception $e) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'error' => 'Analytics error']);
+                }
+                return;
+            }
+        }
+        
+        // If no route matched, return 404
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'API endpoint not found']);
+    }
+    
+    private function route($uri, $method)
+    {
+        // Parse URI to get clean path
+        $uri = parse_url($uri, PHP_URL_PATH);
+        $uri = rtrim($uri, '/');
+        
+        // Basic routing logic
+        if ($uri === "" || $uri === "/") {
+            return $this->loadController("HomeController", "index");
+        } elseif ($uri === "/home") {
+            return $this->loadController("Front\\PageController", "home");
+        } elseif ($uri === "/about") {
+            return $this->loadController("Front\\PageController", "about");
+        } elseif ($uri === "/contact") {
+            return $this->loadController("Front\\PageController", "contact");
+        } elseif ($uri === "/resell") {
+            return $this->loadController("Front\\PageController", "resell");
+        } elseif ($uri === "/services") {
+            return $this->loadController("Front\\PageController", "services");
+        } elseif ($uri === "/gallery") {
+            return $this->loadController("Front\\PageController", "gallery");
+        } elseif ($uri === "/legal-services") {
+            return $this->loadController("Front\\PageController", "legalServices");
+        } elseif ($uri === "/blog") {
+            return $this->loadController("Front\\PageController", "blog");
+        } elseif ($uri === "/projects") {
+            return $this->loadController("Front\\PageController", "projects");
+        } elseif ($uri === "/careers") {
+            return $this->loadController("Front\\PageController", "careers");
+        } elseif ($uri === "/team") {
+            return $this->loadController("Front\\PageController", "team");
+        } elseif ($uri === "/testimonials") {
+            return $this->loadController("Front\\PageController", "testimonials");
+        } elseif ($uri === "/faq") {
+            return $this->loadController("Front\\PageController", "faq");
+        } elseif ($uri === "/privacy") {
+            return $this->loadController("Front\\PageController", "privacy");
+        } elseif ($uri === "/terms") {
+            return $this->loadController("Front\\PageController", "terms");
+        } elseif ($uri === "/sitemap") {
+            return $this->loadController("Front\\PageController", "sitemap");
+        }
+        
+        // Authentication routes
+        elseif ($uri === "/login") {
+            return $this->loadController("Front\\AuthController", "login");
+        } elseif ($uri === "/login/process") {
+            return $this->loadController("Front\\AuthController", "processLogin");
+        } elseif ($uri === "/register") {
+            return $this->loadController("Front\\AuthController", "register");
+        } elseif ($uri === "/register/process") {
+            return $this->loadController("Front\\AuthController", "processRegister");
+        } elseif ($uri === "/logout") {
+            return $this->loadController("Front\\AuthController", "logout");
+        }
+        
+        // Associate routes
+        elseif ($uri === "/associate/login") {
+            return $this->loadController("Associate\\AuthController", "login");
+        } elseif ($uri === "/associate/register") {
+            return $this->loadController("Associate\\AuthController", "register");
+        } elseif ($uri === "/associate/dashboard") {
+            return $this->loadController("Associate\\AssociateDashboardController", "index");
+        }
+        
+        // Employee routes
+        elseif ($uri === "/employee/login") {
+            return $this->loadController("Employee\\AuthController", "login");
+        } elseif ($uri === "/employee/dashboard") {
+            return $this->loadController("Employee\\DashboardController", "index");
+        }
+        
+        // Customer routes
+        elseif ($uri === "/customer/dashboard") {
+            return $this->loadController("Customer\\DashboardController", "index");
+        }
+        
+        // User routes
+        elseif ($uri === "/dashboard") {
+            return $this->loadController("User\\DashboardController", "index");
+        }
+        
+        // Admin routes
+        elseif ($uri === "/admin") {
+            return $this->loadController("Admin\\AdminControllerSimple", "index");
+        } elseif ($uri === "/admin/dashboard") {
+            return $this->loadController("Admin\\AdminControllerSimple", "index");
+        } elseif ($uri === "/admin/properties") {
+            return $this->loadController("Admin\\AdminControllerSimple", "properties");
+        } elseif ($uri === "/admin/projects") {
+            return $this->loadController("Admin\\AdminControllerSimple", "index");
+        } elseif ($uri === "/admin/users") {
+            return $this->loadController("Admin\\AdminControllerSimple", "users");
+        } elseif ($uri === "/admin/leads") {
+            return $this->loadController("Admin\\AdminControllerSimple", "leads");
+        } elseif ($uri === "/admin/customers") {
+            return $this->loadController("Admin\\AdminControllerSimple", "index");
+        } elseif ($uri === "/admin/settings") {
+            return $this->loadController("Admin\\AdminControllerSimple", "settings");
+        }
+        
+        // Property routes
+        elseif ($uri === "/properties") {
+            return $this->loadController("Property\\PropertyController", "index");
+        } elseif (preg_match('/^\/properties\/(\d+)$/', $uri, $matches)) {
+            return $this->loadController("HomeController", "propertyDetail", [$matches[1]]);
+        } elseif ($uri === "/projects") {
+            return $this->loadController("HomeController", "projects");
+        } elseif ($uri === "/contact") {
+            return $this->loadController("HomeController", "contact");
+        }
+        
+        // Agent routes
+        elseif ($uri === "/agent") {
+            return $this->loadController("AgentController", "index");
+        } elseif ($uri === "/agent/dashboard") {
+            return $this->loadController("Agent\\AgentDashboardController", "index");
+        }
+        
+        // API routes handled separately in handleApiRequest
+        elseif (strpos($uri, '/api/') === 0) {
+            return $this->handleApiRequest($uri, $method);
+        }
+        else {
+            // Default to home
+            return $this->loadController("HomeController", "index");
+        }
+    }
+    
+    private function loadController($controller, $method, $params = [])
+    {
+        $controllerClass = "App\\Http\\Controllers\\" . $controller;
+        
+        // Debug logging
+        error_log("CONTROLLER DEBUG: Attempting to load $controllerClass::$method");
+        
+        if (class_exists($controllerClass)) {
+            error_log("CONTROLLER DEBUG: Class $controllerClass exists");
+            $controllerInstance = new $controllerClass();
+            if (method_exists($controllerInstance, $method)) {
+                error_log("CONTROLLER DEBUG: Method $method exists in $controllerClass");
+                ob_start();
+                call_user_func_array([$controllerInstance, $method], $params);
+                return ob_get_clean();
+            } else {
+                error_log("CONTROLLER ERROR: Method $method not found in $controllerClass");
+                return "Method " . $method . " not found in " . $controllerClass;
+            }
+        } else {
+            error_log("CONTROLLER ERROR: Class $controllerClass not found");
+            return "Controller " . $controllerClass . " not found";
+        }
+    }
+    
+    private function handleError($exception)
+    {
+        error_log("Application Error: " . $exception->getMessage());
+        return "<h1>Application Error</h1><p>An error occurred. Please try again later.</p>";
+    }
+    
+    public function getConfig($key = null)
+    {
+        if ($key === null) {
+            return $this->config;
+        }
+        return $this->config[$key] ?? null;
+    }
+    
+    public function request()
+    {
+        static $request = null;
+        if ($request === null) {
+            $request = new \stdClass();
+            $request->uri = $_SERVER["REQUEST_URI"] ?? "/";
+            $request->method = $_SERVER["REQUEST_METHOD"] ?? "GET";
+            $request->get = $_GET;
+            $request->post = $_POST;
+        }
+        return $request;
+    }
+    
+    public function response()
+    {
+        static $response = null;
+        if ($response === null) {
+            $response = new \stdClass();
+            $response->status = 200;
+            $response->headers = [];
+            $response->content = "";
+        }
+        return $response;
+    }
+    
+    public function session()
+    {
+        static $session = null;
+        if ($session === null) {
+            $session = new class {
+                public $started;
+                
+                public function __construct() {
+                    $this->started = session_status() === PHP_SESSION_ACTIVE;
+                }
+                
+                public function isStarted() {
+                    return $this->started;
+                }
+                
+                public function start() {
+                    if (session_status() === PHP_SESSION_NONE) {
+                        @session_start();
+                        $this->started = true;
+                    }
+                    return $this;
+                }
+                
+                public function get($key, $default = null) {
+                    return $_SESSION[$key] ?? $default;
+                }
+                
+                public function set($key, $value) {
+                    $_SESSION[$key] = $value;
+                    return $this;
+                }
+                
+                public function has($key) {
+                    return isset($_SESSION[$key]);
+                }
+                
+                public function flash($key, $value) {
+                    $_SESSION['_flash'][$key] = $value;
+                    return $this;
+                }
+                
+                public function remove($key) {
+                    unset($_SESSION[$key]);
+                    return $this;
+                }
+            };
+        }
+        return $session;
+    }
+    
+    public function db()
+    {
+        static $db = null;
+        if ($db === null) {
+            try {
+                $db = new \stdClass();
+                $db->connected = true;
+                $db->connection = "database_connection";
+            } catch (\Exception $e) {
+                $db = new \stdClass();
+                $db->connected = false;
+                $db->error = $e->getMessage();
+            }
+        }
+        return $db;
+    }
+    
+    public function auth()
+    {
+        static $auth = null;
+        if ($auth === null) {
+            $auth = new \stdClass();
+            $auth->user = null;
+            $auth->authenticated = false;
+        }
+        return $auth;
+    }
+    
+    public function router()
+    {
+        return $this->router;
+    }
+    
+    public function basePath($path = '')
+    {
+        return $this->basePath . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '\\/') : '');
+    }
+}
