@@ -278,13 +278,7 @@ $router->get('/company/projects', 'Front\\PageController@projects');
 $router->get('/projects/{slug}', 'Front\\PageController@projectDetails');
 
 // Careers
-$router->get('/careers', 'Front\\PageController@career');
-$router->get('/careers/jobs', 'Front\\PageController@careerJobs');
-$router->get('/careers/job/{id}', 'Front\\PageController@careerJobDetails');
-
-// 404 Handler (must be last)
-// $router->set404Handler('Front\\PageController@notFound');
-$router->get('/careers', 'Front\PageController@career');
+$router->get('/careers', 'Front\\PageController@careers');
 $router->get('/careers/apply', 'Front\PageController@careerApply');
 $router->post('/careers/apply', 'Front\PageController@submitCareerApplication');
 $router->get('/company/projects', 'Front\PageController@projects');

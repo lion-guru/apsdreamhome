@@ -17,7 +17,9 @@ class RoleBasedDashboardController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = Database::getInstance();
+        $this->layout = 'layouts/admin_header';
     }
 
     /**
@@ -62,7 +64,7 @@ class RoleBasedDashboardController extends BaseController
         $userRole = $this->getCurrentUserRole();
         $dashboardData = $this->getDashboardByRole($userRole);
 
-        $this->render('dashboard/admin_dashboard', $dashboardData);
+        $this->render('dashboard/index', $dashboardData);
     }
 
     /**

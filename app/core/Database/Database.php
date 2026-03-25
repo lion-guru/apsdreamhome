@@ -70,6 +70,11 @@ class Database
         }
     }
 
+    public function getConnection()
+    {
+        return $this->pdo;
+    }
+
     public function query($sql, $params = [])
     {
         $startTime = microtime(true);

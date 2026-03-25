@@ -20,11 +20,7 @@ class AdminAuthController extends BaseController
      */
     public function adminLogin()
     {
-        // Start session if not started
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
+        $this->layout = 'layouts/admin';
         // Redirect if already logged in
         if ($this->isLoggedIn()) {
             $this->redirectToDashboard();
@@ -36,9 +32,16 @@ class AdminAuthController extends BaseController
         // Generate CAPTCHA
         $captcha = $this->generateCaptcha();
         $captcha_question = $captcha['question'];
+        
+        $data = [
+            'page_title' => 'Admin Login - APS Dream Home',
+            'page_description' => 'Secure admin access to APS Dream Home dashboard',
+            'active_page' => 'login',
+            'csrf_token' => $csrf_token,
+            'captcha_question' => $captcha_question
+        ];
 
-        // Include admin login view
-        include_once __DIR__ . '/../../../views/auth/admin_login.php';
+        $this->render('auth/admin_login', $data);
     }
 
     /**
@@ -194,21 +197,5 @@ class AdminAuthController extends BaseController
         ];
     }
 
-    /**
-     * Get CSRF token
-     */
-    protected function getCsrfToken()
-    {
-        // Implement CSRF token generation logic here
-        return 'csrf-token';
-    }
 
-    /**
-     * Validate CSRF token
-     */
-    protected function validateCsrfToken($token)
-    {
-        // Implement CSRF token validation logic here
-        return true;
-    }
 }

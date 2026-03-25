@@ -1,3 +1,22 @@
+<style>
+.news-hero {
+    padding: 60px 0;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+}
+.news-card {
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,.1);
+}
+.news-img-cover {
+    height: 200px;
+    object-fit: cover;
+}
+</style>
 <?php
 // app/views/pages/news.php
 ?>
@@ -90,7 +109,7 @@
                                     alt="<?= htmlspecialchars($news->title) ?>"
                                     class="img-fluid news-img-cover">
                                 <div class="news-category position-absolute top-0 start-0 m-3">
-                                    <span class="badge bg-primary">News</span>
+                                    <span class="badge bg-primary"><?= htmlspecialchars($news->category) ?></span>
                                 </div>
                             </div>
                             <div class="news-content p-4">
@@ -111,7 +130,7 @@
                                 <a href="<?= BASE_URL ?>news/view/<?= htmlspecialchars($news->id) ?>" class="btn btn-outline-primary btn-sm stretched-link">
                                     Read More
                                     <i class="fas fa-arrow-right ms-2"></i>
-                                </a>
+                                a>
                             </div>
                         </article>
                     </div>

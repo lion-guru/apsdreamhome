@@ -1,21 +1,4 @@
-<?php
 
-// TODO: Add proper error handling with try-catch blocks
-
-/**
- * APS Dream Home - Frequently Asked Questions
- * Common questions and answers about our services
- */
-
-require_once 'core/functions.php';
-
-// Set page variables
-$page_title = 'FAQs - APS Dream Home';
-$page_description = 'Frequently asked questions about our real estate services';
-
-// Content for base layout
-ob_start();
-?>
 
 <!-- Page Header -->
 <section class="hero-section bg-primary text-white py-5">
@@ -355,9 +338,3 @@ ob_start();
         margin-bottom: 20px;
     }
 </style>
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/base.php';
-echo $content;
-?>
