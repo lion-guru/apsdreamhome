@@ -1,4 +1,4 @@
-<?php include_once __DIR__ . '/../layouts/header.php'; ?>
+
 
 <div class="container mt-4">
     <!-- Breadcrumb -->
@@ -216,4 +216,4 @@
 }
 </style>
 
-<?php include_once __DIR__ . '/../layouts/footer.php'; ?>
+

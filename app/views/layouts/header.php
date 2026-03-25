@@ -9,7 +9,6 @@ if (!defined('BASE_URL')) {
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
                 <img src="https://via.placeholder.com/40x40/2c3e50/ffffff?text=APS"
-                    <img src="https://via.placeholder.com/40x40/2c3e50/ffffff?text=APS"
                     alt="APS Dream Home" class="logo me-2" style="height:40px; border-radius:8px;">
                 <div>
                     <div class="brand-text fw-bold text-primary">APS Dream Home</div>
@@ -31,19 +30,60 @@ if (!defined('BASE_URL')) {
                     $nav_items = [
                         ['label' => 'Home', 'url' => '/', 'icon' => 'fas fa-home'],
                         ['label' => 'Properties', 'url' => '/properties', 'icon' => 'fas fa-building'],
-                        ['label' => 'About', 'url' => '/about', 'icon' => 'fas fa-info-circle'],
+                        [
+                            'label' => 'About Us', 'icon' => 'fas fa-info-circle', 'submenu' => [
+                                ['label' => 'About', 'url' => '/about', 'icon' => 'fas fa-info-circle'],
+                                ['label' => 'Our Team', 'url' => '/team', 'icon' => 'fas fa-users'],
+                                ['label' => 'Careers', 'url' => '/careers', 'icon' => 'fas fa-briefcase'],
+                                ['label' => 'Testimonials', 'url' => '/testimonials', 'icon' => 'fas fa-comment-alt'],
+                            ]
+                        ],
+                        [
+                            'label' => 'Services', 'icon' => 'fas fa-concierge-bell', 'submenu' => [
+                                ['label' => 'All Services', 'url' => '/services', 'icon' => 'fas fa-concierge-bell'],
+                                ['label' => 'Financial Services', 'url' => '/financial-services', 'icon' => 'fas fa-hand-holding-usd'],
+                                ['label' => 'Interior Design', 'url' => '/interior-design', 'icon' => 'fas fa-couch'],
+                                ['label' => 'Resell Property', 'url' => '/resell', 'icon' => 'fas fa-handshake'],
+                            ]
+                        ],
+                        [
+                            'label' => 'Resources', 'icon' => 'fas fa-folder-open', 'submenu' => [
+                                ['label' => 'Blog', 'url' => '/blog', 'icon' => 'fas fa-blog'],
+                                ['label' => 'News', 'url' => '/news', 'icon' => 'fas fa-newspaper'],
+                                ['label' => 'Downloads', 'url' => '/downloads', 'icon' => 'fas fa-download'],
+                                ['label' => 'FAQs', 'url' => '/faqs', 'icon' => 'fas fa-question-circle'],
+                            ]
+                        ],
                         ['label' => 'Contact', 'url' => '/contact', 'icon' => 'fas fa-phone']
                     ];
-                    foreach ($nav_items as $item):
-                        $active_class = ($current_path === $item['url']) ? 'active' : '';
+
+                    foreach ($nav_items as $item) {
+                        if (isset($item['submenu'])) {
+                            $is_active = array_reduce($item['submenu'], function ($carry, $sub_item) use ($current_path) {
+                                return $carry || $current_path === $sub_item['url'];
+                            }, false);
+                            $active_class = $is_active ? 'active' : '';
+                            echo '<li class="nav-item dropdown">';
+                            echo '<a class="nav-link dropdown-toggle ' . $active_class . '" href="#" role="button" data-bs-toggle="dropdown">';
+                            echo '<i class="' . $item['icon'] . ' me-1"></i>' . htmlspecialchars($item['label']);
+                            echo '</a>';
+                            echo '<ul class="dropdown-menu">';
+                            foreach ($item['submenu'] as $sub_item) {
+                                $active_class = ($current_path === $sub_item['url']) ? 'active' : '';
+                                echo '<li><a class="dropdown-item ' . $active_class . '" href="' . BASE_URL . $sub_item['url'] . '"><i class="' . $sub_item['icon'] . ' me-2"></i>' . htmlspecialchars($sub_item['label']) . '</a></li>';
+                            }
+                            echo '</ul>';
+                            echo '</li>';
+                        } else {
+                            $active_class = ($current_path === $item['url']) ? 'active' : '';
+                            echo '<li class="nav-item">';
+                            echo '<a class="nav-link ' . $active_class . '" href="' . BASE_URL . $item['url'] . '">';
+                            echo '<i class="' . $item['icon'] . ' me-1"></i>' . htmlspecialchars($item['label']);
+                            echo '</a>';
+                            echo '</li>';
+                        }
+                    }
                     ?>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo $active_class; ?>" href="<?php echo BASE_URL . $item['url']; ?>">
-                                <i class="<?php echo $item['icon']; ?> me-1"></i>
-                                <?php echo htmlspecialchars($item['label']); ?>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-plus me-1"></i>

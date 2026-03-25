@@ -130,7 +130,7 @@
   "// APS Dream Home - Disable Testing Features": "",
   "testing.automaticallyOpenPeekViewDuringAutoRun": false,
   "notebook.formatOnSave.enabled": false,
-  "notebook.defaultFormatter": null,
+  "notebook.defaultFormatter": "esbenp.prettier-vscode",
 
   "// APS Dream Home - Disable Advanced Features": "",
   "advancedPhpCsFixer.allowRisky": false,
@@ -142,5 +142,14 @@
   "intelephense.codeLens.overrides.enable": false,
   "intelephense.codeLens.implementations.enable": false,
   "intelephense.phpdoc.useFullyQualifiedNames": false,
-  "editor.linkedEditing": true
+  "editor.linkedEditing": true,
+  "gemini-cli.debug.logging.enabled": true,
+  "geminicodeassist.agentDebugMode": true,
+  "geminicodeassist.agentYoloMode": true,
+  "geminicodeassist.codeGenerationPaneViewEnabled": true,
+  "geminicodeassist.inlineSuggestions.nextEditPredictions": true,
+  "geminicodeassist.outlines.automaticOutlineGeneration": true,
+  "geminicodeassist.verboseLogging": true,
+  "intelephense.rename.namespaceMode": "all",
+  "intelephense.trace.server": "verbose"
 }

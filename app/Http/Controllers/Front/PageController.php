@@ -48,6 +48,26 @@ class PageController extends BaseController
         }
     }
 
+    // Contact Us Page
+    public function contact()
+    {
+        $data = [
+            'page_title' => 'Contact Us - APS Dream Home',
+            'page_description' => 'Get in touch with APS Dream Home'
+        ];
+        $this->render('pages/contact', $data);
+    }
+
+    // About Us Page
+    public function about()
+    {
+        $data = [
+            'page_title' => 'About Us - APS Dream Home',
+            'page_description' => 'Learn more about APS Dream Home'
+        ];
+        $this->render('pages/about', $data);
+    }
+
     // Properties Page
     public function properties()
     {
@@ -219,6 +239,95 @@ class PageController extends BaseController
         }
     }
 
+    // Team
+    public function team()
+    {
+        $data = [
+            'page_title' => 'Our Team - APS Dream Home',
+            'page_description' => 'Meet the team behind APS Dream Home'
+        ];
+        $this->render('pages/team', $data);
+    }
+
+    // Careers
+    public function careers()
+    {
+        $data = [
+            'page_title' => 'Careers - APS Dream Home',
+            'page_description' => 'Join our team at APS Dream Home'
+        ];
+        $this->render('pages/careers', $data);
+    }
+
+    // Services
+    public function services()
+    {
+        $data = [
+            'page_title' => 'Our Services - APS Dream Home',
+            'page_description' => 'Services offered by APS Dream Home'
+        ];
+        $this->render('pages/services', $data);
+    }
+
+    // Blog
+    public function blog()
+    {
+        $blog_posts = [
+            [
+                'id' => 1,
+                'title' => 'The Future of Real Estate: Trends to Watch in 2025',
+                'excerpt' => 'As we look ahead, the real estate market is poised for significant transformation. From sustainable housing to the integration of AI, here are the key trends that will shape the industry in 2025 and beyond.',
+                'featured_image' => 'assets/images/blog/blog-1.jpg',
+                'category' => 'Market Trends',
+                'read_time' => 5,
+                'created_at' => '2024-03-15'
+            ],
+            [
+                'id' => 2,
+                'title' => 'A Step-by-Step Guide to Buying Your First Home',
+                'excerpt' => 'Buying your first home is a major milestone. This comprehensive guide will walk you through every step of the process, from getting pre-approved for a mortgage to closing the deal.',
+                'featured_image' => 'assets/images/blog/blog-2.jpg',
+                'category' => 'Buying Guide',
+                'read_time' => 8,
+                'created_at' => '2024-03-10'
+            ],
+            [
+                'id' => 3,
+                'title' => 'Top 5 Interior Design Tips to Increase Your Home\'s Value',
+                'excerpt' => 'A well-designed home not only looks great but can also significantly increase its market value. Discover our top 5 interior design tips to make your home more appealing to potential buyers.',
+                'featured_image' => 'assets/images/blog/blog-3.jpg',
+                'category' => 'Interior Design',
+                'read_time' => 4,
+                'created_at' => '2024-03-05'
+            ],
+        ];
+
+        $categories = [
+            ['category' => 'Market Trends'],
+            ['category' => 'Buying Guide'],
+            ['category' => 'Interior Design'],
+            ['category' => 'Investment'],
+        ];
+
+        $data = [
+            'page_title' => 'Blog - APS Dream Home',
+            'page_description' => 'Latest news and articles from our blog',
+            'blog_posts' => $blog_posts,
+            'categories' => $categories
+        ];
+        $this->render('pages/blog', $data);
+    }
+
+    // Privacy Policy
+    public function privacy()
+    {
+        $data = [
+            'page_title' => 'Privacy Policy - APS Dream Home',
+            'page_description' => 'Our privacy policy'
+        ];
+        $this->render('pages/privacy', $data);
+    }
+
     // Resell
     public function resell()
     {
@@ -252,9 +361,51 @@ class PageController extends BaseController
     // News
     public function news()
     {
+        $news_items = [
+            (object)[
+                'id' => 1,
+                'title' => 'Grand Opening of Suyoday Colony',
+                'summary' => 'APS Dream Home is proud to announce the grand opening of Suyoday Colony, our latest residential project in Gorakhpur. The opening ceremony will be held on April 15, 2024.',
+                'image' => 'assets/images/news/news-1.jpg',
+                'category' => 'Project Launch',
+                'created_at' => '2024-03-20'
+            ],
+            (object)[
+                'id' => 2,
+                'title' => 'APS Dream Home Wins "Best Real Estate Developer" Award',
+                'summary' => 'We are honored to receive the "Best Real Estate Developer" award for the year 2023. This award is a testament to our commitment to quality and customer satisfaction.',
+                'image' => 'assets/images/news/news-2.jpg',
+                'category' => 'Company News',
+                'created_at' => '2024-03-18'
+            ],
+            (object)[
+                'id' => 3,
+                'title' => 'New Commercial Project Announced in Lucknow',
+                'summary' => 'APS Dream Home is excited to announce a new commercial project in the heart of Lucknow. The project will feature state-of-the-art office spaces and retail outlets.',
+                'image' => 'assets/images/news/news-3.jpg',
+                'category' => 'Project Launch',
+                'created_at' => '2024-03-15'
+            ],
+        ];
+
+        $categories = ['Project Launch', 'Company News', 'Market Updates'];
+
+        $pagination = [
+            'current_page' => 1,
+            'total_pages' => 1,
+            'current_category' => 'all'
+        ];
+
         $data = [
             'page_title' => 'News - APS Dream Home',
-            'page_description' => 'Latest news and updates from APS Dream Home'
+            'page_description' => 'Latest news and updates from APS Dream Home',
+            'news_items' => $news_items,
+            'categories' => $categories,
+            'pagination' => $pagination,
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => '/'],
+                ['title' => 'News', 'url' => '']
+            ]
         ];
         $this->render('pages/news', $data);
     }

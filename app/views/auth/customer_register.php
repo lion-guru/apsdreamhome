@@ -1,16 +1,4 @@
-<?php
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
-// Set page variables
-$page_title = 'Customer Registration - APS Dream Home';
-$page_description = 'Create your account to access premium real estate services';
-
-// Content for base layout
-ob_start();
-?>
 
 <div class="container my-5">
     <div class="row justify-content-center">
@@ -541,9 +529,3 @@ ob_start();
         document.getElementById('name').focus();
     });
 </script>
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/base.php';
-echo $content;
-?>
