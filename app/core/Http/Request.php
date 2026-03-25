@@ -452,6 +452,14 @@ class Request implements Countable
     }
 
     /**
+     * Get a header by name (shorthand)
+     */
+    public function header($key, $default = null)
+    {
+        return $this->getHeader($key, $default);
+    }
+
+    /**
      * Get the session
      */
     public function getSession()
@@ -1295,6 +1303,18 @@ class Request implements Countable
         }
 
         return $default;
+    }
+
+    /**
+     * Get input from the request (shorthand for get)
+     */
+    public function input($key = null, $default = null)
+    {
+        if (null === $key) {
+            return $this->all();
+        }
+
+        return $this->get($key, $default);
     }
 
     /**

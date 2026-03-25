@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Page title
-$page_title = 'Reset Password - APS Dream Home';
+$$page_title = 'Reset Password - APS Dream Home';
 
 // Content for base layout
 ob_start();

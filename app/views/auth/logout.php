@@ -1,6 +1,6 @@
 
 <?php
-$page_title = 'Logged Out - APS Dream Home';
+$$page_title = 'Logged Out - APS Dream Home';
 // Include public header
 include APP_PATH . '/views/layouts/header.php';
 ?>

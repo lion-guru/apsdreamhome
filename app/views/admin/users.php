@@ -11,7 +11,7 @@ if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
 }
 
 // Set page variables
-$page_title = 'User Network - APS Dream Home';
+$$page_title = 'User Network - APS Dream Home';
 $active_page = 'users';
 
 // Content for base layout

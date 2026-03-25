@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Set page variables
-$page_title = 'Forgot Password - APS Dream Home';
+$$page_title = 'Forgot Password - APS Dream Home';
 $page_description = 'Reset your password with email or mobile number';
 
 // Content for base layout

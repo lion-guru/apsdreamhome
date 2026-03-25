@@ -1,5 +1,5 @@
 <?php
-$page_title = 'MLM Dashboard - APS Dream Home';
+$$page_title = 'MLM Dashboard - APS Dream Home';
 $page_description = 'Build your network and grow your business';
 include __DIR__ . '/../layouts/base.php';
 ?>

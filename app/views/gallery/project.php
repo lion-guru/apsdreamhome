@@ -26,19 +26,19 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-function handleError(,  = null,  = null) {
-     = date('Y-m-d H:i:s') . ' - ERROR: ' . ;
-    if ()  .= ' in ' . ;
-    if ()  .= ' on line ' . ;
-    error_log();
+function handleError($message, $file = null, $line = null) {
+    $log = date('Y-m-d H:i:s') . ' - ERROR: ' . $message;
+    if ($file) $log .= ' in ' . $file;
+    if ($line) $log .= ' on line ' . $line;
+    error_log($log);
     return false;
 }
 
-function safeExecute(,  = 'Operation failed') {
+function safeExecute($callback, $errorMsg = 'Operation failed') {
     try {
-        return ();
-    } catch (Exception ) {
-        handleError( . ': ' . (), (), ());
+        return $callback();
+    } catch (Exception $e) {
+        handleError($errorMsg . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
         return null;
     }
 }

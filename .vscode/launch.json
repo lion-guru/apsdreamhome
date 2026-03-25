@@ -5,6 +5,9 @@
     "version": "0.2.0",
     "configurations": [
         
+
+
+        
         {
             "type": "vscode-edge-devtools.debug",
             "request": "attach",
@@ -51,7 +54,7 @@
                 "localhost:0"
             ],
             "program": "",
-            "cwd": "${workspaceRoot}",
+            "cwd": "${workspaceFolder}",
             "port": 9003,
             "serverReadyAction": {
                 "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
@@ -88,11 +91,6 @@
             "serverReadyAction": {
                 "action": "openExternally"
             }
-        },
-        {
-            "name": "Listen for Xdebug",
-            "type": "php",
-            "request": "launch"
         }
     ]
 }

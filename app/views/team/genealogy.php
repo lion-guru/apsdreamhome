@@ -1,5 +1,5 @@
 <?php
-$page_title = 'Team Genealogy - APS Dream Home';
+$$page_title = 'Team Genealogy - APS Dream Home';
 include __DIR__ . '/../layouts/base.php';
 ?>
 

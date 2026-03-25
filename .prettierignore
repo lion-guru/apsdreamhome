@@ -1,0 +1,25 @@
+# Prettier ignore file
+
+# Ignore generated files
+*.min.js
+*.min.css
+
+# Ignore vendor files
+vendor/
+node_modules/
+
+# Ignore cache and logs
+cache/
+logs/
+
+# Ignore config files that shouldn't be formatted
+.env*
+config.php
+
+# Ignore backup files
+backup/
+*_backup*
+
+# Ignore specific large files
+package-lock.json
+composer.lock

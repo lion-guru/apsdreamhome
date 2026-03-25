@@ -11,7 +11,7 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 // Set page variables
-$page_title = 'AI Settings - APS Dream Home';
+$$page_title = 'AI Settings - APS Dream Home';
 $active_page = 'ai-settings';
 
 // Get current API key (masked)
@@ -20,7 +20,7 @@ $maskedKey = substr($currentKey, 0, 10) . '...' . substr($currentKey, -10);
 
 // Content for base layout
 ob_start();
-?>
+
 
 // Get usage statistics
 $stats = $geminiService->getUsageStats();

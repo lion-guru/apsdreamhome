@@ -28,7 +28,7 @@ use \App\Core\Database;
 $db = \App\Core\App::database();
 
 // Set page metadata
-$page_title = 'Customer Reviews - APS Dream Homes';
+$$page_title = 'Customer Reviews - APS Dream Homes';
 $page_description = 'Read what our customers say about APS Dream Homes properties and services';
 $page_keywords = 'customer reviews, testimonials, APS Dream Homes, client feedback';
 

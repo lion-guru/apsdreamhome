@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Set page variables
-$page_title = 'Employee Login - APS Dream Home';
+$$page_title = 'Employee Login - APS Dream Home';
 $page_description = 'Secure employee access to APS Dream Home portal';
 $active_page = 'login';
 

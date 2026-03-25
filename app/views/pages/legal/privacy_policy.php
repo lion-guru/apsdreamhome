@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Set page variables
-$page_title = 'Privacy Policy - APS Dream Home';
+$$page_title = 'Privacy Policy - APS Dream Home';
 $page_description = 'Privacy policy for APS Dream Home real estate services and data protection';
 $active_page = 'privacy';
 

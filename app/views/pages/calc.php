@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/init.php';
 
-$page_title = 'EMI Calculator | APS Dream Homes';
+$$page_title = 'EMI Calculator | APS Dream Homes';
 $layout = 'modern';
 
 // Handle Calculation

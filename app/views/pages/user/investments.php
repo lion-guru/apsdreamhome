@@ -6,7 +6,7 @@ requireAuth('login.php');
 requireRole('customer', 'index.php');
 
 $uid = getAuthUserId();
-$page_title = 'My Investments - APS Dream Homes';
+$$page_title = 'My Investments - APS Dream Homes';
 
 // Fetch Active Investments (Plots)
 $investments = [];

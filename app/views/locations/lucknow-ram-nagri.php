@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/init.php';
 
-$page_title = 'Ram Nagri Lucknow | APS Dream Homes';
+$$page_title = 'Ram Nagri Lucknow | APS Dream Homes';
 $layout = 'modern';
 
 ob_start();

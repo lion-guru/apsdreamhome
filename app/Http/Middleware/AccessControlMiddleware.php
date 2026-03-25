@@ -1,6 +1,11 @@
 <?php
 
 namespace App\Services\Legacy;
+
+use Exception;
+use App\Http\Middleware\AdminLogger;
+use App\Http\Middleware\AccessDeniedException;
+use App\Http\Middleware\RBACManager;
 /**
  * Comprehensive Access Control Middleware
  * Provides advanced access control and protection mechanisms

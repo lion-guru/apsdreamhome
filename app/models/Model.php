@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Core\Database;
+use App\Core\Database\Database;
+use App\Core\Database\QueryBuilder;
 use Exception;
 
 /**
@@ -178,87 +179,7 @@ class Model
      */
     public static function query()
     {
-        return new class {
-            private $db;
-            private $table;
-            private $sql;
-            private $params;
-
-            public function __construct()
-            {
-                $this->db = Database::getInstance();
-                $this->table = static::$table;
-                $this->sql = "";
-                $this->params = [];
-            }
-
-            public function select($columns = '*')
-            {
-                $this->sql = "SELECT " . (is_array($columns) ? implode(', ', $columns) : $columns) . " FROM " . $this->table;
-                return $this;
-            }
-
-            public function from($table)
-            {
-                $this->sql .= " " . $table;
-                return $this;
-            }
-
-            public function join($table, $condition, $operator = '=')
-            {
-                $this->sql .= " JOIN " . $table . " ON " . $condition;
-                return $this;
-            }
-
-            public function where($column, $operator = '=', $value = null)
-            {
-                if ($value === null) {
-                    $this->sql .= " WHERE " . $column;
-                } else {
-                    $this->sql .= " WHERE " . $column . " " . $operator . " ?";
-                    $this->params[] = $value;
-                }
-                return $this;
-            }
-
-            public function orderBy($column, $direction = 'ASC')
-            {
-                $this->sql .= " ORDER BY " . $column . " " . $direction;
-                return $this;
-            }
-
-            public function limit($limit)
-            {
-                $this->sql .= " LIMIT " . $limit;
-                return $this;
-            }
-
-            public function skip($offset)
-            {
-                $this->sql .= " OFFSET " . $offset;
-                return $this;
-            }
-
-            public function get()
-            {
-                try {
-                    return $this->db->fetchAll($this->sql, $this->params);
-                } catch (Exception $e) {
-                    error_log("Query get error: " . $e->getMessage());
-                    return [];
-                }
-            }
-
-            public function first()
-            {
-                try {
-                    return $this->db->fetch($this->sql, $this->params);
-                } catch (Exception $e) {
-                    error_log("Query first error: " . $e->getMessage());
-                    return null;
-                }
-            }
-        };
+        return new QueryBuilder(static::getDb(), static::$table);
     }
 
     /**
@@ -369,9 +290,9 @@ class Model
         return [
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown',
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown',
-            'platform' => $this->getDevicePlatform(),
-            'browser' => $this->getBrowserInfo(),
-            'is_mobile' => $this->isMobileDevice(),
+            'platform' => self::getDevicePlatform(),
+            'browser' => self::getBrowserInfo(),
+            'is_mobile' => self::isMobileDevice(),
             'screen_resolution' => $_COOKIE['screen_resolution'] ?? 'Unknown'
         ];
     }

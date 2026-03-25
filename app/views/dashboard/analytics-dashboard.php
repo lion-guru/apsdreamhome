@@ -1,5 +1,5 @@
 <?php
-$page_title = 'Analytics Dashboard - APS Dream Home';
+$$page_title = 'Analytics Dashboard - APS Dream Home';
 $page_description = 'Comprehensive analytics and performance monitoring';
 include __DIR__ . '/../layouts/base.php';
 ?>

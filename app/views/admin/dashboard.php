@@ -1,1215 +1,821 @@
 <?php
-
-/**
- * APS Dream Home - Admin Dashboard
- * Main admin interface
- */
-
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 // Check admin authentication
-if (!isset($_SESSION['admin_id'])) {
+if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
     header('Location: ' . BASE_URL . '/admin/login');
     exit;
 }
 
-// Set page variables
-$page_title = $page_title ?? 'Admin Dashboard - APS Dream Home';
-$stats = $stats ?? [];
-$recent_projects = $recent_projects ?? [];
-$recent_applications = $recent_applications ?? [];
-$pending_tasks = $pending_tasks ?? [];
+// Get current page context
+$current_section = $_GET['section'] ?? 'dashboard';
+$current_module = $_GET['module'] ?? 'overview';
 
-// Content for admin layout
+// Set page variables
+$page_title = 'SuperAdmin Control Center - APS Dream Home';
+$admin_layout = true;  // tells base.php to skip public header/footer
+$active_page = 'dashboard';
+
+// Define admin sections
+$admin_sections = [
+    'dashboard' => [
+        'title' => 'Dashboard',
+        'icon' => 'fas fa-tachometer-alt',
+        'modules' => [
+            'overview' => ['title' => 'Overview', 'icon' => 'fas fa-chart-pie'],
+            'analytics' => ['title' => 'Analytics', 'icon' => 'fas fa-chart-line'],
+            'reports' => ['title' => 'Reports', 'icon' => 'fas fa-file-alt'],
+            'activity' => ['title' => 'Activity Log', 'icon' => 'fas fa-history']
+        ]
+    ],
+    'properties' => [
+        'title' => 'Properties',
+        'icon' => 'fas fa-home',
+        'modules' => [
+            'residential' => ['title' => 'Residential', 'icon' => 'fas fa-building'],
+            'commercial' => ['title' => 'Commercial', 'icon' => 'fas fa-store'],
+            'land' => ['title' => 'Land & Plots', 'icon' => 'fas fa-map'],
+            'featured' => ['title' => 'Featured', 'icon' => 'fas fa-star'],
+            'analytics' => ['title' => 'Property Analytics', 'icon' => 'fas fa-chart-bar']
+        ]
+    ],
+    'accounts' => [
+        'title' => 'Accounts',
+        'icon' => 'fas fa-users',
+        'modules' => [
+            'users' => ['title' => 'Users', 'icon' => 'fas fa-user'],
+            'associates' => ['title' => 'Associates', 'icon' => 'fas fa-user-tie'],
+            'partners' => ['title' => 'Partners', 'icon' => 'fas fa-handshake'],
+            'permissions' => ['title' => 'Permissions', 'icon' => 'fas fa-key']
+        ]
+    ],
+    'team' => [
+        'title' => 'Team Management',
+        'icon' => 'fas fa-users-cog',
+        'modules' => [
+            'staff' => ['title' => 'Staff', 'icon' => 'fas fa-user-friends'],
+            'roles' => ['title' => 'Roles', 'icon' => 'fas fa-user-tag'],
+            'departments' => ['title' => 'Departments', 'icon' => 'fas fa-sitemap'],
+            'performance' => ['title' => 'Performance', 'icon' => 'fas fa-trophy']
+        ]
+    ],
+    'financial' => [
+        'title' => 'Financial',
+        'icon' => 'fas fa-rupee-sign',
+        'modules' => [
+            'transactions' => ['title' => 'Transactions', 'icon' => 'fas fa-exchange-alt'],
+            'commissions' => ['title' => 'Commissions', 'icon' => 'fas fa-percentage'],
+            'payments' => ['title' => 'Payments', 'icon' => 'fas fa-credit-card'],
+            'tax' => ['title' => 'Tax Management', 'icon' => 'fas fa-receipt']
+        ]
+    ],
+    'marketing' => [
+        'title' => 'Marketing',
+        'icon' => 'fas fa-bullhorn',
+        'modules' => [
+            'campaigns' => ['title' => 'Campaigns', 'icon' => 'fas fa-bullhorn'],
+            'leads' => ['title' => 'Leads', 'icon' => 'fas fa-phone'],
+            'social' => ['title' => 'Social Media', 'icon' => 'fas fa-share-alt'],
+            'seo' => ['title' => 'SEO Tools', 'icon' => 'fas fa-search']
+        ]
+    ],
+    'system' => [
+        'title' => 'System',
+        'icon' => 'fas fa-cogs',
+        'modules' => [
+            'settings' => ['title' => 'Settings', 'icon' => 'fas fa-cog'],
+            'backup' => ['title' => 'Backup', 'icon' => 'fas fa-save'],
+            'logs' => ['title' => 'System Logs', 'icon' => 'fas fa-list-alt'],
+            'security' => ['title' => 'Security', 'icon' => 'fas fa-shield-alt']
+        ]
+    ]
+];
+
+// Content for base layout
 ob_start();
 ?>
 
-<!-- AI Dashboard Header -->
-<div class="ai-dashboard-header mb-4">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <div class="ai-status-indicator">
-                    <div class="ai-pulse"></div>
-                    <h4 class="mb-0">
-                        <i class="fas fa-robot me-2"></i>
-                        AI Assistant Active
-                    </h4>
-                    <small class="text-success">Full Power Mode Enabled</small>
+<!-- Enterprise Admin Dashboard -->
+<div class="enterprise-admin-dashboard">
+    <!-- Top Navigation Bar -->
+    <nav class="admin-top-navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="brand-logo">
+                    <i class="fas fa-crown text-warning"></i>
+                    <span>SuperAdmin</span>
+                    <small class="text-muted">Control Center</small>
                 </div>
             </div>
-            <div class="col-md-6 text-end">
-                <div class="ai-controls">
-                    <button class="btn btn-ai-primary me-2" onclick="toggleAIMode()">
-                        <i class="fas fa-brain me-1"></i>
-                        AI Mode
-                    </button>
-                    <button class="btn btn-ai-secondary me-2" onclick="refreshAIData()">
-                        <i class="fas fa-sync me-1"></i>
-                        Refresh
-                    </button>
-                    <button class="btn btn-ai-info" onclick="showAIInsights()">
-                        <i class="fas fa-chart-line me-1"></i>
-                        Insights
+
+            <div class="navbar-center">
+                <div class="quick-search">
+                    <input type="text" placeholder="Quick search anything..." class="form-control">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-search"></i>
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Enhanced Stats Grid -->
-<div class="enhanced-stats-grid mb-4">
-    <div class="container-fluid">
-        <div class="row g-3">
-            <!-- AI-Powered Network Overview -->
-            <div class="col-md-3">
-                <div class="stat-card ai-enhanced">
-                    <div class="stat-icon ai-gradient">
-                        <i class="fas fa-network-wired"></i>
+            <div class="navbar-right">
+                <div class="admin-info">
+                    <div class="admin-avatar">
+                        <img src="https://via.placeholder.com/32x32/2c3e50/ffffff?text=SA" alt="Admin">
                     </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-target="networkSize">
-                            <?php echo number_format($stats['network_size'] ?? 0); ?>
-                        </h3>
-                        <p class="stat-label">Network Size</p>
-                        <div class="ai-indicator">
-                            <small class="text-success"><i class="fas fa-arrow-up"></i> +12.5%</small>
-                        </div>
+                    <div class="admin-details">
+                        <div class="admin-name">Super Admin</div>
+                        <div class="admin-role">System Administrator</div>
                     </div>
                 </div>
-            </div>
 
-            <!-- AI-Powered Revenue Analytics -->
-            <div class="col-md-3">
-                <div class="stat-card ai-enhanced">
-                    <div class="stat-icon ai-gradient">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-target="revenue">
-                            ₹<?php echo number_format($stats['revenue'] ?? 0); ?>
-                        </h3>
-                        <p class="stat-label">Platform Revenue</p>
-                        <div class="ai-indicator">
-                            <small class="text-success"><i class="fas fa-arrow-up"></i> +8.3%</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI-Powered Active Users -->
-            <div class="col-md-3">
-                <div class="stat-card ai-enhanced">
-                    <div class="stat-icon ai-gradient">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-target="activeUsers">
-                            <?php echo number_format($stats['active_users'] ?? 0); ?>
-                        </h3>
-                        <p class="stat-label">Active Users</p>
-                        <div class="ai-indicator">
-                            <small class="text-info"><i class="fas fa-minus"></i> Stable</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI-Powered Performance Score -->
-            <div class="col-md-3">
-                <div class="stat-card ai-enhanced">
-                    <div class="stat-icon ai-gradient">
-                        <i class="fas fa-tachometer-alt"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-target="performance">
-                            <?php echo $stats['performance_score'] ?? 95; ?>%
-                        </h3>
-                        <p class="stat-label">AI Performance</p>
-                        <div class="ai-indicator">
-                            <small class="text-success"><i class="fas fa-arrow-up"></i> Optimal</small>
-                        </div>
+                <div class="navbar-actions">
+                    <button class="btn btn-outline-light" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge bg-danger">3</span>
+                    </button>
+                    <button class="btn btn-outline-light" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="main-content-area">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <h6>Navigation</h6>
+            </div>
+
+            <nav class="sidebar-nav">
+                <?php foreach ($admin_sections as $section_key => $section): ?>
+                    <div class="nav-section">
+                        <div class="nav-section-header" onclick="toggleNavSection('<?php echo $section_key; ?>')">
+                            <i class="<?php echo $section['icon']; ?>"></i>
+                            <span><?php echo $section['title']; ?></span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+
+                        <div class="nav-section-content" id="nav-<?php echo $section_key; ?>">
+                            <?php foreach ($section['modules'] as $module_key => $module): ?>
+                                <a href="?section=<?php echo $section_key; ?>&module=<?php echo $module_key; ?>"
+                                    class="nav-item <?php echo ($current_section === $section_key && $current_module === $module_key) ? 'active' : ''; ?>">
+                                    <i class="<?php echo $module['icon']; ?>"></i>
+                                    <span><?php echo $module['title']; ?></span>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-info">
+                    <small class="text-muted">System Version: 2.0.1</small>
+                    <small class="text-muted">Last Backup: 2 hours ago</small>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="admin-content">
+            <!-- Breadcrumb -->
+            <nav class="admin-breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="?section=dashboard&module=overview">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <?php if (isset($admin_sections[$current_section])): ?>
+                        <li class="breadcrumb-item">
+                            <a href="?section=<?php echo $current_section; ?>&module=overview">
+                                <i class="<?php echo $admin_sections[$current_section]['icon']; ?>"></i>
+                                <?php echo $admin_sections[$current_section]['title']; ?>
+                            </a>
+                        </li>
+                        <?php if (isset($admin_sections[$current_section]['modules'][$current_module])): ?>
+                            <li class="breadcrumb-item active">
+                                <i class="<?php echo $admin_sections[$current_section]['modules'][$current_module]['icon']; ?>"></i>
+                                <?php echo $admin_sections[$current_section]['modules'][$current_module]['title']; ?>
+                            </li>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </ol>
+            </nav>
+
+            <!-- Module Content -->
+            <div class="module-content">
+                <?php
+                // Load module content based on current section and module
+                $module_file = __DIR__ . "/modules/{$current_section}/{$current_module}.php";
+                if (file_exists($module_file)) {
+                    include $module_file;
+                } else {
+                    // Check if this is a direct page request (like properties.php)
+                    if (strpos($_SERVER['REQUEST_URI'], '/admin/properties') !== false) {
+                        include __DIR__ . '/modules/properties/residential.php';
+                    } elseif (strpos($_SERVER['REQUEST_URI'], '/admin/dashboard') !== false) {
+                        // Show default dashboard content
+                        echo '<div class="welcome-module">';
+                        echo '<div class="module-header">';
+                        echo '<h3><i class="fas fa-rocket"></i> Welcome to SuperAdmin Control Center</h3>';
+                        echo '<p class="text-muted">Select a module from sidebar to get started</p>';
+                        echo '</div>';
+
+                        echo '<div class="quick-stats-grid">';
+                        echo '<div class="stat-card bg-primary">';
+                        echo '<div class="stat-icon"><i class="fas fa-home"></i></div>';
+                        echo '<div class="stat-content"><h4>156</h4><p>Total Properties</p></div>';
+                        echo '</div>';
+
+                        echo '<div class="stat-card bg-success">';
+                        echo '<div class="stat-icon"><i class="fas fa-users"></i></div>';
+                        echo '<div class="stat-content"><h4>1,234</h4><p>Total Users</p></div>';
+                        echo '</div>';
+
+                        echo '<div class="stat-card bg-warning">';
+                        echo '<div class="stat-icon"><i class="fas fa-handshake"></i></div>';
+                        echo '<div class="stat-content"><h4>89</h4><p>Active Deals</p></div>';
+                        echo '</div>';
+
+                        echo '<div class="stat-card bg-info">';
+                        echo '<div class="stat-icon"><i class="fas fa-chart-line"></i></div>';
+                        echo '<div class="stat-content"><h4>94%</h4><p>System Health</p></div>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                    } else {
+                        // Show default dashboard
+                        echo '<div class="welcome-module">';
+                        echo '<div class="module-header">';
+                        echo '<h3><i class="fas fa-rocket"></i> Welcome to SuperAdmin Control Center</h3>';
+                        echo '<p class="text-muted">Select a module from sidebar to get started</p>';
+                        echo '</div>';
+
+                        echo '<div class="quick-stats-grid">';
+                        echo '<div class="stat-card bg-primary">';
+                        echo '<div class="stat-icon"><i class="fas fa-home"></i></div>';
+                        echo '<div class="stat-content"><h4>156</h4><p>Total Properties</p></div>';
+                        echo '</div>';
+
+                        echo '<div class="stat-card bg-success">';
+                        echo '<div class="stat-icon"><i class="fas fa-users"></i></div>';
+                        echo '<div class="stat-content"><h4>1,234</h4><p>Total Users</p></div>';
+                        echo '</div>';
+
+                        echo '<div class="stat-card bg-warning">';
+                        echo '<div class="stat-icon"><i class="fas fa-handshake"></i></div>';
+                        echo '<div class="stat-content"><h4>89</h4><p>Active Deals</p></div>';
+                        echo '</div>';
+
+                        echo '<div class="stat-card bg-info">';
+                        echo '<div class="stat-icon"><i class="fas fa-chart-line"></i></div>';
+                        echo '<div class="stat-content"><h4>94%</h4><p>System Health</p></div>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                }
+                ?>
+            </div>
+        </main>
     </div>
 </div>
 
-<!-- AI Command Center -->
-<div class="ai-command-center mb-4">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="ai-terminal">
-                    <div class="terminal-header">
-                        <span class="terminal-prompt">AI-ADMIN&gt;</span>
-                        <span id="aiCommand" class="terminal-input" contenteditable="false">System initialized...</span>
-                        <span class="terminal-cursor">|</span>
-                    </div>
-                    <div class="terminal-output" id="terminalOutput">
-                        <div class="log-entry success">AI System Online</div>
-                        <div class="log-entry info">Scanning network for anomalies...</div>
-                        <div class="log-entry warning">3 potential optimizations identified</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Advanced Analytics Section -->
-<div class="advanced-analytics mb-4">
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Real-time Activity Monitor -->
-            <div class="col-md-8">
-                <div class="analytics-card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-chart-area me-2"></i>
-                            Real-time Activity Monitor
-                        </h5>
-                        <div class="live-indicator">
-                            <span class="live-dot"></span>
-                            LIVE
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="activityChart" width="400" height="200"></canvas>
-                        <div class="chart-legend">
-                            <span class="legend-item users"><i class="fas fa-circle text-primary"></i> Users</span>
-                            <span class="legend-item properties"><i class="fas fa-circle text-success"></i> Properties</span>
-                            <span class="legend-item revenue"><i class="fas fa-circle text-warning"></i> Revenue</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI Insights Panel -->
-            <div class="col-md-4">
-                <div class="ai-insights">
-                    <div class="insights-header">
-                        <h5 class="mb-3">
-                            <i class="fas fa-brain me-2"></i>
-                            AI Insights
-                        </h5>
-                    </div>
-                    <div class="insights-content">
-                        <div class="insight-item">
-                            <div class="insight-icon positive">
-                                <i class="fas fa-arrow-trend-up"></i>
-                            </div>
-                            <div class="insight-text">
-                                <strong>Peak Performance</strong><br>
-                                <small>System running at optimal efficiency</small>
-                            </div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon warning">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="insight-text">
-                                <strong>Security Alert</strong><br>
-                                <small>2 unusual login patterns detected</small>
-                            </div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon info">
-                                <i class="fas fa-info-circle"></i>
-                            </div>
-                            <div class="insight-text">
-                                <strong>Optimization Ready</strong><br>
-                                <small>3 performance improvements available</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Enhanced Main Content -->
-<div class="enhanced-main-content">
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Left Sidebar -->
-            <div class="col-md-2">
-                <div class="enhanced-sidebar">
-                    <div class="sidebar-header">
-                        <h4 class="text-white">AI Control</h4>
-                    </div>
-                    <nav class="sidebar-nav">
-                        <a href="#" class="nav-item active" onclick="loadSection('overview')">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Overview</span>
-                        </a>
-                        <a href="#" class="nav-item" onclick="loadSection('analytics')">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Analytics</span>
-                        </a>
-                        <a href="#" class="nav-item" onclick="loadSection('users')">
-                            <i class="fas fa-users"></i>
-                            <span>User Network</span>
-                        </a>
-                        <a href="#" class="nav-item" onclick="loadSection('properties')">
-                            <i class="fas fa-home"></i>
-                            <span>Properties</span>
-                        </a>
-                        <a href="#" class="nav-item" onclick="loadSection('ai-tools')">
-                            <i class="fas fa-robot"></i>
-                            <span>AI Tools</span>
-                        </a>
-                        <a href="#" class="nav-item" onclick="loadSection('security')">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>Security</span>
-                        </a>
-                        <a href="#" class="nav-item" onclick="loadSection('reports')">
-                            <i class="fas fa-file-alt"></i>
-                            <span>Reports</span>
-                        </a>
-                        <a href="#" class="nav-item" onclick="loadSection('settings')">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </a>
-                    </nav>
-                </div>
-            </div>
-
-            <!-- Main Content Area -->
-            <div class="col-md-10">
-                <div class="content-area" id="contentArea">
-                    <!-- Dynamic content will be loaded here -->
-                    <div class="section-overview">
-                        <h2 class="section-title">
-                            <i class="fas fa-tachometer-alt me-2"></i>
-                            Administrative Intelligence Dashboard
-                        </h2>
-                        <p class="section-desc">AI-powered real-time monitoring and management system</p>
-
-                        <!-- Quick Actions Grid -->
-                        <div class="quick-actions-grid">
-                            <div class="action-card" onclick="executeAction('system-scan')">
-                                <div class="action-icon">
-                                    <i class="fas fa-search"></i>
-                                </div>
-                                <h6>System Scan</h6>
-                                <p>Perform comprehensive system analysis</p>
-                            </div>
-                            <div class="action-card" onclick="executeAction('optimize-db')">
-                                <div class="action-icon">
-                                    <i class="fas fa-database"></i>
-                                </div>
-                                <h6>Optimize DB</h6>
-                                <p>AI-powered database optimization</p>
-                            </div>
-                            <div class="action-card" onclick="executeAction('security-check')">
-                                <div class="action-icon">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                                <h6>Security Check</h6>
-                                <p>Advanced security analysis</p>
-                            </div>
-                            <div class="action-card" onclick="executeAction('backup-system')">
-                                <div class="action-icon">
-                                    <i class="fas fa-save"></i>
-                                </div>
-                                <h6>Backup System</h6>
-                                <p>Automated system backup</p>
-                            </div>
-                            <div class="action-card" onclick="executeAction('ai-report')">
-                                <div class="action-icon">
-                                    <i class="fas fa-robot"></i>
-                                </div>
-                                <h6>AI Report</h6>
-                                <p>Generate AI insights report</p>
-                            </div>
-                            <div class="action-card" onclick="executeAction('cache-clear')">
-                                <div class="action-icon">
-                                    <i class="fas fa-broom"></i>
-                                </div>
-                                <h6>Clear Cache</h6>
-                                <p>System cache cleanup</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+<!-- Enterprise Admin Styles -->
 <style>
-    :root {
-        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --glass-bg: rgba(255, 255, 255, 0.9);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        --ai-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        --terminal-bg: #1a1a2e;
-        --terminal-green: #00ff00;
-        --terminal-yellow: #ffff00;
-        --terminal-red: #ff0000;
-    }
-
-    /* AI Dashboard Styles */
-    .ai-dashboard-header {
-        background: var(--ai-gradient);
-        border-radius: 15px;
-        padding: 1.5rem;
-        box-shadow: var(--glass-shadow);
-        margin-bottom: 2rem;
-    }
-
-    .ai-status-indicator {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .ai-pulse {
-        width: 12px;
-        height: 12px;
-        background: #00ff00;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0.5;
-        }
-
-        100% {
-            opacity: 1;
-        }
-    }
-
-    .ai-controls .btn {
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .btn-ai-primary {
-        background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
-        color: white;
-    }
-
-    .btn-ai-secondary {
-        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-        color: white;
-    }
-
-    .btn-ai-info {
-        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-        color: white;
-    }
-
-    .enhanced-stats-grid .stat-card {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 15px;
-        padding: 1.5rem;
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .enhanced-stats-grid .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
-    }
-
-    .ai-enhanced {
-        border-left: 4px solid #00ff88;
-    }
-
-    .ai-gradient {
-        background: var(--ai-gradient);
-        color: white;
-    }
-
-    .ai-indicator {
-        margin-top: 0.5rem;
-    }
-
-    .ai-command-center {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 15px;
-        padding: 1.5rem;
-        backdrop-filter: blur(10px);
-    }
-
-    .ai-terminal {
-        background: var(--terminal-bg);
-        border-radius: 8px;
-        padding: 1rem;
-        font-family: 'Courier New', monospace;
-        color: var(--terminal-green);
-        min-height: 120px;
-    }
-
-    .terminal-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .terminal-prompt {
-        color: #00ff88;
-        font-weight: bold;
-    }
-
-    .terminal-input {
-        flex: 1;
-    }
-
-    .terminal-cursor {
-        animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-
-        0%,
-        50% {
-            opacity: 1;
-        }
-
-        51%,
-        100% {
-            opacity: 0;
-        }
-    }
-
-    .terminal-output {
-        font-size: 0.85rem;
-        line-height: 1.4;
-    }
-
-    .log-entry {
-        margin-bottom: 0.5rem;
-        padding: 0.25rem;
-        border-radius: 4px;
-    }
-
-    .log-entry.success {
-        background: rgba(0, 255, 0, 0.1);
-        border-left: 3px solid var(--terminal-green);
-    }
-
-    .log-entry.info {
-        background: rgba(0, 150, 255, 0.1);
-        border-left: 3px solid #0096ff;
-    }
-
-    .log-entry.warning {
-        background: rgba(255, 255, 0, 0.1);
-        border-left: 3px solid var(--terminal-yellow);
-    }
-
-    .advanced-analytics {
-        margin-bottom: 2rem;
-    }
-
-    .analytics-card {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 15px;
-        backdrop-filter: blur(10px);
-        height: 100%;
-    }
-
-    .live-indicator {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .live-dot {
-        width: 8px;
-        height: 8px;
-        background: #00ff00;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-    }
-
-    .ai-insights {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 15px;
-        padding: 1.5rem;
-        backdrop-filter: blur(10px);
-        height: 100%;
-    }
-
-    .insights-header {
-        border-bottom: 1px solid var(--glass-border);
-        padding-bottom: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .insight-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .insight-item:last-child {
-        border-bottom: none;
-    }
-
-    .insight-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-    }
-
-    .insight-icon.positive {
-        background: rgba(0, 255, 0, 0.2);
-        color: var(--terminal-green);
-    }
-
-    .insight-icon.warning {
-        background: rgba(255, 255, 0, 0.2);
-        color: var(--terminal-yellow);
-    }
-
-    .insight-icon.info {
-        background: rgba(0, 150, 255, 0.2);
-        color: #0096ff;
-    }
-
-    .enhanced-main-content {
-        margin-top: 2rem;
-    }
-
-    .enhanced-sidebar {
-        background: linear-gradient(135deg, #1a1c23 0%, #2d3441 100%);
-        border-radius: 15px;
-        padding: 1.5rem;
-        height: fit-content;
-    }
-
-    .sidebar-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .sidebar-nav {
+    .enterprise-admin-dashboard {
+        height: 100vh;
         display: flex;
         flex-direction: column;
+        background: #f8f9fa;
+    }
+
+    /* Top Navigation */
+    .admin-top-navbar {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .navbar-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1.5rem;
+        height: 65px;
+    }
+
+    .navbar-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .sidebar-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: var(--transition);
+    }
+
+    .sidebar-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
         gap: 0.5rem;
     }
 
-    .sidebar-nav .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .sidebar-nav .nav-item:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        transform: translateX(5px);
-    }
-
-    .sidebar-nav .nav-item.active {
-        background: var(--primary-gradient);
-        color: white;
-    }
-
-    .content-area {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 15px;
-        padding: 2rem;
-        backdrop-filter: blur(10px);
-        min-height: 600px;
-    }
-
-    .section-title {
-        color: white;
-        margin-bottom: 1rem;
-    }
-
-    .section-desc {
-        color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 2rem;
-    }
-
-    .quick-actions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .action-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 1.5rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .action-card:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
-    }
-
-    .action-icon {
-        width: 60px;
-        height: 60px;
-        background: var(--primary-gradient);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        color: white;
+    .brand-logo i {
         font-size: 1.5rem;
     }
 
-    .action-card h6 {
-        color: white;
-        margin-bottom: 0.5rem;
+    .brand-logo span {
+        font-weight: 600;
+        font-size: 1.1rem;
     }
 
-    .action-card p {
+    .brand-logo small {
+        font-size: 0.7rem;
+        opacity: 0.8;
+    }
+
+    .navbar-center {
+        flex: 1;
+        max-width: 400px;
+    }
+
+    .quick-search {
+        display: flex;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        overflow: hidden;
+    }
+
+    .quick-search input {
+        border: none;
+        background: transparent;
+        color: white;
+        padding: 0.5rem 1rem;
+        flex: 1;
+    }
+
+    .quick-search input::placeholder {
         color: rgba(255, 255, 255, 0.7);
+    }
+
+    .quick-search button {
+        border: none;
+        background: transparent;
+        color: white;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .admin-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .admin-avatar img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .admin-details .admin-name {
+        font-weight: 600;
         font-size: 0.9rem;
-        margin: 0;
     }
 
-    body {
-        background: #f0f2f5;
-        font-family: 'Inter', sans-serif;
+    .admin-details .admin-role {
+        font-size: 0.8rem;
+        opacity: 0.8;
     }
 
+    .navbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .navbar-actions .btn {
+        position: relative;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .navbar-actions .badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        font-size: 0.6rem;
+        padding: 2px 5px;
+    }
+
+    /* Main Content Area */
+    .main-content-area {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    /* Sidebar */
     .admin-sidebar {
-        background: #1a1c23;
-        min-height: 100vh;
-        padding: 1.5rem;
-        position: fixed;
-        width: inherit;
+        width: 280px;
+        background: white;
+        border-right: 1px solid #dee2e6;
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
     }
 
-    .admin-sidebar .nav-link {
-        color: rgba(255, 255, 255, 0.7);
-        padding: 0.8rem 1rem;
-        border-radius: 12px;
+    .admin-sidebar.collapsed {
+        width: 70px;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .sidebar-header h6 {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem 0;
+    }
+
+    .nav-section {
         margin-bottom: 0.5rem;
-        transition: all 0.3s ease;
     }
 
-    .admin-sidebar .nav-link:hover,
-    .admin-sidebar .nav-link.active {
-        background: var(--primary-gradient);
+    .nav-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .nav-section-header:hover {
+        background: #f8f9fa;
+    }
+
+    .nav-section-header i:first-child {
+        width: 20px;
+        text-align: center;
+    }
+
+    .nav-arrow {
+        transition: var(--transition);
+        font-size: 0.8rem;
+    }
+
+    .nav-section.expanded .nav-arrow {
+        transform: rotate(180deg);
+    }
+
+    .nav-section-content {
+        background: #f8f9fa;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    .nav-section.expanded .nav-section-content {
+        max-height: 500px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem 0.75rem 3rem;
+        color: #6c757d;
+        text-decoration: none;
+        transition: var(--transition);
+        border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+        background: #e9ecef;
+        color: #495057;
+        text-decoration: none;
+    }
+
+    .nav-item.active {
+        background: #007bff;
         color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        border-left-color: #0056b3;
     }
 
-    .main-content {
+    .nav-item i {
+        width: 20px;
+        text-align: center;
+        margin-right: 0.75rem;
+    }
+
+    .sidebar-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #dee2e6;
+        background: #f8f9fa;
+    }
+
+    .system-info small {
+        display: block;
+        font-size: 0.7rem;
+    }
+
+    /* Main Content */
+    .admin-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .admin-breadcrumb {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .breadcrumb {
+        background: transparent;
+        margin: 0;
+        padding: 0;
+    }
+
+    .breadcrumb-item {
+        font-size: 0.9rem;
+    }
+
+    .module-content {
+        flex: 1;
+        overflow-y: auto;
         padding: 2rem;
-        margin-left: 16.666667%;
     }
 
-    .glass-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--glass-border);
-        border-radius: 15px;
+    /* Welcome Module */
+    .welcome-module {
+        text-align: center;
+        padding: 3rem 2rem;
+    }
+
+    .module-header h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    .quick-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: var(--border-radius);
         padding: 1.5rem;
-        box-shadow: var(--glass-shadow);
-        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: var(--transition);
     }
 
-    .glass-card:hover {
+    .stat-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card.bg-primary {
+        border-left: 4px solid #007bff;
+    }
+
+    .stat-card.bg-success {
+        border-left: 4px solid #28a745;
+    }
+
+    .stat-card.bg-warning {
+        border-left: 4px solid #ffc107;
+    }
+
+    .stat-card.bg-info {
+        border-left: 4px solid #17a2b8;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .stat-card.bg-primary .stat-icon {
+        background: #007bff;
+    }
+
+    .stat-card.bg-success .stat-icon {
+        background: #28a745;
+    }
+
+    .stat-card.bg-warning .stat-icon {
+        background: #ffc107;
+    }
+
+    .stat-card.bg-info .stat-icon {
+        background: #17a2b8;
+    }
+
+    .stat-content h4 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .stat-content p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .navbar-center {
+            display: none;
+        }
+
+        .admin-sidebar {
+            position: fixed;
+            left: -280px;
+            top: 65px;
+            height: calc(100vh - 65px);
+            z-index: 999;
+        }
+
+        .admin-sidebar.active {
+            left: 0;
+        }
+
+        .admin-content {
+            margin-left: 0;
+        }
+
+        .quick-stats-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
+<!-- Enterprise Admin JavaScript -->
 <script>
-    // AI Dashboard JavaScript
-    let aiMode = 'full';
-    let currentSection = 'overview';
+    let sidebarCollapsed = false;
 
-    // Initialize dashboard
     document.addEventListener('DOMContentLoaded', function() {
-        initializeAIDashboard();
-        startRealTimeUpdates();
-        animateCounters();
-        initializeActivityChart();
+        initializeAdminDashboard();
+        setActiveNavigation();
     });
 
-    function initializeAIDashboard() {
-        updateTerminalCommand('AI System initialized successfully');
-        addTerminalLog('Scanning network for active users...', 'info');
-        addTerminalLog('AI Analytics engine started', 'success');
+    function initializeAdminDashboard() {
+        console.log('Enterprise Admin Dashboard initialized');
+
+        // Auto-expand first section
+        const firstSection = document.querySelector('.nav-section');
+        if (firstSection) {
+            firstSection.classList.add('expanded');
+        }
+
+        // Set current active navigation
+        setActiveNavigation();
     }
 
-    function toggleAIMode() {
-        aiMode = aiMode === 'full' ? 'economy' : 'full';
-        updateTerminalCommand(`AI Mode switched to ${aiMode}`);
-        addTerminalLog(`AI ${aiMode} mode activated`, 'success');
+    function toggleSidebar() {
+        const sidebar = document.getElementById('adminSidebar');
+        sidebarCollapsed = !sidebarCollapsed;
+
+        if (sidebarCollapsed) {
+            sidebar.classList.add('collapsed');
+        } else {
+            sidebar.classList.remove('collapsed');
+        }
     }
 
-    function refreshAIData() {
-        updateTerminalCommand('Refreshing AI data...');
-        addTerminalLog('Fetching latest analytics...', 'info');
+    function toggleNavSection(sectionId) {
+        const section = document.getElementById(`nav-${sectionId}`);
+        const header = section.previousElementSibling;
 
-        // Simulate data refresh
-        setTimeout(() => {
-            addTerminalLog('AI data refreshed successfully', 'success');
-            updateStats();
-        }, 2000);
+        // Close all other sections
+        document.querySelectorAll('.nav-section').forEach(nav => {
+            nav.classList.remove('expanded');
+        });
+
+        // Toggle current section
+        if (section) {
+            header.parentElement.classList.toggle('expanded');
+        }
     }
 
-    function showAIInsights() {
-        updateTerminalCommand('Generating AI insights...');
-        addTerminalLog('Analyzing system patterns...', 'info');
+    function setActiveNavigation() {
+        const currentSection = '<?php echo $current_section; ?>';
+        const currentModule = '<?php echo $current_module; ?>';
 
-        setTimeout(() => {
-            addTerminalLog('3 optimization opportunities identified', 'warning');
-            addTerminalLog('System performance: Optimal', 'success');
-        }, 1500);
-    }
+        // Expand current section
+        const currentNavSection = document.getElementById(`nav-${currentSection}`);
+        if (currentNavSection) {
+            currentNavSection.parentElement.classList.add('expanded');
+        }
 
-    function loadSection(section) {
-        currentSection = section;
-        updateTerminalCommand(`Loading ${section} section...`);
-
-        // Update active nav
+        // Set active nav item
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
-        event.target.classList.add('active');
 
-        // Load section content
-        loadSectionContent(section);
-    }
-
-    function loadSectionContent(section) {
-        const contentArea = document.getElementById('contentArea');
-
-        const sections = {
-            'overview': `
-                    <h2 class="section-title">
-                        <i class="fas fa-tachometer-alt me-2"></i>
-                        Administrative Intelligence Dashboard
-                    </h2>
-                    <p class="section-desc">AI-powered real-time monitoring and management system</p>
-                    <div class="quick-actions-grid">
-                        <div class="action-card" onclick="executeAction('system-scan')">
-                            <div class="action-icon"><i class="fas fa-search"></i></div>
-                            <h6>System Scan</h6>
-                            <p>Perform comprehensive system analysis</p>
-                        </div>
-                        <div class="action-card" onclick="executeAction('optimize-db')">
-                            <div class="action-icon"><i class="fas fa-database"></i></div>
-                            <h6>Optimize DB</h6>
-                            <p>AI-powered database optimization</p>
-                        </div>
-                        <div class="action-card" onclick="executeAction('security-check')">
-                            <div class="action-icon"><i class="fas fa-shield-alt"></i></div>
-                            <h6>Security Check</h6>
-                            <p>Advanced security analysis</p>
-                        </div>
-                    </div>
-                `,
-            'analytics': `
-                    <h2 class="section-title">
-                        <i class="fas fa-chart-line me-2"></i>
-                        Advanced Analytics
-                    </h2>
-                    <p class="section-desc">Deep AI-powered analytics and insights</p>
-                    <div class="analytics-content">
-                        <canvas id="detailedChart" width="400" height="300"></canvas>
-                    </div>
-                `
-        };
-
-        contentArea.innerHTML = sections[section] || sections['overview'];
-        addTerminalLog(`${section} section loaded`, 'success');
-    }
-
-    function executeAction(action) {
-        updateTerminalCommand(`Executing ${action}...`);
-        addTerminalLog('AI processing request...', 'info');
-
-        const actions = {
-            'system-scan': () => {
-                setTimeout(() => {
-                    addTerminalLog('System scan completed', 'success');
-                    addTerminalLog('0 critical issues found', 'success');
-                    addTerminalLog('3 optimizations available', 'warning');
-                }, 3000);
-            },
-            'optimize-db': () => {
-                setTimeout(() => {
-                    addTerminalLog('Database optimization started', 'info');
-                    addTerminalLog('Query optimization: +25% performance', 'success');
-                    addTerminalLog('Index optimization: +15% performance', 'success');
-                    addTerminalLog('Cache cleanup: Completed', 'success');
-                }, 2000);
-            },
-            'security-check': () => {
-                setTimeout(() => {
-                    addTerminalLog('Security analysis in progress...', 'info');
-                    addTerminalLog('Firewall: Secure', 'success');
-                    addTerminalLog('SSL Certificate: Valid', 'success');
-                    addTerminalLog('2 suspicious activities detected', 'warning');
-                }, 2500);
-            }
-        };
-
-        if (actions[action]) {
-            actions[action]();
+        const activeItem = document.querySelector(`[href*="section=${currentSection}&module=${currentModule}"]`);
+        if (activeItem) {
+            activeItem.classList.add('active');
         }
     }
 
-    function updateTerminalCommand(command) {
-        const commandElement = document.getElementById('aiCommand');
-        commandElement.textContent = command;
+    function toggleNotifications() {
+        alert('Notifications panel would open here');
     }
 
-    function addTerminalLog(message, type = 'info') {
-        const output = document.getElementById('terminalOutput');
-        const logEntry = document.createElement('div');
-        logEntry.className = `log-entry ${type}`;
-        logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-        output.appendChild(logEntry);
-        output.scrollTop = output.scrollHeight;
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        console.log('Theme toggled');
     }
 
-    function animateCounters() {
-        const counters = document.querySelectorAll('.stat-number');
-        counters.forEach(counter => {
-            const target = parseInt(counter.textContent.replace(/[^0-9]/g, ''));
-            const duration = 2000;
-            const step = target / (duration / 16);
-            let current = 0;
+    // Mobile sidebar handling
+    if (window.innerWidth <= 768) {
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('adminSidebar');
+            const isClickInsideSidebar = sidebar.contains(e.target);
+            const isToggle = e.target.classList.contains('sidebar-toggle');
 
-            const timer = setInterval(() => {
-                current += step;
-                if (current >= target) {
-                    current = target;
-                    clearInterval(timer);
-                }
-                counter.textContent = Math.floor(current).toLocaleString();
-            }, 16);
+            if (!isClickInsideSidebar && !isToggle) {
+                sidebar.classList.remove('active');
+            }
         });
-    }
-
-    function startRealTimeUpdates() {
-        setInterval(() => {
-            updateLiveStats();
-        }, 5000);
-    }
-
-    function updateLiveStats() {
-        const randomUpdates = [
-            'New user registered',
-            'Property view updated',
-            'Database query optimized',
-            'Cache refreshed'
-        ];
-
-        if (Math.random() > 0.7) {
-            const update = randomUpdates[Math.floor(Math.random() * randomUpdates.length)];
-            addTerminalLog(update, 'info');
-        }
-    }
-
-    function initializeActivityChart() {
-        const canvas = document.getElementById('activityChart');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-
-        // Create gradient
-        const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, 'rgba(102, 126, 234, 0.8)');
-        gradient.addColorStop(1, 'rgba(102, 126, 234, 0.2)');
-
-        // Simple chart animation
-        let offset = 0;
-
-        function drawChart() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw grid lines
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < 5; i++) {
-                ctx.beginPath();
-                ctx.moveTo(0, i * 40);
-                ctx.lineTo(canvas.width, i * 40);
-                ctx.stroke();
-            }
-
-            // Draw data line
-            ctx.strokeStyle = '#667eea';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-
-            for (let i = 0; i < canvas.width; i += 5) {
-                const y = canvas.height / 2 + Math.sin((i + offset) * 0.02) * 50;
-                if (i === 0) {
-                    ctx.moveTo(i, y);
-                } else {
-                    ctx.lineTo(i, y);
-                }
-            }
-
-            ctx.stroke();
-            offset += 2;
-            requestAnimationFrame(drawChart);
-        }
-
-        drawChart();
     }
 </script>
 
 <?php
 $content = ob_get_clean();
 
-// Include enterprise dashboard layout
-require_once __DIR__ . '/enterprise_dashboard.php';
+// Include base layout
+require_once __DIR__ . '/../layouts/base.php';
 ?>
--webkit-backdrop-filter: blur(10px);
-border: 1px solid var(--glass-border);
-border-radius: 20px;
-box-shadow: var(--glass-shadow);
-padding: 1.5rem;
-transition: transform 0.3s ease;
-}
-
-.glass-card:hover {
-transform: translateY(-5px);
-}
-
-.admin-header {
-background: var(--primary-gradient);
-border-radius: 24px;
-padding: 2.5rem;
-color: white;
-margin-bottom: 2rem;
-box-shadow: 0 10px 20px rgba(118, 75, 162, 0.2);
-}
-
-.stat-icon {
-width: 50px;
-height: 50px;
-border-radius: 12px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 1.5rem;
-color: white;
-margin-bottom: 1rem;
-}
-
-.recent-item {
-display: flex;
-align-items: center;
-padding: 1rem;
-border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-transition: background 0.2s;
-}
-
-.recent-item:last-child {
-border-bottom: none;
-}
-
-.recent-item:hover {
-background: rgba(0, 0, 0, 0.02);
-}
-
-.activity-dot {
-width: 10px;
-height: 10px;
-border-radius: 50%;
-margin-right: 1rem;
-}
-
-.bg-gradient-blue {
-background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-}
-
-.bg-gradient-green {
-background: linear-gradient(135deg, #064e3b 0%, #10b981 100%);
-}
-
-.bg-gradient-orange {
-background: linear-gradient(135deg, #7c2d12 0%, #f97316 100%);
-}
-
-.bg-gradient-purple {
-background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
-}
-</style>
-</head>
-
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 p-0 position-fixed">
-                <div class="admin-sidebar">
-                    <div class="text-center mb-5">
-                        <h4 class="text-white fw-bold">APS <span class="text-primary text-opacity-75">Dream</span></h4>
-                        <small class="text-muted">ADMIN PANEL</small>
-                    </div>
-                    <nav class="nav flex-column">
-                        <a href="<?php echo BASE_URL; ?>/admin/dashboard" class="nav-link active"><i class="fas fa-grid-2 me-2"></i> Dashboard</a>
-                        <a href="<?php echo BASE_URL; ?>/admin/properties" class="nav-link"><i class="fas fa-home me-2"></i> Properties</a>
-                        <a href="<?php echo BASE_URL; ?>/admin/users" class="nav-link"><i class="fas fa-users me-2"></i> User Network</a>
-                        <a href="<?php echo BASE_URL; ?>/admin/reports" class="nav-link"><i class="fas fa-chart-pie me-2"></i> Analytics</a>
-                        <a href="<?php echo BASE_URL; ?>/admin/settings" class="nav-link"><i class="fas fa-sliders me-2"></i> Settings</a>
-                        <hr class="border-secondary opacity-25">
-                        <a href="<?php echo BASE_URL; ?>/" class="nav-link"><i class="fas fa-external-link-alt me-2"></i> Public View</a>
-                    </nav>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="col-md-10 main-content">
-                <div class="admin-header animate-fade-in">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h1 class="fw-bold mb-1">Administrative Intelligence</h1>
-                            <p class="mb-0 opacity-75">Visualizing property metrics and user growth in real-time.</p>
-                        </div>
-                        <div class="text-end">
-                            <div class="dropdown">
-                                <div class="d-flex align-items-center bg-white bg-opacity-10 rounded-pill px-3 py-2 border border-white border-opacity-10" data-bs-toggle="dropdown" style="cursor: pointer;">
-                                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="rounded-circle me-2" width="32">
-                                    <span class="fw-medium">Super Admin</span>
-                                    <i class="fas fa-chevron-down ms-2"></i>
-                                </div>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>/admin/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stats Grid -->
-                <div class="row g-4 mb-4">
-                    <div class="col-md-3">
-                        <div class="glass-card">
-                            <div class="stat-icon bg-gradient-blue"><i class="fas fa-users"></i></div>
-                            <h2 class="fw-bold mb-0"><?php echo number_format($stats['total_users'] ?? 150); ?></h2>
-                            <p class="text-muted small mb-0">Total Network Size</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="glass-card">
-                            <div class="stat-icon bg-gradient-green"><i class="fas fa-building"></i></div>
-                            <h2 class="fw-bold mb-0"><?php echo number_format($stats['total_properties'] ?? 85); ?></h2>
-                            <p class="text-muted small mb-0">Managed Assets</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="glass-card">
-                            <div class="stat-icon bg-gradient-orange"><i class="fas fa-file-invoice-dollar"></i></div>
-                            <h2 class="fw-bold mb-0"><?php echo number_format($stats['pending_approvals'] ?? 5); ?></h2>
-                            <p class="text-muted small mb-0">Pending Validations</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="glass-card">
-                            <div class="stat-icon bg-gradient-purple"><i class="fas fa-wallet"></i></div>
-                            <h2 class="fw-bold mb-0">₹<?php echo number_format(is_numeric($stats['total_revenue'] ?? 0) ? $stats['total_revenue'] : 245000); ?></h2>
-                            <p class="text-muted small mb-0">Platform Revenue</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Content Area -->
-                <div class="row g-4">
-                    <div class="col-md-8">
-                        <div class="glass-card h-100">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h5 class="fw-bold mb-0">Growth Performance</h5>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-light rounded-pill px-3" type="button">This Month</button>
-                                </div>
-                            </div>
-                            <div style="height: 300px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.02); border-radius: 15px;">
-                                <p class="text-muted">Interactive growth charts will render here.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="glass-card h-100">
-                            <h5 class="fw-bold mb-4">Live Activities</h5>
-                            <div class="activity-feed">
-                                <?php if (!empty($recent_activities)): ?>
-                                    <?php foreach ($recent_activities as $activity): ?>
-                                        <div class="recent-item">
-                                            <div class="activity-dot bg-primary"></div>
-                                            <div>
-                                                <p class="mb-0 fw-medium small"><?php echo htmlspecialchars($activity['name']); ?></p>
-                                                <small class="text-muted">Performed <?php echo htmlspecialchars($activity['action']); ?> action</small>
-                                            </div>
-                                            <small class="ms-auto text-muted" style="font-size: 0.7rem;">Today</small>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="text-center py-5">
-                                        <i class="fas fa-stream text-muted fa-2x mb-3"></i>
-                                        <p class="text-muted small">No recent activity detected.</p>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            <button class="btn btn-primary w-100 mt-4 rounded-pill">View All Logs</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Layout Footer -->
-    <?php
-    $content = ob_get_clean();
-    require_once __DIR__ . '/../layouts/base.php';
-    echo $content;
-    ?>

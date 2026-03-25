@@ -4,7 +4,7 @@ require_once 'includes/config/config.php';
 require_once 'includes/functions.php';
 
 // Set page variables
-$page_title = 'Customer Support - APS Dream Home';
+$$page_title = 'Customer Support - APS Dream Home';
 $page_description = 'Get help and support from APS Dream Home team';
 
 // Check if user is logged in

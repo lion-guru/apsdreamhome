@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-**
+/**
  * Referral Model
  */
 

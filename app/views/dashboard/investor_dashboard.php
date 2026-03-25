@@ -49,7 +49,7 @@ try {
     error_log('Investor Dashboard stats error: ' . $e->getMessage());
 }
 
-$page_title = 'Investor Dashboard | APS Dream Homes';
+$$page_title = 'Investor Dashboard | APS Dream Homes';
 $layout = 'modern';
 
 ob_start();

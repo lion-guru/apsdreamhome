@@ -52,7 +52,7 @@ if (!isset($properties)) {
  */
 
 // Set page title and description for layout
-$page_title = 'Featured Properties - APS Dream Home';
+$$page_title = 'Featured Properties - APS Dream Home';
 $page_description = 'Discover exceptional featured properties handpicked for you';
 ?>
 

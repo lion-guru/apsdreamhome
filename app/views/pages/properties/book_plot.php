@@ -13,7 +13,7 @@ require_once 'includes/enhanced_universal_template.php';
 $template = new EnhancedUniversalTemplate();
 
 // Page metadata
-$page_title = 'Book Your Plot - APS Dream Home';
+$$page_title = 'Book Your Plot - APS Dream Home';
 $page_description = 'Book premium plots in APS Dream Homes colonies across Uttar Pradesh. Easy booking process with flexible payment plans.';
 
 $template->setTitle($page_title);

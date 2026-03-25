@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-page_title = 'Employee Profile - APS Dream Home';
+$$page_title = 'Employee Profile - APS Dream Home';
 $page_description = 'Employee profile management with personal and professional information';
 include 'layouts/app.php';
 ?>

@@ -477,6 +477,11 @@ class AIController extends BaseController
      */
     public function runCode()
     {
+        if (!$this->isAdmin()) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Security Error: Unauthorized Code Execution!']);
+            return;
+        }
         $code = $_POST['code'] ?? '';
         $language = $_POST['language'] ?? 'php';
 

@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-equire_once 'app/views/layouts/header.php'; ?>
+require_once __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="container-fluid mt-4">
     <!-- Breadcrumb -->
@@ -12,8 +12,8 @@ equire_once 'app/views/layouts/header.php'; ?>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/leads">लीड्स</a></li>
                     <li class="breadcrumb-item"><a href="/leads/<?= $lead['id'] ?>">
-                        <?= h($lead['name']) ?>
-                    </a></li>
+                            <?= h($lead['name']) ?>
+                        </a></li>
                     <li class="breadcrumb-item active" aria-current="page">एडिट करें</li>
                 </ol>
             </nav>
@@ -51,11 +51,11 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 पूरा नाम <span class="text-danger">*</span>
                                             </label>
                                             <input type="text"
-                                                   class="form-control"
-                                                   id="name"
-                                                   name="name"
-                                                   value="<?= h($lead['name']) ?>"
-                                                   required>
+                                                class="form-control"
+                                                id="name"
+                                                name="name"
+                                                value="<?= h($lead['name']) ?>"
+                                                required>
                                         </div>
 
                                         <div class="form-group mb-3">
@@ -63,10 +63,10 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 ईमेल पता
                                             </label>
                                             <input type="email"
-                                                   class="form-control"
-                                                   id="email"
-                                                   name="email"
-                                                   value="<?= h($lead['email']) ?>">
+                                                class="form-control"
+                                                id="email"
+                                                name="email"
+                                                value="<?= h($lead['email']) ?>">
                                         </div>
 
                                         <div class="form-group mb-3">
@@ -74,12 +74,12 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 फोन नंबर <span class="text-danger">*</span>
                                             </label>
                                             <input type="tel"
-                                                   class="form-control"
-                                                   id="phone"
-                                                   name="phone"
-                                                   value="<?= h($lead['phone']) ?>"
-                                                   required
-                                                   pattern="[0-9]{10}">
+                                                class="form-control"
+                                                id="phone"
+                                                name="phone"
+                                                value="<?= h($lead['phone']) ?>"
+                                                required
+                                                pattern="[0-9]{10}">
                                         </div>
 
                                         <div class="form-group mb-3">
@@ -87,10 +87,10 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 कंपनी/ऑर्गेनाइजेशन
                                             </label>
                                             <input type="text"
-                                                   class="form-control"
-                                                   id="company"
-                                                   name="company"
-                                                   value="<?= h($lead['company'] ?? '') ?>">
+                                                class="form-control"
+                                                id="company"
+                                                name="company"
+                                                value="<?= h($lead['company'] ?? '') ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 <option value="">स्रोत चुनें</option>
                                                 <?php foreach ($sources as $source): ?>
                                                     <option value="<?= $source['id'] ?>"
-                                                            <?= $source['id'] == $lead['source'] ? 'selected' : '' ?>>
+                                                        <?= $source['id'] == $lead['source'] ? 'selected' : '' ?>>
                                                         <?= h($source['source_name']) ?>
                                                     </option>
                                                 <?php endforeach; ?>
@@ -128,7 +128,7 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 <option value="">स्टेटस चुनें</option>
                                                 <?php foreach ($statuses as $status): ?>
                                                     <option value="<?= $status['id'] ?>"
-                                                            <?= $status['id'] == $lead['status'] ? 'selected' : '' ?>>
+                                                        <?= $status['id'] == $lead['status'] ? 'selected' : '' ?>>
                                                         <?= h($status['status_name']) ?>
                                                     </option>
                                                 <?php endforeach; ?>
@@ -154,7 +154,7 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 <option value="">यूजर चुनें</option>
                                                 <?php foreach ($users as $user): ?>
                                                     <option value="<?= $user['id'] ?>"
-                                                            <?= $user['id'] == $lead['assigned_to'] ? 'selected' : '' ?>>
+                                                        <?= $user['id'] == $lead['assigned_to'] ? 'selected' : '' ?>>
                                                         <?= h($user['name']) ?>
                                                         (<?= $user['lead_count'] ?> लीड्स)
                                                     </option>
@@ -177,13 +177,13 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 बजट (₹)
                                             </label>
                                             <input type="number"
-                                                   class="form-control"
-                                                   id="budget"
-                                                   name="budget"
-                                                   value="<?= h($lead['budget'] ?? '') ?>"
-                                                   placeholder="अपेक्षित बजट"
-                                                   min="0"
-                                                   step="10000">
+                                                class="form-control"
+                                                id="budget"
+                                                name="budget"
+                                                value="<?= h($lead['budget'] ?? '') ?>"
+                                                placeholder="अपेक्षित बजट"
+                                                min="0"
+                                                step="10000">
                                         </div>
 
                                         <div class="form-group mb-3">
@@ -204,11 +204,11 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 लोकेशन प्रेफरेंस
                                             </label>
                                             <input type="text"
-                                                   class="form-control"
-                                                   id="location_preference"
-                                                   name="location_preference"
-                                                   value="<?= h($lead['location_preference'] ?? '') ?>"
-                                                   placeholder="पसंदीदा लोकेशन">
+                                                class="form-control"
+                                                id="location_preference"
+                                                name="location_preference"
+                                                value="<?= h($lead['location_preference'] ?? '') ?>"
+                                                placeholder="पसंदीदा लोकेशन">
                                         </div>
 
                                         <div class="form-group mb-3">
@@ -216,10 +216,10 @@ equire_once 'app/views/layouts/header.php'; ?>
                                                 अतिरिक्त नोट्स
                                             </label>
                                             <textarea class="form-control"
-                                                      id="notes"
-                                                      name="notes"
-                                                      rows="2"
-                                                      placeholder="कोई अतिरिक्त जानकारी"><?= h($lead['notes'] ?? '') ?></textarea>
+                                                id="notes"
+                                                name="notes"
+                                                rows="2"
+                                                placeholder="कोई अतिरिक्त जानकारी"><?= h($lead['notes'] ?? '') ?></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -270,94 +270,78 @@ equire_once 'app/views/layouts/header.php'; ?>
 </div>
 
 <script>
-function deleteLead() {
-    $('#deleteModal').modal('show');
-}
+    function deleteLead() {
+        $('#deleteModal').modal('show');
+    }
 </script>
 
 <style>
-.card {
-    border-radius: 10px;
-    border: none;
-    box-shadow: 0 0 20px rgba(0,0,0,0.08);
-}
+    .card {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    }
 
-.card-header {
-    border-radius: 10px 10px 0 0 !important;
-    border-bottom: 2px solid rgba(0,0,0,0.1);
-}
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    }
 
-.form-control {
-    border-radius: 8px;
-    border: 2px solid #e3e6f0;
-    padding: 0.75rem 1rem;
-    transition: all 0.3s ease;
-}
+    .form-control {
+        border-radius: 8px;
+        border: 2px solid #e3e6f0;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
 
-.form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
 
-.btn {
-    border-radius: 8px;
-    padding: 0.75rem 2rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+    .btn {
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-}
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
 
-.btn-primary:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
 
-.btn-danger {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-    border: none;
-}
+    .btn-danger {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        border: none;
+    }
 
-.btn-danger:hover {
-    background: linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-}
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
 
-.form-label {
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 0.5rem;
-}
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
 
-.priority-badge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
+    .priority-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
 </style>
 
-<?php require_once 'app/views/layouts/footer.php'; ?>
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\admin\leads\edit.php
-
-function confirmDelete() {
-        fetch('/admin/leads/delete/<?= $lead['id'] ?>', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\farmers\edit.php
-
-function deleteFarmer(id) {
-    $('#deleteModal').modal('show');
-}
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

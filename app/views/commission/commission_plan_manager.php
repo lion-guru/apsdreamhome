@@ -25,16 +25,16 @@ $associate_name = $_SESSION['associate_name'];
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset(Security::sanitize($_POST['create_plan']))) {
+    if (isset($_POST['create_plan'])) {
         createCommissionPlan($_POST);
-    } elseif (isset(Security::sanitize($_POST['update_plan']))) {
+    } elseif (isset($_POST['update_plan'])) {
         updateCommissionPlan($_POST);
-    } elseif (isset(Security::sanitize($_POST['activate_plan']))) {
-        activatePlan(Security::sanitize($_POST['plan_id']));
-    } elseif (isset(Security::sanitize($_POST['deactivate_plan']))) {
-        deactivatePlan(Security::sanitize($_POST['plan_id']));
-    } elseif (isset(Security::sanitize($_POST['delete_plan']))) {
-        deletePlan(Security::sanitize($_POST['plan_id']));
+    } elseif (isset($_POST['activate_plan'])) {
+        activatePlan((int)($_POST['plan_id'] ?? 0));
+    } elseif (isset($_POST['deactivate_plan'])) {
+        deactivatePlan((int)($_POST['plan_id'] ?? 0));
+    } elseif (isset($_POST['delete_plan'])) {
+        deletePlan((int)($_POST['plan_id'] ?? 0));
     }
 }
 

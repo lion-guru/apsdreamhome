@@ -301,13 +301,16 @@
 
 <body>
     <?php
-    // Check if premium header should be used (for public pages)
+    // Admin pages skip public header entirely
+    $isAdminPage = isset($admin_layout) && $admin_layout === true;
     $isPremiumPage = isset($premium_layout) && $premium_layout === true;
 
-    if ($isPremiumPage) {
-        include __DIR__ . '/active/header_new.php';
-    } else {
-        include __DIR__ . '/header.php';
+    if (!$isAdminPage) {
+        if ($isPremiumPage) {
+            include __DIR__ . '/active/header_new.php';
+        } else {
+            include __DIR__ . '/header.php';
+        }
     }
     ?>
 
@@ -316,13 +319,12 @@
     </main>
 
     <?php
-    // Check if premium footer should be used (for public pages)
-    $isPremiumPage = isset($premium_layout) && $premium_layout === true;
-
-    if ($isPremiumPage) {
-        include __DIR__ . '/active/footer_new.php';
-    } else {
-        include __DIR__ . '/footer.php';
+    if (!$isAdminPage) {
+        if ($isPremiumPage) {
+            include __DIR__ . '/active/footer_new.php';
+        } else {
+            include __DIR__ . '/footer.php';
+        }
     }
     ?>
 

@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Set page variables
-$page_title = 'Universal Login - APS Dream Home';
+$$page_title = 'Universal Login - APS Dream Home';
 $page_description = 'Login with email, mobile number, or Google';
 $active_page = 'login';
 

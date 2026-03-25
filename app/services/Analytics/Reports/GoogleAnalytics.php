@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-**
+/**
  * APS Dream Home - Google Analytics Integration
  * Complete analytics setup with tracking, events, and reporting
  */
@@ -66,7 +66,7 @@ class GoogleAnalytics {
     public function track_page_view($page_title = '', $page_location = '') {
         if (empty($this->tracking_id)) return;
 
-        $title = !empty($page_title) ? $page_title : (function_exists('get_page_title') ? get_page_title() : 'APS Dream Home');
+        $title = !empty($page_title) ? $page_title : (function_exists('get_page_title') ? @get_page_title() : 'APS Dream Home');
         $location = !empty($page_location) ? $page_location : (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
 
         echo "

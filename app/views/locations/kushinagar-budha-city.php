@@ -29,7 +29,7 @@ if (empty($amenities)) {
     }
 }
 
-$page_title = 'Budha City Kushinagar | APS Dream Homes';
+$$page_title = 'Budha City Kushinagar | APS Dream Homes';
 $layout = 'modern';
 
 ob_start();

@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-page_title = 'AI Property Assistant - APS Dream Home';
+$$page_title = 'AI Property Assistant - APS Dream Home';
 $page_description = 'Get AI-powered property recommendations and find your dream home with our intelligent assistant';
 include __DIR__ . '/../layouts/base.php';
 ?>

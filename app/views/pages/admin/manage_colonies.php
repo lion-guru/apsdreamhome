@@ -13,7 +13,7 @@ require_once 'includes/enhanced_universal_template.php';
 $template = new EnhancedUniversalTemplate();
 
 // Page metadata
-$page_title = 'APS Colonies Management - Internal Dashboard';
+$$page_title = 'APS Colonies Management - Internal Dashboard';
 $page_description = 'Manage APS Dream Homes colonies, plots, and project development';
 
 $template->setTitle($page_title);
