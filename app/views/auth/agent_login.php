@@ -124,9 +124,3 @@ ob_start();
         email.focus();
     });
 </script>
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/base.php';
-echo $content;
-?>
