@@ -309,7 +309,7 @@
             </div>
             <div class="modal-body">
                 <form action="" method="POST">
-                    <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
+                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <input type="hidden" name="create_workflow" value="1">
                     <div class="mb-3">
                         <label class="form-label"><?= h($mlSupport->translate('Workflow Name')) ?></label>

@@ -423,6 +423,8 @@ class Request implements Countable
         } finally {
             libxml_use_internal_errors($internalErrors);
         }
+        
+        return null;
     }
 
     /**

@@ -90,7 +90,16 @@ function createDefaultLevels($plan_id) {
     $stmt = $conn->prepare($query);
 
     foreach ($default_levels as $index => $level) {
-        $stmt->bind_param("iiiddddddd", $plan_id, $level[0], ($index + 1), $level[1], $level[2], $level[3], $level[4], $level[5], $level[6], $level[7]);
+        $levelOrder = $index + 1;
+        $name = $level[0];
+        $c1 = $level[1];
+        $c2 = $level[2];
+        $c3 = $level[3];
+        $c4 = $level[4];
+        $c5 = $level[5];
+        $c6 = $level[6];
+        $c7 = $level[7];
+        $stmt->bind_param("iisddddddd", $plan_id, $name, $levelOrder, $c1, $c2, $c3, $c4, $c5, $c6, $c7);
         $stmt->execute();
     }
 }

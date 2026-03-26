@@ -41,7 +41,7 @@ class AdminController extends BaseController
         }
 
         // Check if admin is logged in - use direct session check
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? '', ['admin', 'super_admin'])) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -95,7 +95,7 @@ class AdminController extends BaseController
         }
 
         // Check if admin is logged in - use direct session check
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? '', ['admin', 'super_admin'])) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -346,7 +346,7 @@ class AdminController extends BaseController
         }
 
         // Check if admin is logged in
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? '', ['admin', 'super_admin'])) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -375,7 +375,7 @@ class AdminController extends BaseController
         }
 
         // Check if admin is logged in
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? '', ['admin', 'super_admin'])) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
