@@ -19,80 +19,97 @@ $page_title = 'SuperAdmin Control Center - APS Dream Home';
 $admin_layout = true;  // tells base.php to skip public header/footer
 $active_page = 'dashboard';
 
-// Define admin sections
-$admin_sections = [
+// Define full admin sections for super_admin
+$all_sections = [
     'dashboard' => [
         'title' => 'Dashboard',
         'icon' => 'fas fa-tachometer-alt',
         'modules' => [
-            'overview' => ['title' => 'Overview', 'icon' => 'fas fa-chart-pie'],
-            'analytics' => ['title' => 'Analytics', 'icon' => 'fas fa-chart-line'],
-            'reports' => ['title' => 'Reports', 'icon' => 'fas fa-file-alt'],
-            'activity' => ['title' => 'Activity Log', 'icon' => 'fas fa-history']
+            'overview' => ['title' => 'Overview', 'icon' => 'fas fa-chart-pie', 'url' => '/admin/dashboard'],
+            'analytics' => ['title' => 'Analytics', 'icon' => 'fas fa-chart-line', 'url' => '/admin/analytics'],
+            'reports' => ['title' => 'Reports', 'icon' => 'fas fa-file-alt', 'url' => '/admin/reports'],
+            'activity' => ['title' => 'Activity Log', 'icon' => 'fas fa-history', 'url' => '/admin/logs']
+        ]
+    ],
+    'crm' => [
+        'title' => 'CRM & Leads',
+        'icon' => 'fas fa-bullseye',
+        'modules' => [
+            'leads' => ['title' => 'All Leads', 'icon' => 'fas fa-users', 'url' => '/admin/leads'],
+            'followups' => ['title' => 'Follow Ups', 'icon' => 'fas fa-calendar-check', 'url' => '/admin/followups'],
+            'customers' => ['title' => 'Customers', 'icon' => 'fas fa-user-check', 'url' => '/admin/customers'],
+            'campaigns' => ['title' => 'Campaigns', 'icon' => 'fas fa-bullhorn', 'url' => '/admin/campaigns']
         ]
     ],
     'properties' => [
-        'title' => 'Properties',
-        'icon' => 'fas fa-home',
+        'title' => 'Properties & Inventory',
+        'icon' => 'fas fa-city',
         'modules' => [
-            'residential' => ['title' => 'Residential', 'icon' => 'fas fa-building'],
-            'commercial' => ['title' => 'Commercial', 'icon' => 'fas fa-store'],
-            'land' => ['title' => 'Land & Plots', 'icon' => 'fas fa-map'],
-            'featured' => ['title' => 'Featured', 'icon' => 'fas fa-star'],
-            'analytics' => ['title' => 'Property Analytics', 'icon' => 'fas fa-chart-bar']
+            'projects' => ['title' => 'Projects', 'icon' => 'fas fa-building', 'url' => '/admin/projects'],
+            'plots' => ['title' => 'Plots / Land', 'icon' => 'fas fa-map', 'url' => '/admin/plots'],
+            'residential' => ['title' => 'Residential', 'icon' => 'fas fa-home', 'url' => '/admin/residential'],
+            'commercial' => ['title' => 'Commercial', 'icon' => 'fas fa-store', 'url' => '/admin/commercial']
         ]
     ],
-    'accounts' => [
-        'title' => 'Accounts',
-        'icon' => 'fas fa-users',
+    'mlm' => [
+        'title' => 'MLM Network',
+        'icon' => 'fas fa-sitemap',
         'modules' => [
-            'users' => ['title' => 'Users', 'icon' => 'fas fa-user'],
-            'associates' => ['title' => 'Associates', 'icon' => 'fas fa-user-tie'],
-            'partners' => ['title' => 'Partners', 'icon' => 'fas fa-handshake'],
-            'permissions' => ['title' => 'Permissions', 'icon' => 'fas fa-key']
-        ]
-    ],
-    'team' => [
-        'title' => 'Team Management',
-        'icon' => 'fas fa-users-cog',
-        'modules' => [
-            'staff' => ['title' => 'Staff', 'icon' => 'fas fa-user-friends'],
-            'roles' => ['title' => 'Roles', 'icon' => 'fas fa-user-tag'],
-            'departments' => ['title' => 'Departments', 'icon' => 'fas fa-sitemap'],
-            'performance' => ['title' => 'Performance', 'icon' => 'fas fa-trophy']
+            'network' => ['title' => 'Network Tree', 'icon' => 'fas fa-project-diagram', 'url' => '/admin/network'],
+            'associates' => ['title' => 'Associates', 'icon' => 'fas fa-user-tie', 'url' => '/admin/associates'],
+            'ranks' => ['title' => 'Rank & Tiers', 'icon' => 'fas fa-medal', 'url' => '/admin/ranks'],
+            'performance' => ['title' => 'Performance', 'icon' => 'fas fa-chart-bar', 'url' => '/admin/performance']
         ]
     ],
     'financial' => [
         'title' => 'Financial',
         'icon' => 'fas fa-rupee-sign',
         'modules' => [
-            'transactions' => ['title' => 'Transactions', 'icon' => 'fas fa-exchange-alt'],
-            'commissions' => ['title' => 'Commissions', 'icon' => 'fas fa-percentage'],
-            'payments' => ['title' => 'Payments', 'icon' => 'fas fa-credit-card'],
-            'tax' => ['title' => 'Tax Management', 'icon' => 'fas fa-receipt']
+            'bookings' => ['title' => 'Bookings', 'icon' => 'fas fa-file-contract', 'url' => '/admin/bookings'],
+            'transactions' => ['title' => 'Transactions', 'icon' => 'fas fa-exchange-alt', 'url' => '/admin/transactions'],
+            'commissions' => ['title' => 'Commissions', 'icon' => 'fas fa-percentage', 'url' => '/admin/commissions'],
+            'invoices' => ['title' => 'Invoices', 'icon' => 'fas fa-file-invoice-dollar', 'url' => '/admin/invoices']
         ]
     ],
-    'marketing' => [
-        'title' => 'Marketing',
-        'icon' => 'fas fa-bullhorn',
+    'hr' => [
+        'title' => 'Team & HR',
+        'icon' => 'fas fa-users-cog',
         'modules' => [
-            'campaigns' => ['title' => 'Campaigns', 'icon' => 'fas fa-bullhorn'],
-            'leads' => ['title' => 'Leads', 'icon' => 'fas fa-phone'],
-            'social' => ['title' => 'Social Media', 'icon' => 'fas fa-share-alt'],
-            'seo' => ['title' => 'SEO Tools', 'icon' => 'fas fa-search']
+            'staff' => ['title' => 'Staff Members', 'icon' => 'fas fa-user-friends', 'url' => '/admin/staff'],
+            'roles' => ['title' => 'Roles & Access', 'icon' => 'fas fa-user-shield', 'url' => '/admin/roles'],
+            'attendance' => ['title' => 'Attendance', 'icon' => 'fas fa-clock', 'url' => '/admin/attendance']
+        ]
+    ],
+    'content' => [
+        'title' => 'Content Management',
+        'icon' => 'fas fa-images',
+        'modules' => [
+            'gallery' => ['title' => 'Gallery / Media', 'icon' => 'fas fa-image', 'url' => '/admin/gallery'],
+            'blog' => ['title' => 'Blog & News', 'icon' => 'fas fa-newspaper', 'url' => '/admin/blog'],
+            'testimonials' => ['title' => 'Testimonials', 'icon' => 'fas fa-quote-left', 'url' => '/admin/testimonials']
         ]
     ],
     'system' => [
-        'title' => 'System',
+        'title' => 'System & Settings',
         'icon' => 'fas fa-cogs',
         'modules' => [
-            'settings' => ['title' => 'Settings', 'icon' => 'fas fa-cog'],
-            'backup' => ['title' => 'Backup', 'icon' => 'fas fa-save'],
-            'logs' => ['title' => 'System Logs', 'icon' => 'fas fa-list-alt'],
-            'security' => ['title' => 'Security', 'icon' => 'fas fa-shield-alt']
+            'settings' => ['title' => 'General Settings', 'icon' => 'fas fa-cog', 'url' => '/admin/settings'],
+            'api' => ['title' => 'API Integrations', 'icon' => 'fas fa-code', 'url' => '/admin/api'],
+            'ai_hub' => ['title' => 'AI Features', 'icon' => 'fas fa-robot', 'url' => '/admin/ai-hub'],
+            'backup' => ['title' => 'Backup & Logs', 'icon' => 'fas fa-save', 'url' => '/admin/backup']
         ]
     ]
 ];
+
+// Role-based filtering
+$user_role = $_SESSION['admin_role'] ?? 'admin';
+if ($user_role === 'super_admin') {
+    $admin_sections = $all_sections; // Super admin sees everything
+} else {
+    // Regular admin sees limited sections
+    $allowed_sections = ['dashboard', 'crm', 'properties', 'content'];
+    $admin_sections = array_intersect_key($all_sections, array_flip($allowed_sections));
+}
 
 // Content for base layout
 ob_start();
@@ -109,7 +126,7 @@ ob_start();
                 </button>
                 <div class="brand-logo">
                     <i class="fas fa-crown text-warning"></i>
-                    <span>SuperAdmin</span>
+                    <span><?= ucfirst(str_replace('_', ' ', $_SESSION['admin_role'] ?? 'Admin')) ?></span>
                     <small class="text-muted">Control Center</small>
                 </div>
             </div>
@@ -126,11 +143,11 @@ ob_start();
             <div class="navbar-right">
                 <div class="admin-info">
                     <div class="admin-avatar">
-                        <img src="https://via.placeholder.com/32x32/2c3e50/ffffff?text=SA" alt="Admin">
+                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['admin_name'] ?? 'Admin') ?>&background=2c3e50&color=fff" alt="Admin">
                     </div>
                     <div class="admin-details">
-                        <div class="admin-name">Super Admin</div>
-                        <div class="admin-role">System Administrator</div>
+                        <div class="admin-name"><?= htmlspecialchars($_SESSION['admin_name'] ?? 'System Admin') ?></div>
+                        <div class="admin-role"><?= ucfirst(str_replace('_', ' ', $_SESSION['admin_role'] ?? 'Administrator')) ?></div>
                     </div>
                 </div>
 

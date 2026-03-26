@@ -97,7 +97,11 @@ class AdminAuthController extends BaseController
                 $_SESSION['csrf_token'] = $this->getCsrfToken();
 
                 // Redirect to dashboard
-                header('Location: ' . BASE_URL . '/admin/dashboard');
+                $redirect_url = BASE_URL . '/admin/dashboard';
+                if ($adminUser['role'] === 'cm') {
+                    $redirect_url = BASE_URL . '/admin/dashboard/cm';
+                }
+                header('Location: ' . $redirect_url);
                 exit;
             }
 
@@ -115,7 +119,11 @@ class AdminAuthController extends BaseController
                 $_SESSION['csrf_token'] = $this->getCsrfToken();
 
                 // Redirect to dashboard
-                header('Location: ' . BASE_URL . '/admin/dashboard');
+                $redirect_url = BASE_URL . '/admin/dashboard';
+                if ($user['role'] === 'cm') {
+                    $redirect_url = BASE_URL . '/admin/dashboard/cm';
+                }
+                header('Location: ' . $redirect_url);
                 exit;
             }
 

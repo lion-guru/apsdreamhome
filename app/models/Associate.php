@@ -3,449 +3,353 @@
 namespace App\Models;
 
 use App\Core\Database;
+use App\Core\App;
+use Exception;
 
 /**
- * Associate Model - APS Dream Home
- * Custom MVC implementation without Laravel dependencies
+ * Associate Management Class
+ * Handles all associate-related operations
  */
 class Associate
 {
-    private $database;
-    private $table = 'associates';
-    
-    public $id;
-    public $name;
-    public $email;
-    public $phone;
-    public $address;
-    public $joining_date;
-    public $status;
-    public $commission_rate;
-    public $total_sales;
-    public $created_at;
-    public $updated_at;
-    
+    private $db;
+    private $config;
+
     public function __construct()
     {
-        $this->database = Database::getInstance();
+        $this->db = Database::getInstance();
+        $this->config = App::getInstance();
     }
-    
+
     /**
-     * Find associate by ID
+     * Get all associates
+     * @param array $filters Optional filters (status, level, etc.)
+     * @return array Associates data
      */
-    public static function find($id)
+    public function getAll($filters = [])
     {
-        $database = Database::getInstance();
-        $result = $database->selectOne(
-            "SELECT * FROM associates WHERE id = ? AND status != 'deleted'",
-            [$id]
-        );
-        
-        if ($result) {
-            $associate = new self();
-            $associate->fill($result);
-            return $associate;
+        try {
+            $sql = "SELECT a.*, u.name as user_name, u.email as user_email 
+                    FROM associates a 
+                    LEFT JOIN users u ON a.user_id = u.id 
+                    WHERE 1=1";
+            $params = [];
+
+            // Apply filters
+            if (!empty($filters['status'])) {
+                $sql .= " AND a.status = ?";
+                $params[] = $filters['status'];
+            }
+
+            if (!empty($filters['level'])) {
+                $sql .= " AND a.level = ?";
+                $params[] = $filters['level'];
+            }
+
+            if (!empty($filters['search'])) {
+                $sql .= " AND (a.name LIKE ? OR a.email LIKE ? OR a.phone LIKE ?)";
+                $searchTerm = "%{$filters['search']}%";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+
+            $sql .= " ORDER BY a.created_at DESC";
+
+            $associates = $this->db->fetchAll($sql, $params);
+
+            return [
+                'success' => true,
+                'associates' => $associates,
+                'total' => count($associates)
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to fetch associates: ' . $e->getMessage()
+            ];
         }
-        
-        return null;
     }
-    
+
     /**
-     * Find associate by email
+     * Get associate by ID
+     * @param int $id Associate ID
+     * @return array Associate data
      */
-    public static function findByEmail($email)
+    public function getById($id)
     {
-        $database = Database::getInstance();
-        $result = $database->selectOne(
-            "SELECT * FROM associates WHERE email = ? AND status != 'deleted'",
-            [$email]
-        );
-        
-        if ($result) {
-            $associate = new self();
-            $associate->fill($result);
-            return $associate;
+        try {
+            $sql = "SELECT a.*, u.name as user_name, u.email as user_email 
+                    FROM associates a 
+                    LEFT JOIN users u ON a.user_id = u.id 
+                    WHERE a.id = ?";
+
+            $associate = $this->db->fetch($sql, [$id]);
+
+            if (!$associate) {
+                return [
+                    'success' => false,
+                    'error' => 'Associate not found'
+                ];
+            }
+
+            return [
+                'success' => true,
+                'associate' => $associate
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to fetch associate: ' . $e->getMessage()
+            ];
         }
-        
-        return null;
     }
-    
-    /**
-     * Get all active associates
-     */
-    public static function all()
-    {
-        $database = Database::getInstance();
-        $results = $database->select(
-            "SELECT * FROM associates WHERE status = 'active' ORDER BY name ASC"
-        );
-        
-        $associates = [];
-        foreach ($results as $result) {
-            $associate = new self();
-            $associate->fill($result);
-            $associates[] = $associate;
-        }
-        
-        return $associates;
-    }
-    
-    /**
-     * Get associates with pagination
-     */
-    public static function paginate($page = 1, $limit = 20)
-    {
-        $database = Database::getInstance();
-        $offset = ($page - 1) * $limit;
-        
-        $results = $database->select(
-            "SELECT * FROM associates WHERE status != 'deleted' 
-             ORDER BY created_at DESC LIMIT ? OFFSET ?",
-            [$limit, $offset]
-        );
-        
-        $associates = [];
-        foreach ($results as $result) {
-            $associate = new self();
-            $associate->fill($result);
-            $associates[] = $associate;
-        }
-        
-        // Get total count
-        $total = $database->selectOne(
-            "SELECT COUNT(*) as count FROM associates WHERE status != 'deleted'"
-        )['count'];
-        
-        return [
-            'data' => $associates,
-            'total' => $total,
-            'per_page' => $limit,
-            'current_page' => $page,
-            'last_page' => ceil($total / $limit)
-        ];
-    }
-    
+
     /**
      * Create new associate
+     * @param array $data Associate data
+     * @return array Creation result
      */
-    public function create(array $data)
+    public function create($data)
     {
         try {
             // Validate required fields
-            if (empty($data['name']) || empty($data['email'])) {
-                throw new \Exception('Name and email are required');
+            $required = ['name', 'email', 'phone', 'level'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return [
+                        'success' => false,
+                        'error' => "Field {$field} is required"
+                    ];
+                }
             }
-            
-            // Check if email already exists
-            if (self::findByEmail($data['email'])) {
-                throw new \Exception('Email already exists');
+
+            // Validate email format
+            if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                return [
+                    'success' => false,
+                    'error' => 'Invalid email format'
+                ];
             }
-            
-            $this->fill($data);
-            
-            $this->database->insert('associates', [
-                'name' => $this->name,
-                'email' => $this->email,
-                'phone' => $this->phone ?? null,
-                'address' => $this->address ?? null,
-                'joining_date' => $this->joining_date ?? date('Y-m-d'),
-                'status' => $this->status ?? 'active',
-                'commission_rate' => $this->commission_rate ?? 0,
-                'total_sales' => $this->total_sales ?? 0,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-            
-            $this->id = $this->database->lastInsertId();
-            
-            return $this;
-            
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to create associate: ' . $e->getMessage());
+
+            // Validate phone format
+            if (!empty($data['phone'])) {
+                $data['phone'] = preg_replace('/[^\d+\s]/', '', $data['phone']);
+                if (strlen($data['phone']) < 10 || strlen($data['phone']) > 15) {
+                    return [
+                        'success' => false,
+                        'error' => 'Phone number must be 10-15 digits'
+                    ];
+                }
+            }
+
+            // Set default values
+            $data['status'] = $data['status'] ?? 'active';
+            $data['level'] = $data['level'] ?? 'bronze';
+            $data['created_at'] = date('Y-m-d H:i:s');
+
+            $associateId = $this->db->insert(
+                "INSERT INTO associates (name, email, phone, level, status, user_id, created_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [
+                    $data['name'],
+                    $data['email'],
+                    $data['phone'],
+                    $data['level'],
+                    $data['status'],
+                    $data['user_id'] ?? null,
+                    $data['created_at']
+                ]
+            );
+
+            if ($associateId) {
+                return [
+                    'success' => true,
+                    'associate_id' => $associateId,
+                    'message' => 'Associate created successfully'
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => 'Failed to create associate'
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to create associate: ' . $e->getMessage()
+            ];
         }
     }
-    
+
     /**
      * Update associate
+     * @param int $id Associate ID
+     * @param array $data Updated data
+     * @return array Update result
      */
-    public function update(array $data)
+    public function update($id, $data)
     {
         try {
-            if (!$this->id) {
-                throw new \Exception('Associate ID is required for update');
+            // Check if associate exists
+            $existing = $this->db->fetch("SELECT id FROM associates WHERE id = ?", [$id]);
+            if (!$existing) {
+                return [
+                    'success' => false,
+                    'error' => 'Associate not found'
+                ];
             }
-            
-            // Update only provided fields
-            $updateData = [];
-            foreach ($data as $key => $value) {
-                if (property_exists($this, $key) && $key !== 'id') {
-                    $this->$key = $value;
-                    $updateData[$key] = $value;
+
+            // Validate email format
+            if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                return [
+                    'success' => false,
+                    'error' => 'Invalid email format'
+                ];
+            }
+
+            // Validate phone format
+            if (!empty($data['phone'])) {
+                $data['phone'] = preg_replace('/[^\d+\s]/', '', $data['phone']);
+                if (strlen($data['phone']) < 10 || strlen($data['phone']) > 15) {
+                    return [
+                        'success' => false,
+                        'error' => 'Phone number must be 10-15 digits'
+                    ];
                 }
             }
-            
-            $updateData['updated_at'] = date('Y-m-d H:i:s');
-            
-            // Check email uniqueness if email is being updated
-            if (isset($updateData['email'])) {
-                $existing = self::findByEmail($updateData['email']);
-                if ($existing && $existing->id != $this->id) {
-                    throw new \Exception('Email already exists');
+
+            // Build update query
+            $updateFields = [];
+            $params = [];
+
+            $allowedFields = ['name', 'email', 'phone', 'level', 'status'];
+
+            foreach ($allowedFields as $field) {
+                if (isset($data[$field])) {
+                    $updateFields[] = "{$field} = ?";
+                    $params[] = $data[$field];
                 }
             }
-            
-            $this->database->update('associates', $updateData, 'id = ?', [$this->id]);
-            
-            return $this;
-            
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to update associate: ' . $e->getMessage());
-        }
-    }
-    
-    /**
-     * Delete associate (soft delete)
-     */
-    public function delete()
-    {
-        if (!$this->id) {
-            throw new \Exception('Associate ID is required for delete');
-        }
-        
-        $this->database->update('associates', [
-            'status' => 'deleted',
-            'updated_at' => date('Y-m-d H:i:s')
-        ], 'id = ?', [$this->id]);
-        
-        return true;
-    }
-    
-    /**
-     * Activate associate
-     */
-    public function activate()
-    {
-        if (!$this->id) {
-            throw new \Exception('Associate ID is required');
-        }
-        
-        $this->status = 'active';
-        return $this->update(['status' => 'active']);
-    }
-    
-    /**
-     * Deactivate associate
-     */
-    public function deactivate()
-    {
-        if (!$this->id) {
-            throw new \Exception('Associate ID is required');
-        }
-        
-        $this->status = 'inactive';
-        return $this->update(['status' => 'inactive']);
-    }
-    
-    /**
-     * Get associate's sales
-     */
-    public function getSales($limit = 10)
-    {
-        if (!$this->id) {
-            return [];
-        }
-        
-        return $this->database->select(
-            "SELECT s.*, p.name as property_name 
-             FROM sales s 
-             LEFT JOIN properties p ON s.property_id = p.id 
-             WHERE s.associate_id = ? 
-             ORDER BY s.created_at DESC 
-             LIMIT ?",
-            [$this->id, $limit]
-        );
-    }
-    
-    /**
-     * Get associate's commission
-     */
-    public function getTotalCommission()
-    {
-        if (!$this->id) {
-            return 0;
-        }
-        
-        $result = $this->database->selectOne(
-            "SELECT SUM(commission_amount) as total 
-             FROM sales 
-             WHERE associate_id = ? AND status = 'completed'",
-            [$this->id]
-        );
-        
-        return $result ? (float) $result['total'] : 0;
-    }
-    
-    /**
-     * Update commission rate
-     */
-    public function updateCommissionRate($rate)
-    {
-        if ($rate < 0 || $rate > 100) {
-            throw new \Exception('Commission rate must be between 0 and 100');
-        }
-        
-        return $this->update(['commission_rate' => $rate]);
-    }
-    
-    /**
-     * Add sale to associate
-     */
-    public function addSale($saleAmount, $propertyId = null)
-    {
-        if (!$this->id) {
-            throw new \Exception('Associate ID is required');
-        }
-        
-        $commissionAmount = ($saleAmount * $this->commission_rate) / 100;
-        
-        $this->database->insert('sales', [
-            'associate_id' => $this->id,
-            'property_id' => $propertyId,
-            'sale_amount' => $saleAmount,
-            'commission_amount' => $commissionAmount,
-            'status' => 'completed',
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-        
-        // Update total sales
-        $this->database->query(
-            "UPDATE associates SET total_sales = total_sales + ?, updated_at = NOW() WHERE id = ?",
-            [$saleAmount, $this->id]
-        );
-        
-        return $this->database->lastInsertId();
-    }
-    
-    /**
-     * Search associates
-     */
-    public static function search($query, $limit = 20)
-    {
-        $database = Database::getInstance();
-        $results = $database->select(
-            "SELECT * FROM associates 
-             WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?) 
-             AND status != 'deleted' 
-             ORDER BY name ASC 
-             LIMIT ?",
-            ["%$query%", "%$query%", "%$query%", $limit]
-        );
-        
-        $associates = [];
-        foreach ($results as $result) {
-            $associate = new self();
-            $associate->fill($result);
-            $associates[] = $associate;
-        }
-        
-        return $associates;
-    }
-    
-    /**
-     * Get active associates count
-     */
-    public static function getActiveCount()
-    {
-        $database = Database::getInstance();
-        $result = $database->selectOne(
-            "SELECT COUNT(*) as count FROM associates WHERE status = 'active'"
-        );
-        
-        return $result ? (int) $result['count'] : 0;
-    }
-    
-    /**
-     * Get top performers
-     */
-    public static function getTopPerformers($limit = 10)
-    {
-        $database = Database::getInstance();
-        $results = $database->select(
-            "SELECT a.*, COUNT(s.id) as sales_count, SUM(s.sale_amount) as total_sales_amount
-             FROM associates a
-             LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed'
-             WHERE a.status = 'active'
-             GROUP BY a.id
-             ORDER BY total_sales_amount DESC
-             LIMIT ?",
-            [$limit]
-        );
-        
-        $associates = [];
-        foreach ($results as $result) {
-            $associate = new self();
-            $associate->fill($result);
-            $associate->sales_count = $result['sales_count'];
-            $associate->total_sales_amount = $result['total_sales_amount'];
-            $associates[] = $associate;
-        }
-        
-        return $associates;
-    }
-    
-    /**
-     * Fill model with data
-     */
-    private function fill(array $data)
-    {
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
+
+            if (!empty($updateFields)) {
+                $updateFields[] = "updated_at = ?";
+                $params[] = date('Y-m-d H:i:s');
+                $params[] = $id;
             }
+
+            $sql = "UPDATE associates SET " . implode(', ', $updateFields) . " WHERE id = ?";
+
+            $result = $this->db->query($sql, $params);
+
+            if ($result) {
+                return [
+                    'success' => true,
+                    'message' => 'Associate updated successfully'
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => 'Failed to update associate'
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to update associate: ' . $e->getMessage()
+            ];
         }
     }
-    
+
     /**
-     * Convert to array
+     * Delete associate
+     * @param int $id Associate ID
+     * @return array Deletion result
      */
-    public function toArray()
+    public function delete($id)
+    {
+        try {
+            // Check if associate exists
+            $existing = $this->db->fetch("SELECT id FROM associates WHERE id = ?", [$id]);
+            if (!$existing) {
+                return [
+                    'success' => false,
+                    'error' => 'Associate not found'
+                ];
+            }
+
+            // Delete associate
+            $result = $this->db->query("DELETE FROM associates WHERE id = ?", [$id]);
+
+            if ($result) {
+                return [
+                    'success' => true,
+                    'message' => 'Associate deleted successfully'
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => 'Failed to delete associate'
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to delete associate: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get associate statistics
+     * @return array Statistics data
+     */
+    public function getStatistics()
+    {
+        try {
+            $sql = "SELECT 
+                COUNT(*) as total,
+                COUNT(CASE WHEN status = 'active' THEN 1 END) as active,
+                COUNT(CASE WHEN level = 'platinum' THEN 1 END) as platinum,
+                COUNT(CASE WHEN level = 'gold' THEN 1 END) as gold,
+                COUNT(CASE WHEN level = 'silver' THEN 1 END) as silver,
+                COUNT(CASE WHEN level = 'bronze' THEN 1 END) as bronze
+                FROM associates";
+
+            $stats = $this->db->fetch($sql);
+
+            return [
+                'success' => true,
+                'statistics' => [
+                    'total' => $stats['total'] ?? 0,
+                    'active' => $stats['active'] ?? 0,
+                    'by_level' => [
+                        'platinum' => $stats['platinum'] ?? 0,
+                        'gold' => $stats['gold'] ?? 0,
+                        'silver' => $stats['silver'] ?? 0,
+                        'bronze' => $stats['bronze'] ?? 0
+                    ]
+                ]
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to fetch statistics: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get associate levels
+     * @return array Available levels
+     */
+    public function getLevels()
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'address' => $this->address,
-            'joining_date' => $this->joining_date,
-            'status' => $this->status,
-            'commission_rate' => $this->commission_rate,
-            'total_sales' => $this->total_sales,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'bronze' => 'Bronze',
+            'silver' => 'Silver',
+            'gold' => 'Gold',
+            'platinum' => 'Platinum'
         ];
-    }
-    
-    /**
-     * Validate associate data
-     */
-    public static function validate(array $data)
-    {
-        $errors = [];
-        
-        if (empty($data['name'])) {
-            $errors['name'] = 'Name is required';
-        }
-        
-        if (empty($data['email'])) {
-            $errors['email'] = 'Email is required';
-        } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Invalid email format';
-        }
-        
-        if (isset($data['commission_rate']) && ($data['commission_rate'] < 0 || $data['commission_rate'] > 100)) {
-            $errors['commission_rate'] = 'Commission rate must be between 0 and 100';
-        }
-        
-        return $errors;
     }
 }
