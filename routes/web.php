@@ -298,7 +298,7 @@ $router->get('/map/location-suggestions', 'MapController@getLocationSuggestions'
 require_once __DIR__ . '/api.php';
 
 // Admin Dashboard routes (Modern MVC)
-$router->get('/admin/dashboard', 'Admin\AdminDashboardController@dashboard');
+$router->get('/admin/dashboard', 'Admin\AdminDashboardController@index');
 $router->get('/admin/stats', 'Admin\AdminDashboardController@getStats');
 
 // Career/HR routes (Modern MVC) - Using Front\PageController for public pages
