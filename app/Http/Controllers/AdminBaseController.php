@@ -236,16 +236,16 @@ class AdminBaseController extends BaseController
         $viewPath = defined('VIEW_PATH') ? VIEW_PATH : APP_PATH . '/views';
         $layoutMap = [
             'superadmin' => $viewPath . '/admin/layouts/superadmin.php',
-            'executive' => $viewPath . '/admin/layouts/executive.php',
+            'executive' => $viewPath . '/admin/layouts/superadmin.php',
             'manager' => $viewPath . '/admin/layouts/manager.php',
-            'team_lead' => $viewPath . '/admin/layouts/team_lead.php',
+            'team_lead' => $viewPath . '/admin/layouts/manager.php',
             'employee' => $viewPath . '/admin/layouts/employee.php',
             'associate' => $viewPath . '/admin/layouts/associate.php',
-            'franchise' => $viewPath . '/admin/layouts/franchise.php',
-            'customer' => $viewPath . '/admin/layouts/customer.php',
-            'lead' => $viewPath . '/admin/layouts/lead.php',
-            'guest' => $viewPath . '/admin/layouts/guest.php',
-            'default' => $viewPath . '/admin/layouts/default.php',
+            'franchise' => $viewPath . '/admin/layouts/associate.php',
+            'customer' => $viewPath . '/admin/layouts/default.php',
+            'lead' => $viewPath . '/admin/layouts/default.php',
+            'guest' => $viewPath . '/admin/layouts/default.php',
+            'default' => $viewPath . '/admin/layouts/superadmin.php',
         ];
         
         return $layoutMap[$this->dashboardType] ?? $layoutMap['default'];
@@ -463,7 +463,7 @@ class AdminBaseController extends BaseController
             
             // Commission Paid
             $stats['commission_paid'] = $this->db->fetch(
-                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_payouts WHERE status = 'completed'"
+                "SELECT COALESCE(SUM(net_payout), 0) as total FROM mlm_payouts WHERE status = 'paid'"
             )['total'] ?? 0;
             
             // Revenue This Month

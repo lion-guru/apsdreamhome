@@ -153,6 +153,24 @@ if (!function_exists('asset')) {
     }
 }
 
+if (!function_exists('get_asset_url')) {
+    /**
+     * Generate an asset URL with optional subdirectory.
+     *
+     * @param  string  $path
+     * @param  string  $subdir
+     * @return string
+     */
+    function get_asset_url($path, $subdir = '')
+    {
+        $base = BASE_URL ?? url();
+        if (!empty($subdir)) {
+            return rtrim($base, '/') . '/assets/' . $subdir . '/' . ltrim($path, '/');
+        }
+        return rtrim($base, '/') . '/assets/' . ltrim($path, '/');
+    }
+}
+
 if (!function_exists('auth')) {
     /**
      * Get the current authenticated user.
