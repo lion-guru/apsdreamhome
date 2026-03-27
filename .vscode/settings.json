@@ -186,5 +186,10 @@
     "editor.defaultColorDecorators": "always",
     "yaml.schemas": {
         "https://gitlab.com/appsemble/appsemble/-/raw/HEAD/packages/cli/assets/appsemblerc.schema.json": "file:///c%3A/xampp/htdocs/apsdreamhome/.continue/mcpServers/new-mcp-server.yaml"
-    }
+    },
+    "gitlens.codeLens.scopes": [
+        "document",
+        "containers",
+        "blocks"
+    ]
 }
