@@ -6,8 +6,9 @@ use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Core\View\View;
 use App\Core\Auth;
-use App\Core\Session\Session;
-use PDO;
+use App\Core\Database\Database;
+use App\Core\Session\SessionManager;
+use App\Core\Routing\Router;
 
 /**
  * Base Controller
@@ -43,7 +44,7 @@ class Controller
      *
      * @var Auth
      */
-    protected $auth;
+    public $auth;
 
     /**
      * The database connection
@@ -58,20 +59,6 @@ class Controller
      * @var SessionManager
      */
     protected $session;
-    
-    /**
-     * The data array for views
-     *
-     * @var array
-     */
-    protected $data = [];
-    
-    /**
-     * The layout template
-     *
-     * @var string
-     */
-    protected $layout = 'base';
 
     /**
      * The middleware stack
@@ -114,14 +101,24 @@ class Controller
      */
     public function __construct()
     {
-        // Initialize components for custom router system
-        $this->request = new \App\Core\Http\Request();
-        $this->response = new \App\Core\Http\Response();
+        // Get the base path from APP_ROOT constant or use default
+        $basePath = defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__, 2);
+        $app = App::getInstance($basePath);
+
+        $this->request = $app->request();
+        $this->response = $app->response();
         $this->view = new View();
-        $this->session = new \App\Core\Session\Session();
-        $this->db = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
-        $this->auth = null; // Initialize auth if needed
-        $this->app = null; // Not using App class
+        $this->session = $app->session();
+
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:15 auth
+        if (!isset($app->auth)) {
+            // // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:15 CODE REMOVED: 2026-02-22 19:56:15
+        }
+
+        $this->auth = $app->auth ?? null;
+        $this->db = $app->db();
+        $this->session = $app->session();
+        $this->app = $app;
     }
 
     /**
@@ -199,16 +196,12 @@ class Controller
             $this->view->layout($layout);
         }
 
-        // Add flash messages to all views (if session is available)
-        if ($this->session && method_exists($this->session, 'getFlashBag')) {
-            $data['flash'] = $this->session->getFlashBag()->all();
-        } else {
-            $data['flash'] = [];
-        }
+        // Add flash messages to all views
+        $data['flash'] = $this->session->getFlashBag()->all();
 
         // Add auth and user to all views
         $data['auth'] = $this->auth;
-        $data['user'] = $this->auth && method_exists($this->auth, 'user') ? $this->auth->user() : null;
+        $data['user'] = $this->auth ? $this->auth->user() : null;
 
         return $this->view->render($view, $data);
     }
@@ -386,177 +379,19 @@ class Controller
     }
 
     /**
-     * Render a view with data and layout
-     *
-     * @param string $view The view name
-     * @param array $data The data to pass to the view
-     * @param string|null $layout The layout to use (optional)
-     * @return void
-     */
-    public function render($view, $data = [], $layout = null)
-    {
-        if ($layout !== null) {
-            $this->view->layout($layout);
-        }
-
-        // Add flash messages to all views - with null check
-        if ($this->session && method_exists($this->session, 'getFlashBag')) {
-            $data['flash'] = $this->session->getFlashBag()->all();
-        } else {
-            $data['flash'] = [];
-        }
-
-        // Add auth and user to all views
-        $data['auth'] = $this->auth;
-        $data['user'] = $this->auth ? $this->auth->user() : null;
-
-        echo $this->view->render($view, $data);
-    }
-
-    /**
      * Magic method to handle undefined method calls
      *
      * @param string $method
      * @param array $parameters
      * @return mixed
+     * @throws \BadMethodCallException
      */
     public function __call($method, $parameters)
     {
-        // Handle dynamic method calls
-        if (method_exists($this, $method)) {
-            return $this->$method(...$parameters);
-        }
-
-        // Try to call on the request object
-        if (method_exists($this->request, $method)) {
-            return $this->request->$method(...$parameters);
-        }
-
-        throw new \BadMethodCallException("Method {$method} does not exist.");
-    }
-
-    /**
-     * Set flash message
-     *
-     * @param string $key The flash key
-     * @param string $value The flash value
-     * @return void
-     */
-    protected function setFlash($key, $value)
-    {
-        if ($this->session && method_exists($this->session, 'setFlash')) {
-            $this->session->setFlash($key, $value);
-        } else {
-            // Fallback to regular session
-            $_SESSION[$key] = $value;
-        }
-    }
-
-    /**
-     * Get flash message
-     *
-     * @param string $key The flash key
-     * @param mixed $default Default value
-     * @return mixed
-     */
-    protected function getFlash($key, $default = null)
-    {
-        if ($this->session && method_exists($this->session, 'getFlash')) {
-            return $this->session->getFlash($key, $default);
-        } else {
-            // Fallback to regular session
-            $value = $_SESSION[$key] ?? $default;
-            unset($_SESSION[$key]);
-            return $value;
-        }
-    }
-
-    /**
-     * Check if user is logged in
-     *
-     * @return bool
-     */
-    protected function isLoggedIn()
-    {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Get database connection
-     *
-     * @return PDO
-     */
-    protected function getDatabase()
-    {
-        return $this->db;
-    }
-
-    /**
-     * Sanitize input
-     *
-     * @param string $input The input to sanitize
-     * @return string
-     */
-    protected function sanitizeInput($input)
-    {
-        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
-    }
-
-    /**
-     * Validate CSRF token
-     *
-     * @param string $token The token to validate
-     * @return bool
-     */
-    protected function validateCsrfToken($token)
-    {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-    }
-
-    /**
-     * Generate CSRF token
-     *
-     * @return string
-     */
-    protected function generateCsrfToken()
-    {
-        if (!isset($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-        }
-        return $_SESSION['csrf_token'];
-    }
-
-    /**
-     * Log activity
-     *
-     * @param string $activity The activity description
-     * @return void
-     */
-    protected function logActivity($activity)
-    {
-        if ($this->logger) {
-            $this->logger->info($activity);
-        } else {
-            error_log("Activity: " . $activity);
-        }
-    }
-
-    /**
-     * Get configuration value
-     *
-     * @param string $key The config key
-     * @param mixed $default Default value
-     * @return mixed
-     */
-    protected function getConfig($key, $default = null)
-    {
-        // Simple config fallback
-        $config = [
-            'app_name' => 'APS Dream Home',
-            'app_url' => 'http://localhost/apsdreamhome',
-            'timezone' => 'Asia/Kolkata'
-        ];
-        
-        return $config[$key] ?? $default;
+        throw new \BadMethodCallException(sprintf(
+            'Method %s::%s does not exist.',
+            static::class,
+            $method
+        ));
     }
 }

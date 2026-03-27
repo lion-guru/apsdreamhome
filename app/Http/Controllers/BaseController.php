@@ -2,250 +2,449 @@
 
 namespace App\Http\Controllers;
 
-/**
- * Base Controller
- * 
- * All controllers should extend this base controller
- */
-class BaseController
+use App\Core\Controller as CoreController;
+use Exception;
+
+class BaseController extends CoreController
 {
     protected $models = [];
+    protected $data = [];
     protected $layout = 'layouts/base';
     protected $db;
-    protected $data = [];
-    protected $session;
-    protected $request;
-    protected $middlewares = [];
-    protected $mlSupport;
-    protected $start_time;
-
-    /**
-     * Register a middleware
-     */
-    protected function middleware($name, $options = [])
-    {
-        $this->middlewares[] = [
-            'name' => $name,
-            'options' => $options
-        ];
-    }
-
-    /**
-     * Alias for render()
-     */
-    public function view($view, $data = [])
-    {
-        return $this->render($view, $data);
-    }
 
     public function __construct()
     {
-        // Initialize data array
-        $this->data = [];
+        parent::__construct();
+        // Re-enable database connection with proper config
+        $dbConfig = [
+            'host' => 'localhost',
+            'database' => 'apsdreamhome',
+            'username' => 'root',
+            'password' => '',  // XAMPP MySQL root has no password
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'port' => 3306,
+        ];
+        $this->db = \App\Core\Database::getInstance($dbConfig);
+        $this->loadModels();
+        $this->getCsrfToken();
+    }
 
-        // Initialize session
-        $this->session = $this;
+    /**
+     * Validate CSRF token from request
+     */
+    public function validateCsrfToken($token = null): bool
+    {
+        if ($token === null) {
+            $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+        }
+        return $this->verifyCsrfToken($token);
+    }
 
-        // Initialize request
-        $this->request = \App\Core\Http\Request::createFromGlobals();
-
-        // Initialize database
-        $this->db = \App\Core\Database\Database::getInstance();
-
-        // Initialize Localization Service (mlSupport) if available
-        if (class_exists('\App\Services\Localization\LocalizationService')) {
-            try {
-                // Try to initialize localization service. 
-                // Note: It requires a logger, we'll use a basic error_log wrapper if needed, 
-                // but for now we'll just check if it can be instantiated or if it has a static access.
-                // Since it doesn't have getInstance, we check for a global or app-level registry.
-                if (method_exists('\App\Services\Localization\LocalizationService', 'getInstance')) {
-                    $this->mlSupport = \App\Services\Localization\LocalizationService::getInstance();
-                }
-            } catch (\Exception $e) {
-                error_log("Failed to initialize LocalizationService: " . $e->getMessage());
-            }
+    /**
+     * CSRF token utilities
+     */
+    protected function getCsrfToken(): string
+    {
+        if (!$this->session->isStarted()) {
+            $this->session->start();
         }
 
-        // Automated CSRF protection for POST requests
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-            if (!$this->validateCsrfToken($token)) {
-                \App\Core\ErrorHandler::render(403, "Invalid or missing CSRF token.");
-                exit;
-            }
+        if (!$this->session->has('csrf_token')) {
+            $this->session->set('csrf_token', bin2hex(random_bytes(32)));
         }
+        return $this->session->get('csrf_token');
     }
 
-    /**
-     * Public method to get request object
-     */
-    public function getRequest()
+    protected function verifyCsrfToken(?string $token): bool
     {
-        return $this->request;
-    }
-
-    /**
-     * Public method to get database object
-     */
-    public function getDatabase()
-    {
-        return $this->db;
-    }
-
-    /**
-     * Public method to get session object
-     */
-    public function getSession()
-    {
-        return $this->session;
-    }
-
-    /**
-     * Get the request object (alias for Consistency)
-     */
-    public function request()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Send JSON response (alias for consistency)
-     */
-    public function json($data, int $status = 200)
-    {
-        return $this->jsonResponse($data, $status);
-    }
-
-    /**
-     * Public method to get request header
-     */
-    public function getHeader($name)
-    {
-        return $this->request->getHeader($name);
-    }
-
-    /**
-     * Render a view with data
-     */
-    protected function render($view, $data = [])
-    {
-        // Start output buffering to prevent header issues
-        ob_start();
-
-        // Merge with class data
-        $data = array_merge($this->data, $data);
-
-        // Extract data to variables
-        extract($data);
-
-        // Include view content
-        $viewPath = __DIR__ . '/../../views/' . $view . '.php';
-        if (file_exists($viewPath)) {
-            include $viewPath;
-        } else {
-            echo "View not found: " . $view;
-        }
-
-        // Get content and clean buffer
-        $content = ob_get_clean();
-
-        // If layout exists, render layout with content
-        if ($this->layout) {
-            ob_start();
-            $layoutPath = __DIR__ . '/../../views/' . $this->layout . '.php';
-            if (file_exists($layoutPath)) {
-                include $layoutPath;
-            } else {
-                echo $content;
-            }
-            echo ob_get_clean();
-        } else {
-            echo $content;
-        }
-    }
-
-    /**
-     * Redirect to another URL
-     */
-    protected function redirect($url)
-    {
-        if (!headers_sent()) {
-            header("Location: " . $url);
-        }
-        exit;
+        $storedToken = $this->session->get('csrf_token');
+        return !empty($storedToken) && is_string($token) && hash_equals($storedToken, $token);
     }
 
     /**
      * Set flash message
      */
-    protected function setFlash($key, $value)
+    protected function setFlash(string $type, string $message): void
     {
-        $_SESSION[$key] = $value;
-    }
-
-    /**
-     * Sanitize input
-     */
-    protected function sanitize($input)
-    {
-        if (is_string($input)) {
-            return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
-        }
-        return $input;
+        $this->session->set($type, $message);
     }
 
     /**
      * Get flash message
      */
-    protected function getFlash($key, $default = null)
+    protected function getFlash(string $type): ?string
     {
-        if (isset($_SESSION[$key])) {
-            $value = $_SESSION[$key];
-            unset($_SESSION[$key]);
-            return $value;
+        if ($this->session->has($type)) {
+            $message = $this->session->get($type);
+            $this->session->remove($type);
+            return $message;
         }
-        return $default;
+        return null;
     }
 
     /**
-     * Get session value
+     * Require user to be logged in
      */
-    public function get($key, $default = null)
+    public function requireLogin()
     {
-        return $_SESSION[$key] ?? $default;
+        if (!$this->isLoggedIn()) {
+            if ($this->isAjaxRequest()) {
+                $this->json(['error' => 'Authentication required'], 401);
+            } else {
+                $this->session->set('redirect_url', $_SERVER['REQUEST_URI']);
+                $this->redirect('login');
+                return;
+            }
+        }
     }
 
     /**
-     * Set session value
+     * Check if user is logged in
      */
-    public function set($key, $value)
+    protected function isLoggedIn(): bool
     {
-        $_SESSION[$key] = $value;
+        if ($this->session->has('user_id') || $this->session->has('auser') || $this->session->has('associate_id') || $this->session->has('admin_logged_in')) {
+            return true;
+        }
+
+        if (isset($this->auth)) {
+            if (method_exists($this->auth, 'isLoggedIn')) {
+                return $this->auth->isLoggedIn();
+            }
+            if (method_exists($this->auth, 'check')) {
+                return $this->auth->check();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if current user is an associate
+     */
+    public function isAssociateLoggedIn(): bool
+    {
+        return isset($_SESSION['associate_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'associate');
+    }
+
+    /**
+     * Require user to be an admin
+     */
+    public function requireAdmin()
+    {
+        if (!$this->isAdmin()) {
+            if ($this->isAjaxRequest()) {
+                $this->json(['error' => 'Admin access required'], 403);
+            } else {
+                $this->forbidden();
+            }
+        }
+    }
+
+    /**
+     * Load all available models for easy access
+     */
+    protected function loadModels()
+    {
+        $modelFiles = [
+            'User' => '../models/User.php',
+            'Property' => '../models/Property.php',
+            'Associate' => '../models/Associate.php',
+            'Customer' => '../models/Customer.php',
+            'Payment' => '../models/Payment.php',
+            'Project' => '../models/Project.php',
+            'Farmer' => '../models/Farmer.php',
+            'CRMLead' => '../models/CRMLead.php',
+            'AssociateMLM' => '../models/AssociateMLM.php',
+            'PropertyFavorite' => '../models/PropertyFavorite.php',
+            'PropertyInquiry' => '../models/PropertyInquiry.php',
+            'Admin' => '../models/Admin.php',
+            'Employee' => '../models/Employee.php',
+            'AIChatbot' => '../models/AIChatbot.php'
+        ];
+
+        foreach ($modelFiles as $modelName => $filePath) {
+            $fullPath = __DIR__ . '/' . $filePath;
+            if (file_exists($fullPath)) {
+                $className = "App\\Models\\" . $modelName;
+                if (class_exists($className)) {
+                    $this->models[$modelName] = new $className();
+                }
+            }
+        }
+    }
+
+    protected function getViewsBasePath(): string
+    {
+        if (defined('APP_ROOT')) {
+            return rtrim(APP_ROOT, '/\\') . '/app/views/';
+        }
+
+        return dirname(__DIR__, 2) . '/views/';
     }
 
     /**
      * Get model instance
      */
-    protected function model($name)
+    public function model($modelName)
     {
-        if (!isset($this->models[$name])) {
-            $class = "App\\Models\\{$name}";
-            $this->models[$name] = new $class();
-        }
-        return $this->models[$name];
+        return $this->models[$modelName] ?? null;
     }
 
     /**
-     * Sanitize input
+     * Check if current user is an admin
      */
-    protected function sanitizeInput($input)
+    public function isAdmin(): bool
     {
-        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+        if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
+            return true;
+        }
+
+        if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+            return true;
+        }
+
+        if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+            return true;
+        }
+
+        // Fallback to auth instance if session role is not set
+        if (isset($this->auth)) {
+            if (method_exists($this->auth, 'isAdmin') && $this->auth->isAdmin()) {
+                return true;
+            }
+            if (method_exists($this->auth, 'user')) {
+                $user = $this->auth->user();
+                return $user && isset($user->role) && $user->role === 'admin';
+            }
+        }
+
+        return false;
     }
 
     /**
-     * Validate email
+     * Redirect to a specific path
+     */
+    public function redirect($path, $statusCode = 302)
+    {
+        header("Location: " . BASE_URL . $path);
+        exit;
+    }
+
+    /**
+     * Render view with data, falling back to legacy renderer when core session utilities are unavailable
+     */
+    public function render($view, $data = [], $layout = null, $echo = true)
+    {
+        $this->data = array_merge($this->data ?? [], $data);
+        $layout = $layout ?? $this->layout ?? 'layouts/base';
+
+        if ($this->session && method_exists($this->session, 'getFlashBag')) {
+            // Add flash messages to all views
+            $data['flash'] = $this->session->getFlashBag()->all();
+            $this->session->getFlashBag()->clear(); // Clear flash messages after retrieving
+
+            // Add auth and user to all views
+            $output = parent::view($view, $data, $layout);
+            if ($echo) {
+                echo $output;
+            }
+            return $output;
+        }
+
+        // Fallback implementation for when session/flash bag is not available
+        extract($data, EXTR_SKIP);
+
+        $basePath = rtrim($this->getViewsBasePath(), '/\\') . '/';
+        $viewPath = $basePath . ltrim(str_replace('\\', '/', $view), '/') . '.php';
+
+        if (!file_exists($viewPath)) {
+            throw new Exception("View not found: {$viewPath}");
+        }
+
+        ob_start();
+        include $viewPath;
+        $content = ob_get_clean();
+
+        if ($layout) {
+            $layoutPath = $basePath . ltrim(str_replace('\\', '/', $layout), '/') . '.php';
+            if (file_exists($layoutPath)) {
+                // Pass content to layout - layout expects $content variable
+                $data['content'] = $content;
+                extract($data, EXTR_SKIP);
+                ob_start();
+                include $layoutPath;
+                $output = ob_get_clean();
+
+                if ($echo) {
+                    echo $output;
+                }
+                return $output;
+            }
+        }
+
+        if ($echo) {
+            echo $content;
+        }
+        return $content;
+    }
+    /**
+     * Render error page
+     */
+    public function renderError($message)
+    {
+        return $this->notFound($message);
+    }
+
+    /**
+     * Get base URL
+     */
+    public function getBaseUrl()
+    {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'];
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+        return $protocol . $host . $scriptDir . '/';
+    }
+
+    /**
+     * Check if current user is associate
+     */
+    public function isAssociate()
+    {
+        return isset($_SESSION['associate_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'associate');
+    }
+
+    /**
+     * Get current user ID
+     */
+    public function getCurrentUserId()
+    {
+        return $_SESSION['user_id'] ?? null;
+    }
+
+    /**
+     * Send JSON response (wrapper for json())
+     * 
+     * @param mixed $data
+     * @param int $statusCode
+     */
+    protected function jsonResponse($data, int $statusCode = 200)
+    {
+        return $this->json($data, $statusCode);
+    }
+
+    /**
+     * Send JSON error response
+     * 
+     * @param string $message
+     * @param int $statusCode
+     */
+    protected function jsonError(string $message, int $statusCode = 400)
+    {
+        return $this->json(['success' => false, 'error' => $message], $statusCode);
+    }
+
+    /**
+     * Get current associate ID
+     */
+    public function getCurrentAssociateId()
+    {
+        return $_SESSION['associate_id'] ?? null;
+    }
+
+    /**
+     * Send a 403 Forbidden response
+     */
+    public function forbidden($message = 'Forbidden')
+    {
+        return parent::forbidden($message);
+    }
+
+    /**
+     * Check if request is AJAX
+     */
+    public function isAjaxRequest()
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+
+    /**
+     * Set flash message for next request
+     */
+    protected function setFlashMessage($type, $message)
+    {
+        $_SESSION['flash_message'] = [
+            'type' => $type,
+            'message' => $message
+        ];
+    }
+
+    /**
+     * Get flash message if exists
+     */
+    protected function getFlashMessage()
+    {
+        if (isset($_SESSION['flash_message'])) {
+            $message = $_SESSION['flash_message'];
+            unset($_SESSION['flash_message']);
+            return $message;
+        }
+        return null;
+    }
+
+    /**
+     * Handle file upload
+     */
+    protected function handleFileUpload($file, $allowedTypes = [], $maxSize = 5242880)
+    {
+        if (!isset($file['tmp_name']) || empty($file['tmp_name'])) {
+            return ['success' => false, 'error' => 'No file uploaded'];
+        }
+
+        // Check file size
+        if ($file['size'] > $maxSize) {
+            return ['success' => false, 'error' => 'File size too large'];
+        }
+
+        // Check file type
+        $fileType = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!empty($allowedTypes) && !in_array($fileType, $allowedTypes)) {
+            return ['success' => false, 'error' => 'Invalid file type'];
+        }
+
+        // Generate unique filename
+        $newName = uniqid() . '.' . $fileType;
+        $uploadPath = __DIR__ . '/../../uploads/' . $newName;
+
+        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            return [
+                'success' => true,
+                'filename' => $newName,
+                'path' => $uploadPath,
+                'url' => BASE_URL . 'uploads/' . $newName
+            ];
+        }
+
+        return ['success' => false, 'error' => 'Upload failed'];
+    }
+
+    /**
+     * Sanitize input data
+     */
+    protected function sanitizeInput($data)
+    {
+        if (is_array($data)) {
+            return array_map([$this, 'sanitizeInput'], $data);
+        }
+        return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Validate email address
      */
     protected function validateEmail($email)
     {
@@ -253,319 +452,117 @@ class BaseController
     }
 
     /**
-     * Validate phone
+     * Validate phone number
      */
     protected function validatePhone($phone)
     {
-        return preg_match('/^[0-9]{10}$/', $phone);
+        return preg_match('/^[0-9]{10,15}$/', $phone);
     }
 
     /**
-     * Get CSRF token
+     * Format currency
      */
-    protected function getCsrfToken()
+    protected function formatCurrency($amount, $currency = '₹')
     {
-        if (!isset($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        return $currency . number_format($amount, 0, '.', ',');
+    }
+
+    /**
+     * Format date
+     */
+    protected function formatDate($date, $format = 'd M Y')
+    {
+        return date($format, strtotime($date));
+    }
+
+    /**
+     * Get user IP address
+     */
+    protected function getUserIP()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            return $_SERVER['REMOTE_ADDR'];
         }
-        return $_SESSION['csrf_token'];
     }
 
     /**
-     * Validate CSRF token
+     * Log user activity
      */
-    protected function validateCsrfToken($token)
+    protected function logActivity($action, $details = '')
     {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-    }
+        $logData = [
+            'user_id' => $this->getCurrentUserId(),
+            'associate_id' => $this->getCurrentAssociateId(),
+            'action' => $action,
+            'details' => $details,
+            'ip_address' => $this->getUserIP(),
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+            'created_at' => date('Y-m-d H:i:s')
+        ];
 
-    /**
-     * Require user to be logged in
-     */
-    protected function requireLogin()
-    {
-        if (!$this->isLoggedIn()) {
-            if (!headers_sent()) {
-                header("Location: " . (defined('BASE_URL') ? BASE_URL : '') . "/login");
+        // Log to database if activity logging table exists
+        try {
+            if ($this->db) {
+                $stmt = $this->db->prepare("
+                    INSERT INTO user_activity_logs 
+                    (user_id, associate_id, action, details, ip_address, user_agent, created_at)
+                    VALUES (:userId, :associateId, :action, :details, :ipAddress, :userAgent, :createdAt)
+                ");
+                $stmt->execute([
+                    'userId' => $logData['user_id'],
+                    'associateId' => $logData['associate_id'],
+                    'action' => $logData['action'],
+                    'details' => $logData['details'],
+                    'ipAddress' => $logData['ip_address'],
+                    'userAgent' => $logData['user_agent'],
+                    'createdAt' => $logData['created_at']
+                ]);
             }
-            exit;
+        } catch (Exception $e) {
+            logger()->error('Activity logging failed: ' . $e->getMessage());
         }
     }
 
     /**
-     * Get configuration value
+     * Check if feature is enabled
+     */
+    protected function isFeatureEnabled($feature)
+    {
+        $enabledFeatures = [
+            'mlm' => true,
+            'ai_chatbot' => true,
+            'payment_gateway' => true,
+            'analytics' => true,
+            'metaverse' => true,
+            'quantum_computing' => true,
+            'sustainability' => true,
+            'blockchain' => true,
+            'edge_computing' => true
+        ];
+
+        return isset($enabledFeatures[$feature]) && $enabledFeatures[$feature];
+    }
+
+    /**
+     * Get system configuration
      */
     protected function getConfig($key, $default = null)
     {
         $config = [
             'app_name' => 'APS Dream Home',
-            'app_url' => defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome',
-            'timezone' => 'Asia/Kolkata'
+            'app_version' => '2.0.0',
+            'company_name' => 'APS Dream Home Pvt Ltd',
+            'support_email' => 'support@apsdreamhome.com',
+            'pagination_limit' => 12,
+            'file_upload_max_size' => 5242880, // 5MB
+            'allowed_image_types' => ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+            'session_timeout' => 3600 // 1 hour
         ];
 
         return $config[$key] ?? $default;
-    }
-
-    /**
-     * Check if user has a specific role
-     */
-    protected function hasRole($role)
-    {
-        return ($_SESSION['user_role'] ?? $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '') === $role;
-    }
-
-    /**
-     * Return a JSON response
-     */
-    public function response($data, int $status = 200)
-    {
-        header('Content-Type: application/json');
-        http_response_code($status);
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * Return a JSON response (alias for consistency)
-     */
-    public function jsonResponse($data, int $status = 200)
-    {
-        return $this->response($data, $status);
-    }
-
-    /**
-     * Return a JSON error response
-     */
-    protected function jsonError($message, $status = 400)
-    {
-        return $this->jsonResponse(['success' => false, 'error' => $message], $status);
-    }
-
-    /**
-     * Return a 404 Not Found response
-     */
-    protected function notFound($message = "Resource not found")
-    {
-        if ($this->request->isAjax() || strpos($_SERVER['REQUEST_URI'], '/api/') !== false) {
-            return $this->jsonError($message, 404);
-        }
-
-        http_response_code(404);
-        return $this->render('errors/404', ['message' => $message, 'page_title' => '404 Not Found']);
-    }
-
-    /**
-     * Return a 403 Forbidden response
-     */
-    protected function forbidden($message = "Access denied")
-    {
-        if ($this->request->isAjax() || strpos($_SERVER['REQUEST_URI'], '/api/') !== false) {
-            return $this->jsonError($message, 403);
-        }
-
-        http_response_code(403);
-        return $this->render('errors/403', ['message' => $message, 'page_title' => '403 Forbidden']);
-    }
-
-    /**
-     * Alias for validateCsrfToken
-     */
-    protected function verifyCsrfToken($token)
-    {
-        return $this->validateCsrfToken($token);
-    }
-
-    /**
-     * Get the current logged in user
-     */
-    protected function getCurrentUser()
-    {
-        if (!$this->isLoggedIn()) {
-            return null;
-        }
-
-        $userId = $_SESSION['user_id'];
-        $userModel = $this->model('User');
-        return $userModel->getUserById($userId);
-    }
-
-    /**
-     * Log a lead activity
-     */
-    protected function logLeadActivity($leadId, $type, $description, $metadata = [])
-    {
-        try {
-            $db = \App\Core\Database\Database::getInstance();
-            $sql = "INSERT INTO lead_activities (lead_id, activity_type, description, metadata, created_by, created_at) 
-                    VALUES (?, ?, ?, ?, ?, NOW())";
-            $db->execute($sql, [
-                $leadId,
-                $type,
-                $description,
-                json_encode($metadata),
-                $_SESSION['user_id'] ?? null
-            ]);
-            return true;
-        } catch (\Exception $e) {
-            error_log("Failed to log lead activity: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Load model (alias for model)
-     */
-    protected function modelLocal($modelName)
-    {
-        return $this->model($modelName);
-    }
-
-    /**
-     * Get request method
-     */
-    protected function method()
-    {
-        return $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    }
-
-    /**
-     * Get POST data
-     */
-    protected function post($key = null, $default = null)
-    {
-        if ($key === null) {
-            return $_POST;
-        }
-        return $_POST[$key] ?? $default;
-    }
-
-    /**
-     * Get GET data
-     */
-    protected function getLocal($key = null, $default = null)
-    {
-        if ($key === null) {
-            return $_GET;
-        }
-        return $_GET[$key] ?? $default;
-    }
-
-    /**
-     * Get request files
-     */
-    protected function files($key = null)
-    {
-        if ($key === null) {
-            return $_FILES;
-        }
-        return $_FILES[$key] ?? null;
-    }
-
-    /**
-     * Validate CSRF token
-     */
-    protected function validateCsrfTokenLocal()
-    {
-        $token = $_POST['csrf_token'] ?? '';
-        return $token === $_SESSION['csrf_token'] ?? '';
-    }
-
-    /**
-     * Log activity
-     */
-    protected function logActivity($action, $details = '')
-    {
-        try {
-            $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
-            if (!$userId) return;
-
-            $db = \App\Core\Database\Database::getInstance();
-            $sql = "INSERT INTO activity_logs (user_id, action, details, created_at) VALUES (?, ?, ?, NOW())";
-            $db->execute($sql, [$userId, $action, $details]);
-        } catch (\Exception $e) {
-            error_log("Failed to log activity: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Go back to previous page
-     */
-    protected function back()
-    {
-        $referer = $_SERVER['HTTP_REFERER'] ?? '/';
-        header("Location: $referer");
-        exit();
-    }
-
-    /**
-     * Sanitize input
-     */
-    protected function sanitizeLocal($input)
-    {
-        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
-    }
-
-    /**
-     * Check if current user is admin
-     */
-    protected function isAdmin()
-    {
-        return isset($_SESSION['admin_id']);
-    }
-
-    /**
-     * Require admin access
-     */
-    protected function requireAdmin()
-    {
-        if (!$this->isAdmin()) {
-            $_SESSION['error_message'] = 'Admin access required';
-            header('Location: /admin/login');
-            exit();
-        }
-    }
-
-    /**
-     * Check if current user is logged in
-     */
-    protected function isLoggedIn()
-    {
-        return isset($_SESSION['user_id']) || isset($_SESSION['admin_id']);
-    }
-
-    /**
-     * Check if current user is associate
-     */
-    protected function isAssociate()
-    {
-        return isset($_SESSION['associate_id']);
-    }
-
-    /**
-     * Get views base path
-     */
-    protected function getViewsBasePath()
-    {
-        return realpath(__DIR__ . '/../../views');
-    }
-
-    /**
-     * Start performance monitoring
-     */
-    protected function startPerformanceMonitoring()
-    {
-        $this->start_time = microtime(true);
-    }
-
-    /**
-     * End performance monitoring
-     */
-    protected function endPerformanceMonitoring()
-    {
-        if (isset($this->start_time)) {
-            $end_time = microtime(true);
-            $execution_time = $end_time - $this->start_time;
-            error_log("Page execution time: " . number_format($execution_time, 4) . " seconds");
-        }
     }
 }
