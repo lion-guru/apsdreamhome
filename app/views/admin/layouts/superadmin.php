@@ -559,6 +559,74 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <?php endif; ?>
                 </ul>
             <?php endforeach; ?>
+        <?php else: ?>
+            <!-- Default menus when no menus passed -->
+            <div class="sidebar-section">CRM & Leads</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/leads" class="sidebar-link"><i class="fas fa-bullseye"></i><span>All Leads</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/customers" class="sidebar-link"><i class="fas fa-user-check"></i><span>Customers</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/campaigns" class="sidebar-link"><i class="fas fa-bullhorn"></i><span>Campaigns</span></a></li>
+            </ul>
+            
+            <div class="sidebar-section">Properties</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/properties" class="sidebar-link"><i class="fas fa-building"></i><span>All Properties</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/projects" class="sidebar-link"><i class="fas fa-city"></i><span>Projects</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/plots" class="sidebar-link"><i class="fas fa-map"></i><span>Plots / Land</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/bookings" class="sidebar-link"><i class="fas fa-file-contract"></i><span>Bookings</span></a></li>
+            </ul>
+            
+            <div class="sidebar-section">MLM Network</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/mlm/tree" class="sidebar-link"><i class="fas fa-sitemap"></i><span>Network Tree</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/mlm/associates" class="sidebar-link"><i class="fas fa-users"></i><span>Associates</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/mlm/commissions" class="sidebar-link"><i class="fas fa-percentage"></i><span>Commissions</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/mlm/payouts" class="sidebar-link"><i class="fas fa-rupee-sign"></i><span>Payouts</span></a></li>
+            </ul>
+            
+            <div class="sidebar-section">Financial</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/financial/transactions" class="sidebar-link"><i class="fas fa-exchange-alt"></i><span>Transactions</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/financial/invoices" class="sidebar-link"><i class="fas fa-file-invoice-dollar"></i><span>Invoices</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/financial/emi" class="sidebar-link"><i class="fas fa-calendar"></i><span>EMI Management</span></a></li>
+            </ul>
+            
+            <div class="sidebar-section">Team & HR</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/employees" class="sidebar-link"><i class="fas fa-user-friends"></i><span>Staff Members</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/attendance" class="sidebar-link"><i class="fas fa-clock"></i><span>Attendance</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/leaves" class="sidebar-link"><i class="fas fa-calendar-alt"></i><span>Leaves</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/payroll" class="sidebar-link"><i class="fas fa-money-bill"></i><span>Payroll</span></a></li>
+            </ul>
+            
+            <div class="sidebar-section">Marketing</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/marketing/campaigns" class="sidebar-link"><i class="fas fa-bullhorn"></i><span>Campaigns</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/marketing/email" class="sidebar-link"><i class="fas fa-envelope"></i><span>Email Templates</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/marketing/sms" class="sidebar-link"><i class="fas fa-comment-sms"></i><span>SMS Templates</span></a></li>
+            </ul>
+            
+            <div class="sidebar-section">Content</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/media" class="sidebar-link"><i class="fas fa-image"></i><span>Media Gallery</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/pages" class="sidebar-link"><i class="fas fa-file"></i><span>Pages</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/blog" class="sidebar-link"><i class="fas fa-newspaper"></i><span>Blog & News</span></a></li>
+            </ul>
+            
+            <div class="sidebar-section">Reports</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/reports/sales" class="sidebar-link"><i class="fas fa-chart-line"></i><span>Sales Reports</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/reports/mlm" class="sidebar-link"><i class="fas fa-sitemap"></i><span>MLM Reports</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/reports/financial" class="sidebar-link"><i class="fas fa-rupee-sign"></i><span>Financial Reports</span></a></li>
+            </ul>
+            
+            <div class="sidebar-section">System</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/settings" class="sidebar-link"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users" class="sidebar-link"><i class="fas fa-users-cog"></i><span>User Management</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/ai-settings" class="sidebar-link"><i class="fas fa-robot"></i><span>AI Settings</span></a></li>
+                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/backup" class="sidebar-link"><i class="fas fa-database"></i><span>Backup</span></a></li>
+            </ul>
         <?php endif; ?>
         
         <div class="sidebar-section">Account</div>

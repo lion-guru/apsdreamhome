@@ -184,7 +184,7 @@ class AdminBaseController extends BaseController
     /**
      * Render admin view with layout
      */
-    protected function render(string $view, array $data = [], string $layout = null)
+    public function render($view, $data = [], $layout = null, $echo = true)
     {
         // Add common data
         $data['currentUser'] = $this->currentUser;
@@ -209,7 +209,8 @@ class AdminBaseController extends BaseController
         ob_start();
         
         // Include the view
-        $viewPath = VIEW_PATH . '/' . str_replace('.', '/', $view) . '.php';
+        $viewBasePath = defined('VIEW_PATH') ? VIEW_PATH : (defined('APP_PATH') ? APP_PATH . '/views' : __DIR__ . '/../views');
+        $viewPath = $viewBasePath . '/' . str_replace('.', '/', $view) . '.php';
         if (file_exists($viewPath)) {
             include $viewPath;
         } else {
@@ -232,18 +233,19 @@ class AdminBaseController extends BaseController
      */
     protected function getLayoutPath(): string
     {
+        $viewPath = defined('VIEW_PATH') ? VIEW_PATH : APP_PATH . '/views';
         $layoutMap = [
-            'superadmin' => VIEW_PATH . '/admin/layouts/superadmin.php',
-            'executive' => VIEW_PATH . '/admin/layouts/executive.php',
-            'manager' => VIEW_PATH . '/admin/layouts/manager.php',
-            'team_lead' => VIEW_PATH . '/admin/layouts/team_lead.php',
-            'employee' => VIEW_PATH . '/admin/layouts/employee.php',
-            'associate' => VIEW_PATH . '/admin/layouts/associate.php',
-            'franchise' => VIEW_PATH . '/admin/layouts/franchise.php',
-            'customer' => VIEW_PATH . '/admin/layouts/customer.php',
-            'lead' => VIEW_PATH . '/admin/layouts/lead.php',
-            'guest' => VIEW_PATH . '/admin/layouts/guest.php',
-            'default' => VIEW_PATH . '/admin/layouts/default.php',
+            'superadmin' => $viewPath . '/admin/layouts/superadmin.php',
+            'executive' => $viewPath . '/admin/layouts/executive.php',
+            'manager' => $viewPath . '/admin/layouts/manager.php',
+            'team_lead' => $viewPath . '/admin/layouts/team_lead.php',
+            'employee' => $viewPath . '/admin/layouts/employee.php',
+            'associate' => $viewPath . '/admin/layouts/associate.php',
+            'franchise' => $viewPath . '/admin/layouts/franchise.php',
+            'customer' => $viewPath . '/admin/layouts/customer.php',
+            'lead' => $viewPath . '/admin/layouts/lead.php',
+            'guest' => $viewPath . '/admin/layouts/guest.php',
+            'default' => $viewPath . '/admin/layouts/default.php',
         ];
         
         return $layoutMap[$this->dashboardType] ?? $layoutMap['default'];
@@ -502,7 +504,7 @@ class AdminBaseController extends BaseController
     /**
      * JSON response for API
      */
-    protected function jsonResponse(array $data, int $statusCode = 200): void
+    protected function jsonResponse($data, int $statusCode = 200)
     {
         http_response_code($statusCode);
         header('Content-Type: application/json');

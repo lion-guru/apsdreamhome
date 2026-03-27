@@ -146,42 +146,46 @@ class Router
             error_log("ROUTER DEBUG: URI was empty, set to root: $uri");
         }
 
+        // Normalize URI - strip leading slash for consistent route matching
+        $uriForMatching = ($uri === '/') ? '/' : ltrim($uri, '/');
+        
         // Remove .php extension if present (for direct file access)
         $uri = preg_replace('/\.php$/', '', $uri);
         error_log("ROUTER DEBUG: After all processing - Final URI: $uri");
         error_log("FINAL ROUTER URI: $uri");
 
         // Debug: Check if route exists
-        error_log("ROUTER DEBUG: Looking for route: $method $uri");
+        error_log("ROUTER DEBUG: Looking for route: $method $uriForMatching");
 
-        if (!isset($this->routes[$method][$uri])) {
+        // Debug output - remove in production
+        file_put_contents(__DIR__ . '/../storage/logs/router_debug.log', 
+            "Looking for: $method $uriForMatching\n", FILE_APPEND);
+        file_put_contents(__DIR__ . '/../storage/logs/router_debug.log', 
+            "Is set? " . (isset($this->routes[$method][$uriForMatching]) ? 'YES' : 'NO') . "\n", FILE_APPEND);
+        if (isset($this->routes[$method][$uriForMatching])) {
+            file_put_contents(__DIR__ . '/../storage/logs/router_debug.log', 
+                "Value: " . print_r($this->routes[$method][$uriForMatching], true), FILE_APPEND);
+        }
+
+        if (!isset($this->routes[$method][$uriForMatching])) {
             error_log("ROUTER DEBUG: Route not found in routes array");
-
-            // For localhost, try to find route without leading slash
-            $uriWithoutSlash = ltrim($uri, '/');
-            if (isset($this->routes[$method][$uriWithoutSlash])) {
-                error_log("ROUTER DEBUG: Found route without slash: $uriWithoutSlash");
-                $uri = $uriWithoutSlash;
-                $routeData = $this->routes[$method][$uri];
+            // Try to match dynamic routes with parameters
+            $matchedRoute = $this->matchDynamicRoute($method, $uriForMatching);
+            if ($matchedRoute) {
+                $routeData = $matchedRoute['route_data'];
+                $params = $matchedRoute['params'];
+                error_log("ROUTER DEBUG: Found dynamic route");
             } else {
-                // Try to match dynamic routes with parameters
-                $matchedRoute = $this->matchDynamicRoute($method, $uri);
-                if ($matchedRoute) {
-                    $routeData = $matchedRoute['route_data'];
-                    $params = $matchedRoute['params'];
-                    error_log("ROUTER DEBUG: Found dynamic route");
-                } else {
-                    error_log("ROUTER DEBUG: No dynamic route found, returning 404");
-                    http_response_code(404);
-                    echo '<h1>404 - Page Not Found</h1>';
-                    echo '<p>The page you are looking for could not be found.</p>';
-                    echo '<p>Route: ' . htmlspecialchars($method . ' ' . $uri) . '</p>';
-                    return;
-                }
+                error_log("ROUTER DEBUG: No dynamic route found, returning 404");
+                http_response_code(404);
+                echo '<h1>404 - Page Not Found</h1>';
+                echo '<p>The page you requested could not be found.</p>';
+                echo '<p>Route: ' . htmlspecialchars($method . ' ' . $uriForMatching) . '</p>';
+                return;
             }
         } else {
             error_log("ROUTER DEBUG: Found exact route match");
-            $routeData = $this->routes[$method][$uri];
+            $routeData = $this->routes[$method][$uriForMatching];
         }
 
         // Support both old structure (string handler) and new (array with middleware)
@@ -219,6 +223,12 @@ class Router
                     // Remove 'App\' prefix to get relative path from app/ directory
                     $relativePath = substr($controller, 4);
                     $controllerFile = __DIR__ . '/../app/' . str_replace('\\', '/', $relativePath) . '.php';
+                } elseif (strpos($controller, 'Admin\\') === 0) {
+                    // Admin namespace: "Admin\AdminDashboardController"
+                    $controllerClass = "App\\Http\\Controllers\\" . $controller;
+                    $relativePath = substr($controller, 6); // Remove 'Admin' prefix (6 chars)
+                    $relativePath = ltrim($relativePath, '\\'); // Remove leading backslash if any
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/Admin/' . str_replace('\\', '/', $relativePath) . '.php';
                 } else {
                     // Simple or relative format: "HomeController" or "Front\PageController"
                     $controllerClass = "App\\Http\\Controllers\\" . $controller;
