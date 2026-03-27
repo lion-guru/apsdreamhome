@@ -78,10 +78,29 @@ spl_autoload_register(function ($class) {
             }
         }
     }
+    
+    // Special handling for Security class
+    if ($class === 'App\\Core\\Security' || $class === 'Security') {
+        $security_file = APS_APP . '/Core/Security.php';
+        if (file_exists($security_file)) {
+            require $security_file;
+        }
+    }
 });
 
 // Include required files
 require_once APS_ROOT . '/app/helpers.php';
+
+// Load Security class for global use
+if (!class_exists('Security', false)) {
+    $security_file = APS_APP . '/Core/Security.php';
+    if (file_exists($security_file)) {
+        require_once $security_file;
+        if (class_exists('App\\Core\\Security')) {
+            class_alias('App\\Core\\Security', 'Security');
+        }
+    }
+}
 
 // Preload Database class to avoid autoloader issues
 if (!class_exists('App\\Core\\Database\\Database', false)) {
