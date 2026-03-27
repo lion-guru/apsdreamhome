@@ -172,7 +172,12 @@ $router->get('/api/dashboard/cfo/expenses', 'App\Http\Controllers\RoleBasedDashb
 $router->get('/api/dashboard/builder/analytics', 'App\Http\Controllers\RoleBasedDashboardController@getConstructionAnalytics');
 $router->get('/api/dashboard/builder/materials', 'App\Http\Controllers\RoleBasedDashboardController@getMaterialStatus');
 $router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
+$router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
 $router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
+$router->get('/admin/profile', 'App\Http\Controllers\Admin\AdminProfileController@index');
+$router->post('/admin/profile', 'App\Http\Controllers\Admin\AdminProfileController@update');
+$router->get('/admin/profile/security', 'App\Http\Controllers\Admin\AdminProfileController@security');
+$router->post('/admin/profile/change-password', 'App\Http\Controllers\Admin\AdminProfileController@changePassword');
 $router->get('/admin/properties', 'App\Http\Controllers\Admin\AdminController@properties');
 $router->get('/admin/users', 'App\Http\Controllers\Admin\AdminController@users');
 
