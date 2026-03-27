@@ -85,6 +85,24 @@ class BaseController extends CoreController
     }
 
     /**
+     * Get input from GET or POST request
+     * 
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    protected function get($key, $default = null)
+    {
+        if (isset($_GET[$key])) {
+            return $_GET[$key];
+        }
+        if (isset($_POST[$key])) {
+            return $_POST[$key];
+        }
+        return $default;
+    }
+
+    /**
      * Require user to be logged in
      */
     public function requireLogin()

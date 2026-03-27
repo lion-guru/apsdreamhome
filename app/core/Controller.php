@@ -104,24 +104,26 @@ class Controller
      */
     public function __construct()
     {
+        error_log("CoreController: Starting constructor");
+        
         // Get the base path from APP_ROOT constant or use default
         $basePath = defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__, 2);
+        
+        error_log("CoreController: Getting App instance with basePath: $basePath");
         $app = App::getInstance($basePath);
+        error_log("CoreController: App instance obtained");
 
         $this->request = $app->request();
         $this->response = $app->response();
         $this->view = new View();
         $this->session = $app->session();
 
-        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:15 auth
-        if (!isset($app->auth)) {
-            // // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:15 CODE REMOVED: 2026-02-22 19:56:15
-        }
-
         $this->auth = $app->auth ?? null;
         $this->db = $app->db();
         $this->session = $app->session();
         $this->app = $app;
+        
+        error_log("CoreController: Constructor complete");
     }
 
     /**
