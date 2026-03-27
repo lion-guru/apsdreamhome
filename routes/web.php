@@ -47,23 +47,31 @@ $router->post('/admin/legal-pages/update-privacy', 'Admin\\LegalPagesController@
 
 // Admin Layout Manager
 $router->get('/admin/layout-manager', 'Admin\\LayoutController@layoutManager');
+$router->post('/admin/layout-manager', 'Admin\\LayoutController@updateLayoutSettings');
 
 // Customer Authentication
 $router->get('/register', 'Auth\\CustomerAuthController@register');
+$router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
 $router->get('/login', 'Auth\\CustomerAuthController@login');
+$router->post('/login', 'Auth\\CustomerAuthController@authenticate');
 
 // Agent Authentication
 $router->get('/agent/register', 'Auth\AgentAuthController@register');
+$router->post('/agent/register', 'Auth\AgentAuthController@handleRegister');
 $router->get('/agent/login', 'AgentController@login');
+$router->post('/agent/login', 'AgentController@authenticate');
 
 // Associate Authentication
 $router->get('/associate/register', 'Auth\AssociateAuthController@associateRegister');
+$router->post('/associate/register', 'Auth\AssociateAuthController@handleAssociateRegister');
 $router->get('/associate/login', 'Auth\AssociateAuthController@associateLogin');
+$router->post('/associate/login', 'Auth\AssociateAuthController@authenticateAssociate');
 
 // Dashboard routes (protected)
 $router->get('/dashboard', 'DashboardController@index');
 $router->get('/dashboard/customer', 'DashboardController@customer');
 $router->get('/dashboard/profile', 'DashboardController@profile');
+$router->post('/dashboard/profile', 'DashboardController@updateProfile');
 $router->get('/dashboard/favorites', 'DashboardController@favorites');
 $router->post('/dashboard/favorites/add', 'DashboardController@addFavorite');
 $router->post('/dashboard/favorites/remove', 'DashboardController@removeFavorite');
@@ -184,6 +192,7 @@ $router->get('/admin/users', 'App\Http\Controllers\Admin\AdminController@users')
 // Admin Booking CRUD Routes
 $router->get('/admin/bookings', 'App\Http\Controllers\Admin\BookingController@index');
 $router->get('/admin/bookings/create', 'App\Http\Controllers\Admin\BookingController@create');
+$router->post('/admin/bookings', 'App\Http\Controllers\Admin\BookingController@store');
 $router->get('/admin/bookings/{id}', 'App\Http\Controllers\Admin\BookingController@show');
 $router->get('/admin/bookings/{id}/edit', 'App\Http\Controllers\Admin\BookingController@edit');
 $router->post('/admin/bookings/{id}/update', 'App\Http\Controllers\Admin\BookingController@update');
@@ -193,6 +202,7 @@ $router->post('/admin/bookings/{id}/payment', 'App\Http\Controllers\Admin\Bookin
 // Admin Site Management Routes
 $router->get('/admin/sites', 'App\Http\Controllers\Admin\SiteController@index');
 $router->get('/admin/sites/create', 'App\Http\Controllers\Admin\SiteController@create');
+$router->post('/admin/sites', 'App\Http\Controllers\Admin\SiteController@store');
 $router->get('/admin/sites/{id}', 'App\Http\Controllers\Admin\SiteController@show');
 $router->get('/admin/sites/{id}/edit', 'App\Http\Controllers\Admin\SiteController@edit');
 $router->post('/admin/sites/{id}/update', 'App\Http\Controllers\Admin\SiteController@update');
@@ -201,6 +211,7 @@ $router->post('/admin/sites/{id}/destroy', 'App\Http\Controllers\Admin\SiteContr
 // Admin Plot Management Routes
 $router->get('/admin/plots', 'App\Http\Controllers\Admin\PlotManagementController@index');
 $router->get('/admin/plots/create', 'App\Http\Controllers\Admin\PlotManagementController@create');
+$router->post('/admin/plots', 'App\Http\Controllers\Admin\PlotManagementController@store');
 $router->get('/admin/plots/{id}', 'App\Http\Controllers\Admin\PlotManagementController@show');
 $router->get('/admin/plots/{id}/edit', 'App\Http\Controllers\Admin\PlotManagementController@edit');
 $router->post('/admin/plots/{id}/update', 'App\Http\Controllers\Admin\PlotManagementController@update');
@@ -209,7 +220,9 @@ $router->get('/admin/plots/check-availability', 'App\Http\Controllers\Admin\Plot
 $router->post('/admin/plots/{id}/update-status', 'App\Http\Controllers\Admin\PlotManagementController@updateStatus');
 
 // Admin Property Management Routes
+$router->get('/admin/properties', 'App\Http\Controllers\Admin\PropertyManagementController@index');
 $router->get('/admin/properties/create', 'App\Http\Controllers\Admin\PropertyManagementController@create');
+$router->post('/admin/properties', 'App\Http\Controllers\Admin\PropertyManagementController@store');
 $router->get('/admin/properties/{id}', 'App\Http\Controllers\Admin\PropertyManagementController@show');
 $router->get('/admin/properties/{id}/edit', 'App\Http\Controllers\Admin\PropertyManagementController@edit');
 $router->post('/admin/properties/{id}/update', 'App\Http\Controllers\Admin\PropertyManagementController@update');
@@ -237,29 +250,43 @@ $router->get('/api/gemini/status', 'Api\\GeminiApiController@getStatus');
 
 // Employee System Routes
 $router->get('/employee/login', 'Employee\\EmployeeController@login');
+$router->post('/employee/login', 'Employee\\EmployeeController@authenticate');
 $router->get('/employee/logout', 'Employee\\EmployeeController@logout');
 $router->get('/employee/dashboard', 'Employee\\EmployeeController@dashboard');
 $router->get('/employee/profile', 'Employee\\EmployeeController@profile');
+$router->post('/employee/profile', 'Employee\\EmployeeController@updateProfile');
 $router->post('/employee/checkin', 'Employee\\EmployeeController@checkIn');
 $router->post('/employee/checkout', 'Employee\\EmployeeController@checkOut');
 $router->post('/employee/api/update-task', 'Employee\\EmployeeController@updateTask');
 
 // Admin Authentication
+$router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
+$router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
+$router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
 
 // Admin Dashboard
+$router->get('/admin/dashboard', 'App\Http\Controllers\Admin\AdminDashboardController@index');
+$router->get('/admin/dashboard/cm', 'App\Http\Controllers\Admin\CMDashboardController@index');
 
 // Properties
+$router->get('/properties', 'Front\\PageController@properties');
+$router->get('/properties/{id}', 'Front\\PageController@propertyDetails');
 $router->get('/company/projects', 'Front\\PageController@projects');
 $router->get('/projects/{slug}', 'Front\\PageController@projectDetails');
 
 // Careers
 $router->get('/careers', 'Front\\PageController@careers');
 $router->get('/careers/apply', 'Front\PageController@careerApply');
+$router->post('/careers/apply', 'Front\PageController@submitCareerApplication');
+$router->get('/company/projects', 'Front\PageController@projects');
 $router->get('/blog', 'Front\PageController@blog');
 $router->get('/blog/{slug}', 'Front\PageController@blogPost');
 $router->get('/faq', 'Front\PageController@faq');
+$router->get('/team', 'Front\PageController@team');
+$router->get('/testimonials', 'Front\PageController@testimonials');
 $router->get('/gallery', 'GalleryController@index');
 $router->get('/gallery/project/{projectId}', 'GalleryController@project');
+$router->get('/resell', 'ResellController@index');
 
 // Map routes
 $router->get('/map', 'MapController@index');
@@ -271,6 +298,7 @@ $router->get('/map/location-suggestions', 'MapController@getLocationSuggestions'
 require_once __DIR__ . '/api.php';
 
 // Admin Dashboard routes (Modern MVC)
+$router->get('/admin/dashboard', 'Admin\AdminDashboardController@dashboard');
 $router->get('/admin/stats', 'Admin\AdminDashboardController@getStats');
 
 // Career/HR routes (Modern MVC) - Using Front\PageController for public pages
@@ -288,12 +316,15 @@ $router->post('/land/acquisition/add', 'Land\PlottingController@addAcquisition')
 // Media Library routes (Modern MVC)
 $router->get('/media/library', 'Media\MediaLibraryController@index');
 $router->get('/media/upload', 'Media\MediaLibraryController@upload');
+$router->post('/media/upload', 'Media\MediaLibraryController@handleUpload');
 $router->get('/media/file/{id}', 'Media\MediaLibraryController@viewFile');
 $router->post('/media/file/{id}/update', 'Media\MediaLibraryController@updateFile');
+$router->delete('/media/file/{id}', 'Media\MediaLibraryController@deleteFile');
 $router->get('/media/categories', 'Media\MediaLibraryController@categories');
 $router->get('/media/stats', 'Media\MediaLibraryController@getStats');
 
 // Admin routes (Modern MVC)
+$router->get('/admin/stats', 'Admin\AdminController@getStats');
 $router->get('/admin/activities', 'Admin\AdminController@getRecentActivities');
 $router->get('/admin/analytics/properties', 'Admin\AdminController@propertyAnalytics');
 $router->get('/admin/analytics/users', 'Admin\AdminController@getUserManagementData');
@@ -310,6 +341,7 @@ $router->get('/media/properties', 'Admin\\MediaController@propertyImages');
 $router->get('/media/projects', 'Admin\\MediaController@getProjectImages');
 $router->get('/media/documents', 'Admin\\MediaController@getDocuments');
 $router->get('/media/carousel', 'Admin\\MediaController@getCarouselImages');
+$router->post('/media/upload', 'Admin\\MediaController@upload');
 $router->get('/media/url/{id}', 'Admin\\MediaController@getMediaUrl');
 
 // Event routes (Modern MVC)
@@ -327,6 +359,8 @@ $router->post('/events/create-tables', 'EventController@createTables');
 $router->get('/performance/dashboard', 'PerformanceController@dashboard');
 $router->get('/performance/cache/{key}', 'PerformanceController@getCache');
 $router->post('/performance/cache', 'PerformanceController@setCache');
+$router->delete('/performance/cache/{key}', 'PerformanceController@deleteCache');
+$router->delete('/performance/cache', 'PerformanceController@clearCache');
 $router->get('/performance/stats', 'PerformanceController@getStats');
 $router->post('/performance/optimize', 'PerformanceController@optimize');
 
@@ -335,10 +369,12 @@ $router->get('/marketing/dashboard', 'Marketing\MarketingAutomationController@da
 $router->get('/marketing/leads', 'Marketing\MarketingAutomationController@leads');
 $router->get('/marketing/lead/{id}', 'Marketing\MarketingAutomationController@leadDetails');
 $router->get('/marketing/lead/capture', 'Marketing\MarketingAutomationController@captureLead');
+$router->post('/marketing/lead/capture', 'Marketing\MarketingAutomationController@handleCaptureLead');
 $router->post('/marketing/lead/{id}/status', 'Marketing\MarketingAutomationController@updateLeadStatus');
 $router->post('/marketing/lead/{id}/score', 'Marketing\MarketingAutomationController@assignLeadScore');
 $router->get('/marketing/campaigns', 'Marketing\MarketingAutomationController@campaigns');
 $router->get('/marketing/campaign/create', 'Marketing\MarketingAutomationController@createCampaign');
+$router->post('/marketing/campaign/create', 'Marketing\MarketingAutomationController@handleCreateCampaign');
 
 // AJAX Marketing routes
 $router->get('/api/marketing/leads', 'Marketing\MarketingAutomationController@getLeads');
@@ -355,17 +391,24 @@ $router->post('/api/marketing/automation/trigger', 'Marketing\MarketingAutomatio
 // Auth routes (Modern MVC)
 $router->get('/auth/universal_login', 'Auth\AuthController@universalLogin');
 $router->get('/auth/login', 'Auth\AuthController@login');
+$router->post('/auth/login', 'Auth\AuthController@authenticate');
 $router->get('/auth/logout', 'Auth\AuthController@logout');
 $router->get('/auth/register', 'Auth\AuthController@register');
+$router->post('/auth/register', 'Auth\AuthController@createAccount');
 $router->get('/auth/forgot-password', 'Auth\AuthController@forgotPassword');
+$router->post('/auth/forgot-password', 'Auth\AuthController@sendPasswordReset');
 $router->get('/auth/reset-password', 'Auth\AuthController@resetPassword');
+$router->post('/auth/reset-password', 'Auth\AuthController@updatePassword');
 $router->get('/auth/profile', 'Auth\AuthController@profile');
+$router->post('/auth/profile', 'Auth\AuthController@updateProfile');
 $router->get('/auth/stats', 'Auth\AuthController@getStats');
 
 // Communication routes (Modern MVC)
 $router->get('/communication/media', 'Communication\MediaController@index');
 $router->post('/communication/media/upload', 'Communication\MediaController@upload');
 $router->get('/communication/media/{id}', 'Communication\MediaController@getMedia');
+$router->put('/communication/media/{id}', 'Communication\MediaController@updateMedia');
+$router->delete('/communication/media/{id}', 'Communication\MediaController@deleteMedia');
 $router->get('/communication/media/search', 'Communication\MediaController@search');
 $router->get('/communication/media/gallery/{id}', 'Communication\MediaController@getGallery');
 $router->post('/communication/media/gallery', 'Communication\MediaController@createGallery');
@@ -378,7 +421,10 @@ $router->get('/communication/sms/stats', 'Communication\SmsController@getStats')
 
 // Utility routes (Modern MVC)
 $router->get('/utility/alerts', 'Utility\AlertController@index');
+$router->post('/utility/alerts', 'Utility\AlertController@createAlert');
 $router->get('/utility/alerts/{id}', 'Utility\AlertController@getAlert');
+$router->put('/utility/alerts/{id}', 'Utility\AlertController@updateAlert');
+$router->delete('/utility/alerts/{id}', 'Utility\AlertController@deleteAlert');
 $router->get('/utility/escalations', 'Utility\AlertController@getEscalations');
 $router->post('/utility/escalations/process', 'Utility\AlertController@processEscalations');
 $router->get('/utility/alerts/stats', 'Utility\AlertController@getStats');
@@ -387,6 +433,7 @@ $router->post('/utility/alerts/dismiss/{id}', 'Utility\AlertController@dismissAl
 
 // Async routes (Modern MVC)
 $router->get('/async/tasks', 'Async\AsyncController@index');
+$router->post('/async/tasks', 'Async\AsyncController@createTask');
 $router->get('/async/tasks/{id}', 'Async\AsyncController@getTask');
 $router->post('/async/tasks/process', 'Async\AsyncController@processTasks');
 $router->post('/async/tasks/cancel/{id}', 'Async\AsyncController@cancelTask');
@@ -396,6 +443,7 @@ $router->delete('/async/tasks/cleanup', 'Async\AsyncController@cleanOldTasks');
 
 // Security routes (Modern MVC)
 $router->get('/security/configuration', 'SecurityController@getConfiguration');
+$router->post('/security/configuration', 'SecurityController@setConfiguration');
 $router->post('/security/configuration/apply', 'SecurityController@applyConfiguration');
 $router->get('/security/audit', 'SecurityController@getAuditLog');
 $router->get('/security/stats', 'SecurityController@getStats');
@@ -405,12 +453,14 @@ $router->post('/security/block-ip', 'SecurityController@blockIP');
 $router->post('/security/unblock-ip', 'SecurityController@unblockIP');
 $router->post('/security/incident', 'SecurityController@logIncident');
 $router->get('/security/policies', 'SecurityController@getPolicies');
+$router->post('/security/policies', 'SecurityController@createPolicy');
 $router->post('/security/policies/enforce', 'SecurityController@enforcePolicies');
 $router->get('/security/compliance', 'SecurityController@getComplianceReport');
 
 // Career routes (Modern MVC)
 $router->get('/careers/dashboard', 'Career\CareerController@dashboard');
 $router->get('/careers/application/{id}', 'Career\CareerController@applicationDetails');
+$router->post('/careers/apply', 'Career\CareerController@submitApplication');
 $router->get('/careers/applications', 'Career\CareerController@getApplications');
 $router->get('/careers/application/{id}/details', 'Career\CareerController@getApplication');
 $router->post('/careers/application/{id}/status', 'Career\CareerController@updateStatus');
@@ -421,11 +471,15 @@ $router->get('/careers/stats', 'Career\CareerController@getStats');
 $router->get('/careers/export', 'Career\CareerController@exportApplications');
 
 // Marketing routes (Modern MVC)
+$router->get('/marketing/dashboard', 'MarketingController@dashboard');
 $router->post('/marketing/campaign', 'MarketingController@createCampaign');
 $router->post('/marketing/campaign/{id}/execute', 'MarketingController@executeCampaign');
 $router->post('/marketing/lead', 'MarketingController@addLead');
+$router->get('/marketing/lead/{id}', 'MarketingController@getLead');
+$router->post('/marketing/lead/{id}/status', 'MarketingController@updateLeadStatus');
 $router->post('/marketing/workflows/process', 'MarketingController@processWorkflows');
 $router->get('/marketing/analytics', 'MarketingController@getAnalytics');
+$router->get('/marketing/leads', 'MarketingController@getLeads');
 $router->get('/marketing/scoring', 'MarketingController@getLeadScoring');
 $router->get('/marketing/export', 'MarketingController@exportLeads');
 $router->get('/marketing/campaign/performance', 'MarketingController@getCampaignPerformance');
@@ -443,13 +497,16 @@ $router->get('/farmers/stats', 'FarmerController@getFarmerStats');
 $router->get('/farmers/export', 'FarmerController@exportFarmers');
 
 // Land routes (Modern MVC)
+$router->get('/land/dashboard', 'LandController@dashboard');
 $router->post('/land/project', 'LandController@createProject');
 $router->post('/land/project/{id}/subdivide', 'LandController@subdivideLand');
 $router->post('/land/project/{id}/plot', 'LandController@createPlot');
 $router->post('/land/plot/{id}/reserve', 'LandController@reservePlot');
 $router->post('/land/plot/{id}/sell', 'LandController@sellPlot');
 $router->get('/land/project/{id}', 'LandController@getProject');
+$router->get('/land/plot/{id}', 'LandController@getPlot');
 $router->get('/land/projects', 'LandController@getProjects');
+$router->get('/land/plots', 'LandController@getPlots');
 $router->get('/land/stats', 'LandController@getStats');
 $router->get('/land/project/{id}/details', 'LandController@projectDetails');
 $router->get('/land/plot/{id}/details', 'LandController@plotDetails');
@@ -465,6 +522,7 @@ $router->get('/localization/current', 'LocalizationController@getCurrentLocale')
 $router->post('/localization/translate', 'LocalizationController@translate');
 $router->post('/localization/translation', 'LocalizationController@addTranslation');
 $router->get('/localization/translations', 'LocalizationController@getTranslations');
+$router->delete('/localization/translation', 'LocalizationController@deleteTranslation');
 $router->get('/localization/statistics', 'LocalizationController@getStatistics');
 $router->post('/localization/import', 'LocalizationController@importTranslations');
 $router->get('/localization/export', 'LocalizationController@exportTranslations');
@@ -490,10 +548,12 @@ $router->get('/backup/dashboard', 'Backup\BackupIntegrityController@dashboard');
 
 // Payroll routes (Modern MVC)
 $router->post('/payroll/salary-structure', 'Payroll\SalaryController@createSalaryStructure');
+$router->put('/payroll/salary-structure', 'Payroll\SalaryController@updateSalaryStructure');
 $router->post('/payroll/process-salary', 'Payroll\SalaryController@processMonthlySalary');
 $router->get('/payroll/salary-history', 'Payroll\SalaryController@getSalaryHistory');
 $router->get('/payroll/statistics', 'Payroll\SalaryController@getPayrollStatistics');
 $router->get('/payroll/settings', 'Payroll\SalaryController@getPayrollSettings');
+$router->put('/payroll/settings', 'Payroll\SalaryController@updatePayrollSetting');
 $router->post('/payroll/bulk-process', 'Payroll\SalaryController@bulkProcessSalaries');
 $router->get('/payroll/salary-slip', 'Payroll\SalaryController@getSalarySlip');
 $router->get('/payroll/export', 'Payroll\SalaryController@exportSalaryReport');
@@ -533,8 +593,11 @@ $router->post('/security/validate-file', 'SecurityController@validateFileUpload'
 $router->post('/security/detect-sql', 'SecurityController@detectSqlInjection');
 $router->post('/security/detect-xss', 'SecurityController@detectXss');
 $router->post('/security/log-event', 'SecurityController@logSecurityEvent');
+$router->get('/security/stats', 'SecurityController@getSecurityStats');
 
 // General routes
+$router->get('/', 'HomeController@index');
+$router->get('/mlm-dashboard', 'App\Http\Controllers\MLMController@dashboard');
 $router->get('/monitoring', 'MonitoringController@dashboard');
 $router->get('/ai-valuation', 'AIValuationController@index');
 
@@ -542,8 +605,11 @@ $router->get('/ai-valuation', 'AIValuationController@index');
 $router->get('/blog/category/{category}', 'BlogController@category');
 
 // Project routes
+$router->get('/projects', 'ProjectController@index');
+$router->get('/projects/{id}', 'ProjectController@detail');
 
 // Resell routes
+$router->get('/resell', 'ResellController@index');
 
 // Customer routes
 $router->get('/customer/dashboard', 'CustomerController@dashboard');
@@ -611,6 +677,7 @@ $router->get('/reports/financial', 'Reports\ReportController@financial');
 
 // Utility routes (Modern MVC)
 $router->get('/utils/file/upload', 'Utils\FileController@upload');
+$router->post('/utils/file/upload', 'Utils\FileController@processUpload');
 $router->get('/utils/files', 'Utils\FileController@index');
 $router->get('/utils/files/{category}', 'Utils\FileController@byCategory');
 $router->get('/utils/file/{id}', 'Utils\FileController@show');
@@ -627,9 +694,17 @@ $router->post('/core/helpers/backup', 'Core\HelperController@createBackup');
 $router->post('/core/helpers/cleanup', 'Core\HelperController@cleanup');
 
 // Employee Authentication and Dashboard Routes
+$router->get('/employee/login', 'Employee\\EmployeeController@login');
+$router->post('/employee/login', 'Employee\\EmployeeController@authenticate');
+$router->get('/employee/logout', 'Employee\\EmployeeController@logout');
+$router->get('/employee/dashboard', 'Employee\\EmployeeController@dashboard');
+$router->get('/employee/profile', 'Employee\\EmployeeController@profile');
 
 // Employee API Endpoints
+$router->post('/employee/checkin', 'Employee\\EmployeeController@checkIn');
+$router->post('/employee/checkout', 'Employee\\EmployeeController@checkOut');
 $router->get('/employee/api/tasks', 'Employee\\EmployeeController@getTasks');
+$router->post('/employee/api/update-task', 'Employee\\EmployeeController@updateTask');
 $router->get('/employee/api/performance', 'Employee\\EmployeeController@getPerformance');
 $router->get('/employee/api/attendance-records', 'Employee\\EmployeeController@getAttendanceRecords');
 
