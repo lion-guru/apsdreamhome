@@ -1993,3 +1993,1228 @@ Stack trace:
 [27-Mar-2026 19:52:12 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/dashboard
 [27-Mar-2026 19:52:12 Europe/Berlin] ROUTER DEBUG: Found exact route match
 [27-Mar-2026 19:52:12 Europe/Berlin] Loading controller: App\Http\Controllers\RoleBasedDashboardController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[27-Mar-2026 19:52:56 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:56 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:56 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:56 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:56 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:56 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /
+[27-Mar-2026 19:52:56 Europe/Berlin] FINAL ROUTER URI: /
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /
+[27-Mar-2026 19:52:56 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:56 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/about
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /about
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /about
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /about
+[27-Mar-2026 19:52:57 Europe/Berlin] FINAL ROUTER URI: /about
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET about
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:57 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/contact
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /contact
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /contact
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /contact
+[27-Mar-2026 19:52:57 Europe/Berlin] FINAL ROUTER URI: /contact
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET contact
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:57 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/services
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /services
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /services
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /services
+[27-Mar-2026 19:52:57 Europe/Berlin] FINAL ROUTER URI: /services
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET services
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:57 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/properties
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /properties
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /properties
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /properties
+[27-Mar-2026 19:52:57 Europe/Berlin] FINAL ROUTER URI: /properties
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET properties
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:57 Europe/Berlin] Loading controller: App\Http\Controllers\Property\PropertyController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Property/PropertyController.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/projects
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /projects
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /projects
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /projects
+[27-Mar-2026 19:52:57 Europe/Berlin] FINAL ROUTER URI: /projects
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET projects
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:57 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\ProjectController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/ProjectController.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/resell
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /resell
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /resell
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /resell
+[27-Mar-2026 19:52:57 Europe/Berlin] FINAL ROUTER URI: /resell
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET resell
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:57 Europe/Berlin] Loading controller: App\Http\Controllers\ResellController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/ResellController.php
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  Undefined variable $filters in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 56
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 56
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 56
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  Undefined variable $cities in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 64
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  foreach() argument must be of type array|object, null given in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 64
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  Undefined variable $property_types in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 76
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  foreach() argument must be of type array|object, null given in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 76
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  Undefined variable $filters in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 86
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 86
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 86
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  Undefined variable $filters in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 91
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 91
+[27-Mar-2026 19:52:57 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 91
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/news
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /news
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /news
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /news
+[27-Mar-2026 19:52:57 Europe/Berlin] FINAL ROUTER URI: /news
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET news
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:57 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/testimonials
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /testimonials
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /testimonials
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /testimonials
+[27-Mar-2026 19:52:57 Europe/Berlin] FINAL ROUTER URI: /testimonials
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET testimonials
+[27-Mar-2026 19:52:57 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:57 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/team
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /team
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /team
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /team
+[27-Mar-2026 19:52:58 Europe/Berlin] FINAL ROUTER URI: /team
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Looking for route: GET team
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:58 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/careers
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /careers
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /careers
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /careers
+[27-Mar-2026 19:52:58 Europe/Berlin] FINAL ROUTER URI: /careers
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Looking for route: GET careers
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:58 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/faqs
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /faqs
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /faqs
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /faqs
+[27-Mar-2026 19:52:58 Europe/Berlin] FINAL ROUTER URI: /faqs
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Looking for route: GET faqs
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:58 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/support
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /support
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /support
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /support
+[27-Mar-2026 19:52:58 Europe/Berlin] FINAL ROUTER URI: /support
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Looking for route: GET support
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:58 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:58 Europe/Berlin] Router Error: Method App\Http\Controllers\Front\PageController::support does not exist.
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/downloads
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /downloads
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /downloads
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /downloads
+[27-Mar-2026 19:52:58 Europe/Berlin] FINAL ROUTER URI: /downloads
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Looking for route: GET downloads
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:58 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/blog
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /blog
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /blog
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /blog
+[27-Mar-2026 19:52:58 Europe/Berlin] FINAL ROUTER URI: /blog
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Looking for route: GET blog
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:58 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/gallery
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /gallery
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /gallery
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /gallery
+[27-Mar-2026 19:52:58 Europe/Berlin] FINAL ROUTER URI: /gallery
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Looking for route: GET gallery
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:58 Europe/Berlin] Loading controller: App\Http\Controllers\GalleryController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/GalleryController.php
+[27-Mar-2026 19:52:58 Europe/Berlin] PHP Warning:  Undefined array key "category" in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\GalleryController.php on line 25
+[27-Mar-2026 19:52:58 Europe/Berlin] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\Core\Security.php on line 43
+[27-Mar-2026 19:52:58 Europe/Berlin] Router Error: View not found: C:\xampp\htdocs\apsdreamhome\app/views/gallery/index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:58 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/login
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /login
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /login
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /login
+[27-Mar-2026 19:52:58 Europe/Berlin] FINAL ROUTER URI: /login
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Looking for route: GET login
+[27-Mar-2026 19:52:58 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:58 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\CustomerAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/register
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /register
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /register
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /register
+[27-Mar-2026 19:52:59 Europe/Berlin] FINAL ROUTER URI: /register
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET register
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:59 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\CustomerAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/agent/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /agent/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /agent/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /agent/login
+[27-Mar-2026 19:52:59 Europe/Berlin] FINAL ROUTER URI: /agent/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET agent/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:59 Europe/Berlin] Loading controller: App\Http\Controllers\AgentController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AgentController.php
+[27-Mar-2026 19:52:59 Europe/Berlin] Router Error: Method App\Http\Controllers\AgentController::get does not exist.
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/associate/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /associate/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /associate/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /associate/login
+[27-Mar-2026 19:52:59 Europe/Berlin] FINAL ROUTER URI: /associate/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET associate/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:59 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AssociateAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AssociateAuthController.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/employee/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /employee/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /employee/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /employee/login
+[27-Mar-2026 19:52:59 Europe/Berlin] FINAL ROUTER URI: /employee/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET employee/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:59 Europe/Berlin] Loading controller: App\Http\Controllers\Employee\EmployeeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Employee/EmployeeController.php
+[27-Mar-2026 19:52:59 Europe/Berlin] PHP Fatal error:  Access level to App\Http\Controllers\Employee\EmployeeController::redirect() must be public (as in class App\Http\Controllers\BaseController) in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Employee\EmployeeController.php on line 391
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/login
+[27-Mar-2026 19:52:59 Europe/Berlin] FINAL ROUTER URI: /admin/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/login
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:59 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin
+[27-Mar-2026 19:52:59 Europe/Berlin] FINAL ROUTER URI: /admin
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:59 Europe/Berlin] Loading controller: App\Http\Controllers\RoleBasedDashboardController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/dashboard
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/dashboard
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/dashboard
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/dashboard
+[27-Mar-2026 19:52:59 Europe/Berlin] FINAL ROUTER URI: /admin/dashboard
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/dashboard
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:59 Europe/Berlin] Loading controller: App\Http\Controllers\RoleBasedDashboardController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:52:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/profile
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/profile
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/profile
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/profile
+[27-Mar-2026 19:52:59 Europe/Berlin] FINAL ROUTER URI: /admin/profile
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/profile
+[27-Mar-2026 19:52:59 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:52:59 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\AdminProfileController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/AdminProfileController.php
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/users
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/users
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/users
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/users
+[27-Mar-2026 19:53:00 Europe/Berlin] FINAL ROUTER URI: /admin/users
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/users
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:53:00 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\AdminController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/AdminController.php
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/properties
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/properties
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/properties
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/properties
+[27-Mar-2026 19:53:00 Europe/Berlin] FINAL ROUTER URI: /admin/properties
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/properties
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:53:00 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\PropertyManagementController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/PropertyManagementController.php
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:53:00 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/bookings
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/bookings
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/bookings
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/bookings
+[27-Mar-2026 19:53:00 Europe/Berlin] FINAL ROUTER URI: /admin/bookings
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/bookings
+[27-Mar-2026 19:53:00 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:53:00 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\BookingController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/BookingController.php
+[27-Mar-2026 19:53:39 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:53:39 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:53:39 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:53:39 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:53:39 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:53:39 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/gallery
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /gallery
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /gallery
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /gallery
+[27-Mar-2026 19:53:39 Europe/Berlin] FINAL ROUTER URI: /gallery
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: Looking for route: GET gallery
+[27-Mar-2026 19:53:39 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:53:39 Europe/Berlin] Loading controller: App\Http\Controllers\GalleryController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/GalleryController.php
+[27-Mar-2026 19:53:39 Europe/Berlin] PHP Warning:  Undefined array key "category" in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\GalleryController.php on line 25
+[27-Mar-2026 19:53:39 Europe/Berlin] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\Core\Security.php on line 43
+[27-Mar-2026 19:53:39 Europe/Berlin] Router Error: View not found: C:\xampp\htdocs\apsdreamhome\app/views/gallery/index.php
+[27-Mar-2026 19:55:07 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:55:07 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:55:07 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:55:07 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:55:07 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:55:07 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/gallery
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /gallery
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /gallery
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /gallery
+[27-Mar-2026 19:55:07 Europe/Berlin] FINAL ROUTER URI: /gallery
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: Looking for route: GET gallery
+[27-Mar-2026 19:55:07 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:55:07 Europe/Berlin] Loading controller: App\Http\Controllers\GalleryController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/GalleryController.php
+[27-Mar-2026 19:55:07 Europe/Berlin] PHP Warning:  Undefined array key "category" in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\GalleryController.php on line 25
+[27-Mar-2026 19:55:17 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:55:17 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:55:17 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:55:17 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:55:17 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:55:17 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/gallery
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /gallery
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /gallery
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /gallery
+[27-Mar-2026 19:55:17 Europe/Berlin] FINAL ROUTER URI: /gallery
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: Looking for route: GET gallery
+[27-Mar-2026 19:55:17 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:55:17 Europe/Berlin] Loading controller: App\Http\Controllers\GalleryController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/GalleryController.php
+[27-Mar-2026 19:55:37 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:55:37 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:55:37 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:55:37 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:55:37 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:55:37 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/gallery
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /gallery
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /gallery
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /gallery
+[27-Mar-2026 19:55:37 Europe/Berlin] FINAL ROUTER URI: /gallery
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: Looking for route: GET gallery
+[27-Mar-2026 19:55:37 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:55:37 Europe/Berlin] Loading controller: App\Http\Controllers\GalleryController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/GalleryController.php
+[27-Mar-2026 19:56:17 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:56:17 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:56:17 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:56:17 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:56:17 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:56:17 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/gallery
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /gallery
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /gallery
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /gallery
+[27-Mar-2026 19:56:17 Europe/Berlin] FINAL ROUTER URI: /gallery
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: Looking for route: GET gallery
+[27-Mar-2026 19:56:17 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:56:17 Europe/Berlin] Loading controller: App\Http\Controllers\GalleryController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/GalleryController.php
+[27-Mar-2026 19:57:34 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:57:34 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:57:34 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:57:34 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:57:34 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:57:34 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/support
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /support
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /support
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /support
+[27-Mar-2026 19:57:34 Europe/Berlin] FINAL ROUTER URI: /support
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: Looking for route: GET support
+[27-Mar-2026 19:57:34 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:57:34 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:57:34 Europe/Berlin] PHP Warning:  require_once(includes/config/config.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\pages\support.php on line 3
+[27-Mar-2026 19:57:34 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'includes/config/config.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\pages\support.php:3
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\BaseController.php(268): include()
+#1 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Front\PageController.php(590): App\Http\Controllers\BaseController->render('pages/support', Array)
+#2 C:\xampp\htdocs\apsdreamhome\routes\router.php(249): App\Http\Controllers\Front\PageController->support()
+#3 C:\xampp\htdocs\apsdreamhome\public\index.php(134): Router->dispatch()
+#4 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\support.php on line 3
+[27-Mar-2026 19:58:13 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:13 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:13 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:13 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:13 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:13 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/support
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /support
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /support
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /support
+[27-Mar-2026 19:58:13 Europe/Berlin] FINAL ROUTER URI: /support
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: Looking for route: GET support
+[27-Mar-2026 19:58:13 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:13 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /
+[27-Mar-2026 19:58:20 Europe/Berlin] FINAL ROUTER URI: /
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:20 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/about
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /about
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /about
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /about
+[27-Mar-2026 19:58:20 Europe/Berlin] FINAL ROUTER URI: /about
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Looking for route: GET about
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:20 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:20 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/contact
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /contact
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /contact
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /contact
+[27-Mar-2026 19:58:20 Europe/Berlin] FINAL ROUTER URI: /contact
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Looking for route: GET contact
+[27-Mar-2026 19:58:20 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:20 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/services
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /services
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /services
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /services
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /services
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET services
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/properties
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /properties
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /properties
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /properties
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /properties
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET properties
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Property\PropertyController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Property/PropertyController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/resell
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /resell
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /resell
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /resell
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /resell
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET resell
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\ResellController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/ResellController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  Undefined variable $filters in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 56
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 56
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 56
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  Undefined variable $cities in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 64
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  foreach() argument must be of type array|object, null given in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 64
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  Undefined variable $property_types in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 76
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  foreach() argument must be of type array|object, null given in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 76
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  Undefined variable $filters in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 86
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 86
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 86
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  Undefined variable $filters in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 91
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 91
+[27-Mar-2026 19:58:21 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 91
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/news
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /news
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /news
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /news
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /news
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET news
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/testimonials
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /testimonials
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /testimonials
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /testimonials
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /testimonials
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET testimonials
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/team
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /team
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /team
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /team
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /team
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET team
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/careers
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /careers
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /careers
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /careers
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /careers
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET careers
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/faqs
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /faqs
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /faqs
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /faqs
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /faqs
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET faqs
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/support
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /support
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /support
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /support
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /support
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET support
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/downloads
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /downloads
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /downloads
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /downloads
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /downloads
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET downloads
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/blog
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /blog
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /blog
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /blog
+[27-Mar-2026 19:58:21 Europe/Berlin] FINAL ROUTER URI: /blog
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET blog
+[27-Mar-2026 19:58:21 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/gallery
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /gallery
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /gallery
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /gallery
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /gallery
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET gallery
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\GalleryController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/GalleryController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /login
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\CustomerAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/register
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /register
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /register
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /register
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /register
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET register
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\CustomerAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/login
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /admin/login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/login
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /admin
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\RoleBasedDashboardController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/dashboard
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/dashboard
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/dashboard
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/dashboard
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /admin/dashboard
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/dashboard
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\RoleBasedDashboardController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/profile
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/profile
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/profile
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/profile
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /admin/profile
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/profile
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\AdminProfileController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/AdminProfileController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/users
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/users
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/users
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/users
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /admin/users
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/users
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\AdminController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/AdminController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/properties
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/properties
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/properties
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/properties
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /admin/properties
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/properties
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\PropertyManagementController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/PropertyManagementController.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Creating router instance ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Router created successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER SETUP: Route registration complete
+[27-Mar-2026 19:58:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/bookings
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/bookings
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/bookings
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/bookings
+[27-Mar-2026 19:58:22 Europe/Berlin] FINAL ROUTER URI: /admin/bookings
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET admin/bookings
+[27-Mar-2026 19:58:22 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[27-Mar-2026 19:58:22 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\BookingController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/BookingController.php

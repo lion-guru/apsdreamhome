@@ -579,4 +579,14 @@ class PageController extends BaseController
         ];
         $this->render('pages/whatsapp-templates', $data);
     }
+
+    // Support Page
+    public function support()
+    {
+        $data = [
+            'page_title' => 'Support - APS Dream Home',
+            'page_description' => 'Get help and support from our team'
+        ];
+        $this->render('pages/support', $data);
+    }
 }

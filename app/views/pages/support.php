@@ -1,236 +1,235 @@
-<?php
-// Start session and include configuration
-require_once 'includes/config/config.php';
-require_once 'includes/functions.php';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $page_title ?? 'Support' ?> | APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --primary: #2c3e50; }
+        body { font-family: 'Segoe UI', sans-serif; }
+        .support-hero {
+            background: linear-gradient(rgba(44,62,80,0.9), rgba(44,62,80,0.9)),
+                        url('https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920');
+            background-size: cover;
+            padding: 100px 0;
+            color: white;
+        }
+        .contact-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            height: 100%;
+        }
+        .support-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--primary);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>">
+                <i class="fas fa-home me-2"></i>APS Dream Home
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/properties">Properties</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="<?= BASE_URL ?>/support">Support</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-// Set page variables
-$$page_title = 'Customer Support - APS Dream Home';
-$page_description = 'Get help and support from APS Dream Home team';
+    <!-- Hero -->
+    <section class="support-hero text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">Customer Support</h1>
+            <p class="lead">We're here to help you with any questions or concerns</p>
+        </div>
+    </section>
 
-// Check if user is logged in
-if (!isset($_SESSION['customer_logged_in']) || $_SESSION['customer_logged_in'] !== true) {
-    header('Location: customer_login.php');
-    exit();
-}
-
-// Content for base layout
-ob_start();
-?>
-
-// Handle form submission
-$success = false;
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-$subject = filter_input(INPUT_POST, 'subject', FILTER_SANITIZE_STRING);
-$message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
-$priority = filter_input(INPUT_POST, 'priority', FILTER_SANITIZE_STRING);
-
-if (empty($subject) || empty($message)) {
-$error = 'Please fill in all required fields.';
-} else {
-// Insert ticket into database
-$stmt = $conn->prepare("INSERT INTO support_tickets (customer_id, subject, message, priority, status, created_at) VALUES (?, ?, ?, ?, 'Open', NOW())");
-$stmt->bind_param("isss", $_SESSION['customer_id'], $subject, $message, $priority);
-
-if ($stmt->execute()) {
-$success = true;
-// Reset form
-$subject = $message = '';
-$priority = 'medium';
-} else {
-$error = 'Failed to submit your request. Please try again.';
-error_log("Support ticket submission failed: " . $stmt->error);
-}
-$stmt->close();
-}
-}
-?>
-
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg border-0 rounded-lg">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="text-center font-weight-light my-4">Customer Support</h3>
+    <!-- Support Options -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Phone Support -->
+                <div class="col-md-4">
+                    <div class="contact-card text-center">
+                        <div class="support-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h4>Phone Support</h4>
+                        <p class="text-muted mb-3">Mon-Sat: 9AM - 6PM</p>
+                        <h5 class="text-primary">+91 98765 43210</h5>
+                        <p class="small text-muted mt-3">For immediate assistance, call us directly</p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <?php if ($success): ?>
-                        <div class="alert alert-success" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            Your support request has been submitted successfully. We'll get back to you soon!
-                        </div>
-                    <?php elseif ($error): ?>
-                        <div class="alert alert-danger" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <?php echo htmlspecialchars($error); ?>
-                        </div>
-                    <?php endif; ?>
 
-                    <form action="support.php" method="post" id="supportForm">
-                        <div class="mb-3">
-                            <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control form-control-lg" id="subject" name="subject" required
-                                value="<?php echo isset($subject) ? htmlspecialchars($subject) : ''; ?>">
+                <!-- Email Support -->
+                <div class="col-md-4">
+                    <div class="contact-card text-center">
+                        <div class="support-icon">
+                            <i class="fas fa-envelope"></i>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="priority" class="form-label">Priority</label>
-                            <select class="form-select form-select-lg" id="priority" name="priority">
-                                <option value="low" <?php echo (isset($priority) && $priority === 'low') ? 'selected' : ''; ?>>Low</option>
-                                <option value="medium" <?php echo (!isset($priority) || $priority === 'medium') ? 'selected' : ''; ?>>Medium</option>
-                                <option value="high" <?php echo (isset($priority) && $priority === 'high') ? 'selected' : ''; ?>>High</option>
-                                <option value="urgent" <?php echo (isset($priority) && $priority === 'urgent') ? 'selected' : ''; ?>>Urgent</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="message" name="message" rows="6" required><?php echo isset($message) ? htmlspecialchars($message) : ''; ?></textarea>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-paper-plane me-2"></i>Submit Request
-                            </button>
-                        </div>
-                    </form>
+                        <h4>Email Support</h4>
+                        <p class="text-muted mb-3">24/7 Response</p>
+                        <h5 class="text-primary">support@apsdreamhome.com</h5>
+                        <p class="small text-muted mt-3">We'll respond within 24 hours</p>
+                    </div>
                 </div>
-                <div class="card-footer text-center py-3">
-                    <div class="small">
-                        Need immediate assistance? Call us at <a href="tel:+911234567890">+91 12345 67890</a> or
-                        <a href="mailto:support@apsdreamhome.com">email us</a>.
+
+                <!-- WhatsApp -->
+                <div class="col-md-4">
+                    <div class="contact-card text-center">
+                        <div class="support-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <h4>WhatsApp</h4>
+                        <p class="text-muted mb-3">Quick Responses</p>
+                        <h5 class="text-primary">+91 98765 43210</h5>
+                        <p class="small text-muted mt-3">Chat with us on WhatsApp</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Support Tickets History -->
-            <div class="card shadow-sm border-0 rounded-lg mt-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Your Support Tickets</h5>
-                </div>
-                <div class="card-body">
-                    <?php
-                    // Fetch user's support tickets
-                    $tickets_query = "SELECT * FROM support_tickets WHERE customer_id = ? ORDER BY created_at DESC LIMIT 5";
-                    $stmt = $conn->prepare($tickets_query);
-                    $stmt->bind_param("i", $_SESSION['customer_id']);
-                    $stmt->execute();
-                    $tickets_result = $stmt->get_result();
-
-                    if ($tickets_result->num_rows > 0):
-                        while ($ticket = $tickets_result->fetch_assoc()):
-                            $status_class = '';
-                            switch (strtolower($ticket['status'])) {
-                                case 'open':
-                                    $status_class = 'bg-primary';
-                                    break;
-                                case 'in progress':
-                                    $status_class = 'bg-warning';
-                                    break;
-                                case 'resolved':
-                                    $status_class = 'bg-success';
-                                    break;
-                                case 'closed':
-                                    $status_class = 'bg-secondary';
-                                    break;
-                                default:
-                                    $status_class = 'bg-info';
-                            }
-                    ?>
-                            <div class="border-bottom pb-3 mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <h6 class="mb-0">
-                                        <a href="view_ticket.php?id=<?php echo $ticket['id']; ?>" class="text-decoration-none">
-                                            <?php echo htmlspecialchars($ticket['subject']); ?>
-                                        </a>
-                                    </h6>
-                                    <span class="badge <?php echo $status_class; ?> rounded-pill">
-                                        <?php echo ucfirst($ticket['status']); ?>
-                                    </span>
+            <!-- Contact Form -->
+            <div class="row mt-5">
+                <div class="col-lg-8 mx-auto">
+                    <div class="contact-card">
+                        <h4 class="text-center mb-4">
+                            <i class="fas fa-headset me-2"></i>Submit a Support Ticket
+                        </h4>
+                        <form id="supportForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Your Name</label>
+                                    <input type="text" name="name" class="form-control" required>
                                 </div>
-                                <p class="text-muted small mb-2">
-                                    <?php echo date('M d, Y h:i A', strtotime($ticket['created_at'])); ?>
-                                    <span class="mx-2">•</span>
-                                    Priority: <?php echo ucfirst($ticket['priority']); ?>
-                                </p>
-                                <p class="mb-0 text-truncate">
-                                    <?php echo substr(htmlspecialchars($ticket['message']), 0, 150); ?>
-                                    <?php if (strlen($ticket['message']) > 150): ?>...<?php endif; ?>
-                                </p>
+                                <div class="col-md-6">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" name="phone" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Subject</label>
+                                    <select name="subject" class="form-select" required>
+                                        <option value="">Select a topic</option>
+                                        <option value="booking">Booking Inquiry</option>
+                                        <option value="payment">Payment Issue</option>
+                                        <option value="property">Property Details</option>
+                                        <option value="complaint">File a Complaint</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Message</label>
+                                    <textarea name="message" class="form-control" rows="5" required 
+                                              placeholder="Tell us how we can help you..."></textarea>
+                                </div>
+                                <div class="col-12 text-center">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit Ticket
+                                    </button>
+                                </div>
                             </div>
-                        <?php
-                        endwhile;
-                    else:
-                        ?>
-                        <div class="text-center py-4">
-                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                            <p class="mb-0">You haven't submitted any support tickets yet.</p>
-                        </div>
-                    <?php
-                    endif;
-                    $stmt->close();
-                    ?>
+                        </form>
+                        <div id="formResponse" class="mt-3" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
 
-                    <div class="text-end mt-3">
-                        <a href="support_tickets.php" class="btn btn-outline-primary btn-sm">
-                            View All Tickets <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
+            <!-- FAQ Section -->
+            <div class="row mt-5">
+                <div class="col-lg-10 mx-auto">
+                    <h3 class="text-center mb-4">Frequently Asked Questions</h3>
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How do I book a property?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    You can book a property by visiting our office, calling us, or submitting an inquiry through our website. Our team will guide you through the entire process.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    What payment options are available?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We offer multiple payment options including bank transfer, cheque, and cash. EMI facilities are also available through leading banks.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Do you provide home loan assistance?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, we have partnerships with multiple banks and financial institutions to help you get the best home loan rates with minimal documentation.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- Include TinyMCE for rich text editor -->
-<script src="https://cdn.tiny.cloud/1/YOUR_API_KEY/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-<script>
-    tinymce.init({
-        selector: '#message',
-        plugins: 'link lists help',
-        toolbar: 'undo redo | formatselect | bold italic backcolor | \
-                  alignleft aligncenter alignright alignjustify | \
-                  bullist numlist outdent indent | removeformat | help',
-        menubar: false,
-        statusbar: false,
-        height: 200,
-        content_style: 'body { font-family: "Inter", sans-serif; font-size: 16px; }',
-        setup: function(editor) {
-            editor.on('change', function() {
-                editor.save();
-            });
-        }
-    });
+    <!-- Footer -->
+    <footer style="background: var(--primary); color: white; padding: 40px 0;">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 APS Dream Home. All rights reserved.</p>
+        </div>
+    </footer>
 
-    // Form validation
-    document.getElementById('supportForm').addEventListener('submit', function(e) {
-        const subject = document.getElementById('subject').value.trim();
-        const message = tinymce.get('message').getContent().trim();
-
-        if (!subject) {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('supportForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Please enter a subject for your support request.');
-            document.getElementById('subject').focus();
-            return false;
-        }
-
-        if (!message) {
-            e.preventDefault();
-            alert('Please enter your message.');
-            tinymce.get('message').focus();
-            return false;
-        }
-
-        // Show loading state
-        const submitBtn = this.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
-    });
-</script>
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/base.php';
-echo $content;
-?>
+            const formData = new FormData(this);
+            const response = document.getElementById('formResponse');
+            
+            response.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>Sending your message...</div>';
+            response.style.display = 'block';
+            
+            // Simulate form submission
+            setTimeout(() => {
+                response.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Thank you! Your support ticket has been submitted. We will contact you soon.</div>';
+                this.reset();
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
