@@ -1,8 +1,6 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
-// app/Services/FileUploadService.php
+namespace App\Services;
 
 class FileUploadService {
     private $allowedTypes = [

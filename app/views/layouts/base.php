@@ -293,7 +293,7 @@
     </style>
 
     <!-- Custom CSS -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/public/css/style.css" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/images/apple-touch-icon.png">

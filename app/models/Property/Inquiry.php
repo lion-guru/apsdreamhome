@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Models\Property;
+
 /**
  * Property Inquiry Model
  * Handles property inquiry operations

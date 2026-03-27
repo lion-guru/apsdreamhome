@@ -12,14 +12,18 @@ use App\Services\SystemLogger as Logger;
  */
 class EventController extends BaseController
 {
-    private EventService $eventService;
-    private Logger $logger;
+    private ?EventService $eventService = null;
+    private ?Logger $logger = null;
 
-    public function __construct(EventService $eventService, Logger $logger)
+    public function __construct()
     {
         parent::__construct();
-        $this->eventService = $eventService;
-        $this->logger = $logger;
+        try {
+            $this->eventService = new EventService();
+            $this->logger = new Logger();
+        } catch (\Throwable $e) {
+            error_log('EventController: service init failed - ' . $e->getMessage());
+        }
     }
 
     /**
