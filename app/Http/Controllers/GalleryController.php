@@ -22,7 +22,7 @@ class GalleryController extends BaseController
      */
     public function index()
     {
-        $category = Security::sanitize($_GET['category']) ?? 'all';
+        $category = isset($_GET['category']) ? Security::sanitize($_GET['category']) : 'all';
 
         // Sample gallery data with Google Images/YouTube
         $gallery_items = [

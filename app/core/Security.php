@@ -17,6 +17,10 @@ class Security
      */
     public static function sanitize($input, $type = 'string')
     {
+        if ($input === null || $input === '') {
+            return $input;
+        }
+        
         if (is_array($input)) {
             return array_map([self::class, 'sanitize'], $input);
         }
@@ -40,7 +44,7 @@ class Security
                 error_log("CRITICAL SECURITY WARNING: Security::sanitize('sql') called. Replace with PDO prepared statements.");
                 return $input;
             default:
-                return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+                return htmlspecialchars(trim((string)$input), ENT_QUOTES, 'UTF-8');
         }
     }
     
