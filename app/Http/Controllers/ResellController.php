@@ -18,7 +18,7 @@ class ResellController extends BaseController
      */
     public function index()
     {
-        $this->render('resell/index', [
+        $this->render('pages/resell', [
             'page_title' => 'Resell Properties - APS Dream Home',
             'page_description' => 'Find resale properties with great value and investment potential',
             'resell_properties' => [
