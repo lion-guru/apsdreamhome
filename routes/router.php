@@ -245,6 +245,21 @@ class Router
 
                 if (file_exists($controllerFile)) {
                     require_once $controllerFile;
+                    
+                    // Check if class exists
+                    if (!class_exists($controllerClass)) {
+                        error_log("Router Error: Controller class $controllerClass does not exist");
+                        echo "Controller class not found: $controllerClass";
+                        return;
+                    }
+                    
+                    // Check if method exists
+                    if (!method_exists($controllerClass, $method)) {
+                        error_log("Router Error: Method $controllerClass::$method does not exist");
+                        echo "Method not found: $controllerClass::$method";
+                        return;
+                    }
+                    
                     $controllerInstance = new $controllerClass();
 
                     // Call method with parameters

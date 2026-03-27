@@ -1,7 +1,13 @@
 <?php
-// Define BASE_URL if not already defined
+// BASE_URL should be defined in public/index.php
 if (!defined('BASE_URL')) {
-    define('BASE_URL', 'http://localhost:8000');
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+    $domainName = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    if (str_contains($_SERVER['REQUEST_URI'] ?? '', '/apsdreamhome')) {
+        define('BASE_URL', $protocol . $domainName . '/apsdreamhome');
+    } else {
+        define('BASE_URL', $protocol . $domainName);
+    }
 }
 ?>
 <header class="premium-header fixed-top">
