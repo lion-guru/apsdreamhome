@@ -5,11 +5,29 @@
  */
 if (!defined('BASE_PATH')) exit;
 
-$currentUser = $currentUser ?? [];
-$currentRole = $currentRole ?? 'guest';
-$roleName = $roleName ?? 'Guest';
+// Load RBAC Manager if not already loaded
+if (!class_exists('App\Http\Middleware\RBACManager')) {
+    require_once dirname(__DIR__, 4) . '/Http/Middleware/RBACManager.php';
+}
+
+// Get user data from session if not passed
+if (empty($currentUser)) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $currentUser = [
+        'id' => $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0,
+        'name' => $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin',
+        'email' => $_SESSION['admin_email'] ?? '',
+        'role' => $_SESSION['admin_role'] ?? $_SESSION['user_role'] ?? 'super_admin',
+        'username' => $_SESSION['admin_name'] ?? 'admin'
+    ];
+}
+
+$currentRole = $currentUser['role'] ?? 'super_admin';
+$roleName = \App\Http\Middleware\RBACManager::getRoleName($currentRole) ?? 'Super Admin';
 $roleLevel = $roleLevel ?? 0;
-$roleCategory = $roleCategory ?? 'default';
+$roleCategory = $roleCategory ?? 'admin';
 $permissions = $permissions ?? [];
 $menus = $menus ?? [];
 
@@ -668,23 +686,31 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </nav>
             </div>
             <div class="navbar-right">
-                <button class="navbar-icon" title="Notifications">
+                <button class="navbar-icon" title="Notifications" onclick="location.href='<?php echo BASE_URL; ?>/admin/notifications'">
                     <i class="fas fa-bell"></i>
                     <span class="badge">3</span>
                 </button>
-                <button class="navbar-icon" title="Messages">
-                    <i class="fas fa-envelope"></i>
-                    <span class="badge">5</span>
-                </button>
-                <div class="user-dropdown dropdown">
+                <div class="user-dropdown dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
                     <div class="user-avatar">
                         <?php echo strtoupper(substr($currentUser['name'] ?? $currentUser['username'] ?? 'U', 0, 1)); ?>
                     </div>
                     <div class="user-info">
-                        <div class="user-name"><?php echo $currentUser['name'] ?? $currentUser['username'] ?? 'User'; ?></div>
+                        <div class="user-name"><?php echo htmlspecialchars($currentUser['name'] ?? $currentUser['username'] ?? 'User'); ?></div>
                         <div class="user-role"><?php echo ucwords(str_replace('_', ' ', $roleName)); ?></div>
                     </div>
                     <i class="fas fa-chevron-down" style="color: #64748b; font-size: 0.75rem;"></i>
+                    <ul class="dropdown-menu dropdown-menu-end" style="margin-top: 10px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/profile">
+                            <i class="fas fa-user me-2"></i> My Profile
+                        </a></li>
+                        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/profile/security">
+                            <i class="fas fa-shield-alt me-2"></i> Security
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>/admin/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </a></li>
+                    </ul>
                 </div>
             </div>
         </nav>

@@ -258,12 +258,12 @@ class AdminDashboardController extends AdminBaseController
         )['count'] ?? 0;
         
         $stats['total_commission'] = $this->db->fetch(
-            "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commissions WHERE user_id = ?",
+            "SELECT COALESCE(SUM(commission_amount), 0) as total FROM mlm_commissions WHERE user_id = ?",
             [$userId]
         )['total'] ?? 0;
         
         $stats['pending_payout'] = $this->db->fetch(
-            "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_payouts WHERE user_id = ? AND status = 'pending'",
+            "SELECT COALESCE(SUM(net_payout), 0) as total FROM mlm_payouts WHERE associate_id = ? AND status = 'pending'",
             [$userId]
         )['total'] ?? 0;
         
@@ -403,7 +403,7 @@ class AdminDashboardController extends AdminBaseController
             "SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'pending'"
         )['total'] ?? 0;
         $stats['total_commissions'] = $this->db->fetch(
-            "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commissions"
+            "SELECT COALESCE(SUM(commission_amount), 0) as total FROM mlm_commissions"
         )['total'] ?? 0;
         
         return $stats;
