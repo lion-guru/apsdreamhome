@@ -71,6 +71,11 @@ class Router
     public function dispatch($uri = null)
     {
         $method = $_SERVER['REQUEST_METHOD'];
+        
+        // HEAD requests should use GET routes
+        if ($method === 'HEAD') {
+            $method = 'GET';
+        }
 
         if ($uri === null) {
             $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
