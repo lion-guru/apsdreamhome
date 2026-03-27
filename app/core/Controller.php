@@ -10,6 +10,9 @@ use App\Core\Database\Database;
 use App\Core\Session\SessionManager;
 use App\Core\Routing\Router;
 
+// Include App class from Legacy
+require_once __DIR__ . '/Legacy/AppCoreService.php';
+
 /**
  * Base Controller
  * 

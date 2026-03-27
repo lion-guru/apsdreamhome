@@ -267,3 +267,8 @@ class Database
         return $this->pdo->lastInsertId();
     }
 }
+
+// Class alias for backward compatibility
+if (!class_exists('App\\Core\\Database', false)) {
+    class_alias('App\\Core\\Database\\Database', 'App\\Core\\Database');
+}

@@ -56,11 +56,40 @@ spl_autoload_register(function ($class) {
 
     if (file_exists($file)) {
         require $file;
+        return;
+    }
+    
+    // Special handling for Database class in subfolder
+    if ($class === 'App\\Core\\Database') {
+        $db_file = APS_APP . '/Core/Database/Database.php';
+        if (file_exists($db_file)) {
+            require $db_file;
+        }
+    }
+    
+    // Special handling for App class (from Legacy folder)
+    if ($class === 'App\\Core\\App') {
+        static $app_loaded = false;
+        if (!$app_loaded) {
+            $app_file = APS_APP . '/Core/Legacy/AppCoreService.php';
+            if (file_exists($app_file)) {
+                require $app_file;
+                $app_loaded = true;
+            }
+        }
     }
 });
 
 // Include required files
 require_once APS_ROOT . '/app/helpers.php';
+
+// Preload Database class to avoid autoloader issues
+if (!class_exists('App\\Core\\Database\\Database', false)) {
+    $db_file = APS_APP . '/Core/Database/Database.php';
+    if (file_exists($db_file)) {
+        require_once $db_file;
+    }
+}
 
 // Create router instance
 error_log("=== INDEX: APS_ROOT = " . APS_ROOT . " ===");
