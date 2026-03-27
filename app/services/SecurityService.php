@@ -1,8 +1,6 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
-// app/Services/SecurityService.php
+namespace App\Services;
 
 class SecurityService {
     public function hashPassword($password) {

@@ -10,11 +10,16 @@ use App\Services\Performance\PerformanceService;
  */
 class PerformanceController extends BaseController
 {
-    private PerformanceService $performanceService;
+    private ?PerformanceService $performanceService = null;
 
-    public function __construct(PerformanceService $performanceService)
+    public function __construct()
     {
-        $this->performanceService = $performanceService;
+        parent::__construct();
+        try {
+            $this->performanceService = new PerformanceService();
+        } catch (\Throwable $e) {
+            error_log('PerformanceController: service init failed - ' . $e->getMessage());
+        }
     }
 
     /**

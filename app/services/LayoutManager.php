@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Services;
+
 // Admin Layout Manager
 class LayoutManager {
     private $db;

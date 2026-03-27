@@ -1,10 +1,11 @@
 <?php
 
+namespace App\Services;
+
 /**
  * Validator Service
  * Input validation and sanitization service
  */
-
 class ValidatorService {
     private $data;
     private $errors = [];

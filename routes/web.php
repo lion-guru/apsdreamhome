@@ -1,11 +1,6 @@
 <?php
 // Web Routes - APS Dream Home
-
-// Include router
-require_once __DIR__ . '/router.php';
-
-// Initialize router
-$router = new Router();
+// NOTE: $router is created in public/index.php - do not re-instantiate here.
 
 // Debug: Log routing setup
 error_log("ROUTER SETUP: Starting route registration");
