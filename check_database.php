@@ -1,12 +1,20 @@
 <?php
-// Include the autoloader
-require_once 'app/Core/Autoloader.php';
+// Define constants first
+define('APS_ROOT', __DIR__);
+define('APS_APP', APS_ROOT . '/app');
+define('APS_CONFIG', APS_ROOT . '/config');
+define('APS_STORAGE', APS_ROOT . '/storage');
+
+// Include bootstrap
 require_once 'config/bootstrap.php';
+
+// Include autoloader
+require_once 'app/Core/Autoloader.php';
 
 // Register autoloader
 App\Core\Autoloader::getInstance()->register();
 
-use App\Core\Database;
+use App\Core\Database\Database;
 
 try {
     $db = Database::getInstance();
@@ -87,7 +95,7 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ";
 
-        $db->exec($createTableSQL);
+        $db->execute($createTableSQL);
         echo "Admins table created successfully!\n";
 
         // Create default admin user

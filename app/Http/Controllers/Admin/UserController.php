@@ -511,7 +511,7 @@ class UserController extends AdminController
     /**
      * JSON response helper
      */
-    private function jsonResponse(array $data, int $statusCode = 200): void
+    public function jsonResponse($data, $status = 200)
     {
         http_response_code($statusCode);
         header('Content-Type: application/json');
@@ -522,7 +522,7 @@ class UserController extends AdminController
     /**
      * JSON error helper
      */
-    private function jsonError(string $message, int $statusCode = 400): void
+    protected function jsonError($message, $status = 400)
     {
         http_response_code($statusCode);
         header('Content-Type: application/json');

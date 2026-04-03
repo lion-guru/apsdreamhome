@@ -65,9 +65,35 @@ if (!function_exists('url')) {
      */
     function url($path = null)
     {
-        $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-        $base_url .= str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
-        return rtrim($base_url, '/') . '/' . ltrim($path, '/');
+        if (defined('BASE_URL')) {
+            return rtrim(BASE_URL, '/') . '/' . ltrim($path ?? '', '/');
+        }
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        // Auto-detect if we are in DocumentRoot or subdirectory
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $base = $protocol . '://' . $host;
+        if (strpos($scriptName, '/apsdreamhome/') !== false) {
+            $base .= '/apsdreamhome';
+        }
+        return rtrim($base, '/') . '/' . ltrim($path ?? '', '/');
+    }
+}
+
+if (!function_exists('get_asset_url')) {
+    function get_asset_url($path = '')
+    {
+        if (defined('BASE_URL')) {
+            return rtrim(BASE_URL, '/') . '/' . ltrim($path, '/');
+        }
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $base = $protocol . '://' . $host;
+        if (strpos($scriptName, '/apsdreamhome/') !== false) {
+            $base .= '/apsdreamhome';
+        }
+        return rtrim($base, '/') . '/' . ltrim($path, '/');
     }
 }
 
@@ -150,24 +176,6 @@ if (!function_exists('asset')) {
     function asset($path)
     {
         return url('public/' . ltrim($path, '/'));
-    }
-}
-
-if (!function_exists('get_asset_url')) {
-    /**
-     * Generate an asset URL with optional subdirectory.
-     *
-     * @param  string  $path
-     * @param  string  $subdir
-     * @return string
-     */
-    function get_asset_url($path, $subdir = '')
-    {
-        $base = BASE_URL ?? url();
-        if (!empty($subdir)) {
-            return rtrim($base, '/') . '/assets/' . $subdir . '/' . ltrim($path, '/');
-        }
-        return rtrim($base, '/') . '/assets/' . ltrim($path, '/');
     }
 }
 

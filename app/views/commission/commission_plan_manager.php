@@ -4,11 +4,10 @@
  * Admin interface for creating and managing MLM commission plans
  */
 
-require_once 'includes/config.php';
-require_once 'includes/associate_permissions.php';
-
 // Check if user is admin (only Site Manager, President, VP can access)
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
     header("Location: associate_login.php");
     exit();

@@ -38,7 +38,7 @@ if (!defined('BASE_URL')) {
     // Remove /index.php if it exists
     $script = str_replace('/index.php', '', $script);
 
-    define('BASE_URL', rtrim("$protocol://$host$script", '/') . '/');
+    define('BASE_URL', rtrim("$protocol://$host$script", '/'));
 }
 
 // Environment detection
@@ -119,23 +119,6 @@ if (file_exists(CORE_PATH . '/SystemIntegration.php')) {
 }
 // Database is autoloaded
 // require_once CORE_PATH . '/Database.php';
-
-// Class alias for Database namespace
-// Direct require for Database class to fix autoloader issue
-require_once APP_ROOT . '/app/Core/Database/Database.php';
-if (!class_exists('App\Core\Database')) {
-    class_alias('App\Core\Database\Database', 'App\Core\Database');
-}
-
-// Class alias for Session namespace  
-if (!class_exists('App\Core\Session', false)) {
-    class_alias('App\Core\Session\SessionManager', 'App\Core\Session');
-}
-
-// Class alias for App class
-if (!class_exists('App\Core\App', false) && file_exists(CORE_PATH . '/App.php')) {
-    require_once CORE_PATH . '/App.php';
-}
 
 // Include global helper functions
 if (file_exists(APP_PATH . '/helpers.php')) {

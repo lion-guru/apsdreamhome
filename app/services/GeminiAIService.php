@@ -19,13 +19,13 @@ class GeminiAIService
     private $db;
     private $apiKey;
     private $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
-    
+
     public function __construct()
     {
         $this->db = Database::getInstance();
         $this->apiKey = $this->getApiKey();
     }
-    
+
     /**
      * Get API Key from database or config
      */
@@ -37,21 +37,31 @@ class GeminiAIService
                 'SELECT api_key FROM ai_settings WHERE service = ? AND is_active = 1',
                 ['gemini']
             );
-            
+
             if ($result && !empty($result['api_key'])) {
                 return $result['api_key'];
             }
-            
-            // Fallback to environment or config
-            return $_ENV['GEMINI_API_KEY'] ?? 'AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y';
-            
+
+            // Fallback to environment variables or hardcoded key
+            $fallbackKey = $_ENV['GEMINI_API_KEY'] ?? 'AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y';
+
+            // Auto-save the key to the database for future use
+            if (!empty($fallbackKey)) {
+                // We use a try-catch inside so that if table doesn't exist, it doesn't break the app
+                try {
+                    $this->updateApiKey($fallbackKey);
+                } catch (\Exception $updateEx) {
+                }
+            }
+
+            return $fallbackKey;
         } catch (\Exception $e) {
             // Log error and return default
             error_log('Gemini API Key Error: ' . $e->getMessage());
-            return 'AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y';
+            return $_ENV['GEMINI_API_KEY'] ?? 'AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y';
         }
     }
-    
+
     /**
      * Update API Key in database
      */
@@ -63,7 +73,7 @@ class GeminiAIService
                 'SELECT id FROM ai_settings WHERE service = ?',
                 ['gemini']
             );
-            
+
             if ($existing) {
                 // Update existing
                 $this->db->execute(
@@ -77,24 +87,24 @@ class GeminiAIService
                     ['gemini', $newKey]
                 );
             }
-            
+
             // Clear cached key
             $this->apiKey = $newKey;
-            
+
             return true;
         } catch (\Exception $e) {
             error_log('Update API Key Error: ' . $e->getMessage());
             return false;
         }
     }
-    
+
     /**
      * Generate content using Gemini AI
      */
     public function generateContent(string $prompt, array $options = []): array
     {
         $url = $this->baseUrl . '/gemini-1.5-flash:generateContent?key=' . $this->apiKey;
-        
+
         $data = [
             'contents' => [
                 [
@@ -104,7 +114,7 @@ class GeminiAIService
                 ]
             ]
         ];
-        
+
         // Add optional parameters
         if (isset($options['temperature'])) {
             $data['generationConfig'] = [
@@ -114,17 +124,17 @@ class GeminiAIService
                 'maxOutputTokens' => $options['maxTokens'] ?? 8192,
             ];
         }
-        
+
         return $this->makeRequest($url, $data);
     }
-    
+
     /**
      * Chat with Gemini AI
      */
     public function chat(array $messages, array $options = []): array
     {
         $url = $this->baseUrl . '/gemini-1.5-flash:generateContent?key=' . $this->apiKey;
-        
+
         $contents = [];
         foreach ($messages as $message) {
             $contents[] = [
@@ -134,11 +144,11 @@ class GeminiAIService
                 'role' => $message['role'] ?? 'user'
             ];
         }
-        
+
         $data = [
             'contents' => $contents
         ];
-        
+
         if (isset($options['temperature'])) {
             $data['generationConfig'] = [
                 'temperature' => $options['temperature'],
@@ -147,10 +157,10 @@ class GeminiAIService
                 'maxOutputTokens' => $options['maxTokens'] ?? 8192,
             ];
         }
-        
+
         return $this->makeRequest($url, $data);
     }
-    
+
     /**
      * Generate property recommendations
      */
@@ -174,7 +184,7 @@ Format the response in a structured, professional manner.";
             'maxTokens' => 2048
         ]);
     }
-    
+
     /**
      * Generate property description
      */
@@ -198,7 +208,7 @@ Requirements:
             'maxTokens' => 1024
         ]);
     }
-    
+
     /**
      * Customer support chatbot
      */
@@ -224,7 +234,7 @@ If you don't have specific information, guide them to contact the team.";
             'maxTokens' => 1024
         ]);
     }
-    
+
     /**
      * Analyze market trends
      */
@@ -249,7 +259,7 @@ Provide data-driven, professional analysis.";
             'maxTokens' => 2048
         ]);
     }
-    
+
     /**
      * Generate social media content
      */
@@ -272,7 +282,7 @@ Requirements:
             'maxTokens' => 512
         ]);
     }
-    
+
     /**
      * Make HTTP request to Gemini API
      */
@@ -280,21 +290,21 @@ Requirements:
     {
         try {
             $ch = curl_init($url);
-            
+
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-            
+
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            
+
             curl_close($ch);
-            
+
             // Log the request
             $this->logApiRequest($url, $data, $response, $httpCode);
-            
+
             if ($httpCode === 200) {
                 return [
                     'success' => true,
@@ -309,10 +319,9 @@ Requirements:
                     'status_code' => $httpCode
                 ];
             }
-            
         } catch (\Exception $e) {
             error_log('Gemini API Request Error: ' . $e->getMessage());
-            
+
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -320,7 +329,7 @@ Requirements:
             ];
         }
     }
-    
+
     /**
      * Log API requests for monitoring
      */
@@ -341,7 +350,7 @@ Requirements:
             error_log('Failed to log API request: ' . $e->getMessage());
         }
     }
-    
+
     /**
      * Test API connection
      */
@@ -349,7 +358,7 @@ Requirements:
     {
         return $this->generateContent('Hello, is this API active? Test message.');
     }
-    
+
     /**
      * Get API usage statistics
      */
@@ -360,24 +369,23 @@ Requirements:
                 'SELECT COUNT(*) as requests_today FROM ai_api_logs WHERE service = ? AND DATE(created_at) = CURDATE()',
                 ['gemini']
             );
-            
+
             $thisMonth = $this->db->fetchAll(
                 'SELECT COUNT(*) as requests_this_month FROM ai_api_logs WHERE service = ? AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())',
                 ['gemini']
             );
-            
+
             $errors = $this->db->fetchAll(
                 'SELECT COUNT(*) as error_count FROM ai_api_logs WHERE service = ? AND status_code != 200',
                 ['gemini']
             );
-            
+
             return [
                 'success' => true,
                 'requests_today' => $today[0]['requests_today'] ?? 0,
                 'requests_this_month' => $thisMonth[0]['requests_this_month'] ?? 0,
                 'error_count' => $errors[0]['error_count'] ?? 0
             ];
-            
         } catch (\Exception $e) {
             return [
                 'success' => false,

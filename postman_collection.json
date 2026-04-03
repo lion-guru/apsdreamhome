@@ -1,0 +1,478 @@
+{
+  "info": {
+    "name": "APS Dream Home API Collection",
+    "description": "Complete API collection for APS Dream Home Real Estate CRM with AI Property Valuation",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "aps2024-ai-main-key-secure",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-set session ID from login response",
+          "if (pm.response.code === 200) {",
+          "    const sessionData = pm.response.json();",
+          "    if (sessionData.session_id) {",
+          "        pm.collectionVariables.set('sessionId', sessionData.session_id);",
+          "    }",
+          "}"
+        ]
+      }
+    }
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "User Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.response.to.have.jsonBody('session_id');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": \"{{sessionId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/logout"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Properties API",
+      "item": [
+        {
+          "name": "Get All Properties",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/properties"
+            }
+          }
+        },
+        {
+          "name": "Get Property by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/properties/{{propertyId}}"
+            }
+          }
+        },
+        {
+          "name": "Create Property",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Property\",\n  \"price\": 5000000,\n  \"type\": \"residential\",\n  \"area\": 1500,\n  \"location\": \"prime_location\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/properties"
+            }
+          }
+        },
+        {
+          "name": "Update Property",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Property\",\n  \"price\": 5500000,\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/properties/{{propertyId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI Valuation API",
+      "item": [
+        {
+          "name": "Generate Property Valuation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"property_id\": 1,\n  \"valuation_type\": \"comprehensive\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/valuation"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('AI Valuation Generated', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.response.to.have.jsonBody('success');",
+                  "    pm.response.to.have.jsonBody('data');",
+                  "    pm.response.to.have.jsonBody('final_valuation');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Batch Property Valuation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"property_ids\": [1, 2, 3],\n  \"valuation_type\": \"comprehensive\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/valuation/batch"
+            }
+          }
+        },
+        {
+          "name": "Get Valuation History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/valuation/history/{{propertyId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users API",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users"
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads API",
+      "item": [
+        {
+          "name": "Get All Leads",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/leads"
+            }
+          }
+        },
+        {
+          "name": "Create Lead",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Lead\",\n  \"email\": \"lead@example.com\",\n  \"phone\": \"+91-9876543210\",\n  \"property_id\": 1,\n  \"status\": \"new\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/leads"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Commissions API",
+      "item": [
+        {
+          "name": "Get Commission History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/commissions"
+            }
+          }
+        },
+        {
+          "name": "Calculate Commission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"property_id\": 1,\n  \"commission_rate\": 0.05,\n  \"sale_amount\": 5000000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/commissions/calculate"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments API",
+      "item": [
+        {
+          "name": "Get Payment History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payments"
+            }
+          }
+        },
+        {
+          "name": "Process Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1,\n  \"amount\": 500000,\n  \"payment_type\": \"emi\",\n  \"months\": 12\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/process"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin API",
+      "item": [
+        {
+          "name": "Get System Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/stats"
+            }
+          }
+        },
+        {
+          "name": "Get Database Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/database"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

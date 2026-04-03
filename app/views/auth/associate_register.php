@@ -1,587 +1,461 @@
+<?php
+if (!defined('BASE_URL')) {
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
+}
+$csrf_token = $csrf_token ?? '';
+$errors = $errors ?? [];
+$old = $old ?? [];
+$base = BASE_URL;
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Associate Registration - APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e65100 0%, #ff9800 35%, #ffb74d 65%, #ff8f00 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 15px;
+            position: relative;
+            overflow-y: auto;
+        }
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8">
-            <div class="card shadow-lg border-0">
-                <div class="card-body p-5">
-                    <div class="text-center mb-5">
-                        <div class="mb-3">
-                            <i class="fas fa-handshake fa-3x text-success"></i>
-                        </div>
-                        <h2 class="card-title fw-bold mb-3">Associate Registration</h2>
-                        <p class="text-muted lead">Partner with APS Dream Home and build your real estate career</p>
-                        <div class="badge bg-success text-white fs-6 mb-3">
-                            <i class="fas fa-star me-1"></i>Earn Commission on Every Deal
-                        </div>
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 15% 85%, rgba(255,255,255,0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 15%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 520px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25), 0 8px 20px rgba(0,0,0,0.12);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .card-header-area {
+            background: linear-gradient(135deg, #bf360c 0%, #e65100 40%, #f57c00 100%);
+            padding: 35px 30px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .card-header-area::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: #ffffff;
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+        }
+
+        .brand-icon {
+            width: 72px;
+            height: 72px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            border: 2px solid rgba(255,255,255,0.35);
+            backdrop-filter: blur(4px);
+        }
+
+        .brand-icon i {
+            font-size: 30px;
+            color: #ffffff;
+        }
+
+        .brand-name {
+            color: #ffffff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .brand-subtitle {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.82rem;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .card-body {
+            padding: 30px 35px 25px;
+        }
+
+        .tagline-box {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-left: 4px solid #e65100;
+            border-radius: 0 10px 10px 0;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+        }
+
+        .tagline-box p {
+            margin: 0;
+            font-size: 0.88rem;
+            color: #bf360c;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .tagline-box i {
+            margin-right: 6px;
+            color: #e65100;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #424242;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .form-label .required {
+            color: #e65100;
+            margin-left: 2px;
+        }
+
+        .input-group-text {
+            background: #fff3e0;
+            border-color: #ffcc80;
+            color: #e65100;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            border-color: #ffcc80;
+            font-size: 0.92rem;
+            padding: 10px 14px;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .form-control:focus {
+            border-color: #e65100;
+            box-shadow: 0 0 0 0.2rem rgba(230,81,0,0.15);
+        }
+
+        .form-control::placeholder {
+            color: #bdbdbd;
+            font-size: 0.85rem;
+        }
+
+        .optional-label {
+            font-size: 0.72rem;
+            color: #9e9e9e;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .referral-note {
+            font-size: 0.78rem;
+            color: #757575;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .referral-note i {
+            color: #ff9800;
+            margin-right: 3px;
+        }
+
+        .error-box {
+            background: #fce4ec;
+            border: 1px solid #ef9a9a;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+        }
+
+        .error-box ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .error-box li {
+            color: #c62828;
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .error-box li:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(135deg, #bf360c 0%, #e65100 50%, #f57c00 100%);
+            border: none;
+            border-radius: 10px;
+            letter-spacing: 0.8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(230,81,0,0.4);
+            color: #ffffff;
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 22px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 14px;
+            color: #9e9e9e;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .login-link {
+            text-align: center;
+            font-size: 0.88rem;
+            color: #616161;
+        }
+
+        .login-link a {
+            color: #e65100;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .login-link a:hover {
+            color: #bf360c;
+            text-decoration: underline;
+        }
+
+        .card-footer-area {
+            background: #fafafa;
+            border-top: 1px solid #f0f0f0;
+            padding: 18px 35px;
+            text-align: center;
+        }
+
+        .card-footer-area small {
+            color: #9e9e9e;
+            font-size: 0.75rem;
+        }
+
+        .card-footer-area small a {
+            color: #757575;
+            text-decoration: none;
+        }
+
+        .card-footer-area small a:hover {
+            color: #e65100;
+        }
+
+        @media (max-width: 576px) {
+            .card-header-area {
+                padding: 28px 20px 25px;
+            }
+
+            .brand-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .brand-icon i {
+                font-size: 24px;
+            }
+
+            .brand-name {
+                font-size: 1.35rem;
+            }
+
+            .card-body {
+                padding: 24px 20px 20px;
+            }
+
+            .card-footer-area {
+                padding: 16px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-card">
+    <div class="card-header-area">
+        <div class="brand-icon">
+            <i class="fas fa-handshake"></i>
+        </div>
+        <div class="brand-name">APS Dream Home</div>
+        <div class="brand-subtitle">Associate Partner Portal</div>
+    </div>
+
+    <div class="card-body">
+        <div class="tagline-box">
+            <p><i class="fas fa-chart-line"></i> Join our associate network and earn commissions by referring customers</p>
+        </div>
+
+        <?php if (!empty($errors)): ?>
+        <div class="error-box">
+            <ul>
+                <?php foreach ($errors as $error): ?>
+                <li><?php echo htmlspecialchars($error); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
+
+        <form action="<?php echo $base; ?>/associate/register" method="POST" novalidate>
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+
+            <div class="mb-3">
+                <label for="full_name" class="form-label">Full Name <span class="required">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Enter your full name" value="<?php echo htmlspecialchars($old['full_name'] ?? ''); ?>" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 mb-3">
+                    <label for="password" class="form-label">Password <span class="required">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Create password" required>
                     </div>
-
-                    <?php if (isset($_SESSION['error'])): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <?php
-                            echo htmlspecialchars($_SESSION['error']);
-                            unset($_SESSION['error']);
-                            ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (isset($_SESSION['success'])): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <?php
-                            echo htmlspecialchars($_SESSION['success']);
-                            unset($_SESSION['success']);
-                            ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (isset($_SESSION['errors'])): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <?php foreach ($_SESSION['errors'] as $error): ?>
-                                <div><?php echo htmlspecialchars($error); ?></div>
-                            <?php endforeach; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php unset($_SESSION['errors']); ?>
-                    <?php endif; ?>
-
-                    <form method="POST" action="<?php echo BASE_URL; ?>/associate/register" id="associateRegistrationForm" class="registration-form">
-                        <?php
-                        // Generate CSRF token if not exists
-                        if (!isset($_SESSION['csrf_token'])) {
-                            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                        }
-                        $csrf_token = $_SESSION['csrf_token'];
-                        ?>
-                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
-                        <input type="hidden" name="user_type" value="associate">
-
-                        <!-- Personal Information -->
-                        <div class="registration-section mb-4">
-                            <h4 class="section-title mb-4">
-                                <i class="fas fa-user me-2 text-success"></i>Personal Information
-                            </h4>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label">
-                                        <i class="fas fa-user me-1"></i> Full Name *
-                                    </label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="Enter your full name" required
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['name'] ?? ''); ?>">
-                                    <div class="invalid-feedback">Please provide your full name</div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label">
-                                        <i class="fas fa-envelope me-1"></i> Email Address *
-                                    </label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        placeholder="Enter your email address" required
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['email'] ?? ''); ?>">
-                                    <div class="invalid-feedback">Please provide a valid email address</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="phone" class="form-label">
-                                        <i class="fas fa-phone me-1"></i> Phone Number *
-                                    </label>
-                                    <input type="tel" class="form-control" id="phone" name="phone"
-                                        placeholder="Enter your phone number" pattern="[0-9]{10}" maxlength="10" required
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['phone'] ?? ''); ?>">
-                                    <div class="invalid-feedback">Please provide a valid 10-digit phone number</div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="experience" class="form-label">
-                                        <i class="fas fa-chart-line me-1"></i> Years of Experience *
-                                    </label>
-                                    <select class="form-select" id="experience" name="experience" required>
-                                        <option value="">Select Experience</option>
-                                        <option value="0-1" <?php echo (($_SESSION['old_input']['experience'] ?? '') === '0-1') ? 'selected' : ''; ?>>0-1 Year</option>
-                                        <option value="1-3" <?php echo (($_SESSION['old_input']['experience'] ?? '') === '1-3') ? 'selected' : ''; ?>>1-3 Years</option>
-                                        <option value="3-5" <?php echo (($_SESSION['old_input']['experience'] ?? '') === '3-5') ? 'selected' : ''; ?>>3-5 Years</option>
-                                        <option value="5+" <?php echo (($_SESSION['old_input']['experience'] ?? '') === '5+') ? 'selected' : ''; ?>>5+ Years</option>
-                                    </select>
-                                    <div class="invalid-feedback">Please select your experience level</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Professional Information -->
-                        <div class="registration-section mb-4">
-                            <h4 class="section-title mb-4">
-                                <i class="fas fa-briefcase me-2 text-success"></i>Professional Information
-                            </h4>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="specialization" class="form-label">
-                                        <i class="fas fa-star me-1"></i> Specialization
-                                    </label>
-                                    <select class="form-select" id="specialization" name="specialization">
-                                        <option value="">Select Specialization</option>
-                                        <option value="residential" <?php echo ($_SESSION['old_input']['specialization'] ?? '') === 'residential' ? 'selected' : ''; ?>>Residential Properties</option>
-                                        <option value="commercial" <?php echo ($_SESSION['old_input']['specialization'] ?? '') === 'commercial' ? 'selected' : ''; ?>>Commercial Properties</option>
-                                        <option value="plots" <?php echo ($_SESSION['old_input']['specialization'] ?? '') === 'plots' ? 'selected' : ''; ?>>Plots & Land</option>
-                                        <option value="rental" <?php echo ($_SESSION['old_input']['specialization'] ?? '') === 'rental' ? 'selected' : ''; ?>>Rental Properties</option>
-                                        <option value="investment" <?php echo ($_SESSION['old_input']['specialization'] ?? '') === 'investment' ? 'selected' : ''; ?>>Investment Properties</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="current_company" class="form-label">
-                                        <i class="fas fa-building me-1"></i> Current Company (if any)
-                                    </label>
-                                    <input type="text" class="form-control" id="current_company" name="current_company"
-                                        placeholder="Enter your current company name"
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['current_company'] ?? ''); ?>">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label for="bio" class="form-label">
-                                        <i class="fas fa-info-circle me-1"></i> Professional Bio
-                                    </label>
-                                    <textarea class="form-control" id="bio" name="bio" rows="3"
-                                        placeholder="Tell us about your experience and expertise..."
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['bio'] ?? ''); ?>"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Address Information -->
-                        <div class="registration-section mb-4">
-                            <h4 class="section-title mb-4">
-                                <i class="fas fa-map-marker-alt me-2 text-success"></i>Address Information
-                            </h4>
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label for="address" class="form-label">
-                                        <i class="fas fa-home me-1"></i> Street Address *
-                                    </label>
-                                    <input type="text" class="form-control" id="address" name="address"
-                                        placeholder="Enter your street address" required
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['address'] ?? ''); ?>">
-                                    <div class="invalid-feedback">Please provide your address</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="city" class="form-label">
-                                        <i class="fas fa-city me-1"></i> City *
-                                    </label>
-                                    <input type="text" class="form-control" id="city" name="city"
-                                        placeholder="Enter your city" required
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['city'] ?? ''); ?>">
-                                    <div class="invalid-feedback">Please provide your city</div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label for="state" class="form-label">
-                                        <i class="fas fa-map me-1"></i> State *
-                                    </label>
-                                    <select class="form-select" id="state" name="state" required>
-                                        <option value="">Select State</option>
-                                        <option value="Andhra Pradesh" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Andhra Pradesh' ? 'selected' : ''; ?>>Andhra Pradesh</option>
-                                        <option value="Arunachal Pradesh" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Arunachal Pradesh' ? 'selected' : ''; ?>>Arunachal Pradesh</option>
-                                        <option value="Assam" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Assam' ? 'selected' : ''; ?>>Assam</option>
-                                        <option value="Bihar" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Bihar' ? 'selected' : ''; ?>>Bihar</option>
-                                        <option value="Gujarat" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Gujarat' ? 'selected' : ''; ?>>Gujarat</option>
-                                        <option value="Karnataka" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Karnataka' ? 'selected' : ''; ?>>Karnataka</option>
-                                        <option value="Kerala" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Kerala' ? 'selected' : ''; ?>>Kerala</option>
-                                        <option value="Maharashtra" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Maharashtra' ? 'selected' : ''; ?>>Maharashtra</option>
-                                        <option value="Tamil Nadu" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Tamil Nadu' ? 'selected' : ''; ?>>Tamil Nadu</option>
-                                        <option value="Uttar Pradesh" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'Uttar Pradesh' ? 'selected' : ''; ?>>Uttar Pradesh</option>
-                                        <option value="West Bengal" <?php echo ($_SESSION['old_input']['state'] ?? '') === 'West Bengal' ? 'selected' : ''; ?>>West Bengal</option>
-                                    </select>
-                                    <div class="invalid-feedback">Please select your state</div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label for="pincode" class="form-label">
-                                        <i class="fas fa-mail-bulk me-1"></i> PIN Code *
-                                    </label>
-                                    <input type="text" class="form-control" id="pincode" name="pincode"
-                                        placeholder="Enter PIN code" pattern="[0-9]{6}" required
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['pincode'] ?? ''); ?>">
-                                    <div class="invalid-feedback">Please provide a valid 6-digit PIN code</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Account Information -->
-                        <div class="registration-section mb-4">
-                            <h4 class="section-title mb-4">
-                                <i class="fas fa-lock me-2 text-success"></i>Account Information
-                            </h4>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="password" class="form-label">
-                                        <i class="fas fa-lock me-1"></i> Password *
-                                    </label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="password" name="password"
-                                            placeholder="Create a strong password" required minlength="6">
-                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </div>
-                                    <div class="form-text">Password must be at least 6 characters long</div>
-                                    <div class="invalid-feedback">Please provide a strong password</div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="confirm_password" class="form-label">
-                                        <i class="fas fa-lock me-1"></i> Confirm Password *
-                                    </label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password"
-                                            placeholder="Confirm your password" required minlength="6">
-                                        <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </div>
-                                    <div class="invalid-feedback">Passwords do not match</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Business Information -->
-                        <div class="registration-section mb-4">
-                            <h4 class="section-title mb-4">
-                                <i class="fas fa-chart-line me-2 text-success"></i>Business Information
-                            </h4>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="referral_code" class="form-label">
-                                        <i class="fas fa-gift me-1"></i> Referral Code (Optional)
-                                    </label>
-                                    <input type="text" class="form-control" id="referral_code" name="referral_code"
-                                        placeholder="Enter referral code if you have one"
-                                        value="<?php echo htmlspecialchars($_SESSION['old_input']['referral_code'] ?? ''); ?>">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <div class="alert alert-info small">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Associates earn 5% commission on referred sales
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Terms and Conditions -->
-                        <div class="registration-section mb-4">
-                            <div class="form-check mb-3">
-                                <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
-                                <label class="form-check-label" for="terms">
-                                    I agree to the <a href="<?php echo BASE_URL; ?>/terms" class="text-success">Terms and Conditions</a> and <a href="<?php echo BASE_URL; ?>/privacy" class="text-success">Privacy Policy</a> *
-                                </label>
-                                <div class="invalid-feedback">You must agree to the terms and conditions</div>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input type="checkbox" class="form-check-input" id="commission_terms" name="commission_terms" required>
-                                <label class="form-check-label" for="commission_terms">
-                                    I understand the commission structure and payment terms *
-                                </label>
-                                <div class="invalid-feedback">You must agree to commission terms</div>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input type="checkbox" class="form-check-input" id="newsletter" name="newsletter">
-                                <label class="form-check-label" for="newsletter">
-                                    Send me business opportunities and training updates via email
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success btn-lg px-5">
-                                <i class="fas fa-handshake me-2"></i>Join as Associate
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="text-center mt-4">
-                        <small class="text-muted">
-                            Already have an account?
-                            <a href="<?php echo BASE_URL; ?>/login" class="text-decoration-none">
-                                <i class="fas fa-sign-in-alt me-1"></i>Sign In
-                            </a>
-                        </small>
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <label for="confirm_password" class="form-label">Confirm Password <span class="required">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
                     </div>
                 </div>
             </div>
+
+            <div class="mb-3">
+                <label for="sponsor_code" class="form-label">Sponsor / Referral Code <span class="optional-label">(optional)</span></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-users"></i></span>
+                    <input type="text" class="form-control" id="sponsor_code" name="sponsor_code" placeholder="Enter sponsor code if you have one" value="<?php echo htmlspecialchars($old['sponsor_code'] ?? ''); ?>">
+                </div>
+                <div class="referral-note">
+                    <i class="fas fa-info-circle"></i> Have a referral code from an existing associate? Enter it to join their network.
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-register mt-1">
+                <i class="fas fa-user-plus me-2"></i>Create Associate Account
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>Already registered?</span>
         </div>
+
+        <p class="login-link">
+            <i class="fas fa-sign-in-alt me-1"></i> <a href="<?php echo $base; ?>/associate/login">Sign in to your Associate Account</a>
+        </p>
+    </div>
+
+    <div class="card-footer-area">
+        <small>&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.<br>
+        <a href="<?php echo $base; ?>">Back to Main Site</a></small>
     </div>
 </div>
 
-<style>
-    .registration-section {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 25px;
-        margin-bottom: 20px;
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
-    }
-
-    .registration-section:hover {
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-    }
-
-    .section-title {
-        color: #2c3e50;
-        font-weight: 600;
-        border-bottom: 2px solid #28a745;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-    }
-
-    .card {
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-    }
-
-    .btn-success {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .btn-success:hover {
-        background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-    }
-
-    .fa-3x {
-        color: #28a745;
-        margin-bottom: 1rem;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.05);
-        }
-
-        100% {
-            transform: scale(1);
-        }
-    }
-
-    .alert {
-        border-radius: 8px;
-        border: none;
-        animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .input-group .btn:hover {
-        border-color: #28a745;
-        background-color: #f8f9fa;
-    }
-
-    .form-text {
-        color: #6c757d;
-        font-size: 0.875rem;
-    }
-
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        min-height: 100vh;
-    }
-
-    .badge {
-        animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-
-        0%,
-        20%,
-        50%,
-        80%,
-        100% {
-            transform: translateY(0);
-        }
-
-        40% {
-            transform: translateY(-10px);
-        }
-
-        60% {
-            transform: translateY(-5px);
-        }
-    }
-</style>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle password visibility
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
+    document.getElementById('phone').addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
 
-        if (togglePassword && passwordInput) {
-            togglePassword.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-
-                const icon = this.querySelector('i');
-                icon.classList.toggle('fa-eye');
-                icon.classList.toggle('fa-eye-slash');
-            });
+    document.querySelector('form').addEventListener('submit', function(e) {
+        var phone = document.getElementById('phone').value;
+        if (phone.length !== 10) {
+            e.preventDefault();
+            alert('Please enter a valid 10-digit phone number.');
+            document.getElementById('phone').focus();
+            return false;
         }
 
-        // Toggle confirm password visibility
-        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-        const confirmPasswordInput = document.getElementById('confirm_password');
-
-        if (toggleConfirmPassword && confirmPasswordInput) {
-            toggleConfirmPassword.addEventListener('click', function() {
-                const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                confirmPasswordInput.setAttribute('type', type);
-
-                const icon = this.querySelector('i');
-                icon.classList.toggle('fa-eye');
-                icon.classList.toggle('fa-eye-slash');
-            });
+        var pw = document.getElementById('password').value;
+        var cpw = document.getElementById('confirm_password').value;
+        if (pw !== cpw) {
+            e.preventDefault();
+            alert('Passwords do not match.');
+            document.getElementById('confirm_password').focus();
+            return false;
         }
-
-        // Form validation
-        const form = document.querySelector('form');
-        const inputs = form.querySelectorAll('input[required], select[required]');
-
-        // Real-time validation
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                validateField(this);
-            });
-
-            input.addEventListener('input', function() {
-                if (this.classList.contains('is-invalid')) {
-                    validateField(this);
-                }
-            });
-        });
-
-        function validateField(field) {
-            let isValid = true;
-
-            if (field.hasAttribute('required') && !field.value.trim()) {
-                isValid = false;
-            }
-
-            if (field.type === 'email' && field.value) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(field.value)) {
-                    isValid = false;
-                }
-            }
-
-            if (field.id === 'pincode' && field.value) {
-                const pincodeRegex = /^[0-9]{6}$/;
-                if (!pincodeRegex.test(field.value)) {
-                    isValid = false;
-                }
-            }
-
-            if (field.id === 'confirm_password' && field.value) {
-                const password = document.getElementById('password').value;
-                if (field.value !== password) {
-                    isValid = false;
-                    field.setCustomValidity('Passwords do not match');
-                } else {
-                    field.setCustomValidity('');
-                }
-            }
-
-            if (field.id === 'password' && field.value) {
-                if (field.value.length < 6) {
-                    isValid = false;
-                    field.setCustomValidity('Password must be at least 6 characters');
-                } else {
-                    field.setCustomValidity('');
-                }
-            }
-
-            if (isValid) {
-                field.classList.remove('is-invalid');
-                field.classList.add('is-valid');
-            } else {
-                field.classList.remove('is-valid');
-                field.classList.add('is-invalid');
-            }
-
-            return isValid;
-        }
-
-        // Form submission validation
-        form.addEventListener('submit', function(e) {
-            let isFormValid = true;
-
-            inputs.forEach(input => {
-                if (!validateField(input)) {
-                    isFormValid = false;
-                }
-            });
-
-            if (!isFormValid) {
-                e.preventDefault();
-
-                // Show error message
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-                alertDiv.innerHTML = `
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Please fill in all required fields correctly.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-
-                const existingAlert = form.querySelector('.alert');
-                if (existingAlert) {
-                    existingAlert.remove();
-                }
-
-                form.insertBefore(alertDiv, form.firstChild);
-
-                // Scroll to top
-                form.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
-
-        // Auto-focus first field
-        document.getElementById('name').focus();
     });
 </script>
+
+</body>
+</html>

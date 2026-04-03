@@ -1,0 +1,13 @@
+{
+    "pass": 44,
+    "fail": 0,
+    "redirect": 8,
+    "errors": [
+        "Resell (\/resell) - UNDEFINED",
+        "List Property (\/list-property) - UNDEFINED",
+        "Braj Radha Nagri (\/projects\/braj-radha-nagri) - UNDEFINED",
+        "Budh Bihari Colony (\/projects\/budh-bihar-colony) - UNDEFINED",
+        "Awadhpuri (\/projects\/awadhpuri) - UNDEFINED",
+        "Employee Login (\/employee\/login) - UNDEFINED"
+    ]
+}

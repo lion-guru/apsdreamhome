@@ -27,16 +27,22 @@ class Database
 
     public function __construct(array $config = [])
     {
+        // Use ConfigService if no config is provided
+        if (empty($config)) {
+            $configService = \App\Core\ConfigService::getInstance();
+            $config = $configService->getDatabaseConfig() ?: [];
+        }
+
         $this->config = array_merge([
             'driver' => 'mysql',
-            'host' => 'localhost',
+            'host' => '127.0.0.1', // Use 127.0.0.1 instead of localhost for port-based connection
             'database' => 'apsdreamhome',
             'username' => 'root',
             'password' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'port' => 3306,
+            'port' => 3307, // XAMPP MySQL port
             'socket' => null,
             'options' => extension_loaded('pdo') ? [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -45,6 +51,11 @@ class Database
             ] : [],
         ], $config);
 
+        // Enforce 127.0.0.1 if using custom port (localhost ignores port on Linux/WSL)
+        if ($this->config['host'] === 'localhost') {
+            $this->config['host'] = '127.0.0.1';
+        }
+
         $this->connect();
     }
 
@@ -52,9 +63,10 @@ class Database
     {
         try {
             $dsn = sprintf(
-                '%s:host=%s;dbname=%s;charset=%s',
+                '%s:host=%s;port=%s;dbname=%s;charset=%s',
                 $this->config['driver'],
                 $this->config['host'],
+                $this->config['port'] ?? 3306,
                 $this->config['database'],
                 $this->config['charset']
             );

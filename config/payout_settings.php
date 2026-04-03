@@ -1,0 +1,17 @@
+<?php
+
+// Payout Configuration - Auto-generated from database
+return [
+    'PAYOUT_MINIMUM_THRESHOLD' => '500',
+    'PAYOUT_PROCESSING_FEE_BELOW_1000' => '10',
+    'PAYOUT_PROCESSING_FEE_ABOVE_1000' => '0',
+    'PAYOUT_TAX_DEDUCTION_RATE' => '5',
+    'PAYOUT_TAX_DEDUCTION_HIGH_RATE' => '10',
+    'PAYOUT_TAX_THRESHOLD' => '10000',
+    'PAYOUT_FREQUENCY' => 'monthly',
+    'PAYOUT_PROCESSING_DAY' => '25',
+    'PAYOUT_PROCESSING_TIME' => '48',
+    'PAYOUT_DAILY_LIMIT' => '50000',
+    'PAYOUT_MONTHLY_LIMIT' => '500000',
+    'PAYOUT_EMERGENCY_LIMIT' => '100000',
+];

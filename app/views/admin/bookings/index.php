@@ -18,27 +18,27 @@
                     </h6>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/dashboard">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/dashboard">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/admin/bookings">
+                            <a class="nav-link active" href="<?php echo BASE_URL; ?>/admin/bookings">
                                 <i class="fas fa-calendar-check"></i> Bookings
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/properties">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/properties">
                                 <i class="fas fa-home"></i> Properties
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/users">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/users">
                                 <i class="fas fa-users"></i> Users
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/commissions">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/commissions">
                                 <i class="fas fa-money-bill-wave"></i> Commissions
                             </a>
                         </li>
@@ -51,7 +51,7 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Bookings Management</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/admin/bookings/create" class="btn btn-primary">
+                        <a href="<?php echo BASE_URL; ?>/admin/bookings/create" class="btn btn-primary">
                             <i class="fas fa-plus"></i> New Booking
                         </a>
                     </div>
@@ -138,7 +138,7 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form method="GET" action="/admin/bookings">
+                        <form method="GET" action="<?php echo BASE_URL; ?>/admin/bookings">
                             <div class="row">
                                 <div class="col-md-3">
                                     <label for="search" class="form-label">Search</label>
@@ -184,7 +184,7 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-search"></i> Filter
                                         </button>
-                                        <a href="/admin/bookings" class="btn btn-secondary">
+                                        <a href="<?php echo BASE_URL; ?>/admin/bookings" class="btn btn-secondary">
                                             <i class="fas fa-times"></i> Clear
                                         </a>
                                     </div>
@@ -274,10 +274,10 @@
                                                 </td>
                                                 <td>
                                                     <div class="btn-group btn-group-sm" role="group">
-                                                        <a href="/admin/bookings/<?= $booking['id'] ?>" class="btn btn-outline-primary" title="View">
+                                                        <a href="<?php echo BASE_URL; ?>/admin/bookings/<?= $booking['id'] ?>" class="btn btn-outline-primary" title="View">
                                                             <i class="fas fa-eye"></i>
                                                         </a>
-                                                        <a href="/admin/bookings/<?= $booking['id'] ?>/edit" class="btn btn-outline-warning" title="Edit">
+                                                        <a href="<?php echo BASE_URL; ?>/admin/bookings/<?= $booking['id'] ?>/edit" class="btn btn-outline-warning" title="Edit">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         <button type="button" class="btn btn-outline-danger" 
@@ -361,9 +361,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        var baseUrl = '<?php echo BASE_URL; ?>';
+
         function confirmDelete(bookingId, bookingNumber) {
             document.getElementById('deleteBookingNumber').textContent = bookingNumber;
-            document.getElementById('deleteForm').action = '/admin/bookings/' + bookingId + '/destroy';
+            document.getElementById('deleteForm').action = baseUrl + '/admin/bookings/' + bookingId + '/destroy';
             
             const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
             modal.show();

@@ -1,64 +1,78 @@
 @echo off
-REM APS Dream Home - Quick Server Start
-REM Simple PHP development server starter
+setlocal enabledelayedexpansion
+REM APS Dream Home - Advanced Quick Server Start
+REM Optimized for XAMPP and Custom PHP environments
 
-title APS Dream Home - Quick Server Start
+title APS Dream Home - Server Manager
 
 echo.
 echo =================================================
-echo    APS DREAM HOME - QUICK SERVER START
+echo    APS DREAM HOME - ADVANCED SERVER START
 echo =================================================
 echo.
 
 set PROJECT_PATH=C:\xampp\htdocs\apsdreamhome
-
-echo [INFO] Project: %PROJECT_PATH%
-echo [INFO] Starting PHP development server...
-echo.
+set DEFAULT_PORT=8080
+set SERVER_PORT=%DEFAULT_PORT%
 
 cd /d "%PROJECT_PATH%"
 
-REM Check if .env exists and has AI config
-if exist ".env" (
-    echo [INFO] Configuration file found
-    findstr /C:"AI_API_KEY=" .env >nul
-    if %errorlevel% equ 0 (
-        echo [SUCCESS] AI API Key configured
+:: 1. Detect PHP Path
+set PHP_BIN=php
+where %PHP_BIN% >nul 2>&1
+if %errorlevel% neq 0 (
+    if exist "C:\xampp\php\php.exe" (
+        set PHP_BIN=C:\xampp\php\php.exe
+        echo [INFO] Using XAMPP PHP: !PHP_BIN!
     ) else (
-        echo [WARNING] AI API Key not configured
+        echo [ERROR] PHP not found in PATH or C:\xampp\php\php.exe
+        echo [ERROR] Please install PHP or XAMPP correctly.
+        pause
+        exit /b 1
     )
 ) else (
-    echo [WARNING] .env file not found
+    echo [INFO] Using System PHP from PATH
 )
 
-REM Start PHP server
-echo [ACTION] Starting PHP development server...
-php -S localhost:8000
-
+:: 2. Check if Port is in Use
+:check_port
+netstat -ano | findstr ":%SERVER_PORT% " | findstr "LISTENING" >nul
 if %errorlevel% equ 0 (
-    echo [SUCCESS] Server started successfully
-    echo.
-    echo [ACCESS URLS]
-    echo   • Main Site: http://localhost:8000
-    echo   • AI Chat: http://localhost:8000/ai-chat-enhanced
-    echo   • AI Assistant: http://localhost:8000/ai-assistant
-    echo   • Admin: http://localhost:8000/dashboard/admin_dashboard
-    echo.
-    echo [INFO] Press Ctrl+C to stop server
-    echo.
+    echo [WARNING] Port %SERVER_PORT% is already in use.
+    set /a SERVER_PORT+=1
+    echo [ACTION] Trying next port: !SERVER_PORT!...
+    goto check_port
+)
+
+echo [SUCCESS] Port %SERVER_PORT% is available.
+echo.
+
+:: 3. Check Configuration
+if exist ".env" (
+    echo [INFO] .env configuration found.
 ) else (
-    echo [ERROR] Failed to start server
-    echo [INFO] Check PHP installation
-    echo [INFO] Check port 8000 availability
+    echo [WARNING] .env file not found. System might use fallback settings.
+)
+
+:: 4. Start PHP Development Server
+echo.
+echo [ACTION] Starting server at http://localhost:%SERVER_PORT%...
+echo [INFO] Press Ctrl+C twice to stop the server.
+echo.
+
+:: Run server and keep window open on failure
+"!PHP_BIN!" -S localhost:%SERVER_PORT%
+
+if %errorlevel% neq 0 (
+    echo.
+    echo [ERROR] PHP Server failed to start or crashed.
+    echo [TIP] Check if another process is blocking the port.
+    echo [TIP] Check PHP error logs.
     pause
 )
 
 echo.
 echo =================================================
-echo    Server is running - Press Ctrl+C to stop
+echo    Server stopped.
 echo =================================================
-
-REM Keep server running
-:loop
-timeout /t 60 /nobreak
-goto loop
+pause

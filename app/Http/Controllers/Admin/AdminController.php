@@ -238,7 +238,7 @@ class AdminController extends BaseController
     /**
      * Get recent activities
      */
-    private function getRecentActivities()
+    public function getRecentActivities()
     {
         try {
             return $this->db->fetchAll("
@@ -251,6 +251,26 @@ class AdminController extends BaseController
         } catch (Exception $e) {
             return [];
         }
+    }
+
+    /**
+     * Get dashboard stats (API endpoint)
+     */
+    public function getStats()
+    {
+        header('Content-Type: application/json');
+        try {
+            $stats = [
+                'total_users' => $this->db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0,
+                'total_properties' => $this->db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0,
+                'total_leads' => $this->db->fetch("SELECT COUNT(*) as c FROM leads")['c'] ?? 0,
+                'pending_bookings' => $this->db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0,
+            ];
+            echo json_encode(['success' => true, 'data' => $stats]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
     }
 
     /**
@@ -303,7 +323,7 @@ class AdminController extends BaseController
     /**
      * JSON response helper
      */
-    public function jsonResponse($data, int $statusCode = 200)
+    public function jsonResponse($data, $status = 200)
     {
         http_response_code($statusCode);
         header('Content-Type: application/json');

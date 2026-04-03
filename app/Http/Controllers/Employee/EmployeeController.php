@@ -393,4 +393,53 @@ class EmployeeController extends BaseController
         header("Location: " . BASE_URL . $url);
         exit;
     }
+
+    // Missing page methods - each renders its view
+    public function tasks()
+    {
+        $data = ['page_title' => 'My Tasks', 'page_description' => 'View and manage your tasks'];
+        $this->render('employees/tasks', $data);
+    }
+
+    public function activities()
+    {
+        $data = ['page_title' => 'Activities', 'page_description' => 'Your recent activities'];
+        $this->render('employees/activities', $data);
+    }
+
+    public function attendance()
+    {
+        $data = ['page_title' => 'Attendance', 'page_description' => 'Your attendance records'];
+        $this->render('employees/attendance', $data);
+    }
+
+    public function performancePage()
+    {
+        $data = ['page_title' => 'Performance', 'page_description' => 'Your performance metrics'];
+        $this->render('employees/performance', $data);
+    }
+
+    public function salary()
+    {
+        $data = ['page_title' => 'Salary History', 'page_description' => 'Your salary records'];
+        $this->render('employees/salary_history', $data);
+    }
+
+    public function documents()
+    {
+        $data = ['page_title' => 'Documents', 'page_description' => 'Your documents'];
+        $this->render('employees/documents', $data);
+    }
+
+    public function leaves()
+    {
+        $data = ['page_title' => 'Leaves', 'page_description' => 'Your leave records'];
+        $this->render('employees/leaves', $data);
+    }
+
+    public function reporting()
+    {
+        $data = ['page_title' => 'Reporting', 'page_description' => 'Your reporting structure'];
+        $this->render('employees/reporting_structure', $data);
+    }
 }

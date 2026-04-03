@@ -1,13 +1,9 @@
 <?php
-// BASE_URL should be defined in public/index.php
+// Define BASE_URL if not already defined
 if (!defined('BASE_URL')) {
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-    $domainName = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    if (str_contains($_SERVER['REQUEST_URI'] ?? '', '/apsdreamhome')) {
-        define('BASE_URL', $protocol . $domainName . '/apsdreamhome');
-    } else {
-        define('BASE_URL', $protocol . $domainName);
-    }
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
 }
 ?>
 <header class="premium-header fixed-top">
@@ -28,9 +24,9 @@ if (!defined('BASE_URL')) {
                 <ul class="navbar-nav ms-auto align-items-center">
                     <?php
                     // Enhanced navigation with active state
-                    $current_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
-                    $base_path = parse_url(BASE_URL, PHP_URL_PATH);
-                    $current_path = str_replace($base_path ?? '', '', $current_path);
+                    $current_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+                    $base_path = (string) parse_url(BASE_URL, PHP_URL_PATH);
+                    $current_path = str_replace($base_path, '', $current_path);
                     $current_path = $current_path ?: '/';
 
                     $nav_items = [

@@ -17,7 +17,12 @@
         "bradlc.vscode-tailwindcss",
         "ritwickdeacon.vscode-live-sass",
         "ms-vscode.vscode-html-css",
-        "xdebug.php-debug"
+        "xdebug.php-debug",
+        "modelcontextprotocol.vscode-mcp",
+        "ms-vscode.vscode-mssql",
+        "ms-vscode.vscode-sqltools",
+        "ms-vscode.vscode-docker",
+        "ms-vscode-remote.remote-containers"
     ],
     "unwantedRecommendations": [
         "ritwickdey.LiveServer",

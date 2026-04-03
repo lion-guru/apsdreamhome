@@ -103,6 +103,20 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
     
+    // Gallery images table
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS gallery_images (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            category varchar(50) DEFAULT 'general',
+            image_path varchar(500) DEFAULT NULL,
+            caption text DEFAULT NULL,
+            status enum('active','inactive') DEFAULT 'active',
+            created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
+
     // Insert default admin user
     $adminPassword = password_hash('admin123', PASSWORD_DEFAULT);
     $stmt = $pdo->prepare("INSERT IGNORE INTO users (name, email, password, role, status) VALUES (?, ?, ?, ?, ?)");

@@ -18,32 +18,32 @@
                     </h6>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/dashboard">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/dashboard">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/sites">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/sites">
                                 <i class="fas fa-map-marked-alt"></i> Sites
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/admin/properties">
+                            <a class="nav-link active" href="<?php echo BASE_URL; ?>/admin/properties">
                                 <i class="fas fa-building"></i> Properties
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/plots">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/plots">
                                 <i class="fas fa-th"></i> Plots
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/bookings">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/bookings">
                                 <i class="fas fa-calendar-check"></i> Bookings
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/users">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/users">
                                 <i class="fas fa-users"></i> Users
                             </a>
                         </li>
@@ -57,7 +57,7 @@
                     <h1 class="h2">Property Management</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <a href="/admin/properties/create" class="btn btn-primary">
+                            <a href="<?php echo BASE_URL; ?>/admin/properties/create" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Add New Property
                             </a>
                         </div>
@@ -179,10 +179,10 @@
                                                 <td><?= date('M j, Y', strtotime($property['created_at'])) ?></td>
                                                 <td>
                                                     <div class="btn-group btn-group-sm">
-                                                        <a href="/admin/properties/<?= $property['id'] ?>" class="btn btn-outline-primary" title="View">
+                                                        <a href="<?php echo BASE_URL; ?>/admin/properties/<?= $property['id'] ?>" class="btn btn-outline-primary" title="View">
                                                             <i class="fas fa-eye"></i>
                                                         </a>
-                                                        <a href="/admin/properties/<?= $property['id'] ?>/edit" class="btn btn-outline-warning" title="Edit">
+                                                        <a href="<?php echo BASE_URL; ?>/admin/properties/<?= $property['id'] ?>/edit" class="btn btn-outline-warning" title="Edit">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         <?php if ($property['status'] === 'active'): ?>
@@ -247,19 +247,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        var baseUrl = '<?php echo BASE_URL; ?>';
+
         function confirmDelete(propertyId) {
-            document.getElementById('deleteForm').action = '/admin/properties/' + propertyId + '/destroy';
+            document.getElementById('deleteForm').action = baseUrl + '/admin/properties/' + propertyId + '/destroy';
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
 
         function bookProperty(propertyId) {
             // Redirect to booking form with pre-selected property
-            window.location.href = '/admin/bookings/create?property_id=' + propertyId;
+            window.location.href = baseUrl + '/admin/bookings/create?property_id=' + propertyId;
         }
 
         // Auto-refresh availability status
         setInterval(function() {
-            fetch('/admin/properties/check-availability?' + new URLSearchParams(window.location.search))
+            fetch(baseUrl + '/admin/properties/check-availability?' + new URLSearchParams(window.location.search))
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {

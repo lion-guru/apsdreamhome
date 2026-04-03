@@ -29,10 +29,10 @@ class DashboardController extends BaseController
             // Redirect based on user type
             switch ($userType) {
                 case 'customer':
-                    header('Location: ' . BASE_URL . '/dashboard/customer');
+                    header('Location: ' . BASE_URL . '/customer/dashboard');
                     exit;
                 case 'agent':
-                    header('Location: ' . BASE_URL . '/agents/dashboard');
+                    header('Location: ' . BASE_URL . '/agent/dashboard');
                     exit;
                 case 'associate':
                     header('Location: ' . BASE_URL . '/associate/dashboard');

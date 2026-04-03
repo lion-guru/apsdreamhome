@@ -1,0 +1,40 @@
+{
+    "thresholds": {
+        "minimum_payout": 500,
+        "processing_fee_below_1000": 10,
+        "processing_fee_above_1000": 0,
+        "tax_deduction_rate": 5,
+        "tax_deduction_high_rate": 10,
+        "tax_threshold": 10000
+    },
+    "frequency": {
+        "type": "monthly",
+        "processing_day": 25,
+        "processing_hours": 48
+    },
+    "limits": {
+        "daily_limit": 50000,
+        "monthly_limit": 500000,
+        "emergency_limit": 100000
+    },
+    "payment_methods": {
+        "bank_transfer": {
+            "active": true,
+            "fee": 0
+        },
+        "upi": {
+            "active": true,
+            "fee": 0,
+            "max_amount": 50000
+        },
+        "cheque": {
+            "active": true,
+            "fee": 0,
+            "processing_days": 3
+        },
+        "cash": {
+            "active": false,
+            "fee": 0
+        }
+    }
+}

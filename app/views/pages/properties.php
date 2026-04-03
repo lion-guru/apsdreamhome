@@ -26,7 +26,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title mb-3">Search Properties</h5>
-            <form method="GET" action="/properties" class="row g-3">
+            <form method="GET" action="<?php echo BASE_URL; ?>/properties" class="row g-3">
                 <div class="col-md-3">
                     <label for="property_type" class="form-label">Property Type</label>
                     <select class="form-select" id="property_type" name="property_type">
@@ -71,7 +71,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search"></i> Search Properties
                     </button>
-                    <a href="/properties" class="btn btn-outline-secondary">Clear Filters</a>
+                    <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary">Clear Filters</a>
                 </div>
             </form>
         </div>
@@ -84,7 +84,7 @@
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 property-card">
                         <div class="property-image">
-                            <img src="/assets/images/properties/<?php echo htmlspecialchars($property['image']); ?>" 
+                            <img src="<?php echo BASE_URL; ?>/assets/images/properties/<?php echo htmlspecialchars($property['image']); ?>" 
                                  class="card-img-top" 
                                  alt="<?php echo htmlspecialchars($property['title']); ?>"
                                  style="height: 200px; object-fit: cover;">
@@ -121,7 +121,7 @@
                                 </div>
                             </div>
                             <div class="mt-3">
-                                <a href="/properties/<?php echo $property['id']; ?>" class="btn btn-primary w-100">
+                                <a href="<?php echo BASE_URL; ?>/properties/<?php echo $property['id']; ?>" class="btn btn-primary w-100">
                                     <i class="fas fa-eye"></i> View Details
                                 </a>
                             </div>

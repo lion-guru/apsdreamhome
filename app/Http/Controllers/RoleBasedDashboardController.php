@@ -57,14 +57,45 @@ class RoleBasedDashboardController extends BaseController
     }
 
     /**
-     * Main dashboard entry point
+     * Main dashboard entry point - renders standalone admin dashboard
      */
     public function index()
     {
-        $userRole = $this->getCurrentUserRole();
-        $dashboardData = $this->getDashboardByRole($userRole);
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        // Auth check
+        if (!isset($_SESSION['admin_id'])) {
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
 
-        $this->render('dashboard/index', $dashboardData);
+        $admin_name = $_SESSION['admin_name'] ?? 'Admin';
+        $admin_role = $_SESSION['admin_role'] ?? 'admin';
+
+        // Get stats from database
+        $stats = ['total_users' => 0, 'total_properties' => 0, 'total_leads' => 0, 'new_leads_today' => 0, 'total_associates' => 0, 'revenue_month' => 0, 'total_employees' => 0, 'pending_bookings' => 0];
+        try {
+            $stats['total_users'] = $this->db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0;
+            $stats['total_properties'] = $this->db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0;
+            $stats['total_leads'] = $this->db->fetch("SELECT COUNT(*) as c FROM leads")['c'] ?? 0;
+            $stats['new_leads_today'] = $this->db->fetch("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()")['c'] ?? 0;
+            $stats['total_associates'] = $this->db->fetch("SELECT COUNT(*) as c FROM users WHERE role IN ('associate','agent')")['c'] ?? 0;
+            $stats['pending_bookings'] = $this->db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
+        } catch (\Exception $e) {}
+
+        // Get recent leads
+        $recentLeads = [];
+        try { $recentLeads = $this->db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? []; } catch (\Exception $e) {}
+
+        // Render as standalone page (no layout)
+        $this->layout = false;
+        $data = compact('admin_name', 'admin_role', 'stats', 'recentLeads');
+        $data['page_title'] = 'Dashboard';
+
+        ob_start();
+        extract($data);
+        include __DIR__ . '/../../../views/admin/dashboard_standalone.php';
+        echo ob_get_clean();
     }
 
     /**
@@ -167,8 +198,8 @@ class RoleBasedDashboardController extends BaseController
      */
     private function getCurrentUserRole()
     {
-        // Get user role from session or authentication
-        return $_SESSION['user_role'] ?? 'guest';
+        // Check admin session first, then user session, then fallback to guest
+        return $_SESSION['admin_role'] ?? $_SESSION['user_role'] ?? 'guest';
     }
 
     /**

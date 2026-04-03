@@ -28,9 +28,9 @@
         <p class="lead mb-4">Stay informed with the latest real estate news and market trends.</p>
         <div class="row justify-content-center">
             <div class="col-lg-6">
-                <form class="search-form" id="newsSearch" action="<?= BASE_URL ?>news" method="GET">
+                <form class="search-form" id="newsSearch" action="<?= BASE_URL ?>/news" method="GET">
                     <div class="input-group">
-                        <input type="text" name="q" class="form-control" placeholder="Search news..." id="searchInput" value="<?= isset($_GET['q']) ? h($_GET['q']) : '' ?>">
+                        <input type="text" name="q" class="form-control" placeholder="Search news..." id="searchInput" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
@@ -70,11 +70,11 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="news-filter text-center">
-                    <a href="<?= BASE_URL ?>news" class="btn <?= $pagination['current_category'] === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                    <a href="<?= BASE_URL ?>/news" class="btn <?= $pagination['current_category'] === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                         All News
                     </a>
                     <?php foreach ($categories as $cat): ?>
-                        <a href="<?= BASE_URL ?>news?category=<?= urlencode($cat) ?>"
+                        <a href="<?= BASE_URL ?>/news?category=<?= urlencode($cat) ?>"
                             class="btn <?= $pagination['current_category'] === $cat ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                             <?= htmlspecialchars(ucwords($cat)) ?>
                         </a>
@@ -92,7 +92,7 @@
                         <h3>No news found</h3>
                         <p class="text-muted">There are no news items to display at this time.</p>
                         <?php if ($pagination['current_category'] !== 'all'): ?>
-                            <a href="<?= BASE_URL ?>news" class="btn btn-primary mt-3">View All News</a>
+                            <a href="<?= BASE_URL ?>/news" class="btn btn-primary mt-3">View All News</a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
                             </div>
                             <div class="news-content p-4">
                                 <h3 class="news-title h5 mb-3">
-                                    <a href="<?= BASE_URL ?>news/view/<?= htmlspecialchars($news->id) ?>" class="text-decoration-none text-dark">
+                                    <a href="<?= BASE_URL ?>/news/view/<?= htmlspecialchars($news->id) ?>" class="text-decoration-none text-dark">
                                         <?= htmlspecialchars($news->title) ?>
                                     </a>
                                 </h3>
@@ -127,7 +127,7 @@
                                 <p class="news-excerpt text-muted mb-4">
                                     <?= htmlspecialchars(substr(strip_tags($news->summary ?? $news->content), 0, 150)) ?>...
                                 </p>
-                                <a href="<?= BASE_URL ?>news/view/<?= htmlspecialchars($news->id) ?>" class="btn btn-outline-primary btn-sm stretched-link">
+                                <a href="<?= BASE_URL ?>/news/view/<?= htmlspecialchars($news->id) ?>" class="btn btn-outline-primary btn-sm stretched-link">
                                     Read More
                                     <i class="fas fa-arrow-right ms-2"></i>
                                 a>
@@ -144,7 +144,7 @@
                 <ul class="pagination justify-content-center">
                     <!-- Previous Page -->
                     <li class="page-item <?= $pagination['current_page'] <= 1 ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= BASE_URL ?>news?page=<?= $pagination['current_page'] - 1 ?>&category=<?= urlencode($pagination['current_category']) ?>" aria-label="Previous">
+                        <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= $pagination['current_page'] - 1 ?>&category=<?= urlencode($pagination['current_category']) ?>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
@@ -152,7 +152,7 @@
                     <!-- Page Numbers -->
                     <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
                         <li class="page-item <?= $i == $pagination['current_page'] ? 'active' : '' ?>">
-                            <a class="page-link" href="<?= BASE_URL ?>news?page=<?= $i ?>&category=<?= urlencode($pagination['current_category']) ?>">
+                            <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= $i ?>&category=<?= urlencode($pagination['current_category']) ?>">
                                 <?= $i ?>
                             </a>
                         </li>
@@ -160,7 +160,7 @@
 
                     <!-- Next Page -->
                     <li class="page-item <?= $pagination['current_page'] >= $pagination['total_pages'] ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= BASE_URL ?>news?page=<?= $pagination['current_page'] + 1 ?>&category=<?= urlencode($pagination['current_category']) ?>" aria-label="Next">
+                        <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= $pagination['current_page'] + 1 ?>&category=<?= urlencode($pagination['current_category']) ?>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>

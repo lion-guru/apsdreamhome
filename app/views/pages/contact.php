@@ -30,7 +30,7 @@
                         
                         <hr>
                         
-                        <form method="POST" action="<?php echo BASE_URL; ?>contact" class="needs-validation">
+                        <form method="POST" action="<?php echo BASE_URL; ?>/contact" class="needs-validation">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label">Full Name *</label>

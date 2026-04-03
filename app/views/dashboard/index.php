@@ -1,282 +1,210 @@
 <?php
-
 /**
- * Admin Dashboard View
- * For Super Admin and Admin roles
+ * Admin Dashboard - Full Featured
  */
 
-$dashboardData = $dashboardData ?? [];
-$role = $dashboardData['role'] ?? 'admin';
-$title = $dashboardData['title'] ?? 'Admin Dashboard';
-$widgets = $dashboardData['widgets'] ?? [];
-$recentActivities = $dashboardData['recent_activities'] ?? [];
-$analytics = $dashboardData['analytics'] ?? [];
-$quickActions = $dashboardData['quick_actions'] ?? [];
+$role = $role ?? 'admin';
+$title = $title ?? 'Dashboard';
+
+// Get stats from database
+$stats = ['total_users' => 0, 'total_properties' => 0, 'total_leads' => 0, 'new_leads_today' => 0, 'total_associates' => 0, 'revenue_month' => 0, 'total_employees' => 0, 'pending_bookings' => 0];
+try {
+    $db = \App\Core\Database\Database::getInstance();
+    $stats['total_users'] = $db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0;
+    $stats['total_properties'] = $db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0;
+    $stats['total_leads'] = $db->fetch("SELECT COUNT(*) as c FROM leads")['c'] ?? 0;
+    $stats['new_leads_today'] = $db->fetch("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()")['c'] ?? 0;
+    $stats['total_associates'] = $db->fetch("SELECT COUNT(*) as c FROM users WHERE role IN ('associate','agent')")['c'] ?? 0;
+    $stats['revenue_month'] = $db->fetch("SELECT COALESCE(SUM(amount),0) as c FROM payments WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")['c'] ?? 0;
+    $stats['total_employees'] = $db->fetch("SELECT COUNT(*) as c FROM employees")['c'] ?? 0;
+    $stats['pending_bookings'] = $db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
+} catch (\Exception $e) { /* silent */ }
+
+// Recent leads
+$recentLeads = [];
+try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? []; } catch (\Exception $e) {}
 ?>
 
 <!-- Dashboard Header -->
-<div class="dashboard-header">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <h1><i class="fas fa-tachometer-alt me-3"></i><?php echo htmlspecialchars($title); ?></h1>
-                <p class="mb-0">Welcome back, Admin! Here's your system overview.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1 fw-bold"><?php echo htmlspecialchars($title); ?></h1>
+        <p class="text-muted mb-0">Welcome back! Here's your system overview.</p>
+    </div>
+    <button class="btn btn-primary" onclick="location.reload()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
+</div>
+
+<!-- Stats Row 1 -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon primary"><i class="fas fa-users"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value"><?php echo number_format($stats['total_users']); ?></div>
             </div>
-            <div class="col-md-6 text-md-end">
-                <div class="d-flex justify-content-md-end gap-2">
-                    <span class="badge bg-light text-dark">
-                        <i class="fas fa-user-shield me-1"></i>
-                        <?php echo ucfirst($role); ?>
-                    </span>
-                    <span class="badge bg-success">
-                        <i class="fas fa-circle me-1"></i>
-                        System Online
-                    </span>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon success"><i class="fas fa-building"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Properties</div>
+                <div class="stat-value"><?php echo number_format($stats['total_properties']); ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon warning"><i class="fas fa-bullseye"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Total Leads</div>
+                <div class="stat-value"><?php echo number_format($stats['total_leads']); ?></div>
+                <div class="stat-change up"><i class="fas fa-arrow-up"></i> <?php echo $stats['new_leads_today']; ?> today</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon info"><i class="fas fa-network-wired"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Associates</div>
+                <div class="stat-value"><?php echo number_format($stats['total_associates']); ?></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Row 2 -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon purple"><i class="fas fa-rupee-sign"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Revenue (30 Days)</div>
+                <div class="stat-value">&#8377;<?php echo number_format($stats['revenue_month'], 2); ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon primary"><i class="fas fa-user-tie"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Employees</div>
+                <div class="stat-value"><?php echo number_format($stats['total_employees']); ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon warning"><i class="fas fa-file-contract"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Pending Bookings</div>
+                <div class="stat-value"><?php echo number_format($stats['pending_bookings']); ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">System Status</div>
+                <div class="stat-value text-success">Online</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card mb-4">
+    <div class="card-header border-0 bg-transparent">
+        <h5 class="card-title"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="<?php echo BASE_URL; ?>/admin/leads/create" class="btn btn-outline-primary w-100 py-3">
+                    <i class="fas fa-user-plus mb-2" style="font-size:1.5rem;display:block;"></i>Add New Lead
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="<?php echo BASE_URL; ?>/admin/properties/create" class="btn btn-outline-success w-100 py-3">
+                    <i class="fas fa-plus mb-2" style="font-size:1.5rem;display:block;"></i>Add Property
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="<?php echo BASE_URL; ?>/admin/bookings/create" class="btn btn-outline-warning w-100 py-3">
+                    <i class="fas fa-file-contract mb-2" style="font-size:1.5rem;display:block;"></i>New Booking
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="<?php echo BASE_URL; ?>/admin/gallery/create" class="btn btn-outline-info w-100 py-3">
+                    <i class="fas fa-image mb-2" style="font-size:1.5rem;display:block;"></i>Upload Photo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Two Column: Recent Leads + System Overview -->
+<div class="row g-4">
+    <!-- Recent Leads -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center border-0 bg-transparent">
+                <h5 class="card-title"><i class="fas fa-user-clock me-2"></i>Recent Leads</h5>
+                <a href="<?php echo BASE_URL; ?>/admin/leads" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <?php if (!empty($recentLeads)): ?>
+                <div class="list-group list-group-flush">
+                    <?php foreach ($recentLeads as $lead): ?>
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-3 py-3">
+                        <div>
+                            <div class="fw-semibold"><?php echo htmlspecialchars($lead['name'] ?? 'Unknown'); ?></div>
+                            <small class="text-muted"><?php echo htmlspecialchars($lead['email'] ?? ''); ?> | <?php echo htmlspecialchars($lead['phone'] ?? ''); ?></small>
+                        </div>
+                        <span class="badge bg-<?php echo ($lead['status'] ?? 'new') === 'converted' ? 'success' : (($lead['status'] ?? 'new') === 'contacted' ? 'warning' : 'info'); ?>">
+                            <?php echo ucfirst($lead['status'] ?? 'new'); ?>
+                        </span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <div class="text-center py-4 text-muted"><i class="fas fa-inbox fa-2x mb-2 d-block"></i>No leads yet</div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Overview -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header border-0 bg-transparent">
+                <h5 class="card-title"><i class="fas fa-server me-2"></i>System Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1"><span>Database</span><span class="fw-semibold text-success">Connected</span></div>
+                    <div class="progress"><div class="progress-bar bg-success" style="width:100%"></div></div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1"><span>Active Users</span><span class="fw-semibold"><?php echo number_format($stats['total_users']); ?></span></div>
+                    <div class="progress"><div class="progress-bar bg-primary" style="width:<?php echo min(100, $stats['total_users']); ?>%"></div></div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1"><span>Properties Listed</span><span class="fw-semibold"><?php echo number_format($stats['total_properties']); ?></span></div>
+                    <div class="progress"><div class="progress-bar bg-info" style="width:<?php echo min(100, $stats['total_properties'] * 10); ?>%"></div></div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-4"><div class="h5 mb-0 text-primary"><?php echo number_format($stats['total_properties']); ?></div><small class="text-muted">Properties</small></div>
+                    <div class="col-4"><div class="h5 mb-0 text-success"><?php echo number_format($stats['total_leads']); ?></div><small class="text-muted">Leads</small></div>
+                    <div class="col-4"><div class="h5 mb-0 text-warning"><?php echo number_format($stats['pending_bookings']); ?></div><small class="text-muted">Pending</small></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container">
-    <!-- AI Mode Controls -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card bg-gradient-ai">
-                <div class="card-body">
-                    <h5 class="card-title text-white"><i class="fas fa-brain me-2"></i>AI Mode</h5>
-                    <div class="d-flex flex-wrap gap-2">
-                        <button class="btn btn-light" onclick="enableAIMode()">
-                            <i class="fas fa-robot me-1"></i>
-                            Enable AI Mode
-                        </button>
-                        <button class="btn btn-outline-light" onclick="refreshAIData()">
-                            <i class="fas fa-sync me-1"></i>
-                            Refresh AI Data
-                        </button>
-                        <button class="btn btn-outline-light" onclick="showAIInsights()">
-                            <i class="fas fa-chart-line me-1"></i>
-                            AI Insights
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Enterprise Modules -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-th-large me-2"></i>Enterprise Modules</h5>
-                    <div class="row">
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <div class="text-center p-3 border rounded hover-module">
-                                <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                                <h6>User Management</h6>
-                                <small>Users, Roles, Permissions</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <div class="text-center p-3 border rounded hover-module">
-                                <i class="fas fa-users-cog fa-2x text-success mb-2"></i>
-                                <h6>Team Management</h6>
-                                <small>Staff, Departments, Performance</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <div class="text-center p-3 border rounded hover-module">
-                                <i class="fas fa-rupee-sign fa-2x text-warning mb-2"></i>
-                                <h6>Financial</h6>
-                                <small>Transactions, Commissions, Tax</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <div class="text-center p-3 border rounded hover-module">
-                                <i class="fas fa-bullhorn fa-2x text-info mb-2"></i>
-                                <h6>Marketing</h6>
-                                <small>Campaigns, Leads, Social Media</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <div class="text-center p-3 border rounded hover-module">
-                                <i class="fas fa-cogs fa-2x text-danger mb-2"></i>
-                                <h6>System</h6>
-                                <small>Settings, Backup, Security</small>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <div class="text-center p-3 border rounded hover-module">
-                                <i class="fas fa-chart-bar fa-2x text-secondary mb-2"></i>
-                                <h6>Analytics</h6>
-                                <small>Reports, Insights, Metrics</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Enhanced Stats Grid with AI -->
-    <div class="row mb-4">
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card widget-card ai-enhanced">
-                <div class="card-body text-center">
-                    <div class="widget-icon text-primary ai-gradient">
-                        <i class="fas fa-network-wired"></i>
-                    </div>
-                    <h6 class="card-title">Network Size</h6>
-                    <div class="widget-count"><?php echo number_format($dashboardData['network_size'] ?? 1250); ?></div>
-                    <div class="ai-indicator">
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> +12.5%</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card widget-card ai-enhanced">
-                <div class="card-body text-center">
-                    <div class="widget-icon text-success ai-gradient">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h6 class="card-title">Platform Revenue</h6>
-                    <div class="widget-count">₹<?php echo number_format($dashboardData['revenue'] ?? 2500000); ?></div>
-                    <div class="ai-indicator">
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> +8.3%</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card widget-card ai-enhanced">
-                <div class="card-body text-center">
-                    <div class="widget-icon text-warning ai-gradient">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h6 class="card-title">Active Users</h6>
-                    <div class="widget-count"><?php echo number_format($dashboardData['active_users'] ?? 850); ?></div>
-                    <div class="ai-indicator">
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> +5.2%</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card widget-card ai-enhanced">
-                <div class="card-body text-center">
-                    <div class="widget-icon text-info ai-gradient">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <h6 class="card-title">Properties</h6>
-                    <div class="widget-count"><?php echo number_format($dashboardData['properties'] ?? 320); ?></div>
-                    <div class="ai-indicator">
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> +3.7%</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Analytics and Activities -->
-    <div class="row">
-        <!-- Analytics Section -->
-        <div class="col-md-8 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-chart-line me-2"></i>Analytics Overview</h5>
-                    <?php if (!empty($analytics)): ?>
-                        <div class="row">
-                            <?php foreach ($analytics as $key => $data): ?>
-                                <div class="col-md-6 mb-3">
-                                    <div class="stats-card">
-                                        <h6><?php echo ucwords(str_replace('_', ' ', $key)); ?></h6>
-                                        <p class="mb-0">Analytics data available</p>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-muted">No analytics data available</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activities -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-history me-2"></i>Recent Activities</h5>
-                    <?php if (!empty($recentActivities)): ?>
-                        <?php foreach ($recentActivities as $activity): ?>
-                            <div class="activity-item">
-                                <small class="text-muted"><?php echo date('M d, H:i', strtotime($activity['created_at'] ?? 'now')); ?></small>
-                                <p class="mb-1"><?php echo htmlspecialchars($activity['action'] ?? 'Activity'); ?></p>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p class="text-muted">No recent activities</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- System Health -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-heartbeat me-2"></i>System Health</h5>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="text-success">
-                                    <i class="fas fa-database fa-2x"></i>
-                                </div>
-                                <h6>Database</h6>
-                                <span class="badge bg-success">Healthy</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="text-success">
-                                    <i class="fas fa-server fa-2x"></i>
-                                </div>
-                                <h6>Server</h6>
-                                <span class="badge bg-success">Online</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="text-success">
-                                    <i class="fas fa-shield-alt fa-2x"></i>
-                                </div>
-                                <h6>Security</h6>
-                                <span class="badge bg-success">Secured</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="text-success">
-                                    <i class="fas fa-users fa-2x"></i>
-                                </div>
-                                <h6>Users</h6>
-                                <span class="badge bg-success">Active</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Auto-refresh dashboard every 30 seconds
-    setInterval(function() {
-        location.reload();
-    }, 30000);
-</script>
+<script>setTimeout(function(){ location.reload(); }, 60000);</script>

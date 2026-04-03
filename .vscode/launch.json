@@ -1,35 +1,36 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    // APS Dream Home - PHP Debug Configuration
     "version": "0.2.0",
     "configurations": [
-        
-
-
-        
         {
-            "type": "vscode-edge-devtools.debug",
-            "request": "attach",
-            "name": "Attach to Microsoft Edge and open the Edge DevTools",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
-        },
-        {
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "name": "Launch index.html",
-            "file": "${workspaceFolder}/index.html"
-        },
-        {
-            "name": "Listen for Xdebug",
+            "name": "Launch APS Dream Home (Built-in Server)",
             "type": "php",
             "request": "launch",
-            "port": 9003
+            "runtimeArgs": [
+                "-S",
+                "localhost:8000",
+                "-t",
+                "public"
+            ],
+            "cwd": "${workspaceFolder}/public",
+            "port": 9003,
+            "serverReadyAction": {
+                "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
+                "uriFormat": "http://localhost:%s",
+                "action": "openExternally"
+            }
         },
         {
-            "name": "Launch currently open script",
+            "name": "Listen for Xdebug (APS Dream Home)",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "pathMappings": {
+                "/server": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Launch Currently Open Script",
             "type": "php",
             "request": "launch",
             "program": "${file}",
@@ -44,53 +45,36 @@
             }
         },
         {
-            "name": "Launch Built-in web server",
+            "name": "Debug APS Dream Home with Xdebug",
             "type": "php",
             "request": "launch",
             "runtimeArgs": [
                 "-dxdebug.mode=debug",
                 "-dxdebug.start_with_request=yes",
                 "-S",
-                "localhost:0"
+                "localhost:8000",
+                "-t",
+                "public"
             ],
-            "program": "",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/public",
             "port": 9003,
             "serverReadyAction": {
-                "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
-                "uriFormat": "http://localhost:%s",
                 "action": "openExternally"
             }
         },
         {
-            "name": "Launch built-in server and Debug",
-            "type": "php",
-            "request": "launch",
-            "runtimeArgs": [
-                "-S",
-                "localhost:8000",
-                "-t",
-                "."
-            ],
-            "cwd": "${workspaceRoot}/public",
-            "serverReadyAction": {
-                "action": "openExternally"
-            }
+            "type": "vscode-edge-devtools.debug",
+            "request": "attach",
+            "name": "Attach to Microsoft Edge",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}/public"
         },
         {
-            "name": "Launch built-in server and Profile",
-            "type": "php",
+            "type": "firefox",
             "request": "launch",
-            "runtimeArgs": [
-                "-S",
-                "localhost:8000",
-                "-t",
-                "."
-            ],
-            "cwd": "${workspaceRoot}/public",
-            "serverReadyAction": {
-                "action": "openExternally"
-            }
+            "reAttach": true,
+            "name": "Launch Firefox Debug",
+            "file": "${workspaceFolder}/public/index.html"
         }
     ]
 }
