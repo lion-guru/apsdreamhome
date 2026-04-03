@@ -3,14 +3,7 @@
         <div class="row">
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg"
-                        alt="APS Dream Home" class="me-2" style="height:40px; border-radius:8px;">
-                    <div>
-                        <h5 class="mb-0 text-white">APS Dream Home</h5>
-                        <small class="text-muted">Premium Real Estate Solutions</small>
-                    </div>
-                </div>
+                <h5 class="mb-3 text-white">APS Dream Home</h5>
                 <p class="text-light">With over 8 years of excellence in real estate, we help families and businesses find their perfect properties across Gorakhpur, Lucknow, and Uttar Pradesh.</p>
                 <div class="social-links">
                     <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
