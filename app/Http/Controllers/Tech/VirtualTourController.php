@@ -40,13 +40,20 @@ class VirtualTourController extends BaseController
     /**
      * Display virtual tour interface
      */
-    public function index($property_id)
+    public function index($property_id = null)
     {
+        // If no property_id, show virtual tour listing or redirect
+        if (!$property_id) {
+            $this->setFlash('error', 'Please select a property to view virtual tour');
+            $this->redirect('/properties');
+            return;
+        }
+
         $property = $this->getPropertyDetails($property_id);
 
         if (!$property) {
             $this->setFlash('error', 'Property not found');
-            $this->redirect(BASE_URL . 'properties');
+            $this->redirect('/properties');
             return;
         }
 
@@ -81,7 +88,7 @@ class VirtualTourController extends BaseController
         header('Content-Type: application/json');
 
         if (!$this->isLoggedIn() || !$this->isAdmin()) {
-            sendJsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
+            $this->jsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
         }
 
         $property_id = Security::sanitize($_POST['property_id']) ?? '';
@@ -222,7 +229,7 @@ class VirtualTourController extends BaseController
             }
 
             // Create directory if not exists
-            $upload_dir = UPLOADS_PATH . 'virtual_tours/' . $property_id . '/';
+            $upload_dir = self::UPLOADS_PATH . 'virtual_tours/' . $property_id . '/';
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0755, true);
             }
@@ -239,8 +246,8 @@ class VirtualTourController extends BaseController
 
                 return [
                     'success' => true,
-                    'file_path' => str_replace(UPLOADS_PATH, '', $file_path),
-                    'thumbnail_path' => str_replace(UPLOADS_PATH, '', $thumbnail_path),
+                    'file_path' => str_replace(self::UPLOADS_PATH, '', $file_path),
+                    'thumbnail_path' => str_replace(self::UPLOADS_PATH, '', $thumbnail_path),
                     'filename' => $filename,
                     'file_size' => $file['size']
                 ];
@@ -457,45 +464,8 @@ class VirtualTourController extends BaseController
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            error_log('Properties with tours error: ' . $e->getMessage());
             return [];
         }
-    }
-
-    /**
-     * Create floor plan hotspots
-     */
-    public function createHotspots($property_id)
-    {
-        if (!$this->isAdmin()) {
-            sendJsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            header('Content-Type: application/json');
-
-            $hotspot_data = json_decode(file_get_contents('php://input'), true);
-
-            if (!$hotspot_data) {
-                sendJsonResponse(['success' => false, 'error' => 'Invalid hotspot data'], 400);
-            }
-
-            $success = $this->saveHotspotData($property_id, $hotspot_data);
-
-            sendJsonResponse([
-                'success' => $success,
-                'message' => $success ? 'Hotspot created successfully' : 'Failed to create hotspot'
-            ]);
-        }
-
-        // Get existing hotspots for editing
-        $hotspots = $this->getHotspotData($property_id);
-
-        $this->data['page_title'] = 'Create Hotspots - ' . APP_NAME;
-        $this->data['property_id'] = $property_id;
-        $this->data['hotspots'] = $hotspots;
-
-        $this->render('virtual_tour/create_hotspots');
     }
 
     /**
@@ -548,22 +518,23 @@ class VirtualTourController extends BaseController
             return [];
         }
     }
-}
 
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 527 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//
+
+    //
+    // PERFORMANCE OPTIMIZATION GUIDELINES
+    //
+    // This file contains 527 lines. Consider optimizations:
+    //
+    // 1. Use database indexing
+    // 2. Implement caching
+    // 3. Use prepared statements
+    // 4. Optimize loops
+    // 5. Use lazy loading
+    // 6. Implement pagination
+    // 7. Use connection pooling
+    // 8. Consider Redis for sessions
+    // 9. Implement output buffering
+    // 10. Use gzip compression
+    //
+    //
+}

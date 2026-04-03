@@ -4,18 +4,22 @@ namespace App\Services\AI;
 
 use App\Services\AI\Modules\NLPProcessor;
 use Exception;
+
 /**
  * AI Health Monitor
  * Provides real-time diagnostics for the AI ecosystem.
  */
-class AIHealthMonitor {
+class AIHealthMonitor
+{
     private $db;
 
-    public function __construct($db = null) {
-        $this->db = $db ?: \App\Core\App::database();
+    public function __construct($db = null)
+    {
+        $this->db = $db ?: \App\Core\Database\Database::getInstance();
     }
 
-    public function checkHealth() {
+    public function checkHealth()
+    {
         $stats = [
             'status' => 'healthy',
             'timestamp' => date('Y-m-d H:i:s'),
@@ -54,7 +58,8 @@ class AIHealthMonitor {
         return $stats;
     }
 
-    private function checkNLP() {
+    private function checkNLP()
+    {
         try {
             require_once __DIR__ . '/modules/NLPProcessor.php';
             $nlp = new NLPProcessor();
@@ -74,7 +79,8 @@ class AIHealthMonitor {
      * AI-based predictive failure analysis
      * Analyzes error trends to predict potential system failures
      */
-    private function predictiveFailureAnalysis() {
+    private function predictiveFailureAnalysis()
+    {
         // Get failure counts for last 3 hours (hour by hour)
         $sql = "SELECT
                     HOUR(created_at) as hr,
@@ -92,7 +98,7 @@ class AIHealthMonitor {
 
         if (count($trends) >= 2) {
             $lastHour = end($trends)['cnt'];
-            $prevHour = $trends[count($trends)-2]['cnt'];
+            $prevHour = $trends[count($trends) - 2]['cnt'];
 
             if ($lastHour > $prevHour * 1.5 && $lastHour > 10) {
                 $risk = 'high';
@@ -110,7 +116,8 @@ class AIHealthMonitor {
         ];
     }
 
-    private function checkDatabase() {
+    private function checkDatabase()
+    {
         try {
             $start = microtime(true);
             $res = $this->db->fetch("SELECT 1");
@@ -118,8 +125,12 @@ class AIHealthMonitor {
 
             // Check essential tables
             $required_tables = [
-                'ai_agents', 'ai_workflows', 'ai_audit_log',
-                'ai_agent_logs', 'workflow_executions', 'ai_user_suggestions'
+                'ai_agents',
+                'ai_workflows',
+                'ai_audit_log',
+                'ai_agent_logs',
+                'workflow_executions',
+                'ai_user_suggestions'
             ];
             $missing = [];
 
@@ -140,7 +151,8 @@ class AIHealthMonitor {
         }
     }
 
-    private function checkPendingJobs() {
+    private function checkPendingJobs()
+    {
         $sql = "SELECT COUNT(*) as cnt FROM ai_jobs WHERE status = 'pending'";
         $row = $this->db->fetch($sql);
         $count = (int)($row['cnt'] ?? 0);
@@ -150,7 +162,8 @@ class AIHealthMonitor {
         ];
     }
 
-    private function checkRecentFailures() {
+    private function checkRecentFailures()
+    {
         $sql = "SELECT COUNT(*) as cnt FROM ai_agent_logs WHERE status = 'failed' AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)";
         $row = $this->db->fetch($sql);
         $count = (int)($row['cnt'] ?? 0);
@@ -160,7 +173,8 @@ class AIHealthMonitor {
         ];
     }
 
-    private function checkLearningSystem() {
+    private function checkLearningSystem()
+    {
         $sql = "SELECT COUNT(*) as cnt FROM ai_knowledge_graph";
         $row = $this->db->fetch($sql);
         $count = (int)($row['cnt'] ?? 0);

@@ -10,12 +10,8 @@ if (!defined('BASE_URL')) {
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
-                <img src="https://via.placeholder.com/40x40/2c3e50/ffffff?text=APS"
-                    alt="APS Dream Home" class="logo me-2" style="height:40px; border-radius:8px;">
-                <div>
-                    <div class="brand-text fw-bold text-primary">APS Dream Home</div>
-                    <small class="text-muted d-block lh-1">Premium Real Estate</small>
-                </div>
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg"
+                    alt="APS Dream Home" class="logo" style="height:45px; border-radius:8px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>

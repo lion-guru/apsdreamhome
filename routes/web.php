@@ -31,10 +31,13 @@ $router->get('/blog', 'Front\\PageController@blog');
 $router->get('/blog/{slug}', 'Front\\PageController@blogPost');
 $router->get('/gallery', 'Front\\PageController@gallery');
 $router->get('/resell', 'Front\\PageController@resell');
-$router->get('/careers', 'Front\\PageController@careers');
-$router->get('/faqs', 'Front\\PageController@faqs');
-$router->get('/mlm-dashboard', 'Front\\PageController@mlmDashboard');
-$router->get('/coming-soon', 'Front\\PageController@comingSoon');
+$router->get('/careers', 'Front\PageController@careers');
+$router->get('/coming-soon', 'Front\PageController@comingSoon');
+
+// MLM & AI Dashboard Routes
+$router->get('/mlm-dashboard', 'MLM\MLMDashboardController@dashboard');
+$router->get('/ai-dashboard', 'AIDashboardController@index');
+$router->get('/ai-assistant', 'AIDashboardController@assistant');
 
 // Property Pages
 $router->get('/properties', 'Front\\PageController@properties');
@@ -382,6 +385,14 @@ $router->post('/admin/popups/create', 'NotificationController@createPopup');
 
 // Monitoring
 $router->get('/monitoring', 'MonitoringController@dashboard');
+
+// Virtual Tour Routes
+$router->get('/virtual-tour', 'Tech\VirtualTourController@index');
+$router->get('/virtual-tour/{id}', 'Tech\VirtualTourController@show');
+
+// Meeting Scheduler Routes  
+$router->get('/schedule-meeting', 'Front\PageController@scheduleMeeting');
+$router->post('/schedule-meeting', 'Front\PageController@handleScheduleMeeting');
 
 // Include additional API routes
 if (file_exists(__DIR__ . '/api.php')) {

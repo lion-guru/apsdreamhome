@@ -4,7 +4,7 @@
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="d-flex align-items-center mb-3">
-                    <img src="https://via.placeholder.com/40x40/ffffff/2c3e50?text=APS"
+                    <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg"
                         alt="APS Dream Home" class="me-2" style="height:40px; border-radius:8px;">
                     <div>
                         <h5 class="mb-0 text-white">APS Dream Home</h5>
