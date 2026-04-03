@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                     <a href="<?php echo BASE_URL; ?>/privacy" class="text-light me-3 text-decoration-none">Privacy Policy</a>
-                    <a href="<?php echo BASE_URL; ?>/terms" class="text-light text-decoration-none">Terms of Service</a>
+                    <a href="<?php echo BASE_URL; ?>/legal/terms-conditions" class="text-light text-decoration-none">Terms of Service</a>
                 </div>
             </div>
         </div>

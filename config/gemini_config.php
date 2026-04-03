@@ -21,12 +21,14 @@ function loadEnv($filePath) {
 $projectRoot = __DIR__ . '/..';
 loadEnv($projectRoot . '/.env');
 
-// Gemini AI Configuration
+// Gemini AI Configuration - Updated from database
 return [
-    'api_key' => $_ENV['GEMINI_API_KEY'] ?? null,
-    'api_url' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
-    'project_id' => '269391449583',
-    'model' => 'gemini-flash-latest',
+    'api_key' => $_ENV['GEMINI_API_KEY'] ?? '',
+    'api_url' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    'project_id' => '',
+    'model' => 'gemini-1.5-flash',
     'temperature' => 0.7,
-    'max_tokens' => 1024
+    'max_tokens' => 8192,
+    'enabled' => false
 ];
+

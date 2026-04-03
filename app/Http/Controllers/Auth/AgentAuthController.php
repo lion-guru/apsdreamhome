@@ -1,205 +1,149 @@
 <?php
+/**
+ * Agent Authentication Controller
+ */
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\BaseController;
+require_once __DIR__ . '/../BaseController.php';
 
-/**
- * Agent Authentication Controller
- * Handles agent registration and login
- */
+use App\Http\Controllers\BaseController;
+use App\Core\Database\Database;
+
 class AgentAuthController extends BaseController
 {
-    /**
-     * Show agent registration form
-     */
     public function register()
     {
-        $data = [
-            'page_title' => 'Agent Registration - APS Dream Home',
-            'page_description' => 'Register as a property agent'
-        ];
-        
-        $this->render('auth/agent_register', $data);
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $csrf_token = $this->getCsrfToken();
+        $errors = $_SESSION['errors'] ?? [];
+        $old = $_SESSION['old_input'] ?? [];
+        unset($_SESSION['errors'], $_SESSION['old_input']);
+        $base = BASE_URL;
+        extract(compact('csrf_token', 'errors', 'old'));
+        include __DIR__ . '/../../../views/auth/agent_register.php';
     }
-    
-    /**
-     * Handle agent registration
-     */
+
     public function handleRegister()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/agent/register');
-            return;
-        }
-        
-        // Get form data
-        $name = $this->sanitizeInput($_POST['name'] ?? '');
-        $email = $this->sanitizeInput($_POST['email'] ?? '');
-        $phone = $this->sanitizeInput($_POST['phone'] ?? '');
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
         $password = $_POST['password'] ?? '';
-        $confirm_password = $_POST['confirm_password'] ?? '';
-        $experience = $this->sanitizeInput($_POST['experience'] ?? '');
-        $license_no = $this->sanitizeInput($_POST['license_no'] ?? '');
-        $referral_code = $this->sanitizeInput($_POST['referral_code'] ?? '');
-        
-        // Validation
+        $confirm = $_POST['confirm_password'] ?? '';
+        $experience = $_POST['experience'] ?? '';
+        $referral = trim($_POST['referral_code'] ?? '');
+
         $errors = [];
-        
-        if (empty($name)) {
-            $errors[] = "Name is required";
-        }
-        
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = "Valid email is required";
-        }
-        
-        if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) {
-            $errors[] = "Valid 10-digit phone number is required";
-        }
-        
-        if (empty($password) || strlen($password) < 6) {
-            $errors[] = "Password must be at least 6 characters";
-        }
-        
-        if ($password !== $confirm_password) {
-            $errors[] = "Passwords do not match";
-        }
-        
-        if (empty($license_no)) {
-            $errors[] = "License number is required";
-        }
-        
+        if (empty($name)) $errors[] = "Name is required";
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Valid email is required";
+        if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) $errors[] = "Valid 10-digit phone required";
+        if (strlen($password) < 6) $errors[] = "Password must be at least 6 characters";
+        if ($password !== $confirm) $errors[] = "Passwords do not match";
+
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old_input'] = $_POST;
-            $this->redirect('/agent/register');
-            return;
+            header('Location: ' . BASE_URL . '/agent/register');
+            exit;
         }
-        
-        // Check if email already exists
+
         try {
-            $pdo = $this->getDatabase();
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
-            $stmt->execute([$email]);
-            
-            if ($stmt->fetch()) {
+            $db = Database::getInstance();
+            $exists = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email]);
+            if ($exists) {
                 $_SESSION['errors'] = ["Email already registered"];
-                $_SESSION['old_input'] = $_POST;
-                $this->redirect('/agent/register');
-                return;
+                header('Location: ' . BASE_URL . '/agent/register');
+                exit;
             }
-            
-            // Hash password
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            
-            // Verify referral code if provided
+
             $referrer_id = null;
-            if (!empty($referral_code)) {
-                $stmt = $pdo->prepare("SELECT id FROM users WHERE referral_code = ? AND status = 'active' LIMIT 1");
-                $stmt->execute([$referral_code]);
-                $referrer = $stmt->fetch();
-                if ($referrer) {
-                    $referrer_id = $referrer['id'];
-                }
+            if (!empty($referral)) {
+                $ref = $db->fetchOne("SELECT id FROM users WHERE referral_code = ? LIMIT 1", [$referral]);
+                if ($ref) $referrer_id = $ref['id'];
             }
-            
-            // Generate agent ID and referral code
+
             $agent_id = 'AGT' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-            $user_referral_code = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
-            
-            // Insert agent
-            $stmt = $pdo->prepare("
-                INSERT INTO users (
-                    customer_id, name, email, phone, password, 
-                    referral_code, referrer_id, user_type, experience, license_no,
-                    status, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'agent', ?, ?, 'pending', NOW(), NOW())
-            ");
-            
-            $stmt->execute([
-                $agent_id, $name, $email, $phone, $hashed_password,
-                $user_referral_code, $referrer_id, $experience, $license_no
+            $referral_code = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+
+            $db->insert('users', [
+                'customer_id' => $agent_id, 'name' => $name, 'email' => $email,
+                'phone' => $phone, 'password' => $hashed, 'referral_code' => $referral_code,
+                'referred_by' => $referrer_id, 'user_type' => 'agent', 'role' => 'agent',
+                'experience' => $experience, 'status' => 'active',
+                'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')
             ]);
-            
-            $_SESSION['success'] = "Registration successful! Your Agent ID: $agent_id. Your account is pending approval.";
-            $this->redirect('/agent/login');
-            
-        } catch (Exception $e) {
-            error_log("Agent Registration error: " . $e->getMessage());
-            $_SESSION['errors'] = ["Registration failed. Please try again."];
-            $this->redirect('/agent/register');
+
+            $_SESSION['success'] = "Agent registration successful! ID: $agent_id. Please login.";
+            header('Location: ' . BASE_URL . '/agent/login');
+            exit;
+        } catch (\Exception $e) {
+            error_log("Agent registration error: " . $e->getMessage());
+            $_SESSION['errors'] = ["Registration failed: " . $e->getMessage()];
+            header('Location: ' . BASE_URL . '/agent/register');
+            exit;
         }
     }
-    
-    /**
-     * Show agent login form
-     */
+
     public function login()
     {
-        // Redirect if already logged in
-        if ($this->isLoggedIn() && ($_SESSION['user_type'] ?? '') === 'agent') {
-            $this->redirect('/agents/dashboard');
-            return;
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'agent') {
+            header('Location: ' . BASE_URL . '/agent/dashboard');
+            exit;
         }
-        
-        $data = [
-            'page_title' => 'Agent Login - APS Dream Home',
-            'page_description' => 'Login to your agent dashboard'
-        ];
-        
-        $this->render('auth/agent_login', $data);
+        $csrf_token = $this->getCsrfToken();
+        $error = $_SESSION['errors'][0] ?? $_SESSION['error'] ?? null;
+        $success = $_SESSION['success'] ?? null;
+        unset($_SESSION['errors'], $_SESSION['error'], $_SESSION['success']);
+        $base = BASE_URL;
+        extract(compact('csrf_token', 'error', 'success'));
+        include __DIR__ . '/../../../views/auth/agent_login.php';
     }
-    
-    /**
-     * Handle agent authentication
-     */
+
     public function authenticate()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/agent/login');
-            return;
-        }
-        
-        $email = $this->sanitizeInput($_POST['email'] ?? '');
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
-        
+
         if (empty($email) || empty($password)) {
             $_SESSION['errors'] = ["Email and password are required"];
-            $this->redirect('/agent/login');
-            return;
+            header('Location: ' . BASE_URL . '/agent/login');
+            exit;
         }
-        
+
         try {
-            $pdo = $this->getDatabase();
-            $stmt = $pdo->prepare("
-                SELECT * FROM users 
-                WHERE email = ? AND user_type = 'agent' AND status = 'active' 
-                LIMIT 1
-            ");
-            $stmt->execute([$email]);
-            $user = $stmt->fetch();
-            
+            $db = Database::getInstance();
+            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND user_type = 'agent' LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
-                // Set session
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['agent_id'] = $user['customer_id'];
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_type'] = 'agent';
                 $_SESSION['logged_in'] = true;
-                $_SESSION['login_time'] = time();
-                
-                $this->redirect('/agents/dashboard');
-            } else {
-                $_SESSION['errors'] = ["Invalid email or password"];
-                $this->redirect('/agent/login');
+                header('Location: ' . BASE_URL . '/agent/dashboard');
+                exit;
             }
-            
-        } catch (Exception $e) {
-            error_log("Agent Login error: " . $e->getMessage());
-            $_SESSION['errors'] = ["Login failed. Please try again."];
-            $this->redirect('/agent/login');
+            $_SESSION['errors'] = ["Invalid email or password"];
+            header('Location: ' . BASE_URL . '/agent/login');
+            exit;
+        } catch (\Exception $e) {
+            $_SESSION['errors'] = ["Login failed"];
+            header('Location: ' . BASE_URL . '/agent/login');
+            exit;
         }
+    }
+
+    public function logout()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        session_destroy();
+        header('Location: ' . BASE_URL . '/agent/login');
+        exit;
     }
 }

@@ -1,12 +1,13 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 namespace App\Services\AI;
 
+use App\Core\Database\Database;
+use App\Core\Security;
+
 /**
- * AI Property Valuation Engine
- * Advanced AI-powered property price prediction and market analysis
+ * APS Dream Home - AI Property Valuation Engine
+ * Market Differentiator Feature - Phase 1 Priority 1
  */
 class PropertyValuationEngine
 {
@@ -47,6 +48,51 @@ class PropertyValuationEngine
             'recommendations' => $this->getRecommendations($propertyData, $valuation),
             'comparable_properties' => $this->getComparableProperties($propertyData)
         ];
+    }
+    
+    /**
+     * Generate comprehensive property valuation (for API compatibility)
+     */
+    public function generateValuation($propertyId)
+    {
+        try {
+            // Get property data
+            $property = $this->getPropertyData($propertyId);
+            if (!$property) {
+                return [
+                    'success' => false,
+                    'message' => 'Property not found'
+                ];
+            }
+            
+            // Use existing calculateValuation method
+            $valuation = $this->calculateValuation($property);
+            
+            // Format for API response
+            return [
+                'success' => true,
+                'data' => [
+                    'property_id' => $propertyId,
+                    'base_valuation' => round($valuation['estimated_price'] * 0.7, 2),
+                    'location_multiplier' => $this->getLocationMultiplier($property['location']),
+                    'type_multiplier' => $this->getPropertyTypeMultiplier($property),
+                    'amenity_value' => round($valuation['estimated_price'] * 0.15, 2),
+                    'market_adjustment' => round($this->getMarketTrendAdjustment($property['location']) * 100, 2) . '%',
+                    'final_valuation' => round($valuation['estimated_price'], 2),
+                    'confidence_score' => round($valuation['confidence_score'], 2),
+                    'comparable_properties' => count($valuation['comparable_properties']),
+                    'valuation_date' => date('Y-m-d H:i:s'),
+                    'market_analysis' => $valuation['market_analysis'],
+                    'recommendations' => $valuation['recommendations']
+                ]
+            ];
+            
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Valuation calculation failed: ' . $e->getMessage()
+            ];
+        }
     }
     
     /**
@@ -267,6 +313,63 @@ class PropertyValuationEngine
                 'condition' => 'excellent'
             ]
         ];
+    }
+    
+    /**
+     * Get valuation history for a property
+     */
+    public function getValuationHistory($propertyId, $limit = 10)
+    {
+        try {
+            $stmt = $this->database->prepare("
+                SELECT * FROM property_valuations 
+                WHERE property_id = ? 
+                ORDER BY created_at DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$propertyId, $limit]);
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+    
+    /**
+     * Batch valuation for multiple properties
+     */
+    public function batchValuation($propertyIds)
+    {
+        $results = [];
+        foreach ($propertyIds as $propertyId) {
+            $results[] = $this->generateValuation($propertyId);
+        }
+        return $results;
+    }
+    
+    /**
+     * Get property type multiplier
+     */
+    private function getPropertyTypeMultiplier($property)
+    {
+        $type = strtolower($property['property_type_name'] ?? 'residential');
+        
+        return $this->propertyTypeMultipliers[$type] ?? 1.0;
+    }
+    
+    /**
+     * Get property data from database
+     */
+    private function getPropertyData($propertyId)
+    {
+        $stmt = $this->database->prepare("
+            SELECT p.*, pi.image_url, pt.type_name as property_type_name
+            FROM properties p
+            LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
+            LEFT JOIN property_types pt ON p.type = pt.id
+            WHERE p.id = ?
+        ");
+        $stmt->execute([$propertyId]);
+        return $stmt->fetch();
     }
     
     /**

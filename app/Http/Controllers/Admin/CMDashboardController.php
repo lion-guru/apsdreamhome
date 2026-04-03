@@ -49,7 +49,7 @@ class CMDashboardController
         $page_title = 'CM Dashboard - APS Dream Home';
 
         // Include view
-        require_once __DIR__ . '/../../views/dashboard/cm_dashboard.php';
+        require_once __DIR__ . '/../../../views/dashboard/cm_dashboard.php';
     }
 
     /**
@@ -237,7 +237,7 @@ class CMDashboardController
     /**
      * JSON response helper
      */
-    private function jsonResponse($data, $statusCode = 200)
+    public function jsonResponse($data, $status = 200)
     {
         header('Content-Type: application/json');
         http_response_code($statusCode);

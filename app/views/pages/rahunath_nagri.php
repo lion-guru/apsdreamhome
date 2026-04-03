@@ -1,10 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
-// Include database connection
-require_once 'includes/db_connection.php';
-
 // Set project details
 $projectName = "Raghunath Nagri";
 $projectLocation = "Gorakhpur";

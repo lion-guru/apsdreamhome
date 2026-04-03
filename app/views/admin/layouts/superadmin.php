@@ -5,29 +5,11 @@
  */
 if (!defined('BASE_PATH')) exit;
 
-// Load RBAC Manager if not already loaded
-if (!class_exists('App\Http\Middleware\RBACManager')) {
-    require_once dirname(__DIR__, 4) . '/Http/Middleware/RBACManager.php';
-}
-
-// Get user data from session if not passed
-if (empty($currentUser)) {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-    $currentUser = [
-        'id' => $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0,
-        'name' => $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin',
-        'email' => $_SESSION['admin_email'] ?? '',
-        'role' => $_SESSION['admin_role'] ?? $_SESSION['user_role'] ?? 'super_admin',
-        'username' => $_SESSION['admin_name'] ?? 'admin'
-    ];
-}
-
-$currentRole = $currentUser['role'] ?? 'super_admin';
-$roleName = \App\Http\Middleware\RBACManager::getRoleName($currentRole) ?? 'Super Admin';
+$currentUser = $currentUser ?? [];
+$currentRole = $currentRole ?? 'guest';
+$roleName = $roleName ?? 'Guest';
 $roleLevel = $roleLevel ?? 0;
-$roleCategory = $roleCategory ?? 'admin';
+$roleCategory = $roleCategory ?? 'default';
 $permissions = $permissions ?? [];
 $menus = $menus ?? [];
 
@@ -577,74 +559,6 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <?php endif; ?>
                 </ul>
             <?php endforeach; ?>
-        <?php else: ?>
-            <!-- Default menus when no menus passed -->
-            <div class="sidebar-section">CRM & Leads</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/leads" class="sidebar-link"><i class="fas fa-bullseye"></i><span>All Leads</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/customers" class="sidebar-link"><i class="fas fa-user-check"></i><span>Customers</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/campaigns" class="sidebar-link"><i class="fas fa-bullhorn"></i><span>Campaigns</span></a></li>
-            </ul>
-            
-            <div class="sidebar-section">Properties</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/properties" class="sidebar-link"><i class="fas fa-building"></i><span>All Properties</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/projects" class="sidebar-link"><i class="fas fa-city"></i><span>Projects</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/plots" class="sidebar-link"><i class="fas fa-map"></i><span>Plots / Land</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/bookings" class="sidebar-link"><i class="fas fa-file-contract"></i><span>Bookings</span></a></li>
-            </ul>
-            
-            <div class="sidebar-section">MLM Network</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/mlm/tree" class="sidebar-link"><i class="fas fa-sitemap"></i><span>Network Tree</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/mlm/associates" class="sidebar-link"><i class="fas fa-users"></i><span>Associates</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/mlm/commissions" class="sidebar-link"><i class="fas fa-percentage"></i><span>Commissions</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/mlm/payouts" class="sidebar-link"><i class="fas fa-rupee-sign"></i><span>Payouts</span></a></li>
-            </ul>
-            
-            <div class="sidebar-section">Financial</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/financial/transactions" class="sidebar-link"><i class="fas fa-exchange-alt"></i><span>Transactions</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/financial/invoices" class="sidebar-link"><i class="fas fa-file-invoice-dollar"></i><span>Invoices</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/financial/emi" class="sidebar-link"><i class="fas fa-calendar"></i><span>EMI Management</span></a></li>
-            </ul>
-            
-            <div class="sidebar-section">Team & HR</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/employees" class="sidebar-link"><i class="fas fa-user-friends"></i><span>Staff Members</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/attendance" class="sidebar-link"><i class="fas fa-clock"></i><span>Attendance</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/leaves" class="sidebar-link"><i class="fas fa-calendar-alt"></i><span>Leaves</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/payroll" class="sidebar-link"><i class="fas fa-money-bill"></i><span>Payroll</span></a></li>
-            </ul>
-            
-            <div class="sidebar-section">Marketing</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/marketing/campaigns" class="sidebar-link"><i class="fas fa-bullhorn"></i><span>Campaigns</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/marketing/email" class="sidebar-link"><i class="fas fa-envelope"></i><span>Email Templates</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/marketing/sms" class="sidebar-link"><i class="fas fa-comment-sms"></i><span>SMS Templates</span></a></li>
-            </ul>
-            
-            <div class="sidebar-section">Content</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/media" class="sidebar-link"><i class="fas fa-image"></i><span>Media Gallery</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/pages" class="sidebar-link"><i class="fas fa-file"></i><span>Pages</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/blog" class="sidebar-link"><i class="fas fa-newspaper"></i><span>Blog & News</span></a></li>
-            </ul>
-            
-            <div class="sidebar-section">Reports</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/reports/sales" class="sidebar-link"><i class="fas fa-chart-line"></i><span>Sales Reports</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/reports/mlm" class="sidebar-link"><i class="fas fa-sitemap"></i><span>MLM Reports</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/reports/financial" class="sidebar-link"><i class="fas fa-rupee-sign"></i><span>Financial Reports</span></a></li>
-            </ul>
-            
-            <div class="sidebar-section">System</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/settings" class="sidebar-link"><i class="fas fa-cog"></i><span>Settings</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users" class="sidebar-link"><i class="fas fa-users-cog"></i><span>User Management</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/ai-settings" class="sidebar-link"><i class="fas fa-robot"></i><span>AI Settings</span></a></li>
-                <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/backup" class="sidebar-link"><i class="fas fa-database"></i><span>Backup</span></a></li>
-            </ul>
         <?php endif; ?>
         
         <div class="sidebar-section">Account</div>
@@ -686,31 +600,23 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </nav>
             </div>
             <div class="navbar-right">
-                <button class="navbar-icon" title="Notifications" onclick="location.href='<?php echo BASE_URL; ?>/admin/notifications'">
+                <button class="navbar-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
                     <span class="badge">3</span>
                 </button>
-                <div class="user-dropdown dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                <button class="navbar-icon" title="Messages">
+                    <i class="fas fa-envelope"></i>
+                    <span class="badge">5</span>
+                </button>
+                <div class="user-dropdown dropdown">
                     <div class="user-avatar">
                         <?php echo strtoupper(substr($currentUser['name'] ?? $currentUser['username'] ?? 'U', 0, 1)); ?>
                     </div>
                     <div class="user-info">
-                        <div class="user-name"><?php echo htmlspecialchars($currentUser['name'] ?? $currentUser['username'] ?? 'User'); ?></div>
+                        <div class="user-name"><?php echo $currentUser['name'] ?? $currentUser['username'] ?? 'User'; ?></div>
                         <div class="user-role"><?php echo ucwords(str_replace('_', ' ', $roleName)); ?></div>
                     </div>
                     <i class="fas fa-chevron-down" style="color: #64748b; font-size: 0.75rem;"></i>
-                    <ul class="dropdown-menu dropdown-menu-end" style="margin-top: 10px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/profile">
-                            <i class="fas fa-user me-2"></i> My Profile
-                        </a></li>
-                        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/profile/security">
-                            <i class="fas fa-shield-alt me-2"></i> Security
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>/admin/logout">
-                            <i class="fas fa-sign-out-alt me-2"></i> Logout
-                        </a></li>
-                    </ul>
                 </div>
             </div>
         </nav>

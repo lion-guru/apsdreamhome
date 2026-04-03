@@ -6,54 +6,108 @@ use App\Http\Controllers\BaseController;
 
 class PageController extends BaseController
 {
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     // Home Page
     public function home()
     {
-        try {
-            // Get hero statistics
-            $hero_stats = [
-                'years_experience' => 15,
-                'projects_completed' => 50,
-                'happy_customers' => 1000,
-                'awards_won' => 25,
-            ];
+        // Get hero statistics
+        $hero_stats = [
+            'years_experience' => 15,
+            'projects_completed' => 50,
+            'happy_customers' => 1000,
+            'awards_won' => 25,
+        ];
 
-            // Get featured properties
-            $featured_properties = [
-                [
-                    'id' => 1,
-                    'title' => 'Suyoday Colony',
-                    'location' => 'Gorakhpur',
-                    'price' => '₹7.5 Lakhs',
-                    'image' => 'suyoday.jpg',
-                    'type' => 'Residential',
-                    'status' => 'Available'
-                ],
-                [
-                    'id' => 2,
-                    'title' => 'Raghunat Nagri',
-                    'location' => 'Gorakhpur',
-                    'price' => '₹8.5 Lakhs',
-                    'image' => 'raghunat.jpg',
-                    'type' => 'Residential',
-                    'status' => 'Available'
-                ],
-            ];
+        // Get featured properties
+        $featured_properties = [
+            [
+                'id' => 1,
+                'title' => 'Suyoday Colony',
+                'location' => 'Gorakhpur',
+                'price' => '₹7.5 Lakhs',
+                'image' => 'suyoday.jpg',
+                'type' => 'Residential',
+                'status' => 'Available'
+            ],
+            [
+                'id' => 2,
+                'title' => 'Raghunat Nagri',
+                'location' => 'Gorakhpur',
+                'price' => '₹8.5 Lakhs',
+                'image' => 'raghunat.jpg',
+                'type' => 'Residential',
+                'status' => 'Available'
+            ],
+            [
+                'id' => 3,
+                'title' => 'Braj Radha Nagri',
+                'location' => 'Gorakhpur',
+                'price' => '₹6.5 Lakhs',
+                'image' => 'brajradha.jpg',
+                'type' => 'Residential',
+                'status' => 'Available'
+            ],
+            [
+                'id' => 4,
+                'title' => 'Budh Bihar Colony',
+                'location' => 'Kushinagar',
+                'price' => '₹5.5 Lakhs',
+                'image' => 'budhbihar.jpg',
+                'type' => 'Residential',
+                'status' => 'Available'
+            ],
+        ];
 
-            // Load home page view with data
-            include __DIR__ . '/../../../views/pages/home.php';
-        } catch (Exception $e) {
-            error_log("Home page error: " . $e->getMessage());
-            echo "Error loading home page. Please try again later.";
-        }
+        $data = [
+            'page_title' => 'APS Dream Home - Premium Real Estate in UP',
+            'page_description' => 'Discover premium residential and commercial properties in Gorakhpur, Lucknow, and across Uttar Pradesh',
+            'hero_stats' => $hero_stats,
+            'featured_properties' => $featured_properties,
+        ];
+
+        $this->render('pages/home', $data);
     }
 
     // Contact Us Page
     public function contact()
     {
+        $success = false;
+        $error = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $subject = trim($_POST['subject'] ?? 'Contact Form Submission');
+            $message = trim($_POST['message'] ?? '');
+
+            if (empty($name) || empty($email) || empty($message)) {
+                $error = 'Please fill in all required fields.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Please enter a valid email address.';
+            } else {
+                try {
+                    $stmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+                    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+                    $stmt->execute([$name, $email, $phone, $subject, $message, $ip]);
+                    $success = true;
+                    $_POST = [];
+                } catch (\Exception $e) {
+                    $error = 'Failed to submit. Please try again or call us directly.';
+                    error_log("Contact form error: " . $e->getMessage());
+                }
+            }
+        }
+
         $data = [
             'page_title' => 'Contact Us - APS Dream Home',
-            'page_description' => 'Get in touch with APS Dream Home'
+            'page_description' => 'Get in touch with APS Dream Home',
+            'contact_success' => $success,
+            'contact_error' => $error
         ];
         $this->render('pages/contact', $data);
     }
@@ -410,6 +464,17 @@ class PageController extends BaseController
         $this->render('pages/news', $data);
     }
 
+    // News View
+    public function newsView($id = null)
+    {
+        $data = [
+            'page_title' => 'News - APS Dream Home',
+            'page_description' => 'View news article',
+            'news_id' => $id
+        ];
+        $this->render('pages/news', $data);
+    }
+
     // Navigation
     public function navigation()
     {
@@ -580,13 +645,385 @@ class PageController extends BaseController
         $this->render('pages/whatsapp-templates', $data);
     }
 
-    // Support Page
+    // Sitemap
+    public function sitemap()
+    {
+        $data = [
+            'page_title' => 'Sitemap - APS Dream Home',
+            'page_description' => 'Complete sitemap of APS Dream Home website'
+        ];
+        $this->render('pages/sitemap', $data);
+    }
+
+    // FAQ (singular)
+    public function faq()
+    {
+        return $this->faqs();
+    }
+
+    // Property Details
+    public function propertyDetails($id = null)
+    {
+        $property = null;
+        $property_images = [];
+        $related_properties = [];
+
+        if ($id) {
+            try {
+                $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = ? AND status = 'available' LIMIT 1");
+                $stmt->execute([$id]);
+                $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+                if ($property) {
+                    $imgStmt = $this->db->prepare("SELECT * FROM property_images WHERE property_id = ? ORDER BY is_featured DESC LIMIT 5");
+                    $imgStmt->execute([$id]);
+                    $property_images = $imgStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+                    $relStmt = $this->db->prepare("SELECT * FROM properties WHERE id != ? AND status = 'available' ORDER BY RAND() LIMIT 3");
+                    $relStmt->execute([$id]);
+                    $related_properties = $relStmt->fetchAll(\PDO::FETCH_ASSOC);
+                }
+            } catch (\Exception $e) {
+                error_log("Property fetch error: " . $e->getMessage());
+            }
+        }
+
+        $data = [
+            'page_title' => $property ? ($property['title'] ?? 'Property') . ' - APS Dream Home' : 'Property Not Found',
+            'page_description' => 'View property details',
+            'property' => $property,
+            'property_images' => $property_images,
+            'related_properties' => $related_properties
+        ];
+        $this->render('properties/detail', $data);
+    }
+
+    // Projects List
+    public function projects()
+    {
+        $data = [
+            'page_title' => 'Our Projects - APS Dream Home',
+            'page_description' => 'Explore our residential and commercial projects'
+        ];
+        $this->render('pages/company_projects', $data);
+    }
+
+    // Project Details
+    public function projectDetails($slug = null)
+    {
+        $data = [
+            'page_title' => 'Project Details - APS Dream Home',
+            'page_description' => 'View project details',
+            'project_slug' => $slug
+        ];
+        $this->render('pages/company_projects', $data);
+    }
+
+    // Gallery
+    public function gallery()
+    {
+        $data = [
+            'page_title' => 'Gallery - APS Dream Home',
+            'page_description' => 'Photo and video gallery of our projects'
+        ];
+        $this->render('pages/gallery', $data);
+    }
+
+    // Gallery Project
+    public function galleryProject($projectId = null)
+    {
+        $data = [
+            'page_title' => 'Project Gallery - APS Dream Home',
+            'page_description' => 'Project photo gallery',
+            'project_id' => $projectId
+        ];
+        $this->render('gallery/project', $data);
+    }
+
+    // Blog Post
+    public function blogPost($slug = null)
+    {
+        $data = [
+            'page_title' => 'Blog Post - APS Dream Home',
+            'page_description' => 'Read our latest blog post',
+            'post_slug' => $slug
+        ];
+        $this->render('pages/blog-post', $data);
+    }
+
+    // Career Apply
+    public function careerApply()
+    {
+        $data = [
+            'page_title' => 'Apply for a Job - APS Dream Home',
+            'page_description' => 'Submit your job application'
+        ];
+        $this->render('pages/career_apply', $data);
+    }
+
+    // Submit Career Application
+    public function submitCareerApplication()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $_SESSION['success'] = 'Your application has been submitted successfully!';
+            header('Location: ' . BASE_URL . '/careers');
+            exit;
+        }
+        return $this->careerApply();
+    }
+
+    // Career Jobs
+    public function careerJobs()
+    {
+        $data = [
+            'page_title' => 'Job Openings - APS Dream Home',
+            'page_description' => 'Current job openings at APS Dream Home'
+        ];
+        $this->render('pages/careers', $data);
+    }
+
+    // Career Job Details
+    public function careerJobDetails($id = null)
+    {
+        $data = [
+            'page_title' => 'Job Details - APS Dream Home',
+            'page_description' => 'View job details',
+            'job_id' => $id
+        ];
+        $this->render('pages/career_apply', $data);
+    }
+
+    // Suyoday Colony
+    public function suyodayColony()
+    {
+        $data = [
+            'page_title' => 'Suyoday Colony - APS Dream Home',
+            'page_description' => 'Premium residential plots in Suyoday Colony, Gorakhpur'
+        ];
+        $this->render('pages/suyoday_colony', $data);
+    }
+
+    // Raghunat Nagri
+    public function raghunatNagri()
+    {
+        $data = [
+            'page_title' => 'Raghunat Nagri - APS Dream Home',
+            'page_description' => 'Premium residential plots in Raghunat Nagri, Gorakhpur'
+        ];
+        $this->render('pages/rahunath_nagri', $data);
+    }
+
+    // Braj Radha Nagri
+    public function brajRadhaNagri()
+    {
+        $data = [
+            'page_title' => 'Braj Radha Nagri - APS Dream Home',
+            'page_description' => 'Affordable residential plots in Braj Radha Nagri'
+        ];
+        $this->render('pages/budhacity', $data);
+    }
+
+    // Budh Bihar Colony
+    public function budhBiharColony()
+    {
+        $data = [
+            'page_title' => 'Budh Bihar Colony - APS Dream Home',
+            'page_description' => 'Integrated township at Budh Bihar Colony, Kushinagar'
+        ];
+        $this->render('pages/budhacity', $data);
+    }
+
+    // Awadhpuri
+    public function awadhpuri()
+    {
+        $data = [
+            'page_title' => 'Awadhpuri - APS Dream Home',
+            'page_description' => 'Premium project at Awadhpuri, Lucknow'
+        ];
+        $this->render('pages/budhacity', $data);
+    }
+
+    // WhatsApp Chat
+    public function whatsappChat()
+    {
+        $data = [
+            'page_title' => 'WhatsApp Chat - APS Dream Home',
+            'page_description' => 'Connect with us on WhatsApp'
+        ];
+        $this->render('pages/whatsapp_chat', $data);
+    }
+
+    // Virtual Tour
+    public function virtualTour()
+    {
+        $data = [
+            'page_title' => 'Virtual Tour - APS Dream Home',
+            'page_description' => 'Take a virtual tour of our properties'
+        ];
+        $this->render('pages/virtual_tour', $data);
+    }
+
+    // User AI Suggestions
+    public function userAiSuggestions()
+    {
+        $data = [
+            'page_title' => 'AI Suggestions - APS Dream Home',
+            'page_description' => 'Personalized property suggestions powered by AI'
+        ];
+        $this->render('pages/user_ai_suggestions', $data);
+    }
+
+    // Support
     public function support()
     {
         $data = [
             'page_title' => 'Support - APS Dream Home',
-            'page_description' => 'Get help and support from our team'
+            'page_description' => 'Get support from APS Dream Home team'
         ];
         $this->render('pages/support', $data);
+    }
+
+    // AI Valuation
+    public function aiValuation()
+    {
+        $data = [
+            'page_title' => 'AI Property Valuation - APS Dream Home',
+            'page_description' => 'Get AI-powered property valuation'
+        ];
+        $this->render('pages/ai-valuation', $data);
+    }
+
+    // User Saved Searches
+    public function userSavedSearches()
+    {
+        $data = [
+            'page_title' => 'Saved Searches - APS Dream Home',
+            'page_description' => 'Your saved property searches'
+        ];
+        $this->render('pages/user/saved_searches', $data);
+    }
+
+    // User Notifications
+    public function userNotifications()
+    {
+        $data = [
+            'page_title' => 'Notifications - APS Dream Home',
+            'page_description' => 'Your notifications'
+        ];
+        $this->render('pages/user/notifications', $data);
+    }
+
+    // User Investments
+    public function userInvestments()
+    {
+        $data = [
+            'page_title' => 'My Investments - APS Dream Home',
+            'page_description' => 'Track your property investments'
+        ];
+        $this->render('pages/user/investments', $data);
+    }
+
+    // User Edit Profile
+    public function userEditProfile()
+    {
+        $data = [
+            'page_title' => 'Edit Profile - APS Dream Home',
+            'page_description' => 'Update your profile information'
+        ];
+        $this->render('pages/user/edit_profile', $data);
+    }
+
+    // Under Construction
+    public function underConstruction()
+    {
+        $data = [
+            'page_title' => 'Under Construction - APS Dream Home',
+            'page_description' => 'This page is under construction'
+        ];
+        $this->render('pages/under_construction', $data);
+    }
+
+    // Thank You
+    public function thankYou()
+    {
+        $data = [
+            'page_title' => 'Thank You - APS Dream Home',
+            'page_description' => 'Thank you for contacting us'
+        ];
+        $this->render('pages/thank_you', $data);
+    }
+
+    // Coming Soon
+    public function comingSoon()
+    {
+        $data = [
+            'page_title' => 'Coming Soon - APS Dream Home',
+            'page_description' => 'This page is coming soon'
+        ];
+        $this->render('pages/coming_soon', $data);
+    }
+
+    // Property Submit
+    public function propertySubmit()
+    {
+        $data = [
+            'page_title' => 'Submit Property - APS Dream Home',
+            'page_description' => 'Submit your property for listing'
+        ];
+        $this->render('pages/properties/submit', $data);
+    }
+
+    // Property List
+    public function propertyList()
+    {
+        $data = [
+            'page_title' => 'Property List - APS Dream Home',
+            'page_description' => 'Browse all available properties'
+        ];
+        $this->render('pages/properties/list', $data);
+    }
+
+    // Property Edit
+    public function propertyEdit()
+    {
+        $data = [
+            'page_title' => 'Edit Property - APS Dream Home',
+            'page_description' => 'Edit your property listing'
+        ];
+        $this->render('pages/properties/edit', $data);
+    }
+
+    // Book Plot
+    public function bookPlot()
+    {
+        $data = [
+            'page_title' => 'Book a Plot - APS Dream Home',
+            'page_description' => 'Book your dream plot'
+        ];
+        $this->render('pages/properties/book_plot', $data);
+    }
+
+    // Book Property
+    public function bookProperty()
+    {
+        $data = [
+            'page_title' => 'Book Property - APS Dream Home',
+            'page_description' => 'Book your dream property'
+        ];
+        $this->render('pages/properties/book', $data);
+    }
+
+    // Get Featured Properties (API)
+    public function getFeaturedProperties()
+    {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                ['id' => 1, 'title' => 'Suyoday Colony', 'location' => 'Gorakhpur', 'price' => '750000'],
+                ['id' => 2, 'title' => 'Raghunat Nagri', 'location' => 'Gorakhpur', 'price' => '850000'],
+            ]
+        ]);
+        exit;
     }
 }

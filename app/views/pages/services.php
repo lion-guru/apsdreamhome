@@ -101,7 +101,7 @@
                                     </ul>
                                 </div>
                             <?php endif; ?>
-                            <a href="<?php echo BASE_URL; ?>contact" class="btn btn-<?php echo htmlspecialchars($service->color ?? 'primary'); ?> mt-3">
+                            <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-<?php echo htmlspecialchars($service->color ?? 'primary'); ?> mt-3">
                                 <i class="fas fa-phone me-2"></i>Contact Us
                             </a>
                         </div>
@@ -127,7 +127,7 @@
                                 <li><i class="fas fa-check text-success me-2"></i>Expert Negotiation</li>
                             </ul>
                         </div>
-                        <a href="<?php echo BASE_URL; ?>properties" class="btn btn-primary mt-3">
+                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-primary mt-3">
                             <i class="fas fa-search me-2"></i>Browse Properties
                         </a>
                     </div>
@@ -314,10 +314,10 @@
                     Contact us today and let our expert team help you find the perfect property or sell your current one.
                 </p>
                 <div class="cta-buttons">
-                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-light btn-lg me-3">
+                    <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-light btn-lg me-3">
                         <i class="fas fa-phone me-2"></i>Contact Us
                     </a>
-                    <a href="<?php echo BASE_URL; ?>properties" class="btn btn-outline-light btn-lg">
+                    <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-light btn-lg">
                         <i class="fas fa-search me-2"></i>Browse Properties
                     </a>
                 </div>

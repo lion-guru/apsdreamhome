@@ -20,15 +20,8 @@
  */
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 // Navigation Menu for APS Dream Homes
-// This file provides easy navigation to all implemented pages
-
-require_once __DIR__ . '/init.php';
-
-// Set page metadata
-$$page_title = 'Navigation - APS Dream Homes';
+$page_title = 'Navigation - APS Dream Homes';
 $page_description = 'Navigate through all pages of APS Dream Homes website';
 ?>
 

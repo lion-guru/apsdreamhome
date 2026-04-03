@@ -1,145 +1,211 @@
-<style>
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-    .card {
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
-    }
-    .card:hover {
-        transform: translateY(-5px);
-    }
-    .btn-primary {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    .btn-primary:hover {
-        background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
-    }
-    .form-control:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-    }
-    .fa-3x {
-        color: #28a745;
-        margin-bottom: 1rem;
-        animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-</style>
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <i class="fas fa-handshake fa-3x text-primary mb-3"></i>
-                            <h2 class="fw-bold">Associate Login</h2>
-                            <p class="text-muted">Access your associate dashboard</p>
-                        </div>
+<?php
+if (!defined('BASE_URL')) {
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
+}
+$csrf_token = $csrf_token ?? '';
+$error = $error ?? null;
+$base = BASE_URL;
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Associate Login | APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 50%, #f7931e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .brand-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+        .brand-icon i {
+            font-size: 36px;
+            color: #fff;
+        }
+        .card-body {
+            padding: 40px 35px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .input-group-text {
+            background: #fff;
+            border-left: none;
+        }
+        .form-control {
+            border-right: none;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 4px rgba(255,107,53,0.1);
+        }
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+        .input-group-text {
+            border-radius: 10px 0 0 10px;
+            border: 2px solid #e0e0e0;
+            border-right: none;
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,107,53,0.4);
+        }
+        .btn-login:focus {
+            box-shadow: 0 0 0 4px rgba(255,107,53,0.2);
+        }
+        .brand-title {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .brand-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .link-text {
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .link-text:hover {
+            color: #e55a2b;
+        }
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 25px 0;
+        }
+        .error-alert {
+            background: #fff5f5;
+            border: 1px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .error-alert i {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="card-header">
+            <div class="brand-icon">
+                <i class="fas fa-handshake"></i>
+            </div>
+            <h1 class="brand-title">APS Dream Home</h1>
+            <p class="brand-subtitle">Associate Portal Login</p>
+        </div>
+        <div class="card-body">
+            <?php if ($error): ?>
+                <div class="error-alert d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span><?php echo htmlspecialchars($error); ?></span>
+                </div>
+            <?php endif; ?>
 
-                        <?php if (isset($_SESSION['errors'])): ?>
-                            <div class="alert alert-danger">
-                                <?php foreach ($_SESSION['errors'] as $error): ?>
-                                    <div><?php echo htmlspecialchars($error); ?></div>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php unset($_SESSION['errors']); ?>
-                        <?php endif; ?>
+            <form action="<?php echo BASE_URL; ?>/associate/login" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                
+                <div class="mb-3">
+                    <label for="email_phone" class="form-label">Email or Phone</label>
+                    <input type="text" class="form-control" id="email_phone" name="email_phone" placeholder="Enter email or phone" required>
+                </div>
 
-                        <?php if (isset($_SESSION['success'])): ?>
-                            <div class="alert alert-success">
-                                <?php echo htmlspecialchars($_SESSION['success']); ?>
-                            </div>
-                            <?php unset($_SESSION['success']); ?>
-                        <?php endif; ?>
-
-                        <form action="<?php echo BASE_URL; ?>/associate/login" method="POST">
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email Address *</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password *</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                                        <label class="form-check-label" for="remember">
-                                            Remember me
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-6 mb-3 text-end">
-                                    <a href="#" class="text-primary">Forgot Password?</a>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary btn-lg w-100">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Login as Associate
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <div class="text-center mt-4">
-                            <p class="mb-0">Don't have an account? 
-                                <a href="<?php echo BASE_URL; ?>/associate/register" class="text-primary">Register here</a>
-                            </p>
-                            <p class="mb-0">Are you a customer? 
-                                <a href="<?php echo BASE_URL; ?>/login" class="text-primary">Customer Login</a>
-                            </p>
-                            <p class="mb-0">Are you an agent? 
-                                <a href="<?php echo BASE_URL; ?>/agent/login" class="text-primary">Agent Login</a>
-                            </p>
-                        </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                        <span class="input-group-text toggle-password" style="cursor: pointer;" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </span>
                     </div>
                 </div>
-            </div>
+
+                <button type="submit" class="btn btn-login text-white w-100">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login as Associate
+                </button>
+            </form>
+
+            <div class="divider"></div>
+
+            <p class="text-center mb-2">
+                Don't have an account? 
+                <a href="<?php echo BASE_URL; ?>/associate/register" class="link-text">Register here</a>
+            </p>
+            <p class="text-center mb-0">
+                <a href="<?php echo BASE_URL; ?>" class="link-text">
+                    <i class="fas fa-home me-1"></i>Back to Homepage
+                </a>
+            </p>
         </div>
     </div>
-</section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    
-    form.addEventListener('submit', function(e) {
-        if (!email.value || !password.value) {
-            e.preventDefault();
-            alert('Please fill in all fields');
-            return false;
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
         }
-        
-        if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-            e.preventDefault();
-            alert('Please enter a valid email address');
-            email.focus();
-            return false;
-        }
-    });
-    
-    // Auto-focus on email field
-    email.focus();
-});
-</script>
+    </script>
+</body>
+</html>

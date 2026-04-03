@@ -1,6 +1,15 @@
 <?php
-// Check routes
-require_once __DIR__ . '/vendor/autoload.php';
+// Define constants first
+define('APS_ROOT', __DIR__);
+define('APS_APP', APS_ROOT . '/app');
+define('APS_CONFIG', APS_ROOT . '/config');
+define('APS_STORAGE', APS_ROOT . '/storage');
+
+// Include bootstrap
+require_once 'config/bootstrap.php';
+
+// Include router
+require_once 'routes/router.php';
 
 $router = new Router();
 require __DIR__ . '/routes/web.php';
@@ -14,9 +23,16 @@ foreach ($getRoutes as $route) {
     }
 }
 
-echo "\nLooking for 'admin':\n";
+echo "\nLooking for exact 'admin' route:\n";
 if (isset($router->routes['GET']['admin'])) {
     echo "  Found: admin\n";
 } else {
     echo "  NOT found: admin\n";
+}
+
+echo "\nAll routes containing 'admin':\n";
+foreach ($getRoutes as $route) {
+    if (strpos($route, 'admin') !== false) {
+        echo "  - " . $route . "\n";
+    }
 }

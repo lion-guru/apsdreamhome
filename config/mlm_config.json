@@ -1,0 +1,86 @@
+{
+    "levels": {
+        "1": {
+            "name": "Associate",
+            "direct": 10,
+            "team": 2,
+            "joining_fee": 100
+        },
+        "2": {
+            "name": "Bronze",
+            "direct": 12,
+            "team": 3,
+            "joining_fee": 150
+        },
+        "3": {
+            "name": "Silver",
+            "direct": 14,
+            "team": 4,
+            "joining_fee": 200
+        },
+        "4": {
+            "name": "Gold",
+            "direct": 16,
+            "team": 5,
+            "joining_fee": 250
+        },
+        "5": {
+            "name": "Platinum",
+            "direct": 18,
+            "team": 6,
+            "joining_fee": 300
+        },
+        "6": {
+            "name": "Diamond",
+            "direct": 20,
+            "team": 7,
+            "joining_fee": 350
+        },
+        "7": {
+            "name": "Crown Diamond",
+            "direct": 22,
+            "team": 8,
+            "joining_fee": 400
+        },
+        "8": {
+            "name": "Executive",
+            "direct": 24,
+            "team": 9,
+            "joining_fee": 450
+        },
+        "9": {
+            "name": "Presidential",
+            "direct": 26,
+            "team": 10,
+            "joining_fee": 500
+        },
+        "10": {
+            "name": "Ambassador",
+            "direct": 30,
+            "team": 12,
+            "joining_fee": 1000
+        }
+    },
+    "commission": {
+        "calculation_method": "percentage",
+        "payment_delay_days": 7,
+        "minimum_approval_amount": 100
+    },
+    "bonuses": {
+        "welcome": {
+            "amount": 50,
+            "min_sales": 100,
+            "days": 30
+        },
+        "fast_start": {
+            "amount": 100,
+            "min_sales": 500,
+            "days": 60
+        },
+        "leadership_pool": {
+            "percentage": 1,
+            "min_rank": "Diamond",
+            "min_team_sales": 10000
+        }
+    }
+}

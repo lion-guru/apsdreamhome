@@ -10,15 +10,21 @@
         "--user",
         "root",
         "--password",
-        ""
+        "",
+        "--database",
+        "apsdreamhome"
       ],
       "env": {
         "MYSQL_HOST": "localhost",
         "MYSQL_PORT": "3306",
         "MYSQL_USER": "root",
         "MYSQL_PASSWORD": "",
-        "MYSQL_DATABASE": "apsdreamhome"
-      }
+        "MYSQL_DATABASE": "apsdreamhome",
+        "APS_ROOT": "C:\\xampp\\htdocs\\apsdreamhome",
+        "APS_CONFIG": "C:\\xampp\\htdocs\\apsdreamhome\\config",
+        "APS_STORAGE": "C:\\xampp\\htdocs\\apsdreamhome\\storage"
+      },
+      "description": "APS Dream Home Database Server - 635 tables with real estate data"
     },
     "filesystem": {
       "command": "npx",
@@ -26,11 +32,26 @@
         "-y",
         "@modelcontextprotocol/server-filesystem",
         "C:\\xampp\\htdocs\\apsdreamhome"
-      ]
+      ],
+      "env": {
+        "APS_ROOT": "C:\\xampp\\htdocs\\apsdreamhome",
+        "PROJECT_NAME": "APS Dream Home",
+        "PROJECT_TYPE": "Real Estate CRM"
+      },
+      "description": "APS Dream Home File System - Complete project structure access"
     },
     "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "PROJECT_NAME": "APS Dream Home",
+        "MEMORY_TYPE": "project_context",
+        "DATABASE_TABLES": "635",
+        "CONTROLLER_FILES": "178",
+        "SERVICE_FILES": "320",
+        "AI_FEATURES": "property_valuation"
+      },
+      "description": "APS Dream Home Memory Server - Project context and AI features"
     },
     "sqlite": {
       "command": "npx",
@@ -39,23 +60,112 @@
         "@modelcontextprotocol/server-sqlite",
         "--db-path",
         "C:\\xampp\\htdocs\\apsdreamhome\\storage\\database\\project_memory.sqlite"
-      ]
+      ],
+      "env": {
+        "APS_ROOT": "C:\\xampp\\htdocs\\apsdreamhome",
+        "DB_PATH": "C:\\xampp\\htdocs\\apsdreamhome\\storage\\database\\project_memory.sqlite",
+        "PROJECT_NAME": "APS Dream Home"
+      },
+      "description": "APS Dream Home SQLite - Local project memory and caching"
     },
     "puppeteer": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {
+        "PROJECT_URL": "http://localhost:8000",
+        "BASE_URL": "http://localhost:8000",
+        "ADMIN_URL": "http://localhost:8000/admin",
+        "AI_VALUATION_URL": "http://localhost:8000/ai/property-valuation",
+        "PROJECT_NAME": "APS Dream Home"
+      },
+      "description": "APS Dream Home Puppeteer - Web automation and testing"
     },
     "fetch": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "env": {
+        "PROJECT_API_BASE": "http://localhost:8000/api",
+        "AI_API_ENDPOINT": "http://localhost:8000/api/ai/valuation",
+        "PROJECT_NAME": "APS Dream Home",
+        "API_KEY_REQUIRED": "false",
+        "POSTMAN_COLLECTION": "apsdreamhome-api",
+        "API_DOCUMENTATION": "http://localhost:8000/api/docs",
+        "AUTH_TYPE": "session_based",
+        "RATE_LIMIT": "1000_per_hour"
+      },
+      "description": "APS Dream Home Fetch - API integration and external services"
     },
-    "new-mcp-server": {
+    "mcp-playwright": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {
+        "PROJECT_URL": "http://localhost:8000",
+        "BASE_URL": "http://localhost:8000",
+        "ADMIN_URL": "http://localhost:8000/admin",
+        "AI_VALUATION_URL": "http://localhost:8000/ai/property-valuation",
+        "PROJECT_NAME": "APS Dream Home",
+        "PLAYWRIGHT_MODE": "automation_testing",
+        "CRAWLER_DEPTH": "3",
+        "SCREENSHOT_PATH": "C:\\xampp\\htdocs\\apsdreamhome\\storage\\screenshots"
+      },
+      "description": "APS Dream Home Playwright - Advanced web automation and crawling"
+    },
+    "mcp-sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "PROJECT_NAME": "APS Dream Home",
+        "THINKING_MODE": "sequential",
+        "MEMORY_DEPTH": "deep",
+        "CONTEXT_WINDOW": "large",
+        "AI_REASONING": "step_by_step"
+      },
+      "description": "APS Dream Home Sequential Thinking - Step-by-step AI reasoning"
+    },
+    "analytics": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-filesystem"
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\xampp\\htdocs\\apsdreamhome\\storage\\analytics"
       ],
-      "env": {}
+      "env": {
+        "PROJECT_NAME": "APS Dream Home",
+        "ANALYTICS_TYPE": "real_estate",
+        "DATA_PATH": "C:\\xampp\\htdocs\\apsdreamhome\\storage\\analytics"
+      },
+      "description": "APS Dream Home Analytics - Property data and market analysis"
+    },
+    "ai-services": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\xampp\\htdocs\\apsdreamhome\\app\\Services\\AI"
+      ],
+      "env": {
+        "PROJECT_NAME": "APS Dream Home",
+        "AI_ENGINE": "PropertyValuationEngine",
+        "AI_FEATURES": "valuation,market_analysis,recommendations",
+        "AI_PATH": "C:\\xampp\\htdocs\\apsdreamhome\\app\\Services\\AI"
+      },
+      "description": "APS Dream Home AI Services - Property valuation and market analysis"
+    },
+    "config-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\xampp\\htdocs\\apsdreamhome\\config"
+      ],
+      "env": {
+        "PROJECT_NAME": "APS Dream Home",
+        "CONFIG_TYPE": "real_estate_crm",
+        "CONFIG_PATH": "C:\\xampp\\htdocs\\apsdreamhome\\config",
+        "DATABASE_CONFIG": "database.php",
+        "APP_CONFIG": "app.php"
+      },
+      "description": "APS Dream Home Configuration - Database and application settings"
     }
   }
 }

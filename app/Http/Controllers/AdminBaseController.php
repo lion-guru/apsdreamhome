@@ -184,7 +184,7 @@ class AdminBaseController extends BaseController
     /**
      * Render admin view with layout
      */
-    public function render($view, $data = [], $layout = null, $echo = true)
+    protected function render($view, $data = [], $layout = null)
     {
         // Add common data
         $data['currentUser'] = $this->currentUser;
@@ -209,8 +209,7 @@ class AdminBaseController extends BaseController
         ob_start();
         
         // Include the view
-        $viewBasePath = defined('VIEW_PATH') ? VIEW_PATH : (defined('APP_PATH') ? APP_PATH . '/views' : __DIR__ . '/../views');
-        $viewPath = $viewBasePath . '/' . str_replace('.', '/', $view) . '.php';
+        $viewPath = VIEW_PATH . '/' . str_replace('.', '/', $view) . '.php';
         if (file_exists($viewPath)) {
             include $viewPath;
         } else {
@@ -233,19 +232,18 @@ class AdminBaseController extends BaseController
      */
     protected function getLayoutPath(): string
     {
-        $viewPath = defined('VIEW_PATH') ? VIEW_PATH : APP_PATH . '/views';
         $layoutMap = [
-            'superadmin' => $viewPath . '/admin/layouts/superadmin.php',
-            'executive' => $viewPath . '/admin/layouts/superadmin.php',
-            'manager' => $viewPath . '/admin/layouts/manager.php',
-            'team_lead' => $viewPath . '/admin/layouts/manager.php',
-            'employee' => $viewPath . '/admin/layouts/employee.php',
-            'associate' => $viewPath . '/admin/layouts/associate.php',
-            'franchise' => $viewPath . '/admin/layouts/associate.php',
-            'customer' => $viewPath . '/admin/layouts/default.php',
-            'lead' => $viewPath . '/admin/layouts/default.php',
-            'guest' => $viewPath . '/admin/layouts/default.php',
-            'default' => $viewPath . '/admin/layouts/superadmin.php',
+            'superadmin' => VIEW_PATH . '/admin/layouts/superadmin.php',
+            'executive' => VIEW_PATH . '/admin/layouts/executive.php',
+            'manager' => VIEW_PATH . '/admin/layouts/manager.php',
+            'team_lead' => VIEW_PATH . '/admin/layouts/team_lead.php',
+            'employee' => VIEW_PATH . '/admin/layouts/employee.php',
+            'associate' => VIEW_PATH . '/admin/layouts/associate.php',
+            'franchise' => VIEW_PATH . '/admin/layouts/franchise.php',
+            'customer' => VIEW_PATH . '/admin/layouts/customer.php',
+            'lead' => VIEW_PATH . '/admin/layouts/lead.php',
+            'guest' => VIEW_PATH . '/admin/layouts/guest.php',
+            'default' => VIEW_PATH . '/admin/layouts/default.php',
         ];
         
         return $layoutMap[$this->dashboardType] ?? $layoutMap['default'];
@@ -463,7 +461,7 @@ class AdminBaseController extends BaseController
             
             // Commission Paid
             $stats['commission_paid'] = $this->db->fetch(
-                "SELECT COALESCE(SUM(net_payout), 0) as total FROM mlm_payouts WHERE status = 'paid'"
+                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_payouts WHERE status = 'completed'"
             )['total'] ?? 0;
             
             // Revenue This Month
@@ -504,9 +502,9 @@ class AdminBaseController extends BaseController
     /**
      * JSON response for API
      */
-    protected function jsonResponse($data, int $statusCode = 200)
+    public function jsonResponse($data, int $status = 200)
     {
-        http_response_code($statusCode);
+        http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;
@@ -515,7 +513,7 @@ class AdminBaseController extends BaseController
     /**
      * Success JSON response
      */
-    protected function successResponse(array $data = [], string $message = 'Success'): void
+    protected function successResponse($data = [], $message = 'Success')
     {
         $this->jsonResponse([
             'success' => true,
@@ -527,7 +525,7 @@ class AdminBaseController extends BaseController
     /**
      * Error JSON response
      */
-    protected function errorResponse(string $message, int $statusCode = 400, array $errors = []): void
+    protected function errorResponse($message, $statusCode = 400, $errors = [])
     {
         $this->jsonResponse([
             'success' => false,

@@ -18,32 +18,32 @@
                     </h6>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/dashboard">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/dashboard">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/sites">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/sites">
                                 <i class="fas fa-map-marked-alt"></i> Sites
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/admin/properties">
+                            <a class="nav-link active" href="<?php echo BASE_URL; ?>/admin/properties">
                                 <i class="fas fa-building"></i> Properties
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/plots">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/plots">
                                 <i class="fas fa-th"></i> Plots
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/bookings">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/bookings">
                                 <i class="fas fa-calendar-check"></i> Bookings
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/users">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/users">
                                 <i class="fas fa-users"></i> Users
                             </a>
                         </li>
@@ -57,7 +57,7 @@
                     <h1 class="h2">Add New Property</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <a href="/admin/properties" class="btn btn-outline-secondary">
+                            <a href="<?php echo BASE_URL; ?>/admin/properties" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to Properties
                             </a>
                         </div>
@@ -67,7 +67,7 @@
                 <!-- Property Form -->
                 <div class="card">
                     <div class="card-body">
-                        <form method="POST" action="/admin/properties" enctype="multipart/form-data">
+                        <form method="POST" action="<?php echo BASE_URL; ?>/admin/properties" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             
                             <div class="row">
@@ -266,7 +266,7 @@
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-between">
-                                        <a href="/admin/properties" class="btn btn-outline-secondary">
+                                        <a href="<?php echo BASE_URL; ?>/admin/properties" class="btn btn-outline-secondary">
                                             <i class="fas fa-times"></i> Cancel
                                         </a>
                                         <div>

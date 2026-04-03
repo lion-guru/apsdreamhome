@@ -21,7 +21,7 @@ class LayoutController {
     // Layout Manager Page
     public function layoutManager() {
         require_once __DIR__ . '/../../Services/LayoutManager.php';
-        require_once __DIR__ . '/../../views/admin/layout_manager.php';
+        require_once __DIR__ . '/../../../views/admin/layout_manager.php';
     }
     
     // Update Layout Settings

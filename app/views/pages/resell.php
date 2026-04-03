@@ -11,7 +11,7 @@
                 <h1 class="display-4 fw-bold mb-4">Resell Properties Marketplace</h1>
                 <p class="lead mb-4">Buy directly from individual sellers. No brokerage. Verified properties. Trusted transactions.</p>
                 <div class="d-flex justify-content-center gap-3">
-                    <a href="<?= BASE_URL ?>list-property" class="btn btn-light btn-lg">
+                    <a href="<?= BASE_URL ?>/list-property" class="btn btn-light btn-lg">
                         <i class="fas fa-plus me-2"></i>List Your Property
                     </a>
                     <a href="#properties" class="btn btn-outline-light btn-lg">
@@ -48,7 +48,7 @@
 <!-- Filters Section -->
 <section class="container mt-n5 position-relative z-index-2">
     <div class="resell-filter-section shadow-sm bg-white p-4 rounded-3" style="margin-top: -50px;">
-        <form action="<?= BASE_URL ?>resell" method="GET" class="row g-3">
+        <form action="<?= BASE_URL ?>/resell" method="GET" class="row g-3">
             <div class="col-md-4">
                 <label class="form-label fw-bold">Search</label>
                 <div class="input-group">
@@ -92,7 +92,7 @@
             </div>
 
             <div class="col-12 text-end mt-4">
-                <a href="<?= BASE_URL ?>resell" class="btn btn-outline-secondary me-2">Reset</a>
+                <a href="<?= BASE_URL ?>/resell" class="btn btn-outline-secondary me-2">Reset</a>
                 <button type="submit" class="btn btn-primary px-4">Apply Filters</button>
             </div>
         </form>
@@ -109,7 +109,7 @@
                 </div>
                 <h3>No Properties Found</h3>
                 <p class="text-muted">Try adjusting your filters or search criteria.</p>
-                <a href="<?= BASE_URL ?>resell" class="btn btn-primary mt-3">View All Properties</a>
+                <a href="<?= BASE_URL ?>/resell" class="btn btn-primary mt-3">View All Properties</a>
             </div>
         <?php else: ?>
             <div class="row g-4">
@@ -169,7 +169,7 @@
                                             <span class="text-dark fw-bold"><?= htmlspecialchars($prop->full_name ?? 'Verified Seller') ?></span>
                                         </small>
                                     </div>
-                                    <a href="<?= BASE_URL ?>property/<?= $prop->id ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3">View Details</a>
+                                    <a href="<?= BASE_URL ?>/property/<?= $prop->id ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3">View Details</a>
                                 </div>
                             </div>
                         </div>

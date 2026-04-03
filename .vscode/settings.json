@@ -1,12 +1,12 @@
 {
-    "php.version": "8.4",
+    "php.version": "8.2",
+    "php.validate.executablePath": "C:\\xampp\\php\\php.exe",
+    "php.executablePath": "C:\\xampp\\php\\php.exe",
     "explorer.excludeGitIgnore": true,
-
     "// APS Dream Home - Memory Optimization Settings": "",
     "intelephense.maxMemory": 1024,
     "typescript.tsserver.maxTsServerMemory": 1024,
     "intelephense.completion.maxItems": 200,
-
     "// APS Dream Home - Intelephense Configuration": "",
     "intelephense.diagnostics.undefinedMethods": false,
     "intelephense.diagnostics.undefinedFunctions": false,
@@ -15,7 +15,6 @@
     "intelephense.diagnostics.undefinedProperties": false,
     "intelephense.diagnostics.undefinedTypes": false,
     "intelephense.diagnostics.duplicateSymbols": true,
-
     "// APS Dream Home - File Exclusions for Performance": "",
     "files.watcherExclude": {
         "**/node_modules/*/**": true,
@@ -45,34 +44,11 @@
         "**/storage/cache": true,
         "**/vendor": true
     },
-
     "// APS Dream Home - PHP Configuration": "",
     "php.validate.enable": true,
     "php.validate.run": "onSave",
-    "intelephense.environment.phpVersion": "8.2.0",
-
-    "// APS Dream Home - Editor Configuration": "",
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "files.autoSave": "afterDelay",
-    "workbench.editor.showTabIndex": true,
-    "editor.wordWrap": "on",
-    "editor.minimap.enabled": false,
-    "editor.glyphMargin": false,
-    "editor.folding": true,
-    "editor.lineNumbers": "on",
-    "editor.insertSpaces": true,
-    "editor.tabSize": 4,
-    "editor.detectIndentation": false,
-
+    "intelephense.environment.phpVersion": "8.2.12",
     "// APS Dream Home - Performance Settings": "",
-    "editor.experimentalGpuAcceleration": "on",
-    "editor.experimental.preferTreeSitter.css": false,
-    "editor.experimental.preferTreeSitter.ini": false,
-    "editor.experimental.preferTreeSitter.regex": false,
-    "editor.experimental.preferTreeSitter.typescript": false,
-    "typescript.disableAutomaticTypeAcquisition": true,
-    "typescript.enablePromptUseWorkspaceTsdk": false,
     "files.autoSaveDelay": 1000,
     "workbench.enableExperiments": false,
     "telemetry.enableTelemetry": false,
@@ -84,7 +60,18 @@
     "git.enableSmartCommit": true,
     "git.autofetch": true,
     "git.confirmSync": false,
-
+    "// APS Dream Home - Editor Configuration": "",
+    "editor.formatOnSave": true,
+    "files.autoSave": "afterDelay",
+    "workbench.editor.showTabIndex": true,
+    "editor.wordWrap": "on",
+    "editor.minimap.enabled": false,
+    "editor.glyphMargin": false,
+    "editor.folding": true,
+    "editor.lineNumbers": "on",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
     "// APS Dream Home - Language Specific": "",
     "[php]": {
         "editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
@@ -99,16 +86,12 @@
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-
     "// APS Dream Home - Database Configuration": "",
     "sqltools.connections": [
         {
@@ -122,74 +105,93 @@
             "password": ""
         }
     ],
-
     "// APS Dream Home - Disable Unused Features": "",
     "markdown.validate.enabled": false,
     "css.format.spaceAroundSelectorSeparator": false,
     "scss.format.spaceAroundSelectorSeparator": false,
     "powershell.codeFormatting.trimWhitespaceAroundPipe": false,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
-
     "// APS Dream Home - Disable AI Features for Performance": "",
     "codium.codeCompletion.enable": false,
     "editor.aiStats.enabled": false,
     "dbcode.ai.mcp.autoStart": false,
     "chat.agent.maxRequests": 50,
-
     "// APS Dream Home - Disable Testing Features": "",
     "testing.automaticallyOpenPeekViewDuringAutoRun": false,
     "notebook.formatOnSave.enabled": true,
     "notebook.defaultFormatter": "esbenp.prettier-vscode",
-
-    "// APS Dream Home - Disable Advanced Features": "",
-    "advancedPhpCsFixer.allowRisky": false,
-    "intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": false,
-    "intelephense.compatibility.preferPsalmPhpstanPrefixedAnnotations": false,
-    "intelephense.codeLens.usages.enable": false,
-    "intelephense.codeLens.references.enable": false,
-    "intelephense.codeLens.parent.enable": false,
-    "intelephense.codeLens.overrides.enable": false,
-    "intelephense.codeLens.implementations.enable": false,
-    "intelephense.phpdoc.useFullyQualifiedNames": false,
-    "editor.linkedEditing": true,
-    "gemini-cli.debug.logging.enabled": true,
-    "geminicodeassist.agentDebugMode": true,
-    "geminicodeassist.agentYoloMode": true,
-    "geminicodeassist.codeGenerationPaneViewEnabled": true,
-    "geminicodeassist.inlineSuggestions.nextEditPredictions": true,
-    "geminicodeassist.outlines.automaticOutlineGeneration": true,
-    "geminicodeassist.verboseLogging": true,
-    "intelephense.rename.namespaceMode": "all",
-    "intelephense.trace.server": "verbose",
-    "eslint.format.enable": true,
-    "notebook.formatOnCellExecution": true,
-    "editor.formatOnPaste": true,
-    "prettier.useEditorConfig": false,
-    "prettier.configPath": ".prettierrc",
-    "prettier.ignorePath": ".prettierignore",
-    "prettier.requireConfig": true,
-    "editor.experimental.asyncTokenizationLogging": true,
-    "editor.experimental.asyncTokenizationVerification": true,
-    "workbench.editor.autoLockGroups": {
-        "default": true,
-        "workbench.editor.chatSession": true,
-        "workbench.editorinputs.searchEditorInput": true,
-        "workbench.editor.cascadeEditor": true
+    "// APS Dream Home - Debug Configuration": "",
+    "php.debug.executablePath": "C:\\xampp\\php\\php.exe",
+    "php.debug.executable": "C:\\xampp\\php\\php.exe",
+    "xdebug.debugPort": 9003,
+    "xdebug.maxChildren": 100,
+    "xdebug.maxData": 1024,
+    "// APS Dream Home - MCP Tools Configuration": "",
+    "mcp.enabled": true,
+    "mcp.autoStart": true,
+    "mcp.servers": {
+        "mysql": {
+            "enabled": true,
+            "autoStart": true,
+            "description": "APS Dream Home Database Server"
+        },
+        "filesystem": {
+            "enabled": true,
+            "autoStart": true,
+            "description": "APS Dream Home File System Access"
+        },
+        "memory": {
+            "enabled": true,
+            "autoStart": true,
+            "description": "APS Dream Home Memory Server"
+        },
+        "sqlite": {
+            "enabled": true,
+            "autoStart": true,
+            "description": "APS Dream Home SQLite Database"
+        },
+        "puppeteer": {
+            "enabled": true,
+            "autoStart": false,
+            "description": "APS Dream Home Web Automation"
+        },
+        "fetch": {
+            "enabled": true,
+            "autoStart": true,
+            "description": "APS Dream Home API Integration"
+        },
+        "analytics": {
+            "enabled": true,
+            "autoStart": true,
+            "description": "APS Dream Home Analytics Server"
+        },
+        "ai-services": {
+            "enabled": true,
+            "autoStart": true,
+            "description": "APS Dream Home AI Services"
+        },
+        "config-server": {
+            "enabled": true,
+            "autoStart": true,
+            "description": "APS Dream Home Configuration Server"
+        }
     },
-    "editor.defaultColorDecorators": "always",
-    "yaml.schemas": {
-        "https://gitlab.com/appsemble/appsemble/-/raw/HEAD/packages/cli/assets/appsemblerc.schema.json": "file:///c%3A/xampp/htdocs/apsdreamhome/.continue/mcpServers/new-mcp-server.yaml"
-    },
-    "gitlens.codeLens.scopes": [
-        "document",
-        "containers",
-        "blocks"
-    ]
+    "mcp.serverConfigPath": ".windsurf/mcp_servers.json",
+    "mcp.envPath": ".windsurf/mcp_config.env",
+    "mcp.projectRoot": "${workspaceFolder}",
+    "mcp.showStatusBar": true,
+    "mcp.showActivityBar": true,
+    "mcp.enableAutoComplete": true,
+    "mcp.enableIntelliSense": true,
+    "// APS Dream Home - Gemini Code Assist Configuration": "",
+    "google.gemini.enable": true,
+    "google.gemini.projectId": "",
+    "google.gemini.apiKey": "",
+    "google.gemini.model": "gemini-1.5-flash",
+    "google.gemini.maxTokens": 8192,
+    "google.gemini.temperature": 0.7,
+    "gemini-code-assist.projectId": "",
+    "gemini-code-assist.apiKey": "",
+    "gemini-code-assist.enabled": true,
+    "gemini-code-assist.model": "gemini-1.5-flash",
+    "gemini-code-assist.maxTokens": 8192
 }

@@ -689,6 +689,134 @@ class LeadController extends AdminController
     }
 
     /**
+     * Get lead documents/files
+     */
+    public function getDocuments($leadId)
+    {
+        try {
+            $sql = "SELECT * FROM lead_files WHERE lead_id = ? ORDER BY created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            $documents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'documents' => $documents
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Documents error: " . $e->getMessage());
+            return $this->jsonError('Failed to get documents', 500);
+        }
+    }
+
+    /**
+     * Upload document for lead
+     */
+    public function uploadDocument($leadId)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $leadId = intval($leadId);
+
+            if ($leadId <= 0 || !isset($_FILES['document'])) {
+                return $this->jsonError('Invalid parameters', 400);
+            }
+
+            $file = $_FILES['document'];
+            $docType = $_POST['document_type'] ?? 'other';
+            $allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+            $maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (!in_array($file['type'], $allowedTypes)) {
+                return $this->jsonError('Invalid file type. Only PDF, JPG, PNG allowed', 400);
+            }
+
+            if ($file['size'] > $maxSize) {
+                return $this->jsonError('File too large. Max 5MB', 400);
+            }
+
+            // Create upload directory
+            $uploadDir = 'storage/app/lead_files/' . $leadId;
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $fileName = uniqid() . '_' . basename($file['name']);
+            $filePath = $uploadDir . '/' . $fileName;
+
+            if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                // Save to database
+                $sql = "INSERT INTO lead_files (lead_id, file_name, file_path, file_type, document_type, file_size, uploaded_by, created_at) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    $leadId,
+                    $file['name'],
+                    $filePath,
+                    $file['type'],
+                    $docType,
+                    $file['size'],
+                    $_SESSION['user_id'] ?? 0
+                ]);
+
+                // Create activity
+                $sql = "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                        VALUES (?, 'document_added', 'Document uploaded: ' . ?, ?, NOW())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$leadId, $file['name'], $_SESSION['user_id'] ?? 0]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Document uploaded successfully'
+                ]);
+            }
+
+            return $this->jsonError('Failed to upload file', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Upload Document error: " . $e->getMessage());
+            return $this->jsonError('Failed to upload document', 500);
+        }
+    }
+
+    /**
+     * Delete lead document
+     */
+    public function deleteDocument($documentId)
+    {
+        try {
+            $sql = "SELECT * FROM lead_files WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$documentId]);
+            $document = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$document) {
+                return $this->jsonError('Document not found', 404);
+            }
+
+            // Delete file
+            if (file_exists($document['file_path'])) {
+                unlink($document['file_path']);
+            }
+
+            // Delete from database
+            $sql = "DELETE FROM lead_files WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$documentId]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Document deleted successfully'
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Delete Document error: " . $e->getMessage());
+            return $this->jsonError('Failed to delete document', 500);
+        }
+    }
+
+    /**
      * Get lead statistics
      */
     public function getStats()
