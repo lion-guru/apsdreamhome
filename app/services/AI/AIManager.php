@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\AI;
+
 use App\Services\AI\Modules\NLPProcessor;
 use App\Services\AI\Modules\DataAnalyst;
 use App\Services\AI\Modules\DecisionEngine;
@@ -11,7 +12,8 @@ use App\Services\AI\Modules\KnowledgeGraph;
 /**
  * Core AI Manager for Orchestrating Agents and Workflows
  */
-class AIManager {
+class AIManager
+{
     private $db;
     private $active_agents = [];
     private $encryption_key = 'APS_AI_SECURE_KEY_2026';
@@ -33,8 +35,9 @@ class AIManager {
     private $workflowEngine;
     private $gemini;
 
-    public function __construct() {
-        $this->db = \App\Core\App::database();
+    public function __construct()
+    {
+        $this->db = \App\Core\Database\Database::getInstance();
 
         // Modules are autoloaded via PSR-4
         $this->nlp = new NLPProcessor();
@@ -56,7 +59,8 @@ class AIManager {
     /**
      * Handle User Suggestions & Feedback
      */
-    public function recordSuggestion($text, $userId = null) {
+    public function recordSuggestion($text, $userId = null)
+    {
         $analysis = $this->nlp->analyze($text);
 
         // Categorize based on keywords
@@ -104,7 +108,8 @@ class AIManager {
         ];
     }
 
-    public function getSystemHealth() {
+    public function getSystemHealth()
+    {
         require_once __DIR__ . '/AIHealthMonitor.php';
         $monitor = new AIHealthMonitor();
         return $monitor->getFullReport();
@@ -113,9 +118,10 @@ class AIManager {
     /**
      * Analyze a lead message for strategic value and prioritization
      */
-    public function analyzeLead($text) {
+    public function analyzeLead($text)
+    {
         $analysis = $this->nlp->analyze($text);
-        
+
         // Enhance strategic detection based on entities (e.g., high value)
         if (!$analysis['is_strategic'] && !empty($analysis['entities']['monetary'])) {
             foreach ($analysis['entities']['monetary'] as $money) {
@@ -146,7 +152,8 @@ class AIManager {
     /**
      * Get UI Components for AI Dashboard
      */
-    public function getDashboardComponents() {
+    public function getDashboardComponents()
+    {
         require_once __DIR__ . '/AIDashboardController.php';
         $controller = new AIDashboardController();
         return $controller->getDashboardData();
@@ -155,7 +162,8 @@ class AIManager {
     /**
      * Record User Interaction with Property (for Knowledge Graph)
      */
-    public function recordInteraction($userId, $propertyId, $actionType) {
+    public function recordInteraction($userId, $propertyId, $actionType)
+    {
         $sql = "INSERT INTO ai_user_interactions (user_id, property_id, action_type) VALUES (?, ?, ?)";
         $this->db->execute($sql, [$userId, $propertyId, $actionType]);
 
@@ -175,7 +183,8 @@ class AIManager {
     /**
      * Execute a workflow by name
      */
-    public function executeWorkflowByName($name, $data = []) {
+    public function executeWorkflowByName($name, $data = [])
+    {
         $sql = "SELECT id FROM ai_workflows WHERE name = ? AND status = 'active'";
         $res = $this->db->fetch($sql, [$name]);
         $workflowId = $res ? $res['id'] : null;
@@ -190,7 +199,8 @@ class AIManager {
      * Self-Evolution Logic: Analyze system performance and user feedback
      * to suggest improvements for the AI ecosystem.
      */
-    public function generateEvolutionInsights() {
+    public function generateEvolutionInsights()
+    {
         $insights = [];
 
         try {
@@ -241,7 +251,6 @@ class AIManager {
                     'data' => ['busy_count' => $busyAgents]
                 ];
             }
-
         } catch (Exception $e) {
             error_log("Evolution Insights Error: " . $e->getMessage());
         }
@@ -252,21 +261,24 @@ class AIManager {
     /**
      * Advanced Data Analysis
      */
-    public function analyze($source, $params = []) {
+    public function analyze($source, $params = [])
+    {
         return $this->analyst->analyzeData($source, $params);
     }
 
     /**
      * Advanced Decision Making
      */
-    public function decide($type, $input) {
+    public function decide($type, $input)
+    {
         return $this->decider->evaluate($type, $input);
     }
 
     /**
      * Smart Agent Discovery
      */
-    public function findBestAgentForTask($taskType) {
+    public function findBestAgentForTask($taskType)
+    {
         $sql = "SELECT id, capabilities, status FROM ai_agents WHERE status IN ('active', 'idle')";
         $agents = $this->db->fetchAll($sql);
 
@@ -284,7 +296,8 @@ class AIManager {
      * Strategic Audit Log
      * Tracks critical AI decisions for transparency and compliance
      */
-    public function auditLog($action, $details, $status = 'info') {
+    public function auditLog($action, $details, $status = 'info')
+    {
         $sql = "INSERT INTO ai_audit_log (action, details, status, created_at) VALUES (?, ?, ?, NOW())";
         $details_json = is_array($details) ? json_encode($details) : $details;
 
@@ -295,7 +308,8 @@ class AIManager {
      * Set the agent operation mode
      * modes: assistant (executes tasks), leader (strategic planning)
      */
-    public function setMode($mode, $reason = 'Manual switch') {
+    public function setMode($mode, $reason = 'Manual switch')
+    {
         if (in_array($mode, ['assistant', 'leader'])) {
             $old_mode = $this->current_mode;
             $this->current_mode = $mode;
@@ -307,20 +321,28 @@ class AIManager {
                 'reason' => $reason
             ], 'critical');
 
-            $this->logAgentActivity(null, null, 'mode_transition',
+            $this->logAgentActivity(
+                null,
+                null,
+                'mode_transition',
                 ['from' => $old_mode, 'to' => $mode, 'reason' => $reason],
-                ['status' => 'switched'], 0, 'success', null
+                ['status' => 'switched'],
+                0,
+                'success',
+                null
             );
             return true;
         }
         return false;
     }
 
-    public function getMode() {
+    public function getMode()
+    {
         return $this->current_mode;
     }
 
-    public function getAgentByName($name) {
+    public function getAgentByName($name)
+    {
         $sql = "SELECT * FROM ai_agents WHERE name = ? AND status = 'active'";
         $res = $this->db->fetch($sql, [$name]);
         return $res;
@@ -329,7 +351,8 @@ class AIManager {
     /**
      * Get Proactive Suggestions for Dashboard
      */
-    public function getProactiveSuggestions($userId) {
+    public function getProactiveSuggestions($userId)
+    {
         $suggestions = [];
 
         // 1. Check for high-intent leads that haven't been followed up
@@ -372,7 +395,8 @@ class AIManager {
      * Context-aware mode transition
      * Automatically switches mode based on task complexity or context
      */
-    private function autoTransitionMode($task_type, $input_data) {
+    private function autoTransitionMode($task_type, $input_data)
+    {
         $text_to_analyze = $task_type . ' ' . (isset($input_data['content']) ? $input_data['content'] : '');
         $analysis = $this->nlp->analyze($text_to_analyze);
 
@@ -386,7 +410,8 @@ class AIManager {
     /**
      * Centralized logging for all AI Agent activities
      */
-    public function logAgentActivity($agent_id, $workflow_id, $task_type, $input_data, $output_data, $execution_time_ms, $status, $error_message = null) {
+    public function logAgentActivity($agent_id, $workflow_id, $task_type, $input_data, $output_data, $execution_time_ms, $status, $error_message = null)
+    {
         $sql = "INSERT INTO ai_agent_logs (agent_id, workflow_id, task_type, input_data, output_data, execution_time_ms, status, error_message)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -399,17 +424,20 @@ class AIManager {
         return $this->db->execute($sql, [$agent_id, $workflow_id, $task_type, $input_str, $output_str, $time, $status, $error_message]);
     }
 
-    public function getAgentsByStatus($status) {
+    public function getAgentsByStatus($status)
+    {
         $sql = "SELECT * FROM ai_agents WHERE status = ?";
         return $this->db->fetchAll($sql, [$status]);
     }
 
-    public function getAgentById($id) {
+    public function getAgentById($id)
+    {
         $sql = "SELECT * FROM ai_agents WHERE id = ?";
         return $this->db->fetch($sql, [$id]);
     }
 
-    public function updateAgentStatus($id, $status) {
+    public function updateAgentStatus($id, $status)
+    {
         $sql = "UPDATE ai_agents SET status = ?, last_active = NOW() WHERE id = ?";
         return $this->db->execute($sql, [$status, $id]);
     }

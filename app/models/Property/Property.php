@@ -58,11 +58,11 @@ class Property extends Model
         try {
             $db = \App\Core\Database::getInstance();
             $sql = "SELECT * FROM properties WHERE status != 'sold' ORDER BY created_at DESC";
-            
+
             if ($limit) {
                 $sql .= " LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
             }
-            
+
             return $db->fetchAll($sql);
         } catch (\Exception $e) {
             error_log("Error in getAllProperties: " . $e->getMessage());
@@ -174,7 +174,7 @@ class Property extends Model
                         $orderBy = "price DESC";
                         break;
                     case 'area':
-                        $orderBy = "area_sqft DESC";
+                        $orderBy = "area DESC";
                         break;
                 }
             }

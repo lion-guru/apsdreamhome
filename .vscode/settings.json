@@ -193,5 +193,7 @@
     "gemini-code-assist.apiKey": "",
     "gemini-code-assist.enabled": true,
     "gemini-code-assist.model": "gemini-1.5-flash",
-    "gemini-code-assist.maxTokens": 8192
+    "gemini-code-assist.maxTokens": 8192,
+    "editor.linkedEditing": true,
+    "php.linkedEditing.variables": true
 }

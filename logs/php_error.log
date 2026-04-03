@@ -807,3 +807,187 @@ Stack trace:
 [03-Apr-2026 20:47:20 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
 [03-Apr-2026 20:47:20 Europe/Berlin] Controller error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.property_type' in 'field list' in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\AIController.php:591
 [03-Apr-2026 20:47:50 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 22:55:41 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 22:56:02 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 22:56:02 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 22:56:16 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 22:56:16 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:02:08 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:10:58 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:10:58 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:10:58 Europe/Berlin] Controller fatal: Class "App\Http\Controllers\Controller" not found in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Property\CompareController.php:12
+[03-Apr-2026 23:11:02 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:18 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:18 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:18 Europe/Berlin] Controller error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'ld.property_id' in 'on clause' in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\DealController.php:205
+[03-Apr-2026 23:11:19 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:19 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:20 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:43 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:43 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:43 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:44 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:11:49 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:12:04 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:12:06 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:12:06 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:12:07 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:12:07 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:39 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:44 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:44 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:44 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:45 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:45 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:45 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:46 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:30:58 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:31:12 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:31:13 Europe/Berlin] Controller fatal: Class "App\Http\Controllers\Controller" not found in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Property\CompareController.php:12
+[03-Apr-2026 23:31:13 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:31:14 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:31:14 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:31:14 Europe/Berlin] Controller error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'ld.property_id' in 'on clause' in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\DealController.php:205
+[03-Apr-2026 23:31:14 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:31:14 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:31:14 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:31:14 Europe/Berlin] PHP Warning:  Undefined array key "total" in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\UserController.php on line 76
+[03-Apr-2026 23:31:25 Europe/Berlin] Controller fatal: Class "App\Http\Controllers\Controller" not found in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Property\CompareController.php:12
+[03-Apr-2026 23:31:29 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:34:50 Europe/Berlin] PHP Fatal error:  Access level to App\Http\Controllers\Property\CompareController::jsonResponse() must be public (as in class App\Http\Controllers\BaseController) in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Property\CompareController.php on line 372
+[03-Apr-2026 23:34:50 Europe/Berlin] FATAL ERROR: Access level to App\Http\Controllers\Property\CompareController::jsonResponse() must be public (as in class App\Http\Controllers\BaseController) in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Property\CompareController.php on line 372
+[03-Apr-2026 23:38:09 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:38:09 Europe/Berlin] CompareController::index error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.rera_status' in 'field list'
+[03-Apr-2026 23:38:15 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:46:23 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:52:07 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[03-Apr-2026 23:52:07 Europe/Berlin] PHP Fatal error:  Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\BaseController.php on line 71
+[03-Apr-2026 23:52:07 Europe/Berlin] FATAL ERROR: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\BaseController.php on line 71
+[04-Apr-2026 00:17:21 Europe/Berlin] CoreController: Starting constructor
+[04-Apr-2026 00:17:21 Europe/Berlin] CoreController: Getting App instance with basePath: C:\xampp\htdocs\apsdreamhome
+[04-Apr-2026 00:17:21 Europe/Berlin] CoreController: App instance obtained
+[04-Apr-2026 00:17:21 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:17:21 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:17:21 Europe/Berlin] Controller fatal: Class "App\Core\App" not found in C:\xampp\htdocs\apsdreamhome\app\Services\AI\AIHealthMonitor.php:15
+[04-Apr-2026 00:17:21 Europe/Berlin] Controller fatal: Class "App\Core\App" not found in C:\xampp\htdocs\apsdreamhome\app\Services\AI\AIHealthMonitor.php:15
+[04-Apr-2026 00:17:21 Europe/Berlin] CoreController: Constructor complete
+[04-Apr-2026 00:17:21 Europe/Berlin] Controller fatal: Class "App\Core\Database" not found in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\MLM\MLMDashboardController.php:21
+[04-Apr-2026 00:38:41 Europe/Berlin] Controller fatal: Class "App\Http\Controllers\MLM\BaseController" not found in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\MLM\MLMDashboardController.php:13
+[04-Apr-2026 00:39:05 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:39:07 Europe/Berlin] Controller fatal: Class "App\Core\App" not found in C:\xampp\htdocs\apsdreamhome\app\Services\AI\AIHealthMonitor.php:15
+[04-Apr-2026 00:39:08 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:39:08 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:40:39 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:40:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:40:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:40:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:40:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:40:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:40:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:41:04 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:42:30 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:42:31 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:42:31 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:43:52 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:43:53 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:43:53 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:43:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:43:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:43:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:43:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:43:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:47:15 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:15 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:47:59 Europe/Berlin] Controller file not found: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/MeetingSchedulerController.php
+[04-Apr-2026 00:48:00 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:48:00 Europe/Berlin] Controller fatal: Class "App\Core\Logging" not found in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\MLM\MLMDashboardController.php:22
+[04-Apr-2026 00:48:00 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:48:00 Europe/Berlin] Controller fatal: Class "App\Core\App" not found in C:\xampp\htdocs\apsdreamhome\app\Services\AI\AIHealthMonitor.php:15
+[04-Apr-2026 00:54:38 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:59:25 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:25 Europe/Berlin] PHP Warning:  Undefined array key "rera_status" in C:\xampp\htdocs\apsdreamhome\app\views\properties\compare.php on line 151
+[04-Apr-2026 00:59:28 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:59:49 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:59:49 Europe/Berlin] Controller fatal: Class "App\Core\App" not found in C:\xampp\htdocs\apsdreamhome\app\Services\AI\AIHealthMonitor.php:15
+[04-Apr-2026 00:59:50 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:59:50 Europe/Berlin] Controller fatal: Too few arguments to function App\Http\Controllers\Tech\VirtualTourController::index(), 0 passed in C:\xampp\htdocs\apsdreamhome\routes\router.php on line 172 and exactly 1 expected in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Tech\VirtualTourController.php:43
+[04-Apr-2026 00:59:50 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 00:59:50 Europe/Berlin] Controller fatal: Call to undefined method App\Http\Controllers\Front\PageController::scheduleMeeting() in C:\xampp\htdocs\apsdreamhome\routes\router.php:172
+[04-Apr-2026 01:04:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:04:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:04:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:04:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:04:54 Europe/Berlin] Controller fatal: Class "App\Core\App" not found in C:\xampp\htdocs\apsdreamhome\app\Services\AI\AIManager.php:37
+[04-Apr-2026 01:04:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:04:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:04:54 Europe/Berlin] Controller fatal: Class "App\Core\App" not found in C:\xampp\htdocs\apsdreamhome\app\Services\AI\AIManager.php:37
+[04-Apr-2026 01:06:28 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:06:29 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:06:29 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:06:29 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:06:29 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:06:29 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:06:37 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:06:37 Europe/Berlin] HTTP 403 Error: /apsdreamhome/admin/login - IP: ::1 - Message: Invalid or missing CSRF token.
+[04-Apr-2026 01:06:37 Europe/Berlin] ErrorHandler::render() - Starting error rendering for code: 403
+[04-Apr-2026 01:06:37 Europe/Berlin] ErrorHandler::render() - Message: Invalid or missing CSRF token.
+[04-Apr-2026 01:06:37 Europe/Berlin] ErrorHandler::render() - Data: []
+[04-Apr-2026 01:06:37 Europe/Berlin] ErrorHandler::render() - Error view path: C:\xampp\htdocs\apsdreamhome\app\Core/../../app/views/errors/403.php
+[04-Apr-2026 01:06:37 Europe/Berlin] ErrorHandler::render() - Error view file exists, including: C:\xampp\htdocs\apsdreamhome\app\Core/../../app/views/errors/403.php
+[04-Apr-2026 01:06:37 Europe/Berlin] ErrorHandler::render() - Error view included successfully
+[04-Apr-2026 01:06:47 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:32:01 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:32:50 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:35:19 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:35:20 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:46:13 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:46:13 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:46:28 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:46:43 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:46:44 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[04-Apr-2026 01:46:49 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()

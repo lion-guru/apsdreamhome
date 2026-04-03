@@ -224,7 +224,7 @@ class PageController extends BaseController
                 'bedrooms' => $bedrooms,
                 'breadcrumbs' => $breadcrumbs
             ];
-            
+
             $this->render('pages/properties', $data);
         } catch (Exception $e) {
             $this->renderError('Error loading properties page', $e->getMessage());
@@ -286,7 +286,7 @@ class PageController extends BaseController
                 'testimonials' => $testimonials,
                 'breadcrumbs' => $breadcrumbs
             ];
-            
+
             $this->render('pages/testimonials', $data);
         } catch (Exception $e) {
             $this->renderError('Error loading testimonials page', $e->getMessage());
@@ -1011,6 +1011,26 @@ class PageController extends BaseController
             'page_description' => 'Book your dream property'
         ];
         $this->render('pages/properties/book', $data);
+    }
+
+    // Schedule Meeting
+    public function scheduleMeeting()
+    {
+        $data = [
+            'page_title' => 'Schedule a Meeting - APS Dream Home',
+            'page_description' => 'Book an appointment with our agents'
+        ];
+        $this->render('pages/schedule_meeting', $data);
+    }
+
+    // Handle Schedule Meeting Form
+    public function handleScheduleMeeting()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Process form data here
+            $this->setFlash('success', 'Meeting scheduled successfully! We will contact you soon.');
+            $this->redirect('/');
+        }
     }
 
     // Get Featured Properties (API)
