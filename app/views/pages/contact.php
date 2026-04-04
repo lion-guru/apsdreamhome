@@ -1,35 +1,46 @@
 <?php
-// Contact Page - APS Dream Home
+// Contact Page - APS Dream Home - Enhanced UI/UX
 ?>
 
-<section class="py-5 bg-primary text-white">
-    <div class="container">
+<!-- Hero Section with Better Design -->
+<section class="py-5 bg-gradient-primary text-white position-relative overflow-hidden">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: url('<?php echo BASE_URL; ?>/assets/images/pattern.png') repeat; opacity: 0.1;"></div>
+    <div class="container position-relative">
         <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">Contact Us</h1>
-                <p class="lead mb-4">Get in touch with APS Dream Home for all your real estate needs. Visit our office or call us to find your dream property.</p>
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-4 animate-fade-in">Get In Touch</h1>
+                <p class="lead mb-4 animate-fade-in-delay">Have questions about our properties or services? We're here to help you find your dream home.</p>
+                <div class="d-flex flex-wrap gap-3 animate-fade-in-delay-2">
+                    <a href="tel:+919277121112" class="btn btn-light btn-lg">
+                        <i class="fas fa-phone-alt me-2"></i>Call Now
+                    </a>
+                    <a href="https://wa.me/919277121112" class="btn btn-success btn-lg" target="_blank">
+                        <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                    </a>
+                </div>
+                <div class="mt-4 animate-fade-in-delay-2">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span>1st floor, Singhariya Chauraha, Gorakhpur</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-envelope me-2"></i>
+                        <span>info@apsdreamhome.com</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-clock me-2"></i>
+                        <span>Mon - Sat: 9:00 AM - 7:00 PM</span>
+                    </div>
+                </div>
             </div>
             <div class="col-lg-6">
-                <div class="card bg-white bg-opacity-10">
-                    <div class="card-body">
-                        <h3 class="card-title">Get In Touch</h3>
-                        <p>We're here to help you find your perfect property or answer any questions you may have.</p>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <strong>Head Office:</strong><br>
-                                1st floor, Singhariya Chauraha, Kunraghat, Deoria Road<br>
-                                Gorakhpur, UP - 273008<br>
-                                Phone: +91 92771 21112 / +91 70074 44842
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <strong>Email:</strong><br>
-                                <a href="mailto:info@apsdreamhome.com">info@apsdreamhome.com</a>
-                            </div>
-                        </div>
-
-                        <hr>
-
+                <div class="card shadow-lg border-0 animate-fade-in">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h3 class="card-title mb-0"><i class="fas fa-paper-plane text-primary me-2"></i>Send Message</h3>
+                        <p class="text-muted small mb-0">Fill out the form below and we'll get back to you shortly.</p>
+                    </div>
+                    <div class="card-body p-4">
                         <form method="POST" action="<?php echo BASE_URL; ?>/contact" class="needs-validation">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -65,7 +76,12 @@
                                 </div>
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Send Message</button>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                                <p class="small text-muted mt-2">
+                                    <i class="fas fa-shield-alt me-1"></i>Your information is secure and will never be shared.
+                                </p>
                             </div>
                         </form>
                     </div>
