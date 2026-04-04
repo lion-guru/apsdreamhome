@@ -42,7 +42,7 @@ $page_description = $page_description ?? 'Login to your APS Dream Home account';
                             <p class="mb-2">Login as:</p>
                             <div class="d-flex gap-2 justify-content-center">
                                 <a href="<?php echo BASE_URL; ?>/associate/register" class="btn btn-outline-primary btn-sm">Associate</a>
-                                <a href="<?php echo BASE_URL; ?>/customer/register" class="btn btn-outline-success btn-sm">Customer</a>
+                                <a href="<?php echo BASE_URL; ?>/register" class="btn btn-outline-success btn-sm">Customer</a>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,34 @@
 # APS Dream Home - Project Notes
 Last Updated: April 4, 2026 - OpenCode Session
 
-## CURRENT STATUS: 100% PUBLIC PAGES WORKING
+## CURRENT STATUS: TESTING IN PROGRESS
+
+### Pages Status (Public):
+| Page | Status | Notes |
+|------|--------|-------|
+| / (Home) | ✅ 200 | Working |
+| /about | ✅ 200 | Working |
+| /properties | ✅ 200 | Working |
+| /contact | ✅ 200 | Working, form functional |
+| /login | ✅ 200 | Working |
+| /register | ✅ 200 | Working |
+| /compare | ✅ 200 | Working |
+| /ai-valuation | ✅ 200 | Working |
+
+### Pages Needing Updates (WindSurf Task):
+| Page | Issue | Priority |
+|------|-------|----------|
+| Footer | Phone still old: 9876543210 | HIGH |
+| Footer | Need 9277121112 | HIGH |
+| Google Maps | Generic Gorakhpur | MEDIUM |
+| Property Images | Not loaded from DB | HIGH |
+| WhatsApp Button | Need 919277121112 | MEDIUM |
+
+## WIND SURF TASKS FILE:
+- `WINDSURF_REMAINING_TASKS.md` - Full task list
+
+## WIND SURF FULL SETUP FILE:
+- `WINDSURF_FULL_SETUP_PROMPT.md` - Company details prompt
 
 ### ✅ ALL PUBLIC PAGES - 200 OK
 | Page | Status | Notes |

@@ -281,7 +281,7 @@
             </div>
             <div class="contact-item">
                 <i class="fas fa-phone"></i>
-                <span>+91 98765 43210</span>
+                <span>+91 92771 21112</span>
             </div>
             <div class="contact-item">
                 <i class="fas fa-map-marker-alt"></i>

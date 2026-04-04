@@ -171,10 +171,10 @@ $related = $data['related_properties'] ?? [];
                     </form>
                     <hr>
                     <div class="d-grid gap-2">
-                        <a href="tel:+919876543210" class="btn btn-success">
+                        <a href="tel:+919277121112" class="btn btn-success">
                             <i class="fas fa-phone me-2"></i>Call Now
                         </a>
-                        <a href="https://wa.me/919876543210?text=I'm interested in <?php echo urlencode($property['title'] ?? 'this property'); ?>" 
+                        <a href="https://wa.me/919277121112?text=I'm interested in <?php echo urlencode($property['title'] ?? 'this property'); ?>" 
                            class="btn btn-outline-success" target="_blank">
                             <i class="fab fa-whatsapp me-2"></i>WhatsApp
                         </a>

@@ -2,6 +2,9 @@
 
 namespace App\Services\Legacy;
 
+use App\Core\Database\Database;
+use App\Services\EmailService;
+
 /**
  * User Authentication and Management System
  * Complete user registration, login, and profile management
@@ -21,7 +24,7 @@ class AuthManager
 
     public function __construct($db = null, $logger = null)
     {
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: Database::getInstance();
         $this->logger = $logger;
         $this->propertyAI = new PropertyAI($this->db);
     }
@@ -107,7 +110,7 @@ class AuthManager
                 $_SESSION['full_name'] = $user['name'];
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['job_role'] = $user['job_role'];
-                
+
                 // Log login
                 if ($this->logger) {
                     $this->logger->log("User logged in: {$user['name']} (ID: {$user['id']})", 'info', 'auth');

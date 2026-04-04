@@ -141,7 +141,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                                     <i class="fas fa-phone text-primary me-3"></i>
                                     <div>
                                         <strong>Phone:</strong><br>
-                                        <a href="tel:+919876543210">+91 98765 43210</a>
+                                        <a href="tel:+919876543210">+91 92771 21112</a>
                                     </div>
                                 </div>
                             </div>

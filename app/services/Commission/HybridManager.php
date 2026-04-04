@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Services\Legacy;
+namespace App\Services\Commission;
+
+use App\Core\Database\Database;
 
 /**
  * APS Dream Home - Hybrid Commission System
@@ -20,7 +22,7 @@ class HybridCommissionManager
 
     public function __construct($db = null, $logger = null)
     {
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: Database::getInstance();
         $this->logger = $logger;
         $this->createHybridTables();
     }

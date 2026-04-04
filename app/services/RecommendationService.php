@@ -6,6 +6,8 @@ use Exception;
 use PDO;
 use App\Models\Model;
 
+use App\Core\Database\Database;
+
 class RecommendationService
 {
     private $db;
@@ -21,7 +23,7 @@ class RecommendationService
 
     public function __construct()
     {
-        $this->db = \App\Core\App::database()->getConnection();
+        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
@@ -88,7 +90,7 @@ class RecommendationService
         $scored = [];
         foreach ($candidates as $property) {
             $score = 0;
-            
+
             // Location match (25%)
             if (isset($preferences['locations']) && in_array($property['location'], $preferences['locations'])) {
                 $score += $this->mlWeights['location_match'];

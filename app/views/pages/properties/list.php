@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $whatsapp_message .= "📞 Our team will contact you soon\n\n";
 
             $whatsapp_message .= "🔗 Track Status: http://localhost/apsdreamhome/resell-status.php\n";
-            $whatsapp_message .= "📱 Support: +91-9876543210\n\n";
+            $whatsapp_message .= "📱 Support: +91-9277121112\n\n";
             $whatsapp_message .= "APS Dream Homes - Your Property, Our Priority! 🏠✨";
 
             sendWhatsAppNotification($mobile, $whatsapp_message);
@@ -375,7 +375,7 @@ $indian_states = [
                                 ✅ Property status updates<br>
                                 ✅ Buyer inquiry notifications<br>
                                 ✅ 24/7 customer support<br>
-                                📞 Call: +91-9876543210
+                                📞 Call: +91-9277121112
                             </small>
                         </div>
 
@@ -740,7 +740,7 @@ $indian_states = [
                         <h6 class="text-muted">Need Help?</h6>
                         <p class="mb-2">
                             <i class="fas fa-phone me-2"></i>
-                            <strong>Support:</strong> +91-9876543210
+                            <strong>Support:</strong> +91-9277121112
                         </p>
                         <p class="mb-0">
                             <i class="fas fa-envelope me-2"></i>

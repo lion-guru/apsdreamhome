@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $whatsapp_message .= "• Mobile Number + Password\n";
             $whatsapp_message .= "• Email + Password\n\n";
 
-            $whatsapp_message .= "📞 Need Help? Call: +91-9876543210\n";
+            $whatsapp_message .= "📞 Need Help? Call: +91-9277121112\n";
             $whatsapp_message .= "🌐 Visit: http://localhost/apsdreamhome/customer_login.php\n\n";
             $whatsapp_message .= "APS Dream Homes - Your Dream Home Awaits! 🏡✨";
 
@@ -424,7 +424,7 @@ function sendWhatsAppNotification($mobile, $message)
                         <h6 class="text-muted">Need Help?</h6>
                         <p class="mb-2">
                             <i class="fas fa-phone me-2"></i>
-                            <strong>Support:</strong> +91-9876543210
+                            <strong>Support:</strong> +91-9277121112
                         </p>
                         <p class="mb-0">
                             <i class="fas fa-envelope me-2"></i>

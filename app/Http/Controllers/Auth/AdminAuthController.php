@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin Login Controller
  * Simple standalone admin login - no layout system needed
@@ -66,9 +67,9 @@ class AdminAuthController extends BaseController
             }
 
             // Validate captcha
-            $submittedCaptcha = $_POST['captcha'] ?? '';
+            $submittedCaptcha = $_POST['captcha_answer'] ?? '';
             $sessionCaptcha = $_SESSION['captcha_result'] ?? '';
-            if (empty($submittedCaptcha) || $submittedCaptcha != $sessionCaptcha) {
+            if (empty($submittedCaptcha) || (int)$submittedCaptcha !== (int)$sessionCaptcha) {
                 throw new \Exception('Wrong security answer. Please try again.');
             }
 
@@ -91,7 +92,7 @@ class AdminAuthController extends BaseController
                 $_SESSION['admin_role'] = $admin['role'];
                 $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Admin';
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                
+
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;
             }
@@ -104,13 +105,12 @@ class AdminAuthController extends BaseController
                 $_SESSION['admin_role'] = $user['role'];
                 $_SESSION['admin_name'] = $user['name'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                
+
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;
             }
 
             throw new \Exception('Invalid username or password.');
-
         } catch (\Exception $e) {
             $_SESSION['error'] = $e->getMessage();
             header('Location: ' . BASE_URL . '/admin/login');

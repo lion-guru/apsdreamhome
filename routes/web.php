@@ -89,29 +89,29 @@ $router->get('/ai-valuation', 'AIController@propertyValuation');
 $router->post('/api/ai/valuation', 'AIController@apiValuation');
 
 // Lead Scoring Routes
-$router->get('/admin/leads/scoring', 'Admin\LeadScoringController@index');
-$router->get('/admin/leads/scoring/recalculate', 'Admin\LeadScoringController@recalculateScores');
-$router->get('/api/leads/{id}/score-details', 'Admin\LeadScoringController@getScoreDetails');
-$router->get('/admin/leads/scoring/export', 'Admin\LeadScoringController@export');
+$router->get('/admin/leads/scoring', 'App\Http\Controllers\Admin\LeadScoringController@index');
+$router->get('/admin/leads/scoring/recalculate', 'App\Http\Controllers\Admin\LeadScoringController@recalculateScores');
+$router->get('/api/leads/{id}/score-details', 'App\Http\Controllers\Admin\LeadScoringController@getScoreDetails');
+$router->get('/admin/leads/scoring/export', 'App\Http\Controllers\Admin\LeadScoringController@export');
 
 // Site Visit Routes
-$router->get('/admin/visits', 'Admin\VisitController@index');
-$router->get('/admin/visits/calendar', 'Admin\VisitController@calendar');
-$router->get('/admin/visits/create', 'Admin\VisitController@create');
-$router->post('/admin/visits/store', 'Admin\VisitController@store');
-$router->post('/admin/visits/{id}/status', 'Admin\VisitController@updateStatus');
+$router->get('/admin/visits', 'App\Http\Controllers\Admin\VisitController@index');
+$router->get('/admin/visits/calendar', 'App\Http\Controllers\Admin\VisitController@calendar');
+$router->get('/admin/visits/create', 'App\Http\Controllers\Admin\VisitController@create');
+$router->post('/admin/visits/store', 'App\Http\Controllers\Admin\VisitController@store');
+$router->post('/admin/visits/{id}/status', 'App\Http\Controllers\Admin\VisitController@updateStatus');
 
 // Lead Documents Routes
-$router->get('/admin/leads/{id}/documents', 'Admin\LeadController@getDocuments');
-$router->post('/admin/leads/{id}/documents/upload', 'Admin\LeadController@uploadDocument');
-$router->post('/admin/leads/documents/{id}/delete', 'Admin\LeadController@deleteDocument');
+$router->get('/admin/leads/{id}/documents', 'App\Http\Controllers\Admin\LeadController@getDocuments');
+$router->post('/admin/leads/{id}/documents/upload', 'App\Http\Controllers\Admin\LeadController@uploadDocument');
+$router->post('/admin/leads/documents/{id}/delete', 'App\Http\Controllers\Admin\LeadController@deleteDocument');
 
 // Deal Tracking Routes
-$router->get('/admin/deals', 'Admin\DealController@index');
-$router->get('/admin/deals/kanban', 'Admin\DealController@kanban');
-$router->get('/admin/deals/create', 'Admin\DealController@createFromLead');
-$router->post('/admin/deals/store', 'Admin\DealController@store');
-$router->post('/admin/deals/{id}/stage', 'Admin\DealController@updateStage');
+$router->get('/admin/deals', 'App\Http\Controllers\Admin\DealController@index');
+$router->get('/admin/deals/kanban', 'App\Http\Controllers\Admin\DealController@kanban');
+$router->get('/admin/deals/create', 'App\Http\Controllers\Admin\DealController@createFromLead');
+$router->post('/admin/deals/store', 'App\Http\Controllers\Admin\DealController@store');
+$router->post('/admin/deals/{id}/stage', 'App\Http\Controllers\Admin\DealController@updateStage');
 
 // Achievement Routes
 $router->get('/dashboard/achievements', 'AchievementController@index');

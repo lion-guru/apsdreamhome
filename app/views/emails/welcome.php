@@ -42,7 +42,7 @@
 
             <p>If you have any questions, our support team is here to help:</p>
             <p>📧 Email: support@apsdreamhome.com<br>
-               📞 Phone: +91-9876543210</p>
+               📞 Phone: +91-9277121112</p>
         </div>
 
         <div class="footer">

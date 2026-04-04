@@ -14,7 +14,7 @@
                     <div class="card-body">
                         <h3 class="card-title">Get In Touch</h3>
                         <p>We're here to help you find your perfect property or answer any questions you may have.</p>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <strong>Head Office:</strong><br>
@@ -27,9 +27,9 @@
                                 <a href="mailto:info@apsdreamhomes.com">info@apsdreamhomes.com</a>
                             </div>
                         </div>
-                        
+
                         <hr>
-                        
+
                         <form method="POST" action="<?php echo BASE_URL; ?>/contact" class="needs-validation">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -128,13 +128,14 @@
                                 Email: info@apsdreamhomes.com
                             </address>
                         </div>
-                        <div class="map-container">
-                            <iframe 
-                                src="https://maps.google.com/maps?q=Gorakhpur,+Uttar+Pradesh&output=embed" 
-                                width="100%" 
-                                height="200" 
-                                style="border:0;" 
-                                allowfullscreen>
+                        <div class="map-container mt-3">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3559.991144111075!2d83.30122467380973!3d26.840233976690463!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399149002e8a386b%3A0x907b565a09c02435!2sSuryoday%20Colony%20developed%20by%20APS%20Dream%20Homes!5e0!3m2!1sen!2sin!4v1775289074035!5m2!1sen!2sin"
+                                width="100%"
+                                height="250"
+                                style="border:0; border-radius: 8px;"
+                                allowfullscreen
+                                loading="lazy">
                             </iframe>
                         </div>
                     </div>

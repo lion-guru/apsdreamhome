@@ -187,7 +187,7 @@
         }
 
         function showSupport() {
-            alert('Support Center: support@apsdreamhome.com\nPhone: +91 98765 43210');
+            alert('Support Center: support@apsdreamhome.com\nPhone: +91 92771 21112');
         }
 
         // Initialize
