@@ -12,7 +12,7 @@ class KnowledgeGraph {
     private $db;
 
     public function __construct() {
-        $this->db = \App\Core\App::database();
+        $this->db = \App\Core\Database\Database::getInstance();
     }
 
     public function query($entity, $relation = null) {

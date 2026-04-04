@@ -258,7 +258,7 @@ class AIDreamHome
      */
     public function getPropertyInsights($property_id)
     {
-        $db = \App\Core\App::database();
+        $db = \App\Core\Database\Database::getInstance();
 
         $property = $db->fetch("SELECT * FROM properties WHERE id = :id", ['id' => $property_id]);
 

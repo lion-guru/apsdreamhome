@@ -26,7 +26,7 @@ abstract class BaseAgent implements AgentInterface {
     public function __construct($agentId, $agentName, $db = null) {
         $this->agentId = $agentId;
         $this->agentName = $agentName;
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: \App\Core\Database\Database::getInstance();
     }
 
     public function initialize($config = []) {

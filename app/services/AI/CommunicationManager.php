@@ -12,7 +12,7 @@ class CommunicationManager {
     private $aiManager;
 
     public function __construct($aiManager) {
-        $this->db = \App\Core\App::database();
+        $this->db = \App\Core\Database\Database::getInstance();
         $this->aiManager = $aiManager;
     }
 

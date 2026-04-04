@@ -20,7 +20,7 @@ class AIAgentPersonality {
 
     public function __construct($db = null) {
         if ($db === null) {
-            $this->db = \App\Core\App::database();
+            $this->db = \App\Core\Database\Database::getInstance();
         } else {
             $this->db = $db;
         }
