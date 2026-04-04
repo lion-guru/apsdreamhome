@@ -343,7 +343,7 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- AI Chatbot Floating Button -->
+    <!-- AI Chatbot (Left Side) -->
     <div id="ai-chatbot" class="ai-chatbot-container">
         <!-- Chat Popup -->
         <div class="ai-chat-popup" id="chatPopup">
@@ -362,28 +362,34 @@
                 <div class="ai-message bot">
                     <div class="ai-message-content">
                         Namaste! 🙏<br><br>
-                        Welcome to <strong>APS Dream Home</strong>! I'm your personal property assistant.<br><br>
-                        How can I help you today?
+                        Welcome to <strong>APS Dream Home</strong>! 🏠<br><br>
+                        I'm your personal property assistant. Tell me what you're looking for!
                     </div>
                     <span class="ai-time">Just now</span>
                 </div>
                 <div class="quick-actions">
                     <button class="quick-btn" onclick="sendQuickMessage('View Properties')">
-                        <i class="fas fa-home"></i> View Properties
+                        <i class="fas fa-home"></i> Properties
                     </button>
-                    <button class="quick-btn" onclick="sendQuickMessage('Property Prices')">
+                    <button class="quick-btn" onclick="sendQuickMessage('Plot Prices')">
                         <i class="fas fa-tag"></i> Prices
                     </button>
                     <button class="quick-btn" onclick="sendQuickMessage('Book Site Visit')">
                         <i class="fas fa-calendar-check"></i> Book Visit
                     </button>
-                    <button class="quick-btn" onclick="sendQuickMessage('Contact Us')">
-                        <i class="fas fa-phone"></i> Contact
+                    <button class="quick-btn" onclick="sendQuickMessage('Home Loan Help')">
+                        <i class="fas fa-university"></i> Home Loan
+                    </button>
+                    <button class="quick-btn" onclick="sendQuickMessage('RERA Info')">
+                        <i class="fas fa-shield-alt"></i> RERA Verified
+                    </button>
+                    <button class="quick-btn" onclick="sendQuickMessage('Contact Agent')">
+                        <i class="fas fa-phone"></i> Call Us
                     </button>
                 </div>
             </div>
             <div class="ai-chat-footer">
-                <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="handleChatKeypress(event)">
+                <input type="text" id="chatInput" placeholder="Ask about properties..." onkeypress="handleChatKeypress(event)">
                 <button class="ai-send-btn" onclick="sendChatMessage()">
                     <i class="fas fa-paper-plane"></i>
                 </button>
@@ -397,11 +403,16 @@
         </button>
     </div>
 
+    <!-- WhatsApp Button (Right Side - Manual Chat) -->
+    <a href="https://wa.me/919277121112?text=Hi, I'm interested in APS Dream Home properties" target="_blank" class="whatsapp-float-btn" title="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
     <style>
         .ai-chatbot-container {
             position: fixed;
             bottom: 30px;
-            right: 30px;
+            left: 30px;
             z-index: 9999;
         }
         
@@ -444,7 +455,7 @@
         .ai-chat-popup {
             position: absolute;
             bottom: 80px;
-            right: 0;
+            left: 0;
             width: 380px;
             height: 550px;
             background: white;
@@ -701,10 +712,35 @@
             color: white;
         }
         
+        /* WhatsApp Button - Right Side */
+        .whatsapp-float-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #25D366;
+            color: white;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            z-index: 9998;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .whatsapp-float-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+        }
+        
         @media (max-width: 480px) {
             .ai-chat-popup {
                 width: calc(100vw - 20px);
-                right: -10px;
+                left: -10px;
                 height: 70vh;
             }
             
@@ -712,6 +748,19 @@
                 width: 55px;
                 height: 55px;
                 font-size: 24px;
+            }
+            
+            .whatsapp-float-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+                bottom: 25px;
+                right: 25px;
+            }
+            
+            .ai-chatbot-container {
+                left: 15px;
+                bottom: 25px;
             }
         }
     </style>
