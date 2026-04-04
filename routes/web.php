@@ -186,6 +186,13 @@ $router->post('/ai/property-valuation/batch', 'AI\\PropertyValuationController@b
 $router->post('/api/ai/valuation', 'AI\\PropertyValuationController@apiValuation');
 
 // ============================================================
+// AI CHATBOT
+// ============================================================
+$router->get('/ai/chatbot', 'AI\\AIWebController@chatbot');
+$router->post('/api/ai/chatbot', 'AI\\ChatbotAPIController@handleMessage');
+$router->get('/ai/chatbot/history', 'AI\\ChatbotAPIController@getHistory');
+
+// ============================================================
 // ADMIN PANEL
 // ============================================================
 
