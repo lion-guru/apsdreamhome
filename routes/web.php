@@ -298,6 +298,58 @@ $router->post('/admin/plots/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PlotM
 $router->get('/admin/plots/check-availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@checkAvailability');
 $router->post('/admin/plots/{id}/update-status', 'App\\Http\\Controllers\\Admin\\PlotManagementController@updateStatus');
 
+// Admin Testimonials
+$router->get('/admin/testimonials', 'App\Http\Controllers\Admin\TestimonialsAdminController@index');
+$router->get('/admin/testimonials/show/{id}', 'App\Http\Controllers\Admin\TestimonialsAdminController@show');
+$router->post('/admin/testimonials/{id}/status', 'App\Http\Controllers\Admin\TestimonialsAdminController@updateStatus');
+$router->post('/admin/testimonials/{id}/delete', 'App\Http\Controllers\Admin\TestimonialsAdminController@delete');
+
+// Admin Location Management
+$router->get('/admin/locations/states', 'App\Http\Controllers\Admin\LocationAdminController@index');
+$router->get('/admin/locations/states/create', 'App\Http\Controllers\Admin\LocationAdminController@createState');
+$router->post('/admin/locations/states/create', 'App\Http\Controllers\Admin\LocationAdminController@createState');
+$router->get('/admin/locations/states/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editState');
+$router->post('/admin/locations/states/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editState');
+$router->get('/admin/locations/states/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteState');
+
+$router->get('/admin/locations/districts', 'App\Http\Controllers\Admin\LocationAdminController@districts');
+$router->get('/admin/locations/districts/create', 'App\Http\Controllers\Admin\LocationAdminController@createDistrict');
+$router->post('/admin/locations/districts/create', 'App\Http\Controllers\Admin\LocationAdminController@createDistrict');
+$router->get('/admin/locations/districts/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editDistrict');
+$router->post('/admin/locations/districts/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editDistrict');
+$router->get('/admin/locations/districts/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteDistrict');
+
+$router->get('/admin/locations/colonies', 'App\Http\Controllers\Admin\LocationAdminController@colonies');
+$router->get('/admin/locations/colonies/create', 'App\Http\Controllers\Admin\LocationAdminController@createColony');
+$router->post('/admin/locations/colonies/create', 'App\Http\Controllers\Admin\LocationAdminController@createColony');
+$router->get('/admin/locations/colonies/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editColony');
+$router->post('/admin/locations/colonies/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editColony');
+$router->get('/admin/locations/colonies/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteColony');
+
+// Location API endpoints
+$router->get('/admin/locations/api/districts/{state_id}', 'App\Http\Controllers\Admin\LocationAdminController@getDistrictsByState');
+$router->get('/admin/locations/api/colonies/{district_id}', 'App\Http\Controllers\Admin\LocationAdminController@getColoniesByDistrict');
+
+// Admin Plots Management
+$router->get('/admin/plots', 'App\Http\Controllers\Admin\PlotsAdminController@index');
+$router->get('/admin/plots/create', 'App\Http\Controllers\Admin\PlotsAdminController@create');
+$router->post('/admin/plots/create', 'App\Http\Controllers\Admin\PlotsAdminController@create');
+$router->get('/admin/plots/show/{id}', 'App\Http\Controllers\Admin\PlotsAdminController@show');
+$router->get('/admin/plots/edit/{id}', 'App\Http\Controllers\Admin\PlotsAdminController@edit');
+$router->post('/admin/plots/edit/{id}', 'App\Http\Controllers\Admin\PlotsAdminController@edit');
+$router->get('/admin/plots/delete/{id}', 'App\Http\Controllers\Admin\PlotsAdminController@delete');
+$router->post('/admin/plots/{id}/status', 'App\Http\Controllers\Admin\PlotsAdminController@updateStatus');
+$router->post('/admin/plots/bulk-status-update', 'App\Http\Controllers\Admin\PlotsAdminController@bulkStatusUpdate');
+$router->get('/admin/plots/export', 'App\Http\Controllers\Admin\PlotsAdminController@export');
+
+// Admin News/Blog
+$router->get('/admin/news', 'App\\Http\\Controllers\\Admin\\NewsController@index');
+$router->get('/admin/news/create', 'App\\Http\\Controllers\\Admin\\NewsController@create');
+$router->post('/admin/news', 'App\\Http\\Controllers\\Admin\\NewsController@store');
+$router->get('/admin/news/{id}/edit', 'App\\Http\\Controllers\\Admin\\NewsController@edit');
+$router->post('/admin/news/{id}/update', 'App\\Http\\Controllers\\Admin\\NewsController@update');
+$router->post('/admin/news/{id}/delete', 'App\\Http\\Controllers\\Admin\\NewsController@delete');
+
 // Admin Campaigns
 $router->get('/admin/campaigns', 'App\\Http\\Controllers\\Admin\\CampaignController@index');
 $router->get('/admin/campaigns/create', 'App\\Http\\Controllers\\Admin\\CampaignController@create');
