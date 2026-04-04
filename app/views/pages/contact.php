@@ -18,13 +18,13 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <strong>Head Office:</strong><br>
-                                1st floor singhariya chauraha, Kunraghat, deoria Road<br>
+                                1st floor, Singhariya Chauraha, Kunraghat, Deoria Road<br>
                                 Gorakhpur, UP - 273008<br>
-                                Phone: +91-7007444842
+                                Phone: +91 92771 21112 / +91 70074 44842
                             </div>
                             <div class="col-md-6 mb-3">
                                 <strong>Email:</strong><br>
-                                <a href="mailto:info@apsdreamhomes.com">info@apsdreamhomes.com</a>
+                                <a href="mailto:info@apsdreamhome.com">info@apsdreamhome.com</a>
                             </div>
                         </div>
 
@@ -122,10 +122,10 @@
                         <div class="office-location">
                             <h4>Head Office - Gorakhpur</h4>
                             <address>
-                                1st floor singhariya chauraha, Kunraghat, deoria Road<br>
+                                1st floor, Singhariya Chauraha, Kunraghat, Deoria Road<br>
                                 Gorakhpur, UP - 273008<br>
-                                Phone: +91-7007444842<br>
-                                Email: info@apsdreamhomes.com
+                                Phone: +91 92771 21112 / +91 70074 44842<br>
+                                Email: info@apsdreamhome.com
                             </address>
                         </div>
                         <div class="map-container mt-3">
