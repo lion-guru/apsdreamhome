@@ -296,9 +296,19 @@ class PageController extends BaseController
     // Team
     public function team()
     {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC");
+            $stmt->execute();
+            $team_members = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            $team_members = [];
+            error_log("Team error: " . $e->getMessage());
+        }
+        
         $data = [
             'page_title' => 'Our Team - APS Dream Home',
-            'page_description' => 'Meet the team behind APS Dream Home'
+            'page_description' => 'Meet the team behind APS Dream Home',
+            'team_members' => $team_members
         ];
         $this->render('pages/team', $data);
     }
