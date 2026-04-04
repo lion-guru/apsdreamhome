@@ -107,11 +107,22 @@ class PlotManagementController extends AdminController
                 'sites' => $sites
             ];
 
-            return $this->render('admin/plot_management/index', $data);
+            return $this->render('admin/plots/index', $data);
         } catch (Exception $e) {
-            $this->loggingService->error("Plot Management Index error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load plot management data');
-            return $this->redirect('admin/dashboard');
+            error_log("Plot Management Index error: " . $e->getMessage());
+            $data = [
+                'page_title' => 'Plot Management - APS Dream Home',
+                'active_page' => 'plot_management',
+                'plots' => [],
+                'total' => 0,
+                'page' => 1,
+                'per_page' => 20,
+                'total_pages' => 0,
+                'filters' => ['search' => '', 'status' => '', 'site_id' => 0],
+                'sites' => [],
+                'error' => 'Unable to load plots: ' . $e->getMessage()
+            ];
+            return $this->render('admin/plots/index', $data);
         }
     }
 

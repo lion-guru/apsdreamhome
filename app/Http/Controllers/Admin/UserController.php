@@ -73,7 +73,7 @@ class UserController extends AdminController
             $countSql = str_replace("SELECT u.*, COUNT(p.id) as property_count, (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count", "SELECT COUNT(DISTINCT u.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0;
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";
@@ -513,7 +513,7 @@ class UserController extends AdminController
      */
     public function jsonResponse($data, $status = 200)
     {
-        http_response_code($statusCode);
+        http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;
@@ -524,7 +524,7 @@ class UserController extends AdminController
      */
     protected function jsonError($message, $status = 400)
     {
-        http_response_code($statusCode);
+        http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => $message]);
         exit;

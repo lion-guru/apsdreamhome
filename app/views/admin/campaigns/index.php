@@ -1,5 +1,7 @@
 <?php
-$this->layout('layouts/admin', ['title' => $this->data['page_title'] ?? 'Campaign Management'])
+$page_title = $page_title ?? 'Campaign Management';
+$campaigns = $campaigns ?? [];
+$baseUrl = BASE_URL ?? '/apsdreamhome';
 ?>
 
 <div class="container-fluid">
