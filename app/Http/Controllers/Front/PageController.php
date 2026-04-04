@@ -306,9 +306,19 @@ class PageController extends BaseController
     // Careers
     public function careers()
     {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM careers WHERE status = 'active' ORDER BY created_at DESC");
+            $stmt->execute();
+            $careers = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            $careers = [];
+            error_log("Careers error: " . $e->getMessage());
+        }
+        
         $data = [
             'page_title' => 'Careers - APS Dream Home',
-            'page_description' => 'Join our team at APS Dream Home'
+            'page_description' => 'Join our team at APS Dream Home',
+            'careers' => $careers
         ];
         $this->render('pages/careers', $data);
     }
