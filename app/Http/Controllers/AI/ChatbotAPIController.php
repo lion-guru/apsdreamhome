@@ -15,6 +15,11 @@ class ChatbotAPIController extends BaseController
         $this->chatbotService = new PropertyChatbotService();
     }
 
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     public function handleMessage()
     {
         header('Content-Type: application/json');
