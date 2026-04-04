@@ -782,12 +782,31 @@ class PageController extends BaseController
     // Project Details
     public function projectDetails($slug = null)
     {
+        try {
+            $slug = $slug ?? '';
+            $siteName = str_replace('-', ' ', $slug);
+            $siteName = ucwords($siteName);
+            
+            $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE ? OR slug = ? LIMIT 1");
+            $stmt->execute(['%' . $siteName . '%', $slug]);
+            $project = $stmt->fetch(\PDO::FETCH_OBJ);
+            
+            if (!$project) {
+                $stmt = $this->db->prepare("SELECT * FROM sites WHERE status = 'active' LIMIT 1");
+                $stmt->execute();
+                $project = $stmt->fetch(\PDO::FETCH_OBJ);
+            }
+        } catch (\Exception $e) {
+            $project = null;
+            error_log("Project details error: " . $e->getMessage());
+        }
+        
         $data = [
             'page_title' => 'Project Details - APS Dream Home',
             'page_description' => 'View project details',
-            'project_slug' => $slug
+            'project' => $project
         ];
-        $this->render('pages/company_projects', $data);
+        $this->render('pages/project_detail', $data);
     }
 
     // Gallery
@@ -867,41 +886,77 @@ class PageController extends BaseController
     // Suyoday Colony
     public function suyodayColony()
     {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Suryoday%' LIMIT 1");
+            $stmt->execute();
+            $project = $stmt->fetch(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            $project = null;
+        }
+        
         $data = [
             'page_title' => 'Suyoday Colony - APS Dream Home',
-            'page_description' => 'Premium residential plots in Suyoday Colony, Gorakhpur'
+            'page_description' => 'Premium residential plots in Suyoday Colony, Gorakhpur',
+            'project' => $project
         ];
-        $this->render('pages/suyoday_colony', $data);
+        $this->render('pages/project_detail', $data);
     }
 
     // Raghunat Nagri
     public function raghunatNagri()
     {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Raghunath%' OR site_name LIKE '%Raghunat%' LIMIT 1");
+            $stmt->execute();
+            $project = $stmt->fetch(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            $project = null;
+        }
+        
         $data = [
             'page_title' => 'Raghunat Nagri - APS Dream Home',
-            'page_description' => 'Premium residential plots in Raghunat Nagri, Gorakhpur'
+            'page_description' => 'Premium residential plots in Raghunat Nagri, Gorakhpur',
+            'project' => $project
         ];
-        $this->render('pages/rahunath_nagri', $data);
+        $this->render('pages/project_detail', $data);
     }
 
     // Braj Radha Nagri
     public function brajRadhaNagri()
     {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Braj Radha%' OR site_name LIKE '%Braj%' LIMIT 1");
+            $stmt->execute();
+            $project = $stmt->fetch(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            $project = null;
+        }
+        
         $data = [
             'page_title' => 'Braj Radha Nagri - APS Dream Home',
-            'page_description' => 'Affordable residential plots in Braj Radha Nagri'
+            'page_description' => 'Affordable residential plots in Braj Radha Nagri',
+            'project' => $project
         ];
-        $this->render('pages/budhacity', $data);
+        $this->render('pages/project_detail', $data);
     }
 
     // Budh Bihar Colony
     public function budhBiharColony()
     {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Budh Bihar%' OR site_name LIKE '%Budh%' LIMIT 1");
+            $stmt->execute();
+            $project = $stmt->fetch(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            $project = null;
+        }
+        
         $data = [
             'page_title' => 'Budh Bihar Colony - APS Dream Home',
-            'page_description' => 'Integrated township at Budh Bihar Colony, Kushinagar'
+            'page_description' => 'Integrated township at Budh Bihar Colony, Kushinagar',
+            'project' => $project
         ];
-        $this->render('pages/budhacity', $data);
+        $this->render('pages/project_detail', $data);
     }
 
     // Awadhpuri
