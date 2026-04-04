@@ -749,9 +749,32 @@ class PageController extends BaseController
     // Projects List
     public function projects()
     {
+        try {
+            // Get sites by state for grouping
+            $stmt = $this->db->prepare("SELECT * FROM sites WHERE status IN ('active', 'under_development') ORDER BY state, city, site_name");
+            $stmt->execute();
+            $projects = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            
+            // Group by state
+            $grouped = [];
+            foreach ($projects as $project) {
+                $state = $project->state ?? 'Other';
+                if (!isset($grouped[$state])) {
+                    $grouped[$state] = [];
+                }
+                $grouped[$state][] = $project;
+            }
+        } catch (\Exception $e) {
+            $projects = [];
+            $grouped = [];
+            error_log("Projects error: " . $e->getMessage());
+        }
+        
         $data = [
             'page_title' => 'Our Projects - APS Dream Home',
-            'page_description' => 'Explore our residential and commercial projects'
+            'page_description' => 'Explore our residential and commercial projects',
+            'projects' => $projects,
+            'grouped_projects' => $grouped
         ];
         $this->render('pages/company_projects', $data);
     }
