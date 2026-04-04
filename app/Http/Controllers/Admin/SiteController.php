@@ -43,12 +43,11 @@ class SiteController extends AdminController
             $sql = "SELECT s.*, 
                            COUNT(p.id) as property_count,
                            COUNT(pr.id) as project_count,
-                           COUNT(pl.id) as plot_count,
+                           0 as plot_count,
                            COALESCE(SUM(p.price), 0) as total_property_value
                     FROM sites s
                     LEFT JOIN properties p ON s.id = p.site_id
                     LEFT JOIN projects pr ON s.id = pr.site_id
-                    LEFT JOIN plots pl ON s.id = pl.site_id
                     WHERE 1=1";
             $params = [];
 
@@ -74,7 +73,7 @@ class SiteController extends AdminController
             $sql .= " GROUP BY s.id ORDER BY s.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT s.*, COUNT(p.id) as property_count, COUNT(pr.id) as project_count, COUNT(pl.id) as plot_count, COALESCE(SUM(p.price), 0) as total_property_value", "SELECT COUNT(DISTINCT s.id) as total", $sql);
+            $countSql = str_replace("SELECT s.*, COUNT(p.id) as property_count, COUNT(pr.id) as project_count, 0 as plot_count, COALESCE(SUM(p.price), 0) as total_property_value", "SELECT COUNT(DISTINCT s.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -105,9 +104,19 @@ class SiteController extends AdminController
 
             return $this->render('admin/sites/index', $data);
         } catch (Exception $e) {
-            $this->loggingService->error("Site Index error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load sites');
-            return $this->redirect('admin/dashboard');
+            error_log("Site Index error: " . $e->getMessage());
+            $data = [
+                'page_title' => 'Site Management - APS Dream Home',
+                'active_page' => 'sites',
+                'sites' => [],
+                'total' => 0,
+                'page' => 1,
+                'per_page' => 20,
+                'total_pages' => 0,
+                'filters' => ['search' => '', 'status' => '', 'type' => ''],
+                'error' => 'Unable to load sites: ' . $e->getMessage()
+            ];
+            return $this->render('admin/sites/index', $data);
         }
     }
 
