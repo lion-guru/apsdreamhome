@@ -962,11 +962,20 @@ class PageController extends BaseController
     // Awadhpuri
     public function awadhpuri()
     {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Awadhpuri%' LIMIT 1");
+            $stmt->execute();
+            $project = $stmt->fetch(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            $project = null;
+        }
+        
         $data = [
             'page_title' => 'Awadhpuri - APS Dream Home',
-            'page_description' => 'Premium project at Awadhpuri, Lucknow'
+            'page_description' => 'Premium project at Awadhpuri, Lucknow',
+            'project' => $project
         ];
-        $this->render('pages/budhacity', $data);
+        $this->render('pages/project_detail', $data);
     }
 
     // WhatsApp Chat
