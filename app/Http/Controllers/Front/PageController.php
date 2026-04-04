@@ -405,9 +405,20 @@ class PageController extends BaseController
     // Resell
     public function resell()
     {
+        try {
+            $cities = $this->db->fetchAll("SELECT DISTINCT city FROM properties WHERE city IS NOT NULL AND city != '' ORDER BY city");
+            $property_types = $this->db->fetchAll("SELECT DISTINCT type FROM properties WHERE type IS NOT NULL AND type != '' ORDER BY type");
+        } catch (\Exception $e) {
+            $cities = [];
+            $property_types = [];
+            error_log("Resell error: " . $e->getMessage());
+        }
+        
         $data = [
             'page_title' => 'Resell Property - APS Dream Home',
-            'page_description' => 'Sell your property through APS Dream Home'
+            'page_description' => 'Sell your property through APS Dream Home',
+            'cities' => $cities,
+            'property_types' => $property_types
         ];
         $this->render('pages/resell', $data);
     }
@@ -548,9 +559,17 @@ class PageController extends BaseController
     // Downloads
     public function downloads()
     {
+        try {
+            $downloads = $this->db->fetchAll("SELECT * FROM downloads WHERE status = 'active' ORDER BY category, sort_order ASC");
+        } catch (\Exception $e) {
+            $downloads = [];
+            error_log("Downloads error: " . $e->getMessage());
+        }
+        
         $data = [
             'page_title' => 'Downloads - APS Dream Home',
-            'page_description' => 'Download brochures and documents from APS Dream Home'
+            'page_description' => 'Download brochures and documents from APS Dream Home',
+            'downloads' => $downloads
         ];
         $this->render('pages/downloads', $data);
     }
