@@ -414,11 +414,20 @@ class PageController extends BaseController
             error_log("Resell error: " . $e->getMessage());
         }
         
+        $filters = [
+            'search' => $_GET['search'] ?? '',
+            'city' => $_GET['city'] ?? '',
+            'type' => $_GET['type'] ?? '',
+            'min_price' => $_GET['min_price'] ?? '',
+            'max_price' => $_GET['max_price'] ?? ''
+        ];
+        
         $data = [
             'page_title' => 'Resell Property - APS Dream Home',
             'page_description' => 'Sell your property through APS Dream Home',
             'cities' => $cities,
-            'property_types' => $property_types
+            'property_types' => $property_types,
+            'filters' => $filters
         ];
         $this->render('pages/resell', $data);
     }
