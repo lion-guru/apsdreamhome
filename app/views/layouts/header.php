@@ -29,6 +29,23 @@ if (!defined('BASE_URL')) {
                         ['label' => 'Home', 'url' => '/', 'icon' => 'fas fa-home'],
                         ['label' => 'Properties', 'url' => '/properties', 'icon' => 'fas fa-building'],
                         [
+                            'label' => 'Projects',
+                            'icon' => 'fas fa-project-diagram',
+                            'submenu' => [
+                                ['label' => 'All Projects', 'url' => '/company/projects', 'icon' => 'fas fa-th-large'],
+                                ['label' => '── By Location ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
+                                ['label' => 'Gorakhpur', 'url' => '/company/projects?location=gorakhpur', 'icon' => 'fas fa-map-pin', 'badge' => '3'],
+                                ['label' => 'Lucknow', 'url' => '/company/projects?location=lucknow', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
+                                ['label' => 'Kushinagar', 'url' => '/company/projects?location=kushinagar', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
+                                ['label' => '── Projects ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true],
+                                ['label' => 'Suryoday Colony', 'url' => '/projects/suyoday-colony', 'icon' => 'fas fa-home'],
+                                ['label' => 'Raghunat Nagri', 'url' => '/projects/raghunat-nagri', 'icon' => 'fas fa-building'],
+                                ['label' => 'Braj Radha Nagri', 'url' => '/projects/braj-radha-nagri', 'icon' => 'fas fa-city'],
+                                ['label' => 'Budh Bihar Colony', 'url' => '/projects/budh-bihar-colony', 'icon' => 'fas fa-map-marker-alt'],
+                                ['label' => 'Awadhpuri', 'url' => '/projects/awadhpuri', 'icon' => 'fas fa-landmark'],
+                            ]
+                        ],
+                        [
                             'label' => 'About Us',
                             'icon' => 'fas fa-info-circle',
                             'submenu' => [
@@ -73,8 +90,14 @@ if (!defined('BASE_URL')) {
                             echo '</a>';
                             echo '<ul class="dropdown-menu">';
                             foreach ($item['submenu'] as $sub_item) {
-                                $active_class = ($current_path === $sub_item['url']) ? 'active' : '';
-                                echo '<li><a class="dropdown-item ' . $active_class . '" href="' . BASE_URL . $sub_item['url'] . '"><i class="' . $sub_item['icon'] . ' me-2"></i>' . htmlspecialchars($sub_item['label']) . '</a></li>';
+                                if (isset($sub_item['disabled']) && $sub_item['disabled']) {
+                                    echo '<li><span class="dropdown-header text-muted small"><i class="' . $sub_item['icon'] . ' me-2"></i>' . htmlspecialchars($sub_item['label']) . '</span></li>';
+                                } else {
+                                    $active_class = ($current_path === $sub_item['url']) ? 'active' : '';
+                                    $badge = $sub_item['badge'] ?? '';
+                                    $badge_html = $badge ? '<span class="badge bg-primary ms-2">' . $badge . '</span>' : '';
+                                    echo '<li><a class="dropdown-item ' . $active_class . '" href="' . BASE_URL . $sub_item['url'] . '"><i class="' . $sub_item['icon'] . ' me-2"></i>' . htmlspecialchars($sub_item['label']) . $badge_html . '</a></li>';
+                                }
                             }
                             echo '</ul>';
                             echo '</li>';
