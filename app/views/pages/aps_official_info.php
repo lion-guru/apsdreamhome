@@ -15,7 +15,7 @@ try {
     $company_updates = [
         ['setting_name' => 'company_name', 'setting_value' => 'APS Dream Homes Pvt Ltd'],
         ['setting_name' => 'company_phone', 'setting_value' => '+91-9554000001'],
-        ['setting_name' => 'company_email', 'setting_value' => 'info@apsdreamhomes.com'],
+        ['setting_name' => 'company_email', 'setting_value' => 'info@apsdreamhome.com'],
         ['setting_name' => 'company_address', 'setting_value' => '123, Kunraghat Main Road, Near Railway Station, Gorakhpur, Uttar Pradesh - 273008'],
         ['setting_name' => 'company_description', 'setting_value' => 'APS Dream Homes Pvt Ltd is a registered real estate company established in 2022, specializing in residential and commercial property development in Gorakhpur and surrounding areas. We are committed to delivering quality construction, transparent dealings, and customer satisfaction. Our expertise spans across property development, real estate consultancy, and investment advisory services.'],
         ['setting_name' => 'working_hours', 'setting_value' => 'Mon-Sat: 9:30 AM - 7:00 PM, Sun: 10:00 AM - 5:00 PM'],
@@ -70,7 +70,7 @@ try {
     echo "<li><strong>Type:</strong> Private Limited Company</li>\n";
     echo "<li><strong>Registration:</strong> U70109UP2022PTC163047</li>\n";
     echo "<li><strong>Phone:</strong> +91-9554000001</li>\n";
-    echo "<li><strong>Email:</strong> info@apsdreamhomes.com</li>\n";
+    echo "<li><strong>Email:</strong> info@apsdreamhome.com</li>\n";
     echo "<li><strong>Website:</strong> apsdreamhomes.com</li>\n";
     echo "</ul>\n";
     echo "</div>\n";

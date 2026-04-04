@@ -50,7 +50,7 @@
                             <p class="text-muted mb-4">The materials appearing on APS Dream Home website could include technical, typographical, or photographic errors. APS Dream Home does not warrant that any of the materials on its website are accurate, complete, or current.</p>
 
                             <h4 class="fw-bold mb-3 text-primary">6. Contact Information</h4>
-                            <p class="text-muted mb-0">If you have any questions about these Terms of Service, please contact us at <a href="mailto:info@apsdreamhomes.com" class="text-primary fw-bold">info@apsdreamhomes.com</a></p>
+                            <p class="text-muted mb-0">If you have any questions about these Terms of Service, please contact us at <a href="mailto:info@apsdreamhome.com" class="text-primary fw-bold">info@apsdreamhome.com</a></p>
                         </div>
                     </div>
                 </div>

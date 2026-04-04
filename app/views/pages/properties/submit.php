@@ -202,7 +202,7 @@
                         <h4 class="h5 mb-3">Need Help?</h4>
                         <p class="small text-muted mb-3">If you need assistance with submitting your property, please contact our support team:</p>
                         <p class="mb-2 fw-bold"><i class="fas fa-phone-alt text-primary me-2"></i> +91 7007444842</p>
-                        <p class="mb-0 fw-bold"><i class="fas fa-envelope text-primary me-2"></i> info@apsdreamhomes.com</p>
+                        <p class="mb-0 fw-bold"><i class="fas fa-envelope text-primary me-2"></i> info@apsdreamhome.com</p>
                     </div>
                 </div>
             </div>
