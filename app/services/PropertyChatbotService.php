@@ -92,8 +92,52 @@ Is there anything else I can help you with?\n\n🏠 Explore more:\n{BASE_URL}/pr
     public function processMessage($message)
     {
         $message = strtolower(trim($message));
+        
+        // Special handling for booking intent
+        if ($this->isBookingIntent($message)) {
+            return $this->handleBookingIntent($message);
+        }
+        
         $response = $this->findBestResponse($message);
         return $this->formatResponse($response);
+    }
+
+    private function isBookingIntent($message)
+    {
+        $bookingPatterns = ['book', 'visit', 'schedule', 'appointment', 'meeting', 'see property', 'tour'];
+        foreach ($bookingPatterns as $pattern) {
+            if (strpos($message, $pattern) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function handleBookingIntent($message)
+    {
+        $baseUrl = rtrim(BASE_URL ?? 'http://localhost/apsdreamhome', '/');
+        return [
+            'reply' => "🗓️ <strong>Book Free Site Visit!</strong>\n\n" .
+                       "I'd love to help you visit our properties.\n\n" .
+                       "📅 <strong>Available Slots:</strong>\n" .
+                       "• Mon-Sat: 9:00 AM - 7:00 PM\n\n" .
+                       "🔗 <strong>Quick Booking:</strong>\n" .
+                       "1. <a href='{$baseUrl}/contact' target='_blank'>Fill Contact Form</a>\n" .
+                       "2. Call: <strong>+91 92771 21112</strong>\n" .
+                       "3. WhatsApp: <a href='https://wa.me/919277121112?text=Hi, I want to book a site visit' target='_blank'>Send Message</a>\n\n" .
+                       "🏠 <strong>What You'll Get:</strong>\n" .
+                       "• Free site tour\n" .
+                       "• Property details\n" .
+                       "• Price breakup\n" .
+                       "• Loan assistance",
+            'quick_replies' => [
+                'Call Now',
+                'WhatsApp Now',
+                'View Properties',
+                'Price Details'
+            ],
+            'intent' => 'booking'
+        ];
     }
 
     private function findBestResponse($message)
@@ -111,7 +155,21 @@ Is there anything else I can help you with?\n\n🏠 Explore more:\n{BASE_URL}/pr
 
     private function getDefaultResponse()
     {
-        return "I'm not sure I understand that. 🤔\n\nTry asking about:\n• Properties & Projects\n• Prices & Payment\n• Site Visits\n• Contact Details\n• Documents/Registration\n\nOr call us: +91 92771 21112";
+        $baseUrl = rtrim(BASE_URL ?? 'http://localhost/apsdreamhome', '/');
+        return "🤔 <strong>I'm not sure I understand that.</strong>\n\n" .
+               "I can help you with:\n" .
+               "• 🏠 Properties & Projects\n" .
+               "• 💰 Prices & Payment Plans\n" .
+               "• 📅 Site Visit Booking\n" .
+               "• 🏦 Home Loan Info\n" .
+               "• 📜 RERA Documents\n" .
+               "• 📞 Contact Details\n\n" .
+               "💬 <strong>Try these:</strong>\n" .
+               "• \"View Properties\"\n" .
+               "• \"Plot Prices\"\n" .
+               "• \"Book Site Visit\"\n" .
+               "• \"Home Loan Help\"\n\n" .
+               "📞 Or call: <strong>+91 92771 21112</strong>";
     }
 
     private function formatResponse($response)

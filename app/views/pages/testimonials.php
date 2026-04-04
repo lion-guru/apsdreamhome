@@ -6,26 +6,45 @@
     </div>
 </section>
 
-<!-- Breadcrumb -->
-<div class="bg-light py-2">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <?php if (isset($breadcrumbs)): ?>
-                    <?php foreach ($breadcrumbs as $crumb): ?>
-                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
-                        <?php else: ?>
-                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Testimonials</li>
-                <?php endif; ?>
-            </ol>
-        </nav>
-    </div>
+<style>
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+    .star-rating input {
+        display: none;
+    }
+
+    .star-rating label {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #ddd;
+        margin: 0 2px;
+    }
+
+    .star-rating input:checked~label,
+    .star-rating label:hover,
+    .star-rating label:hover~label {
+        color: #ffc107;
+    }
+</style>
+<?php if (isset($breadcrumbs)): ?>
+    <?php foreach ($breadcrumbs as $crumb): ?>
+        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+        <?php else: ?>
+            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+        <?php endif; ?>
+    <?php endforeach; ?>
+<?php else: ?>
+    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Testimonials</li>
+<?php endif; ?>
+</ol>
+</nav>
+</div>
 </div>
 
 <!-- Testimonials Grid -->
@@ -89,11 +108,81 @@
     </div>
 </section>
 
-<!-- Call to Action -->
+<!-- Submit Testimonial Section -->
 <section class="bg-light py-5 mt-5">
-    <div class="container text-center">
-        <h2 class="mb-4">Share Your Experience</h2>
-        <p class="lead text-muted mb-4">We value your feedback. Let us know how we did.</p>
-        <a href="<?= BASE_URL ?>contact" class="btn btn-primary btn-lg">Write a Review</a>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white py-4">
+                        <h3 class="mb-0"><i class="fas fa-pen-fancy me-2"></i>Share Your Experience</h3>
+                        <p class="mb-0 opacity-75">Your feedback helps others make informed decisions</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="testimonialForm" method="POST" action="<?php echo BASE_URL; ?>/testimonials/submit">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Full Name *</label>
+                                    <input type="text" name="name" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" name="phone" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" name="location" class="form-control" placeholder="e.g., Gorakhpur">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Property Type</label>
+                                    <select name="property_type" class="form-select">
+                                        <option value="">Select...</option>
+                                        <option value="Residential Plot">Residential Plot</option>
+                                        <option value="Villa">Villa</option>
+                                        <option value="Apartment">Apartment</option>
+                                        <option value="Commercial">Commercial</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Rating *</label>
+                                    <div class="star-rating">
+                                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                                            <input type="radio" name="rating" id="star<?php echo $i; ?>" value="<?php echo $i; ?>" <?php echo $i === 5 ? 'checked' : ''; ?>>
+                                            <label for="star<?php echo $i; ?>"><i class="fas fa-star"></i></label>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Review Title *</label>
+                                <input type="text" name="title" class="form-control" placeholder="e.g., Best Investment Decision!" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Your Experience *</label>
+                                <textarea name="testimonial" class="form-control" rows="4" placeholder="Share your experience with APS Dream Homes..." required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Photo (Optional)</label>
+                                <input type="file" name="photo" class="form-control" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Review
+                            </button>
+                            <p class="text-muted small mt-2 mb-0">
+                                <i class="fas fa-info-circle me-1"></i>Your review will be moderated before appearing publicly.
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
