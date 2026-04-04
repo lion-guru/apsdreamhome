@@ -22,7 +22,14 @@
         "ms-vscode.vscode-mssql",
         "ms-vscode.vscode-sqltools",
         "ms-vscode.vscode-docker",
-        "ms-vscode-remote.remote-containers"
+        "ms-vscode-remote.remote-containers",
+        "dbaeumer.vscode-eslint",
+        "VisualStudioExptTeam.vscodeintellicode",
+        "xabikos.JavaScriptSnippets",
+        "dsznajder.es7-react-js-snippets",
+        "nickdemayo.vscode-json-editor",
+        "pmnds.pmndrs",
+        "WakaTime.vscode-wakatime"
     ],
     "unwantedRecommendations": [
         "ritwickdey.LiveServer",
