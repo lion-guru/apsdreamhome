@@ -11,7 +11,7 @@ class InvestmentManager {
     private $db;
 
     public function __construct() {
-        $this->db = \App\Core\App::database();
+        $this->db = \App\Core\Database\Database::getInstance();
     }
 
     /**

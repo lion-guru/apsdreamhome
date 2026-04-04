@@ -13,7 +13,7 @@ class AIAdvancedAgent {
     private $toolsManager;
 
     public function __construct($aiManager) {
-        $this->db = \App\Core\App::database();
+        $this->db = \App\Core\Database\Database::getInstance();
         $this->aiManager = $aiManager;
         $this->toolsManager = new AIToolsManager();
     }

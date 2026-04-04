@@ -15,7 +15,7 @@ class AdvancedAIBot {
     private $encryptionKey = 'aps_ai_secure_key_2026';
 
     public function __construct($sessionId, $userRole = 'visitor', $userId = null) {
-        $this->db = \App\Core\App::database();
+        $this->db = \App\Core\Database\Database::getInstance();
         $this->sessionId = $sessionId;
         $this->userRole = $userRole;
         $this->userId = $userId;

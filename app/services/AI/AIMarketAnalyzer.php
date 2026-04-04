@@ -25,7 +25,7 @@ class AIMarketAnalyzer {
      * Constructor
      */
     public function __construct($config = []) {
-        $this->db = \App\Core\App::database();
+        $this->db = \App\Core\Database\Database::getInstance();
         $this->config = array_merge([
             'enable_predictions' => true,
             'prediction_horizon' => 12, // months

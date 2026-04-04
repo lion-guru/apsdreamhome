@@ -18,7 +18,7 @@ class PropertyAI {
      * Constructor
      */
     public function __construct($db = null, $config = []) {
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: \App\Core\Database\Database::getInstance();
         $this->config = array_merge([
             'use_mock_data' => false,
             'cache_ttl' => 3600, // 1 hour cache

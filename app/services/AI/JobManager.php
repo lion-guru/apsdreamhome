@@ -7,7 +7,7 @@ class JobManager {
     private $aiManager;
 
     public function __construct($db = null, $aiManager = null) {
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: \App\Core\Database\Database::getInstance();
         $this->aiManager = $aiManager;
     }
 

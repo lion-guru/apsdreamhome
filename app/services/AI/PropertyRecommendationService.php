@@ -15,7 +15,7 @@ class AIPropertyRecommendations {
     private $aiManager;
     
     public function __construct() {
-        $this->db = \App\Core\App::database();
+        $this->db = \App\Core\Database\Database::getInstance();
         $this->aiManager = new AIManager();
         $this->initAI();
     }

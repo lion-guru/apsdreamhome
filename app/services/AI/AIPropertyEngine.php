@@ -13,7 +13,7 @@ class AIPropertyRecommendationEngine {
     private $propertyData;
 
     public function __construct($db = null) {
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: \App\Core\Database\Database::getInstance();
         $this->loadPropertyData();
     }
 
@@ -375,7 +375,7 @@ class AIPropertyChatbot {
     private $recommendationEngine;
 
     public function __construct($db = null) {
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: \App\Core\Database\Database::getInstance();
         $this->recommendationEngine = new AIPropertyRecommendationEngine($this->db);
     }
 
@@ -649,7 +649,7 @@ class AIPropertyValuation {
     private $db;
 
     public function __construct($db = null) {
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: \App\Core\Database\Database::getInstance();
     }
 
     /**
@@ -959,7 +959,7 @@ class AIPropertyValuation {
 
 // AI API Endpoints
 if (isset($_GET['action'])) {
-    $db = \App\Core\App::database();
+    $db = \App\Core\Database\Database::getInstance();
 
     switch ($_GET['action']) {
         case 'recommendations':
