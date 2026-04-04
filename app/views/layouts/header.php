@@ -29,7 +29,9 @@ if (!defined('BASE_URL')) {
                         ['label' => 'Home', 'url' => '/', 'icon' => 'fas fa-home'],
                         ['label' => 'Properties', 'url' => '/properties', 'icon' => 'fas fa-building'],
                         [
-                            'label' => 'About Us', 'icon' => 'fas fa-info-circle', 'submenu' => [
+                            'label' => 'About Us',
+                            'icon' => 'fas fa-info-circle',
+                            'submenu' => [
                                 ['label' => 'About', 'url' => '/about', 'icon' => 'fas fa-info-circle'],
                                 ['label' => 'Our Team', 'url' => '/team', 'icon' => 'fas fa-users'],
                                 ['label' => 'Careers', 'url' => '/careers', 'icon' => 'fas fa-briefcase'],
@@ -37,7 +39,9 @@ if (!defined('BASE_URL')) {
                             ]
                         ],
                         [
-                            'label' => 'Services', 'icon' => 'fas fa-concierge-bell', 'submenu' => [
+                            'label' => 'Services',
+                            'icon' => 'fas fa-concierge-bell',
+                            'submenu' => [
                                 ['label' => 'All Services', 'url' => '/services', 'icon' => 'fas fa-concierge-bell'],
                                 ['label' => 'Financial Services', 'url' => '/financial-services', 'icon' => 'fas fa-hand-holding-usd'],
                                 ['label' => 'Interior Design', 'url' => '/interior-design', 'icon' => 'fas fa-couch'],
@@ -45,7 +49,9 @@ if (!defined('BASE_URL')) {
                             ]
                         ],
                         [
-                            'label' => 'Resources', 'icon' => 'fas fa-folder-open', 'submenu' => [
+                            'label' => 'Resources',
+                            'icon' => 'fas fa-folder-open',
+                            'submenu' => [
                                 ['label' => 'Blog', 'url' => '/blog', 'icon' => 'fas fa-blog'],
                                 ['label' => 'News', 'url' => '/news', 'icon' => 'fas fa-newspaper'],
                                 ['label' => 'Downloads', 'url' => '/downloads', 'icon' => 'fas fa-download'],
@@ -116,7 +122,13 @@ if (!defined('BASE_URL')) {
                                 </a></li>
                         </ul>
                     </li>
-                    <li class="nav-item ms-3">
+                    <li class="nav-item ms-2">
+                        <a href="tel:+919277121112" class="btn btn-success btn-sm">
+                            <i class="fas fa-phone me-1"></i>
+                            +91 92771 21112
+                        </a>
+                    </li>
+                    <li class="nav-item ms-2">
                         <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-primary btn-sm">
                             <i class="fas fa-user-lock me-1"></i>
                             Admin

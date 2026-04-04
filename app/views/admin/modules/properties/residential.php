@@ -17,7 +17,7 @@ $residential_properties = [
         'status' => 'active',
         'listed_date' => '2024-01-15',
         'owner' => 'Ramesh Kumar',
-        'contact' => '+91 98765 43210'
+        'contact' => '+91 92771 21112'
     ],
     [
         'id' => 'RES002',

@@ -331,6 +331,29 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919277121112" target="_blank" class="whatsapp-float" style="
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #25D366;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 9999;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    " onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.4)';"
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
     <!-- Custom JS -->
     <script src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/premium-header.js"></script>

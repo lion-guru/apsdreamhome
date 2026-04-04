@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Services\Legacy;
+namespace App\Services\Communication;
+
+use App\Core\Database\Database;
 
 /**
  * APS Dream Home - WhatsApp Integration Manager
@@ -25,7 +27,7 @@ class WhatsAppManager
 
     public function __construct($db = null, $logger = null)
     {
-        $this->db = $db ?: \App\Core\App::database();
+        $this->db = $db ?: Database::getInstance();
         $this->logger = $logger;
         $this->createWhatsAppTables();
         $this->setupWhatsAppConfiguration();

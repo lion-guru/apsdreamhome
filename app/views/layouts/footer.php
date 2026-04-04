@@ -3,13 +3,13 @@
         <div class="row">
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <h5 class="mb-3 text-white">APS Dream Home</h5>
+                <h5 class="mb-3 text-white">APS Dream Homes Pvt Ltd</h5>
                 <p class="text-light">With over 8 years of excellence in real estate, we help families and businesses find their perfect properties across Gorakhpur, Lucknow, and Uttar Pradesh.</p>
                 <div class="social-links">
-                    <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.facebook.com/apsdreamhomes/" target="_blank" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/apsdreamhomes/" target="_blank" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.justdial.com/Gorakhpur/Aps-Dream-Homes-Pvt-Ltd-Near-Ganpati-Lawn-Kunraghat/9999PX551-X551-220919133119-G7Q6_BZDET" target="_blank" class="text-white me-3"><i class="fas fa-phone"></i></a>
+                    <a href="https://www.falconebiz.com/company/APS-DREAM-HOMES-PRIVATE-LIMITED-U70109UP2022PTC163047" target="_blank" class="text-white me-3"><i class="fas fa-building"></i></a>
                 </div>
             </div>
 
@@ -43,11 +43,15 @@
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <i class="fas fa-map-marker-alt me-2"></i>
-                        <span class="text-light">Gorakhpur, Uttar Pradesh, India</span>
+                        <span class="text-light">1st floor, Singhariya Chauraha, Kunraghat, Gorakhpur, UP - 273008</span>
                     </li>
                     <li class="mb-3">
                         <i class="fas fa-phone me-2"></i>
-                        <span class="text-light">+91 98765 43210</span>
+                        <span class="text-light">+91 92771 21112</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone me-2"></i>
+                        <span class="text-light">+91 70074 44842</span>
                     </li>
                     <li class="mb-3">
                         <i class="fas fa-envelope me-2"></i>

@@ -1,40 +1,50 @@
 <?php
 
-namespace App\Services\Legacy;
+namespace App\Services\Commission;
+
+use App\Core\Database\Database;
+use App\Services\LoggingService;
+
 /**
  * Hybrid Real Estate Commission System
  * Supports both company properties (colony plotting) and resell properties
  * Integrates development cost calculation with commission structures
  */
 
-class HybridRealEstateCommission {
+class HybridRealEstateCommission
+{
 
     private $db;
     private $current_plan = null;
+    private $logger;
 
-    public function __construct($db = null) {
-        $this->db = $db ?: \App\Core\App::database();
+    public function __construct($db = null)
+    {
+        $this->db = $db ?: Database::getInstance();
+        $this->logger = new LoggingService();
         $this->loadActivePlan();
     }
 
     /**
      * Load the active hybrid commission plan
      */
-    private function loadActivePlan() {
+    private function loadActivePlan()
+    {
         try {
             $query = "SELECT * FROM hybrid_commission_plans WHERE status = 'active' LIMIT 1";
             $this->current_plan = $this->db->fetch($query);
-            
+
             if (!$this->current_plan) {
                 $this->current_plan = $this->getDefaultPlan();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // If table doesn't exist, use default plan
             $this->current_plan = $this->getDefaultPlan();
         }
     }
 
-    private function getDefaultPlan() {
+    private function getDefaultPlan()
+    {
         return [
             'id' => 1,
             'plan_name' => 'Default Hybrid Plan',
@@ -48,7 +58,8 @@ class HybridRealEstateCommission {
     /**
      * Calculate commission for a property sale
      */
-    public function calculateCommission($associate_id, $property_id, $sale_amount, $customer_id = null) {
+    public function calculateCommission($associate_id, $property_id, $sale_amount, $customer_id = null)
+    {
         if (!$this->current_plan) {
             return ['success' => false, 'message' => 'No active commission plan found'];
         }
@@ -90,7 +101,8 @@ class HybridRealEstateCommission {
     /**
      * Calculate commission for company properties using MLM structure
      */
-    private function calculateCompanyPropertyCommission($commission_data, $property) {
+    private function calculateCompanyPropertyCommission($commission_data, $property)
+    {
         $associate_level = $this->getAssociateLevel($commission_data['associate_id']);
         $level_details = $this->getLevelDetails($associate_level);
 
@@ -128,7 +140,8 @@ class HybridRealEstateCommission {
     /**
      * Calculate commission for resell properties
      */
-    private function calculateResellPropertyCommission($commission_data, $property) {
+    private function calculateResellPropertyCommission($commission_data, $property)
+    {
         $commission_structure = $this->getResellCommissionStructure($property['property_category'], $commission_data['sale_amount']);
 
         if ($commission_structure) {
@@ -153,7 +166,8 @@ class HybridRealEstateCommission {
     /**
      * Calculate plot rate including development cost and commission
      */
-    public function calculatePlotRate($land_cost, $development_cost, $area_sqft, $profit_margin_percentage = 25) {
+    public function calculatePlotRate($land_cost, $development_cost, $area_sqft, $profit_margin_percentage = 25)
+    {
         // Calculate total cost
         $total_cost = $land_cost + $development_cost;
 
@@ -185,7 +199,8 @@ class HybridRealEstateCommission {
     /**
      * Save development cost breakdown
      */
-    public function saveDevelopmentCosts($property_id, $cost_breakdown) {
+    public function saveDevelopmentCosts($property_id, $cost_breakdown)
+    {
         try {
             // First, delete existing costs for this property
             $delete_query = "DELETE FROM property_development_costs WHERE property_id = ?";
@@ -213,7 +228,7 @@ class HybridRealEstateCommission {
             }
 
             return ['success' => true, 'message' => 'Development costs saved successfully'];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return ['success' => false, 'message' => 'Error saving development costs: ' . $e->getMessage()];
         }
     }
@@ -221,11 +236,12 @@ class HybridRealEstateCommission {
     /**
      * Get property details
      */
-    private function getPropertyDetails($property_id) {
+    private function getPropertyDetails($property_id)
+    {
         try {
             $query = "SELECT * FROM real_estate_properties WHERE id = ?";
             return $this->db->fetch($query, [$property_id]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -233,7 +249,8 @@ class HybridRealEstateCommission {
     /**
      * Get associate level
      */
-    private function getAssociateLevel($associate_id) {
+    private function getAssociateLevel($associate_id)
+    {
         // This would typically check the associate's performance and assign level
         // For now, return a default level
         return 'Associate';
@@ -242,7 +259,8 @@ class HybridRealEstateCommission {
     /**
      * Get level details
      */
-    private function getLevelDetails($level_name) {
+    private function getLevelDetails($level_name)
+    {
         try {
             if (!$this->current_plan) return null;
 
@@ -253,12 +271,13 @@ class HybridRealEstateCommission {
             $level_details = $this->db->fetch($query, [$this->current_plan['id'], $level_name]);
 
             return $level_details ?: $this->getDefaultLevelDetails($level_name);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->getDefaultLevelDetails($level_name);
         }
     }
 
-    private function getDefaultLevelDetails($level_name) {
+    private function getDefaultLevelDetails($level_name)
+    {
         $default_levels = [
             'Associate' => [
                 'level_name' => 'Associate',
@@ -295,7 +314,8 @@ class HybridRealEstateCommission {
     /**
      * Get resell commission structure
      */
-    private function getResellCommissionStructure($property_category, $sale_amount) {
+    private function getResellCommissionStructure($property_category, $sale_amount)
+    {
         try {
             if (!$this->current_plan) return null;
 
@@ -307,12 +327,13 @@ class HybridRealEstateCommission {
             $structure = $this->db->fetch($query, [$this->current_plan['id'], $property_category, $sale_amount]);
 
             return $structure ?: $this->getDefaultResellStructure($property_category, $sale_amount);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->getDefaultResellStructure($property_category, $sale_amount);
         }
     }
 
-    private function getDefaultResellStructure($property_category, $sale_amount) {
+    private function getDefaultResellStructure($property_category, $sale_amount)
+    {
         $default_structures = [
             'plot' => ['commission_percentage' => 5, 'commission_type' => 'percentage', 'fixed_commission' => 0],
             'flat' => ['commission_percentage' => 3, 'commission_type' => 'percentage', 'fixed_commission' => 0],
@@ -327,7 +348,8 @@ class HybridRealEstateCommission {
     /**
      * Save commission record
      */
-    private function saveCommissionRecord($commission_data) {
+    private function saveCommissionRecord($commission_data)
+    {
         try {
             $query = "INSERT INTO hybrid_commission_records
                      (associate_id, property_id, customer_id, sale_amount, commission_amount,
@@ -348,7 +370,7 @@ class HybridRealEstateCommission {
                 $commission_data['level_achieved'],
                 $payout_status
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // If there's an error saving, just continue - the commission calculation is still valid
             return;
         }
@@ -357,7 +379,8 @@ class HybridRealEstateCommission {
     /**
      * Get commission summary for an associate
      */
-    public function getCommissionSummary($associate_id, $start_date = null, $end_date = null) {
+    public function getCommissionSummary($associate_id, $start_date = null, $end_date = null)
+    {
         try {
             $where_clause = "";
             $params = [$associate_id];
@@ -381,7 +404,7 @@ class HybridRealEstateCommission {
                      GROUP BY commission_type";
 
             return $this->db->fetchAll($query, $params);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }
@@ -389,7 +412,8 @@ class HybridRealEstateCommission {
     /**
      * Get development cost analysis
      */
-    public function getDevelopmentCostAnalysis($property_id) {
+    public function getDevelopmentCostAnalysis($property_id)
+    {
         try {
             $query = "SELECT
                         cost_type,
@@ -413,7 +437,7 @@ class HybridRealEstateCommission {
                 'total_cost' => $total_cost,
                 'analysis' => $this->analyzeCosts($costs)
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'costs' => [],
                 'total_cost' => 0,
@@ -425,7 +449,8 @@ class HybridRealEstateCommission {
     /**
      * Analyze development costs
      */
-    private function analyzeCosts($costs) {
+    private function analyzeCosts($costs)
+    {
         $analysis = [
             'highest_cost' => null,
             'lowest_cost' => null,
@@ -444,4 +469,3 @@ class HybridRealEstateCommission {
         return $analysis;
     }
 }
-?>

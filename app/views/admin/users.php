@@ -173,7 +173,7 @@ ob_start();
                                     </td>
                                     <td><span class="badge bg-primary">Customer</span></td>
                                     <td>
-                                        <div>+91 98765 43210</div>
+                                        <div>+91 92771 21112</div>
                                         <small class="text-muted">john.doe@email.com</small>
                                     </td>
                                     <td>Gorakhpur, UP</td>

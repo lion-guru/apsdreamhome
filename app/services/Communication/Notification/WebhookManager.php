@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Services\Legacy\Notification;
+namespace App\Services\Communication\Notification;
 
-use App\Services\Legacy\SecurityLogger;
-use Exception;
+use App\Core\Database\Database;
+use App\Services\LoggingService;
 
 /**
  * Webhook Manager
  * Manages webhook subscriptions and notifications for system events
  */
-class WebhookManager {
+class WebhookManager
+{
     private $logger;
     private $db;
     private $cache;
     private $config;
 
-    public function __construct() {
-        $this->db = \App\Core\App::database();
-        $this->logger = new SecurityLogger();
+    public function __construct()
+    {
+        $this->db = Database::getInstance();
+        $this->logger = new LoggingService();
         $this->initializeCache();
         $this->loadConfig();
         $this->ensureWebhookTable();
@@ -26,7 +28,8 @@ class WebhookManager {
     /**
      * Initialize Redis cache for webhook delivery tracking
      */
-    private function initializeCache() {
+    private function initializeCache()
+    {
         try {
             if (\class_exists('\Redis')) {
                 $className = '\Redis';
@@ -57,7 +60,8 @@ class WebhookManager {
     /**
      * Load configuration
      */
-    private function loadConfig() {
+    private function loadConfig()
+    {
         $this->config = [
             'max_retries' => 3,
             'retry_delay' => 60, // seconds
@@ -80,7 +84,8 @@ class WebhookManager {
     /**
      * Ensure webhook tables exist
      */
-    private function ensureWebhookTable() {
+    private function ensureWebhookTable()
+    {
         $this->db->execute("
             CREATE TABLE IF NOT EXISTS webhooks (
                 id VARCHAR(36) PRIMARY KEY,
@@ -114,7 +119,8 @@ class WebhookManager {
     /**
      * Send webhook notification
      */
-    public function notify($eventType, $payload) {
+    public function notify($eventType, $payload)
+    {
         // Logic to find and notify relevant webhooks
         // (Implementation omitted for brevity as per original file structure)
     }

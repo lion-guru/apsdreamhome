@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $whatsapp_message .= "• Mobile + Password\n";
                 $whatsapp_message .= "• Email + Password\n\n";
 
-                $whatsapp_message .= "📞 Contact: +91-9876543210\n";
+                $whatsapp_message .= "📞 Contact: +91-9277121112\n";
                 $whatsapp_message .= "🌐 Portal: http://localhost/apsdreamhome/builder_login.php\n\n";
                 $whatsapp_message .= "List your projects and reach thousands of buyers! 🏠✨";
 
@@ -585,7 +585,7 @@ $current_year = date('Y');
                         <h6 class="text-muted">Need Help?</h6>
                         <p class="mb-2">
                             <i class="fas fa-phone me-2"></i>
-                            <strong>Support:</strong> +91-9876543210
+                            <strong>Support:</strong> +91-9277121112
                         </p>
                         <p class="mb-0">
                             <i class="fas fa-envelope me-2"></i>
