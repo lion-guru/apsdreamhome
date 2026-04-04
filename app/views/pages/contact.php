@@ -94,7 +94,7 @@
                             How can I schedule a property visit?
                         </h2>
                         <div class="accordion-content">
-                            <p>You can call us at +91-7007444842 or fill out the contact form. Our team will get back to you to arrange a convenient time.</p>
+                            <p>You can call us at +91 92771 21112 / +91 70074 44842 or fill out the contact form. Our team will get back to you to arrange a convenient time.</p>
                         </div>
                     </div>
                     <div class="accordion-item">
