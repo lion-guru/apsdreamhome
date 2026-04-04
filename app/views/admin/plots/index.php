@@ -1,278 +1,379 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? 'Plot Management') ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky pt-3">
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Admin Panel</span>
-                    </h6>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/dashboard">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/sites">
-                                <i class="fas fa-map-marked-alt"></i> Sites
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/properties">
-                                <i class="fas fa-building"></i> Properties
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="/admin/plots">
-                                <i class="fas fa-th"></i> Plots
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/bookings">
-                                <i class="fas fa-calendar-check"></i> Bookings
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/users">
-                                <i class="fas fa-users"></i> Users
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+<?php include __DIR__ . '/../../../layouts/admin_header.php'; ?>
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Plot Management</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <a href="/admin/plots/create" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Add New Plot
-                            </a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-th"></i> Plots Management</h2>
+                <div>
+                    <a href="/admin/plots/create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Plot
+                    </a>
+                    <a href="/admin/plots/export" class="btn btn-success">
+                        <i class="fas fa-download"></i> Export CSV
+                    </a>
+                    <a href="/admin/locations/colonies" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Colonies
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Plots</h5>
+                            <h3><?php echo $stats['total']; ?></h3>
                         </div>
                     </div>
                 </div>
-
-                <!-- Filters -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Available</h5>
+                            <h3><?php echo $stats['by_status']['available'] ?? 0; ?></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Booked</h5>
+                            <h3><?php echo $stats['by_status']['booked'] ?? 0; ?></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Sold</h5>
+                            <h3><?php echo $stats['by_status']['sold'] ?? 0; ?></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="GET" action="/admin/plots">
+                        <div class="row">
                             <div class="col-md-3">
-                                <select name="site_id" class="form-select">
-                                    <option value="">All Sites</option>
-                                    <?php foreach ($sites as $site): ?>
-                                        <option value="<?= $site['id'] ?>" <?= ($filters['site_id'] ?? '') == $site['id'] ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($site['site_name']) ?>
+                                <label for="colony_id" class="form-label">Filter by Colony</label>
+                                <select class="form-select" id="colony_id" name="colony_id">
+                                    <option value="">All Colonies</option>
+                                    <?php foreach ($colonies as $colony): ?>
+                                        <option value="<?php echo $colony['id']; ?>" <?php echo (isset($_GET['colony_id']) && $_GET['colony_id'] == $colony['id']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($colony['state_name'] . ' > ' . $colony['district_name'] . ' > ' . $colony['colony_name']); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <input type="text" name="search" class="form-control" placeholder="Search plots..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
-                            </div>
                             <div class="col-md-2">
-                                <select name="status" class="form-select">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
                                     <option value="">All Status</option>
-                                    <option value="available" <?= ($filters['status'] ?? '') === 'available' ? 'selected' : '' ?>>Available</option>
-                                    <option value="sold" <?= ($filters['status'] ?? '') === 'sold' ? 'selected' : '' ?>>Sold</option>
-                                    <option value="reserved" <?= ($filters['status'] ?? '') === 'reserved' ? 'selected' : '' ?>>Reserved</option>
-                                    <option value="under_process" <?= ($filters['status'] ?? '') === 'under_process' ? 'selected' : '' ?>>Under Process</option>
+                                    <option value="available" <?php echo (isset($_GET['status']) && $_GET['status'] == 'available') ? 'selected' : ''; ?>>Available</option>
+                                    <option value="booked" <?php echo (isset($_GET['status']) && $_GET['status'] == 'booked') ? 'selected' : ''; ?>>Booked</option>
+                                    <option value="sold" <?php echo (isset($_GET['status']) && $_GET['status'] == 'sold') ? 'selected' : ''; ?>>Sold</option>
+                                    <option value="hold" <?php echo (isset($_GET['status']) && $_GET['status'] == 'hold') ? 'selected' : ''; ?>>Hold</option>
+                                    <option value="reserved" <?php echo (isset($_GET['status']) && $_GET['status'] == 'reserved') ? 'selected' : ''; ?>>Reserved</option>
+                                    <option value="under_construction" <?php echo (isset($_GET['status']) && $_GET['status'] == 'under_construction') ? 'selected' : ''; ?>>Under Construction</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-outline-primary">
-                                    <i class="fas fa-search"></i> Search
-                                </button>
+                                <label for="plot_type" class="form-label">Plot Type</label>
+                                <select class="form-select" id="plot_type" name="plot_type">
+                                    <option value="">All Types</option>
+                                    <option value="residential" <?php echo (isset($_GET['plot_type']) && $_GET['plot_type'] == 'residential') ? 'selected' : ''; ?>>Residential</option>
+                                    <option value="commercial" <?php echo (isset($_GET['plot_type']) && $_GET['plot_type'] == 'commercial') ? 'selected' : ''; ?>>Commercial</option>
+                                    <option value="industrial" <?php echo (isset($_GET['plot_type']) && $_GET['plot_type'] == 'industrial') ? 'selected' : ''; ?>>Industrial</option>
+                                    <option value="mixed" <?php echo (isset($_GET['plot_type']) && $_GET['plot_type'] == 'mixed') ? 'selected' : ''; ?>>Mixed</option>
+                                </select>
                             </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Plots Table -->
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Plot No</th>
-                                        <th>Site</th>
-                                        <th>Area (sq ft)</th>
-                                        <th>Available Area</th>
-                                        <th>Dimensions</th>
-                                        <th>Facing</th>
-                                        <th>Price</th>
-                                        <th>Status</th>
-                                        <th>Created</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (empty($plots)): ?>
-                                        <tr>
-                                            <td colspan="10" class="text-center">No plots found</td>
-                                        </tr>
-                                    <?php else: ?>
-                                        <?php foreach ($plots as $plot): ?>
-                                            <tr>
-                                                <td>
-                                                    <strong><?= htmlspecialchars($plot['plot_no']) ?></strong>
-                                                    <?php if (!empty($plot['plot_dimension'])): ?>
-                                                        <br><small class="text-muted"><?= htmlspecialchars($plot['plot_dimension']) ?></small>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <?= htmlspecialchars($plot['site_name']) ?>
-                                                    <br><small class="text-muted"><?= htmlspecialchars($plot['site_location']) ?></small>
-                                                </td>
-                                                <td><?= number_format($plot['area'], 2) ?></td>
-                                                <td><?= number_format($plot['available_area'], 2) ?></td>
-                                                <td><?= htmlspecialchars($plot['plot_dimension'] ?? 'N/A') ?></td>
-                                                <td><?= htmlspecialchars($plot['plot_facing'] ?? 'N/A') ?></td>
-                                                <td>
-                                                    <?php if ($plot['plot_price'] > 0): ?>
-                                                        ₹<?= number_format($plot['plot_price'], 2) ?>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">Not Set</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    $statusColors = [
-                                                        'available' => 'success',
-                                                        'sold' => 'danger',
-                                                        'reserved' => 'warning',
-                                                        'under_process' => 'info'
-                                                    ];
-                                                    $color = $statusColors[$plot['plot_status']] ?? 'secondary';
-                                                    ?>
-                                                    <span class="badge bg-<?= $color ?>">
-                                                        <?= htmlspecialchars(ucfirst(str_replace('_', ' ', $plot['plot_status']))) ?>
-                                                    </span>
-                                                </td>
-                                                <td><?= date('M j, Y', strtotime($plot['created_at'] ?? 'now')) ?></td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm">
-                                                        <a href="/admin/plots/<?= $plot['plot_id'] ?>" class="btn btn-outline-primary" title="View">
-                                                            <i class="fas fa-eye"></i>
-                                                        </a>
-                                                        <a href="/admin/plots/<?= $plot['plot_id'] ?>/edit" class="btn btn-outline-warning" title="Edit">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <?php if ($plot['plot_status'] === 'available'): ?>
-                                                            <button type="button" class="btn btn-outline-success" onclick="bookPlot(<?= $plot['plot_id'] ?>)" title="Book Plot">
-                                                                <i class="fas fa-calendar-plus"></i>
-                                                            </button>
-                                                        <?php endif; ?>
-                                                        <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(<?= $plot['plot_id'] ?>)" title="Delete">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-filter"></i> Apply Filter
+                                    </button>
+                                    <a href="/admin/plots" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Clear
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <div>
+                                    <button type="button" class="btn btn-warning" onclick="showBulkStatusModal()">
+                                        <i class="fas fa-edit"></i> Bulk Update
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-
-                        <!-- Pagination -->
-                        <?php if ($total_pages > 1): ?>
-                            <nav aria-label="Plot pagination">
-                                <ul class="pagination justify-content-center">
-                                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                                        <li class="page-item <?= $i === $current_page ? 'active' : '' ?>">
-                                            <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($filters['search'] ?? '') ?>&status=<?= urlencode($filters['status'] ?? '') ?>&site_id=<?= urlencode($filters['site_id'] ?? '') ?>">
-                                                <?= $i ?>
-                                            </a>
-                                        </li>
-                                    <?php endfor; ?>
-                                </ul>
-                            </nav>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this plot? This action cannot be undone.</p>
-                    <p class="text-danger"><strong>Note:</strong> You cannot delete a plot that has existing bookings.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form method="POST" id="deleteForm" style="display: inline;">
-                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                        <button type="submit" class="btn btn-danger">Delete Plot</button>
                     </form>
+                </div>
+            </div>
+            
+            <!-- Plots Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Plots List</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="plotsTable">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                                    <th>Plot Number</th>
+                                    <th>Location</th>
+                                    <th>Type</th>
+                                    <th>Area (Sqft)</th>
+                                    <th>Total Price</th>
+                                    <th>Status</th>
+                                    <th>Customer</th>
+                                    <th>Features</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($plots as $plot): ?>
+                                <tr>
+                                    <td><input type="checkbox" class="plot-checkbox" value="<?php echo $plot['id']; ?>"></td>
+                                    <td>
+                                        <strong><?php echo htmlspecialchars($plot['plot_number']); ?></strong>
+                                        <?php if ($plot['is_featured']): ?>
+                                            <i class="fas fa-star text-warning"></i>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <?php echo htmlspecialchars($plot['colony_name']); ?><br>
+                                            <?php echo htmlspecialchars($plot['district_name']); ?>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info"><?php echo htmlspecialchars($plot['plot_type']); ?></span>
+                                    </td>
+                                    <td>
+                                        <?php echo number_format($plot['area_sqft']); ?>
+                                        <?php if ($plot['corner_plot']): ?>
+                                            <i class="fas fa-crown text-warning" title="Corner Plot"></i>
+                                        <?php endif; ?>
+                                        <?php if ($plot['park_facing']): ?>
+                                            <i class="fas fa-tree text-success" title="Park Facing"></i>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <strong>₹<?php echo number_format($plot['total_price']); ?></strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<?php 
+                                            echo match($plot['status']) {
+                                                'available' => 'success',
+                                                'booked' => 'warning',
+                                                'sold' => 'danger',
+                                                'hold' => 'secondary',
+                                                'reserved' => 'info',
+                                                'under_construction' => 'dark',
+                                                default => 'secondary'
+                                            };
+                                        ?>">
+                                            <?php echo ucfirst($plot['status']); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if ($plot['customer_name']): ?>
+                                            <small>
+                                                <?php echo htmlspecialchars($plot['customer_name']); ?><br>
+                                                <?php echo htmlspecialchars($plot['customer_phone'] ?? ''); ?>
+                                            </small>
+                                        <?php else: ?>
+                                            <span class="text-muted">-</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <?php echo htmlspecialchars($plot['facing'] ?? ''); ?> Facing<br>
+                                            <?php echo $plot['road_width_ft']; ?>ft Road
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="/admin/plots/show/<?php echo $plot['id']; ?>" class="btn btn-outline-info" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/admin/plots/edit/<?php echo $plot['id']; ?>" class="btn btn-outline-primary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-outline-warning" onclick="quickStatusUpdate(<?php echo $plot['id']; ?>, '<?php echo $plot['status']; ?>')" title="Quick Status">
+                                                <i class="fas fa-sync"></i>
+                                            </button>
+                                            <a href="/admin/plots/delete/<?php echo $plot['id']; ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function confirmDelete(plotId) {
-            document.getElementById('deleteForm').action = '/admin/plots/' + plotId + '/destroy';
-            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+<!-- Bulk Status Update Modal -->
+<div class="modal fade" id="bulkStatusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bulk Status Update</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="bulk_status" class="form-label">New Status</label>
+                    <select class="form-select" id="bulk_status">
+                        <option value="">Select Status</option>
+                        <option value="available">Available</option>
+                        <option value="booked">Booked</option>
+                        <option value="sold">Sold</option>
+                        <option value="hold">Hold</option>
+                        <option value="reserved">Reserved</option>
+                        <option value="under_construction">Under Construction</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="bulk_reason" class="form-label">Reason</label>
+                    <textarea class="form-control" id="bulk_reason" rows="2" placeholder="Reason for status change..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="performBulkUpdate()">Update Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Status Update Modal -->
+<div class="modal fade" id="quickStatusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Plot Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="quick_plot_id">
+                <div class="mb-3">
+                    <label for="quick_status" class="form-label">New Status</label>
+                    <select class="form-select" id="quick_status">
+                        <option value="">Select Status</option>
+                        <option value="available">Available</option>
+                        <option value="booked">Booked</option>
+                        <option value="sold">Sold</option>
+                        <option value="hold">Hold</option>
+                        <option value="reserved">Reserved</option>
+                        <option value="under_construction">Under Construction</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="quick_reason" class="form-label">Reason</label>
+                    <textarea class="form-control" id="quick_reason" rows="2" placeholder="Reason for status change..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="performQuickUpdate()">Update Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleSelectAll() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.plot-checkbox');
+    checkboxes.forEach(checkbox => checkbox.checked = selectAll.checked);
+}
+
+function showBulkStatusModal() {
+    const selected = document.querySelectorAll('.plot-checkbox:checked');
+    if (selected.length === 0) {
+        alert('Please select at least one plot');
+        return;
+    }
+    
+    const modal = new bootstrap.Modal(document.getElementById('bulkStatusModal'));
+    modal.show();
+}
+
+function performBulkUpdate() {
+    const selected = document.querySelectorAll('.plot-checkbox:checked');
+    const plotIds = Array.from(selected).map(cb => cb.value);
+    const status = document.getElementById('bulk_status').value;
+    const reason = document.getElementById('bulk_reason').value;
+    
+    if (!status) {
+        alert('Please select a status');
+        return;
+    }
+    
+    fetch('/admin/plots/bulk-status-update', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `plot_ids=${plotIds.join(',')}&status=${status}&reason=${encodeURIComponent(reason)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert(data.message);
         }
+    });
+}
 
-        function bookPlot(plotId) {
-            // Redirect to booking form with pre-selected plot
-            window.location.href = '/admin/bookings/create?plot_id=' + plotId;
+function quickStatusUpdate(plotId, currentStatus) {
+    document.getElementById('quick_plot_id').value = plotId;
+    document.getElementById('quick_status').value = currentStatus;
+    
+    const modal = new bootstrap.Modal(document.getElementById('quickStatusModal'));
+    modal.show();
+}
+
+function performQuickUpdate() {
+    const plotId = document.getElementById('quick_plot_id').value;
+    const status = document.getElementById('quick_status').value;
+    const reason = document.getElementById('quick_reason').value;
+    
+    if (!status) {
+        alert('Please select a status');
+        return;
+    }
+    
+    fetch(`/admin/plots/${plotId}/status`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `status=${status}&reason=${encodeURIComponent(reason)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert(data.message);
         }
+    });
+}
+</script>
 
-        // Auto-refresh availability status
-        setInterval(function() {
-            fetch('/admin/plots/check-availability?' + new URLSearchParams(window.location.search))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update plot statuses in real-time
-                        document.querySelectorAll('table tbody tr').forEach(row => {
-                            const plotId = row.querySelector('a[href*="/admin/plots/"]').href.split('/').pop();
-                            const statusBadge = row.querySelector('.badge');
-                            if (statusBadge && data.plots) {
-                                const plot = data.plots.find(p => p.plot_id == plotId);
-                                if (plot) {
-                                    statusBadge.textContent = plot.plot_status.replace('_', ' ');
-                                    statusBadge.className = 'badge bg-' + getStatusColor(plot.plot_status);
-                                }
-                            }
-                        });
-                    }
-                });
-        }, 30000); // Check every 30 seconds
-
-        function getStatusColor(status) {
-            const colors = {
-                'available': 'success',
-                'sold': 'danger',
-                'reserved': 'warning',
-                'under_process': 'info'
-            };
-            return colors[status] || 'secondary';
-        }
-    </script>
-</body>
-</html>
+<?php include __DIR__ . '/../../../layouts/admin_footer.php'; ?>
