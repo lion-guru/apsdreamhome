@@ -1,0 +1,96 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/gemma3:1b",
+  "providers": {
+    "ollama": {
+      "baseURL": "http://localhost:11434"
+    }
+  },
+  "instructions": [
+    "README.md",
+    "AGENTS.md",
+    "docs/"
+  ],
+  "mcp": {
+    "filesystem": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "C:\\xampp\\htdocs\\apsdreamhome"],
+      "description": "APS Dream Home File System"
+    },
+    "git": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-git", "C:\\xampp\\htdocs\\apsdreamhome"],
+      "description": "Git Operations"
+    },
+    "fetch": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-fetch"],
+      "description": "Web Fetch"
+    },
+    "memory": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "description": "Memory Server"
+    },
+    "mysql": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-mysql"],
+      "env": {
+        "MYSQL_HOST": "localhost",
+        "MYSQL_PORT": "3306",
+        "MYSQL_USER": "root",
+        "MYSQL_PASSWORD": "",
+        "MYSQL_DATABASE": "apsdreamhome"
+      },
+      "description": "MySQL Database - APS Dream Home"
+    },
+    "github": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "env:GITHUB_TOKEN"
+      },
+      "description": "GitHub API"
+    }
+  },
+  "lsp": {
+    "php": {
+      "command": ["intelephense", "serve"],
+      "filetypes": ["php"]
+    },
+    "javascript": {
+      "command": ["typescript-language-server", "--stdio"],
+      "filetypes": ["javascript", "typescript"]
+    }
+  },
+  "permission": {
+    "allowEdit": true,
+    "allowWrite": true,
+    "allowBash": "ask",
+    "allowWebfetch": true
+  },
+  "ignore": [
+    ".env",
+    ".env.*",
+    "vendor/",
+    "node_modules/",
+    "storage/logs/*",
+    "storage/backup/*",
+    "*.sql",
+    "*.pem",
+    "*.key"
+  ],
+  "theme": "dracula",
+  "agents": {
+    "php-expert": {
+      "description": "Laravel/PHP specialist for APS Dream Home",
+      "systemPrompt": "You are a Laravel/PHP expert specializing in APS Dream Home real estate CRM. Focus on Laravel best practices, PHP 8.2+ features, and the existing code patterns.",
+      "tools": ["read", "grep", "glob", "bash", "edit", "write"]
+    },
+    "frontend": {
+      "description": "JavaScript/CSS/UI specialist",
+      "systemPrompt": "You are a frontend specialist for APS Dream Home. Focus on vanilla JavaScript, CSS, Vite build system, and responsive UI.",
+      "tools": ["read", "grep", "glob", "bash", "edit", "write"]
+    }
+  }
+}

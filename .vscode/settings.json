@@ -128,55 +128,9 @@
     "// APS Dream Home - MCP Tools Configuration": "",
     "mcp.enabled": true,
     "mcp.autoStart": true,
-    "mcp.servers": {
-        "mysql": {
-            "enabled": true,
-            "autoStart": true,
-            "description": "APS Dream Home Database Server"
-        },
-        "filesystem": {
-            "enabled": true,
-            "autoStart": true,
-            "description": "APS Dream Home File System Access"
-        },
-        "memory": {
-            "enabled": true,
-            "autoStart": true,
-            "description": "APS Dream Home Memory Server"
-        },
-        "sqlite": {
-            "enabled": true,
-            "autoStart": true,
-            "description": "APS Dream Home SQLite Database"
-        },
-        "puppeteer": {
-            "enabled": true,
-            "autoStart": false,
-            "description": "APS Dream Home Web Automation"
-        },
-        "fetch": {
-            "enabled": true,
-            "autoStart": true,
-            "description": "APS Dream Home API Integration"
-        },
-        "analytics": {
-            "enabled": true,
-            "autoStart": true,
-            "description": "APS Dream Home Analytics Server"
-        },
-        "ai-services": {
-            "enabled": true,
-            "autoStart": true,
-            "description": "APS Dream Home AI Services"
-        },
-        "config-server": {
-            "enabled": true,
-            "autoStart": true,
-            "description": "APS Dream Home Configuration Server"
-        }
-    },
-    "mcp.serverConfigPath": ".windsurf/mcp_servers.json",
-    "mcp.envPath": ".windsurf/mcp_config.env",
+    "mcp.servers": {},
+    "mcp.serverConfigPath": "mcp_config/mcp_servers.json",
+    "mcp.envPath": ".vscode/mcp_config.env",
     "mcp.projectRoot": "${workspaceFolder}",
     "mcp.showStatusBar": true,
     "mcp.showActivityBar": true,
