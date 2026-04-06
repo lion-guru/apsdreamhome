@@ -2,8 +2,13 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Redirect all requests to public/ directory
+    # Don't redirect testing directory to public
+    RewriteCond %{REQUEST_URI} ^/testing/
+    RewriteRule ^testing/(.*)$ testing/$1 [L]
+    
+    # Redirect all other requests to public/ directory
     RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_URI} !^/testing/
     RewriteRule ^(.*)$ public/$1 [L]
     
     # Handle requests in public/ directory
