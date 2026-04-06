@@ -15,6 +15,7 @@ use Exception;
 class NewsController extends AdminController
 {
     private $loggingService;
+    protected $layout = null;
 
     public function __construct()
     {
@@ -39,9 +40,8 @@ class NewsController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             // Build query
-            $sql = "SELECT n.*, u.name as author_name
+            $sql = "SELECT n.*, COALESCE(n.author_name, 'Admin') as author_name
                     FROM news n
-                    LEFT JOIN users u ON n.author_id = u.id
                     WHERE 1=1";
             $params = [];
 
@@ -54,7 +54,7 @@ class NewsController extends AdminController
                 $params[] = $searchParam;
             }
 
-            if (!empty($status)) {
+            if (!empty($status) && in_array($status, ['published', 'draft', 'archived'])) {
                 $sql .= " AND n.status = ?";
                 $params[] = $status;
             }
@@ -62,7 +62,7 @@ class NewsController extends AdminController
             $sql .= " ORDER BY n.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT n.*, u.name as author_name", "SELECT COUNT(DISTINCT n.id) as total", $sql);
+            $countSql = preg_replace('/SELECT .* FROM/', 'SELECT COUNT(*) as total FROM', $sql, 1);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -94,7 +94,7 @@ class NewsController extends AdminController
         } catch (Exception $e) {
             $this->loggingService->error("News Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load news');
-            return $this->redirect('admin/dashboard');
+            return $this->redirect(BASE_URL . '/admin/dashboard');
         }
     }
 
@@ -113,7 +113,7 @@ class NewsController extends AdminController
         } catch (Exception $e) {
             $this->loggingService->error("News Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load news form');
-            return $this->redirect('admin/news');
+            return $this->redirect(BASE_URL . '/admin/news');
         }
     }
 
@@ -204,7 +204,7 @@ class NewsController extends AdminController
             $newsId = intval($id);
             if ($newsId <= 0) {
                 $this->setFlash('error', 'Invalid news ID');
-                return $this->redirect('admin/news');
+                return $this->redirect(BASE_URL . '/admin/news');
             }
 
             // Get news article details
@@ -218,7 +218,7 @@ class NewsController extends AdminController
 
             if (!$news) {
                 $this->setFlash('error', 'News article not found');
-                return $this->redirect('admin/news');
+                return $this->redirect(BASE_URL . '/admin/news');
             }
 
             $data = [
@@ -231,7 +231,7 @@ class NewsController extends AdminController
         } catch (Exception $e) {
             $this->loggingService->error("News Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load news article');
-            return $this->redirect('admin/news');
+            return $this->redirect(BASE_URL . '/admin/news');
         }
     }
 
@@ -244,7 +244,7 @@ class NewsController extends AdminController
             $newsId = intval($id);
             if ($newsId <= 0) {
                 $this->setFlash('error', 'Invalid news ID');
-                return $this->redirect('admin/news');
+                return $this->redirect(BASE_URL . '/admin/news');
             }
 
             // Get news article details
@@ -255,7 +255,7 @@ class NewsController extends AdminController
 
             if (!$news) {
                 $this->setFlash('error', 'News article not found');
-                return $this->redirect('admin/news');
+                return $this->redirect(BASE_URL . '/admin/news');
             }
 
             $data = [
@@ -268,7 +268,7 @@ class NewsController extends AdminController
         } catch (Exception $e) {
             $this->loggingService->error("News Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load news form');
-            return $this->redirect('admin/news');
+            return $this->redirect(BASE_URL . '/admin/news');
         }
     }
 

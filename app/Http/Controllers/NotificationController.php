@@ -1,255 +1,60 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Services\NotificationService;
-use Exception;
-
-class NotificationController extends BaseController
+class NotificationController 
 {
-    private $notificationService;
-
-    public function __construct()
+    public function index() 
     {
-        parent::__construct();
-        $this->notificationService = new NotificationService();
+        // Notification Dashboard
+        include __DIR__ . "/../../views/notification/index.php";
     }
-
-    /**
-     * Get notifications for current user
-     */
-    public function getNotifications()
+    
+    public function templates() 
     {
-        $userId = $this->getCurrentUserId();
-        $filters = $_GET;
-
-        $notifications = $this->notificationService->getUserNotifications($userId, $filters);
-        $unreadCount = $this->notificationService->getUnreadCount($userId);
-
-        $this->jsonResponse([
-            'success' => true,
-            'data' => $notifications,
-            'unread_count' => $unreadCount
-        ]);
+        // Notification Templates
+        include __DIR__ . "/../../views/notification/templates.php";
     }
-
-    /**
-     * Mark notification as read
-     */
-    public function markAsRead()
+    
+    public function createTemplate() 
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
-        }
-
-        $notificationId = $_POST['notification_id'] ?? null;
-        $userId = $this->getCurrentUserId();
-
-        if (!$notificationId) {
-            $this->jsonResponse(['success' => false, 'message' => 'Notification ID required'], 400);
-        }
-
-        $result = $this->notificationService->markAsRead($notificationId, $userId);
-
-        if ($result) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Notification marked as read'
-            ]);
-        } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to mark notification as read'
-            ], 500);
-        }
+        // Create Notification Template
+        include __DIR__ . "/../../views/notification/create_template.php";
     }
-
-    /**
-     * Get active popups for current page
-     */
-    public function getPopups()
+    
+    public function editTemplate($id) 
     {
-        $page = $_GET['page'] ?? 'home';
-        $userRole = $this->getCurrentUserRole();
-
-        $popups = $this->notificationService->getActivePopups($page, $userRole);
-
-        // Filter out dismissed popups
-        $activePopups = [];
-        $userId = $this->getCurrentUserId();
-        $sessionId = session_id();
-
-        foreach ($popups as $popup) {
-            if (!$this->notificationService->isPopupDismissed($popup['id'], $userId, $sessionId)) {
-                $activePopups[] = $popup;
-            }
-        }
-
-        $this->jsonResponse([
-            'success' => true,
-            'data' => $activePopups
-        ]);
+        // Edit Notification Template
+        include __DIR__ . "/../../views/notification/edit_template.php";
     }
-
-    /**
-     * Dismiss a popup
-     */
-    public function dismissPopup()
+    
+    public function emailLogs() 
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
-        }
-
-        $popupId = $_POST['popup_id'] ?? null;
-        $userId = $this->getCurrentUserId();
-        $sessionId = session_id();
-
-        if (!$popupId) {
-            $this->jsonResponse(['success' => false, 'message' => 'Popup ID required'], 400);
-        }
-
-        $result = $this->notificationService->dismissPopup($popupId, $userId, $sessionId);
-
-        if ($result) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Popup dismissed'
-            ]);
-        } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to dismiss popup'
-            ], 500);
-        }
+        // Email Logs
+        include __DIR__ . "/../../views/notification/email_logs.php";
     }
-
-    /**
-     * Get unread notification count
-     */
-    public function getUnreadCount()
+    
+    public function smsLogs() 
     {
-        $userId = $this->getCurrentUserId();
-        $count = $this->notificationService->getUnreadCount($userId);
-
-        $this->jsonResponse([
-            'success' => true,
-            'data' => ['unread_count' => $count]
-        ]);
+        // SMS Logs
+        include __DIR__ . "/../../views/notification/sms_logs.php";
     }
-
-    /**
-     * Create notification (admin only)
-     */
-    public function createNotification()
+    
+    public function settings() 
     {
-        $this->middleware('admin.auth');
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
-        }
-
-        $notificationData = [
-            'title' => $_POST['title'] ?? '',
-            'message' => $_POST['message'] ?? '',
-            'type' => $_POST['type'] ?? 'info',
-            'target_audience' => $_POST['target_audience'] ?? 'all',
-            'user_id' => $_POST['user_id'] ?? null,
-            'campaign_id' => $_POST['campaign_id'] ?? null
-        ];
-
-        if (empty($notificationData['title'])) {
-            $this->jsonResponse(['success' => false, 'message' => 'Title is required'], 400);
-        }
-
-        $result = $this->notificationService->sendToTargetAudience($notificationData);
-
-        if ($result) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Notification created successfully'
-            ]);
-        } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to create notification'
-            ], 500);
-        }
+        // Notification Settings
+        include __DIR__ . "/../../views/notification/settings.php";
     }
-
-    /**
-     * Create popup (admin only)
-     */
-    public function createPopup()
+    
+    public function sendTest() 
     {
-        $this->middleware('admin.auth');
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
-        }
-
-        $popupData = [
-            'title' => $_POST['title'] ?? '',
-            'content' => $_POST['content'] ?? '',
-            'type' => $_POST['type'] ?? 'info',
-            'target_audience' => $_POST['target_audience'] ?? 'all',
-            'pages' => $_POST['pages'] ?? 'all',
-            'position' => $_POST['position'] ?? 'center',
-            'show_delay' => $_POST['show_delay'] ?? 0,
-            'auto_close' => $_POST['auto_close'] ?? 0,
-            'campaign_id' => $_POST['campaign_id'] ?? null
-        ];
-
-        if (empty($popupData['title'])) {
-            $this->jsonResponse(['success' => false, 'message' => 'Title is required'], 400);
-        }
-
-        $popupId = $this->notificationService->createPopup($popupData);
-
-        if ($popupId) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Popup created successfully',
-                'data' => ['popup_id' => $popupId]
-            ]);
-        } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to create popup'
-            ], 500);
-        }
+        // Send Test Notification
+        include __DIR__ . "/../../views/notification/send_test.php";
     }
-
-    /**
-     * Get current user ID
-     */
-    private function getCurrentUserId()
+    
+    public function preview() 
     {
-        // Check different session variables based on user type
-        if (isset($_SESSION['user_id'])) {
-            return $_SESSION['user_id'];
-        } elseif (isset($_SESSION['employee_id'])) {
-            return $_SESSION['employee_id'];
-        } elseif (isset($_SESSION['admin_id'])) {
-            return $_SESSION['admin_id'];
-        }
-        
-        return null;
-    }
-
-    /**
-     * Get current user role
-     */
-    private function getCurrentUserRole()
-    {
-        // Check different session variables based on user type
-        if (isset($_SESSION['user_role'])) {
-            return $_SESSION['user_role'];
-        } elseif (isset($_SESSION['employee_role'])) {
-            return 'employees';
-        } elseif (isset($_SESSION['admin_role'])) {
-            return 'admin';
-        }
-        
-        return 'customer'; // Default role
+        // Preview Template
+        include __DIR__ . "/../../views/notification/preview.php";
     }
 }
+?>

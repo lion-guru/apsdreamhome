@@ -62,7 +62,7 @@ class RoleBasedDashboardController extends BaseController
     public function index()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         // Auth check
         if (!isset($_SESSION['admin_id'])) {
             header('Location: ' . BASE_URL . '/admin/login');
@@ -81,11 +81,15 @@ class RoleBasedDashboardController extends BaseController
             $stats['new_leads_today'] = $this->db->fetch("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()")['c'] ?? 0;
             $stats['total_associates'] = $this->db->fetch("SELECT COUNT(*) as c FROM users WHERE role IN ('associate','agent')")['c'] ?? 0;
             $stats['pending_bookings'] = $this->db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         // Get recent leads
         $recentLeads = [];
-        try { $recentLeads = $this->db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? []; } catch (\Exception $e) {}
+        try {
+            $recentLeads = $this->db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? [];
+        } catch (\Exception $e) {
+        }
 
         // Render as standalone page (no layout)
         $this->layout = false;
@@ -94,7 +98,7 @@ class RoleBasedDashboardController extends BaseController
 
         ob_start();
         extract($data);
-        include __DIR__ . '/../../../views/admin/dashboard_standalone.php';
+        include __DIR__ . '/../../views/admin/dashboard_standalone.php';
         echo ob_get_clean();
     }
 

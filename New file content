@@ -1,0 +1,203 @@
+<?php
+
+/**
+ * APS Dream Home - Location Hierarchy Setup
+ * Creates States, Districts, and Colonies tables with sample data
+ */
+
+echo "🚀 Starting Location Hierarchy Setup...\n";
+
+try {
+    $db = new PDO('mysql:host=localhost;port=3307;dbname=apsdreamhome;charset=utf8mb4', 'root', '');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    echo "✅ Database connected\n";
+
+    // 1. Create States Table
+    echo "📝 Creating states table...\n";
+    $statesTable = "
+    CREATE TABLE IF NOT EXISTS `states` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `name` varchar(100) NOT NULL,
+        `code` varchar(10) NOT NULL,
+        `is_active` tinyint(1) DEFAULT 1,
+        `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+        `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `unique_state_name` (`name`),
+        UNIQUE KEY `unique_state_code` (`code`),
+        KEY `idx_is_active` (`is_active`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+    $db->exec($statesTable);
+    echo "✅ States table created\n";
+
+    // 2. Create Districts Table
+    echo "📝 Creating districts table...\n";
+    $districtsTable = "
+    CREATE TABLE IF NOT EXISTS `districts` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `state_id` int(11) NOT NULL,
+        `name` varchar(100) NOT NULL,
+        `code` varchar(10) NOT NULL,
+        `is_active` tinyint(1) DEFAULT 1,
+        `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+        `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `unique_district_name` (`state_id`, `name`),
+        UNIQUE KEY `unique_district_code` (`code`),
+        KEY `idx_state_id` (`state_id`),
+        KEY `idx_is_active` (`is_active`),
+        FOREIGN KEY (`state_id`) REFERENCES `states` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+    $db->exec($districtsTable);
+    echo "✅ Districts table created\n";
+
+    // 3. Create Colonies Table
+    echo "📝 Creating colonies table...\n";
+    $coloniesTable = "
+    CREATE TABLE IF NOT EXISTS `colonies` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `district_id` int(11) NOT NULL,
+        `name` varchar(150) NOT NULL,
+        `description` text DEFAULT NULL,
+        `amenities` text DEFAULT NULL COMMENT 'JSON array of amenities',
+        `map_link` varchar(500) DEFAULT NULL,
+        `total_plots` int(11) DEFAULT 0,
+        `available_plots` int(11) DEFAULT 0,
+        `starting_price` decimal(12,2) DEFAULT 0,
+        `image_path` varchar(500) DEFAULT NULL,
+        `brochure_path` varchar(500) DEFAULT NULL,
+        `is_featured` tinyint(1) DEFAULT 0,
+        `is_active` tinyint(1) DEFAULT 1,
+        `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+        `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `unique_colony_name` (`district_id`, `name`),
+        KEY `idx_district_id` (`district_id`),
+        KEY `idx_is_featured` (`is_featured`),
+        KEY `idx_is_active` (`is_active`),
+        KEY `idx_price_range` (`starting_price`),
+        FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+    $db->exec($coloniesTable);
+    echo "✅ Colonies table created\n";
+
+    // 4. Insert Sample States
+    echo "🌍 Inserting sample states...\n";
+    $states = [
+        ['Uttar Pradesh', 'UP'],
+        ['Madhya Pradesh', 'MP'],
+        ['Rajasthan', 'RJ'],
+        ['Gujarat', 'GJ'],
+        ['Maharashtra', 'MH'],
+        ['Delhi', 'DL'],
+        ['Haryana', 'HR'],
+        ['Punjab', 'PB'],
+        ['Bihar', 'BR'],
+        ['West Bengal', 'WB']
+    ];
+
+    $statesStmt = $db->prepare("INSERT IGNORE INTO `states` (`name`, `code`) VALUES (?, ?)");
+    foreach ($states as $state) {
+        $statesStmt->execute([$state[0], $state[1]]);
+    }
+    echo "✅ States inserted: " . count($states) . "\n";
+
+    // 5. Insert Sample Districts (UP focus)
+    echo "🏛️ Inserting sample districts...\n";
+    $districts = [
+        // Uttar Pradesh
+        [1, 'Gorakhpur', 'GKP'],
+        [1, 'Lucknow', 'LKO'],
+        [1, 'Kanpur', 'KNU'],
+        [1, 'Varanasi', 'BSR'],
+        [1, 'Agra', 'AGR'],
+        [1, 'Noida', 'NDA'],
+        [1, 'Ghaziabad', 'GZB'],
+        [1, 'Prayagraj', 'PRY'],
+        [1, 'Bareilly', 'BRL'],
+        [1, 'Aligarh', 'ALG'],
+        // Other states sample
+        [2, 'Bhopal', 'BPL'],
+        [2, 'Indore', 'IDR'],
+        [3, 'Jaipur', 'JPR'],
+        [3, 'Udaipur', 'UDR'],
+        [4, 'Ahmedabad', 'AMD'],
+        [4, 'Surat', 'SUR'],
+        [5, 'Mumbai', 'MUM'],
+        [5, 'Pune', 'PUN'],
+        [6, 'New Delhi', 'NDL'],
+        [7, 'Gurgaon', 'GUR']
+    ];
+
+    $districtsStmt = $db->prepare("INSERT IGNORE INTO `districts` (`state_id`, `name`, `code`) VALUES (?, ?, ?)");
+    foreach ($districts as $district) {
+        $districtsStmt->execute([$district[0], $district[1], $district[2]]);
+    }
+    echo "✅ Districts inserted: " . count($districts) . "\n";
+
+    // 6. Insert Sample Colonies
+    echo "🏘️ Inserting sample colonies...\n";
+    $colonies = [
+        // Gorakhpur District
+        [1, 'Kushinagar Colony', 'Premium residential plots in Kushinagar area with modern amenities', '"Park", "Temple", "School", "Hospital", "Market"]', 'https://maps.google.com/?q=Kushinagar,Gorakhpur', 150, 45, 2500000, 'assets/images/colonies/kushinagar.jpg', 'assets/brochures/kushinagar.pdf', 1],
+        [1, 'Gorakhnath Vihar', 'Luxury plots near Gorakhnath Temple', '"Temple", "Market", "School", "24/7 Security"]', 'https://maps.google.com/?q=Gorakhnath,Gorakhpur', 200, 30, 3200000, 'assets/images/colonies/gorakhnath.jpg', 'assets/brochures/gorakhnath.pdf', 1],
+        [1, 'Rapti Nagar', 'Affordable housing plots near Rapti river', '"River View", "Park", "School", "Community Center"]', 'https://maps.google.com/?q=RaptiNagar,Gorakhpur', 100, 60, 1800000, 'assets/images/colonies/rapti.jpg', 'assets/brochures/rapti.pdf', 0],
+
+        // Lucknow District
+        [2, 'Gomti Nagar Extension', 'Premium plots in Gomti Nagar Extension', '"Mall", "School", "Hospital", "Metro Station"]', 'https://maps.google.com/?q=GomtiNagar,Lucknow', 300, 50, 4500000, 'assets/images/colonies/gomti.jpg', 'assets/brochures/gomti.pdf', 1],
+        [2, 'Hazratganj Heights', 'Commercial and residential plots in city center', '"Market", "Metro", "Hospital", "School"]', 'https://maps.google.com/?q=Hazratganj,Lucknow', 80, 15, 6800000, 'assets/images/colonies/hazratganj.jpg', 'assets/brochures/hazratganj.pdf', 1],
+
+        // Kanpur District
+        [3, 'Kanpur South City', 'Modern residential colony with all facilities', '"School", "College", "Hospital", "Shopping Mall"]', 'https://maps.google.com/?q=KanpurSouth,Kanpur', 250, 80, 2200000, 'assets/images/colonies/kanpur.jpg', 'assets/brochures/kanpur.pdf', 0],
+
+        // Other Districts
+        [4, 'Kashi Vihar', 'Spiritual living near Varanasi', '"Temple", "Ganga Ghat", "School", "Market"]', 'https://maps.google.com/?q=KashiVihar,Varanasi', 120, 40, 2800000, 'assets/images/colonies/kashi.jpg', 'assets/brochures/kashi.pdf', 0],
+        [5, 'Taj Nagri Phase 1', 'Luxury living near Taj Mahal', '"Taj View", "5-Star Hotel", "Golf Course", "Shopping"]', 'https://maps.google.com/?q=TajNagri,Agra', 60, 10, 8500000, 'assets/images/colonies/taj.jpg', 'assets/brochures/taj.pdf', 1],
+        [6, 'Noida Sector 150', 'Smart city plots with metro connectivity', '"Metro", "Tech Park", "School", "Hospital"]', 'https://maps.google.com/?q=Sector150,Noida', 400, 120, 5200000, 'assets/images/colonies/noida.jpg', 'assets/brochures/noida.pdf', 1],
+        [11, 'Bhopal Lake View', 'Scenic plots near Upper Lake', '"Lake View", "Boat Club", "School", "Hospital"]', 'https://maps.google.com/?q=LakeView,Bhopal', 180, 70, 3200000, 'assets/images/colonies/bhopal.jpg', 'assets/brochures/bhopal.pdf', 0],
+        [13, 'Jaipur Pink City', 'Heritage area with modern amenities', '"Fort", "Palace", "Market", "School"]', 'https://maps.google.com/?q=PinkCity,Jaipur', 90, 25, 4200000, 'assets/images/colonies/jaipur.jpg', 'assets/brochures/jaipur.pdf', 0]
+    ];
+
+    $coloniesStmt = $db->prepare("INSERT IGNORE INTO `colonies` (`district_id`, `name`, `description`, `amenities`, `map_link`, `total_plots`, `available_plots`, `starting_price`, `image_path`, `brochure_path`, `is_featured`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    foreach ($colonies as $colony) {
+        $coloniesStmt->execute([$colony[0], $colony[1], $colony[2], $colony[3], $colony[4], $colony[5], $colony[6], $colony[7], $colony[8], $colony[9]]);
+    }
+    echo "✅ Colonies inserted: " . count($colonies) . "\n";
+
+    // 7. Create Indexes for Performance
+    echo "⚡ Creating performance indexes...\n";
+    $indexes = [
+        "CREATE INDEX IF NOT EXISTS `idx_colonies_district_active` ON `colonies` (`district_id`, `is_active`)",
+        "CREATE INDEX IF NOT EXISTS `idx_colonies_featured_active` ON `colonies` (`is_featured`, `is_active`)",
+        "CREATE INDEX IF NOT EXISTS `idx_districts_state_active` ON `districts` (`state_id`, `is_active`)",
+        "CREATE INDEX IF NOT EXISTS `idx_states_active` ON `states` (`is_active`)"
+    ];
+
+    foreach ($indexes as $index) {
+        $db->exec($index);
+    }
+    echo "✅ Performance indexes created\n";
+
+    // 8. Verify Data
+    echo "📊 Verifying data...\n";
+    $stateCount = $db->query("SELECT COUNT(*) FROM states")->fetchColumn();
+    $districtCount = $db->query("SELECT COUNT(*) FROM districts")->fetchColumn();
+    $colonyCount = $db->query("SELECT COUNT(*) FROM colonies")->fetchColumn();
+
+    echo "📈 Summary:\n";
+    echo "   States: $stateCount\n";
+    echo "   Districts: $districtCount\n";
+    echo "   Colonies: $colonyCount\n";
+
+    echo "\n🎉 Location Hierarchy Setup Completed Successfully!\n";
+    echo "📍 Sample Data: UP (Gorakhpur: 3 colonies, Lucknow: 2 colonies)\n";
+    echo "🔗 Foreign Keys: districts→states, colonies→districts\n";
+    echo "⚡ Indexes: Created for optimal performance\n";
+} catch (Exception $e) {
+    echo "❌ Error: " . $e->getMessage() . "\n";
+    echo "📍 Line: " . $e->getLine() . "\n";
+}

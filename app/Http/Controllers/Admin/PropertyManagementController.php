@@ -43,11 +43,10 @@ class PropertyManagementController extends AdminController
             // Build query
             $sql = "SELECT p.*, 
                            s.site_name,
-                           pr.project_name,
+                           pr.name as project_name,
                            pl.plot_number,
                            l.land_title,
                            c.name as category_name,
-                           b.booking_number,
                            u.name as customer_name,
                            COUNT(pi.id) as image_count
                     FROM properties p
@@ -90,7 +89,7 @@ class PropertyManagementController extends AdminController
             $sql .= " GROUP BY p.id ORDER BY p.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT p.*, s.site_name, pr.project_name, pl.plot_number, l.land_title, c.name as category_name, b.booking_number, u.name as customer_name, COUNT(pi.id) as image_count", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countSql = str_replace("SELECT p.*, s.site_name, pr.name as project_name, pl.plot_number, l.land_title, c.name as category_name, u.name as customer_name, COUNT(pi.id) as image_count", "SELECT COUNT(DISTINCT p.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -599,7 +598,7 @@ class PropertyManagementController extends AdminController
     private function getPropertiesExport(string $startDate, string $endDate): array
     {
         try {
-            $sql = "SELECT p.*, s.site_name, pr.project_name, c.name as category_name
+            $sql = "SELECT p.*, s.site_name, pr.name as project_name, c.name as category_name
                     FROM properties p
                     LEFT JOIN sites s ON p.site_id = s.id
                     LEFT JOIN projects pr ON p.project_id = pr.id

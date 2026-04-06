@@ -150,11 +150,42 @@ class Router
                     $controllerClass = $controller;
                     $relativePath = substr($controller, 4);
                     $controllerFile = __DIR__ . '/../app/' . str_replace('\\', '/', $relativePath) . '.php';
+                } elseif (strpos($controller, 'Admin\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\Admin\\" . substr($controller, 6);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/Admin/' . substr(str_replace('\\', '/', $controller), 6) . '.php';
+                } elseif (strpos($controller, 'Front\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\Front\\" . substr($controller, 6);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/Front/' . substr(str_replace('\\', '/', $controller), 6) . '.php';
+                } elseif (strpos($controller, 'Auth\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\Auth\\" . substr($controller, 5);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/Auth/' . substr(str_replace('\\', '/', $controller), 5) . '.php';
+                } elseif (strpos($controller, 'MLM\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\MLM\\" . substr($controller, 4);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/MLM/' . substr(str_replace('\\', '/', $controller), 4) . '.php';
+                } elseif (strpos($controller, 'AI\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\AI\\" . substr($controller, 3);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/AI/' . substr(str_replace('\\', '/', $controller), 3) . '.php';
+                } elseif (strpos($controller, 'Employee\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\Employee\\" . substr($controller, 9);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/Employee/' . substr(str_replace('\\', '/', $controller), 9) . '.php';
+                } elseif (strpos($controller, 'Api\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\Api\\" . substr($controller, 4);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/Api/' . substr(str_replace('\\', '/', $controller), 4) . '.php';
+                } elseif (strpos($controller, 'Property\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\Property\\" . substr($controller, 9);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/Property/' . substr(str_replace('\\', '/', $controller), 9) . '.php';
+                } elseif (strpos($controller, 'Tech\\') === 0) {
+                    $controllerClass = "App\\Http\\Controllers\\Tech\\" . substr($controller, 5);
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/Tech/' . substr(str_replace('\\', '/', $controller), 5) . '.php';
                 } else {
                     $controllerClass = "App\\Http\\Controllers\\" . $controller;
                     $controllerFile = __DIR__ . '/../app/Http/Controllers/' . str_replace('\\', '/', $controller) . '.php';
                 }
 
+                // Debug logging
+                error_log("Router: Looking for controller at: $controllerFile");
+                error_log("Router: Controller class: $controllerClass");
+                
                 if (file_exists($controllerFile)) {
                     try {
                         // Load base controllers first

@@ -1,331 +1,257 @@
 <?php
-
 namespace App\Services;
 
-class PaymentService {
-    private $gateway;
-    private $apiKey;
-    private $apiSecret;
-    private $webhookSecret;
-    private $currency = 'INR';
-
-    public function __construct($gateway = 'razorpay') {
-        $this->gateway = $gateway;
-
-        // Load configuration based on gateway
-        switch ($gateway) {
-            case 'razorpay':
-                $this->apiKey = getenv('RAZORPAY_KEY_ID') ?: '';
-                $this->apiSecret = getenv('RAZORPAY_KEY_SECRET') ?: '';
-                $this->webhookSecret = getenv('RAZORPAY_WEBHOOK_SECRET') ?: '';
-                break;
-            case 'payu':
-                $this->apiKey = getenv('PAYU_KEY') ?: '';
-                $this->apiSecret = getenv('PAYU_SALT') ?: '';
-                break;
-            default:
-                // Fallback to existing configuration
-                $this->apiKey = $_ENV['PAYMENT_API_KEY'] ?? '';
-                $this->apiSecret = $_ENV['PAYMENT_API_SECRET'] ?? '';
+class PaymentService 
+{
+    private $db;
+    private $settings;
+    
+    public function __construct() {
+        $this->db = new PDO("mysql:host=localhost;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
+        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->loadSettings();
+    }
+    
+    private function loadSettings() {
+        $stmt = $this->db->prepare("SELECT setting_key, setting_value FROM payment_settings");
+        $stmt->execute();
+        
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $this->settings[$row["setting_key"]] = $row["setting_value"];
         }
     }
-
-    /**
-     * Create payment order
-     */
-    public function createOrder($amount, $currency = 'INR', $receipt = null, $notes = []) {
-        try {
-            if (empty($this->apiKey) || empty($this->apiSecret)) {
-                throw new \Exception('Payment gateway not configured properly');
-            }
-
-            // Convert amount to paisa (Razorpay uses paisa)
-            $amountInPaisa = (int)($amount * 100);
-
-            $orderData = [
-                'amount' => $amountInPaisa,
-                'currency' => $currency,
-                'receipt' => $receipt ?: 'rcpt_' . time(),
-                'notes' => $notes
-            ];
-
-            // For Razorpay, we would make API call here
-            // For now, return mock data
-            $orderId = 'order_' . bin2hex(random_bytes(8));
-
-            return [
-                'success' => true,
-                'order_id' => $orderId,
-                'amount' => $amount,
-                'currency' => $currency,
-                'gateway_order_id' => 'rzp_order_' . time(),
-                'checkout_url' => $this->getCheckoutUrl($orderId)
-            ];
-
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Process a payment (legacy method for compatibility)
-     */
-    public function processPayment(array $paymentData) {
-        // Validate payment data
-        $requiredFields = ['amount', 'currency', 'description', 'customer_email'];
-        foreach ($requiredFields as $field) {
-            if (empty($paymentData[$field])) {
-                throw new \InvalidArgumentException("Missing required field: $field");
-            }
-        }
-
-        // Create order using new method
-        return $this->createOrder($paymentData['amount'], $paymentData['currency'], null, [
-            'description' => $paymentData['description'],
-            'customer_email' => $paymentData['customer_email']
+    
+    public function initiatePayment($data) {
+        $paymentId = "PAY" . time() . mt_rand(1000, 9999);
+        $transactionId = "TXN" . time() . mt_rand(1000, 9999);
+        
+        // Calculate tax and total amount
+        $taxAmount = $data["amount"] * ($this->settings["tax_rate"] / 100);
+        $totalAmount = $data["amount"] + $taxAmount - $data["discount_amount"];
+        
+        // Insert payment record
+        $stmt = $this->db->prepare("INSERT INTO payments (
+            payment_id, transaction_id, reference_id, customer_id, property_id, property_type,
+            payment_type, amount, currency, tax_amount, discount_amount, total_amount,
+            gateway, status, description, ip_address, user_agent, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        
+        $stmt->execute([
+            $paymentId,
+            $transactionId,
+            $data["reference_id"] ?? null,
+            $data["customer_id"] ?? null,
+            $data["property_id"] ?? null,
+            $data["property_type"] ?? null,
+            $data["payment_type"],
+            $data["amount"],
+            $data["currency"] ?? "INR",
+            $taxAmount,
+            $data["discount_amount"] ?? 0,
+            $totalAmount,
+            $data["gateway"],
+            "pending",
+            $data["description"] ?? "",
+            $_SERVER["REMOTE_ADDR"] ?? "",
+            $_SERVER["HTTP_USER_AGENT"] ?? ""
         ]);
+        
+        // Create payment notification
+        $this->createNotification($paymentId, "payment_initiated", "Payment Initiated", 
+            "Your payment of ₹" . number_format($totalAmount, 2) . " has been initiated.",
+            $data["customer_id"] ?? null);
+        
+        return [
+            "success" => true,
+            "payment_id" => $paymentId,
+            "transaction_id" => $transactionId,
+            "amount" => $totalAmount,
+            "gateway" => $data["gateway"]
+        ];
     }
-
-    /**
-     * Verify payment
-     */
-    public function verifyPayment($paymentId, $orderId, $signature) {
-        try {
-            if ($this->gateway === 'razorpay') {
-                // Razorpay signature verification
-                $expectedSignature = hash_hmac('sha256', $orderId . '|' . $paymentId, $this->apiSecret);
-
-                if (hash_equals($expectedSignature, $signature)) {
-                    return [
-                        'success' => true,
-                        'verified' => true,
-                        'payment_id' => $paymentId,
-                        'order_id' => $orderId
-                    ];
-                } else {
-                    return [
-                        'success' => true,
-                        'verified' => false,
-                        'error' => 'Signature verification failed'
-                    ];
-                }
-            }
-
-            return [
-                'success' => false,
-                'error' => 'Unsupported gateway for verification'
-            ];
-
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
+    
+    public function processRazorpay($paymentId, $data) {
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?");
+        $stmt->execute([$paymentId]);
+        $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$payment) {
+            return ["success" => false, "message" => "Payment not found"];
         }
-    }
-
-    /**
-     * Process webhook
-     */
-    public function processWebhook($payload, $signature = null) {
-        try {
-            if ($this->gateway === 'razorpay' && $signature) {
-                // Verify webhook signature
-                $expectedSignature = hash_hmac('sha256', $payload, $this->webhookSecret);
-
-                if (!hash_equals($expectedSignature, $signature)) {
-                    return [
-                        'success' => false,
-                        'error' => 'Invalid webhook signature'
-                    ];
-                }
-            }
-
-            $data = json_decode($payload, true);
-
-            if (!$data) {
-                return [
-                    'success' => false,
-                    'error' => 'Invalid webhook payload'
-                ];
-            }
-
-            // Process based on event type
-            $event = $data['event'] ?? '';
-            $paymentEntity = $data['payment'] ?? $data['entity'] ?? [];
-
-            switch ($event) {
-                case 'payment.captured':
-                    return $this->handlePaymentCaptured($paymentEntity);
-                case 'payment.failed':
-                    return $this->handlePaymentFailed($paymentEntity);
-                case 'order.paid':
-                    return $this->handleOrderPaid($data['order'] ?? []);
-                default:
-                    return [
-                        'success' => true,
-                        'message' => 'Unhandled event: ' . $event
-                    ];
-            }
-
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
+        
+        // Update payment with gateway response
+        $updateStmt = $this->db->prepare("UPDATE payments SET 
+            gateway_transaction_id = ?, gateway_response = ?, status = ?, 
+            payment_date = ?, payment_time = ?, updated_at = NOW()
+            WHERE payment_id = ?");
+        
+        $status = $data["status"] === "captured" ? "completed" : "failed";
+        $updateStmt->execute([
+            $data["razorpay_payment_id"] ?? "",
+            json_encode($data),
+            $status,
+            date("Y-m-d"),
+            date("H:i:s"),
+            $paymentId
+        ]);
+        
+        if ($status === "completed") {
+            $this->createNotification($paymentId, "payment_success", "Payment Successful", 
+                "Your payment of ₹" . number_format($payment["total_amount"], 2) . " has been successfully processed.",
+                $payment["customer_id"]);
+        } else {
+            $this->createNotification($paymentId, "payment_failed", "Payment Failed", 
+                "Your payment of ₹" . number_format($payment["total_amount"], 2) . " has failed. Please try again.",
+                $payment["customer_id"]);
         }
+        
+        return ["success" => true, "status" => $status];
     }
-
-    /**
-     * Handle payment captured event
-     */
-    private function handlePaymentCaptured($payment) {
+    
+    public function processPaytm($paymentId, $data) {
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?");
+        $stmt->execute([$paymentId]);
+        $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$payment) {
+            return ["success" => false, "message" => "Payment not found"];
+        }
+        
+        $status = ($data["STATUS"] === "TXN_SUCCESS") ? "completed" : "failed";
+        
+        $updateStmt = $this->db->prepare("UPDATE payments SET 
+            gateway_transaction_id = ?, gateway_response = ?, status = ?, 
+            payment_date = ?, payment_time = ?, updated_at = NOW()
+            WHERE payment_id = ?");
+        
+        $updateStmt->execute([
+            $data["TXNID"] ?? "",
+            json_encode($data),
+            $status,
+            date("Y-m-d"),
+            date("H:i:s"),
+            $paymentId
+        ]);
+        
+        if ($status === "completed") {
+            $this->createNotification($paymentId, "payment_success", "Payment Successful", 
+                "Your payment of ₹" . number_format($payment["total_amount"], 2) . " has been successfully processed.",
+                $payment["customer_id"]);
+        } else {
+            $this->createNotification($paymentId, "payment_failed", "Payment Failed", 
+                "Your payment of ₹" . number_format($payment["total_amount"], 2) . " has failed. Please try again.",
+                $payment["customer_id"]);
+        }
+        
+        return ["success" => true, "status" => $status];
+    }
+    
+    public function calculateEMI($principal, $rate, $tenure) {
+        $monthlyRate = $rate / 12 / 100;
+        $emi = $principal * $monthlyRate * pow(1 + $monthlyRate, $tenure) / (pow(1 + $monthlyRate, $tenure) - 1);
+        
         return [
-            'success' => true,
-            'message' => 'Payment captured successfully',
-            'payment_id' => $payment['id'] ?? '',
-            'amount' => ($payment['amount'] ?? 0) / 100, // Convert from paisa
-            'currency' => $payment['currency'] ?? 'INR'
+            "emi" => round($emi, 2),
+            "total_interest" => round(($emi * $tenure) - $principal, 2),
+            "total_amount" => round($emi * $tenure, 2)
         ];
     }
-
-    /**
-     * Handle payment failed event
-     */
-    private function handlePaymentFailed($payment) {
-        return [
-            'success' => true,
-            'message' => 'Payment failed',
-            'payment_id' => $payment['id'] ?? '',
-            'error_code' => $payment['error_code'] ?? '',
-            'error_description' => $payment['error_description'] ?? ''
-        ];
+    
+    public function getPaymentPlans() {
+        $stmt = $this->db->prepare("SELECT * FROM payment_plans WHERE is_active = 1 ORDER BY is_default DESC, plan_name ASC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Handle order paid event
-     */
-    private function handleOrderPaid($order) {
-        return [
-            'success' => true,
-            'message' => 'Order paid successfully',
-            'order_id' => $order['id'] ?? '',
-            'amount' => ($order['amount'] ?? 0) / 100
-        ];
+    
+    public function getPaymentHistory($customerId, $limit = 20, $offset = 0) {
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE customer_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        $stmt->execute([$customerId, $limit, $offset]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Refund a payment (updated method)
-     */
-    public function refundPayment(string $paymentId, ?float $amount = null) {
-        // For Razorpay, we would make refund API call
-        // For now, return mock response
-
-        $refundId = 'rfnd_' . bin2hex(random_bytes(8));
-
-        return [
-            'success' => true,
-            'refund_id' => $refundId,
-            'payment_id' => $paymentId,
-            'amount_refunded' => $amount,
-            'status' => 'processed'
-        ];
+    
+    public function getPayment($paymentId) {
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?");
+        $stmt->execute([$paymentId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Get payment details (updated method)
-     */
-    public function getPaymentDetails(string $paymentId) {
-        // For Razorpay, we would fetch payment status from API
-        // For now, return mock status
-
-        return [
-            'id' => $paymentId,
-            'amount' => 1000, // in rupees
-            'currency' => 'INR',
-            'status' => 'captured',
-            'created' => time(),
-            'customer_email' => 'example@example.com',
-            'description' => 'Property Booking'
-        ];
+    
+    public function refundPayment($paymentId, $refundAmount, $refundReason) {
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?");
+        $stmt->execute([$paymentId]);
+        $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$payment) {
+            return ["success" => false, "message" => "Payment not found"];
+        }
+        
+        $refundTransactionId = "REF" . time() . mt_rand(1000, 9999);
+        
+        $updateStmt = $this->db->prepare("UPDATE payments SET 
+            refund_amount = ?, refund_reason = ?, refund_date = ?, refund_transaction_id = ?, 
+            status = ?, updated_at = NOW()
+            WHERE payment_id = ?");
+        
+        $updateStmt->execute([
+            $refundAmount,
+            $refundReason,
+            date("Y-m-d"),
+            $refundTransactionId,
+            "refunded",
+            $paymentId
+        ]);
+        
+        $this->createNotification($paymentId, "payment_refunded", "Payment Refunded", 
+            "Your refund of ₹" . number_format($refundAmount, 2) . " has been processed. Reason: " . $refundReason,
+            $payment["customer_id"]);
+        
+        return ["success" => true, "refund_transaction_id" => $refundTransactionId];
     }
-
-    /**
-     * Get supported payment methods
-     */
-    public function getSupportedMethods() {
-        switch ($this->gateway) {
-            case 'razorpay':
-                return [
-                    'card' => 'Credit/Debit Cards',
-                    'netbanking' => 'Net Banking',
-                    'upi' => 'UPI',
-                    'wallet' => 'Digital Wallets',
-                    'emi' => 'EMI'
-                ];
-            case 'payu':
-                return [
-                    'card' => 'Credit/Debit Cards',
-                    'netbanking' => 'Net Banking',
-                    'upi' => 'UPI',
-                    'wallet' => 'Digital Wallets'
-                ];
+    
+    public function getPaymentSettings() {
+        return $this->settings;
+    }
+    
+    public function updatePaymentSetting($key, $value) {
+        $stmt = $this->db->prepare("INSERT INTO payment_settings (setting_key, setting_value, setting_type, setting_category) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()");
+        return $stmt->execute([$key, $value, "string", "general"]);
+    }
+    
+    private function createNotification($paymentId, $type, $title, $message, $customerId = null) {
+        $stmt = $this->db->prepare("SELECT customer_email, customer_phone FROM customers WHERE id = ?");
+        $stmt->execute([$customerId]);
+        $customer = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $notifStmt = $this->db->prepare("INSERT INTO payment_notifications (
+            payment_id, notification_type, title, message, customer_id, customer_email, customer_phone, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+        
+        $notifStmt->execute([
+            $paymentId,
+            $type,
+            $title,
+            $message,
+            $customerId,
+            $customer["customer_email"] ?? null,
+            $customer["customer_phone"] ?? null
+        ]);
+        
+        // Send email notification (implement email service)
+        // Send SMS notification (implement SMS service)
+    }
+    
+    public function generatePaymentLink($paymentId, $gateway) {
+        $baseUrl = $this->settings["payment_success_url"] ?? "https://apsdreamhome.com/payment/success";
+        
+        switch ($gateway) {
+            case "razorpay":
+                return "https://razorpay.com/payment/" . $paymentId;
+            case "paytm":
+                return "https://secure.paytm.in/order/pay?orderId=" . $paymentId;
+            case "phonepe":
+                return "upi://pay?pa=" . $this->settings["upi_vpa"] . "&pn=APS Dream Home&am=" . $paymentId;
             default:
-                return [];
-        }
-    }
-
-    /**
-     * Calculate booking amount with fees
-     */
-    public function calculateBookingAmount($propertyPrice, $bookingType = 'token') {
-        $amounts = [];
-
-        switch ($bookingType) {
-            case 'token':
-                // Token amount (usually 5-10% of property value)
-                $tokenPercentage = 0.05; // 5%
-                $amounts['token_amount'] = $propertyPrice * $tokenPercentage;
-                $amounts['processing_fee'] = 100; // Fixed processing fee
-                $amounts['total'] = $amounts['token_amount'] + $amounts['processing_fee'];
-                break;
-
-            case 'full':
-                // Full payment
-                $amounts['property_amount'] = $propertyPrice;
-                $amounts['processing_fee'] = 500; // Higher fee for full payment
-                $amounts['total'] = $amounts['property_amount'] + $amounts['processing_fee'];
-                break;
-
-            case 'emi_booking':
-                // EMI booking (usually 10-20% down payment)
-                $downPaymentPercentage = 0.10; // 10%
-                $amounts['down_payment'] = $propertyPrice * $downPaymentPercentage;
-                $amounts['processing_fee'] = 200;
-                $amounts['total'] = $amounts['down_payment'] + $amounts['processing_fee'];
-                break;
-        }
-
-        $amounts['gst'] = $amounts['total'] * 0.18; // 18% GST
-        $amounts['grand_total'] = $amounts['total'] + $amounts['gst'];
-
-        return $amounts;
-    }
-
-    /**
-     * Get checkout URL for payment
-     */
-    private function getCheckoutUrl($orderId) {
-        switch ($this->gateway) {
-            case 'razorpay':
-                return '/payment/checkout/' . $orderId;
-            case 'payu':
-                return '/payment/checkout/' . $orderId;
-            default:
-                return '/payment/checkout/' . $orderId;
+                return $baseUrl . "?payment_id=" . $paymentId;
         }
     }
 }
+?>

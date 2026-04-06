@@ -42,13 +42,11 @@ class PlotManagementController extends AdminController
             // Build query
             $sql = "SELECT p.*, 
                            s.site_name,
-                           l.land_title,
-                           COUNT(pr.id) as property_count,
-                           COALESCE(SUM(pr.total_area), 0) as developed_area
+                           '' as land_title,
+                           0 as property_count,
+                           0 as developed_area
                     FROM plots p
                     LEFT JOIN sites s ON p.site_id = s.id
-                    LEFT JOIN land_records l ON p.land_id = l.id
-                    LEFT JOIN properties pr ON p.id = pr.plot_id
                     WHERE 1=1";
             $params = [];
 
@@ -71,10 +69,14 @@ class PlotManagementController extends AdminController
                 $params[] = $status;
             }
 
-            $sql .= " GROUP BY p.id ORDER BY p.created_at DESC";
+            $sql .= " ORDER BY p.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT p.*, s.site_name, l.land_title, COUNT(pr.id) as property_count, COALESCE(SUM(pr.total_area), 0) as developed_area", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countSql = preg_replace('/SELECT .* FROM/', 'SELECT COUNT(*) as total FROM', $sql, 1);
+            $countSql = str_replace('s.site_name', '1', $countSql);
+            $countSql = str_replace("'' as land_title", '1', $countSql);
+            $countSql = str_replace('0 as property_count', '1', $countSql);
+            $countSql = str_replace('0 as developed_area', '1', $countSql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
