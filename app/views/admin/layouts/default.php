@@ -165,6 +165,66 @@ $roleName = $roleName ?? 'Guest';
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/properties" class="nav-link <?php echo ($active_page ?? '') === 'properties' ? 'active' : ''; ?>">
+                            <i class="fas fa-building"></i>
+                            <span>Properties</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/sites" class="nav-link <?php echo ($active_page ?? '') === 'sites' ? 'active' : ''; ?>">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Sites</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/plots" class="nav-link <?php echo ($active_page ?? '') === 'plots' ? 'active' : ''; ?>">
+                            <i class="fas fa-th"></i>
+                            <span>Plots</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/bookings" class="nav-link <?php echo ($active_page ?? '') === 'bookings' ? 'active' : ''; ?>">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Bookings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/leads" class="nav-link <?php echo ($active_page ?? '') === 'leads' ? 'active' : ''; ?>">
+                            <i class="fas fa-users"></i>
+                            <span>Leads</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/testimonials" class="nav-link <?php echo ($active_page ?? '') === 'testimonials' ? 'active' : ''; ?>">
+                            <i class="fas fa-quote-left"></i>
+                            <span>Testimonials</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/news" class="nav-link <?php echo ($active_page ?? '') === 'news' ? 'active' : ''; ?>">
+                            <i class="fas fa-newspaper"></i>
+                            <span>News/Blog</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/users" class="nav-link <?php echo ($active_page ?? '') === 'users' ? 'active' : ''; ?>">
+                            <i class="fas fa-user-cog"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/campaigns" class="nav-link <?php echo ($active_page ?? '') === 'campaigns' ? 'active' : ''; ?>">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Campaigns</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>/admin/settings" class="nav-link <?php echo ($active_page ?? '') === 'settings' ? 'active' : ''; ?>">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mt-3">
                         <a href="<?php echo BASE_URL; ?>/admin/logout" class="nav-link">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>

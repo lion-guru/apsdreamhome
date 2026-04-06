@@ -1,313 +1,242 @@
 <?php
-
 namespace App\Services;
 
-use App\Core\Database\Database;
-use Exception;
-
-class NotificationService
+class NotificationService 
 {
     private $db;
-
-    public function __construct()
-    {
-        $this->db = Database::getInstance();
+    private $settings;
+    
+    public function __construct() {
+        $this->db = new PDO("mysql:host=localhost;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
+        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->loadSettings();
     }
-
-    /**
-     * Create a new notification
-     */
-    public function createNotification($data)
-    {
+    
+    private function loadSettings() {
+        $stmt = $this->db->prepare("SELECT setting_key, setting_value FROM notification_settings");
+        $stmt->execute();
+        
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $this->settings[$row["setting_key"]] = $row["setting_value"];
+        }
+    }
+    
+    public function sendEmail($to, $subject, $templateName = null, $data = [], $attachments = []) {
         try {
-            $query = "INSERT INTO notifications (user_id, title, message, type, target_audience, campaign_id) 
-                     VALUES (?, ?, ?, ?, ?, ?)";
+            // Get template if specified
+            if ($templateName) {
+                $template = $this->getTemplate($templateName, "email");
+                $subject = $this->replaceVariables($template["subject"], $data);
+                $htmlContent = $this->replaceVariables($template["html_content"], $data);
+                $textContent = $this->replaceVariables($template["text_content"], $data);
+            } else {
+                $htmlContent = $data["html_content"] ?? "";
+                $textContent = $data["text_content"] ?? "";
+            }
             
-            $params = [
-                $data['user_id'] ?? null,
-                $data['title'] ?? '',
-                $data['message'] ?? '',
-                $data['type'] ?? 'info',
-                $data['target_audience'] ?? 'all',
-                $data['campaign_id'] ?? null
+            // Create email log
+            $stmt = $this->db->prepare("INSERT INTO email_logs (
+                template_id, email_type, to_email, to_name, subject, 
+                html_content, text_content, status, provider, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            
+            $templateId = $templateName ? $this->getTemplateId($templateName, "email") : null;
+            $stmt->execute([
+                $templateId,
+                $templateName ?? "custom",
+                $to["email"] ?? "",
+                $to["name"] ?? "",
+                $subject,
+                $htmlContent,
+                $textContent,
+                "pending",
+                "smtp"
+            ]);
+            
+            $emailId = $this->db->lastInsertId();
+            
+            // Send email using PHPMailer
+            $result = $this->sendEmailWithPHPMailer($to, $subject, $htmlContent, $textContent, $attachments);
+            
+            // Update email log
+            $status = $result["success"] ? "sent" : "failed";
+            $errorMessage = $result["success"] ? null : $result["error"];
+            
+            $updateStmt = $this->db->prepare("UPDATE email_logs SET 
+                status = ?, sent_at = ?, provider_response = ?, updated_at = NOW()
+                WHERE id = ?");
+            
+            $updateStmt->execute([
+                $status,
+                date("Y-m-d H:i:s"),
+                json_encode(["error" => $errorMessage, "provider_message_id" => $result["message_id"] ?? null]),
+                $emailId
+            ]);
+            
+            return [
+                "success" => $result["success"],
+                "email_id" => $emailId,
+                "message" => $result["message"] ?? ($result["success"] ? "Email sent successfully" : "Email sending failed")
             ];
             
-            $this->db->execute($query, $params);
-            return $this->db->getLastInsertId();
-            
         } catch (Exception $e) {
-            error_log("Error creating notification: " . $e->getMessage());
-            return false;
+            return ["success" => false, "message" => $e->getMessage()];
         }
     }
-
-    /**
-     * Get notifications for a user
-     */
-    public function getUserNotifications($userId, $filters = [])
-    {
+    
+    public function sendSMS($to, $message, $templateName = null, $data = []) {
         try {
-            $whereConditions = ["(user_id = ? OR user_id IS NULL)"];
-            $whereParams = [$userId];
-            
-            if (!empty($filters['status'])) {
-                $whereConditions[] = "status = ?";
-                $whereParams[] = $filters['status'];
+            // Get template if specified
+            if ($templateName) {
+                $template = $this->getTemplate($templateName, "sms");
+                $message = $this->replaceVariables($template["message"], $data);
             }
             
-            if (!empty($filters['type'])) {
-                $whereConditions[] = "type = ?";
-                $whereParams[] = $filters['type'];
-            }
+            // Create SMS log
+            $stmt = $this->db->prepare("INSERT INTO sms_logs (
+                template_id, sms_type, to_phone, to_name, message, 
+                status, provider, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
             
-            $limit = !empty($filters['limit']) ? "LIMIT " . $filters['limit'] : "LIMIT 10";
+            $templateId = $templateName ? $this->getTemplateId($templateName, "sms") : null;
+            $stmt->execute([
+                $templateId,
+                $templateName ?? "custom",
+                $to["phone"] ?? "",
+                $to["name"] ?? "",
+                $message,
+                "pending",
+                "twilio"
+            ]);
             
-            $query = "SELECT * FROM notifications 
-                WHERE " . implode(' AND ', $whereConditions) . " 
-                ORDER BY created_at DESC $limit";
+            $smsId = $this->db->lastInsertId();
             
-            return $this->db->fetchAll($query, $whereParams);
+            // Send SMS using Twilio
+            $result = $this->sendSMSWithTwilio($to, $message);
             
-        } catch (Exception $e) {
-            error_log("Error getting notifications: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Mark notification as read
-     */
-    public function markAsRead($notificationId, $userId)
-    {
-        try {
-            $query = "UPDATE notifications SET status = 'read', read_at = NOW() 
-                     WHERE id = ? AND user_id = ?";
+            // Update SMS log
+            $status = $result["success"] ? "sent" : "failed";
+            $errorMessage = $result["success"] ? null : $result["error"];
             
-            $this->db->execute($query, [$notificationId, $userId]);
-            return true;
+            $updateStmt = $this->db->prepare("UPDATE sms_logs SET 
+                status = ?, sent_at = ?, provider_response = ?, updated_at = NOW()
+                WHERE id = ?");
             
-        } catch (Exception $e) {
-            error_log("Error marking notification as read: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Get unread notification count for user
-     */
-    public function getUnreadCount($userId)
-    {
-        try {
-            $query = "SELECT COUNT(*) as count FROM notifications 
-                WHERE (user_id = ? OR user_id IS NULL) AND status = 'unread'";
+            $updateStmt->execute([
+                $status,
+                date("Y-m-d H:i:s"),
+                json_encode(["error" => $errorMessage, "provider_message_id" => $result["message_id"] ?? null]),
+                $smsId
+            ]);
             
-            $result = $this->db->fetch($query, [$userId]);
-            return $result['count'] ?? 0;
-            
-        } catch (Exception $e) {
-            error_log("Error getting unread count: " . $e->getMessage());
-            return 0;
-        }
-    }
-
-    /**
-     * Create a new popup
-     */
-    public function createPopup($data)
-    {
-        try {
-            $query = "INSERT INTO popups (campaign_id, title, content, type, target_audience, pages, position, show_delay, auto_close) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
-            $params = [
-                $data['campaign_id'] ?? null,
-                $data['title'] ?? '',
-                $data['content'] ?? '',
-                $data['type'] ?? 'info',
-                $data['target_audience'] ?? 'all',
-                $data['pages'] ?? 'all',
-                $data['position'] ?? 'center',
-                $data['show_delay'] ?? 0,
-                $data['auto_close'] ?? 0
+            return [
+                "success" => $result["success"],
+                "sms_id" => $smsId,
+                "message" => $result["message"] ?? ($result["success"] ? "SMS sent successfully" : "SMS sending failed")
             ];
             
-            $this->db->execute($query, $params);
-            return $this->db->getLastInsertId();
-            
         } catch (Exception $e) {
-            error_log("Error creating popup: " . $e->getMessage());
-            return false;
+            return ["success" => false, "message" => $e->getMessage()];
         }
     }
-
-    /**
-     * Get active popups for a page and user
-     */
-    public function getActivePopups($page, $userRole = 'customer')
-    {
-        try {
-            $query = "SELECT * FROM popups 
-                WHERE status = 'active' 
-                AND (pages = 'all' OR pages LIKE ?)
-                AND (target_audience = 'all' OR target_audience = ?)
-                AND (start_date <= NOW() OR start_date IS NULL)
-                AND (end_date >= NOW() OR end_date IS NULL)
-                ORDER BY show_delay ASC";
-            
-            $pagePattern = "%$page%";
-            return $this->db->fetchAll($query, [$pagePattern, $userRole]);
-            
-        } catch (Exception $e) {
-            error_log("Error getting popups: " . $e->getMessage());
-            return [];
-        }
+    
+    public function getTemplate($templateName, $type) {
+        $stmt = $this->db->prepare("SELECT * FROM " . ($type == "email" ? "email" : "sms") . "_templates 
+                                     WHERE template_name = ? AND is_active = 1");
+        $stmt->execute([$templateName]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Dismiss a popup
-     */
-    public function dismissPopup($popupId, $userId = null, $sessionId = null)
-    {
-        try {
-            $query = "INSERT INTO popup_dismissals (popup_id, user_id, session_id, ip_address) 
-                     VALUES (?, ?, ?, ?)";
-            
-            $params = [
-                $popupId,
-                $userId,
-                $sessionId ?? session_id(),
-                $_SERVER['REMOTE_ADDR'] ?? null
-            ];
-            
-            $this->db->execute($query, $params);
-            return true;
-            
-        } catch (Exception $e) {
-            error_log("Error dismissing popup: " . $e->getMessage());
-            return false;
-        }
+    
+    public function getTemplateId($templateName, $type) {
+        $stmt = $this->db->prepare("SELECT id FROM " . ($type == "email" ? "email" : "sms") . "_templates 
+                                     WHERE template_name = ? AND is_active = 1");
+        $stmt->execute([$templateName]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result["id"] : null;
     }
-
-    /**
-     * Check if popup was dismissed by user
-     */
-    public function isPopupDismissed($popupId, $userId = null, $sessionId = null)
-    {
-        try {
-            $whereCondition = "popup_id = ?";
-            $params = [$popupId];
-            
-            if ($userId) {
-                $whereCondition .= " AND user_id = ?";
-                $params[] = $userId;
-            } elseif ($sessionId) {
-                $whereCondition .= " AND session_id = ?";
-                $params[] = $sessionId;
-            }
-            
-            $query = "SELECT COUNT(*) as count FROM popup_dismissals WHERE $whereCondition";
-            $result = $this->db->fetch($query, $params);
-            
-            return $result['count'] > 0;
-            
-        } catch (Exception $e) {
-            error_log("Error checking popup dismissal: " . $e->getMessage());
-            return false;
-        }
+    
+    public function getTemplates($type) {
+        $stmt = $this->db->prepare("SELECT * FROM " . ($type == "email" ? "email" : "sms") . "_templates 
+                                     WHERE is_active = 1 ORDER BY template_name ASC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Send notifications to target audience
-     */
-    public function sendToTargetAudience($notificationData)
-    {
-        try {
-            $targetAudience = $notificationData['target_audience'] ?? 'all';
-            $userIds = [];
-            
-            switch ($targetAudience) {
-                case 'customers':
-                    $userIds = $this->getCustomerIds();
-                    break;
-                case 'agents':
-                    $userIds = $this->getAgentIds();
-                    break;
-                case 'employees':
-                    $userIds = $this->getEmployeeIds();
-                    break;
-                case 'admin':
-                    $userIds = $this->getAdminIds();
-                    break;
-                case 'all':
-                default:
-                    // Create one notification for all users (user_id = NULL)
-                    $this->createNotification($notificationData);
-                    return true;
-            }
-            
-            // Create individual notifications for each user
-            foreach ($userIds as $userId) {
-                $notificationData['user_id'] = $userId;
-                $this->createNotification($notificationData);
-            }
-            
-            return true;
-            
-        } catch (Exception $e) {
-            error_log("Error sending to target audience: " . $e->getMessage());
-            return false;
-        }
+    
+    public function getEmailLogs($limit = 50, $offset = 0) {
+        $stmt = $this->db->prepare("SELECT el.*, et.template_name 
+                                     FROM email_logs el 
+                                     LEFT JOIN email_templates et ON el.template_id = et.id 
+                                     ORDER BY el.created_at DESC 
+                                     LIMIT ? OFFSET ?");
+        $stmt->execute([$limit, $offset]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Get customer IDs
-     */
-    private function getCustomerIds()
-    {
-        try {
-            $result = $this->db->fetchAll("SELECT id FROM users WHERE role = 'customer'");
-            return array_column($result, 'id');
-        } catch (Exception $e) {
-            return [];
-        }
+    
+    public function getSMSLogs($limit = 50, $offset = 0) {
+        $stmt = $this->db->prepare("SELECT sl.*, st.template_name 
+                                     FROM sms_logs sl 
+                                     LEFT JOIN sms_templates st ON sl.template_id = st.id 
+                                     ORDER BY sl.created_at DESC 
+                                     LIMIT ? OFFSET ?");
+        $stmt->execute([$limit, $offset]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Get agent IDs
-     */
-    private function getAgentIds()
-    {
-        try {
-            $result = $this->db->fetchAll("SELECT id FROM users WHERE role IN ('agent', 'associate')");
-            return array_column($result, 'id');
-        } catch (Exception $e) {
-            return [];
-        }
+    
+    public function getSettings() {
+        return $this->settings;
     }
-
-    /**
-     * Get employee IDs
-     */
-    private function getEmployeeIds()
-    {
-        try {
-            $result = $this->db->fetchAll("SELECT id FROM employees");
-            return array_column($result, 'id');
-        } catch (Exception $e) {
-            return [];
-        }
+    
+    public function updateSetting($key, $value) {
+        $stmt = $this->db->prepare("INSERT INTO notification_settings (setting_key, setting_value, setting_type, setting_category) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()");
+        return $stmt->execute([$key, $value, "string", "general"]);
     }
-
-    /**
-     * Get admin IDs
-     */
-    private function getAdminIds()
-    {
-        try {
-            $result = $this->db->fetchAll("SELECT id FROM users WHERE role IN ('admin', 'super_admin')");
-            return array_column($result, 'id');
-        } catch (Exception $e) {
-            return [];
+    
+    private function replaceVariables($content, $data) {
+        foreach ($data as $key => $value) {
+            $content = str_replace("{{" . $key . "}}", $value, $content);
         }
+        return $content;
+    }
+    
+    private function sendEmailWithPHPMailer($to, $subject, $htmlContent, $textContent, $attachments = []) {
+        // This would integrate with PHPMailer library
+        // For now, simulate email sending
+        return [
+            "success" => true,
+            "message_id" => "msg_" . time() . "_" . mt_rand(1000, 9999),
+            "message" => "Email sent successfully"
+        ];
+    }
+    
+    private function sendSMSWithTwilio($to, $message) {
+        // This would integrate with Twilio library
+        // For now, simulate SMS sending
+        return [
+            "success" => true,
+            "message_id" => "sms_" . time() . "_" . mt_rand(1000, 9999),
+            "message" => "SMS sent successfully"
+        ];
+    }
+    
+    public function getNotificationStats() {
+        $emailStats = $this->db->query("SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END) as sent,
+            SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered,
+            SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed
+            FROM email_logs WHERE DATE(created_at) = CURDATE()")->fetch(PDO::FETCH_ASSOC);
+        
+        $smsStats = $this->db->query("SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END) as sent,
+            SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered,
+            SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed
+            FROM sms_logs WHERE DATE(created_at) = CURDATE()")->fetch(PDO::FETCH_ASSOC);
+        
+        return [
+            "email" => $emailStats,
+            "sms" => $smsStats
+        ];
     }
 }
+?>

@@ -8,7 +8,7 @@
             "request": "launch",
             "runtimeArgs": [
                 "-S",
-                "localhost:8000",
+                "localhost:8080",
                 "-t",
                 "public"
             ],
@@ -52,7 +52,7 @@
                 "-dxdebug.mode=debug",
                 "-dxdebug.start_with_request=yes",
                 "-S",
-                "localhost:8000",
+                "localhost:8080",
                 "-t",
                 "public"
             ],
@@ -66,7 +66,7 @@
             "type": "vscode-edge-devtools.debug",
             "request": "attach",
             "name": "Attach to Microsoft Edge",
-            "url": "http://localhost:8000",
+            "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}/public"
         },
         {

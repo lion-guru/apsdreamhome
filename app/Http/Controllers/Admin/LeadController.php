@@ -43,13 +43,13 @@ class LeadController extends AdminController
             // Build query
             $sql = "SELECT l.*, 
                            u.name as assigned_to_name,
-                           ls.name as status_name,
-                           ls.color as status_color,
+                           ls.status_name,
+                           COALESCE(ls.status_description, 'new') as status_color,
                            src.name as source_name,
                            COUNT(la.id) as activity_count
                     FROM leads l
                     LEFT JOIN users u ON l.assigned_to = u.id
-                    LEFT JOIN lead_statuses ls ON l.status = ls.id
+                    LEFT JOIN lead_statuses ls ON l.status = ls.status_name COLLATE utf8mb4_general_ci
                     LEFT JOIN lead_sources src ON l.source_id = src.id
                     LEFT JOIN lead_activities la ON l.id = la.lead_id
                     WHERE 1=1";
@@ -83,7 +83,7 @@ class LeadController extends AdminController
             $sql .= " GROUP BY l.id ORDER BY l.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT l.*, u.name as assigned_to_name, ls.name as status_name, ls.color as status_color, src.name as source_name, COUNT(la.id) as activity_count", "SELECT COUNT(DISTINCT l.id) as total", $sql);
+            $countSql = str_replace("SELECT l.*, u.name as assigned_to_name, ls.status_name, ls.color as status_color, src.name as source_name, COUNT(la.id) as activity_count", "SELECT COUNT(DISTINCT l.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -98,7 +98,7 @@ class LeadController extends AdminController
             $leads = $stmt->fetchAll();
 
             // Get filter options
-            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY name");
+            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY status_name");
             $sources = $this->db->fetchAll("SELECT * FROM lead_sources ORDER BY name");
             $assignees = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate', 'manager') ORDER BY name");
 
@@ -138,7 +138,7 @@ class LeadController extends AdminController
     {
         try {
             // Get dropdown options
-            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY name");
+            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY status_name");
             $sources = $this->db->fetchAll("SELECT * FROM lead_sources ORDER BY name");
             $assignees = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate', 'manager') ORDER BY name");
 
@@ -267,12 +267,12 @@ class LeadController extends AdminController
             $sql = "SELECT l.*, 
                            u.name as assigned_to_name,
                            u.email as assigned_to_email,
-                           ls.name as status_name,
-                           ls.color as status_color,
+                           ls.status_name,
+                           COALESCE(ls.status_description, 'new') as status_color,
                            src.name as source_name
                     FROM leads l
                     LEFT JOIN users u ON l.assigned_to = u.id
-                    LEFT JOIN lead_statuses ls ON l.status = ls.id
+                    LEFT JOIN lead_statuses ls ON l.status = ls.status_name COLLATE utf8mb4_general_ci
                     LEFT JOIN lead_sources src ON l.source_id = src.id
                     WHERE l.id = ?";
             $stmt = $this->db->prepare($sql);
@@ -345,7 +345,7 @@ class LeadController extends AdminController
             }
 
             // Get dropdown options
-            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY name");
+            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY status_name");
             $sources = $this->db->fetchAll("SELECT * FROM lead_sources ORDER BY name");
             $assignees = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate', 'manager') ORDER BY name");
 
@@ -637,9 +637,9 @@ class LeadController extends AdminController
             }
 
             // Check if lead exists and status is valid
-            $sql = "SELECT l.*, ls.name as status_name
+            $sql = "SELECT l.*, ls.status_name
                     FROM leads l
-                    LEFT JOIN lead_statuses ls ON l.status = ls.id
+                    LEFT JOIN lead_statuses ls ON l.status = ls.status_name COLLATE utf8mb4_general_ci
                     WHERE l.id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$leadId]);
@@ -830,11 +830,11 @@ class LeadController extends AdminController
             $stats['total_leads'] = (int)($result['total'] ?? 0);
 
             // Leads by status
-            $sql = "SELECT ls.name, ls.color, COUNT(l.id) as count
+            $sql = "SELECT ls.status_name, COALESCE(ls.status_description, 'new') as color, COUNT(l.id) as count
                     FROM lead_statuses ls
-                    LEFT JOIN leads l ON ls.id = l.status
-                    GROUP BY ls.id, ls.name, ls.color
-                    ORDER BY ls.name";
+                    LEFT JOIN leads l ON ls.status_name = l.status COLLATE utf8mb4_general_ci
+                    GROUP BY ls.id, ls.status_name, ls.status_description
+                    ORDER BY ls.status_name";
             $stats['by_status'] = $this->db->fetchAll($sql) ?: [];
 
             // Leads by source

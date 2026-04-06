@@ -52,6 +52,7 @@ $router->get('/compare/load/{id}', 'Property\CompareController@load');
 $router->post('/compare/delete/{id}', 'Property\CompareController@delete');
 
 // Project Pages
+$router->get('/projects', 'Front\\PageController@projects');
 $router->get('/company/projects', 'Front\\PageController@projects');
 $router->get('/projects/suyoday-colony', 'Front\\PageController@suyodayColony');
 $router->get('/projects/raghunat-nagri', 'Front\\PageController@raghunatNagri');
@@ -330,18 +331,6 @@ $router->get('/admin/locations/colonies/delete/{id}', 'App\Http\Controllers\Admi
 $router->get('/admin/locations/api/districts/{state_id}', 'App\Http\Controllers\Admin\LocationAdminController@getDistrictsByState');
 $router->get('/admin/locations/api/colonies/{district_id}', 'App\Http\Controllers\Admin\LocationAdminController@getColoniesByDistrict');
 
-// Admin Plots Management
-$router->get('/admin/plots', 'App\Http\Controllers\Admin\PlotsAdminController@index');
-$router->get('/admin/plots/create', 'App\Http\Controllers\Admin\PlotsAdminController@create');
-$router->post('/admin/plots/create', 'App\Http\Controllers\Admin\PlotsAdminController@create');
-$router->get('/admin/plots/show/{id}', 'App\Http\Controllers\Admin\PlotsAdminController@show');
-$router->get('/admin/plots/edit/{id}', 'App\Http\Controllers\Admin\PlotsAdminController@edit');
-$router->post('/admin/plots/edit/{id}', 'App\Http\Controllers\Admin\PlotsAdminController@edit');
-$router->get('/admin/plots/delete/{id}', 'App\Http\Controllers\Admin\PlotsAdminController@delete');
-$router->post('/admin/plots/{id}/status', 'App\Http\Controllers\Admin\PlotsAdminController@updateStatus');
-$router->post('/admin/plots/bulk-status-update', 'App\Http\Controllers\Admin\PlotsAdminController@bulkStatusUpdate');
-$router->get('/admin/plots/export', 'App\Http\Controllers\Admin\PlotsAdminController@export');
-
 // Admin News/Blog
 $router->get('/admin/news', 'App\\Http\\Controllers\\Admin\\NewsController@index');
 $router->get('/admin/news/create', 'App\\Http\\Controllers\\Admin\\NewsController@create');
@@ -457,3 +446,108 @@ $router->post('/schedule-meeting', 'Front\PageController@handleScheduleMeeting')
 if (file_exists(__DIR__ . '/api.php')) {
     require_once __DIR__ . '/api.php';
 }
+
+
+// MLM Management Routes
+$router->get('/admin/mlm', 'App\Http\Controllers\Admin\MLMController@index');
+$router->get('/admin/mlm/associates', 'App\Http\Controllers\Admin\MLMController@associates');
+$router->get('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
+$router->post('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
+$router->get('/admin/mlm/commission', 'App\Http\Controllers\Admin\MLMController@commission');
+$router->get('/admin/mlm/network', 'App\Http\Controllers\Admin\MLMController@network');
+$router->get('/admin/mlm/payouts', 'App\Http\Controllers\Admin\MLMController@payouts');
+
+// Projects Management Routes
+$router->get('/admin/projects', 'App\Http\Controllers\Admin\ProjectsAdminController@index');
+$router->get('/admin/projects/create', 'App\Http\Controllers\Admin\ProjectsAdminController@create');
+$router->post('/admin/projects/create', 'App\Http\Controllers\Admin\ProjectsAdminController@create');
+$router->get('/admin/projects/edit/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@edit');
+$router->post('/admin/projects/edit/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@edit');
+$router->get('/admin/projects/view/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@view');
+$router->get('/admin/projects/images/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@images');
+$router->post('/admin/projects/images/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@images');
+$router->get('/admin/projects/status/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@status');
+$router->post('/admin/projects/status/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@status');
+
+// Commission Management Routes
+$router->get('/admin/commission', 'App\Http\Controllers\Admin\CommissionAdminController@index');
+$router->get('/admin/commission/rules', 'App\Http\Controllers\Admin\CommissionAdminController@rules');
+$router->get('/admin/commission/create-rule', 'App\Http\Controllers\Admin\CommissionAdminController@createRule');
+$router->post('/admin/commission/create-rule', 'App\Http\Controllers\Admin\CommissionAdminController@createRule');
+$router->get('/admin/commission/edit-rule/{id}', 'App\Http\Controllers\Admin\CommissionAdminController@editRule');
+$router->post('/admin/commission/edit-rule/{id}', 'App\Http\Controllers\Admin\CommissionAdminController@editRule');
+$router->get('/admin/commission/calculations', 'App\Http\Controllers\Admin\CommissionAdminController@calculations');
+$router->get('/admin/commission/payments', 'App\Http\Controllers\Admin\CommissionAdminController@payments');
+$router->get('/admin/commission/reports', 'App\Http\Controllers\Admin\CommissionAdminController@reports');
+
+// Authentication Routes
+$router->get('/login', 'App\Http\Controllers\AuthController@login');
+$router->post('/login', 'App\Http\Controllers\AuthController@login');
+$router->get('/register', 'App\Http\Controllers\AuthController@register');
+$router->post('/register', 'App\Http\Controllers\AuthController@register');
+$router->get('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
+$router->post('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
+$router->get('/reset-password', 'App\Http\Controllers\AuthController@resetPassword');
+$router->post('/reset-password', 'App\Http\Controllers\AuthController@resetPassword');
+$router->get('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
+$router->post('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
+$router->get('/logout', 'App\Http\Controllers\AuthController@logout');
+
+// Customer Routes
+$router->get('/customer', 'App\Http\Controllers\CustomerController@index');
+$router->get('/customer/dashboard', 'App\Http\Controllers\CustomerController@index');
+$router->get('/customer/profile', 'App\Http\Controllers\CustomerController@profile');
+$router->post('/customer/profile', 'App\Http\Controllers\CustomerController@profile');
+$router->get('/customer/wishlist', 'App\Http\Controllers\CustomerController@wishlist');
+$router->get('/customer/inquiries', 'App\Http\Controllers\CustomerController@inquiries');
+$router->get('/customer/documents', 'App\Http\Controllers\CustomerController@documents');
+$router->get('/customer/settings', 'App\Http\Controllers\CustomerController@settings');
+$router->get('/customer/property-history', 'App\Http\Controllers\CustomerController@propertyHistory');
+$router->get('/customer/payments', 'App\Http\Controllers\CustomerController@payments');
+$router->get('/customer/notifications', 'App\Http\Controllers\CustomerController@notifications');
+
+
+// Property Routes
+$router->get('/properties', 'App\Http\Controllers\PropertyController@index');
+$router->get('/properties/search', 'App\Http\Controllers\PropertyController@search');
+$router->get('/properties/{id}', 'App\Http\Controllers\PropertyController@detail');
+$router->get('/colonies', 'App\Http\Controllers\PropertyController@colonies');
+$router->get('/colonies/{id}', 'App\Http\Controllers\PropertyController@colony');
+$router->get('/projects', 'App\Http\Controllers\PropertyController@projects');
+$router->get('/projects/{id}', 'App\Http\Controllers\PropertyController@project');
+$router->get('/resell', 'App\Http\Controllers\PropertyController@resell');
+$router->get('/resell/{id}', 'App\Http\Controllers\PropertyController@resellDetail');
+$router->get('/submit-property', 'App\Http\Controllers\PropertyController@submitProperty');
+$router->get('/compare', 'App\Http\Controllers\PropertyController@compare');
+
+
+// Payment Routes
+$router->get('/payment', 'App\Http\Controllers\PaymentController@index');
+$router->get('/payment/initiate', 'App\Http\Controllers\PaymentController@initiate');
+$router->post('/payment/initiate', 'App\Http\Controllers\PaymentController@initiate');
+$router->post('/payment/process', 'App\Http\Controllers\PaymentController@process');
+$router->get('/payment/success', 'App\Http\Controllers\PaymentController@success');
+$router->get('/payment/failure', 'App\Http\Controllers\PaymentController@failure');
+$router->post('/payment/webhook', 'App\Http\Controllers\PaymentController@webhook');
+$router->get('/payment/history', 'App\Http\Controllers\PaymentController@history');
+$router->get('/payment/plans', 'App\Http\Controllers\PaymentController@plans');
+$router->get('/payment/emi-calculator', 'App\Http\Controllers\PaymentController@emiCalculator');
+$router->post('/payment/emi-calculator', 'App\Http\Controllers\PaymentController@emiCalculator');
+$router->get('/payment/refund', 'App\Http\Controllers\PaymentController@refund');
+$router->post('/payment/refund', 'App\Http\Controllers\PaymentController@refund');
+$router->get('/payment/settings', 'App\Http\Controllers\PaymentController@settings');
+$router->post('/payment/settings', 'App\Http\Controllers\PaymentController@settings');
+
+// Missing Routes
+$router->get('/privacy-policy', function() { include __DIR__ . '/../app/views/pages/privacy-policy.php'; });
+$router->get('/terms', function() { include __DIR__ . '/../app/views/pages/terms.php'; });
+$router->get('/inquiry', function() { include __DIR__ . '/../app/views/pages/inquiry.php'; });
+$router->post('/inquiry', function() { 
+    header('Location: /inquiry?success=1'); 
+    exit; 
+});
+$router->get('/plots', function() { include __DIR__ . '/../app/views/pages/plots.php'; });
+$router->get('/mlm-dashboard', function() { include __DIR__ . '/../app/views/pages/mlm-dashboard.php'; });
+$router->get('/analytics', function() { include __DIR__ . '/../app/views/pages/analytics.php'; });
+$router->get('/whatsapp-templates', function() { include __DIR__ . '/../app/views/pages/whatsapp-templates.php'; });
+$router->get('/ai-assistant', function() { include __DIR__ . '/../app/views/pages/ai-assistant.php'; });

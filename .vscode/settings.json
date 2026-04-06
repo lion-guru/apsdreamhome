@@ -97,7 +97,7 @@
         {
             "previewLimit": 50,
             "server": "localhost",
-            "port": 3306,
+            "port": 3307,
             "driver": "MySQL",
             "name": "APS Dream Home",
             "database": "apsdreamhome",
