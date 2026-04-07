@@ -301,6 +301,103 @@
     </div>
 </section>
 
+<!-- Service Inquiry Form -->
+<section class="py-5 bg-light" id="service-inquiry">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-5">
+                        <h3 class="text-center mb-4">
+                            <i class="fas fa-paper-plane text-primary me-2"></i>
+                            Enquire About Our Services
+                        </h3>
+                        <form id="serviceInterestForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Your Name *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="service_type" class="form-label">Service Required *</label>
+                                    <select class="form-select" id="service_type" name="service_type" required>
+                                        <option value="">Select a service</option>
+                                        <option value="home_loan">Home Loan Assistance</option>
+                                        <option value="legal">Legal Services</option>
+                                        <option value="registry">Registry / Transfer</option>
+                                        <option value="mutation">Mutation</option>
+                                        <option value="interior">Interior Design</option>
+                                        <option value="rental_agreement">Rental Agreement</option>
+                                        <option value="property_tax">Property Tax</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="message" class="form-label">Additional Details</label>
+                                    <textarea class="form-control" id="message" name="message" rows="3" placeholder="Tell us more about your requirements..."></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <div id="serviceFormMessage" class="alert d-none"></div>
+                                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit Inquiry
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('serviceInterestForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    const submitBtn = document.getElementById('submitBtn');
+    const messageDiv = document.getElementById('serviceFormMessage');
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+    
+    const formData = new FormData(form);
+    
+    fetch('<?php echo BASE_URL; ?>/service-interest', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        messageDiv.classList.remove('d-none', 'alert-danger', 'alert-success');
+        messageDiv.classList.add(data.success ? 'alert-success' : 'alert-danger');
+        messageDiv.textContent = data.message;
+        
+        if (data.success) {
+            form.reset();
+        }
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Inquiry';
+        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    })
+    .catch(error => {
+        messageDiv.classList.remove('d-none');
+        messageDiv.classList.remove('alert-success');
+        messageDiv.classList.add('alert-danger');
+        messageDiv.textContent = 'Something went wrong. Please try again.';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Inquiry';
+    });
+});
+</script>
+
 <!-- Call to Action Section -->
 <section class="cta-section py-5 cta-section-success">
     <div class="container">

@@ -111,40 +111,67 @@ if (!defined('BASE_URL')) {
                         }
                     }
                     ?>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-plus me-1"></i>
-                            Register
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/register">
-                                    <i class="fas fa-user me-2"></i>Customer Registration
-                                </a></li>
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/associate/register">
-                                    <i class="fas fa-handshake me-2"></i>Associate Registration
-                                </a></li>
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/register">
-                                    <i class="fas fa-briefcase me-2"></i>Agent Registration
-                                </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-sign-in-alt me-1"></i>
-                            Login
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/login">
-                                    <i class="fas fa-user me-2"></i>Customer Login
-                                </a></li>
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/associate/login">
-                                    <i class="fas fa-handshake me-2"></i>Associate Login
-                                </a></li>
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/login">
-                                    <i class="fas fa-briefcase me-2"></i>Agent Login
-                                </a></li>
-                        </ul>
-                    </li>
+                    <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id']): ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-primary fw-bold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'My Account'); ?>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/user/dashboard">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                    </a></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/user/properties">
+                                        <i class="fas fa-building me-2"></i>My Properties
+                                    </a></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/user/inquiries">
+                                        <i class="fas fa-envelope me-2"></i>My Inquiries
+                                    </a></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/user/profile">
+                                        <i class="fas fa-user-cog me-2"></i>Profile
+                                    </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>/user/logout">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </a></li>
+                            </ul>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-plus me-1"></i>
+                                Register
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/register">
+                                        <i class="fas fa-user me-2"></i>Customer Registration
+                                    </a></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/associate/register">
+                                        <i class="fas fa-handshake me-2"></i>Associate Registration
+                                    </a></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/register">
+                                        <i class="fas fa-briefcase me-2"></i>Agent Registration
+                                    </a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-sign-in-alt me-1"></i>
+                                Login
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/login">
+                                        <i class="fas fa-user me-2"></i>Customer Login
+                                    </a></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/associate/login">
+                                        <i class="fas fa-handshake me-2"></i>Associate Login
+                                    </a></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/login">
+                                        <i class="fas fa-briefcase me-2"></i>Agent Login
+                                    </a></li>
+                            </ul>
+                        </li>
+                    <?php endif; ?>
                     <li class="nav-item ms-2">
                         <a href="tel:+919277121112" class="btn btn-success btn-sm">
                             <i class="fas fa-phone me-1"></i>

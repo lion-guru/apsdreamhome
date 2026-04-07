@@ -15,6 +15,16 @@ $router = new Router();
 // Home
 $router->get('/', 'Front\\PageController@home');
 
+// Redirect /public to /
+$router->get('/public', function() {
+    header('Location: /', true, 301);
+    exit;
+});
+$router->get('/public/', function() {
+    header('Location: /', true, 301);
+    exit;
+});
+
 // Static Pages
 $router->get('/about', 'Front\\PageController@about');
 $router->get('/contact', 'Front\\PageController@contact');
@@ -54,16 +64,47 @@ $router->post('/compare/delete/{id}', 'Property\CompareController@delete');
 // Project Pages
 $router->get('/projects', 'Front\\PageController@projects');
 $router->get('/company/projects', 'Front\\PageController@projects');
-$router->get('/projects/suyoday-colony', 'Front\\PageController@suyodayColony');
-$router->get('/projects/raghunat-nagri', 'Front\\PageController@raghunatNagri');
-$router->get('/projects/braj-radha-nagri', 'Front\\PageController@brajRadhaNagri');
-$router->get('/projects/budh-bihar-colony', 'Front\\PageController@budhBiharColony');
-$router->get('/projects/awadhpuri', 'Front\\PageController@awadhpuri');
+$router->get('/projects/{slug}', 'Front\\PageController@projectDetails');
+$router->get('/projects/{location}', 'Front\\PageController@projectsByLocation');
 $router->get('/navigation', 'Front\\PageController@navigation');
 $router->get('/downloads', 'Front\\PageController@downloads');
 $router->get('/under-construction', 'Front\\PageController@underConstruction');
 $router->get('/thank-you', 'Front\\PageController@thankYou');
 $router->get('/customer-reviews', 'Front\\PageController@customerReviews');
+
+// Buy/Sell/Rent/Invest
+$router->get('/buy', 'Front\\PageController@buyProperty');
+$router->get('/sell', 'Front\\PageController@sellProperty');
+$router->get('/rent', 'Front\\PageController@rentProperty');
+$router->get('/invest', 'Front\\PageController@investProperty');
+
+// Property Listing (User)
+$router->get('/list-property', 'Front\\PageController@listProperty');
+$router->post('/list-property/submit', 'Front\\PageController@handlePropertyListing');
+
+// Form Handlers
+$router->post('/contact', 'Front\\PageController@contact');
+$router->post('/quick-inquiry', 'Front\\PageController@handleQuickInquiry');
+
+// AI Bot
+$router->post('/ai-chat', 'Front\\AIBotController@chat');
+$router->get('/ai-chat', 'Front\\AIBotController@chat');
+$router->post('/whatsapp-webhook', 'Front\\AIBotController@whatsappWebhook');
+
+// Admin Services
+$router->get('/admin/services', 'App\\Http\\Controllers\\Admin\\ServiceController@index');
+$router->get('/admin/services/view/{id}', 'App\\Http\\Controllers\\Admin\\ServiceController@view');
+$router->post('/admin/services/update-status', 'App\\Http\\Controllers\\Admin\\ServiceController@updateStatus');
+
+// Admin User Properties
+$router->get('/admin/user-properties', 'App\\Http\\Controllers\\Admin\\UserPropertyController@index');
+$router->get('/admin/user-properties/verify/{id}', 'App\\Http\\Controllers\\Admin\\UserPropertyController@verify');
+$router->post('/admin/user-properties/action', 'App\\Http\\Controllers\\Admin\\UserPropertyController@action');
+
+// Resources
+$router->get('/blog', 'Front\\PageController@blog');
+$router->get('/news', 'Front\\PageController@news');
+$router->get('/faqs', 'Front\\PageController@faqs');
 
 // Missing frontend routes (from header/footer links)
 $router->get('/financial-services', 'Front\\PageController@financialServices');
@@ -288,6 +329,12 @@ $router->get('/admin/sites/{id}/edit', 'App\\Http\\Controllers\\Admin\\SiteContr
 $router->post('/admin/sites/{id}/update', 'App\\Http\\Controllers\\Admin\\SiteController@update');
 $router->post('/admin/sites/{id}/destroy', 'App\\Http\\Controllers\\Admin\\SiteController@destroy');
 
+// Admin Inquiries
+$router->get('/admin/inquiries', 'App\\Http\\Controllers\\Admin\\InquiryController@index');
+$router->get('/admin/inquiries/view/{id}', 'App\\Http\\Controllers\\Admin\\InquiryController@show');
+$router->post('/admin/inquiries/update-status', 'App\\Http\\Controllers\\Admin\\InquiryController@updateStatus');
+$router->post('/admin/inquiries/delete/{id}', 'App\\Http\\Controllers\\Admin\\InquiryController@delete');
+
 // Admin Plots
 $router->get('/admin/plots', 'App\\Http\\Controllers\\Admin\\PlotManagementController@index');
 $router->get('/admin/plots/create', 'App\\Http\\Controllers\\Admin\\PlotManagementController@create');
@@ -460,13 +507,12 @@ $router->get('/admin/mlm/payouts', 'App\Http\Controllers\Admin\MLMController@pay
 // Projects Management Routes
 $router->get('/admin/projects', 'App\Http\Controllers\Admin\ProjectsAdminController@index');
 $router->get('/admin/projects/create', 'App\Http\Controllers\Admin\ProjectsAdminController@create');
-$router->post('/admin/projects/create', 'App\Http\Controllers\Admin\ProjectsAdminController@create');
+$router->post('/admin/projects/store', 'App\Http\Controllers\Admin\ProjectsAdminController@store');
 $router->get('/admin/projects/edit/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@edit');
-$router->post('/admin/projects/edit/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@edit');
+$router->post('/admin/projects/update/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@update');
 $router->get('/admin/projects/view/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@view');
 $router->get('/admin/projects/images/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@images');
-$router->post('/admin/projects/images/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@images');
-$router->get('/admin/projects/status/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@status');
+$router->get('/admin/projects/delete/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@delete');
 $router->post('/admin/projects/status/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@status');
 
 // Commission Management Routes
@@ -551,3 +597,21 @@ $router->get('/mlm-dashboard', function() { include __DIR__ . '/../app/views/pag
 $router->get('/analytics', function() { include __DIR__ . '/../app/views/pages/analytics.php'; });
 $router->get('/whatsapp-templates', function() { include __DIR__ . '/../app/views/pages/whatsapp-templates.php'; });
 $router->get('/ai-assistant', function() { include __DIR__ . '/../app/views/pages/ai-assistant.php'; });
+
+// Newsletter Subscribe
+$router->post('/subscribe', 'Api\NewsletterController@subscribe');
+
+// Service Interest
+$router->post('/service-interest', 'Front\PageController@serviceInterest');
+
+// User Authentication
+$router->get('/login', 'Front\UserController@login');
+$router->post('/login', 'Front\UserController@login');
+$router->get('/register', 'Front\UserController@register');
+$router->post('/register', 'Front\UserController@register');
+$router->get('/user/logout', 'Front\UserController@logout');
+$router->get('/user/dashboard', 'Front\UserController@dashboard');
+$router->get('/user/properties', 'Front\UserController@myProperties');
+$router->get('/user/inquiries', 'Front\UserController@myInquiries');
+$router->get('/user/profile', 'Front\UserController@profile');
+$router->post('/user/profile', 'Front\UserController@profile');
