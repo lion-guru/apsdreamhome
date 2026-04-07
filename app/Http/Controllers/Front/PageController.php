@@ -22,51 +22,40 @@ class PageController extends BaseController
             'awards_won' => 25,
         ];
 
-        // Get featured properties
-        $featured_properties = [
-            [
-                'id' => 1,
-                'title' => 'Suyoday Colony',
-                'location' => 'Gorakhpur',
-                'price' => '₹7.5 Lakhs',
-                'image' => 'suyoday.jpg',
-                'type' => 'Residential',
-                'status' => 'Available'
-            ],
-            [
-                'id' => 2,
-                'title' => 'Raghunat Nagri',
-                'location' => 'Gorakhpur',
-                'price' => '₹8.5 Lakhs',
-                'image' => 'raghunat.jpg',
-                'type' => 'Residential',
-                'status' => 'Available'
-            ],
-            [
-                'id' => 3,
-                'title' => 'Braj Radha Nagri',
-                'location' => 'Gorakhpur',
-                'price' => '₹6.5 Lakhs',
-                'image' => 'brajradha.jpg',
-                'type' => 'Residential',
-                'status' => 'Available'
-            ],
-            [
-                'id' => 4,
-                'title' => 'Budh Bihar Colony',
-                'location' => 'Kushinagar',
-                'price' => '₹5.5 Lakhs',
-                'image' => 'budhbihar.jpg',
-                'type' => 'Residential',
-                'status' => 'Available'
-            ],
-        ];
+        // Get featured projects from database
+        $featured_properties = [];
+        $all_projects = [];
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM sites WHERE status IN ('active', 'completed') ORDER BY site_name LIMIT 6");
+            $stmt->execute();
+            $all_projects = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            
+            // Map to featured format
+            foreach ($all_projects as $project) {
+                $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));
+                $featured_properties[] = [
+                    'id' => $project->id,
+                    'title' => $project->site_name,
+                    'location' => ($project->district ?? '') . ', ' . ($project->state ?? ''),
+                    'city' => $project->district ?? '',
+                    'price' => 'Starting from ₹5.5 Lakhs',
+                    'slug' => $slug,
+                    'type' => ucfirst($project->site_type ?? 'Residential'),
+                    'status' => ($project->status === 'active') ? 'Available' : 'Completed',
+                    'total_area' => $project->total_area,
+                    'description' => $project->description
+                ];
+            }
+        } catch (\Exception $e) {
+            error_log("Home projects error: " . $e->getMessage());
+        }
 
         $data = [
             'page_title' => 'APS Dream Home - Premium Real Estate in UP',
             'page_description' => 'Discover premium residential and commercial properties in Gorakhpur, Lucknow, and across Uttar Pradesh',
             'hero_stats' => $hero_stats,
             'featured_properties' => $featured_properties,
+            'all_projects' => $all_projects,
         ];
 
         $this->render('pages/home', $data);
@@ -96,6 +85,14 @@ class PageController extends BaseController
                     $stmt->execute([$name, $email, $phone, $subject, $message, $ip]);
                     $success = true;
                     $_POST = [];
+                    
+                    // Also save to inquiries table for CRM
+                    try {
+                        $inqStmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'new', 'medium', NOW())");
+                        $inqStmt->execute([$name, $email, $phone, $subject . ': ' . $message, 'contact']);
+                    } catch (\Exception $e2) {
+                        error_log("Inquiry save error: " . $e2->getMessage());
+                    }
                 } catch (\Exception $e) {
                     $error = 'Failed to submit. Please try again or call us directly.';
                     error_log("Contact form error: " . $e->getMessage());
@@ -112,6 +109,96 @@ class PageController extends BaseController
         $this->render('pages/contact', $data);
     }
 
+    // Service Interest Handler
+    public function serviceInterest()
+    {
+        header('Content-Type: application/json');
+        
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $serviceType = trim($_POST['service_type'] ?? '');
+        $propertyId = (int)($_POST['property_id'] ?? 0);
+        $message = trim($_POST['message'] ?? '');
+
+        if (empty($name) || empty($email) || empty($phone) || empty($serviceType)) {
+            echo json_encode(['success' => false, 'message' => 'Please fill in all required fields.']);
+            return;
+        }
+
+        try {
+            // Check if service_interests table exists
+            $this->db->query("SELECT 1 FROM service_interests LIMIT 1");
+            
+            $stmt = $this->db->prepare("
+                INSERT INTO service_interests (service_type, property_id, status, notes, created_at) 
+                VALUES (?, ?, 'new', ?, NOW())
+            ");
+            $stmt->execute([$serviceType, $propertyId, $message]);
+            $serviceId = $this->db->lastInsertId();
+
+            // Create lead
+            $leadStmt = $this->db->prepare("
+                INSERT INTO leads (name, email, phone, source, status, created_at) 
+                VALUES (?, ?, ?, 'website', 'new', NOW())
+            ");
+            $leadStmt->execute([$name, $email, $phone]);
+            $leadId = $this->db->lastInsertId();
+
+            // Link lead to service
+            $this->db->prepare("UPDATE service_interests SET lead_id = ? WHERE id = ?")
+                ->execute([$leadId, $serviceId]);
+
+            echo json_encode(['success' => true, 'message' => 'Thank you! We will contact you shortly.']);
+        } catch (\Exception $e) {
+            // Table might not exist, create it
+            if (strpos($e->getMessage(), "doesn't exist") !== false) {
+                $this->createServiceInterestsTable();
+                // Retry
+                $stmt = $this->db->prepare("
+                    INSERT INTO service_interests (service_type, property_id, status, notes, created_at) 
+                    VALUES (?, ?, 'new', ?, NOW())
+                ");
+                $stmt->execute([$serviceType, $propertyId, $message]);
+                $serviceId = $this->db->lastInsertId();
+
+                $leadStmt = $this->db->prepare("
+                    INSERT INTO leads (name, email, phone, source, status, created_at) 
+                    VALUES (?, ?, ?, 'website', 'new', NOW())
+                ");
+                $leadStmt->execute([$name, $email, $phone]);
+                $leadId = $this->db->lastInsertId();
+
+                $this->db->prepare("UPDATE service_interests SET lead_id = ? WHERE id = ?")
+                    ->execute([$leadId, $serviceId]);
+
+                echo json_encode(['success' => true, 'message' => 'Thank you! We will contact you shortly.']);
+            } else {
+                error_log("Service interest error: " . $e->getMessage());
+                echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again.']);
+            }
+        }
+    }
+
+    private function createServiceInterestsTable()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS service_interests (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            lead_id INT DEFAULT NULL,
+            property_id INT DEFAULT NULL,
+            service_type VARCHAR(50) NOT NULL,
+            status ENUM('new', 'contacted', 'in_progress', 'completed', 'cancelled') DEFAULT 'new',
+            notes TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_lead (lead_id),
+            INDEX idx_property (property_id),
+            INDEX idx_service_type (service_type),
+            INDEX idx_status (status)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+        $this->db->exec($sql);
+    }
+
     // About Us Page
     public function about()
     {
@@ -125,110 +212,234 @@ class PageController extends BaseController
     // Properties Page
     public function properties()
     {
+        $page = (int)($_GET['page'] ?? 1);
+        $type = $_GET['type'] ?? '';
+        $listingType = $_GET['listing'] ?? '';
+        $location = $_GET['location'] ?? '';
+        $minPrice = (int)($_GET['min_price'] ?? 0);
+        $maxPrice = (int)($_GET['max_price'] ?? 0);
+        $sortBy = $_GET['sort'] ?? 'newest';
+        $perPage = 12;
+        $offset = ($page - 1) * $perPage;
+
+        $properties = [];
+        $total = 0;
+
+        // Try to fetch from database first
         try {
-            // Get all properties with sample data
-            $properties = [
-                [
-                    'id' => 1,
-                    'title' => 'Suyoday Colony',
-                    'location' => 'Gorakhpur',
-                    'price' => '₹7.5 Lakhs',
-                    'image' => 'suyoday.jpg',
-                    'type' => 'Residential',
-                    'status' => 'Available',
-                    'area' => '1200 sq ft',
-                    'bedrooms' => '2 BHK',
-                    'description' => 'Premium residential plots with modern infrastructure and amenities.'
-                ],
-                [
-                    'id' => 2,
-                    'title' => 'Raghunat Nagri',
-                    'location' => 'Gorakhpur',
-                    'price' => '₹8.5 Lakhs',
-                    'image' => 'raghunat.jpg',
-                    'type' => 'Residential',
-                    'status' => 'Available',
-                    'area' => '1500 sq ft',
-                    'bedrooms' => '3 BHK',
-                    'description' => 'Premium residential plots in developing area with all facilities.'
-                ],
-                [
-                    'id' => 3,
-                    'title' => 'Braj Radha Nagri',
-                    'location' => 'Gorakhpur',
-                    'price' => '₹6.5 Lakhs',
-                    'image' => 'brajradha.jpg',
-                    'type' => 'Residential',
-                    'status' => 'Planned',
-                    'area' => '1000 sq ft',
-                    'bedrooms' => '2 BHK',
-                    'description' => 'Affordable residential plots with basic amenities.'
-                ],
-                [
-                    'id' => 4,
-                    'title' => 'Budh Bihar Colony',
-                    'location' => 'Kushinagar',
-                    'price' => '₹5.5 Lakhs',
-                    'image' => 'budhbihar.jpg',
-                    'type' => 'Residential',
-                    'status' => 'Ongoing',
-                    'area' => '1100 sq ft',
-                    'bedrooms' => '2 BHK',
-                    'description' => 'Integrated township at Premwaliya with modern facilities.'
-                ],
-                [
-                    'id' => 5,
-                    'title' => 'Awadhpuri',
-                    'location' => 'Lucknow',
-                    'price' => '₹12 Lakhs',
-                    'image' => 'awadhpuri.jpg',
-                    'type' => 'Residential',
-                    'status' => 'Coming Soon',
-                    'area' => '2000 sq ft',
-                    'bedrooms' => '4 BHK',
-                    'description' => '20 bigha premium project at Safadarganj with luxury amenities.'
-                ],
-                [
-                    'id' => 6,
-                    'title' => 'Commercial Complex',
-                    'location' => 'Gorakhpur',
-                    'price' => '₹25 Lakhs',
-                    'image' => 'commercial.jpg',
-                    'type' => 'Commercial',
-                    'status' => 'Available',
-                    'area' => '800 sq ft',
-                    'bedrooms' => 'N/A',
-                    'description' => 'Prime commercial space in heart of the city.'
-                ]
-            ];
+            $this->db->query("SELECT 1 FROM user_properties LIMIT 1");
+            
+            $where = "WHERE status = 'approved'";
+            $params = [];
 
-            // Get filter options
-            $property_types = ['All Types', 'Residential', 'Commercial', 'Land', 'Villa', 'Apartment'];
-            $locations = ['All Locations', 'Gorakhpur', 'Lucknow', 'Kanpur', 'Varanasi', 'Allahabad'];
-            $price_ranges = ['Any Price', 'Under ₹10L', '₹10L - ₹50L', '₹50L - ₹1Cr', '₹1Cr - ₹5Cr', 'Above ₹5Cr'];
-            $bedrooms = ['Any', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK'];
+            if ($type) {
+                $where .= " AND property_type = ?";
+                $params[] = $type;
+            }
+            if ($listingType) {
+                $where .= " AND listing_type = ?";
+                $params[] = $listingType;
+            }
+            if ($location) {
+                $where .= " AND address LIKE ?";
+                $params[] = '%' . $location . '%';
+            }
+            if ($minPrice > 0) {
+                $where .= " AND price >= ?";
+                $params[] = $minPrice;
+            }
+            if ($maxPrice > 0) {
+                $where .= " AND price <= ?";
+                $params[] = $maxPrice;
+            }
 
-            // Breadcrumb data
-            $breadcrumbs = [
-                ['title' => 'Home', 'url' => BASE_URL],
-                ['title' => 'Properties', 'url' => BASE_URL . '/properties']
-            ];
+            $orderBy = match($sortBy) {
+                'price_low' => 'price ASC',
+                'price_high' => 'price DESC',
+                'oldest' => 'created_at ASC',
+                default => 'created_at DESC'
+            };
 
-            $data = [
-                'page_title' => 'Properties - APS Dream Home',
-                'page_description' => 'Browse our premium residential and commercial properties',
-                'properties' => $properties,
-                'property_types' => $property_types,
-                'locations' => $locations,
-                'price_ranges' => $price_ranges,
-                'bedrooms' => $bedrooms,
-                'breadcrumbs' => $breadcrumbs
-            ];
+            // Count total
+            $countSql = "SELECT COUNT(*) as total FROM user_properties $where";
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
 
-            $this->render('pages/properties', $data);
-        } catch (Exception $e) {
-            $this->renderError('Error loading properties page', $e->getMessage());
+            // Get properties
+            $sql = "SELECT * FROM user_properties $where ORDER BY $orderBy LIMIT $perPage OFFSET $offset";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        } catch (\Exception $e) {
+            // Table doesn't exist or error, use sample data
         }
+
+        // If no properties in DB, use sample data
+        if (empty($properties)) {
+            $sampleProperties = $this->getSampleProperties();
+            $total = count($sampleProperties);
+            
+            // Apply filters to sample data
+            if ($type) {
+                $sampleProperties = array_filter($sampleProperties, fn($p) => strtolower($p['type']) === strtolower($type));
+            }
+            if ($listingType) {
+                $sampleProperties = array_filter($sampleProperties, fn($p) => strtolower($p['listing_type']) === strtolower($listingType));
+            }
+            if ($location) {
+                $sampleProperties = array_filter($sampleProperties, fn($p) => stripos($p['location'], $location) !== false);
+            }
+            
+            // Sort
+            usort($sampleProperties, function($a, $b) use ($sortBy) {
+                return match($sortBy) {
+                    'price_low' => $a['price_num'] <=> $b['price_num'],
+                    'price_high' => $b['price_num'] <=> $a['price_num'],
+                    default => 0
+                };
+            });
+            
+            $total = count($sampleProperties);
+            $properties = array_slice($sampleProperties, $offset, $perPage);
+        }
+
+        $totalPages = ceil($total / $perPage);
+
+        $data = [
+            'properties' => $properties,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
+            'type' => $type,
+            'listingType' => $listingType,
+            'location' => $location,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'sortBy' => $sortBy,
+            'property_types' => ['plot', 'house', 'flat', 'shop', 'farmhouse', 'land'],
+            'locations' => ['Gorakhpur', 'Lucknow', 'Kushinagar', 'Varanasi'],
+            'price_ranges' => ['Under 5 Lakhs', '5-10 Lakhs', '10-20 Lakhs', '20-50 Lakhs', '50+ Lakhs'],
+            'page_title' => 'Properties - APS Dream Home',
+            'page_description' => 'Browse properties for sale and rent'
+        ];
+
+        $this->render('pages/properties', $data);
+    }
+
+    private function getSampleProperties()
+    {
+        return [
+            [
+                'id' => 1,
+                'name' => 'Suryoday Colony',
+                'address' => 'Gorakhpur, Uttar Pradesh',
+                'location' => 'Gorakhpur',
+                'price' => 750000,
+                'price_display' => '₹7.5 Lakhs',
+                'price_num' => 750000,
+                'image' => 'suyoday.jpg',
+                'property_type' => 'plot',
+                'listing_type' => 'sell',
+                'type' => 'Plot',
+                'status' => 'approved',
+                'area_sqft' => 1200,
+                'area' => '1200 sq ft',
+                'bedrooms' => 'N/A',
+                'description' => 'Premium residential plots with modern infrastructure and amenities.'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Raghunat Nagri',
+                'address' => 'Gorakhpur, Uttar Pradesh',
+                'location' => 'Gorakhpur',
+                'price' => 850000,
+                'price_display' => '₹8.5 Lakhs',
+                'price_num' => 850000,
+                'image' => 'raghunat.jpg',
+                'property_type' => 'plot',
+                'listing_type' => 'sell',
+                'type' => 'Plot',
+                'status' => 'approved',
+                'area_sqft' => 1500,
+                'area' => '1500 sq ft',
+                'bedrooms' => 'N/A',
+                'description' => 'Premium residential plots in developing area with all facilities.'
+            ],
+            [
+                'id' => 3,
+                'name' => 'Braj Radha Nagri',
+                'address' => 'Gorakhpur, Uttar Pradesh',
+                'location' => 'Gorakhpur',
+                'price' => 650000,
+                'price_display' => '₹6.5 Lakhs',
+                'price_num' => 650000,
+                'image' => 'brajradha.jpg',
+                'property_type' => 'plot',
+                'listing_type' => 'sell',
+                'type' => 'Plot',
+                'status' => 'approved',
+                'area_sqft' => 1000,
+                'area' => '1000 sq ft',
+                'bedrooms' => 'N/A',
+                'description' => 'Affordable residential plots with basic amenities.'
+            ],
+            [
+                'id' => 4,
+                'name' => 'Budh Bihar Colony',
+                'address' => 'Kushinagar, Uttar Pradesh',
+                'location' => 'Kushinagar',
+                'price' => 550000,
+                'price_display' => '₹5.5 Lakhs',
+                'price_num' => 550000,
+                'image' => 'budhbihar.jpg',
+                'property_type' => 'plot',
+                'listing_type' => 'sell',
+                'type' => 'Plot',
+                'status' => 'approved',
+                'area_sqft' => 1100,
+                'area' => '1100 sq ft',
+                'bedrooms' => 'N/A',
+                'description' => 'Integrated township with modern facilities.'
+            ],
+            [
+                'id' => 5,
+                'name' => 'Awadhpuri',
+                'address' => 'Lucknow, Uttar Pradesh',
+                'location' => 'Lucknow',
+                'price' => 1200000,
+                'price_display' => '₹12 Lakhs',
+                'price_num' => 1200000,
+                'image' => 'awadhpuri.jpg',
+                'property_type' => 'plot',
+                'listing_type' => 'sell',
+                'type' => 'Plot',
+                'status' => 'approved',
+                'area_sqft' => 2000,
+                'area' => '2000 sq ft',
+                'bedrooms' => 'N/A',
+                'description' => '20 bigha premium project with luxury amenities.'
+            ],
+            [
+                'id' => 6,
+                'name' => 'Commercial Shop',
+                'address' => 'Gorakhpur, Uttar Pradesh',
+                'location' => 'Gorakhpur',
+                'price' => 2500000,
+                'price_display' => '₹25 Lakhs',
+                'price_num' => 2500000,
+                'image' => 'commercial.jpg',
+                'property_type' => 'shop',
+                'listing_type' => 'sell',
+                'type' => 'Commercial',
+                'status' => 'approved',
+                'area_sqft' => 800,
+                'area' => '800 sq ft',
+                'bedrooms' => 'N/A',
+                'description' => 'Prime commercial space in heart of the city.'
+            ]
+        ];
     }
 
     // Testimonials
@@ -757,12 +968,18 @@ class PageController extends BaseController
             
             // Group by state
             $grouped = [];
+            // Group by state > district
+            $grouped = [];
             foreach ($projects as $project) {
                 $state = $project->state ?? 'Other';
+                $district = $project->district ?? 'Other';
                 if (!isset($grouped[$state])) {
                     $grouped[$state] = [];
                 }
-                $grouped[$state][] = $project;
+                if (!isset($grouped[$state][$district])) {
+                    $grouped[$state][$district] = [];
+                }
+                $grouped[$state][$district][] = $project;
             }
         } catch (\Exception $e) {
             $projects = [];
@@ -779,32 +996,73 @@ class PageController extends BaseController
         $this->render('pages/company_projects', $data);
     }
 
-    // Project Details
+    // Project Details - Dynamic
     public function projectDetails($slug = null)
     {
-        try {
-            $slug = $slug ?? '';
-            $siteName = str_replace('-', ' ', $slug);
-            $siteName = ucwords($siteName);
-            
-            $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE ? OR slug = ? LIMIT 1");
-            $stmt->execute(['%' . $siteName . '%', $slug]);
-            $project = $stmt->fetch(\PDO::FETCH_OBJ);
-            
-            if (!$project) {
-                $stmt = $this->db->prepare("SELECT * FROM sites WHERE status = 'active' LIMIT 1");
-                $stmt->execute();
+        $project = null;
+        $plots = [];
+        
+        if ($slug) {
+            try {
+                // Convert slug to site name format
+                $searchName = str_replace('-', ' ', $slug);
+                $searchName = preg_replace('/\s+/', ' ', trim($searchName));
+                
+                // Try exact match on site_name
+                $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name = ? LIMIT 1");
+                $stmt->execute([ucwords($searchName)]);
                 $project = $stmt->fetch(\PDO::FETCH_OBJ);
+                
+                // Try case-insensitive match
+                if (!$project) {
+                    $stmt = $this->db->prepare("SELECT * FROM sites WHERE LOWER(site_name) = LOWER(?) LIMIT 1");
+                    $stmt->execute([$searchName]);
+                    $project = $stmt->fetch(\PDO::FETCH_OBJ);
+                }
+                
+                // Try LIKE match
+                if (!$project) {
+                    $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE ? LIMIT 1");
+                    $stmt->execute(['%' . $searchName . '%']);
+                    $project = $stmt->fetch(\PDO::FETCH_OBJ);
+                }
+                
+                // Get any active project as final fallback
+                if (!$project) {
+                    $stmt = $this->db->query("SELECT * FROM sites WHERE status = 'active' LIMIT 1");
+                    $project = $stmt->fetch(\PDO::FETCH_OBJ);
+                }
+                
+                // Get plots for this site
+                if ($project) {
+                    try {
+                        $plotStmt = $this->db->prepare("SELECT * FROM plots WHERE site_id = ? AND status IN ('available', 'open') LIMIT 20");
+                        $plotStmt->execute([$project->id]);
+                        $plots = $plotStmt->fetchAll(\PDO::FETCH_OBJ);
+                    } catch (\Exception $e) {
+                        $plots = [];
+                    }
+                    
+                    // Get related projects (same district, excluding current)
+                    try {
+                        $relatedStmt = $this->db->prepare("SELECT * FROM sites WHERE district = ? AND id != ? AND status IN ('active', 'completed') ORDER BY site_name LIMIT 4");
+                        $relatedStmt->execute([$project->district, $project->id]);
+                        $related_projects = $relatedStmt->fetchAll(\PDO::FETCH_OBJ);
+                    } catch (\Exception $e) {
+                        $related_projects = [];
+                    }
+                }
+            } catch (\Exception $e) {
+                error_log("Project details error: " . $e->getMessage());
             }
-        } catch (\Exception $e) {
-            $project = null;
-            error_log("Project details error: " . $e->getMessage());
         }
         
         $data = [
-            'page_title' => 'Project Details - APS Dream Home',
-            'page_description' => 'View project details',
-            'project' => $project
+            'page_title' => $project ? ($project->site_name ?? 'Project') . ' - APS Dream Home' : 'Project Not Found',
+            'page_description' => $project ? 'View details of ' . ($project->site_name ?? 'our project') : 'Project details',
+            'project' => $project,
+            'plots' => $plots ?? [],
+            'related_projects' => $related_projects ?? []
         ];
         $this->render('pages/project_detail', $data);
     }
@@ -1180,5 +1438,258 @@ class PageController extends BaseController
             ]
         ]);
         exit;
+    }
+
+    // Buy Property
+    public function buyProperty()
+    {
+        $this->render('pages/buy');
+    }
+
+    // Sell Property
+    public function sellProperty()
+    {
+        $this->render('pages/sell');
+    }
+
+    // Rent Property
+    public function rentProperty()
+    {
+        $this->render('pages/rent');
+    }
+
+    // Investment Property
+    public function investProperty()
+    {
+        $this->render('pages/invest');
+    }
+
+    // Projects by Location
+    public function projectsByLocation($location = null)
+    {
+        $projects = [];
+        if ($location) {
+            try {
+                $stmt = $this->db->prepare("SELECT * FROM sites WHERE LOWER(district) = LOWER(?) AND status IN ('active', 'completed') ORDER BY site_name");
+                $stmt->execute([$location]);
+                $projects = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            } catch (\Exception $e) {
+                error_log("Projects by location error: " . $e->getMessage());
+            }
+        }
+        $data = [
+            'page_title' => ucfirst($location) . ' Projects - APS Dream Home',
+            'page_description' => 'Explore our projects in ' . ucfirst($location),
+            'projects' => $projects,
+            'location' => $location
+        ];
+        $this->render('pages/projects_by_location', $data);
+    }
+
+    // Handle Quick Inquiry from Homepage
+    public function handleQuickInquiry()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $requirement = trim($_POST['requirement'] ?? '');
+            $budget = trim($_POST['budget'] ?? '');
+            $location = trim($_POST['location'] ?? '');
+            $timeline = trim($_POST['timeline'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+            $formType = trim($_POST['form_type'] ?? 'quick_inquiry');
+
+            if (empty($name) || empty($phone)) {
+                $_SESSION['flash_error'] = 'Please fill in name and phone number.';
+                $this->redirect('/');
+                return;
+            }
+
+            try {
+                // Save to inquiries table
+                $fullMessage = "Requirement: " . ucfirst(str_replace('_', ' ', $requirement)) . "\n";
+                $fullMessage .= "Budget: " . ucfirst(str_replace('_', ' ', $budget)) . "\n";
+                $fullMessage .= "Location: " . ucfirst($location) . "\n";
+                $fullMessage .= "Timeline: " . ucfirst(str_replace('_', ' ', $timeline)) . "\n";
+                if ($message) {
+                    $fullMessage .= "Message: " . $message;
+                }
+
+                $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'new', 'high', NOW())");
+                $stmt->execute([$name, $email, $phone, $fullMessage, $formType]);
+                $inquiryId = $this->db->lastInsertId();
+
+                // Also save to contacts table
+                try {
+                    $contactStmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+                    $contactStmt->execute([$name, $email, $phone, 'Quick Inquiry - ' . ucfirst(str_replace('_', ' ', $requirement)), $fullMessage, $_SERVER['REMOTE_ADDR'] ?? 'unknown']);
+                } catch (\Exception $e2) {}
+
+                // Track service interests based on requirement
+                $this->trackServiceInterests($name, $phone, $email, $requirement, $inquiryId);
+
+                $_SESSION['flash_success'] = 'Thank you! Your inquiry has been submitted. We will contact you shortly.';
+            } catch (\Exception $e) {
+                error_log("Quick inquiry error: " . $e->getMessage());
+                $_SESSION['flash_error'] = 'Failed to submit. Please call us directly at +91 92771 21112.';
+            }
+        }
+        $this->redirect('/');
+    }
+
+    // Track Service Interests
+    private function trackServiceInterests($name, $phone, $email, $requirement, $inquiryId)
+    {
+        // Map requirements to service types
+        $serviceMapping = [
+            'home_loan' => ['buy_house', 'buy_flat', 'invest'],
+            'legal' => ['legal', 'registry'],
+            'interior' => ['interior']
+        ];
+
+        foreach ($serviceMapping as $serviceType => $requirements) {
+            if (in_array($requirement, $requirements)) {
+                try {
+                    $serviceStmt = $this->db->prepare("INSERT INTO service_interests (inquiry_id, service_type, status, created_at) VALUES (?, ?, 'new', NOW())");
+                    $serviceStmt->execute([$inquiryId, $serviceType]);
+                } catch (\Exception $e) {
+                    error_log("Service interest tracking error: " . $e->getMessage());
+                }
+            }
+        }
+    }
+
+    // Property Listing (User Post Property)
+    public function listProperty()
+    {
+        $this->render('pages/list_property');
+    }
+
+    // Handle Property Listing Submission
+    public function handlePropertyListing()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $propertyType = trim($_POST['property_type'] ?? '');
+            $listingType = trim($_POST['listing_type'] ?? 'sell');
+            $price = (float)str_replace([',', ' '], '', $_POST['price'] ?? 0);
+            $location = trim($_POST['location'] ?? '');
+            $area = (int)str_replace([',', ' '], '', $_POST['area'] ?? 0);
+            $description = trim($_POST['description'] ?? '');
+
+            if (empty($name) || empty($phone) || empty($propertyType)) {
+                $_SESSION['flash_error'] = 'Please fill in all required fields.';
+                $this->redirect('/list-property');
+                return;
+            }
+
+            try {
+                // Try to save to user_properties table
+                $savedToUserProperties = false;
+                try {
+                    $this->db->query("SELECT 1 FROM user_properties LIMIT 1");
+                    
+                    $stmt = $this->db->prepare("
+                        INSERT INTO user_properties (user_id, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, status, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                    ");
+                    $stmt->execute([
+                        null,
+                        $name,
+                        $phone,
+                        $email,
+                        $propertyType,
+                        $listingType,
+                        $location,
+                        $area,
+                        $price,
+                        $listingType === 'rent' ? 'month' : 'lakh',
+                        $description
+                    ]);
+                    $savedToUserProperties = true;
+                } catch (\Exception $e1) {
+                    // Table might not exist, create it
+                    if (strpos($e1->getMessage(), "doesn't exist") !== false) {
+                        $this->createUserPropertiesTable();
+                        $stmt = $this->db->prepare("
+                            INSERT INTO user_properties (user_id, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, status, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                        ");
+                        $stmt->execute([
+                            null,
+                            $name,
+                            $phone,
+                            $email,
+                            $propertyType,
+                            $listingType,
+                            $location,
+                            $area,
+                            $price,
+                            $listingType === 'rent' ? 'month' : 'lakh',
+                            $description
+                        ]);
+                        $savedToUserProperties = true;
+                    }
+                }
+
+                // Also save to inquiries for CRM tracking
+                $message = "Property Type: " . ucfirst($propertyType) . "\n";
+                $message .= "Listing Type: " . ucfirst($listingType) . "\n";
+                $message .= "Price: " . $price . "\n";
+                $message .= "Area: " . $area . " sq ft\n";
+                $message .= "Location: " . $location . "\n";
+                $message .= "Description: " . $description;
+
+                try {
+                    $inqStmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'property_listing', 'new', 'medium', NOW())");
+                    $inqStmt->execute([$name, $email, $phone, $message]);
+                } catch (\Exception $e2) {
+                    error_log("Inquiry save error: " . $e2->getMessage());
+                }
+
+                $_SESSION['flash_success'] = 'Thank you! Your property listing request has been submitted. Our team will contact you within 24 hours to verify the details.';
+            } catch (\Exception $e) {
+                error_log("Property listing error: " . $e->getMessage());
+                $_SESSION['flash_error'] = 'Failed to submit. Please try again or call us directly.';
+            }
+        }
+        $this->redirect('/list-property');
+    }
+
+    private function createUserPropertiesTable()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS user_properties (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT DEFAULT NULL,
+            name VARCHAR(200) NOT NULL,
+            phone VARCHAR(20) NOT NULL,
+            email VARCHAR(100) DEFAULT NULL,
+            property_type ENUM('plot','house','flat','shop','farmhouse','warehouse','land') NOT NULL,
+            listing_type ENUM('sell','rent') NOT NULL DEFAULT 'sell',
+            state_id INT DEFAULT NULL,
+            district_id INT DEFAULT NULL,
+            city_id INT DEFAULT NULL,
+            address TEXT,
+            area_sqft INT DEFAULT NULL,
+            price DECIMAL(15,2) DEFAULT NULL,
+            price_type ENUM('lakh','crore','month') DEFAULT 'lakh',
+            description TEXT,
+            images JSON,
+            status ENUM('pending','verified','approved','rejected','sold','rented') DEFAULT 'pending',
+            is_featured TINYINT DEFAULT 0,
+            views INT DEFAULT 0,
+            inquiries INT DEFAULT 0,
+            verified_by INT DEFAULT NULL,
+            verified_at DATETIME DEFAULT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_status (status),
+            INDEX idx_property_type (property_type),
+            INDEX idx_listing_type (listing_type)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+        $this->db->exec($sql);
     }
 }
