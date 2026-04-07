@@ -1,0 +1,27 @@
+{
+    "recommendations": [
+        "bmewburn.vscode-intelephense-client",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-json",
+        "eamodio.gitlens"
+    ],
+    "unwantedRecommendations": [
+        "modelcontextprotocol.vscode-mcp",
+        "github.copilot",
+        "github.copilot-chat",
+        "ms-vscode.vscode-ai-toolkit",
+        "ms-vscode.vscode-sqltools",
+        "cweijan.vscode-mysql-client2",
+        "ms-vscode.vscode-typescript-next",
+        "ms-vscode.vscode-javascript",
+        "ms-vscode.vscode-css",
+        "ms-vscode.vscode-html",
+        "ms-vscode.vscode-test-explorer",
+        "ms-vscode.test-adapter-converter",
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode-remote.remote-ssh",
+        "ms-vscode.vscode-live-server",
+        "ritwickdey.liveserver",
+        "bradlc.vscode-tailwindcss"
+    ]
+}

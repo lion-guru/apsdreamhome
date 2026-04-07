@@ -1,0 +1,129 @@
+{
+    "php.version": "8.2",
+    "php.validate.executablePath": "C:\\xampp\\php\\php.exe",
+    "explorer.excludeGitIgnore": true,
+    
+    "// OpenCode IDE - Minimal Configuration": "",
+    "intelephense.maxMemory": 512,
+    "intelephense.completion.maxItems": 100,
+    
+    "// OpenCode IDE - Disable Intelephense Warnings": "",
+    "intelephense.diagnostics.undefinedMethods": false,
+    "intelephense.diagnostics.undefinedFunctions": false,
+    "intelephense.diagnostics.undefinedConstants": false,
+    "intelephense.diagnostics.undefinedClassConstants": false,
+    "intelephense.diagnostics.undefinedProperties": false,
+    "intelephense.diagnostics.undefinedTypes": false,
+    "intelephense.diagnostics.duplicateSymbols": false,
+    
+    "// OpenCode IDE - File Exclusions for Performance": "",
+    "files.watcherExclude": {
+        "**/node_modules/*/**": true,
+        "**/vendor/*/**": true,
+        "**/logs/*/**": true,
+        "**/storage/*/**": true,
+        "**/cache/*/**": true,
+        "**/backup/*/**": true,
+        "**/.git/*/**": true,
+        "**/_DEPRECATED/*/**": true,
+        "**/testing/*/**": true,
+        "**/reports/*/**": true
+    },
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/vendor": true,
+        "**/logs": true,
+        "**/storage/cache": true,
+        "**/backup": true,
+        "**/_DEPRECATED": true,
+        "**/testing": true,
+        "**/reports": true
+    },
+    "search.exclude": {
+        "**/_DEPRECATED": true,
+        "**/.git": true,
+        "**/backup": true,
+        "**/bin": true,
+        "**/logs": true,
+        "**/node_modules": true,
+        "**/storage/cache": true,
+        "**/vendor": true,
+        "**/testing": true,
+        "**/reports": true
+    },
+    
+    "// OpenCode IDE - Basic PHP Configuration": "",
+    "php.validate.enable": true,
+    "php.validate.run": "onType",
+    "intelephense.environment.phpVersion": "8.2.12",
+    
+    "// OpenCode IDE - Performance Settings": "",
+    "files.autoSaveDelay": 2000,
+    "workbench.enableExperiments": false,
+    "telemetry.enableTelemetry": false,
+    "extensions.autoUpdate": false,
+    "extensions.autoCheckUpdates": false,
+    "update.mode": "manual",
+    "workbench.startupEditor": "none",
+    
+    "// OpenCode IDE - Editor Configuration": "",
+    "editor.formatOnSave": false,
+    "files.autoSave": "afterDelay",
+    "workbench.editor.showTabIndex": false,
+    "editor.minimap.enabled": false,
+    "editor.glyphMargin": false,
+    "editor.folding": false,
+    "editor.lineNumbers": "on",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+    "editor.wordWrap": "off",
+    
+    "// OpenCode IDE - Language Specific": "",
+    "[php]": {
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
+        "editor.formatOnSave": false
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    
+    "// OpenCode IDE - Disable All Language Servers Except PHP": "",
+    "typescript.tsserver.enable": false,
+    "javascript.validate.enable": false,
+    "css.validate.enabled": false,
+    "html.validate.enabled": false,
+    "json.validate.enabled": false,
+    
+    "// OpenCode IDE - Disable All AI and MCP Features": "",
+    "mcp.enabled": false,
+    "mcp.autoStart": false,
+    "gitlab.lsp.enabled": false,
+    "windsurf.enabled": false,
+    "codium.codeCompletion.enable": false,
+    "editor.aiStats.enabled": false,
+    "dbcode.ai.mcp.autoStart": false,
+    "chat.agent.enabled": false,
+    
+    "// OpenCode IDE - Disable Database Tools": "",
+    "sqltools.enable": false,
+    "sqltools.connections": [],
+    
+    "// OpenCode IDE - Minimal Git Settings": "",
+    "git.enableSmartCommit": false,
+    "git.autofetch": false,
+    "git.confirmSync": true,
+    
+    "// OpenCode IDE - Debug Configuration": "",
+    "php.debug.executablePath": "C:\\xampp\\php\\php.exe",
+    "php.debug.executable": "C:\\xampp\\php\\php.exe",
+    "xdebug.debugPort": 9003,
+    "xdebug.maxChildren": 50,
+    "xdebug.maxData": 512,
+    
+    "// OpenCode IDE - Basic Settings": "",
+    "php.suggest.basic": true,
+    "workbench.colorTheme": "Default Dark+",
+    "editor.fontSize": 14,
+    "editor.fontFamily": "Consolas, 'Courier New', monospace"
+}
