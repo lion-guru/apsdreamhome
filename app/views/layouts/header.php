@@ -75,7 +75,8 @@ if (!defined('BASE_URL')) {
                                 ['label' => 'FAQs', 'url' => '/faqs', 'icon' => 'fas fa-question-circle'],
                             ]
                         ],
-                        ['label' => 'Contact', 'url' => '/contact', 'icon' => 'fas fa-phone']
+                        ['label' => 'Contact', 'url' => '/contact', 'icon' => 'fas fa-phone'],
+                        ['label' => 'Post Property FREE', 'url' => '/list-property', 'icon' => 'fas fa-plus-circle', 'highlight' => true]
                     ];
 
                     foreach ($nav_items as $item) {
@@ -103,8 +104,9 @@ if (!defined('BASE_URL')) {
                             echo '</li>';
                         } else {
                             $active_class = ($current_path === $item['url']) ? 'active' : '';
+                            $highlight_class = (isset($item['highlight']) && $item['highlight']) ? 'text-white bg-success rounded px-2' : '';
                             echo '<li class="nav-item">';
-                            echo '<a class="nav-link ' . $active_class . '" href="' . BASE_URL . $item['url'] . '">';
+                            echo '<a class="nav-link ' . $active_class . ' ' . $highlight_class . '" href="' . BASE_URL . $item['url'] . '">';
                             echo '<i class="' . $item['icon'] . ' me-1"></i>' . htmlspecialchars($item['label']);
                             echo '</a>';
                             echo '</li>';

@@ -604,12 +604,8 @@ $router->post('/subscribe', 'Api\NewsletterController@subscribe');
 // Service Interest
 $router->post('/service-interest', 'Front\PageController@serviceInterest');
 
-// User Authentication
-$router->get('/login', 'Front\UserController@login');
-$router->post('/login', 'Front\UserController@login');
-$router->get('/register', 'Front\UserController@register');
-$router->post('/register', 'Front\UserController@register');
-$router->get('/user/logout', 'Front\UserController@logout');
+// User Authentication (Customer)
+$router->get('/user/logout', 'Auth\CustomerAuthController@logout');
 $router->get('/user/dashboard', 'Front\UserController@dashboard');
 $router->get('/user/properties', 'Front\UserController@myProperties');
 $router->get('/user/inquiries', 'Front\UserController@myInquiries');
