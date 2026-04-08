@@ -6,9 +6,9 @@ $extraHead = '<style>
 
 $investments = [];
 try {
-    $stmt = $this->db->prepare("SELECT p.*, s.site_name, s.location as site_location 
-        FROM plots p LEFT JOIN site_master s ON p.site_id = s.id 
-        WHERE p.customer_id = ? AND p.status = 'active' ORDER BY p.updated_at DESC LIMIT 20");
+    $stmt = $this->db->prepare("SELECT p.*, s.site_name, s.district as site_location 
+        FROM plots p LEFT JOIN site_master s ON p.colony_id = s.site_id 
+        WHERE p.customer_id = ? AND p.is_active = 1 ORDER BY p.updated_at DESC LIMIT 20");
     $userId = $_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0;
     $stmt->execute([$userId]);
     $investments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -83,11 +83,11 @@ try {
                                 </div>
                                 <div class="col-6">
                                     <label class="text-muted small d-block mb-1">Size</label>
-                                    <span class="fw-bold"><?= htmlspecialchars($inv['plot_size'] ?? 'N/A') ?> sq.ft</span>
+                                    <span class="fw-bold"><?= number_format($inv['area_sqft'] ?? 0) ?> sq.ft</span>
                                 </div>
                                 <div class="col-6">
-                                    <label class="text-muted small d-block mb-1">Rate</label>
-                                    <span class="fw-bold">&#8377;<?= number_format($inv['rate'] ?? 0) ?>/sq.ft</span>
+                                    <label class="text-muted small d-block mb-1">Price</label>
+                                    <span class="fw-bold">&#8377;<?= number_format($inv['total_price'] ?? 0) ?></span>
                                 </div>
                             </div>
                             <div class="d-grid mt-4">
