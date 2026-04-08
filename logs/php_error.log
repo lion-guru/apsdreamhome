@@ -5287,3 +5287,101 @@ Stack trace:
 [08-Apr-2026 08:11:30 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
 [08-Apr-2026 08:11:30 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
 [08-Apr-2026 08:11:30 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:29 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:27:29 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:27:29 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:32 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:27:32 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:27:32 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:32 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:27:32 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:27:32 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:33 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:27:33 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:27:33 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:33 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:27:33 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:27:33 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:34 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:27:34 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:27:34 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:34 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 08:27:34 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 08:27:34 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:35 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/LocationApiController.php
+[08-Apr-2026 08:27:35 Europe/Berlin] Router: Controller class: App\Http\Controllers\Api\LocationApiController
+[08-Apr-2026 08:27:35 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:35 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/SystemController.php
+[08-Apr-2026 08:27:35 Europe/Berlin] Router: Controller class: App\Http\Controllers\Api\SystemController
+[08-Apr-2026 08:27:35 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 08:27:35 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 08:27:35 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:27:35 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 08:27:35 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 08:27:35 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:28:02 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/NewsletterController.php
+[08-Apr-2026 08:28:02 Europe/Berlin] Router: Controller class: App\Http\Controllers\Api\NewsletterController
+[08-Apr-2026 08:30:00 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:30:00 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:30:00 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:02 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:30:02 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:30:02 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:04 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:30:04 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:30:04 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:11 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 08:30:11 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 08:30:11 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:12 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 08:30:12 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 08:30:12 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:19 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 08:30:19 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 08:30:19 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:19 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 08:30:19 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 08:30:19 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:21 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/UserPropertyController.php
+[08-Apr-2026 08:30:21 Europe/Berlin] Router: Controller class: App\Http\Controllers\Admin\UserPropertyController
+[08-Apr-2026 08:30:21 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:27 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:30:27 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:30:27 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:36 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:30:36 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:30:36 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:30:59 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:30:59 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:30:59 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:00 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:31:00 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:31:00 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:01 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:31:01 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:31:01 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:02 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:31:02 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:31:02 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:03 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:31:03 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:31:03 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:03 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 08:31:03 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 08:31:03 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:04 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 08:31:04 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 08:31:04 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:04 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/LocationApiController.php
+[08-Apr-2026 08:31:04 Europe/Berlin] Router: Controller class: App\Http\Controllers\Api\LocationApiController
+[08-Apr-2026 08:31:04 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:05 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/SystemController.php
+[08-Apr-2026 08:31:05 Europe/Berlin] Router: Controller class: App\Http\Controllers\Api\SystemController
+[08-Apr-2026 08:31:05 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/NewsletterController.php
+[08-Apr-2026 08:31:05 Europe/Berlin] Router: Controller class: App\Http\Controllers\Api\NewsletterController
+[08-Apr-2026 08:31:05 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 08:31:05 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 08:31:05 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 08:31:05 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 08:31:05 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 08:31:05 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
