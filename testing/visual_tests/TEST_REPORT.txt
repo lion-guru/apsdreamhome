@@ -1,41 +1,41 @@
 === APS Dream Home A-to-Z Test Report ===
-Generated: 2026-04-08T12:42:46.120Z
+Generated: 2026-04-08T13:00:09.017Z
 
-[12:42:46] Starting A-to-Z test suite...
-[12:42:46] --- Phase 0: DB Health ---
-[12:42:46] --- Phase 0b: DB Seeds ---
-[12:42:48] --- Phase 1: Header UI/UX ---
-[12:42:55] Screenshot saved: testing/visual_tests/header_Desktop.png
-[12:42:56] Screenshot saved: testing/visual_tests/header_Tablet.png
-[12:42:58] Screenshot saved: testing/visual_tests/header_Mobile.png
-[12:42:58] PASS: Header Visual Tests (Desktop/Tablet/Mobile)
-[12:42:58] --- Phase 2: Admin Login ---
-[12:43:01] Admin test-login bypass: SUCCESS
-[12:43:02] PASS: Admin Login (test-login bypass)
-[12:43:05] Admin User Properties page: LOADED
-[12:43:05] PASS: Admin User Properties
-[12:43:05] --- Phase 3: User Property Posting ---
-[12:43:08] List Property form: PRESENT
-[12:43:13] List Property form: SUBMITTED
-[12:43:14] PASS: List Property Form
-[12:43:14] --- Phase 4: Newsletter ---
-[12:43:21] Newsletter form: SUBMITTED
-[12:43:21] PASS: Newsletter Subscription
-[12:43:21] --- Phase 5: User Pages ---
-[12:43:29] User Dashboard: LOADED
-[12:43:30] User Properties: LOADED
-[12:43:31] User Inquiries: LOADED
-[12:43:32] User Profile: LOADED
-[12:43:33] PASS: User Dashboard/Properties/Inquiries/Profile
-[12:43:33] --- Summary ---
-[12:43:33] Total screenshots captured: 7
-[12:43:33]   - testing/visual_tests/header_Desktop.png
-[12:43:33]   - testing/visual_tests/header_Tablet.png
-[12:43:33]   - testing/visual_tests/header_Mobile.png
-[12:43:33]   - testing/visual_tests/admin_dashboard.png
-[12:43:33]   - testing/visual_tests/admin_user_properties.png
-[12:43:33]   - testing/visual_tests/list_property.png
-[12:43:33]   - testing/visual_tests/user_dashboard.png
-[12:43:33] A-to-Z test suite COMPLETE
+[13:00:09] Starting A-to-Z test suite...
+[13:00:09] --- Phase 0: DB Health ---
+[13:00:09] --- Phase 0b: DB Seeds ---
+[13:00:10] --- Phase 1: Header UI/UX ---
+[13:00:18] Screenshot saved: testing/visual_tests/header_Desktop.png
+[13:00:20] Screenshot saved: testing/visual_tests/header_Tablet.png
+[13:00:21] Screenshot saved: testing/visual_tests/header_Mobile.png
+[13:00:22] PASS: Header Visual Tests (Desktop/Tablet/Mobile)
+[13:00:22] --- Phase 2: Admin Login ---
+[13:00:24] Admin test-login bypass: SUCCESS
+[13:00:25] PASS: Admin Login (test-login bypass)
+[13:00:28] Admin User Properties page: LOADED
+[13:00:29] PASS: Admin User Properties
+[13:00:29] --- Phase 3: User Property Posting ---
+[13:00:31] List Property form: PRESENT
+[13:00:35] List Property form: SUBMITTED
+[13:00:36] PASS: List Property Form
+[13:00:36] --- Phase 4: Newsletter ---
+[13:00:43] Newsletter form: SUBMITTED
+[13:00:43] PASS: Newsletter Subscription
+[13:00:43] --- Phase 5: User Pages ---
+[13:00:52] User Dashboard: LOADED
+[13:00:53] User Properties: LOADED
+[13:00:53] User Inquiries: LOADED
+[13:00:54] User Profile: LOADED
+[13:00:55] PASS: User Dashboard/Properties/Inquiries/Profile
+[13:00:55] --- Summary ---
+[13:00:55] Total screenshots captured: 7
+[13:00:55]   - testing/visual_tests/header_Desktop.png
+[13:00:55]   - testing/visual_tests/header_Tablet.png
+[13:00:55]   - testing/visual_tests/header_Mobile.png
+[13:00:55]   - testing/visual_tests/admin_dashboard.png
+[13:00:55]   - testing/visual_tests/admin_user_properties.png
+[13:00:55]   - testing/visual_tests/list_property.png
+[13:00:55]   - testing/visual_tests/user_dashboard.png
+[13:00:55] A-to-Z test suite COMPLETE
 
 === END OF REPORT ===
