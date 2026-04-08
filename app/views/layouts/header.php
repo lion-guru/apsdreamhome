@@ -4,6 +4,90 @@ if (!defined('BASE_URL')) {
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
 }
+
+$projectLocations = [];
+$allProjects = [];
+
+try {
+    $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    $sql = "SELECT p.id, p.name, d.name as district, s.name as state 
+            FROM projects p 
+            LEFT JOIN districts d ON p.district_id = d.id 
+            LEFT JOIN states s ON p.state_id = s.id 
+            WHERE p.status IN ('under_construction', 'completed', 'planning') 
+            ORDER BY d.name, p.name";
+    $stmt = $db->query($sql);
+    $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    foreach ($projects as $p) {
+        $district = ucfirst(strtolower($p['district'] ?? 'Other'));
+        $state = ucfirst(strtolower($p['state'] ?? ''));
+        
+        $locKey = strtolower($district);
+        if (!isset($projectLocations[$locKey])) {
+            $projectLocations[$locKey] = [
+                'name' => $district,
+                'count' => 0,
+                'state' => $state
+            ];
+        }
+        $projectLocations[$locKey]['count']++;
+        
+        $allProjects[] = [
+            'id' => $p['id'],
+            'name' => $p['name'],
+            'district' => $district
+        ];
+    }
+} catch (PDOException $e) {
+    $projectLocations = [];
+    $allProjects = [];
+}
+
+$projectsSubmenu = [
+    ['label' => 'All Projects', 'url' => '/company/projects', 'icon' => 'fas fa-th-large']
+];
+
+if (!empty($projectLocations)) {
+    $projectsSubmenu[] = ['label' => '── By Location ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true];
+    foreach ($projectLocations as $loc) {
+        $projectsSubmenu[] = [
+            'label' => $loc['name'],
+            'url' => '/company/projects?location=' . urlencode(strtolower($loc['name'])),
+            'icon' => 'fas fa-map-pin',
+            'badge' => (string)$loc['count']
+        ];
+    }
+}
+
+if (!empty($allProjects)) {
+    $projectsSubmenu[] = ['label' => '── Projects ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true];
+    foreach (array_slice($allProjects, 0, 10) as $proj) {
+        $slug = preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
+        $projectsSubmenu[] = [
+            'label' => $proj['name'],
+            'url' => '/projects/' . $slug,
+            'icon' => 'fas fa-home'
+        ];
+    }
+}
+
+if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
+    $projectsSubmenu = [
+        ['label' => 'All Projects', 'url' => '/company/projects', 'icon' => 'fas fa-th-large'],
+        ['label' => '── By Location ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
+        ['label' => 'Gorakhpur', 'url' => '/company/projects?location=gorakhpur', 'icon' => 'fas fa-map-pin', 'badge' => '3'],
+        ['label' => 'Lucknow', 'url' => '/company/projects?location=lucknow', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
+        ['label' => 'Kushinagar', 'url' => '/company/projects?location=kushinagar', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
+        ['label' => 'Varanasi', 'url' => '/company/projects?location=varanasi', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
+        ['label' => '── Projects ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true],
+        ['label' => 'Suryoday Colony', 'url' => '/projects/suryoday-colony', 'icon' => 'fas fa-home'],
+        ['label' => 'Raghunath Nagri', 'url' => '/projects/raghunath-nagri', 'icon' => 'fas fa-building'],
+        ['label' => 'Braj Radha Nagri', 'url' => '/projects/braj-radha-nagri', 'icon' => 'fas fa-city'],
+    ];
+}
 ?>
 <header class="premium-header fixed-top" id="mainHeader">
     <nav class="navbar navbar-expand-lg">
@@ -31,20 +115,7 @@ if (!defined('BASE_URL')) {
                         [
                             'label' => 'Projects', 
                             'icon' => 'fas fa-project-diagram',
-                            'submenu' => [
-                                ['label' => 'All Projects', 'url' => '/company/projects', 'icon' => 'fas fa-th-large'],
-                                ['label' => '── By Location ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
-                                ['label' => 'Gorakhpur', 'url' => '/company/projects?location=gorakhpur', 'icon' => 'fas fa-map-pin', 'badge' => '3'],
-                                ['label' => 'Lucknow', 'url' => '/company/projects?location=lucknow', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
-                                ['label' => 'Kushinagar', 'url' => '/company/projects?location=kushinagar', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
-                                ['label' => 'Varanasi', 'url' => '/company/projects?location=varanasi', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
-                                ['label' => '── Projects ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true],
-                                ['label' => 'Suryoday Colony', 'url' => '/projects/suryoday-colony', 'icon' => 'fas fa-home'],
-                                ['label' => 'Raghunath Nagri', 'url' => '/projects/raghunath-nagri', 'icon' => 'fas fa-building'],
-                                ['label' => 'Braj Radha Nagri', 'url' => '/projects/braj-radha-nagri', 'icon' => 'fas fa-city'],
-                                ['label' => 'Budh Bihar Colony', 'url' => '/projects/budh-bihar-colony', 'icon' => 'fas fa-map-marker-alt'],
-                                ['label' => 'Awadhpuri', 'url' => '/projects/awadhpuri', 'icon' => 'fas fa-landmark'],
-                            ]
+                            'submenu' => $projectsSubmenu
                         ],
                         [
                             'label' => 'Buy',
