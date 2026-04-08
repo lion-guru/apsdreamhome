@@ -341,6 +341,23 @@ node testing/visual_tests/MASTER_TEST_RUNNER.js
 
 ---
 
+---
+
+## Phase 15 - Cleanup & Bug Fixes
+
+### What Was Done
+1. Fixed `user/investments.php` — corrected DB query schema (`plots JOIN site_master` using correct columns: `colony_id=site_id`, `district as location`, `area_sqft`, `total_price`)
+2. Removed broken `/properties/list` route — `properties/list.php` is a 776-line standalone page incompatible with MVC layout; `/properties` already works for listing
+3. Fixed LocalizationService error log on every page load — silenced non-critical exception
+4. Deleted 3 truly orphaned standalone pages: `rahunath_nagri.php`, `aps_portfolio.php`, `builder_registration.php`
+5. All 5 test phases pass, PHP error log clean
+
+### Commit
+`3fbd997d5` - Delete 3 truly orphaned standalone pages (rahunath_nagri, aps_portfolio, builder_registration)
+`724d8aec6` - Fix investments query schema, remove broken /properties/list route, silence LocalizationService warning
+
+---
+
 ## Restoration & Fix Session (This Session)
 
 ### What Was Done
