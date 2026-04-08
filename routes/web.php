@@ -106,7 +106,6 @@ $router->get('/interior-design', 'Front\\PageController@interiorDesign');
 $router->get('/legal/terms-conditions', 'Front\\PageController@legalTermsConditions');
 $router->get('/legal/services', 'Front\\PageController@legalServices');
 $router->get('/legal/documents', 'Front\\PageController@legalDocuments');
-$router->get('/forgot-password', 'Auth\\CustomerAuthController@login');
 $router->get('/user/edit-profile', 'Front\\PageController@userEditProfile');
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
@@ -573,11 +572,10 @@ $router->post('/inquiry', function() {
     header('Location: /inquiry?success=1'); 
     exit; 
 });
+
+
+// Standalone Pages
 $router->get('/plots', function() { include __DIR__ . '/../app/views/pages/plots.php'; });
-$router->get('/mlm-dashboard', function() { include __DIR__ . '/../app/views/pages/mlm-dashboard.php'; });
-$router->get('/analytics', function() { include __DIR__ . '/../app/views/pages/analytics.php'; });
-$router->get('/whatsapp-templates', function() { include __DIR__ . '/../app/views/pages/whatsapp-templates.php'; });
-$router->get('/ai-assistant', function() { include __DIR__ . '/../app/views/pages/ai-assistant.php'; });
 
 // Newsletter Subscribe
 $router->post('/subscribe', 'Api\NewsletterController@subscribe');
