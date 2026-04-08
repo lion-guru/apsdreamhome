@@ -332,7 +332,63 @@ node testing/visual_tests/MASTER_TEST_RUNNER.js
 
 ---
 
-## Important Rules
+### Database
+- Host: 127.0.0.1
+- Port: 3307
+- Database: apsdreamhome
+- User: root
+- Password: (empty)
+
+---
+
+## Restoration & Fix Session (This Session)
+
+### What Was Done
+1. **Restored 18 deleted files** from git commits 46403b273 and 88eecfd7e
+2. **Fixed 4 broken view files** to work with the MVC layout system
+3. **Added 6 new routes** for previously inaccessible pages
+4. **All PHP syntax checks pass**, MASTER_TEST_RUNNER passes all 5 phases
+
+### Files Restored
+All from commit `65499538d` (before deletion commits):
+- `app/views/pages/support.php` → rewritten as layout-based view
+- `app/views/pages/whatsapp_chat.php` → rewritten as layout-based view
+- `app/views/pages/user_ai_suggestions.php` → rewritten as layout-based view
+- `app/views/pages/user/investments.php` → rewritten as layout-based view
+- `app/views/pages/rahunath_nagri.php` → standalone (broken, not linked)
+- `app/views/pages/aps_portfolio.php` → standalone (broken, not linked)
+- `app/views/pages/builder_registration.php` → standalone (broken, not linked)
+- `app/views/pages/admin/` → 4 files (broken, not linked)
+- `app/views/pages/system/` → 3 files (broken, not linked)
+- `app/views/pages/properties/` → 5 files (broken, not linked)
+
+### Routes Added
+```
+GET/POST /support → Front\SupportController@index/@store
+GET /whatsapp-chat → Front\PageController@whatsappChat
+GET /user-ai-suggestions → Front\PageController@userAiSuggestions
+GET /user/investments → Front\PageController@userInvestments
+GET /properties/submit → Front\PageController@propertySubmit
+GET /properties/list → Front\PageController@propertyList
+```
+
+### Critical Lesson: View File Cleanup Protocol
+**BEFORE deleting any view file**, follow this 3-step protocol:
+1. Search `routes/web.php` for direct route references to the file
+2. Search ALL controllers (`app/Http/Controllers/`) for `$this->render('pages/xxx')` calls
+3. Search `app/views/` for any links/references to the file
+
+A file with NO route AND NO controller render AND NO links = **truly orphaned** → safe to delete.
+A file with a controller render but NO route = **not publicly accessible** → leave as-is OR add route.
+
+### Current Status
+- ALL TESTS PASS (5 phases)
+- 7 screenshots captured
+- 6 new routes added and verified (HTTP 200)
+- All 18 restored files pass PHP syntax check
+
+### Commit
+`080c0c5f1` - Restore 18 deleted/orphaned view files, add routes for 5 pages, fix layout compatibility
 
 ### Git Workflow
 - Use PowerShell for git commands (not bash)
