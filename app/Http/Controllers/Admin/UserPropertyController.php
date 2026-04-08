@@ -128,6 +128,45 @@ class UserPropertyController extends AdminController
         ");
         $stmt->execute([$status, $adminId, $id]);
 
+        // Send email notification to property owner
+        try {
+            $propStmt = $this->db->prepare("SELECT * FROM user_properties WHERE id = ?");
+            $propStmt->execute([$id]);
+            $property = $propStmt->fetch(\PDO::FETCH_ASSOC);
+            if ($property && !empty($property['email'])) {
+                $subjectMap = [
+                    'approved' => 'Your property has been approved!',
+                    'rejected' => 'Your property listing has been rejected',
+                    'verified' => 'Your property has been verified'
+                ];
+                $msgMap = [
+                    'approved' => "Congratulations! Your property listing '{$property['name']}' has been approved and is now visible to buyers on APS Dream Home.",
+                    'rejected' => "Your property listing '{$property['name']}' has been rejected. Please contact us for more information.",
+                    'verified' => "Your property listing '{$property['name']}' has been verified by our team."
+                ];
+                $to = $property['email'];
+                $subject = $subjectMap[$status] ?? 'Property Status Update';
+                $message = $msgMap[$status] ?? 'Your property status has been updated.';
+                $message .= "\n\nProperty: " . ($property['name'] ?? '') . "\nType: " . ucfirst($property['property_type'] ?? '') . "\nPrice: Rs. " . number_format($property['price'] ?? 0);
+                $message .= "\n\nContact: +91 92771 21112 | info@apsdreamhome.com";
+                @mail($to, $subject, $message, "From: info@apsdreamhome.com\r\nReply-To: info@apsdreamhome.com");
+            }
+
+            // SMS notification to property owner
+            if ($property && !empty($property['phone'])) {
+                $smsMap = [
+                    'approved' => "APS Dream Home: Your property '{$property['name']}' has been APPROVED! It is now visible to buyers. Contact: +91 92771 21112",
+                    'rejected' => "APS Dream Home: Your property '{$property['name']}' has been REJECTED. Please contact us at +91 92771 21112 for details.",
+                    'verified' => "APS Dream Home: Your property '{$property['name']}' has been VERIFIED by our team."
+                ];
+                $smsMessage = $smsMap[$status] ?? "APS Dream Home: Your property status has been updated to {$status}.";
+                // Log SMS for now (gateway integration ready for Twilio/MSG91/etc)
+                error_log("SMS TO: {$property['phone']} - {$smsMessage}");
+            }
+        } catch (\Exception $e) {
+            error_log("Property notification error: " . $e->getMessage());
+        }
+
         header('Location: /admin/user-properties?success=updated');
         exit;
     }
