@@ -4693,3 +4693,46 @@ Stack trace:
 [08-Apr-2026 02:02:45 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
 [08-Apr-2026 02:02:45 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
 [08-Apr-2026 02:02:45 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 02:04:36 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 02:04:36 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 02:04:36 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 78
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 78
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 78
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 78
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 78
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 78
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 77
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Warning:  Undefined array key "property_type" in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 78
+[08-Apr-2026 02:04:36 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\pages\resell.php on line 78
+[08-Apr-2026 02:04:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 02:04:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 02:04:54 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 02:05:31 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/PropertyController.php
+[08-Apr-2026 02:05:31 Europe/Berlin] Router: Controller class: App\Http\Controllers\PropertyController
+[08-Apr-2026 02:05:31 Europe/Berlin] PHP Warning:  Undefined variable $page_title in C:\xampp\htdocs\apsdreamhome\app\views\properties\index.php on line 2
+[08-Apr-2026 02:06:01 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AuthController.php
+[08-Apr-2026 02:06:01 Europe/Berlin] Router: Controller class: App\Http\Controllers\AuthController
+[08-Apr-2026 02:06:07 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AssociateAuthController.php
+[08-Apr-2026 02:06:07 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AssociateAuthController
+[08-Apr-2026 02:06:07 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 02:11:00 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 02:11:00 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 02:11:00 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 02:11:04 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/PropertyController.php
+[08-Apr-2026 02:11:04 Europe/Berlin] Router: Controller class: App\Http\Controllers\PropertyController
+[08-Apr-2026 02:11:04 Europe/Berlin] PHP Warning:  Undefined variable $page_title in C:\xampp\htdocs\apsdreamhome\app\views\properties\index.php on line 2
+[08-Apr-2026 02:11:13 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 02:11:13 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 02:11:13 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
