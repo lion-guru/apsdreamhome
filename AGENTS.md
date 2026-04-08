@@ -193,6 +193,7 @@ Phase 7: Docs and sync: test artifacts and scripts created; AGENTS.md kept updat
 Phase 8: A-to-Z master test runner created and ALL TESTS PASS. Critical schema fixes applied. Full automation complete.
 Phase 9: Newsletter API test fixed (POST instead of GET). Deep functional test now passes all 11 checks.
 Phase 10: User pages refactored to proper MVC layout. Broken header_new_v2.php replaced. Duplicate auth routes removed. 6 orphaned dead files deleted. Remaining duplicate routes cleaned up.
+Phase 11: CustomerAuthController fixed (form field `identity` now accepted). Seed script fixed to create users in `users` table. User page tests added (Dashboard, Properties, Inquiries, Profile). ALL 5 phases pass.
 
 ---
 
@@ -266,6 +267,15 @@ Phase 10: User pages refactored to proper MVC layout. Broken header_new_v2.php r
 - Supported: JPG, PNG, WEBP (max 5MB)
 - Path stored in `user_properties.image` column
 - DB: `scripts/add_property_image_column.php` adds `image` column
+
+### 14. CustomerAuthController Form Field Bug (FIXED)
+- **Issue**: `authenticate()` read `$_POST['email']` but `customer_login.php` form sends `name="identity"`
+- **Fix**: `$_POST['identity'] ?? $_POST['email'] ?? ''` fallback
+- **Also**: Seed script now seeds `users` table (auth target) instead of `customers` table
+
+### 15. User Page Tests (ADDED)
+- Phase 5 added to `MASTER_TEST_RUNNER.js`: logs in as test user, visits dashboard/properties/inquiries/profile
+- All 4 user pages now tested end-to-end via Playwright
 
 ---
 
