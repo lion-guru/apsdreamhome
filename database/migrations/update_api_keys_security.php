@@ -1,10 +1,11 @@
 <?php
-
 /**
  * Update API Keys - Security Update
  * 
- * This script updates leaked API keys with new secure ones
- * Run this after keys have been compromised
+ * This script updates API keys with new secure values
+ * Run this after keys have been changed
+ * 
+ * USAGE: php database/migrations/update_api_keys_security.php
  */
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -14,31 +15,26 @@ use App\Core\Database\Database;
 
 echo "🔐 Updating API Keys (Security Update)...\n\n";
 
-// New secure API keys
+// Placeholder keys - Get real values from .env
 $newKeys = [
     [
         'key_name' => 'GEMINI_API_KEY',
-        'key_value' => 'AIzaSyCKu8FpPDXWaxgzFIlWd7OXwmkfvjRn4eE',
-        'description' => 'Google Gemini AI API Key (Updated - Old key revoked)'
+        'key_value' => 'AIzaSyYOUR_NEW_GEMINI_KEY',
+        'description' => 'Google Gemini AI API Key - Get from aistudio.google.com/apikey'
     ],
     [
         'key_name' => 'GEMINI_PROJECT_ID',
-        'key_value' => '269391449583',
+        'key_value' => 'YOUR_PROJECT_ID',
         'description' => 'Google Gemini Project ID'
     ],
     [
-        'key_name' => 'AI_API_KEY',
-        'key_value' => 'AIzaSyCKu8FpPDXWaxgzFIlWd7OXwmkfvjRn4eE',
-        'description' => 'Legacy AI API Key (Updated)'
-    ],
-    [
         'key_name' => 'HUGGINGFACE_API_KEY',
-        'key_value' => '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',
+        'key_value' => 'hf_YOUR_HUGGINGFACE_KEY',
         'description' => 'Hugging Face API Key for ML models'
     ],
     [
         'key_name' => 'OPENROUTER_API_KEY',
-        'key_value' => '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',
+        'key_value' => 'sk-or-v1-YOUR_OPENROUTER_KEY',
         'description' => 'OpenRouter API Key for AI models'
     ],
     [
@@ -107,9 +103,9 @@ try {
     echo "📊 Updated: {$updated} keys\n";
     echo "📊 Inserted: {$inserted} keys\n";
     echo "\n⚠️  IMPORTANT:\n";
-    echo "   - Old API keys have been revoked\n";
-    echo "   - New keys are now active in database\n";
-    echo "   - Remove old keys from .env file\n";
+    echo "   - Get real API keys from respective providers\n";
+    echo "   - Update .env file with real keys\n";
+    echo "   - Use admin panel to manage API keys\n";
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";
     exit(1);

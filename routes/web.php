@@ -96,8 +96,6 @@ $router->get('/properties/submit', 'Front\\PageController@propertySubmit');
 $router->post('/quick-inquiry', 'Front\\PageController@handleQuickInquiry');
 
 // AI Bot
-$router->post('/ai-chat', 'Front\\AIBotController@chat');
-$router->get('/ai-chat', 'Front\\AIBotController@chat');
 $router->post('/whatsapp-webhook', 'Front\\AIBotController@whatsappWebhook');
 
 // Admin Services
@@ -109,6 +107,17 @@ $router->post('/admin/services/update-status', 'App\\Http\\Controllers\\Admin\\S
 $router->get('/admin/user-properties', 'App\\Http\\Controllers\\Admin\\UserPropertyController@index');
 $router->get('/admin/user-properties/verify/{id}', 'App\\Http\\Controllers\\Admin\\UserPropertyController@verify');
 $router->post('/admin/user-properties/action', 'App\\Http\\Controllers\\Admin\\UserPropertyController@action');
+
+// Admin API Keys Management
+$router->get('/admin/api-keys', 'App\\Http\\Controllers\\Admin\\ApiKeyController@index');
+$router->get('/admin/api-keys/guide', 'App\\Http\\Controllers\\Admin\\ApiKeyController@guide');
+$router->get('/admin/api-keys/create', 'App\\Http\\Controllers\\Admin\\ApiKeyController@create');
+$router->post('/admin/api-keys/store', 'App\\Http\\Controllers\\Admin\\ApiKeyController@store');
+$router->get('/admin/api-keys/edit/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@edit');
+$router->post('/admin/api-keys/update/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@update');
+$router->get('/admin/api-keys/delete/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@delete');
+$router->get('/admin/api-keys/toggle/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@toggle');
+$router->get('/admin/api-keys/test/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@test');
 
 // Missing frontend routes (from header/footer links)
 $router->get('/financial-services', 'Front\\PageController@financialServices');
@@ -130,7 +139,6 @@ $router->post('/dashboard/inquiries/submit', 'DashboardController@submitInquiry'
 
 // AI Routes
 $router->get('/ai-valuation', 'AIController@propertyValuation');
-$router->post('/api/ai/valuation', 'AIController@apiValuation');
 
 // Lead Scoring Routes
 $router->get('/admin/leads/scoring', 'App\Http\Controllers\Admin\LeadScoringController@index');
@@ -172,7 +180,6 @@ $router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
 $router->get('/login', 'Auth\\CustomerAuthController@login');
 $router->post('/login', 'Auth\\CustomerAuthController@authenticate');
 $router->get('/logout', 'Auth\\CustomerAuthController@logout');
-$router->get('/customer/dashboard', 'CustomerDashboardController@dashboard');
 
 // Agent Auth
 $router->get('/agent/register', 'Auth\\AgentAuthController@register');

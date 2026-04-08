@@ -1,18 +1,40 @@
 <?php
+/**
+ * Emergency Security Fix - API Key Revocation Check
+ * 
+ * This script checks if compromised API keys are still active
+ * Run this to verify keys have been revoked after security incident
+ * 
+ * USAGE: php emergency_security_fix.php
+ */
+
+require_once __DIR__ . '/app/Core/Config.php';
 
 echo "🚨 EMERGENCY SECURITY FIX - API KEYS COMPROMISED\n";
 echo "===============================================\n\n";
 
-// Check if API keys are working (they shouldn't be!)
+// Get keys from environment
 $keys_to_check = [
-    'AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y',
-    'AIzaSyDfsQxz1ojlgOnlg4i_nFW7aUfYdQJTcxo'
+    'GEMINI_API_KEY' => Env::get('GEMINI_API_KEY', ''),
+    'OPENAI_API_KEY' => Env::get('OPENAI_API_KEY', ''),
+    'OPENROUTER_API_KEY' => Env::get('OPENROUTER_API_KEY', ''),
 ];
 
-foreach ($keys_to_check as $key) {
-    echo "🔍 Checking key: " . substr($key, 0, 10) . "...\n";
+foreach ($keys_to_check as $name => $key) {
+    if (empty($key) || strpos($key, 'YOUR_') === 0) {
+        echo "⚠️  $name - NOT CONFIGURED\n\n";
+        continue;
+    }
     
-    $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . $key;
+    echo "🔍 Checking $name: " . substr($key, 0, 10) . "...\n";
+    
+    if ($name === 'GEMINI_API_KEY') {
+        $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . $key;
+    } else {
+        echo "  ⏭️  Skipping - check manually\n\n";
+        continue;
+    }
+    
     $data = ["contents" => [["parts" => [["text" => "test"]]]]];
     
     $ch = curl_init();
@@ -27,34 +49,24 @@ foreach ($keys_to_check as $key) {
     curl_close($ch);
     
     if ($http_code === 200) {
-        echo "  ❌ KEY IS WORKING - IMMEDIATE REVOKE NEEDED!\n";
-    } elseif ($http_code === 403) {
+        echo "  ❌ KEY IS WORKING - REVOKE IF COMPROMISED!\n";
+    } elseif ($http_code === 403 || $http_code === 400) {
         echo "  ✅ KEY IS DISABLED - Good!\n";
     } else {
-        echo "  ⚠️ Status Code: $http_code\n";
+        echo "  ⚠️  Status Code: $http_code\n";
     }
     echo "\n";
 }
 
-echo "🔒 IMMEDIATE ACTIONS REQUIRED:\n";
-echo "1. Go to https://aistudio.google.com\n";
-echo "2. Delete BOTH API keys immediately\n";
-echo "3. Generate NEW API key\n";
-echo "4. Update .env file with NEW key only\n";
-echo "5. NEVER share API keys publicly again\n\n";
+echo "🔒 SECURITY BEST PRACTICES:\n";
+echo "1. Never commit API keys to git\n";
+echo "2. Use .env file for secrets\n";
+echo "3. Add .env to .gitignore\n";
+echo "4. Rotate keys regularly\n\n";
 
-echo "📧 SECURITY INCIDENT REPORT:\n";
-echo "- API Keys exposed in chat messages\n";
-echo "- Both keys need immediate revocation\n";
-echo "- New secure implementation ready\n";
-echo "- Environment variables protection enabled\n\n";
+echo "📧 GET NEW API KEYS:\n";
+echo "- Gemini: https://aistudio.google.com/apikey\n";
+echo "- OpenAI: https://platform.openai.com/api-keys\n";
+echo "- OpenRouter: https://openrouter.ai/keys\n\n";
 
-echo "🎯 NEXT STEPS:\n";
-echo "1. REVOKE old keys (IMMEDIATE)\n";
-echo "2. Generate NEW key\n";
-echo "3. Update .env: GEMINI_API_KEY=new_key_here\n";
-echo "4. Test with: php test_simple.php\n";
-echo "5. Use secure ai_chat.html interface\n\n";
-
-echo "✅ Secure AI system is ready for new API key\n";
-?>
+echo "✅ After getting new keys, update .env file\n";

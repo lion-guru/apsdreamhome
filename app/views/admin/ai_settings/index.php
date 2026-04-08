@@ -111,7 +111,7 @@ require_once __DIR__ . '/../layouts/header.php';
                                                 </button>
                                             </div>
                                             <div class="form-text">
-                                                Format: AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y
+                                                Format: AIzaSy... (starts with AIzaSy, get from <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>)
                                             </div>
                                         </div>
                                         <div class="mb-3">

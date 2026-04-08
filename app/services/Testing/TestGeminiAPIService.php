@@ -1,6 +1,23 @@
 <?php
-// Test Gemini API Integration
-$apiKey = 'AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y'; // Default API key
+/**
+ * Test Gemini API Integration
+ * 
+ * Get your API key from: https://aistudio.google.com/apikey
+ * Add to .env: GEMINI_API_KEY=your_key_here
+ */
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../app/Core/Config.php';
+
+$apiKey = Env::get('GEMINI_API_KEY', 'YOUR_GEMINI_KEY_HERE');
+
+if ($apiKey === 'YOUR_GEMINI_KEY_HERE' || empty($apiKey)) {
+    echo "<h1>⚠️ API Key Not Configured</h1>";
+    echo "<p>Please set GEMINI_API_KEY in your .env file</p>";
+    echo "<p>Get your key from: <a href='https://aistudio.google.com/apikey' target='_blank'>Google AI Studio</a></p>";
+    exit;
+}
+
 $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . $apiKey;
 
 $data = [
@@ -49,4 +66,3 @@ echo "<li><a href='/admin/ai-settings'>Access AI Settings Admin Panel</a></li>";
 echo "<li><a href='/api/gemini/test'>Test Public API Endpoint</a></li>";
 echo "<li><a href='/api/gemini/status'>Check API Status</a></li>";
 echo "</ol>";
-?>

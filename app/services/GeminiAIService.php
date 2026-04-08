@@ -42,8 +42,8 @@ class GeminiAIService
                 return $result['api_key'];
             }
 
-            // Fallback to environment variables or hardcoded key
-            $fallbackKey = $_ENV['GEMINI_API_KEY'] ?? 'AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y';
+            // Fallback to environment variable
+            $fallbackKey = $_ENV['GEMINI_API_KEY'] ?? '';
 
             // Auto-save the key to the database for future use
             if (!empty($fallbackKey)) {
@@ -58,7 +58,7 @@ class GeminiAIService
         } catch (\Exception $e) {
             // Log error and return default
             error_log('Gemini API Key Error: ' . $e->getMessage());
-            return $_ENV['GEMINI_API_KEY'] ?? 'AIzaSyCkVFFk4xU7cawmvg14HUEugmSrLt-aW5Y';
+            return $_ENV['GEMINI_API_KEY'] ?? '';
         }
     }
 

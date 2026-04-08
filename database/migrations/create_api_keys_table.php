@@ -1,10 +1,11 @@
 <?php
-
 /**
  * Migration: Create API Keys Table
  * 
  * This table stores API keys securely in database instead of .env file
  * to prevent API key leaks in version control
+ * 
+ * USAGE: php database/migrations/create_api_keys_table.php
  */
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -33,26 +34,21 @@ try {
     $db->exec($sql);
     echo "✅ API Keys table created successfully\n";
 
-    // Insert default API keys from user's configuration
+    // Insert default placeholder API keys
     $apiKeys = [
         [
             'key_name' => 'GEMINI_API_KEY',
-            'key_value' => 'AIzaSyDH3-HwnTquiVj4QUf90zBlyiVSbYnNjZE',
+            'key_value' => 'AIzaSyYOUR_GEMINI_KEY',
             'description' => 'Google Gemini AI API Key for chatbot and AI features'
         ],
         [
             'key_name' => 'GEMINI_PROJECT_ID',
-            'key_value' => '269391449583',
+            'key_value' => 'YOUR_PROJECT_ID',
             'description' => 'Google Gemini Project ID'
         ],
         [
-            'key_name' => 'AI_API_KEY',
-            'key_value' => 'AIzaSyDH3-HwnTquiVj4QUf90zBlyiVSbYnNjZE',
-            'description' => 'Legacy AI API Key (same as Gemini)'
-        ],
-        [
             'key_name' => 'WHATSAPP_COUNTRY_CODE',
-            'key_value' => '917007444842',
+            'key_value' => '919876543210',
             'description' => 'WhatsApp Business Country Code'
         ]
     ];
@@ -85,9 +81,10 @@ try {
 
     echo "\n🎉 Migration completed!\n";
     echo "📊 Total API keys inserted: {$inserted}\n";
-    echo "\n💡 Usage:\n";
-    echo "   \$apiService = App\\Services\\ApiKeyService::getInstance();\n";
-    echo "   \$geminiKey = \$apiService->getGeminiKey();\n";
+    echo "\n💡 Next Steps:\n";
+    echo "   1. Get API keys from providers\n";
+    echo "   2. Add keys to .env file\n";
+    echo "   3. Use admin panel to configure keys\n";
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";
     exit(1);
