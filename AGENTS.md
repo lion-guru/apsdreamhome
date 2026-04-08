@@ -176,10 +176,10 @@ Stores all inquiries. Fields: id, name, email, phone, message, type, status, pri
 ## Pending Tasks
 
 1. **Pan-India Locations** - Add API for location search
-2. **Email Notifications** - Send email when property is approved/rejected
+2. **Email Notifications** - Send email when property is approved/rejected ✅ DONE
 3. **Property Images** - Allow users to upload property images ✅ DONE
 4. **Search by Price** - Add price range filter ✅ DONE
-5. **SMS Notifications** - Send SMS for important events
+5. **SMS Notifications** - Send SMS for important events ✅ DONE (logged, gateway-ready)
 6. **Test User Flow** - Complete user registration, login, post property, admin approval flow ✅ VERIFIED
 
 --- Phase Progress ---
