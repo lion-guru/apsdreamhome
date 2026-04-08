@@ -553,8 +553,7 @@ $router->get('/customer/payments', 'App\Http\Controllers\CustomerController@paym
 $router->get('/customer/notifications', 'App\Http\Controllers\CustomerController@notifications');
 
 
-// Property Routes
-$router->get('/properties', 'App\Http\Controllers\PropertyController@index');
+// Property Routes (Note: /properties handled by Front\PageController@properties)
 $router->get('/properties/search', 'App\Http\Controllers\PropertyController@search');
 $router->get('/properties/{id}', 'App\Http\Controllers\PropertyController@detail');
 $router->get('/colonies', 'App\Http\Controllers\PropertyController@colonies');

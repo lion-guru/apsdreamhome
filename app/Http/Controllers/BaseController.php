@@ -157,14 +157,12 @@ class BaseController
 
         // If layout exists, render layout with content
         if ($this->layout) {
-            ob_start();
             $layoutPath = __DIR__ . '/../../views/' . $this->layout . '.php';
             if (file_exists($layoutPath)) {
                 include $layoutPath;
             } else {
                 echo $content;
             }
-            echo ob_get_clean();
         } else {
             echo $content;
         }
