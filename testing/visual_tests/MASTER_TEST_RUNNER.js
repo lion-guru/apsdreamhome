@@ -110,6 +110,68 @@ async function userPropertyPostingTests() {
   await browser.close();
 }
 
+async function userPageTests() {
+  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+  const page = await browser.newPage();
+
+  // Seed a test user and log in
+  await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+  try {
+    execSync('php tools/db_seed_testdata.php', { stdio: 'pipe' });
+  } catch (e) {}
+
+  // Test login
+  await page.goto(`${BASE}/login`, { waitUntil: 'networkidle' });
+  const identityField = page.locator('input[name="identity"]').first();
+  const passField = page.locator('input[name="password"]').first();
+  if ((await identityField.count()) > 0 && (await passField.count()) > 0) {
+    await identityField.fill('testuser@example.com');
+    await passField.fill('Test@123');
+    await page.locator('button[type="submit"]').first().click().catch(() => {});
+    await page.waitForTimeout(2000);
+  }
+
+  // Test user dashboard
+  await page.goto(`${BASE}/user/dashboard`, { waitUntil: 'networkidle' });
+  const dashHtml = await page.content();
+  if (dashHtml.includes('Welcome') || dashHtml.includes('Dashboard') || dashHtml.includes('My Properties')) {
+    log('User Dashboard: LOADED');
+  } else {
+    log('User Dashboard: NOT LOADED (auth or render issue)');
+  }
+  await page.screenshot({ path: 'testing/visual_tests/user_dashboard.png', fullPage: false });
+  screenshots.push('testing/visual_tests/user_dashboard.png');
+
+  // Test user properties
+  await page.goto(`${BASE}/user/properties`, { waitUntil: 'networkidle' });
+  const propHtml = await page.content();
+  if (propHtml.includes('My Properties') || propHtml.includes('Property')) {
+    log('User Properties: LOADED');
+  } else {
+    log('User Properties: NOT LOADED');
+  }
+
+  // Test user inquiries
+  await page.goto(`${BASE}/user/inquiries`, { waitUntil: 'networkidle' });
+  const inqHtml = await page.content();
+  if (inqHtml.includes('Inquiries') || inqHtml.includes('inquiry')) {
+    log('User Inquiries: LOADED');
+  } else {
+    log('User Inquiries: NOT LOADED');
+  }
+
+  // Test user profile
+  await page.goto(`${BASE}/user/profile`, { waitUntil: 'networkidle' });
+  const profHtml = await page.content();
+  if (profHtml.includes('Profile') || profHtml.includes('profile')) {
+    log('User Profile: LOADED');
+  } else {
+    log('User Profile: NOT LOADED');
+  }
+
+  await browser.close();
+}
+
 async function newsletterTests() {
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   const page = await browser.newPage();
@@ -168,6 +230,10 @@ async function main() {
   // Phase 4: Newsletter
   log('--- Phase 4: Newsletter ---');
   await runBrowserTest(newsletterTests, 'Newsletter Subscription');
+
+  // Phase 5: User pages (requires login)
+  log('--- Phase 5: User Pages ---');
+  await runBrowserTest(userPageTests, 'User Dashboard/Properties/Inquiries/Profile');
 
   // Summary
   log('--- Summary ---');

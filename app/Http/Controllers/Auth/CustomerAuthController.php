@@ -47,7 +47,7 @@ class CustomerAuthController extends BaseController
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        $email = trim($_POST['email'] ?? '');
+        $email = trim($_POST['identity'] ?? $_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
