@@ -42,7 +42,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Property Details Submit Karein</h4>
                     </div>
                     <div class="card-body p-4">
-                        <form action="<?php echo BASE_URL; ?>/list-property/submit" method="POST">
+                        <form action="<?php echo BASE_URL; ?>/list-property/submit" method="POST" enctype="multipart/form-data">
                             <!-- Property Type -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Kya karna hai? *</label>
@@ -119,6 +119,13 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Short Description</label>
                                 <textarea name="description" class="form-control" rows="3" placeholder="Plot size, road width, kya special hai..."></textarea>
+                            </div>
+
+                            <!-- Image Upload -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Property Image (Optional)</label>
+                                <input type="file" name="property_image" class="form-control" accept="image/jpeg,image/png,image/webp">
+                                <small class="text-muted">Upload JPG, PNG or WEBP (Max 5MB)</small>
                             </div>
 
                             <!-- Submit -->
