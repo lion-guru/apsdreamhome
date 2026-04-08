@@ -1,34 +1,34 @@
 === APS Dream Home A-to-Z Test Report ===
-Generated: 2026-04-08T06:07:04.037Z
+Generated: 2026-04-08T06:10:46.528Z
 
-[06:07:04] Starting A-to-Z test suite...
-[06:07:04] --- Phase 0: DB Health ---
-[06:07:04] --- Phase 0b: DB Seeds ---
-[06:07:05] --- Phase 1: Header UI/UX ---
-[06:07:08] Screenshot saved: testing/visual_tests/header_Desktop.png
-[06:07:09] Screenshot saved: testing/visual_tests/header_Tablet.png
-[06:07:12] Screenshot saved: testing/visual_tests/header_Mobile.png
-[06:07:19] PASS: Header Visual Tests (Desktop/Tablet/Mobile)
-[06:07:19] --- Phase 2: Admin Login ---
-[06:07:22] Admin test-login bypass: SUCCESS
-[06:07:26] PASS: Admin Login (test-login bypass)
-[06:07:29] Admin User Properties page: LOADED
-[06:07:31] PASS: Admin User Properties
-[06:07:31] --- Phase 3: User Property Posting ---
-[06:07:35] List Property form: PRESENT
-[06:07:39] List Property form: SUBMITTED
-[06:07:45] PASS: List Property Form
-[06:07:45] --- Phase 4: Newsletter ---
-[06:07:52] Newsletter form: SUBMITTED
-[06:07:53] PASS: Newsletter Subscription
-[06:07:53] --- Summary ---
-[06:07:53] Total screenshots captured: 6
-[06:07:53]   - testing/visual_tests/header_Desktop.png
-[06:07:53]   - testing/visual_tests/header_Tablet.png
-[06:07:53]   - testing/visual_tests/header_Mobile.png
-[06:07:53]   - testing/visual_tests/admin_dashboard.png
-[06:07:53]   - testing/visual_tests/admin_user_properties.png
-[06:07:53]   - testing/visual_tests/list_property.png
-[06:07:53] A-to-Z test suite COMPLETE
+[06:10:46] Starting A-to-Z test suite...
+[06:10:46] --- Phase 0: DB Health ---
+[06:10:47] --- Phase 0b: DB Seeds ---
+[06:10:48] --- Phase 1: Header UI/UX ---
+[06:10:53] Screenshot saved: testing/visual_tests/header_Desktop.png
+[06:10:54] Screenshot saved: testing/visual_tests/header_Tablet.png
+[06:10:57] Screenshot saved: testing/visual_tests/header_Mobile.png
+[06:11:02] PASS: Header Visual Tests (Desktop/Tablet/Mobile)
+[06:11:02] --- Phase 2: Admin Login ---
+[06:11:04] Admin test-login bypass: SUCCESS
+[06:11:12] PASS: Admin Login (test-login bypass)
+[06:11:15] Admin User Properties page: LOADED
+[06:11:20] PASS: Admin User Properties
+[06:11:20] --- Phase 3: User Property Posting ---
+[06:11:23] List Property form: PRESENT
+[06:11:27] List Property form: SUBMITTED
+[06:11:29] PASS: List Property Form
+[06:11:29] --- Phase 4: Newsletter ---
+[06:11:37] Newsletter form: SUBMITTED
+[06:11:38] PASS: Newsletter Subscription
+[06:11:38] --- Summary ---
+[06:11:38] Total screenshots captured: 6
+[06:11:38]   - testing/visual_tests/header_Desktop.png
+[06:11:38]   - testing/visual_tests/header_Tablet.png
+[06:11:38]   - testing/visual_tests/header_Mobile.png
+[06:11:38]   - testing/visual_tests/admin_dashboard.png
+[06:11:38]   - testing/visual_tests/admin_user_properties.png
+[06:11:38]   - testing/visual_tests/list_property.png
+[06:11:38] A-to-Z test suite COMPLETE
 
 === END OF REPORT ===

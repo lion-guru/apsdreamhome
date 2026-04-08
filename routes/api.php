@@ -34,6 +34,11 @@ $router->post('/api/contact', 'Api\ApiEnquiryController@store');
 $router->post('/api/newsletter', 'Api\NewsletterController@subscribe');
 $router->post('/api/property-inquiry', 'Api\ApiEnquiryController@propertyInquiry');
 
+// Location API (Pan-India)
+$router->get('/api/locations', 'Api\LocationApiController@index');
+$router->get('/api/locations/state/{id}', 'Api\LocationApiController@byState');
+$router->get('/api/locations/district/{id}', 'Api\LocationApiController@byDistrict');
+
 // Notification API
 $router->post('/api/notification', 'Api\NotificationController@create');
 
