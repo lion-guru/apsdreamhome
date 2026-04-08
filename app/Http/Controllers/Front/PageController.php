@@ -1587,14 +1587,32 @@ class PageController extends BaseController
             }
 
             try {
+                // Handle image upload
+                $imagePath = null;
+                if (!empty($_FILES['property_image']['name'])) {
+                    $uploadDir = __DIR__ . '/../../../../assets/images/properties/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0755, true);
+                    }
+                    $ext = strtolower(pathinfo($_FILES['property_image']['name'], PATHINFO_EXTENSION));
+                    $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+                    if (in_array($ext, $allowed) && $_FILES['property_image']['size'] <= 5 * 1024 * 1024) {
+                        $newName = 'prop_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                        $targetPath = $uploadDir . $newName;
+                        if (move_uploaded_file($_FILES['property_image']['tmp_name'], $targetPath)) {
+                            $imagePath = 'properties/' . $newName;
+                        }
+                    }
+                }
+
                 // Try to save to user_properties table
                 $savedToUserProperties = false;
                 try {
                     $this->db->query("SELECT 1 FROM user_properties LIMIT 1");
                     
                     $stmt = $this->db->prepare("
-                        INSERT INTO user_properties (user_id, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, status, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                        INSERT INTO user_properties (user_id, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
                     ");
                     $stmt->execute([
                         null,
@@ -1607,7 +1625,8 @@ class PageController extends BaseController
                         $area,
                         $price,
                         $listingType === 'rent' ? 'month' : 'lakh',
-                        $description
+                        $description,
+                        $imagePath
                     ]);
                     $savedToUserProperties = true;
                 } catch (\Exception $e1) {
@@ -1615,8 +1634,8 @@ class PageController extends BaseController
                     if (strpos($e1->getMessage(), "doesn't exist") !== false) {
                         $this->createUserPropertiesTable();
                         $stmt = $this->db->prepare("
-                            INSERT INTO user_properties (user_id, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, status, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                            INSERT INTO user_properties (user_id, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
                         ");
                         $stmt->execute([
                             null,
@@ -1629,7 +1648,8 @@ class PageController extends BaseController
                             $area,
                             $price,
                             $listingType === 'rent' ? 'month' : 'lakh',
-                            $description
+                            $description,
+                            $imagePath
                         ]);
                         $savedToUserProperties = true;
                     }

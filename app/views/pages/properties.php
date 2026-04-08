@@ -60,6 +60,28 @@
                         <option value="price_high" <?php echo $sortBy === 'price_high' ? 'selected' : ''; ?>>Price: High to Low</option>
                     </select>
                 </div>
+                <div class="col-md-3">
+                    <label for="min_price" class="form-label">Min Price (₹)</label>
+                    <select class="form-select" id="min_price" name="min_price">
+                        <option value="">No Min</option>
+                        <option value="100000" <?php echo ($minPrice ?? 0) == 100000 ? 'selected' : ''; ?>>₹1 Lakh</option>
+                        <option value="500000" <?php echo ($minPrice ?? 0) == 500000 ? 'selected' : ''; ?>>₹5 Lakhs</option>
+                        <option value="1000000" <?php echo ($minPrice ?? 0) == 1000000 ? 'selected' : ''; ?>>₹10 Lakhs</option>
+                        <option value="2000000" <?php echo ($minPrice ?? 0) == 2000000 ? 'selected' : ''; ?>>₹20 Lakhs</option>
+                        <option value="5000000" <?php echo ($minPrice ?? 0) == 5000000 ? 'selected' : ''; ?>>₹50 Lakhs</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="max_price" class="form-label">Max Price (₹)</label>
+                    <select class="form-select" id="max_price" name="max_price">
+                        <option value="">No Max</option>
+                        <option value="500000" <?php echo ($maxPrice ?? 0) == 500000 ? 'selected' : ''; ?>>₹5 Lakhs</option>
+                        <option value="1000000" <?php echo ($maxPrice ?? 0) == 1000000 ? 'selected' : ''; ?>>₹10 Lakhs</option>
+                        <option value="2000000" <?php echo ($maxPrice ?? 0) == 2000000 ? 'selected' : ''; ?>>₹20 Lakhs</option>
+                        <option value="5000000" <?php echo ($maxPrice ?? 0) == 5000000 ? 'selected' : ''; ?>>₹50 Lakhs</option>
+                        <option value="10000000" <?php echo ($maxPrice ?? 0) == 10000000 ? 'selected' : ''; ?>>₹1 Crore</option>
+                    </select>
+                </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search"></i> Search
