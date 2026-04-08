@@ -54,16 +54,12 @@ class BaseController
 
         // Initialize Localization Service (mlSupport) if available
         if (class_exists('\App\Services\Localization\LocalizationService')) {
-            try {
-                // Try to initialize localization service. 
-                // Note: It requires a logger, we'll use a basic error_log wrapper if needed, 
-                // but for now we'll just check if it can be instantiated or if it has a static access.
-                // Since it doesn't have getInstance, we check for a global or app-level registry.
-                if (method_exists('\App\Services\Localization\LocalizationService', 'getInstance')) {
+            if (method_exists('\App\Services\Localization\LocalizationService', 'getInstance')) {
+                try {
                     $this->mlSupport = \App\Services\Localization\LocalizationService::getInstance();
+                } catch (\Throwable $e) {
+                    // LocalizationService requires deps not available - skip silently
                 }
-            } catch (\Exception $e) {
-                error_log("Failed to initialize LocalizationService: " . $e->getMessage());
             }
         }
 

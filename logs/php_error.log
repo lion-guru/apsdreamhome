@@ -6032,3 +6032,65 @@ Stack trace:
 [08-Apr-2026 14:09:35 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
 [08-Apr-2026 14:09:35 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
 [08-Apr-2026 14:09:35 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 14:20:15 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:20:15 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:20:15 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 14:20:15 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php on line 34
+[08-Apr-2026 14:20:15 Europe/Berlin] PHP Warning:  require_once(C:\xampp\htdocs\apsdreamhome\app\views\pages\properties/../../../includes/config.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php on line 35
+[08-Apr-2026 14:20:15 Europe/Berlin] Controller fatal: Failed opening required 'C:\xampp\htdocs\apsdreamhome\app\views\pages\properties/../../../includes/config.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php:35
+[08-Apr-2026 14:20:34 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:20:34 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:20:35 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 14:20:35 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php on line 34
+[08-Apr-2026 14:20:35 Europe/Berlin] PHP Warning:  require_once(C:\xampp\htdocs\apsdreamhome\app\views\pages\properties/../../../includes/config.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php on line 35
+[08-Apr-2026 14:20:35 Europe/Berlin] Controller fatal: Failed opening required 'C:\xampp\htdocs\apsdreamhome\app\views\pages\properties/../../../includes/config.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php:35
+[08-Apr-2026 14:32:45 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:32:45 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:32:45 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[08-Apr-2026 14:32:45 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php on line 34
+[08-Apr-2026 14:32:45 Europe/Berlin] PHP Warning:  require_once(C:\xampp\htdocs\apsdreamhome\app\views\pages\properties/../../../includes/config.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php on line 35
+[08-Apr-2026 14:32:45 Europe/Berlin] Controller fatal: Failed opening required 'C:\xampp\htdocs\apsdreamhome\app\views\pages\properties/../../../includes/config.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\pages\properties\list.php:35
+[08-Apr-2026 14:42:31 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:42:31 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:42:31 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/SupportController.php
+[08-Apr-2026 14:42:31 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\SupportController
+[08-Apr-2026 14:42:32 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:42:32 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:42:32 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:42:32 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:42:50 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:42:50 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:42:55 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:42:55 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:42:56 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:42:56 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:42:59 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 14:42:59 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 14:42:59 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 14:42:59 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 14:43:02 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 14:43:02 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 14:43:02 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 14:43:02 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 14:43:04 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/UserPropertyController.php
+[08-Apr-2026 14:43:04 Europe/Berlin] Router: Controller class: App\Http\Controllers\Admin\UserPropertyController
+[08-Apr-2026 14:43:07 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:43:07 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:43:15 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:43:15 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:43:22 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 14:43:22 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 14:43:25 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[08-Apr-2026 14:43:25 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\CustomerAuthController
+[08-Apr-2026 14:43:26 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[08-Apr-2026 14:43:26 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\CustomerAuthController
+[08-Apr-2026 14:43:26 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/CustomerController.php
+[08-Apr-2026 14:43:26 Europe/Berlin] Router: Controller class: App\Http\Controllers\CustomerController
+[08-Apr-2026 14:43:28 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 14:43:28 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 14:43:29 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 14:43:29 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 14:43:30 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 14:43:30 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 14:43:31 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 14:43:31 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController

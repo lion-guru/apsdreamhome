@@ -89,7 +89,6 @@ $router->get('/invest', 'Front\\PageController@investProperty');
 $router->get('/list-property', 'Front\\PageController@listProperty');
 $router->post('/list-property/submit', 'Front\\PageController@handlePropertyListing');
 $router->get('/properties/submit', 'Front\\PageController@propertySubmit');
-$router->get('/properties/list', 'Front\\PageController@propertyList');
 
 // Form Handlers
 $router->post('/quick-inquiry', 'Front\\PageController@handleQuickInquiry');
