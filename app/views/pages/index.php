@@ -26,26 +26,34 @@
                         </div>
 
                         <!-- Trust Indicators -->
+                        <?php 
+                        $heroStats = $hero_stats ?? [
+                            'properties_sold' => '500+',
+                            'happy_clients' => '1000+',
+                            'years_experience' => '15+',
+                            'projects_completed' => '50+'
+                        ];
+                        ?>
                         <div class="trust-indicators mt-4">
                             <div class="row text-white">
                                 <div class="col-4 text-center">
                                     <div class="trust-item">
                                         <i class="fas fa-award fa-2x mb-2"></i>
-                                        <h6>8+ Years</h6>
+                                        <h6><?php echo $heroStats['years_experience']; ?></h6>
                                         <small>Experience</small>
                                     </div>
                                 </div>
                                 <div class="col-4 text-center">
                                     <div class="trust-item">
                                         <i class="fas fa-home fa-2x mb-2"></i>
-                                        <h6>500+</h6>
+                                        <h6><?php echo $heroStats['properties_sold']; ?></h6>
                                         <small>Properties Sold</small>
                                     </div>
                                 </div>
                                 <div class="col-4 text-center">
                                     <div class="trust-item">
                                         <i class="fas fa-smile fa-2x mb-2"></i>
-                                        <h6>1000+</h6>
+                                        <h6><?php echo $heroStats['happy_clients']; ?></h6>
                                         <small>Happy Clients</small>
                                     </div>
                                 </div>
@@ -381,33 +389,97 @@
     <section class="statistics-section py-5 bg-primary text-white">
         <div class="container">
             <div class="row text-center">
+                <?php 
+                $stats = $hero_stats ?? [
+                    'properties_sold' => '500+',
+                    'happy_clients' => '1000+',
+                    'years_experience' => '15+',
+                    'projects_completed' => '50+'
+                ];
+                ?>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number">500+</div>
+                        <div class="stat-number" data-target="<?php echo (int)$stats['properties_sold']; ?>"><?php echo $stats['properties_sold']; ?></div>
                         <div class="stat-label">Properties Sold</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number">1000+</div>
+                        <div class="stat-number" data-target="<?php echo (int)$stats['happy_clients']; ?>"><?php echo $stats['happy_clients']; ?></div>
                         <div class="stat-label">Happy Clients</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number">8+</div>
+                        <div class="stat-number" data-target="<?php echo (int)$stats['years_experience']; ?>"><?php echo $stats['years_experience']; ?></div>
                         <div class="stat-label">Years Experience</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number">15+</div>
-                        <div class="stat-label">Cities Covered</div>
+                        <div class="stat-number" data-target="<?php echo (int)$stats['projects_completed']; ?>"><?php echo $stats['projects_completed']; ?></div>
+                        <div class="stat-label">Projects Completed</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Testimonials Section -->
+    <?php 
+    $testimonialList = $testimonials ?? [];
+    if (!empty($testimonialList)): 
+    ?>
+    <section class="testimonials-section py-5 bg-light">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-5 fw-bold mb-4">What Our Clients Say</h2>
+                    <p class="lead text-muted">Real stories from satisfied customers</p>
+                </div>
+            </div>
+            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <?php foreach($testimonialList as $i => $t): ?>
+                    <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="<?php echo $i; ?>" <?php echo $i === 0 ? 'class="active" aria-current="true"' : ''; ?> aria-label="Slide <?php echo $i + 1; ?>"></button>
+                    <?php endforeach; ?>
+                </div>
+                <div class="carousel-inner">
+                    <?php foreach($testimonialList as $i => $t): ?>
+                    <div class="carousel-item <?php echo $i === 0 ? 'active' : ''; ?>">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8 text-center">
+                                <div class="testimonial-card p-4">
+                                    <div class="testimonial-rating mb-3">
+                                        <?php for($s = 0; $s < ($t->rating ?? 5); $s++): ?>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <?php endfor; ?>
+                                    </div>
+                                    <blockquote class="blockquote">
+                                        <p class="mb-4"><em>"<?php echo htmlspecialchars($t->content ?? ''); ?>"</em></p>
+                                    </blockquote>
+                                    <div class="testimonial-author">
+                                        <h5 class="mb-1"><?php echo htmlspecialchars($t->name ?? 'Anonymous'); ?></h5>
+                                        <p class="text-muted mb-0"><?php echo htmlspecialchars($t->property ?? ''); ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <!-- Contact Section -->
     <section id="contact" class="contact-section py-5 bg-light">

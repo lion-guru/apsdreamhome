@@ -1,6 +1,15 @@
 {
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "eslint": "^10.1.0",
     "playwright": "^1.59.1"
+  },
+  "dependencies": {
+    "@cyanheads/git-mcp-server": "^2.10.5",
+    "@modelcontextprotocol/server-filesystem": "^2026.1.14",
+    "@modelcontextprotocol/server-memory": "^2026.1.26",
+    "@modelcontextprotocol/server-sequential-thinking": "^2025.12.18",
+    "@morris131/mysql-mcp-server": "^1.0.3",
+    "@playwright/mcp": "^0.0.70"
   }
 }

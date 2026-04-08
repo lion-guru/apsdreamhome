@@ -4,10 +4,13 @@ try {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     echo "🚀 Phase 5: Projects Table + Admin CRUD Implementation\n";
-    
+
+    // Disable foreign key checks
+    $db->exec("SET FOREIGN_KEY_CHECKS = 0");
+
     // 1. Create projects table
     echo "📋 Creating Projects Table...\n";
-    
+
     $db->exec("DROP TABLE IF EXISTS projects");
     
     $createProjectsTable = "CREATE TABLE projects (
@@ -307,9 +310,10 @@ try {
             rera_number, approvals, legal_documents,
             is_featured, is_hot_deal, marketing_description, tags,
             sales_office_address, sales_office_phone, sales_office_email, sales_team_contact
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
         $stmt->execute($project);
+        echo "✅ Inserted: " . $project[0] . "\n";
     }
     
     echo "✅ " . count($sampleProjects) . " sample projects inserted\n";
@@ -345,6 +349,9 @@ try {
     echo "✅ Foreign keys: Proper relationships\n";
     echo "✅ Indexes: Performance optimized\n";
     echo "📈 Ready for Admin CRUD Implementation!\n";
+
+    // Re-enable foreign key checks
+    $db->exec("SET FOREIGN_KEY_CHECKS = 1");
     
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";

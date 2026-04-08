@@ -1,0 +1,135 @@
+[
+    {
+        "name": "AI Property Valuation",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 44.95,
+        "error": ""
+    },
+    {
+        "name": "AI Price Prediction",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 53.29,
+        "error": ""
+    },
+    {
+        "name": "AI Recommendations",
+        "status": "\u2705 PASS",
+        "http_code": 200,
+        "response_time": 98.31,
+        "error": ""
+    },
+    {
+        "name": "AI Market Analysis",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 28.27,
+        "error": ""
+    },
+    {
+        "name": "List Properties",
+        "status": "\u2705 PASS",
+        "http_code": 200,
+        "response_time": 67.22,
+        "error": ""
+    },
+    {
+        "name": "Property Details",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 33.34,
+        "error": ""
+    },
+    {
+        "name": "Search Properties",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 29.93,
+        "error": ""
+    },
+    {
+        "name": "List Users",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 28.82,
+        "error": ""
+    },
+    {
+        "name": "User Profile",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 44.71,
+        "error": ""
+    },
+    {
+        "name": "User Login",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 43.21,
+        "error": ""
+    },
+    {
+        "name": "Network Tree",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 61.26,
+        "error": ""
+    },
+    {
+        "name": "Genealogy View",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 39.49,
+        "error": ""
+    },
+    {
+        "name": "Calculate Commission",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 28.54,
+        "error": ""
+    },
+    {
+        "name": "Payment History",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 21.99,
+        "error": ""
+    },
+    {
+        "name": "Process Payment",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 26.39,
+        "error": ""
+    },
+    {
+        "name": "EMI Calculator",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 21.06,
+        "error": ""
+    },
+    {
+        "name": "List States",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 18.42,
+        "error": ""
+    },
+    {
+        "name": "Districts by State",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 20.14,
+        "error": ""
+    },
+    {
+        "name": "List Colonies",
+        "status": "\u274c FAIL",
+        "http_code": 404,
+        "response_time": 18.65,
+        "error": ""
+    }
+]

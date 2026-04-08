@@ -6,6 +6,19 @@ use App\Http\Controllers\BaseController;
 
 class HomeController extends BaseController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        if (!$this->db) {
+            try {
+                $this->db = new \PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome", "root", "");
+                $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            } catch(\PDOException $e) {
+                $this->db = null;
+            }
+        }
+    }
+    
     public function index()
     {
         // Load all required data for home page
@@ -192,7 +205,8 @@ class HomeController extends BaseController
 
     private function loadFeaturedProperties()
     {
-        return [
+        // Default featured properties
+        $defaults = [
             (object)[
                 'id' => 1,
                 'title' => 'Luxury Apartment in Gomti Nagar',
@@ -233,6 +247,31 @@ class HomeController extends BaseController
                 'image_path' => '/assets/img/property3.jpg'
             ]
         ];
+        
+        if ($this->db) {
+            try {
+                // Check if properties table exists and has data
+                $stmt = $this->db->query("SHOW TABLES LIKE 'properties'");
+                if ($stmt->rowCount() > 0) {
+                    $query = "SELECT p.*, s.site_name as location 
+                              FROM properties p 
+                              LEFT JOIN sites s ON p.site_id = s.id 
+                              WHERE p.status = 'active' 
+                              ORDER BY p.featured DESC, p.id DESC 
+                              LIMIT 4";
+                    $stmt = $this->db->query($query);
+                    $properties = $stmt->fetchAll(\PDO::FETCH_OBJ);
+                    
+                    if (!empty($properties)) {
+                        return $properties;
+                    }
+                }
+            } catch(\PDOException $e) {
+                // Fall back to defaults
+            }
+        }
+        
+        return $defaults;
     }
 
     private function loadProjects()
@@ -263,12 +302,42 @@ class HomeController extends BaseController
 
     private function loadHeroStats()
     {
-        return [
+        // Try to get dynamic stats from database, fallback to defaults
+        $stats = [
             'properties_sold' => '500+',
             'happy_clients' => '1000+',
-            'years_experience' => '8+',
+            'years_experience' => '15+',
             'projects_completed' => '50+'
         ];
+        
+        if ($this->db) {
+            try {
+                // Get property count
+                $stmt = $this->db->query("SELECT COUNT(*) FROM properties WHERE status = 'active'");
+                $propertyCount = (int)$stmt->fetchColumn();
+                if ($propertyCount > 0) {
+                    $stats['properties_sold'] = $propertyCount . '+';
+                }
+                
+                // Get user/customer count
+                $stmt = $this->db->query("SELECT COUNT(*) FROM users");
+                $userCount = (int)$stmt->fetchColumn();
+                if ($userCount > 0) {
+                    $stats['happy_clients'] = ($userCount > 1000 ? '1000+' : $userCount . '+');
+                }
+                
+                // Get projects/sites count
+                $stmt = $this->db->query("SELECT COUNT(*) FROM sites WHERE status IN ('active', 'completed')");
+                $siteCount = (int)$stmt->fetchColumn();
+                if ($siteCount > 0) {
+                    $stats['projects_completed'] = $siteCount . '+';
+                }
+            } catch(\PDOException $e) {
+                // Keep defaults on error
+            }
+        }
+        
+        return $stats;
     }
 
     private function loadPropertyTypes()
@@ -325,7 +394,8 @@ class HomeController extends BaseController
 
     private function loadTestimonials()
     {
-        return [
+        // Default testimonials
+        $defaults = [
             (object)[
                 'name' => 'Ramesh Kumar',
                 'property' => '3BHK Apartment, Gomti Nagar',
@@ -345,6 +415,30 @@ class HomeController extends BaseController
                 'rating' => 4
             ]
         ];
+        
+        if ($this->db) {
+            try {
+                // Check if testimonials table exists
+                $stmt = $this->db->query("SHOW TABLES LIKE 'testimonials'");
+                if ($stmt->rowCount() > 0) {
+                    $query = "SELECT name, property, content, rating 
+                              FROM testimonials 
+                              WHERE status = 'active' 
+                              ORDER BY created_at DESC 
+                              LIMIT 3";
+                    $stmt = $this->db->query($query);
+                    $testimonials = $stmt->fetchAll(\PDO::FETCH_OBJ);
+                    
+                    if (!empty($testimonials)) {
+                        return $testimonials;
+                    }
+                }
+            } catch(\PDOException $e) {
+                // Fall back to defaults
+            }
+        }
+        
+        return $defaults;
     }
 
     private function loadOfficeLocations()

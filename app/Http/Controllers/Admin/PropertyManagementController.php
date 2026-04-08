@@ -123,7 +123,7 @@ class PropertyManagementController extends AdminController
                 'sites' => $sites
             ];
 
-            return $this->render('admin/property_management/index', $data);
+            return $this->render('admin/properties/index', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Property Management Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load property management data');
@@ -145,7 +145,7 @@ class PropertyManagementController extends AdminController
                 'recent_activity' => $this->getRecentActivity()
             ];
 
-            return $this->render('admin/property_management/dashboard', $data);
+            return $this->render('admin/properties/dashboard', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Property Management Dashboard error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load dashboard');
@@ -223,7 +223,7 @@ class PropertyManagementController extends AdminController
                 ]
             ];
 
-            return $this->render('admin/property_management/allocation', $data);
+            return $this->render('admin/properties/allocation', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Property Allocation error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load allocation data');
@@ -384,7 +384,7 @@ class PropertyManagementController extends AdminController
                 ]
             ];
 
-            return $this->render('admin/property_management/maintenance', $data);
+            return $this->render('admin/properties/maintenance', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Property Maintenance error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load maintenance data');

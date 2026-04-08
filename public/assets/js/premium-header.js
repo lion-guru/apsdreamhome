@@ -43,23 +43,15 @@ function initPremiumHeader() {
         
         lastScrollTop = scrollTop;
         
-        // Add scrolled class
+        // Add scrolled class - always keep header visible
         if (scrollTop > 50) {
             header.classList.add('scrolled');
         } else {
             header.classList.remove('scrolled');
         }
         
-        // Hide/show header on scroll
-        if (scrollTop > 200) {
-            if (scrollDirection === 'down') {
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                header.style.transform = 'translateY(0)';
-            }
-        } else {
-            header.style.transform = 'translateY(0)';
-        }
+        // Header stays ALWAYS VISIBLE - no transform/hide on scroll
+        header.style.transform = 'translateY(0)';
         
         updateHeaderSpacer();
     }
@@ -101,6 +93,36 @@ function initPremiumHeader() {
         }
     }
     
+    // Hover dropdown for desktop
+    function setupHoverDropdowns() {
+        if (window.innerWidth > 991) {
+            const dropdowns = document.querySelectorAll('.nav-item.dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                let hoverTimeout;
+                
+                dropdown.addEventListener('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                    const menu = this.querySelector('.dropdown-menu');
+                    if (menu) {
+                        this.querySelector('.dropdown-toggle')?.classList.add('show');
+                        menu.classList.add('show');
+                    }
+                });
+                
+                dropdown.addEventListener('mouseleave', function() {
+                    hoverTimeout = setTimeout(() => {
+                        const menu = this.querySelector('.dropdown-menu');
+                        if (menu) {
+                            this.querySelector('.dropdown-toggle')?.classList.remove('show');
+                            menu.classList.remove('show');
+                        }
+                    }, 150);
+                });
+            });
+        }
+    }
+
     // Active navigation highlighting
     function setupActiveNavigation() {
         const sections = document.querySelectorAll('section[id]');
@@ -166,6 +188,7 @@ function initPremiumHeader() {
     
     // Initialize all features
     setupMobileMenu();
+    setupHoverDropdowns();
     setupActiveNavigation();
     setupSearch();
     
@@ -180,91 +203,3 @@ function initPremiumHeader() {
 
 // Export for external use
 window.initPremiumHeader = initPremiumHeader;
-        }
-        
-        .mega-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .mega-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-        
-        .search-box {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .search-box.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .user-dropdown, .notification-dropdown, .language-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            min-width: 200px;
-        }
-        
-        .user-dropdown.show, .notification-dropdown.show, .language-dropdown.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .mobile-navigation {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            width: 280px;
-            height: 100vh;
-            background: white;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            transition: left 0.3s ease;
-            z-index: 1001;
-            overflow-y: auto;
-        }
-        
-        .mobile-navigation.show {
-            left: 0;
-        }
-        
-        .mobile-menu-open {
-            overflow: hidden;
-        }
-        
-        @media (max-width: 768px) {
-            .mobile-menu-button {
-                display: block !important;
-            }
-        }
-    `;
-    document.head.appendChild(headerStyles);
-});

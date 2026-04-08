@@ -4,7 +4,7 @@
  * Use this if XAMPP is not working
  */
 
-$port = 8000;
+$port = 8001;
 $host = 'localhost';
 $projectRoot = __DIR__;
 
