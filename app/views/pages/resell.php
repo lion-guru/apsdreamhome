@@ -62,8 +62,9 @@
                 <select name="city" class="form-select">
                     <option value="">All Cities</option>
                     <?php foreach ($cities as $city): ?>
-                        <option value="<?= htmlspecialchars(is_array($city) ? $city['city'] : $city) ?>" <?= $filters['city'] == (is_array($city) ? $city['city'] : $city) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars(is_array($city) ? $city['city'] : $city) ?>
+                        <?php $cityValue = is_array($city) ? ($city['city'] ?? '') : ($city ?? ''); ?>
+                        <option value="<?= htmlspecialchars($cityValue) ?>" <?= $filters['city'] == $cityValue ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cityValue ?: 'Unknown') ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -74,8 +75,9 @@
                 <select name="type" class="form-select">
                     <option value="">All Types</option>
                     <?php foreach ($property_types as $type): ?>
-                        <option value="<?= htmlspecialchars(is_array($type) ? $type['property_type'] : $type) ?>" <?= $filters['type'] == (is_array($type) ? $type['property_type'] : $type) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars(is_array($type) ? $type['property_type'] : $type) ?>
+                        <?php $typeValue = is_array($type) ? ($type['type'] ?? '') : ($type ?? ''); ?>
+                        <option value="<?= htmlspecialchars($typeValue) ?>" <?= $filters['type'] == $typeValue ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($typeValue ?: 'Unknown') ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

@@ -114,7 +114,7 @@ $router->get('/legal/services', 'Front\\PageController@legalServices');
 $router->get('/legal/documents', 'Front\\PageController@legalDocuments');
 $router->get('/forgot-password', 'Auth\\CustomerAuthController@login');
 $router->get('/user/edit-profile', 'Front\\PageController@userEditProfile');
-$router->get('/list-property', 'Front\\PageController@resell');
+$router->get('/resell', 'Front\\PageController@resell');
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
 $router->get('/dashboard', 'DashboardController@index');
