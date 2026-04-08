@@ -83,7 +83,6 @@ $router->get('/list-property', 'Front\\PageController@listProperty');
 $router->post('/list-property/submit', 'Front\\PageController@handlePropertyListing');
 
 // Form Handlers
-$router->post('/contact', 'Front\\PageController@contact');
 $router->post('/quick-inquiry', 'Front\\PageController@handleQuickInquiry');
 
 // AI Bot
@@ -520,12 +519,7 @@ $router->get('/admin/commission/calculations', 'App\Http\Controllers\Admin\Commi
 $router->get('/admin/commission/payments', 'App\Http\Controllers\Admin\CommissionAdminController@payments');
 $router->get('/admin/commission/reports', 'App\Http\Controllers\Admin\CommissionAdminController@reports');
 
-// Authentication Routes
-$router->get('/login', 'Auth\\CustomerAuthController@login');
-$router->post('/login', 'Auth\\CustomerAuthController@authenticate');
-$router->get('/register', 'Auth\\CustomerAuthController@register');
-$router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
-$router->get('/logout', 'Auth\\CustomerAuthController@logout');
+// Authentication Routes (Note: /login, /register, /logout already defined earlier)
 $router->get('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
 $router->post('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
 $router->get('/reset-password', 'App\Http\Controllers\AuthController@resetPassword');
