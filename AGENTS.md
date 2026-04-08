@@ -23,12 +23,18 @@
 
 ## Completed Features
 
-### 1. Header System
-- **Files**: `app/views/layouts/header.php`, `header_new_v2.php`
-- Shows navigation with dropdowns (Buy, Rent, Projects, Services)
-- Shows login/register buttons for guests
+### 1. Header System (UPDATED - DYNAMIC)
+- **File**: `app/views/layouts/header.php` (ONE consolidated header)
+- Shows navigation with dropdowns (Buy, Rent, Projects, Services, Resources, About Us)
+- **Dynamic Projects Dropdown** - Loads from `projects` table via JOIN with `districts` and `states` tables
+- Groups projects by location (district/city)
+- Shows project count badges per location
+- Shows login/register buttons for guests (Customer, Associate, Agent options)
 - Shows user name and dropdown menu for logged-in users
 - Menu items: Dashboard, My Properties, My Inquiries, Profile, Logout
+- Premium CSS with gradients, animations, scroll effects
+- Mobile responsive with collapsible menu
+- Call button (+91 92771 21112) and Admin button
 
 ### 2. User Authentication System
 - **Files**: 
@@ -159,11 +165,11 @@ Stores all inquiries. Fields: id, name, email, phone, message, type, status, pri
 
 ---
 
-## Project Locations
-- Gorakhpur: 3 projects (Suryoday, Raghunath, Braj Radha)
-- Kushinagar: 1 project (Budh Bihar)
-- Lucknow: 1 project (Awadhpuri)
-- Varanasi: 1 project (Ganga Nagri)
+## Project Locations (from Database)
+- Gorakhpur: Suryoday Heights Phase 1, Raghunath City Center
+- Lucknow: Braj Radha Enclave
+- Kushinagar: Budh Bihar Colony
+- Varanasi: Ganga Nagri
 
 ---
 
@@ -174,10 +180,16 @@ Stores all inquiries. Fields: id, name, email, phone, message, type, status, pri
 3. **Property Images** - Allow users to upload property images
 4. **Search by Price** - Add price range filter
 5. **SMS Notifications** - Send SMS for important events
+6. **Test User Flow** - Complete user registration, login, post property, admin approval flow
 
 ---
 
 ## Important Rules
+
+### Git Workflow
+- Use PowerShell for git commands (not bash)
+- Commands: `git add -A`, `git commit -m "message"`, `git push origin production`
+- Run PHP syntax check before commit
 
 ### Token Optimization
 1. Use filesystem tool for file operations
