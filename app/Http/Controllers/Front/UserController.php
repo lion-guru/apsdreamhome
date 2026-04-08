@@ -1,26 +1,17 @@
 <?php
-/**
- * User Controller - Handles user dashboard, profile, my properties, my inquiries
- * Uses existing users table from CustomerAuthController
- */
 
 namespace App\Http\Controllers\Front;
 
-class UserController
-{
-    private $db;
+use App\Http\Controllers\BaseController;
 
+class UserController extends BaseController
+{
     public function __construct()
     {
-        $this->db = new \PDO(
-            "mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome",
-            "root",
-            "",
-            [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
-        );
+        parent::__construct();
     }
 
-    public function dashboard()
+    private function requireCustomerLogin()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
         
@@ -28,14 +19,12 @@ class UserController
             header('Location: /login');
             exit;
         }
+    }
 
-        $userId = $_SESSION['user_id'];
-        $registered = isset($_GET['registered']);
-        $loginSuccess = isset($_GET['login']);
-
-        // Get user details
+    private function getUser()
+    {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
+        $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$user) {
@@ -43,81 +32,79 @@ class UserController
             exit;
         }
 
-        // Get user properties
+        return $user;
+    }
+
+    public function dashboard()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
         $stmt = $this->db->prepare("SELECT * FROM user_properties WHERE email = ? ORDER BY created_at DESC");
         $stmt->execute([$user['email']]);
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // Get user inquiries
         $stmt = $this->db->prepare("SELECT * FROM inquiries WHERE email = ? ORDER BY created_at DESC LIMIT 10");
         $stmt->execute([$user['email']]);
         $inquiries = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        include __DIR__ . '/../../../Views/pages/user_dashboard.php';
+        $data = [
+            'page_title' => 'My Dashboard - APS Dream Home',
+            'page_description' => 'Manage your properties and inquiries',
+            'user' => $user,
+            'properties' => $properties,
+            'inquiries' => $inquiries,
+            'registered' => isset($_GET['registered']),
+            'loginSuccess' => isset($_GET['login']),
+        ];
+
+        $this->render('pages/user_dashboard', $data);
     }
 
     public function myProperties()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        
-        if (!isset($_SESSION['user_id']) || ($_SESSION['user_type'] ?? '') !== 'customer') {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
 
-        $userId = $_SESSION['user_id'];
-        
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
-        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        // Get user properties
         $stmt = $this->db->prepare("SELECT * FROM user_properties WHERE email = ? ORDER BY created_at DESC");
         $stmt->execute([$user['email']]);
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        include __DIR__ . '/../../../Views/pages/user_properties.php';
+        $data = [
+            'page_title' => 'My Properties - APS Dream Home',
+            'page_description' => 'View and manage your listed properties',
+            'user' => $user,
+            'properties' => $properties,
+        ];
+
+        $this->render('pages/user_properties', $data);
     }
 
     public function myInquiries()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        
-        if (!isset($_SESSION['user_id']) || ($_SESSION['user_type'] ?? '') !== 'customer') {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
 
-        $userId = $_SESSION['user_id'];
-        
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
-        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        // Get user inquiries
         $stmt = $this->db->prepare("SELECT * FROM inquiries WHERE email = ? ORDER BY created_at DESC");
         $stmt->execute([$user['email']]);
         $inquiries = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        include __DIR__ . '/../../../Views/pages/user_inquiries.php';
+        $data = [
+            'page_title' => 'My Inquiries - APS Dream Home',
+            'page_description' => 'Track your property inquiries',
+            'user' => $user,
+            'inquiries' => $inquiries,
+        ];
+
+        $this->render('pages/user_inquiries', $data);
     }
 
     public function profile()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        
-        if (!isset($_SESSION['user_id']) || ($_SESSION['user_type'] ?? '') !== 'customer') {
-            header('Location: /login');
-            exit;
-        }
-
-        $userId = $_SESSION['user_id'];
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
         $error = '';
         $success = false;
-
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
-        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name = trim($_POST['name'] ?? '');
@@ -135,7 +122,7 @@ class UserController
                 } else {
                     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     $stmt = $this->db->prepare("UPDATE users SET name = ?, phone = ?, password = ? WHERE id = ?");
-                    $stmt->execute([$name, $phone, $hashedPassword, $userId]);
+                    $stmt->execute([$name, $phone, $hashedPassword, $_SESSION['user_id']]);
                     
                     $_SESSION['user_name'] = $name;
                     $success = true;
@@ -144,7 +131,7 @@ class UserController
                 }
             } else {
                 $stmt = $this->db->prepare("UPDATE users SET name = ?, phone = ? WHERE id = ?");
-                $stmt->execute([$name, $phone, $userId]);
+                $stmt->execute([$name, $phone, $_SESSION['user_id']]);
                 
                 $_SESSION['user_name'] = $name;
                 $success = true;
@@ -153,7 +140,14 @@ class UserController
             }
         }
 
-        include __DIR__ . '/../../../Views/pages/user_profile.php';
+        $data = [
+            'page_title' => 'My Profile - APS Dream Home',
+            'page_description' => 'Manage your account settings',
+            'user' => $user,
+            'error' => $error,
+            'success' => $success,
+        ];
+
+        $this->render('pages/user_profile', $data);
     }
 }
-?>
