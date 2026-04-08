@@ -101,11 +101,6 @@ $router->get('/admin/user-properties', 'App\\Http\\Controllers\\Admin\\UserPrope
 $router->get('/admin/user-properties/verify/{id}', 'App\\Http\\Controllers\\Admin\\UserPropertyController@verify');
 $router->post('/admin/user-properties/action', 'App\\Http\\Controllers\\Admin\\UserPropertyController@action');
 
-// Resources
-$router->get('/blog', 'Front\\PageController@blog');
-$router->get('/news', 'Front\\PageController@news');
-$router->get('/faqs', 'Front\\PageController@faqs');
-
 // Missing frontend routes (from header/footer links)
 $router->get('/financial-services', 'Front\\PageController@financialServices');
 $router->get('/interior-design', 'Front\\PageController@interiorDesign');
@@ -114,7 +109,6 @@ $router->get('/legal/services', 'Front\\PageController@legalServices');
 $router->get('/legal/documents', 'Front\\PageController@legalDocuments');
 $router->get('/forgot-password', 'Auth\\CustomerAuthController@login');
 $router->get('/user/edit-profile', 'Front\\PageController@userEditProfile');
-$router->get('/resell', 'Front\\PageController@resell');
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
 $router->get('/dashboard', 'DashboardController@index');
@@ -555,16 +549,10 @@ $router->get('/customer/notifications', 'App\Http\Controllers\CustomerController
 
 // Property Routes (Note: /properties handled by Front\PageController@properties)
 $router->get('/properties/search', 'App\Http\Controllers\PropertyController@search');
-$router->get('/properties/{id}', 'App\Http\Controllers\PropertyController@detail');
 $router->get('/colonies', 'App\Http\Controllers\PropertyController@colonies');
 $router->get('/colonies/{id}', 'App\Http\Controllers\PropertyController@colony');
-$router->get('/projects', 'App\Http\Controllers\PropertyController@projects');
-$router->get('/projects/{id}', 'App\Http\Controllers\PropertyController@project');
-$router->get('/resell', 'App\Http\Controllers\PropertyController@resell');
 $router->get('/resell/{id}', 'App\Http\Controllers\PropertyController@resellDetail');
 $router->get('/submit-property', 'App\Http\Controllers\PropertyController@submitProperty');
-$router->get('/compare', 'App\Http\Controllers\PropertyController@compare');
-
 
 // Payment Routes
 $router->get('/payment', 'App\Http\Controllers\PaymentController@index');
