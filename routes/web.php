@@ -42,7 +42,14 @@ $router->get('/blog/{slug}', 'Front\\PageController@blogPost');
 $router->get('/gallery', 'Front\\PageController@gallery');
 $router->get('/resell', 'Front\\PageController@resell');
 $router->get('/careers', 'Front\PageController@careers');
-$router->get('/coming-soon', 'Front\PageController@comingSoon');
+$router->get('/coming-soon', 'Front\\PageController@comingSoon');
+
+// Support
+$router->get('/support', 'Front\\SupportController@index');
+$router->post('/support', 'Front\\SupportController@store');
+$router->get('/whatsapp-chat', 'Front\\PageController@whatsappChat');
+$router->get('/user-ai-suggestions', 'Front\\PageController@userAiSuggestions');
+$router->get('/user/investments', 'Front\\PageController@userInvestments');
 
 // MLM & AI Dashboard Routes
 $router->get('/mlm-dashboard', 'MLM\MLMDashboardController@dashboard');
@@ -81,6 +88,8 @@ $router->get('/invest', 'Front\\PageController@investProperty');
 // Property Listing (User)
 $router->get('/list-property', 'Front\\PageController@listProperty');
 $router->post('/list-property/submit', 'Front\\PageController@handlePropertyListing');
+$router->get('/properties/submit', 'Front\\PageController@propertySubmit');
+$router->get('/properties/list', 'Front\\PageController@propertyList');
 
 // Form Handlers
 $router->post('/quick-inquiry', 'Front\\PageController@handleQuickInquiry');
