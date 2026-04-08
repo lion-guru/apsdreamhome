@@ -6249,3 +6249,39 @@ Stack trace:
 [08-Apr-2026 16:23:06 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
 [08-Apr-2026 16:24:16 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/BookingController.php
 [08-Apr-2026 16:24:16 Europe/Berlin] Router: Controller class: App\Http\Controllers\Admin\BookingController
+[08-Apr-2026 16:32:04 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 16:32:04 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 16:32:09 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 16:32:09 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 16:32:10 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 16:32:10 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 16:32:12 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 16:32:12 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 16:32:12 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 16:32:12 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 16:32:15 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 16:32:15 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 16:32:15 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 16:32:15 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 16:32:17 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/UserPropertyController.php
+[08-Apr-2026 16:32:17 Europe/Berlin] Router: Controller class: App\Http\Controllers\Admin\UserPropertyController
+[08-Apr-2026 16:32:19 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 16:32:19 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 16:32:51 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 16:32:51 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 16:32:57 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 16:32:57 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 16:33:00 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[08-Apr-2026 16:33:00 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\CustomerAuthController
+[08-Apr-2026 16:33:01 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[08-Apr-2026 16:33:01 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\CustomerAuthController
+[08-Apr-2026 16:33:01 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/CustomerController.php
+[08-Apr-2026 16:33:01 Europe/Berlin] Router: Controller class: App\Http\Controllers\CustomerController
+[08-Apr-2026 16:33:03 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 16:33:03 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 16:33:04 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 16:33:04 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 16:33:05 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 16:33:05 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 16:33:06 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 16:33:06 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController

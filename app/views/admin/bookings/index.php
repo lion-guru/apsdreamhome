@@ -281,7 +281,7 @@
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         <button type="button" class="btn btn-outline-danger" 
-                                                                onclick="confirmDelete(<?= $booking['id'] ?>, '<?= htmlspecialchars($booking['booking_number']) ?>')" 
+                                                                onclick="confirmDelete(<?= $booking['id'] ?>, '<?= htmlspecialchars($booking['booking_number'] ?? '') ?>')" 
                                                                 title="Delete">
                                                             <i class="fas fa-trash"></i>
                                                         </button>

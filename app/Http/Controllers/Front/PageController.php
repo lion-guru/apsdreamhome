@@ -1355,14 +1355,13 @@ class PageController extends BaseController
         ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $company_name = trim($_POST['company_name'] ?? '');
+            $name = trim($_POST['company_name'] ?? '');
             $contact_person = trim($_POST['contact_person'] ?? '');
             $mobile = trim($_POST['mobile'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $company_type = trim($_POST['company_type'] ?? '');
-            $established_year = trim($_POST['established_year'] ?? '');
-            $total_projects = trim($_POST['total_projects'] ?? '');
-            $ongoing_projects = trim($_POST['ongoing_projects'] ?? '');
+            $total_projects = intval($_POST['total_projects'] ?? 0);
+            $ongoing_projects = intval($_POST['ongoing_projects'] ?? 0);
             $city = trim($_POST['city'] ?? '');
             $state = trim($_POST['state'] ?? '');
             $password = trim($_POST['password'] ?? '');
@@ -1371,7 +1370,7 @@ class PageController extends BaseController
 
             $errors = [];
 
-            if (empty($company_name) || empty($contact_person) || empty($mobile) || empty($email) || empty($password)) {
+            if (empty($name) || empty($contact_person) || empty($mobile) || empty($email) || empty($password)) {
                 $errors[] = "Please fill all required fields.";
             }
             if ($password !== $confirm_password) {
@@ -1394,14 +1393,13 @@ class PageController extends BaseController
                     if ($check->fetch()) {
                         $data['error'] = "Mobile number or email already registered!";
                     } else {
-                        $builder_code = 'BLD' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
                         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                        $address = $city . ', ' . $state;
 
-                        $stmt = $this->db->prepare("INSERT INTO builders (builder_code, company_name, contact_person, mobile, email, company_type, established_year, total_projects, ongoing_projects, city, state, password, status, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
-                        $stmt->execute([$builder_code, $company_name, $contact_person, $mobile, $email, $company_type, $established_year, $total_projects, $ongoing_projects, $city, $state, $hashed_password]);
+                        $stmt = $this->db->prepare("INSERT INTO builders (name, email, mobile, address, license_number, specialization, total_projects, ongoing_projects, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+                        $stmt->execute([$name, $email, $mobile, $address, $company_type, 'Residential', $total_projects, $ongoing_projects]);
 
-                        $data['success'] = "Registration successful! Your Builder Code is: <strong>" . $builder_code . "</strong>. Your account is under review.";
-                        $data['builder_code'] = $builder_code;
+                        $data['success'] = "Registration successful! Your account is under review. Our team will contact you soon.";
                     }
                 } catch (\Exception $e) {
                     $data['error'] = "Registration failed. Please try again.";
