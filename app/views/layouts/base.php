@@ -34,6 +34,9 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
+    <!-- Extra head content from views -->
+    <?php if (!empty($extraHead)) echo $extraHead; ?>
+
     <!-- Critical CSS Inline -->
     <style>
         :root {

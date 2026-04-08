@@ -527,17 +527,17 @@ $router->get('/admin/commission/payments', 'App\Http\Controllers\Admin\Commissio
 $router->get('/admin/commission/reports', 'App\Http\Controllers\Admin\CommissionAdminController@reports');
 
 // Authentication Routes
-$router->get('/login', 'App\Http\Controllers\AuthController@login');
-$router->post('/login', 'App\Http\Controllers\AuthController@login');
-$router->get('/register', 'App\Http\Controllers\AuthController@register');
-$router->post('/register', 'App\Http\Controllers\AuthController@register');
+$router->get('/login', 'Auth\\CustomerAuthController@login');
+$router->post('/login', 'Auth\\CustomerAuthController@authenticate');
+$router->get('/register', 'Auth\\CustomerAuthController@register');
+$router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
+$router->get('/logout', 'Auth\\CustomerAuthController@logout');
 $router->get('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
 $router->post('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
 $router->get('/reset-password', 'App\Http\Controllers\AuthController@resetPassword');
 $router->post('/reset-password', 'App\Http\Controllers\AuthController@resetPassword');
 $router->get('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
 $router->post('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
-$router->get('/logout', 'App\Http\Controllers\AuthController@logout');
 
 // Customer Routes
 $router->get('/customer', 'App\Http\Controllers\CustomerController@index');
