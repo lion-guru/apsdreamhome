@@ -50,6 +50,8 @@ $router->post('/support', 'Front\\SupportController@store');
 $router->get('/whatsapp-chat', 'Front\\PageController@whatsappChat');
 $router->get('/user-ai-suggestions', 'Front\\PageController@userAiSuggestions');
 $router->get('/user/investments', 'Front\\PageController@userInvestments');
+$router->get('/builder-registration', 'Front\\PageController@builderRegistration');
+$router->post('/builder-registration', 'Front\\PageController@builderRegistration');
 
 // MLM & AI Dashboard Routes
 $router->get('/mlm-dashboard', 'MLM\MLMDashboardController@dashboard');
