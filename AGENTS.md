@@ -191,6 +191,8 @@ Phase 5: UI polish and offset robustness added; header tests re-run; baseline vi
 Phase 6: Automated UI test scaffolding created (Playwright-based visual tests). Admin login smoke test and header visuals run in isolated steps.
 Phase 7: Docs and sync: test artifacts and scripts created; AGENTS.md kept updated with status.
 Phase 8: A-to-Z master test runner created and ALL TESTS PASS. Critical schema fixes applied. Full automation complete.
+Phase 9: Newsletter API test fixed (POST instead of GET). Deep functional test now passes all 11 checks.
+Phase 10: User pages refactored to proper MVC layout. Broken header_new_v2.php replaced. Duplicate auth routes removed. 6 orphaned dead files deleted. Remaining duplicate routes cleaned up.
 
 ---
 
@@ -233,6 +235,30 @@ Phase 8: A-to-Z master test runner created and ALL TESTS PASS. Critical schema f
 - Properties page now has Min Price and Max Price dropdown filters
 - Controller already had logic; added UI in `app/views/pages/properties.php`
 
+### 10. Broken User Pages (FIXED)
+- **Issue**: All 4 user pages (`user_dashboard`, `user_profile`, `user_properties`, `user_inquiries`) referenced `header_new_v2.php` which did not exist, causing PHP include errors
+- **Fix**: Refactored all 4 pages to use proper MVC layout system (`BaseController::render()` + `base.php` layout), removed full HTML document wrappers, added `$extraHead` support
+- **Controller**: `UserController` now extends `BaseController`, uses `render()` method
+- **Files**: All 4 pages in `app/views/pages/user_*.php` rewritten
+
+### 11. Duplicate Auth Routes (FIXED)
+- **Issue**: `routes/web.php` had duplicate `/login`, `/register`, `/logout` routes (lines 168-171 and 530-533). Later routes pointed to `AuthController` (no auth logic), overriding proper `CustomerAuthController`
+- **Fix**: Removed duplicate routes at lines 530-533; `CustomerAuthController` now handles auth correctly
+
+### 12. Orphaned Dead Code (CLEANED UP)
+- **Deleted 6 broken/unused files**:
+  - `app/views/pages/aps_official_info.php` (missing `includes/db_connection.php`)
+  - `app/views/pages/whatsapp_chat.php` (missing `includes/config.php`)
+  - `app/views/pages/rahunath_nagri.php` (missing `includes/templates/header.php`)
+  - `app/views/pages/user/investments.php` (missing `init.php`)
+  - `app/views/pages/user_login.php` (replaced by `auth/customer_login.php`)
+  - `app/views/pages/user_register.php` (replaced by `auth/customer_register.php`)
+- **Removed 8 duplicate routes** from `routes/web.php`: `/blog`, `/news`, `/faqs`, `/resell`, `/projects`, `/projects/{id}`, `/properties/{id}` (second occurrence), `/compare` (second occurrence)
+
+### 13. Extra Head Support (ADDED)
+- `app/views/layouts/base.php` now supports `$extraHead` variable for custom page CSS
+- Views can inject additional `<style>` or `<link>` tags into `<head>` section
+
 ### 9. Property Image Upload (ADDED)
 - Users can upload property images when listing
 - Form: `enctype="multipart/form-data"` + file input in `list_property.php`
@@ -253,6 +279,10 @@ Phase 8: A-to-Z master test runner created and ALL TESTS PASS. Critical schema f
 | Services | Working |
 | Contact | Working |
 | Login/Register | Working |
+| User Dashboard | Working (refactored) |
+| User Profile | Working (refactored) |
+| User Properties | Working (refactored) |
+| User Inquiries | Working (refactored) |
 | Admin Login | Working (test-login bypass available) |
 | Admin User Properties | Working (schema fix applied) |
 | Newsletter | Working |
