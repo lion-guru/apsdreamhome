@@ -313,9 +313,9 @@
             animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
-        /* Fix: Add padding for fixed header */
+        /* Fix: Add padding for fixed header (dynamic via CSS variable) */
         main {
-            padding-top: 80px;
+            padding-top: var(--header-height, 80px);
         }
 
         /* Hero sections need extra padding adjustment */
@@ -325,6 +325,18 @@
             padding-top: 160px !important;
         }
     </style>
+    <script>
+      // Dynamically set header height for page offset
+      (function(){
+        function setHeaderHeight(){
+          var hdr = document.querySelector('header.premium-header');
+          var h = hdr ? hdr.offsetHeight : 80;
+          document.documentElement.style.setProperty('--header-height', h + 'px');
+        }
+        window.addEventListener('load', setHeaderHeight);
+        window.addEventListener('resize', setHeaderHeight);
+      })();
+    </script>
 
     <!-- Custom CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">

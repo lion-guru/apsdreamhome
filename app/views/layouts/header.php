@@ -52,8 +52,8 @@ $projectsSubmenu = [
 
 if (!empty($projectLocations)) {
     $projectsSubmenu[] = ['label' => '── By Location ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true];
-    foreach ($projectLocations as $loc) {
-        $projectsSubmenu[] = [
+        foreach ($projectLocations as $loc) {
+            $projectsSubmenu[] = [
             'label' => $loc['name'],
             'url' => '/company/projects?location=' . urlencode(strtolower($loc['name'])),
             'icon' => 'fas fa-map-pin',
@@ -97,7 +97,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                 <span class="brand-text">APS Dream Home</span>
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
@@ -188,7 +188,8 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 } else {
                                     $active_class = ($current_path === $sub_item['url']) ? 'active' : '';
                                     $badge = $sub_item['badge'] ?? '';
-                                    $badge_html = $badge ? '<span class="badge bg-primary ms-2">' . $badge . '</span>' : '';
+                                    // Ensure a visible separator before the badge
+                                    $badge_html = $badge ? '&nbsp;<span class="badge bg-primary ms-2">' . $badge . '</span>' : '';
                                     echo '<li><a class="dropdown-item ' . $active_class . '" href="' . BASE_URL . $sub_item['url'] . '"><i class="' . $sub_item['icon'] . ' me-2"></i>' . htmlspecialchars($sub_item['label']) . $badge_html . '</a></li>';
                                 }
                             }
@@ -285,6 +286,8 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
 </header>
 
 <style>
+/* Ensure header stays above content and provides stable layering across breakpoints */
+.premium-header { z-index: 9999; }
 /* ===== PREMIUM HEADER CSS ===== */
 .premium-header {
     background: rgba(255, 255, 255, 0.98);
@@ -536,7 +539,25 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
         }
     }
 }
-</style>
+    </style>
+    <script>
+      // Improve accessibility: keep aria-expanded in sync with UI state
+      document.addEventListener('DOMContentLoaded', function() {
+        var toggler = document.querySelector('.navbar-toggler');
+        if (toggler) {
+          toggler.addEventListener('click', function() {
+            var expanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', String(!expanded));
+          });
+        }
+        // Update aria-expanded for Bootstrap dropdowns
+        var dropdownToggles = document.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]');
+        dropdownToggles.forEach(function(dt){
+          dt.addEventListener('shown.bs.dropdown', function(){ dt.setAttribute('aria-expanded', 'true'); });
+          dt.addEventListener('hidden.bs.dropdown', function(){ dt.setAttribute('aria-expanded', 'false'); });
+        });
+      });
+    </script>
 
 <script>
 // Header scroll effect
