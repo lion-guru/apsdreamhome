@@ -1,6 +1,0 @@
-{
-    "phpunit": {
-        "bootstrap": "tests\/bootstrap.php",
-        "testsuite": "APS Dream Home Test Suite"
-    }
-}

@@ -1,0 +1,32 @@
+{
+    "mcpServers": {
+        "playwright": {
+            "command": "node",
+            "args": [
+                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@playwright\\mcp\\dist\\index.js"
+            ],
+            "env": {
+                "PLAYWRIGHT_BROWSERS_PATH": "0"
+            }
+        },
+        "filesystem": {
+            "command": "node",
+            "args": [
+                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@modelcontextprotocol\\server-filesystem\\dist\\index.js",
+                "C:\\xampp\\htdocs\\apsdreamhome"
+            ]
+        },
+        "memory": {
+            "command": "node",
+            "args": [
+                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@modelcontextprotocol\\server-memory\\dist\\index.js"
+            ]
+        },
+        "sequential-thinking": {
+            "command": "node",
+            "args": [
+                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@modelcontextprotocol\\server-sequential-thinking\\dist\\index.js"
+            ]
+        }
+    }
+}

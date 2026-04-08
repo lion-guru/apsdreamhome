@@ -1,0 +1,10 @@
+services:
+  apsdreamhomemobile:
+    image: apsdreamhomemobile
+    build:
+      context: public/mobile
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8000:8000

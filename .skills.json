@@ -1,0 +1,24 @@
+{
+  "skills": [
+    {
+      "name": "php-mvc",
+      "description": "PHP MVC Framework patterns and conventions",
+      "file": ".skills/php-mvc.md"
+    },
+    {
+      "name": "frontend",
+      "description": "CSS, Bootstrap, JavaScript frontend skills",
+      "file": ".skills/frontend.md"
+    },
+    {
+      "name": "database",
+      "description": "MySQL database operations",
+      "file": ".skills/database.md"
+    },
+    {
+      "name": "memory",
+      "description": "Project context and memory management",
+      "file": ".skills/memory.md"
+    }
+  ]
+}

@@ -57,7 +57,7 @@ class SiteSettingsController extends AdminController
                 'settings' => $organizedSettings
             ];
 
-            return $this->render('admin/site_settings/index', $data);
+            return $this->render('admin/settings/index', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Site Settings Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site settings');
@@ -83,7 +83,7 @@ class SiteSettingsController extends AdminController
                 ]
             ];
 
-            return $this->render('admin/site_settings/edit', $data);
+            return $this->render('admin/settings/edit', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Site Settings Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load settings form');

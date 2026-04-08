@@ -142,7 +142,7 @@ class PlotManagementController extends AdminController
                 'recent_activity' => $this->getRecentActivity()
             ];
 
-            return $this->render('admin/plot_management/dashboard', $data);
+            return $this->render('admin/plots/dashboard', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Plot Management Dashboard error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load dashboard');
@@ -220,7 +220,7 @@ class PlotManagementController extends AdminController
                 ]
             ];
 
-            return $this->render('admin/plot_management/allocation', $data);
+            return $this->render('admin/plots/allocation', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Plot Allocation error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load allocation data');
@@ -381,7 +381,7 @@ class PlotManagementController extends AdminController
                 ]
             ];
 
-            return $this->render('admin/plot_management/development', $data);
+            return $this->render('admin/plots/development', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Plot Development error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load development data');
