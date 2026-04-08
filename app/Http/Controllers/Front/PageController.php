@@ -1346,6 +1346,75 @@ class PageController extends BaseController
         $this->render('pages/thank_you', $data);
     }
 
+    // Builder Registration
+    public function builderRegistration()
+    {
+        $data = [
+            'page_title' => 'Builder Registration - APS Dream Home',
+            'page_description' => 'Join our developer partner program'
+        ];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $company_name = trim($_POST['company_name'] ?? '');
+            $contact_person = trim($_POST['contact_person'] ?? '');
+            $mobile = trim($_POST['mobile'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $company_type = trim($_POST['company_type'] ?? '');
+            $established_year = trim($_POST['established_year'] ?? '');
+            $total_projects = trim($_POST['total_projects'] ?? '');
+            $ongoing_projects = trim($_POST['ongoing_projects'] ?? '');
+            $city = trim($_POST['city'] ?? '');
+            $state = trim($_POST['state'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+            $confirm_password = trim($_POST['confirm_password'] ?? '');
+            $terms_accepted = isset($_POST['terms_accepted']) ? 1 : 0;
+
+            $errors = [];
+
+            if (empty($company_name) || empty($contact_person) || empty($mobile) || empty($email) || empty($password)) {
+                $errors[] = "Please fill all required fields.";
+            }
+            if ($password !== $confirm_password) {
+                $errors[] = "Passwords do not match.";
+            }
+            if (strlen($mobile) != 10) {
+                $errors[] = "Mobile number must be 10 digits.";
+            }
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Please enter a valid email address.";
+            }
+            if (!$terms_accepted) {
+                $errors[] = "Please accept the terms and conditions.";
+            }
+
+            if (empty($errors)) {
+                try {
+                    $check = $this->db->prepare("SELECT id FROM builders WHERE mobile = ? OR email = ?");
+                    $check->execute([$mobile, $email]);
+                    if ($check->fetch()) {
+                        $data['error'] = "Mobile number or email already registered!";
+                    } else {
+                        $builder_code = 'BLD' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+                        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+                        $stmt = $this->db->prepare("INSERT INTO builders (builder_code, company_name, contact_person, mobile, email, company_type, established_year, total_projects, ongoing_projects, city, state, password, status, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+                        $stmt->execute([$builder_code, $company_name, $contact_person, $mobile, $email, $company_type, $established_year, $total_projects, $ongoing_projects, $city, $state, $hashed_password]);
+
+                        $data['success'] = "Registration successful! Your Builder Code is: <strong>" . $builder_code . "</strong>. Your account is under review.";
+                        $data['builder_code'] = $builder_code;
+                    }
+                } catch (\Exception $e) {
+                    $data['error'] = "Registration failed. Please try again.";
+                    error_log('Builder registration error: ' . $e->getMessage());
+                }
+            } else {
+                $data['error'] = implode(" ", $errors);
+            }
+        }
+
+        $this->render('pages/builder_registration', $data);
+    }
+
     // Coming Soon
     public function comingSoon()
     {

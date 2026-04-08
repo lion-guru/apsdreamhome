@@ -6130,3 +6130,122 @@ Stack trace:
 [08-Apr-2026 15:00:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
 [08-Apr-2026 15:00:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
 [08-Apr-2026 15:00:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 15:30:59 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:30:59 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:31:05 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:31:05 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:31:23 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 15:31:23 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 15:31:24 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 15:31:24 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 15:31:47 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 15:31:47 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 15:31:47 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 15:31:47 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 15:35:54 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/LeadController.php
+[08-Apr-2026 15:35:54 Europe/Berlin] Router: Controller class: App\Http\Controllers\Admin\LeadController
+[08-Apr-2026 15:35:54 Europe/Berlin] PHP Warning:  Undefined array key "total" in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\LeadController.php on line 89
+[08-Apr-2026 15:49:25 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:49:25 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:49:45 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:49:45 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:49:50 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:49:50 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:49:52 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:49:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:49:56 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 15:49:56 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 15:49:56 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 15:49:56 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 15:49:59 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[08-Apr-2026 15:49:59 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\AdminAuthController
+[08-Apr-2026 15:49:59 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 15:49:59 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 15:50:01 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/UserPropertyController.php
+[08-Apr-2026 15:50:01 Europe/Berlin] Router: Controller class: App\Http\Controllers\Admin\UserPropertyController
+[08-Apr-2026 15:50:03 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:50:03 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:50:18 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:50:18 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:50:26 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[08-Apr-2026 15:50:26 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\PageController
+[08-Apr-2026 15:50:33 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[08-Apr-2026 15:50:33 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\CustomerAuthController
+[08-Apr-2026 15:50:35 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/CustomerAuthController.php
+[08-Apr-2026 15:50:35 Europe/Berlin] Router: Controller class: App\Http\Controllers\Auth\CustomerAuthController
+[08-Apr-2026 15:50:35 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/CustomerController.php
+[08-Apr-2026 15:50:35 Europe/Berlin] Router: Controller class: App\Http\Controllers\CustomerController
+[08-Apr-2026 15:50:38 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 15:50:38 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 15:50:39 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 15:50:39 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 15:50:40 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 15:50:40 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 15:50:40 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/UserController.php
+[08-Apr-2026 15:50:40 Europe/Berlin] Router: Controller class: App\Http\Controllers\Front\UserController
+[08-Apr-2026 16:23:01 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/BookingController.php
+[08-Apr-2026 16:23:01 Europe/Berlin] Router: Controller class: App\Http\Controllers\Admin\BookingController
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:01 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 232
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 240
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 242
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Warning:  Undefined array key "total_amount" in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  number_format(): Passing null to parameter #1 ($num) of type float is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 254
+[08-Apr-2026 16:23:02 Europe/Berlin] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\apsdreamhome\app\views\admin\bookings\index.php on line 284
+[08-Apr-2026 16:23:06 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/RoleBasedDashboardController.php
+[08-Apr-2026 16:23:06 Europe/Berlin] Router: Controller class: App\Http\Controllers\RoleBasedDashboardController
+[08-Apr-2026 16:24:16 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/BookingController.php
+[08-Apr-2026 16:24:16 Europe/Berlin] Router: Controller class: App\Http\Controllers\Admin\BookingController
