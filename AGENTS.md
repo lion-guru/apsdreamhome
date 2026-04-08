@@ -177,10 +177,10 @@ Stores all inquiries. Fields: id, name, email, phone, message, type, status, pri
 
 1. **Pan-India Locations** - Add API for location search
 2. **Email Notifications** - Send email when property is approved/rejected
-3. **Property Images** - Allow users to upload property images
-4. **Search by Price** - Add price range filter
+3. **Property Images** - Allow users to upload property images ✅ DONE
+4. **Search by Price** - Add price range filter ✅ DONE
 5. **SMS Notifications** - Send SMS for important events
-6. **Test User Flow** - Complete user registration, login, post property, admin approval flow
+6. **Test User Flow** - Complete user registration, login, post property, admin approval flow ✅ VERIFIED
 
 --- Phase Progress ---
 Phase 1: Header UI/UX baseline tests and fixes completed. Header accessible, offset handling improved, dynamic projects rendering verified via tests.
@@ -228,6 +228,18 @@ Phase 8: A-to-Z master test runner created and ALL TESTS PASS. Critical schema f
 - Single command: `node testing/visual_tests/MASTER_TEST_RUNNER.js`
 - Covers: DB health → seeds → header visuals → admin login → admin user-properties → list property → newsletter
 - Result: ALL PASS, 6 screenshots captured
+
+### 8. Price Range Filter (ADDED)
+- Properties page now has Min Price and Max Price dropdown filters
+- Controller already had logic; added UI in `app/views/pages/properties.php`
+
+### 9. Property Image Upload (ADDED)
+- Users can upload property images when listing
+- Form: `enctype="multipart/form-data"` + file input in `list_property.php`
+- Controller handles upload: saves to `assets/images/properties/` directory
+- Supported: JPG, PNG, WEBP (max 5MB)
+- Path stored in `user_properties.image` column
+- DB: `scripts/add_property_image_column.php` adds `image` column
 
 ---
 
