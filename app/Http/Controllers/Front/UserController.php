@@ -150,4 +150,78 @@ class UserController extends BaseController
 
         $this->render('pages/user_profile', $data);
     }
+    
+    /**
+     * Bank Details Page
+     */
+    public function bankDetails()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['flash_error'] = 'Please login first';
+            header('Location: /login?redirect=/user/bank-details');
+            exit;
+        }
+        
+        $this->render('pages/user_bank_details');
+    }
+    
+    /**
+     * Save Bank Details
+     */
+    public function saveBankDetails()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /login');
+            exit;
+        }
+        
+        $userId = $_SESSION['user_id'];
+        $accountHolder = trim($_POST['account_holder'] ?? '');
+        $accountNumber = trim($_POST['account_number'] ?? '');
+        $ifscCode = trim(strtoupper($_POST['ifsc_code'] ?? ''));
+        $bankName = trim($_POST['bank_name'] ?? '');
+        $branchName = trim($_POST['branch_name'] ?? '');
+        $accountType = $_POST['account_type'] ?? 'savings';
+        $upiId = trim($_POST['upi_id'] ?? '');
+        
+        // Validation
+        if (empty($accountHolder) || empty($accountNumber) || empty($ifscCode)) {
+            $_SESSION['flash_error'] = 'Please fill all required fields';
+            header('Location: /user/bank-details');
+            exit;
+        }
+        
+        // Check if account already exists
+        $existing = $this->db->fetch(
+            "SELECT id FROM user_bank_accounts WHERE user_id = ?",
+            [$userId]
+        );
+        
+        if ($existing) {
+            // Update existing
+            $stmt = $this->db->prepare("
+                UPDATE user_bank_accounts 
+                SET account_holder = ?, account_number = ?, ifsc_code = ?, 
+                    bank_name = ?, branch_name = ?, account_type = ?, upi_id = ?
+                WHERE user_id = ? AND is_primary = 1
+            ");
+            $stmt->execute([$accountHolder, $accountNumber, $ifscCode, $bankName, $branchName, $accountType, $upiId, $userId]);
+        } else {
+            // Insert new
+            $stmt = $this->db->prepare("
+                INSERT INTO user_bank_accounts 
+                (user_id, account_holder, account_number, ifsc_code, bank_name, branch_name, account_type, upi_id, is_primary)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+            ");
+            $stmt->execute([$userId, $accountHolder, $accountNumber, $ifscCode, $bankName, $branchName, $accountType, $upiId]);
+        }
+        
+        $_SESSION['flash_success'] = 'Bank details saved successfully!';
+        header('Location: /user/bank-details');
+        exit;
+    }
 }

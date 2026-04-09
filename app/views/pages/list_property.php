@@ -1,10 +1,15 @@
 <?php
 /**
  * List Property Page - Simple & Easy Property Posting
+ * Now with Smart Location Dropdowns
  */
 $success = isset($_SESSION['flash_success']) ? $_SESSION['flash_success'] : null;
 $error = isset($_SESSION['flash_error']) ? $_SESSION['flash_error'] : null;
 unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+// Load states for dropdown
+$db = \App\Core\Database\Database::getInstance();
+$states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER BY name LIMIT 50");
 ?>
 <!-- Hero Section -->
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -75,24 +80,29 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                 </select>
                             </div>
 
-                            <!-- Location -->
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Property Location *</label>
-                                <select name="location" class="form-select" required>
-                                    <option value="">Select location...</option>
-                                    <option value="Gorakhpur">Gorakhpur</option>
-                                    <option value="Kushinagar">Kushinagar</option>
-                                    <option value="Lucknow">Lucknow</option>
-                                    <option value="Varanasi">Varanasi</option>
-                                    <option value="Ayodhya">Ayodhya</option>
-                                    <option value="Deoria">Deoria</option>
-                                    <option value="Basti">Basti</option>
-                                    <option value="Siddharthnagar">Siddharthnagar</option>
-                                    <option value="Maharajganj">Maharajganj</option>
-                                    <option value="Sant Kabir Nagar">Sant Kabir Nagar</option>
-                                    <option value="Other">Other</option>
-                                </select>
+                            <!-- Location with Smart Dropdowns -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">State *</label>
+                                    <select id="state_id" class="form-select" required>
+                                        <option value="">Select State...</option>
+                                        <?php foreach ($states as $state): ?>
+                                            <option value="<?= $state['id'] ?>"><?= htmlspecialchars($state['name']) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">District/City *</label>
+                                    <select id="district_id" name="location" class="form-select" required disabled>
+                                        <option value="">Select District First...</option>
+                                    </select>
+                                </div>
                             </div>
+                            
+                            <!-- Hidden fields for state/district IDs -->
+                            <input type="hidden" name="state_id" id="state_id_hidden">
+                            <input type="hidden" name="district_id" id="district_id_hidden">
+                            <input type="hidden" name="city_name" id="city_name_hidden">
 
                             <!-- Price -->
                             <div class="mb-3">
@@ -238,3 +248,56 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         </a>
     </div>
 </section>
+
+<!-- Smart Form JavaScript -->
+<script src="<?= BASE_URL ?>/assets/js/components/smart-form-autocomplete.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize location cascade
+    const smartForm = new SmartFormAutocomplete();
+    
+    // State change - load districts
+    document.getElementById('state_id').addEventListener('change', async function() {
+        const stateId = this.value;
+        const districtSelect = document.getElementById('district_id');
+        
+        if (!stateId) {
+            districtSelect.innerHTML = '<option value="">Select State First...</option>';
+            districtSelect.disabled = true;
+            return;
+        }
+        
+        districtSelect.disabled = true;
+        districtSelect.innerHTML = '<option value="">Loading...</option>';
+        
+        try {
+            const response = await fetch('/api/locations/districts?state_id=' + stateId);
+            const districts = await response.json();
+            
+            districtSelect.innerHTML = '<option value="">Select District...</option>';
+            districts.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d.name; // Use name for the form field
+                option.dataset.id = d.id;
+                option.textContent = d.name;
+                districtSelect.appendChild(option);
+            });
+            districtSelect.disabled = false;
+            
+        } catch (error) {
+            console.error('Error loading districts:', error);
+            districtSelect.innerHTML = '<option value="">Error loading</option>';
+        }
+    });
+    
+    // District change - update hidden fields
+    document.getElementById('district_id').addEventListener('change', function() {
+        const stateSelect = document.getElementById('state_id');
+        const selectedOption = this.options[this.selectedIndex];
+        
+        document.getElementById('state_id_hidden').value = stateSelect.value;
+        document.getElementById('district_id_hidden').value = selectedOption.dataset.id || '';
+        document.getElementById('city_name_hidden').value = this.value;
+    });
+});
+</script>
