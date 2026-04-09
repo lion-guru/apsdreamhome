@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Core\Controller;
 
 class LocationController extends Controller
 {
-    private $db;
+    protected $db;
     
     public function __construct()
     {
@@ -177,22 +177,18 @@ class LocationController extends Controller
             $this->errorResponse('Valid pincode required (4-10 digits)', 400);
         }
         
-        $sql = "SELECT p.pincode, p.area_name,
-                       c.id as city_id, c.name as city,
-                       d.id as district_id, d.name as district,
-                       s.id as state_id, s.name as state,
-                       co.id as country_id, co.name as country
-                FROM pincodes p
-                LEFT JOIN cities c ON p.city_id = c.id
-                LEFT JOIN districts d ON p.district_id = d.id
-                LEFT JOIN states s ON p.state_id = s.id
-                LEFT JOIN countries co ON p.country_id = co.id
-                WHERE p.pincode = ? AND p.is_active = 1";
-        
-        $result = $this->db->fetch($sql, [$pincode]);
+        $result = $this->db->fetch(
+            "SELECT pincode, area_name FROM pincodes WHERE pincode = ? AND is_active = 1 LIMIT 1",
+            [$pincode]
+        );
         
         if ($result) {
-            $this->jsonResponse($result);
+            $this->jsonResponse([
+                'found' => true,
+                'pincode' => $result['pincode'],
+                'area' => $result['area_name'],
+                'message' => 'Pincode found'
+            ]);
         } else {
             $this->jsonResponse([
                 'found' => false,
