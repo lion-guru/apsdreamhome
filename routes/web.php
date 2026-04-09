@@ -639,3 +639,6 @@ $router->get('/user/properties', 'Front\UserController@myProperties');
 $router->get('/user/inquiries', 'Front\UserController@myInquiries');
 $router->get('/user/profile', 'Front\UserController@profile');
 $router->post('/user/profile', 'Front\UserController@profile');
+$router->get('/user/bank-details', 'Front\UserController@bankDetails');
+$router->post('/user/bank-details/save', 'Front\UserController@saveBankDetails');
+$router->get('/user/network', function() { include __DIR__ . '/../app/views/pages/user_network.php'; });
