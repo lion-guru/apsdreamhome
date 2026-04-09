@@ -44,11 +44,9 @@ class ServiceController extends AdminController
         $totalPages = ceil($total / $perPage);
 
         // Get service interests
-        $sql = "SELECT si.*, l.name, l.phone, l.email, l.status as lead_status,
-                p.site_name as property_name
+        $sql = "SELECT si.*, l.name, l.phone, l.email, l.status as lead_status
                 FROM service_interests si
                 LEFT JOIN leads l ON si.lead_id = l.id
-                LEFT JOIN sites p ON si.property_id = p.id
                 $where
                 ORDER BY si.created_at DESC
                 LIMIT $perPage OFFSET $offset";
