@@ -169,6 +169,11 @@ class BaseController
      */
     protected function redirect($url)
     {
+        // Add BASE_URL if not already present
+        if (!empty($url) && strpos($url, 'http') !== 0 && defined('BASE_URL')) {
+            $url = rtrim(BASE_URL, '/') . '/' . ltrim($url, '/');
+        }
+        
         if (!headers_sent()) {
             header("Location: " . $url);
         }
