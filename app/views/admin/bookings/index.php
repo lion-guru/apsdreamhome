@@ -229,29 +229,29 @@
                                         <?php foreach ($bookings as $booking): ?>
                                             <tr>
                                                 <td>
-                                                    <strong><?= htmlspecialchars($booking['booking_number']) ?></strong>
+                                                    <strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong>
                                                 </td>
                                                 <td>
-                                                    <?= htmlspecialchars($booking['property_title']) ?>
+                                                    <?= htmlspecialchars($booking['property_title'] ?? 'N/A') ?>
                                                     <br>
-                                                    <small class="text-muted"><?= htmlspecialchars($booking['property_location']) ?></small>
+                                                    <small class="text-muted"><?= htmlspecialchars($booking['property_location'] ?? '') ?></small>
                                                 </td>
                                                 <td>
-                                                    <?= htmlspecialchars($booking['customer_name']) ?>
+                                                    <?= htmlspecialchars($booking['customer_name'] ?? 'N/A') ?>
                                                     <br>
-                                                    <small class="text-muted"><?= htmlspecialchars($booking['customer_email']) ?></small>
+                                                    <small class="text-muted"><?= htmlspecialchars($booking['customer_email'] ?? '') ?></small>
                                                 </td>
                                                 <td>
-                                                    <?php if ($booking['associate_name']): ?>
+                                                    <?php if (!empty($booking['associate_name'])): ?>
                                                         <?= htmlspecialchars($booking['associate_name']) ?>
                                                         <br>
-                                                        <small class="text-muted"><?= htmlspecialchars($booking['associate_email']) ?></small>
+                                                        <small class="text-muted"><?= htmlspecialchars($booking['associate_email'] ?? '') ?></small>
                                                     <?php else: ?>
                                                         <span class="text-muted">Direct Booking</span>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <strong>₹<?= number_format($booking['total_amount'], 2) ?></strong>
+                                                    <strong>₹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></strong>
                                                 </td>
                                                 <td>
                                                     <?php

@@ -83,10 +83,11 @@ class LeadController extends AdminController
             $sql .= " GROUP BY l.id ORDER BY l.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT l.*, u.name as assigned_to_name, ls.status_name, ls.color as status_color, src.name as source_name, COUNT(la.id) as activity_count", "SELECT COUNT(DISTINCT l.id) as total", $sql);
+            $countSql = str_replace("SELECT l.*, u.name as assigned_to_name, ls.status_name, ls.color as status_color, src.name as source_name, COUNT(la.id) as activity_count", "SELECT COUNT(DISTINCT l.id) as cnt", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $totalResult = $countStmt->fetch();
+            $total = $totalResult['cnt'] ?? 0;
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";

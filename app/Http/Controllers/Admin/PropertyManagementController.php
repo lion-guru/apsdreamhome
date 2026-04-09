@@ -89,10 +89,11 @@ class PropertyManagementController extends AdminController
             $sql .= " GROUP BY p.id ORDER BY p.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT p.*, s.site_name, pr.name as project_name, pl.plot_number, l.land_title, c.name as category_name, u.name as customer_name, COUNT(pi.id) as image_count", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countSql = str_replace("SELECT p.*, s.site_name, pr.name as project_name, pl.plot_number, l.land_title, c.name as category_name, u.name as customer_name, COUNT(pi.id) as image_count", "SELECT COUNT(DISTINCT p.id) as cnt", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $totalResult = $countStmt->fetch();
+            $total = $totalResult['cnt'] ?? 0;
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";
