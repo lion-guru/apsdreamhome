@@ -140,11 +140,8 @@ $router->post('/dashboard/inquiries/submit', 'DashboardController@submitInquiry'
 // AI Routes
 $router->get('/ai-valuation', 'AIController@propertyValuation');
 
-// Lead Scoring Routes
-$router->get('/admin/leads/scoring', 'App\Http\Controllers\Admin\LeadScoringController@index');
-$router->get('/admin/leads/scoring/recalculate', 'App\Http\Controllers\Admin\LeadScoringController@recalculateScores');
+// Lead Scoring Routes (API)
 $router->get('/api/leads/{id}/score-details', 'App\Http\Controllers\Admin\LeadScoringController@getScoreDetails');
-$router->get('/admin/leads/scoring/export', 'App\Http\Controllers\Admin\LeadScoringController@export');
 
 // Site Visit Routes
 $router->get('/admin/visits', 'App\Http\Controllers\Admin\VisitController@index');
@@ -318,6 +315,21 @@ $router->post('/admin/leads/{id}/update', 'App\\Http\\Controllers\\Admin\\LeadCo
 $router->post('/admin/leads/{id}/destroy', 'App\\Http\\Controllers\\Admin\\LeadController@destroy');
 $router->post('/admin/leads/{id}/note', 'App\\Http\\Controllers\\Admin\\LeadController@addNote');
 $router->post('/admin/leads/{id}/status', 'App\\Http\\Controllers\\Admin\\LeadController@updateStatus');
+
+// Lead Scoring Dashboard
+$router->get('/admin/leads/scoring', 'App\\Http\\Controllers\\Admin\\LeadScoringController@index');
+$router->get('/admin/leads/scoring/show/{id}', 'App\\Http\\Controllers\\Admin\\LeadScoringController@show');
+$router->post('/admin/leads/scoring/process-all', 'App\\Http\\Controllers\\Admin\\LeadScoringController@processAll');
+$router->post('/admin/leads/scoring/auto-assign', 'App\\Http\\Controllers\\Admin\\LeadScoringController@autoAssign');
+$router->post('/admin/leads/scoring/rescore/{id}', 'App\\Http\\Controllers\\Admin\\LeadScoringController@rescore');
+$router->get('/admin/leads/scoring/export', 'App\\Http\\Controllers\\Admin\\LeadScoringController@export');
+
+// Plot Development Cost Calculator
+$router->get('/admin/plot-costs', 'App\\Http\\Controllers\\Admin\\PlotCostController@index');
+$router->get('/admin/plot-costs/colony/{id}', 'App\\Http\\Controllers\\Admin\\PlotCostController@colony');
+$router->post('/admin/plot-costs/add-cost', 'App\\Http\\Controllers\\Admin\\PlotCostController@addCost');
+$router->post('/admin/plot-costs/calculate', 'App\\Http\\Controllers\\Admin\\PlotCostController@calculateAll');
+$router->get('/admin/plot-costs/report/{id}', 'App\\Http\\Controllers\\Admin\\PlotCostController@report');
 
 // Admin Bookings
 $router->get('/admin/bookings', 'App\\Http\\Controllers\\Admin\\BookingController@index');
