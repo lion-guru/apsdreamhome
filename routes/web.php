@@ -609,6 +609,26 @@ $router->get('/plots', function() { include __DIR__ . '/../app/views/pages/plots
 // Newsletter Subscribe
 $router->post('/subscribe', 'Api\NewsletterController@subscribe');
 
+// ============================================================
+// SMART LOCATION & BANK APIs
+// ============================================================
+
+// Location APIs
+$router->get('/api/locations/countries', 'Api\LocationController@countries');
+$router->get('/api/locations/states', 'Api\LocationController@states');
+$router->get('/api/locations/districts', 'Api\LocationController@districts');
+$router->get('/api/locations/cities', 'Api\LocationController@cities');
+$router->get('/api/locations/search', 'Api\LocationController@search');
+$router->get('/api/locations/pincode/{pincode}', 'Api\LocationController@byPincode');
+$router->get('/api/locations/pincodes', 'Api\LocationController@pincodes');
+
+// Bank APIs
+$router->get('/api/banks/search', 'Api\BankController@search');
+$router->get('/api/banks/ifsc/{ifsc}', 'Api\BankController@byIfsc');
+$router->get('/api/banks/branches', 'Api\BankController@searchBranches');
+$router->get('/api/banks/validate-account', 'Api\BankController@validateAccount');
+$router->get('/api/banks/{id}/branches', 'Api\BankController@branches');
+
 // Service Interest
 $router->post('/service-interest', 'Front\PageController@serviceInterest');
 
