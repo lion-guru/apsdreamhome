@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Core\Controller;
 
 class BankController extends Controller
 {
-    private $db;
+    protected $db;
     
     public function __construct()
     {
