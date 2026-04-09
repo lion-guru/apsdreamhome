@@ -642,3 +642,10 @@ $router->post('/user/profile', 'Front\UserController@profile');
 $router->get('/user/bank-details', 'Front\UserController@bankDetails');
 $router->post('/user/bank-details/save', 'Front\UserController@saveBankDetails');
 $router->get('/user/network', function() { include __DIR__ . '/../app/views/pages/user_network.php'; });
+$router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\CommissionController@payouts');
+
+$router->get('/admin/network/tree', 'App\\Http\\Controllers\\Admin\\MlmController@tree');
+
+$router->get('/admin/network/genealogy', 'App\\Http\\Controllers\\Admin\\MlmController@genealogy');
+
+$router->get('/admin/network/ranks', 'App\\Http\\Controllers\\Admin\\MlmController@ranks');

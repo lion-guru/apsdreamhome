@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../../../layouts/admin_header.php'; ?>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -376,4 +376,4 @@ function performQuickUpdate() {
 }
 </script>
 
-<?php include __DIR__ . '/../../../layouts/admin_footer.php'; ?>
+
