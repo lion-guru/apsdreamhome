@@ -76,39 +76,172 @@ class AssociateController extends BaseController
     {
         $this->requireAuth();
 
-        // Sample data
-        $stats = [
-            'total_properties' => 15,
-            'sold_properties' => 8,
-            'pending_deals' => 3,
-            'commission_earned' => 125000,
-            'active_clients' => 12
-        ];
-
-        $recent_properties = [
-            [
-                'id' => 1,
-                'title' => 'Luxury Apartment in Gomti Nagar',
-                'price' => 7500000,
-                'status' => 'listed',
-                'client_name' => 'Ramesh Kumar',
-                'commission' => 150000
+        // Sample data matching view expectations
+        $dashboardData = [
+            'role' => 'associate',
+            'title' => 'Associate Dashboard',
+            'widgets' => [
+                'total_properties' => [
+                    'title' => 'Total Properties',
+                    'count' => 15,
+                    'icon' => 'building',
+                    'link' => '/associate/properties'
+                ],
+                'sold_properties' => [
+                    'title' => 'Sold Properties',
+                    'count' => 8,
+                    'icon' => 'check-circle',
+                    'link' => '/associate/sold'
+                ],
+                'pending_deals' => [
+                    'title' => 'Pending Deals',
+                    'count' => 3,
+                    'icon' => 'clock',
+                    'link' => '/associate/pending'
+                ],
+                'commissions' => [
+                    'title' => 'Commission Earned',
+                    'count' => '₹1.25L',
+                    'icon' => 'rupee-sign',
+                    'link' => '/associate/commissions'
+                ]
             ],
-            [
-                'id' => 2,
-                'title' => 'Modern Villa in Hazratganj',
-                'price' => 12000000,
-                'status' => 'negotiating',
-                'client_name' => 'Priya Singh',
-                'commission' => 240000
+            'recent_activities' => [
+                ['action' => 'Property listed: Luxury Apartment in Gomti Nagar', 'created_at' => date('Y-m-d H:i:s', strtotime('-2 hours'))],
+                ['action' => 'Deal closed: Modern Villa in Hazratganj', 'created_at' => date('Y-m-d H:i:s', strtotime('-1 day'))],
+                ['action' => 'New lead added: Ramesh Kumar', 'created_at' => date('Y-m-d H:i:s', strtotime('-3 days'))]
+            ],
+            'analytics' => [
+                'sales_performance' => ['data' => 'Available'],
+                'lead_conversion' => ['data' => 'Available'],
+                'commission_trend' => ['data' => 'Available']
+            ],
+            'quick_actions' => [
+                'add_property' => '/associate/add-property',
+                'view_leads' => '/associate/leads',
+                'my_commissions' => '/associate/commissions',
+                'profile' => '/associate/profile'
             ]
         ];
 
-        $this->render('associate/dashboard', [
+        $this->render('dashboard/associate_dashboard', [
             'page_title' => 'Associate Dashboard - APS Dream Home',
             'page_description' => 'Manage your property listings and client relationships',
-            'stats' => $stats,
-            'recent_properties' => $recent_properties
-        ], 'layouts/base');
+            'dashboardData' => $dashboardData
+        ]);
+    }
+
+    /**
+     * Add property form
+     */
+    public function addProperty()
+    {
+        $this->requireAuth();
+
+        $this->render('associate/add_property', [
+            'page_title' => 'Add Property - APS Dream Home',
+            'page_description' => 'Add a new property listing'
+        ]);
+    }
+
+    /**
+     * View leads
+     */
+    public function leads()
+    {
+        $this->requireAuth();
+
+        $this->render('associate/leads', [
+            'page_title' => 'My Leads - APS Dream Home',
+            'page_description' => 'Manage your client leads'
+        ]);
+    }
+
+    /**
+     * View commissions
+     */
+    public function commissions()
+    {
+        $this->requireAuth();
+
+        $this->render('associate/commissions', [
+            'page_title' => 'My Commissions - APS Dream Home',
+            'page_description' => 'View your commission earnings'
+        ]);
+    }
+
+    /**
+     * View properties
+     */
+    public function properties()
+    {
+        $this->requireAuth();
+
+        $this->render('associate/properties', [
+            'page_title' => 'My Properties - APS Dream Home',
+            'page_description' => 'Manage your property listings'
+        ]);
+    }
+
+    /**
+     * View sold properties
+     */
+    public function sold()
+    {
+        $this->requireAuth();
+
+        $this->render('associate/sold', [
+            'page_title' => 'Sold Properties - APS Dream Home',
+            'page_description' => 'View your sold properties'
+        ]);
+    }
+
+    /**
+     * View pending deals
+     */
+    public function pending()
+    {
+        $this->requireAuth();
+
+        $this->render('associate/pending', [
+            'page_title' => 'Pending Deals - APS Dream Home',
+            'page_description' => 'Manage your pending deals'
+        ]);
+    }
+
+    /**
+     * View profile
+     */
+    public function profile()
+    {
+        $this->requireAuth();
+
+        // Get associate data from session
+        $userId = $_SESSION['user_id'] ?? null;
+        $user = [];
+
+        if ($userId) {
+            try {
+                $user = $this->db->fetch(
+                    "SELECT * FROM users WHERE id = ? AND status = 'active'",
+                    [$userId]
+                );
+            } catch (\Exception $e) {
+                error_log("Error getting associate: " . $e->getMessage());
+            }
+        }
+
+        // Define BASE_PATH for shared view
+        if (!defined('BASE_PATH')) {
+            define('BASE_PATH', dirname(__DIR__, 3));
+        }
+
+        // Set variables for shared view
+        $userRole = 'associate';
+        $profileUrl = BASE_URL . '/associate/profile';
+        $securityUrl = null; // Associates don't have security page yet
+        $canEdit = true;
+
+        include __DIR__ . '/../../../views/shared/profile.php';
     }
 }

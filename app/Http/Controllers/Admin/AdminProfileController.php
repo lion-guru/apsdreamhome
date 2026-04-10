@@ -56,13 +56,18 @@ class AdminProfileController extends AdminController
             define('BASE_PATH', dirname(__DIR__, 3));
         }
 
-        // Directly include view with header/footer
+        // Use unified shared profile view
         $active_page = 'profile';
         $page_title = 'My Profile';
         $page_description = 'Manage your profile information';
-        $user_data = $user ?: [];
+        
+        // Set variables for shared view
+        $userRole = 'admin';
+        $profileUrl = BASE_URL . '/admin/profile';
+        $securityUrl = BASE_URL . '/admin/profile/security';
+        $canEdit = true;
 
-        include __DIR__ . '/../../../views/admin/profile.php';
+        include __DIR__ . '/../../../views/shared/profile.php';
     }
 
     /**
