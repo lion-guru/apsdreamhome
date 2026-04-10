@@ -43,6 +43,7 @@ class PropertyManagementController extends AdminController
             // Build query
             $sql = "SELECT p.*, 
                            s.site_name,
+                           s.location as site_location,
                            pr.name as project_name,
                            pl.plot_number,
                            l.land_title,
@@ -129,6 +130,28 @@ class PropertyManagementController extends AdminController
             $this->loggingService->error("Property Management Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load property management data');
             return $this->redirect('admin/dashboard');
+        }
+    }
+
+    /**
+     * Show form for creating a new property
+     */
+    public function create()
+    {
+        try {
+            $data = [
+                'page_title' => 'Add New Property - APS Dream Home',
+                'active_page' => 'properties',
+                'sites' => [],
+                'projects' => [],
+                'property_types' => []
+            ];
+
+            return $this->render('admin/properties/create', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Property Create error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load property creation form');
+            return $this->redirect('admin/properties');
         }
     }
 
