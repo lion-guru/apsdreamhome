@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\GeminiAIService;
-use App\Http\Controllers\BaseController;
 
 /**
  * AI Settings Controller - Manage Gemini AI Integration
  */
-class AISettingsController extends BaseController
+class AISettingsController extends AdminController
 {
     private $geminiService;
     
@@ -23,28 +23,11 @@ class AISettingsController extends BaseController
      */
     public function index()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('/admin/login');
-            return;
-        }
+        $this->data['page_title'] = 'AI Settings';
+        $this->data['stats'] = ['requests_today' => 0, 'requests_this_month' => 0, 'error_count' => 0];
+        $this->data['recent_logs'] = [];
         
-        $page_title = 'AI Settings - APS Dream Home';
-        $active_page = 'ai-settings';
-        
-        // Get current API key (masked)
-        $currentKey = $this->geminiService->getApiKey();
-        $maskedKey = substr($currentKey, 0, 10) . '...' . substr($currentKey, -10);
-        
-        // Get usage statistics
-        $stats = $this->geminiService->getUsageStats();
-        
-        // Get recent API logs
-        $recentLogs = $this->db->fetchAll(
-            'SELECT * FROM ai_api_logs WHERE service = ? ORDER BY created_at DESC LIMIT 10',
-            ['gemini']
-        );
-        
-        include_once __DIR__ . '/../../../views/admin/ai_settings/index.php';
+        return $this->render('admin/ai_settings/index');
     }
     
     /**

@@ -207,8 +207,8 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
                 <tbody>
                     <?php foreach ($currentKeys as $key): ?>
                     <tr>
-                        <td><?= htmlspecialchars($key['service_name']) ?></td>
-                        <td><code><?= substr(htmlspecialchars($key['key_value']), 0, 15) ?>...</code></td>
+                        <td><?= htmlspecialchars(key['service_name'] ?? '') ?></td>
+                        <td><code><?= substr(htmlspecialchars(key['key_value'] ?? ''), 0, 15) ?>...</code></td>
                         <td><span class="api-status api-active"><i class="fas fa-check me-1"></i>Active</span></td>
                         <td><?= $key['usage_count'] ?? 0 ?> times</td>
                     </tr>

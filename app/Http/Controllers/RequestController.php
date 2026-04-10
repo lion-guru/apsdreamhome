@@ -299,10 +299,11 @@ class RequestController extends BaseController
 
             $db = Database::getInstance();
 
-            // Get logs with pagination
+            // Get logs with pagination - select only needed columns for performance
             $logs = $db->fetchAll(
-                "SELECT * FROM request_logs 
-                 ORDER BY created_at DESC 
+                "SELECT id, user_id, action, endpoint, method, ip_address, status, created_at
+                 FROM request_logs
+                 ORDER BY created_at DESC
                  LIMIT ? OFFSET ?",
                 [$limit, $offset]
             );

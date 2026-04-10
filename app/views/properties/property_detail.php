@@ -19,28 +19,28 @@ include __DIR__ . '/../layouts/base.php';
             <!-- Hero Image Section -->
             <div class="glass-card p-2 mb-4 overflow-hidden">
                 <div class="position-relative">
-                    <img src="<?php echo $property_images[0]['image_path'] ?? $property['image'] ?? 'https://via.placeholder.com/1200x600'; ?>" 
-                         alt="<?php echo htmlspecialchars($property['title']); ?>" 
-                         class="w-100 rounded-lg shadow-2xl" id="main-gallery-image"
-                         style="height: 500px; object-fit: cover; border-radius: 12px;">
-                    
+                    <img src="<?php echo $property_images[0]['image_path'] ?? $property['image'] ?? 'https://via.placeholder.com/1200x600'; ?>"
+                        alt="<?php echo htmlspecialchars($property['title']); ?>"
+                        class="w-100 rounded-lg shadow-2xl" id="main-gallery-image"
+                        style="height: 500px; object-fit: cover; border-radius: 12px;">
+
                     <div class="position-absolute top-0 end-0 p-3">
                         <span class="badge bg-primary glass-blur px-3 py-2 fs-6">
                             <?php echo ucfirst($property['property_type'] ?? 'Premium'); ?>
                         </span>
                     </div>
                 </div>
-                
+
                 <!-- Thumbnails -->
                 <?php if (!empty($property_images) && count($property_images) > 1): ?>
-                <div class="d-flex gap-2 mt-2 px-1 overflow-auto pb-2 scrollbar-hidden">
-                    <?php foreach ($property_images as $img): ?>
-                    <img src="<?php echo $img['image_path']; ?>" 
-                         class="rounded cursor-pointer thumbnail-hover" 
-                         style="width: 100px; height: 70px; object-fit: cover;"
-                         onclick="document.getElementById('main-gallery-image').src = this.src">
-                    <?php endforeach; ?>
-                </div>
+                    <div class="d-flex gap-2 mt-2 px-1 overflow-auto pb-2 scrollbar-hidden">
+                        <?php foreach ($property_images as $img): ?>
+                            <img src="<?php echo $img['image_path']; ?>"
+                                class="rounded cursor-pointer thumbnail-hover"
+                                style="width: 100px; height: 70px; object-fit: cover;"
+                                onclick="document.getElementById('main-gallery-image').src = this.src">
+                        <?php endforeach; ?>
+                    </div>
                 <?php endif; ?>
             </div>
 
@@ -91,15 +91,15 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
                     <div class="tab-pane fade" id="amenities">
                         <div class="row g-3">
-                            <?php 
+                            <?php
                             $amenities = isset($property['amenities']) ? explode(',', $property['amenities']) : ['Parking', 'Security', 'Gated Community', 'Swimming Pool', 'CCTV'];
                             foreach ($amenities as $item): ?>
-                            <div class="col-6 col-md-4">
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-check2-circle text-primary"></i>
-                                    <span><?php echo trim($item); ?></span>
+                                <div class="col-6 col-md-4">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-check2-circle text-primary"></i>
+                                        <span><?php echo trim($item); ?></span>
+                                    </div>
                                 </div>
-                            </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -121,7 +121,7 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="glass-card p-4 mb-4">
                     <h5 class="text-white-50 small text-uppercase mb-1">Investment Amount</h5>
                     <h2 class="text-white fw-bold mb-4">₹<?php echo number_format($property['price']); ?></h2>
-                    
+
                     <div class="d-grid gap-3">
                         <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#inquiryModal">
                             <i class="bi bi-chat-dots me-2"></i>Send Inquiry
@@ -136,25 +136,51 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
                 </div>
 
-                <!-- Agent Contact -->
+                <!-- Agent / Owner Contact (Lead Capture Wall) -->
                 <div class="glass-card p-4">
-                    <h5 class="text-white h6 mb-3">Contact Property Specialist</h5>
+                    <h5 class="text-white h6 mb-3">Contact Property <?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Owner' : 'Specialist'; ?></h5>
                     <div class="d-flex align-items-center gap-3 mb-4">
-                        <img src="https://via.placeholder.com/60/4f46e5/ffffff?text=AS" class="rounded-circle shadow">
-                        <div>
-                            <h6 class="text-white mb-0">APS Sales Team</h6>
-                            <small class="text-white-50">+91 Premium Support</small>
+                        <img src="https://via.placeholder.com/60/4f46e5/ffffff?text=<?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'OW' : 'AS'; ?>" class="rounded-circle shadow">
+                        <div class="w-100">
+                            <h6 class="text-white mb-0"><?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Verified Owner' : 'APS Sales Team'; ?></h6>
+
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <!-- Logged In View: Show Contact & Track Lead -->
+                                <div class="mt-2" id="revealed-contact" style="display:none;">
+                                    <h5 class="text-success fw-bold mb-0" style="letter-spacing: 1px;">
+                                        <?php echo !empty($property['owner_contact']) ? htmlspecialchars($property['owner_contact']) : '+91 92771 21112'; ?>
+                                    </h5>
+                                    <small class="text-white-50">Verified Number <i class="bi bi-check-circle-fill text-success ms-1"></i></small>
+                                </div>
+                                <button id="reveal-btn" class="btn btn-sm btn-success mt-2 w-100 fw-bold shadow" onclick="revealContact(<?php echo $property['id']; ?>)">
+                                    <i class="bi bi-eye-fill me-1"></i> Reveal Phone Number
+                                </button>
+                            <?php else: ?>
+                                <!-- Logged Out View: Lead Capture Wall -->
+                                <div class="mt-2 position-relative" style="overflow: hidden;">
+                                    <h5 class="text-white-50 fw-bold mb-0" style="filter: blur(5px); user-select: none;">+91 98765 43210</h5>
+                                </div>
+                                <a href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/login?redirect=property/<?php echo $property['id']; ?>" class="btn btn-sm btn-warning mt-3 w-100 fw-bold shadow">
+                                    <i class="bi bi-lock-fill me-1"></i> Login to View Contact
+                                </a>
+                                <small class="text-white-50 d-block mt-2 text-center" style="font-size: 0.75rem;">(100% Free - Verify you're human)</small>
+                            <?php endif; ?>
                         </div>
                     </div>
-                    <form id="lead-form">
-                        <div class="mb-2">
-                            <input type="text" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Your Name">
-                        </div>
-                        <div class="mb-2">
-                            <input type="email" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Email Address">
-                        </div>
-                        <button type="button" class="btn btn-outline-primary w-100" onclick="alert('Lead captured!')">Call Back Request</button>
-                    </form>
+
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <hr class="border-secondary opacity-25">
+                        <form id="lead-form">
+                            <h6 class="text-white-50 small mb-2">Or request a callback:</h6>
+                            <div class="mb-2">
+                                <input type="text" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Your Name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">
+                            </div>
+                            <div class="mb-2">
+                                <input type="email" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Email Address" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>">
+                            </div>
+                            <button type="button" class="btn btn-outline-primary w-100" onclick="alert('Call back request sent! Our team will contact you shortly.')">Request Callback</button>
+                        </form>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -223,20 +249,37 @@ include __DIR__ . '/../layouts/base.php';
             alert('Link copied to clipboard!');
         }
     }
+
+    function revealContact(propertyId) {
+        document.getElementById('reveal-btn').style.display = 'none';
+        document.getElementById('revealed-contact').style.display = 'block';
+
+        // Quietly log this interaction as a Lead using existing Tracking API
+        const formData = new FormData();
+        formData.append('property_id', propertyId);
+        formData.append('interest_type', 'view_contact');
+        formData.append('source', 'property_detail_page');
+
+        const baseUrl = '<?php echo defined("BASE_URL") ? BASE_URL : ""; ?>';
+        fetch(baseUrl + '/track/interest', {
+            method: 'POST',
+            body: formData
+        }).catch(e => console.log('Lead tracked silently.'));
+    }
 </script>
- }
+}
 
-    .toast-body {
-        padding: 1rem;
-    }
+.toast-body {
+padding: 1rem;
+}
 
-    @media (max-width: 768px) {
-        .toast {
-            right: 10px;
-            left: 10px;
-            min-width: auto;
-        }
-    }
+@media (max-width: 768px) {
+.toast {
+right: 10px;
+left: 10px;
+min-width: auto;
+}
+}
 </style>
 
 //

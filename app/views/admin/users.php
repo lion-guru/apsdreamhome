@@ -1,21 +1,9 @@
 <?php
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Check admin authentication
-if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
-    header('Location: ' . BASE_URL . '/admin/login');
-    exit;
-}
+include APP_PATH . '/views/admin/layouts/header.php';
 
 // Set page variables
-$$page_title = 'User Network - APS Dream Home';
+$page_title = 'User Network - APS Dream Home';
 $active_page = 'users';
-
-// Content for base layout
-ob_start();
 ?>
 
 <div class="container-fluid py-4">
@@ -252,13 +240,6 @@ ob_start();
         </div>
     </div>
 </div>
-
-<?php
-$content = ob_get_clean();
-
-// Include base layout
-require_once __DIR__ . '/../layouts/base.php';
-?>
 
 <!-- Search and Filter -->
 <div class="card mb-4">

@@ -183,7 +183,7 @@ class SecurityService
         try {
             // Test database connection
             $db = \DB::connection();
-            
+
             if (!$db) {
                 $this->addTestResult($testName, 'FAIL', 'Database connection failed');
                 return;
@@ -198,7 +198,6 @@ class SecurityService
             } else {
                 $this->addTestResult($testName, 'FAIL', 'Database prepared statements failed');
             }
-
         } catch (\Exception $e) {
             $this->addTestResult($testName, 'FAIL', 'Database security test error: ' . $e->getMessage());
         }
@@ -447,12 +446,12 @@ class SecurityService
     public function getSecurityScore(): array
     {
         $cacheKey = 'security_score';
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () {
             $results = $this->runSecurityTests();
             $totalTests = count($results);
             $passedTests = count(array_filter($results, fn($r) => $r['status'] === 'PASS'));
-            
+
             return [
                 'score' => $totalTests > 0 ? round(($passedTests / $totalTests) * 100, 2) : 0,
                 'total_tests' => $totalTests,

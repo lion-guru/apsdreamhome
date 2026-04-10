@@ -1,345 +1,66 @@
 <?php
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+include APP_PATH . '/views/admin/layouts/header.php';
 
-// Check if admin is logged in
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: ' . BASE_URL . '/admin/login');
-    exit;
-}
-
-// Set page variables
-$$page_title = 'AI Settings - APS Dream Home';
-$active_page = 'ai-settings';
-
-// Get current API key (masked)
-$currentKey = $geminiService->getApiKey();
-$maskedKey = substr($currentKey, 0, 10) . '...' . substr($currentKey, -10);
-
-// Content for base layout
-ob_start();
-
-
-// Get usage statistics
-$stats = $geminiService->getUsageStats();
-
-// Get recent API logs
-$recentLogs = $db->fetchAll(
-'SELECT * FROM ai_api_logs WHERE service = ? ORDER BY created_at DESC LIMIT 10',
-['gemini']
-);
-
-// Include admin header
-require_once __DIR__ . '/../layouts/header.php';
+// Variables passed from controller via admin layout
+$page_title = $page_title ?? 'AI Settings';
+$stats = $stats ?? ['requests_today' => 0, 'requests_this_month' => 0, 'error_count' => 0];
+$recentLogs = $recentLogs ?? [];
+$baseUrl = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
 
-<div class="container-fluid">
-    <div class="row">
-        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= BASE_URL ?>/admin/dashboard">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="<?= BASE_URL ?>/admin/ai-settings">
-                            <i class="fas fa-robot"></i> AI Settings
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= BASE_URL ?>/admin/properties">
-                            <i class="fas fa-building"></i> Properties
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= BASE_URL ?>/admin/users">
-                            <i class="fas fa-users"></i> Users
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= BASE_URL ?>/admin/legal-pages">
-                            <i class="fas fa-gavel"></i> Legal Pages
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">AI Settings</h1>
+        <p class="text-muted mb-0">Manage Gemini AI integration</p>
+    </div>
+</div>
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">
-                    <i class="fas fa-robot me-2"></i>
-                    AI Settings & Management
-                </h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group me-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="testConnection()">
-                            <i class="fas fa-plug"></i> Test Connection
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshStats()">
-                            <i class="fas fa-sync"></i> Refresh
-                        </button>
-                    </div>
-                </div>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon primary"><i class="fas fa-robot"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">API Status</div>
+                <div class="stat-value text-success">Active</div>
             </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon success"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Requests Today</div>
+                <div class="stat-value"><?= $stats['requests_today'] ?? 0 ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon warning"><i class="fas fa-calendar"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">This Month</div>
+                <div class="stat-value"><?= $stats['requests_this_month'] ?? 0 ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon danger"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Errors</div>
+                <div class="stat-value"><?= $stats['error_count'] ?? 0 ?></div>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <!-- API Key Management -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-key me-2"></i>
-                                Gemini API Key Management
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <form id="apiKeyForm">
-                                        <div class="mb-3">
-                                            <label for="apiKey" class="form-label">Current API Key</label>
-                                            <div class="input-group">
-                                                <input type="password" class="form-control" id="apiKey"
-                                                    value="<?= $maskedKey ?>" placeholder="Enter Gemini API Key">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="toggleApiKeyVisibility()">
-                                                    <i class="fas fa-eye" id="apiKeyToggle"></i>
-                                                </button>
-                                            </div>
-                                            <div class="form-text">
-                                                Format: AIzaSy... (starts with AIzaSy, get from <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>)
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-save me-2"></i>Update API Key
-                                            </button>
-                                            <button type="button" class="btn btn-outline-primary ms-2" onclick="testCurrentKey()">
-                                                <i class="fas fa-check-circle me-2"></i>Test Current Key
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="alert alert-info">
-                                        <h6><i class="fas fa-info-circle me-2"></i>API Key Information</h6>
-                                        <ul class="mb-0">
-                                            <li>Get your API key from Google AI Studio</li>
-                                            <li>Keep your key secure and private</li>
-                                            <li>Regularly rotate your API key</li>
-                                            <li>Monitor usage for security</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Usage Statistics -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4 class="card-title"><?= $stats['requests_today'] ?? 0 ?></h4>
-                                    <p class="card-text">Requests Today</p>
-                                </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-chart-line fa-2x"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card bg-success text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4 class="card-title"><?= $stats['requests_this_month'] ?? 0 ?></h4>
-                                    <p class="card-text">This Month</p>
-                                </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-calendar fa-2x"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card bg-warning text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4 class="card-title"><?= $stats['error_count'] ?? 0 ?></h4>
-                                    <p class="card-text">Errors</p>
-                                </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card bg-info text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4 class="card-title">Active</h4>
-                                    <p class="card-text">Status</p>
-                                </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-check-circle fa-2x"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Generation Tools -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-magic me-2"></i>
-                                AI Content Generation Tools
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <form id="contentGenerationForm">
-                                        <div class="mb-3">
-                                            <label for="contentType" class="form-label">Content Type</label>
-                                            <select class="form-select" id="contentType">
-                                                <option value="property_description">Property Description</option>
-                                                <option value="social_media">Social Media Post</option>
-                                                <option value="customer_support">Customer Support Response</option>
-                                                <option value="market_analysis">Market Analysis</option>
-                                                <option value="custom">Custom Content</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="prompt" class="form-label">Prompt / Context</label>
-                                            <textarea class="form-control" id="prompt" rows="4"
-                                                placeholder="Enter your prompt or context here..."></textarea>
-                                        </div>
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="fas fa-wand-magic-sparkles me-2"></i>Generate Content
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="col-md-6">
-                                    <div id="generatedContent" class="border rounded p-3" style="min-height: 200px; background-color: #f8f9fa;">
-                                        <p class="text-muted text-center">Generated content will appear here...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent API Logs -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-history me-2"></i>
-                                Recent API Activity
-                            </h5>
-                            <div>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearLogs()">
-                                    <i class="fas fa-trash me-1"></i>Clear Logs
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="exportLogs()">
-                                    <i class="fas fa-download me-1"></i>Export
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Date/Time</th>
-                                            <th>Endpoint</th>
-                                            <th>Status</th>
-                                            <th>Response Time</th>
-                                            <th>User</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (!empty($recentLogs)): ?>
-                                            <?php foreach ($recentLogs as $log): ?>
-                                                <tr>
-                                                    <td><?= date('M d, Y H:i:s', strtotime($log['created_at'])) ?></td>
-                                                    <td><?= substr($log['endpoint'], 0, 50) ?>...</td>
-                                                    <td>
-                                                        <?php if ($log['status_code'] == 200): ?>
-                                                            <span class="badge bg-success">Success</span>
-                                                        <?php else: ?>
-                                                            <span class="badge bg-danger">Error (<?= $log['status_code'] ?>)</span>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                    <td><?= $log['response_time_ms'] ?? 'N/A' ?> ms</td>
-                                                    <td><?= $log['user_id'] ?? 'System' ?></td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <tr>
-                                                <td colspan="5" class="text-center text-muted">No API activity yet</td>
-                                            </tr>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI Chat Interface -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-comments me-2"></i>
-                                AI Chat Interface
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="chatMessages" class="border rounded p-3 mb-3" style="height: 300px; overflow-y: auto; background-color: #f8f9fa;">
-                                <div class="text-center text-muted">
-                                    <i class="fas fa-robot fa-2x mb-2"></i>
-                                    <p>Start a conversation with Gemini AI</p>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="chatInput"
-                                    placeholder="Type your message here..."
-                                    onkeypress="if(event.key === 'Enter') sendMessage()">
-                                <button class="btn btn-primary" type="button" onclick="sendMessage()">
-                                    <i class="fas fa-paper-plane"></i> Send
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title mb-3"><i class="fas fa-key me-2"></i>Gemini API Key</h5>
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>Configure your Gemini API key in settings to enable AI features.
+        </div>
+        <p class="text-muted">Get your API key from <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a></p>
     </div>
 </div>
 
@@ -656,7 +377,5 @@ require_once __DIR__ . '/../layouts/header.php';
 </script>
 
 <?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../../layouts/base.php';
-echo $content;
+include APP_PATH . '/views/admin/layouts/footer.php';
 ?>

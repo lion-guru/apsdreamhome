@@ -19,13 +19,13 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Key Name *</label>
-                                <input type="text" name="key_name" class="form-control" value="<?= htmlspecialchars($api_key['key_name']) ?>" required>
+                                <input type="text" name="key_name" class="form-control" value="<?= htmlspecialchars(api_key['key_name'] ?? '') ?>" required>
                             </div>
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">API Key Value *</label>
-                            <input type="text" name="key_value" class="form-control" value="<?= htmlspecialchars($api_key['key_value']) ?>" required>
+                            <input type="text" name="key_value" class="form-control" value="<?= htmlspecialchars(api_key['key_value'] ?? '') ?>" required>
                             <small class="text-muted">Current value shown. Enter new value to update.</small>
                         </div>
 

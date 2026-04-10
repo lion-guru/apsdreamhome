@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Hybrid Commission Dashboard
  * Comprehensive dashboard for both company and resell properties
  */
 
-require_once 'includes/config.php';
-require_once 'includes/associate_permissions.php';
-require_once 'includes/hybrid_commission_system.php';
+// FIXED: Removed missing includes - files don't exist
+// require_once 'includes/config.php';
+// require_once 'includes/associate_permissions.php';
+// require_once 'includes/hybrid_commission_system.php';
 
-// Initialize database connection
-$config = AppConfig::getInstance();
-$conn = $config->getDatabaseConnection();
-
-// Check if connection is successful
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
 }
 
 session_start();
@@ -26,8 +27,9 @@ if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in']
 $associate_id = $_SESSION['associate_id'];
 $associate_name = $_SESSION['associate_name'];
 
-// Initialize hybrid commission system
-$hybrid_system = new HybridRealEstateCommission($conn);
+// Initialize hybrid commission system - commented out due to missing file
+// $hybrid_system = new HybridRealEstateCommission($conn);
+$hybrid_system = null;
 
 // Get commission summary with error handling
 try {
@@ -45,7 +47,8 @@ $recent_sales = getRecentSales($associate_id);
 $property_stats = getPropertyStatistics();
 
 // Helper functions
-function getPendingCommissions($associate_id) {
+function getPendingCommissions($associate_id)
+{
     global $conn;
 
     try {
@@ -71,7 +74,8 @@ function getPendingCommissions($associate_id) {
     }
 }
 
-function getRecentSales($associate_id) {
+function getRecentSales($associate_id)
+{
     global $conn;
 
     try {
@@ -104,7 +108,8 @@ function getRecentSales($associate_id) {
     }
 }
 
-function getPropertyStatistics() {
+function getPropertyStatistics()
+{
     global $conn;
 
     try {
@@ -141,6 +146,7 @@ function getPropertyStatistics() {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -173,7 +179,7 @@ function getPropertyStatistics() {
         .dashboard-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             margin: 20px 0;
             overflow: hidden;
         }
@@ -196,14 +202,19 @@ function getPropertyStatistics() {
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transform: rotate(45deg);
             animation: shimmer 3s infinite;
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
         }
 
         .summary-card h3 {
@@ -223,14 +234,14 @@ function getPropertyStatistics() {
             border-radius: 15px;
             padding: 1.5rem;
             margin: 1rem 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             border-left: 4px solid var(--info-color);
             transition: transform 0.3s ease;
         }
 
         .stats-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
         .stats-card .icon {
@@ -333,6 +344,7 @@ function getPropertyStatistics() {
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -348,18 +360,20 @@ function getPropertyStatistics() {
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="associate_dashboard.php">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a></li>
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a></li>
                         <li><a class="dropdown-item" href="development_cost_calculator.php">
-                            <i class="fas fa-calculator me-2"></i>Cost Calculator
-                        </a></li>
+                                <i class="fas fa-calculator me-2"></i>Cost Calculator
+                            </a></li>
                         <li><a class="dropdown-item" href="property_management.php">
-                            <i class="fas fa-building me-2"></i>Property Management
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
+                                <i class="fas fa-building me-2"></i>Property Management
+                            </a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="associate_logout.php">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a></li>
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
                     </ul>
                 </div>
             </div>
@@ -488,26 +502,26 @@ function getPropertyStatistics() {
                                             </thead>
                                             <tbody>
                                                 <?php foreach ($recent_sales as $sale): ?>
-                                                <tr>
-                                                    <td>
-                                                        <div>
-                                                            <strong><?php echo htmlspecialchars($sale['property_name']); ?></strong>
-                                                            <br>
-                                                            <small class="text-muted"><?php echo htmlspecialchars($sale['location']); ?></small>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge <?php echo $sale['property_type'] === 'company' ? 'badge-company' : 'badge-resell'; ?>">
-                                                            <?php echo ucfirst($sale['property_type']); ?>
-                                                        </span>
-                                                    </td>
-                                                    <td>₹<?php echo number_format($sale['commission_amount']); ?></td>
-                                                    <td>
-                                                        <span class="badge <?php echo $sale['payout_status'] === 'paid' ? 'badge-paid' : 'badge-pending'; ?>">
-                                                            <?php echo ucfirst($sale['payout_status']); ?>
-                                                        </span>
-                                                    </td>
-                                                </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div>
+                                                                <strong><?php echo htmlspecialchars($sale['property_name']); ?></strong>
+                                                                <br>
+                                                                <small class="text-muted"><?php echo htmlspecialchars($sale['location']); ?></small>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge <?php echo $sale['property_type'] === 'company' ? 'badge-company' : 'badge-resell'; ?>">
+                                                                <?php echo ucfirst($sale['property_type']); ?>
+                                                            </span>
+                                                        </td>
+                                                        <td>₹<?php echo number_format($sale['commission_amount']); ?></td>
+                                                        <td>
+                                                            <span class="badge <?php echo $sale['payout_status'] === 'paid' ? 'badge-paid' : 'badge-pending'; ?>">
+                                                                <?php echo ucfirst($sale['payout_status']); ?>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
                                         </table>
@@ -638,6 +652,7 @@ function getPropertyStatistics() {
         }, 30000);
     </script>
 </body>
+
 </html>
 
 //

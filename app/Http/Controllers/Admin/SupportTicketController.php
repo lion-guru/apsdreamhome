@@ -117,9 +117,9 @@ class SupportTicketController extends AdminController
     public function create()
     {
         try {
-            // Get customers and agents for dropdowns
-            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $agents = $this->db->query("SELECT id, name, email FROM users WHERE role IN ('admin', 'support', 'associate') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get customers and agents for dropdowns using models
+            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $agents = \App\Models\User::getAgents('active', ['admin', 'support', 'associate'], ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Create Support Ticket - APS Dream Home',
@@ -285,9 +285,9 @@ class SupportTicketController extends AdminController
                 return $this->redirect('admin/support_tickets');
             }
 
-            // Get dropdown options
-            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $agents = $this->db->query("SELECT id, name, email FROM users WHERE role IN ('admin', 'support', 'associate') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get dropdown options using models
+            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $agents = \App\Models\User::getAgents('active', ['admin', 'support', 'associate'], ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Edit Support Ticket - APS Dream Home',
@@ -515,7 +515,7 @@ class SupportTicketController extends AdminController
      */
     public function jsonResponse($data, $status = 200)
     {
-        http_response_code($statusCode);
+        http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;
@@ -526,7 +526,7 @@ class SupportTicketController extends AdminController
      */
     protected function jsonError($message, $status = 400)
     {
-        http_response_code($statusCode);
+        http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => $message]);
         exit;

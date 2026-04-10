@@ -1,15 +1,62 @@
 {
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "eslint": "^10.1.0",
-    "playwright": "^1.59.1"
+    "concurrently": "^9.2.1",
+    "eslint": "^10.2.0",
+    "playwright": "^1.59.1",
+    "prettier": "^3.8.1"
   },
   "dependencies": {
     "@cyanheads/git-mcp-server": "^2.10.5",
-    "@modelcontextprotocol/server-filesystem": "^2026.1.14",
-    "@modelcontextprotocol/server-memory": "^2026.1.26",
+    "@f4ww4z/mcp-mysql-server": "^0.1.0",
+    "@google/genai": "^0.15.0",
+    "@google/generative-ai": "^0.24.1",
+    "@modelcontextprotocol/server-filesystem": "2026.1.14",
+    "@modelcontextprotocol/server-memory": "2026.1.26",
     "@modelcontextprotocol/server-sequential-thinking": "^2025.12.18",
     "@morris131/mysql-mcp-server": "^1.0.3",
-    "@playwright/mcp": "^0.0.70"
-  }
+    "@playwright/mcp": "^0.0.70",
+    "dotenv": "^16.6.1",
+    "openai": "^6.34.0"
+  },
+  "name": "apsdreamhome",
+  "version": "1.0.0",
+  "description": "APS Dream Home is a comprehensive real estate and MLM (Multi-Level Marketing) platform built with a custom PHP MVC architecture. The platform provides property management, agent services, customer relationship management, and a sophisticated MLM network system.",
+  "main": "analyze_header.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "php -S localhost:8080 -t public",
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "test:debug": "npx playwright test --debug",
+    "test:report": "npx playwright show-report",
+    "lint": "npx eslint . --ext .js",
+    "lint:fix": "npx eslint . --ext .js --fix",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check .",
+    "workflow": "node scripts/sequential-workflow-manager.js",
+    "workflow:database": "node scripts/sequential-workflow-manager.js database-setup",
+    "workflow:test": "node scripts/sequential-workflow-manager.js full-system-test",
+    "workflow:quality": "node scripts/sequential-workflow-manager.js code-quality",
+    "build": "npm run lint && npm run format && npm run test",
+    "start": "concurrently \"npm run dev\" \"npm run test:watch\"",
+    "mcp:test": "node scripts/test-mcp-tools.js",
+    "ai": "node ai-chatbot.js",
+    "ai:test": "node ai-chatbot.js",
+    "setup": "npm install && npx playwright install && node scripts/setup-project.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lion-guru/apsdreamhome.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/lion-guru/apsdreamhome/issues"
+  },
+  "homepage": "https://github.com/lion-guru/apsdreamhome#readme"
 }

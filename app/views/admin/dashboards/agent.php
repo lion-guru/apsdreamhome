@@ -13,8 +13,8 @@
             <div class="card border-start border-primary border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">My Commissions</h6>
-                    <h3>₹<?php echo number_format($stats['total_commissions'] ?? 0); ?></h3>
-                    <p class="text-success mb-0"><i class="fas fa-wallet me-1"></i>₹<?php echo number_format($stats['pending_commissions'] ?? 0); ?> Pending</p>
+                    <h3>₹<?php echo number_format(floatval(stats['total_commissions'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-success mb-0"><i class="fas fa-wallet me-1"></i>₹<?php echo number_format(floatval(stats['pending_commissions'] ?? 0) ?? 0); ?> Pending</p>
                 </div>
             </div>
         </div>

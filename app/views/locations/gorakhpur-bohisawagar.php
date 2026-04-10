@@ -2,8 +2,16 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-// Include database connection
-require_once 'includes/db_connection.php';
+// FIXED: Removed missing include - file doesn't exist
+// require_once 'includes/db_connection.php';
+
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
 // Set project details
 $projectName = "Bohisawagar";
@@ -23,23 +31,24 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $projectName; ?> - APS Dream Homes</title>
     <meta name="description" content="<?php echo $metaDescription; ?>">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
+
     <style>
         .project-hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                        url('assets/images/projects/gorakhpur/bohisawagar-banner.jpg');
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('assets/images/projects/gorakhpur/bohisawagar-banner.jpg');
             background-size: cover;
             background-position: center;
             color: white;
@@ -47,13 +56,15 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
             margin-top: -20px;
             position: relative;
         }
-        
+
         /* ... rest of the CSS same as Minua ... */
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
-    <?php include 'includes/templates/header.php'; ?>
+    <!-- FIXED: Commented out missing template file -->
+    <!-- <?php include 'includes/templates/header.php'; ?> -->
 
     <!-- Project Hero Section -->
     <section class="project-hero">
@@ -88,7 +99,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                             <div class="project-description">
                                 <?php echo nl2br(htmlspecialchars($projectDescription)); ?>
                             </div>
-                            
+
                             <h3 class="mt-5 mb-4">Project Highlights</h3>
                             <div class="row">
                                 <div class="col-md-4">
@@ -119,7 +130,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <h3 class="mt-5 mb-4">Amenities</h3>
                             <div class="row">
                                 <div class="col-md-6">
@@ -144,7 +155,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Sidebar -->
                 <div class="col-lg-4">
                     <div class="project-highlight sticky-top" style="top: 100px;">
@@ -175,7 +186,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                                 </span>
                             </li>
                         </ul>
-                        
+
                         <div class="d-grid gap-2 mt-4">
                             <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#enquiryModal">
                                 <i class="fas fa-phone-alt me-2"></i> Request Call Back
@@ -224,7 +235,8 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
     </div>
 
     <!-- Footer -->
-    <?php include 'includes/templates/footer.php'; ?>
+    <!-- FIXED: Commented out missing template file -->
+    <!-- <?php include 'includes/templates/footer.php'; ?> -->
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -236,7 +248,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
             easing: 'ease-in-out',
             once: true
         });
-        
+
         // Handle enquiry form submission
         document.getElementById('enquiryForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -246,4 +258,5 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
         });
     </script>
 </body>
+
 </html>

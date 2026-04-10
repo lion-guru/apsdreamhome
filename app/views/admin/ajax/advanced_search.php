@@ -133,7 +133,7 @@ try {
             foreach ($rows as $row) {
                 $allResults[] = [
                     'title' => h($row['title']),
-                    'description' => h($row['location']) . ' - ₹' . h(number_format($row['price'])) . ' - ' . h(ucfirst($mlSupport->translate($row['status']))),
+                    'description' => h($row['location']) . ' - ₹' . h(number_format(floatval(row['price'] ?? 0))) . ' - ' . h(ucfirst($mlSupport->translate($row['status']))),
                     'url' => BASE_URL . 'admin/properties.php?property_id=' . intval($row['id']),
                     'type' => h($mlSupport->translate('Property'))
                 ];
@@ -168,7 +168,7 @@ try {
             case 'properties':
                 $results[] = [
                     'title' => h($row['title']),
-                    'description' => h($row['location']) . ' - ₹' . h(number_format($row['price'])) . ' - ' . h(ucfirst($mlSupport->translate($row['status']))),
+                    'description' => h($row['location']) . ' - ₹' . h(number_format(floatval(row['price'] ?? 0))) . ' - ' . h(ucfirst($mlSupport->translate($row['status']))),
                     'url' => BASE_URL . 'admin/properties.php?property_id=' . intval($row['id']),
                     'type' => h($mlSupport->translate('Property'))
                 ];
@@ -184,7 +184,7 @@ try {
             case 'bookings':
                 $results[] = [
                     'title' => h($row['customer_name']) . ' - ' . h($row['property_title']),
-                    'description' => '₹' . h(number_format($row['total_amount'])) . ' - ' . h(ucfirst($mlSupport->translate($row['status']))),
+                    'description' => '₹' . h(number_format(floatval(row['total_amount'] ?? 0))) . ' - ' . h(ucfirst($mlSupport->translate($row['status']))),
                     'url' => BASE_URL . 'admin/bookings.php?booking_id=' . intval($row['id']),
                     'type' => h($mlSupport->translate('Booking'))
                 ];

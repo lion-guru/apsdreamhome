@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../../../layouts/admin_header.php'; ?>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -175,4 +175,4 @@ document.getElementById('total_plots').addEventListener('input', function() {
 });
 </script>
 
-<?php include __DIR__ . '/../../../layouts/admin_footer.php'; ?>
+

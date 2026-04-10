@@ -109,7 +109,7 @@ $current_status = $current_status ?? 'all';
                             <?php foreach ($testimonials as $t): ?>
                                 <tr>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($t['name']); ?></strong>
+                                        <strong><?php echo htmlspecialchars($t['name'] ?? ''); ?></strong>
                                         <br><small class="text-muted"><?php echo htmlspecialchars($t['location'] ?? 'N/A'); ?></small>
                                     </td>
                                     <td>

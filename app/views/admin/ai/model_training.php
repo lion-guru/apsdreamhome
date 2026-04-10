@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-database fa-2x text-warning mb-2"></i>
-                        <h4><?php echo number_format($model_stats['training_data_size'] ?? 12500); ?></h4>
+                        <h4><?php echo number_format(floatval(model_stats['training_data_size'] ?? 0) ?? 12500); ?></h4>
                         <p class="text-muted mb-0">Training Records</p>
                     </div>
                 </div>

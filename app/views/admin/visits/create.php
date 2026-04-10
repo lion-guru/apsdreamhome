@@ -4,7 +4,6 @@
  */
 
 $page_title = 'Schedule Site Visit - APS Dream Home';
-include __DIR__ . '/../../layouts/admin_header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -33,7 +32,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                                     <option value="">Choose a lead...</option>
                                     <?php foreach ($leads as $lead): ?>
                                     <option value="<?= $lead['id'] ?>">
-                                        <?= htmlspecialchars($lead['name']) ?> - <?= htmlspecialchars($lead['phone']) ?> (<?= ucfirst($lead['status']) ?>)
+                                        <?= htmlspecialchars($lead['name'] ?? '') ?> - <?= htmlspecialchars($lead['phone'] ?? '') ?> (<?= ucfirst($lead['status']) ?>)
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -44,7 +43,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                                     <option value="">Choose a property...</option>
                                     <?php foreach ($properties as $property): ?>
                                     <option value="<?= $property['id'] ?>">
-                                        <?= htmlspecialchars($property['title']) ?> - <?= htmlspecialchars($property['location']) ?>
+                                        <?= htmlspecialchars($property['title'] ?? '') ?> - <?= htmlspecialchars($property['location'] ?? '') ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -65,7 +64,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                                 <select class="form-select" name="agent_id">
                                     <option value="">Select Agent</option>
                                     <?php foreach ($agents as $agent): ?>
-                                    <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name']) ?></option>
+                                    <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -117,4 +116,4 @@ include __DIR__ . '/../../layouts/admin_header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

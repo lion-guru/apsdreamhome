@@ -2,30 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Database\Database;
 
-class GalleryController extends BaseController
+class GalleryController extends AdminController
 {
-    protected $db;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->db = Database::getInstance();
-    }
-
     /**
      * Gallery listing
      */
     public function index()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['admin_id'])) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
         try {
             $images = $this->db->fetchAll("SELECT * FROM gallery_images ORDER BY created_at DESC") ?? [];
         } catch (\Exception $e) {
@@ -49,12 +35,6 @@ class GalleryController extends BaseController
      */
     public function create()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['admin_id'])) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
         $data = [
             'page_title' => 'Add Gallery Image',
             'page_description' => 'Upload a new image to the gallery'
@@ -68,12 +48,6 @@ class GalleryController extends BaseController
      */
     public function store()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['admin_id'])) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
         try {
             $category = $_POST['category'] ?? 'general';
             $caption = $_POST['caption'] ?? '';
@@ -106,13 +80,11 @@ class GalleryController extends BaseController
             ]);
 
             $_SESSION['success'] = 'Image added to gallery successfully!';
-            header('Location: ' . BASE_URL . '/admin/gallery');
-            exit;
+            $this->redirect('/admin/gallery');
 
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error adding image: ' . $e->getMessage();
-            header('Location: ' . BASE_URL . '/admin/gallery/create');
-            exit;
+            $this->redirect('/admin/gallery/create');
         }
     }
 
@@ -121,18 +93,11 @@ class GalleryController extends BaseController
      */
     public function edit($id = null)
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['admin_id'])) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
         try {
             $image = $this->db->fetch("SELECT * FROM gallery_images WHERE id = ?", [$id]);
             if (!$image) {
                 $_SESSION['error'] = 'Image not found';
-                header('Location: ' . BASE_URL . '/admin/gallery');
-                exit;
+                $this->redirect('/admin/gallery');
             }
 
             $data = [
@@ -145,8 +110,7 @@ class GalleryController extends BaseController
 
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error loading image: ' . $e->getMessage();
-            header('Location: ' . BASE_URL . '/admin/gallery');
-            exit;
+            $this->redirect('/admin/gallery');
         }
     }
 
@@ -155,12 +119,6 @@ class GalleryController extends BaseController
      */
     public function update($id = null)
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['admin_id'])) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
         try {
             $updateData = [
                 'category' => $_POST['category'] ?? 'general',
@@ -188,13 +146,11 @@ class GalleryController extends BaseController
             $this->db->update('gallery_images', $updateData, ['id' => $id]);
 
             $_SESSION['success'] = 'Image updated successfully!';
-            header('Location: ' . BASE_URL . '/admin/gallery');
-            exit;
+            $this->redirect('/admin/gallery');
 
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error updating image: ' . $e->getMessage();
-            header('Location: ' . BASE_URL . '/admin/gallery/' . $id . '/edit');
-            exit;
+            $this->redirect('/admin/gallery/' . $id . '/edit');
         }
     }
 
@@ -203,12 +159,6 @@ class GalleryController extends BaseController
      */
     public function destroy($id = null)
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['admin_id'])) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
         try {
             // Get image path to delete file
             $image = $this->db->fetch("SELECT image_path FROM gallery_images WHERE id = ?", [$id]);
@@ -226,7 +176,6 @@ class GalleryController extends BaseController
             $_SESSION['error'] = 'Error deleting image: ' . $e->getMessage();
         }
 
-        header('Location: ' . BASE_URL . '/admin/gallery');
-        exit;
+        $this->redirect('/admin/gallery');
     }
 }

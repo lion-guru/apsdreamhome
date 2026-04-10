@@ -27,6 +27,19 @@
             "args": [
                 "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@modelcontextprotocol\\server-sequential-thinking\\dist\\index.js"
             ]
+        },
+        "mysql": {
+            "command": "node",
+            "args": [
+                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@f4ww4z\\mcp-mysql-server\\dist\\index.js"
+            ],
+            "env": {
+                "MYSQL_HOST": "127.0.0.1",
+                "MYSQL_PORT": "3307",
+                "MYSQL_USER": "root",
+                "MYSQL_PASSWORD": "",
+                "MYSQL_DATABASE": "apsdreamhome"
+            }
         }
     }
 }

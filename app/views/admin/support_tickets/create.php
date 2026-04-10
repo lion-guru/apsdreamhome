@@ -46,7 +46,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <select name="assigned_agent_id" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php foreach ($agents as $agent): ?>
-                                    <option value="<?php echo $agent['id']; ?>"><?php echo htmlspecialchars($agent['name']); ?></option>
+                                    <option value="<?php echo $agent['id']; ?>"><?php echo htmlspecialchars(agent['name'] ?? ''); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

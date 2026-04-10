@@ -1,0 +1,125 @@
+{
+  "summary": {
+    "totalWorkflows": 3,
+    "completedWorkflows": 1,
+    "failedWorkflows": 0,
+    "totalSteps": 3,
+    "errors": 0
+  },
+  "workflows": [
+    {
+      "name": "database-setup",
+      "steps": [
+        {
+          "name": "Check MySQL Connection",
+          "type": "database_check",
+          "query": "SELECT 1",
+          "critical": true
+        },
+        {
+          "name": "Verify Database Schema",
+          "type": "database_check",
+          "query": "SHOW TABLES",
+          "critical": true
+        },
+        {
+          "name": "Check Core Tables",
+          "type": "database_check",
+          "query": "SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema = \"apsdreamhome\"",
+          "critical": true
+        }
+      ],
+      "currentIndex": 2,
+      "status": "completed",
+      "startTime": "2026-04-09T18:16:31.946Z",
+      "endTime": "2026-04-09T18:16:36.902Z",
+      "errors": []
+    },
+    {
+      "name": "full-system-test",
+      "steps": [
+        {
+          "name": "Start Development Server",
+          "type": "command",
+          "command": "php -S localhost:8080 -t public",
+          "critical": true
+        },
+        {
+          "name": "Run Playwright Tests",
+          "type": "command",
+          "command": "npx playwright test",
+          "critical": true
+        },
+        {
+          "name": "Check API Endpoints",
+          "type": "api_test",
+          "url": "http://localhost:8080/api/health",
+          "expectedStatus": 200
+        },
+        {
+          "name": "Validate File Structure",
+          "type": "file_check",
+          "path": "app/Http/Controllers",
+          "exists": true
+        }
+      ],
+      "currentIndex": 0,
+      "status": "pending",
+      "startTime": null,
+      "endTime": null,
+      "errors": []
+    },
+    {
+      "name": "code-quality",
+      "steps": [
+        {
+          "name": "Run ESLint",
+          "type": "command",
+          "command": "npx eslint . --ext .js",
+          "critical": false
+        },
+        {
+          "name": "Run Prettier",
+          "type": "command",
+          "command": "npx prettier --write .",
+          "critical": false
+        },
+        {
+          "name": "Check PHP Syntax",
+          "type": "command",
+          "command": "find . -name \"*.php\" -exec php -l {} \\;",
+          "critical": true
+        }
+      ],
+      "currentIndex": 0,
+      "status": "pending",
+      "startTime": null,
+      "endTime": null,
+      "errors": []
+    }
+  ],
+  "stepHistory": [
+    {
+      "workflow": "database-setup",
+      "step": "Check MySQL Connection",
+      "status": "success",
+      "result": "",
+      "timestamp": "2026-04-09T18:16:33.121Z"
+    },
+    {
+      "workflow": "database-setup",
+      "step": "Verify Database Schema",
+      "status": "success",
+      "result": "",
+      "timestamp": "2026-04-09T18:16:35.324Z"
+    },
+    {
+      "workflow": "database-setup",
+      "step": "Check Core Tables",
+      "status": "success",
+      "result": "",
+      "timestamp": "2026-04-09T18:16:36.902Z"
+    }
+  ],
+  "errors": []
+}

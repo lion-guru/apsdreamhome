@@ -70,7 +70,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                         </div>
                                     <?php endif; ?>
                                     <div class="card-body p-2">
-                                        <p class="card-text small text-truncate mb-1"><?php echo htmlspecialchars($item['name']); ?></p>
+                                        <p class="card-text small text-truncate mb-1"><?php echo htmlspecialchars(item['name'] ?? ''); ?></p>
                                         <small class="text-muted"><?php echo $item['size']; ?></small>
                                     </div>
                                 </div>

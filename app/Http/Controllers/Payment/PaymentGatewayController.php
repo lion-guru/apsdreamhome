@@ -283,8 +283,8 @@ class PaymentGatewayController extends BaseController
                 return;
             }
 
-            // Get MLM level structure
-            $level_query = "SELECT * FROM associate_levels ORDER BY level_number";
+            // Get MLM level structure - select only needed columns for performance
+            $level_query = "SELECT id, level_number, commission_percentage FROM associate_levels ORDER BY level_number";
             $levels = $this->db->query($level_query)->fetchAll(PDO::FETCH_ASSOC);
 
             $associate_id = $plot_data['associate_id'];

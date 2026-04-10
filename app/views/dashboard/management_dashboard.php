@@ -1,13 +1,17 @@
 <?php
+
 /**
  * APS Dream Home - WhatsApp & AI Management Dashboard
  * Comprehensive management interface for all integrations
  */
 
-require_once 'includes/config.php';
-require_once 'includes/ai_integration.php';
-require_once 'includes/whatsapp_integration.php';
-require_once 'includes/email_system.php';
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
 echo "<!DOCTYPE html>
 <html lang='en'>
@@ -119,7 +123,7 @@ foreach ($status_checks as $service => $enabled) {
 
 echo "</div></div></div>";
 
-        // Quick Metrics
+// Quick Metrics
 echo "<div class='col-md-6'>
     <div class='card dashboard-card'>
         <div class='card-header'>
@@ -147,7 +151,6 @@ try {
     echo "<div class='metric-label'>Emails Sent</div>";
     echo "</div></div>";
     echo "</div>";
-
 } catch (Exception $e) {
     echo "<p class='text-danger'>Error loading metrics: " . $e->getMessage() . "</p>";
 }
@@ -203,7 +206,7 @@ foreach (['property_descriptions' => 'Property Descriptions', 'chatbot' => 'Chat
 }
 echo "</div></div></div></div>";
 
-        // AI Test Interface
+// AI Test Interface
 echo "<div class='col-md-4'>
     <div class='card dashboard-card'>
         <div class='card-header'>
@@ -254,7 +257,7 @@ foreach (['welcome_message' => 'Welcome Messages', 'property_inquiry' => 'Proper
 }
 echo "</div></div></div></div>";
 
-        // WhatsApp Test Interface
+// WhatsApp Test Interface
 echo "<div class='col-md-4'>
     <div class='card dashboard-card'>
         <div class='card-header'>

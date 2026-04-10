@@ -28,7 +28,7 @@
                         <div class="fw-semibold">
                             <?php echo htmlspecialchars($service['phone'] ?? 'N/A'); ?>
                             <?php if (!empty($service['phone'])): ?>
-                            <a href="tel:<?php echo htmlspecialchars($service['phone']); ?>" class="btn btn-sm btn-success ms-2">
+                            <a href="tel:<?php echo htmlspecialchars(service['phone'] ?? ''); ?>" class="btn btn-sm btn-success ms-2">
                                 <i class="fas fa-phone"></i>
                             </a>
                             <a href="https://wa.me/91<?php echo preg_replace('/[^0-9]/', '', $service['phone']); ?>" target="_blank" class="btn btn-sm btn-success">
@@ -88,7 +88,7 @@
                 <?php if (!empty($service['notes'])): ?>
                 <div class="mt-3">
                     <label class="text-muted small">Notes</label>
-                    <div><?php echo nl2br(htmlspecialchars($service['notes'])); ?></div>
+                    <div><?php echo nl2br(htmlspecialchars(service['notes'] ?? '')); ?></div>
                 </div>
                 <?php endif; ?>
             </div>
@@ -132,7 +132,7 @@
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <?php if (!empty($service['phone'])): ?>
-                    <a href="tel:<?php echo htmlspecialchars($service['phone']); ?>" class="btn btn-success">
+                    <a href="tel:<?php echo htmlspecialchars(service['phone'] ?? ''); ?>" class="btn btn-success">
                         <i class="fas fa-phone me-2"></i>Call Now
                     </a>
                     <a href="https://wa.me/91<?php echo preg_replace('/[^0-9]/', '', $service['phone']); ?>?text=Namaste! APS Dream Home se aapka service inquiry mila hai. Hum aapki kaise madad kar sakte hain?" target="_blank" class="btn btn-success">
@@ -140,7 +140,7 @@
                     </a>
                     <?php endif; ?>
                     <?php if (!empty($service['email'])): ?>
-                    <a href="mailto:<?php echo htmlspecialchars($service['email']); ?>?subject=Re: APS Dream Home - <?php echo $serviceLabels[$service['service_type']] ?? 'Service'; ?> Inquiry" class="btn btn-primary">
+                    <a href="mailto:<?php echo htmlspecialchars(service['email'] ?? ''); ?>?subject=Re: APS Dream Home - <?php echo $serviceLabels[$service['service_type']] ?? 'Service'; ?> Inquiry" class="btn btn-primary">
                         <i class="fas fa-envelope me-2"></i>Send Email
                     </a>
                     <?php endif; ?>

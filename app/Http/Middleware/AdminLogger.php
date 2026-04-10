@@ -34,7 +34,7 @@ class AdminLogger
     {
         try {
             $db = self::initDb();
-            
+
             $logEntry = [
                 'admin_id' => $_SESSION['admin_id'] ?? null,
                 'action' => $action,
@@ -55,7 +55,6 @@ class AdminLogger
                     $logEntry['created_at']
                 ]
             );
-
         } catch (Exception $e) {
             error_log("AdminLogger Error: " . $e->getMessage());
             return false;
@@ -72,7 +71,7 @@ class AdminLogger
     {
         try {
             $db = self::initDb();
-            
+
             $logEntry = [
                 'admin_id' => $_SESSION['admin_id'] ?? null,
                 'error_type' => $errorType,
@@ -93,7 +92,6 @@ class AdminLogger
                     $logEntry['created_at']
                 ]
             );
-
         } catch (Exception $e) {
             error_log("AdminLogger Error: " . $e->getMessage());
             return false;
@@ -109,8 +107,9 @@ class AdminLogger
     {
         try {
             $db = self::initDb();
-            
-            $sql = "SELECT * FROM admin_activity_log WHERE 1=1";
+
+            // PERFORMANCE: Select only needed columns instead of SELECT *
+            $sql = "SELECT id, admin_id, action, details, ip_address, created_at FROM admin_activity_log WHERE 1=1";
             $params = [];
 
             if (!empty($filters['admin_id'])) {
@@ -136,7 +135,6 @@ class AdminLogger
             $sql .= " ORDER BY created_at DESC";
 
             return $db->fetchAll($sql, $params);
-
         } catch (Exception $e) {
             error_log("AdminLogger Error: " . $e->getMessage());
             return [];

@@ -50,7 +50,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <option value="">Unassigned</option>
                                 <?php foreach ($agents as $agent): ?>
                                     <option value="<?php echo $agent['id']; ?>" <?php echo ($ticket['assigned_agent_id'] ?? '') == $agent['id'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($agent['name']); ?>
+                                        <?php echo htmlspecialchars(agent['name'] ?? ''); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>

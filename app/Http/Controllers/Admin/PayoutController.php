@@ -241,6 +241,42 @@ class PayoutController extends AdminController
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$payoutId]);
 
+                // Wallet Integration: If payout method is 'wallet', credit the associate's wallet
+                if (strtolower($method) === 'wallet') {
+                    $walletSql = "UPDATE wallet_points 
+                                  SET points_balance = points_balance + ?, 
+                                      total_earned = total_earned + ?, 
+                                      commission_earnings = commission_earnings + ?,
+                                      updated_at = NOW()
+                                  WHERE user_id = ?";
+                    $this->db->prepare($walletSql)->execute([
+                        $payout['amount'],
+                        $payout['amount'],
+                        $payout['amount'],
+                        $payout['associate_id']
+                    ]);
+
+                    // Fetch the updated balance to record in transactions accurately
+                    $walletStmt = $this->db->prepare("SELECT points_balance FROM wallet_points WHERE user_id = ?");
+                    $walletStmt->execute([$payout['associate_id']]);
+                    $walletData = $walletStmt->fetch();
+                    $currentBalance = $walletData['points_balance'] ?? $payout['amount'];
+                    $balanceBefore = $currentBalance - $payout['amount'];
+
+                    $txnSql = "INSERT INTO wallet_transactions 
+                               (user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type, status, created_at)
+                               VALUES (?, 'credit', 'commission', ?, ?, ?, ?, ?, 'payout', 'completed', NOW())";
+                    $desc = "Commission payout #" . $payoutId;
+                    $this->db->prepare($txnSql)->execute([
+                        $payout['associate_id'],
+                        $payout['amount'],
+                        $balanceBefore,
+                        $currentBalance,
+                        $desc,
+                        $payoutId
+                    ]);
+                }
+
                 $this->db->commit();
 
                 // Log activity

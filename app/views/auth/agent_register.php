@@ -11,6 +11,7 @@ $base = BASE_URL;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,8 +40,15 @@ $base = BASE_URL;
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .brand-icon {
@@ -92,7 +100,8 @@ $base = BASE_URL;
             background: linear-gradient(to right, #d1fae5, transparent);
         }
 
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border: 1.5px solid #e2e8f0;
             border-radius: 0.65rem;
             padding: 0.65rem 0.9rem 0.65rem 2.6rem;
@@ -101,7 +110,8 @@ $base = BASE_URL;
             background: #f8fafc;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: #059669;
             box-shadow: 0 0 0 0.25rem rgba(5, 150, 105, 0.15);
             background: #fff;
@@ -117,7 +127,7 @@ $base = BASE_URL;
             margin-bottom: 0.85rem;
         }
 
-        .input-group-custom > i {
+        .input-group-custom>i {
             position: absolute;
             left: 0.95rem;
             top: 50%;
@@ -128,7 +138,7 @@ $base = BASE_URL;
             pointer-events: none;
         }
 
-        .input-group-custom > i.icon-top {
+        .input-group-custom>i.icon-top {
             top: 2.4rem;
         }
 
@@ -249,15 +259,37 @@ $base = BASE_URL;
         }
 
         @media (max-width: 576px) {
-            body { padding: 1rem 0.75rem; }
-            .register-card { padding: 1.75rem 1.25rem; border-radius: 1rem; }
-            .brand-title { font-size: 1.35rem; }
-            .brand-icon { width: 60px; height: 60px; }
-            .brand-icon i { font-size: 1.5rem; }
-            .home-link { top: 0.75rem; left: 1rem; font-size: 0.82rem; }
+            body {
+                padding: 1rem 0.75rem;
+            }
+
+            .register-card {
+                padding: 1.75rem 1.25rem;
+                border-radius: 1rem;
+            }
+
+            .brand-title {
+                font-size: 1.35rem;
+            }
+
+            .brand-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .brand-icon i {
+                font-size: 1.5rem;
+            }
+
+            .home-link {
+                top: 0.75rem;
+                left: 1rem;
+                font-size: 0.82rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <a href="<?php echo $base; ?>/" class="home-link">
         <i class="fa-solid fa-arrow-left"></i> Back to Home
@@ -272,15 +304,15 @@ $base = BASE_URL;
             <p class="brand-subtitle">Agent Registration</p>
         </div>
 
-        <?php if(!empty($errors)): ?>
-        <div class="error-box">
-            <div class="error-title"><i class="fa-solid fa-circle-exclamation me-1"></i>Please fix the following errors:</div>
-            <ul>
-                <?php foreach($errors as $error): ?>
-                <li><?php echo htmlspecialchars($error); ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
+        <?php if (!empty($errors)): ?>
+            <div class="error-box">
+                <div class="error-title"><i class="fa-solid fa-circle-exclamation me-1"></i>Please fix the following errors:</div>
+                <ul>
+                    <?php foreach ($errors as $error): ?>
+                        <li><?php echo htmlspecialchars($error); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php endif; ?>
 
         <form method="POST" action="<?php echo $base; ?>/agent/register" novalidate>
@@ -346,8 +378,8 @@ $base = BASE_URL;
 
             <div class="input-group-custom">
                 <i class="fa-solid fa-ticket icon-top"></i>
-                <label class="form-label-custom">Referral Code <span class="optional-badge">(optional)</span></label>
-                <input type="text" class="form-control" name="referral_code" placeholder="Enter referral code if you have one" value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>">
+                <label class="form-label-custom">Referral Code <span class="required-badge">*</span></label>
+                <input type="text" class="form-control" name="referral_code" placeholder="Enter referral code" required value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>">
             </div>
 
             <div class="terms-text text-center mb-3">
@@ -368,4 +400,5 @@ $base = BASE_URL;
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

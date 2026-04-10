@@ -52,9 +52,13 @@ if (!isset($_SESSION['last_regeneration'])) {
     $_SESSION['last_regeneration'] = time();
 }
 
-// Include configuration
-require_once __DIR__ . '/../../includes/db_connection.php';
-$pdo = getPdoConnection();
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $pdo = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
 // Check if user is logged in
 if (!isset($_SESSION['auser'])) {

@@ -5,7 +5,6 @@
  */
 
 $page_title = 'Colony Cost Detail - APS Dream Home';
-include __DIR__ . '/../../layouts/admin_header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -30,14 +29,14 @@ include __DIR__ . '/../../layouts/admin_header.php';
 
     <?php if (isset($_SESSION['success'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
-        <?= htmlspecialchars($_SESSION['success']) ?>
+        <?= htmlspecialchars(_SESSION['success'] ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['success']); endif; ?>
 
     <?php if (isset($_SESSION['error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show">
-        <?= htmlspecialchars($_SESSION['error']) ?>
+        <?= htmlspecialchars(_SESSION['error'] ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['error']); endif; ?>
@@ -48,7 +47,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
             <div class="card border-primary">
                 <div class="card-body text-center">
                     <h6 class="text-primary">Land Cost</h6>
-                    <h3 class="mb-0">₹<?= number_format($costs['land'] ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format(floatval(costs['land'] ?? 0) ?? 0) ?></h3>
                 </div>
             </div>
         </div>
@@ -56,7 +55,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
             <div class="card border-success">
                 <div class="card-body text-center">
                     <h6 class="text-success">Development Cost</h6>
-                    <h3 class="mb-0">₹<?= number_format($costs['development'] ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format(floatval(costs['development'] ?? 0) ?? 0) ?></h3>
                 </div>
             </div>
         </div>
@@ -64,7 +63,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
             <div class="card border-warning">
                 <div class="card-body text-center">
                     <h6 class="text-warning">Amenities Cost</h6>
-                    <h3 class="mb-0">₹<?= number_format($costs['amenities'] ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format(floatval(costs['amenities'] ?? 0) ?? 0) ?></h3>
                 </div>
             </div>
         </div>
@@ -72,7 +71,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
             <div class="card border-danger">
                 <div class="card-body text-center">
                     <h6 class="text-danger">Total Cost</h6>
-                    <h3 class="mb-0">₹<?= number_format($costs['total'] ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format(floatval(costs['total'] ?? 0) ?? 0) ?></h3>
                 </div>
             </div>
         </div>
@@ -152,7 +151,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                                 <?= ucfirst($cb['cost_type']) ?>
                             </span>
                         </td>
-                        <td class="text-end">₹<?= number_format($cb['total']) ?></td>
+                        <td class="text-end">₹<?= number_format(floatval(cb['total'] ?? 0)) ?></td>
                         <td class="text-center"><?= $cb['entries'] ?></td>
                         <td class="text-end"><?= $costs['total'] > 0 ? round(($cb['total'] / $costs['total']) * 100, 1) : 0 ?>%</td>
                     </tr>
@@ -161,7 +160,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                 <tfoot class="table-dark">
                     <tr>
                         <th>Total</th>
-                        <th class="text-end">₹<?= number_format($costs['total']) ?></th>
+                        <th class="text-end">₹<?= number_format(floatval(costs['total'] ?? 0)) ?></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -225,10 +224,10 @@ include __DIR__ . '/../../layouts/admin_header.php';
                             <?php foreach ($plots as $plot): ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td>
-                                <td><?= number_format($plot['area_sqft'] ?? 0) ?></td>
-                                <td>₹<?= number_format($plot['cost_price'] ?? 0) ?></td>
+                                <td><?= number_format(floatval(plot['area_sqft'] ?? 0) ?? 0) ?></td>
+                                <td>₹<?= number_format(floatval(plot['cost_price'] ?? 0) ?? 0) ?></td>
                                 <td class="text-success">
-                                    <strong>₹<?= number_format($plot['total_price'] ?? 0) ?></strong>
+                                    <strong>₹<?= number_format(floatval(plot['total_price'] ?? 0) ?? 0) ?></strong>
                                 </td>
                                 <td>
                                     <?php 
@@ -247,4 +246,4 @@ include __DIR__ . '/../../layouts/admin_header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

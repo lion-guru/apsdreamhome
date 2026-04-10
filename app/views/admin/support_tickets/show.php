@@ -117,7 +117,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     </div>
                     <div class="card-body">
                         <?php if (!empty($ticket['assigned_agent_name'])): ?>
-                            <h6><?php echo htmlspecialchars($ticket['assigned_agent_name']); ?></h6>
+                            <h6><?php echo htmlspecialchars(ticket['assigned_agent_name'] ?? ''); ?></h6>
                             <p class="text-muted small"><?php echo htmlspecialchars($ticket['assigned_agent_email'] ?? '-'); ?></p>
                         <?php else: ?>
                             <p class="text-muted">Unassigned</p>

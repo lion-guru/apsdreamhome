@@ -179,7 +179,7 @@ function exportAsPDF($data) {
             echo '<tr>
                 <td>' . h($property['title']) . '</td>
                 <td>' . h($property['location']) . '</td>
-                <td>₹' . number_format($property['price']) . '</td>
+                <td>₹' . number_format(floatval(property['price'] ?? 0)) . '</td>
                 <td>' . h($property['status']) . '</td>
                 <td>' . h($property['created_at']) . '</td>
             </tr>';

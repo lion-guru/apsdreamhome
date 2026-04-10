@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../../layouts/admin_header.php'; ?>
+
 
 <div class="container-fluid">
     <nav aria-label="breadcrumb" class="mb-3">
@@ -20,10 +20,10 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h4 class="text-primary"><?php echo htmlspecialchars($property['name']); ?></h4>
+                            <h4 class="text-primary"><?php echo htmlspecialchars($property['name'] ?? ''); ?></h4>
                             <p class="text-muted mb-3">
                                 <i class="fas fa-map-marker-alt me-1"></i>
-                                <?php echo htmlspecialchars($property['address']); ?>
+                                <?php echo htmlspecialchars($property['address'] ?? ''); ?>
                             </p>
                         </div>
                         <div class="col-md-6 text-md-end">
@@ -50,11 +50,11 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="text-muted small">Area</label>
-                            <p class="mb-0 fw-bold"><?php echo number_format($property['area_sqft']); ?> sq ft</p>
+                            <p class="mb-0 fw-bold"><?php echo number_format(floatval($property['area_sqft'] ?? 0)); ?> sq ft</p>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="text-muted small">Price</label>
-                            <p class="mb-0 fw-bold text-success fs-5">₹<?php echo number_format($property['price']); ?> <?php echo ucfirst($property['price_type']); ?></p>
+                            <p class="mb-0 fw-bold text-success fs-5">₹<?php echo number_format(floatval($property['price'] ?? 0)); ?> <?php echo ucfirst($property['price_type']); ?></p>
                         </div>
                     </div>
 
@@ -82,16 +82,16 @@
                 </div>
                 <div class="card-body">
                     <p class="mb-2">
-                        <strong><?php echo htmlspecialchars($property['name']); ?></strong>
+                        <strong><?php echo htmlspecialchars($property['name'] ?? ''); ?></strong>
                     </p>
                     <p class="mb-2">
                         <i class="fas fa-phone me-2 text-primary"></i>
-                        <a href="tel:<?php echo htmlspecialchars($property['phone']); ?>"><?php echo htmlspecialchars($property['phone']); ?></a>
+                        <a href="tel:<?php echo htmlspecialchars($property['phone'] ?? ''); ?>"><?php echo htmlspecialchars($property['phone'] ?? ''); ?></a>
                     </p>
-                    <?php if ($property['email']): ?>
+                    <?php if ($$property['email']): ?>
                         <p class="mb-0">
                             <i class="fas fa-envelope me-2 text-primary"></i>
-                            <a href="mailto:<?php echo htmlspecialchars($property['email']); ?>"><?php echo htmlspecialchars($property['email']); ?></a>
+                            <a href="mailto:<?php echo htmlspecialchars($property['email'] ?? ''); ?>"><?php echo htmlspecialchars($property['email'] ?? ''); ?></a>
                         </p>
                     <?php endif; ?>
                 </div>
@@ -154,4 +154,4 @@
     </div>
 </div>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

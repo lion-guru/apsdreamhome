@@ -13,8 +13,8 @@
             <div class="card border-start border-success border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Total Revenue</h6>
-                    <h3>₹<?php echo number_format($financial_overview['total_revenue'] ?? 0); ?></h3>
-                    <p class="text-success mb-0"><i class="fas fa-arrow-up me-1"></i>+₹<?php echo number_format($financial_overview['pending_revenue'] ?? 0); ?> Pending</p>
+                    <h3>₹<?php echo number_format(floatval(financial_overview['total_revenue'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-success mb-0"><i class="fas fa-arrow-up me-1"></i>+₹<?php echo number_format(floatval(financial_overview['pending_revenue'] ?? 0) ?? 0); ?> Pending</p>
                 </div>
             </div>
         </div>
@@ -22,8 +22,8 @@
             <div class="card border-start border-danger border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Total Expenses</h6>
-                    <h3>₹<?php echo number_format($expense_stats['total_expenses'] ?? 0); ?></h3>
-                    <p class="text-muted mb-0">Avg: ₹<?php echo number_format($expense_stats['avg_expense'] ?? 0); ?></p>
+                    <h3>₹<?php echo number_format(floatval(expense_stats['total_expenses'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-muted mb-0">Avg: ₹<?php echo number_format(floatval(expense_stats['avg_expense'] ?? 0) ?? 0); ?></p>
                 </div>
             </div>
         </div>
@@ -31,8 +31,8 @@
             <div class="card border-start border-warning border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Commission Paid</h6>
-                    <h3>₹<?php echo number_format($commission_stats['total_commissions'] ?? 0); ?></h3>
-                    <p class="text-muted mb-0">Avg: ₹<?php echo number_format($commission_stats['avg_commission'] ?? 0); ?></p>
+                    <h3>₹<?php echo number_format(floatval(commission_stats['total_commissions'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-muted mb-0">Avg: ₹<?php echo number_format(floatval(commission_stats['avg_commission'] ?? 0) ?? 0); ?></p>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
             <div class="card border-start border-primary border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Net Profit</h6>
-                    <h3>₹<?php echo number_format($profit_analysis['net_profit'] ?? 0); ?></h3>
+                    <h3>₹<?php echo number_format(floatval(profit_analysis['net_profit'] ?? 0) ?? 0); ?></h3>
                     <p class="text-success mb-0"><i class="fas fa-chart-line me-1"></i>Profit Margin: <?php echo $profit_analysis['gross_revenue'] > 0 ? number_format(($profit_analysis['net_profit'] / $profit_analysis['gross_revenue']) * 100, 1) : 0; ?>%</p>
                 </div>
             </div>
@@ -82,25 +82,25 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-success">₹<?php echo number_format($profit_analysis['gross_revenue'] ?? 0); ?></h4>
+                                <h4 class="text-success">₹<?php echo number_format(floatval(profit_analysis['gross_revenue'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Gross Revenue</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-danger">₹<?php echo number_format($profit_analysis['total_expenses_paid'] ?? 0); ?></h4>
+                                <h4 class="text-danger">₹<?php echo number_format(floatval(profit_analysis['total_expenses_paid'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Total Expenses</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-warning">₹<?php echo number_format($profit_analysis['total_commissions_paid'] ?? 0); ?></h4>
+                                <h4 class="text-warning">₹<?php echo number_format(floatval(profit_analysis['total_commissions_paid'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Commissions Paid</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-primary">₹<?php echo number_format($profit_analysis['net_profit'] ?? 0); ?></h4>
+                                <h4 class="text-primary">₹<?php echo number_format(floatval(profit_analysis['net_profit'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Net Profit</p>
                             </div>
                         </div>
@@ -123,12 +123,12 @@
                             <?php foreach ($activities as $activity): ?>
                                 <div class="list-group-item">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1"><?php echo htmlspecialchars($activity['activity_type']); ?></h6>
+                                        <h6 class="mb-1"><?php echo htmlspecialchars(activity['activity_type'] ?? ''); ?></h6>
                                         <small class="text-muted"><?php echo date('M d, Y H:i', strtotime($activity['created_at'])); ?></small>
                                     </div>
-                                    <p class="mb-1"><?php echo htmlspecialchars($activity['description']); ?></p>
+                                    <p class="mb-1"><?php echo htmlspecialchars(activity['description'] ?? ''); ?></p>
                                     <small class="text-<?php echo $activity['amount'] > 0 ? 'success' : 'danger'; ?>">
-                                        <?php echo $activity['amount'] > 0 ? '+' : ''; ?>₹<?php echo number_format($activity['amount']); ?>
+                                        <?php echo $activity['amount'] > 0 ? '+' : ''; ?>₹<?php echo number_format(floatval(activity['amount'] ?? 0)); ?>
                                     </small>
                                 </div>
                             <?php endforeach; ?>

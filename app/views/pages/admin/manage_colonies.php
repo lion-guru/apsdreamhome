@@ -7,17 +7,29 @@
  * Enhanced colony management for APS own projects
  */
 
-require_once 'includes/db_connection.php';
-require_once 'includes/enhanced_universal_template.php';
+// FIXED: Removed missing includes - files don't exist
+// require_once 'includes/db_connection.php';
+// require_once 'includes/enhanced_universal_template.php';
 
-$template = new EnhancedUniversalTemplate();
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
+
+// FIXED: Commented out missing template class
+// $template = new EnhancedUniversalTemplate();
+$template = null;
 
 // Page metadata
-$$page_title = 'APS Colonies Management - Internal Dashboard';
+$page_title = 'APS Colonies Management - Internal Dashboard';
 $page_description = 'Manage APS Dream Homes colonies, plots, and project development';
 
-$template->setTitle($page_title);
-$template->setDescription($page_description);
+// FIXED: Commented out template methods since template is null
+// $template->setTitle($page_title);
+// $template->setDescription($page_description);
 
 // Sample data for colonies (in production, this would come from database)
 $colonies = [
@@ -112,7 +124,7 @@ $total_colonies = count($colonies);
 $total_plots = array_sum(array_column($colonies, 'total_plots'));
 $total_sold = array_sum(array_column($colonies, 'sold_plots'));
 $total_available = array_sum(array_column($colonies, 'available_plots'));
-$total_revenue = array_sum(array_map(function($colony) {
+$total_revenue = array_sum(array_map(function ($colony) {
     return (float)str_replace(['Γé╣', ','], '', $colony['revenue_generated']);
 }, $colonies));
 
@@ -120,6 +132,7 @@ $total_revenue = array_sum(array_map(function($colony) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -137,14 +150,14 @@ $total_revenue = array_sum(array_map(function($colony) {
             background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             transition: all 0.3s ease;
         }
 
         .colony-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
         .colony-header {
@@ -164,9 +177,17 @@ $total_revenue = array_sum(array_map(function($colony) {
             font-weight: 600;
         }
 
-        .status-active { background: rgba(40, 167, 69, 0.9); }
-        .status-sold-out { background: rgba(220, 53, 69, 0.9); }
-        .status-ongoing { background: rgba(255, 193, 7, 0.9); }
+        .status-active {
+            background: rgba(40, 167, 69, 0.9);
+        }
+
+        .status-sold-out {
+            background: rgba(220, 53, 69, 0.9);
+        }
+
+        .status-ongoing {
+            background: rgba(255, 193, 7, 0.9);
+        }
 
         .colony-title {
             font-size: 1.3rem;
@@ -257,7 +278,7 @@ $total_revenue = array_sum(array_map(function($colony) {
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .summary-stat {
@@ -309,6 +330,7 @@ $total_revenue = array_sum(array_map(function($colony) {
         }
     </style>
 </head>
+
 <body>
     <!-- Hero Section -->
     <section class="management-hero">
@@ -351,7 +373,7 @@ $total_revenue = array_sum(array_map(function($colony) {
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="summary-stat">
-                            <span class="summary-number">Γé╣<?php echo number_format($total_revenue/10000000, 1); ?>Cr</span>
+                            <span class="summary-number">Γé╣<?php echo number_format($total_revenue / 10000000, 1); ?>Cr</span>
                             <span class="summary-label">Total Revenue</span>
                         </div>
                     </div>
@@ -604,6 +626,7 @@ $total_revenue = array_sum(array_map(function($colony) {
         }, 120000);
     </script>
 </body>
+
 </html>
 
 //

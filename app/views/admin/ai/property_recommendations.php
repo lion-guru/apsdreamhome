@@ -39,7 +39,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                     <span class="badge bg-success"><?php echo $rec['match_score'] ?? 0; ?>% Match</span>
                                 </div>
                                 <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($rec['location'] ?? '-'); ?></p>
-                                <p class="fw-bold text-primary mb-2">₹<?php echo number_format($rec['price'] ?? 0); ?></p>
+                                <p class="fw-bold text-primary mb-2">₹<?php echo number_format(floatval(rec['price'] ?? 0) ?? 0); ?></p>
                                 <div class="progress mb-2" style="height: 8px;">
                                     <div class="progress-bar bg-success" style="width: <?php echo $rec['confidence_score'] ?? 0; ?>%"></div>
                                 </div>

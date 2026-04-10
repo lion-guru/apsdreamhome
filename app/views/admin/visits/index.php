@@ -4,7 +4,6 @@
  */
 
 $page_title = 'Site Visit Management - APS Dream Home';
-include __DIR__ . '/../../layouts/admin_header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -148,12 +147,12 @@ include __DIR__ . '/../../layouts/admin_header.php';
                                 <br><small class="text-muted"><?= date('h:i A', strtotime($visit['visit_time'])) ?></small>
                             </td>
                             <td>
-                                <strong><?= htmlspecialchars($visit['lead_name']) ?></strong>
-                                <br><small class="text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($visit['lead_phone']) ?></small>
+                                <strong><?= htmlspecialchars(visit['lead_name'] ?? '') ?></strong>
+                                <br><small class="text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars(visit['lead_phone'] ?? '') ?></small>
                             </td>
                             <td>
-                                <strong><?= htmlspecialchars($visit['property_title']) ?></strong>
-                                <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($visit['property_location']) ?></small>
+                                <strong><?= htmlspecialchars(visit['property_title'] ?? '') ?></strong>
+                                <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(visit['property_location'] ?? '') ?></small>
                             </td>
                             <td><?= htmlspecialchars($visit['agent_name'] ?? 'Unassigned') ?></td>
                             <td>
@@ -214,4 +213,4 @@ function updateStatus(visitId, status) {
 }
 </script>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

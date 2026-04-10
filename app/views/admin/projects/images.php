@@ -1,10 +1,10 @@
-<?php include __DIR__ . "/../../../layouts/admin_header.php"; ?>
+
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-images"></i> Project Images: <?php echo htmlspecialchars($project['name']); ?></h2>
+                <h2><i class="fas fa-images"></i> Project Images: <?php echo htmlspecialchars(project['name'] ?? ''); ?></h2>
                 <div>
                     <a href="/admin/projects" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Projects
@@ -75,15 +75,15 @@
                                 <div class="col-md-4 mb-4">
                                     <div class="card">
                                         <?php if ($image['image_path']): ?>
-                                            <img src="<?php echo htmlspecialchars($image['image_path']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($image['image_title']); ?>" style="height: 200px; object-fit: cover;">
+                                            <img src="<?php echo htmlspecialchars(image['image_path'] ?? ''); ?>" class="card-img-top" alt="<?php echo htmlspecialchars(image['image_title'] ?? ''); ?>" style="height: 200px; object-fit: cover;">
                                         <?php endif; ?>
                                         <div class="card-body">
-                                            <h6 class="card-title"><?php echo htmlspecialchars($image['image_title']); ?></h6>
+                                            <h6 class="card-title"><?php echo htmlspecialchars(image['image_title'] ?? ''); ?></h6>
                                             <p class="card-text small">
-                                                <span class="badge bg-info"><?php echo ucfirst(htmlspecialchars($image['image_type'])); ?></span>
+                                                <span class="badge bg-info"><?php echo ucfirst(htmlspecialchars(image['image_type'] ?? '')); ?></span>
                                             </p>
                                             <?php if ($image['image_description']): ?>
-                                                <p class="card-text small"><?php echo htmlspecialchars($image['image_description']); ?></p>
+                                                <p class="card-text small"><?php echo htmlspecialchars(image['image_description'] ?? ''); ?></p>
                                             <?php endif; ?>
                                             <div class="d-flex justify-content-between">
                                                 <small class="text-muted">Order: <?php echo $image['display_order']; ?></small>
@@ -107,4 +107,3 @@
     </div>
 </div>
 
-<?php include __DIR__ . "/../../../layouts/admin_footer.php"; ?>

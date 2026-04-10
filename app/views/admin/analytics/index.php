@@ -34,7 +34,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Total Revenue</p>
-                                <h4 class="mb-0">₹<?php echo number_format($analytics_data['total_revenue'] ?? 0); ?></h4>
+                                <h4 class="mb-0">₹<?php echo number_format(floatval(analytics_data['total_revenue'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-success bg-opacity-10 rounded p-2">
                                 <i class="fas fa-rupee-sign text-success"></i>
@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Active Users</p>
-                                <h4 class="mb-0"><?php echo number_format($analytics_data['active_users'] ?? 0); ?></h4>
+                                <h4 class="mb-0"><?php echo number_format(floatval(analytics_data['active_users'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-primary bg-opacity-10 rounded p-2">
                                 <i class="fas fa-users text-primary"></i>
@@ -64,7 +64,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">New Leads</p>
-                                <h4 class="mb-0"><?php echo number_format($analytics_data['new_leads'] ?? 0); ?></h4>
+                                <h4 class="mb-0"><?php echo number_format(floatval(analytics_data['new_leads'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-warning bg-opacity-10 rounded p-2">
                                 <i class="fas fa-bullseye text-warning"></i>
@@ -106,7 +106,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                         <?php foreach ($charts['revenue'] as $item): ?>
                                             <tr>
                                                 <td><?php echo date('M d', strtotime($item['date'])); ?></td>
-                                                <td>₹<?php echo number_format($item['amount']); ?></td>
+                                                <td>₹<?php echo number_format(floatval(item['amount'] ?? 0)); ?></td>
                                                 <td><?php echo $item['count']; ?></td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -157,9 +157,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <tbody>
                                 <?php foreach ($analytics_data['top_properties'] as $prop): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($prop['title']); ?></td>
-                                        <td><?php echo number_format($prop['views']); ?></td>
-                                        <td><?php echo number_format($prop['inquiries']); ?></td>
+                                        <td><?php echo htmlspecialchars(prop['title'] ?? ''); ?></td>
+                                        <td><?php echo number_format(floatval(prop['views'] ?? 0)); ?></td>
+                                        <td><?php echo number_format(floatval(prop['inquiries'] ?? 0)); ?></td>
                                         <td><?php echo $prop['conversion']; ?>%</td>
                                     </tr>
                                 <?php endforeach; ?>

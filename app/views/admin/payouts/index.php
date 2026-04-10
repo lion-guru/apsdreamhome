@@ -37,7 +37,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Pending Payouts</p>
-                                <h4 class="mb-0">₹<?php echo number_format($stats['pending'] ?? 0); ?></h4>
+                                <h4 class="mb-0">₹<?php echo number_format(floatval(stats['pending'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-warning bg-opacity-10 rounded p-2">
                                 <i class="fas fa-clock text-warning"></i>
@@ -52,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Processed Today</p>
-                                <h4 class="mb-0">₹<?php echo number_format($stats['processed_today'] ?? 0); ?></h4>
+                                <h4 class="mb-0">₹<?php echo number_format(floatval(stats['processed_today'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-success bg-opacity-10 rounded p-2">
                                 <i class="fas fa-check text-success"></i>
@@ -67,7 +67,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Total Paid (Month)</p>
-                                <h4 class="mb-0">₹<?php echo number_format($stats['month_total'] ?? 0); ?></h4>
+                                <h4 class="mb-0">₹<?php echo number_format(floatval(stats['month_total'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-primary bg-opacity-10 rounded p-2">
                                 <i class="fas fa-calendar text-primary"></i>
@@ -105,7 +105,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                     <tr>
                                         <td><?php echo htmlspecialchars($payout['payout_id'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($payout['user_name'] ?? '-'); ?></td>
-                                        <td>₹<?php echo number_format($payout['amount'] ?? 0); ?></td>
+                                        <td>₹<?php echo number_format(floatval(payout['amount'] ?? 0) ?? 0); ?></td>
                                         <td>
                                             <span class="badge bg-<?php echo ($payout['status'] ?? '') === 'completed' ? 'success' : (($payout['status'] ?? '') === 'pending' ? 'warning' : 'secondary'); ?>">
                                                 <?php echo ucfirst($payout['status'] ?? 'unknown'); ?>

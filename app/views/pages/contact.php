@@ -5,7 +5,6 @@
 <!-- Hero Section with Better Design -->
 <section class="py-5 bg-gradient-primary text-white position-relative overflow-hidden">
     <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);"></div>
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: url('<?php echo BASE_URL; ?>/assets/images/pattern.png') repeat; opacity: 0.1;"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">

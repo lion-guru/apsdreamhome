@@ -152,7 +152,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                 </div>
                 <div class="card-body">
                     <small class="text-muted">
-                        <i class="fas fa-user me-1"></i>Reviewed by: <?php echo htmlspecialchars($t['reviewed_by_name']); ?><br>
+                        <i class="fas fa-user me-1"></i>Reviewed by: <?php echo htmlspecialchars(t['reviewed_by_name'] ?? ''); ?><br>
                         <i class="fas fa-clock me-1"></i>Reviewed at: <?php echo date('M d, Y H:i', strtotime($t['reviewed_at'] ?? 'now')); ?>
                     </small>
                 </div>

@@ -482,37 +482,15 @@ class AIController extends BaseController
             echo json_encode(['success' => false, 'message' => 'Security Error: Unauthorized Code Execution!']);
             return;
         }
-        $code = $_POST['code'] ?? '';
-        $language = $_POST['language'] ?? 'php';
 
-        ob_start();
-
-        try {
-            if ($language === 'php') {
-                // Execute PHP code
-                eval('?>' . $code);
-            } else {
-                echo "Code execution for $language not yet implemented";
-            }
-
-            $output = ob_get_clean();
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'output' => $output,
-                'language' => $language
-            ]);
-        } catch (\Exception $e) {
-            $error = ob_get_clean();
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage(),
-                'error' => $error . $e->getMessage()
-            ]);
-        }
+        // SECURITY FIX: Disabled code execution due to critical security vulnerability
+        // Direct eval() with user input allows arbitrary code execution (RCE)
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false,
+            'message' => 'Code execution has been disabled for security reasons.',
+            'error' => 'This feature was disabled due to a critical security vulnerability (CVE-class RCE). Please use a sandboxed environment if code execution is needed.'
+        ]);
     }
 
     /**

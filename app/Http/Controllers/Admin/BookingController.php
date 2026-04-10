@@ -143,9 +143,9 @@ class BookingController extends AdminController
             $stmt->execute($params);
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Get filter options
-            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $associates = $this->db->query("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get filter options using models/services
+            $customers = \App\Models\User::getCustomers('active', ['id', 'name', 'email']);
+            $associates = \App\Models\User::getAssociates('active', ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Bookings - APS Dream Home',
@@ -255,10 +255,10 @@ class BookingController extends AdminController
                 return $this->redirect('admin/bookings');
             }
 
-            // Get form data
-            $properties = $this->db->query("SELECT id, title, price FROM properties ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
-            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $associates = $this->db->query("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get form data using models/services
+            $properties = \App\Models\Property::getForSelect(['id', 'title', 'price'], 'all');
+            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $associates = \App\Models\User::getAssociates('active', ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Edit Booking - APS Dream Home',
@@ -618,17 +618,14 @@ class BookingController extends AdminController
      */
     public function create()
     {
-        // Fetch properties (available)
-        // Using direct query for simple list or use model method if available
-        $properties = $this->db->query("SELECT id, title, price FROM properties WHERE status = 'available' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
+        // Fetch properties (available) using model
+        $properties = \App\Models\Property::getForSelect(['id', 'title', 'price'], 'active');
 
-        // Fetch customers (users with role='customer')
-        // Using direct query to be efficient
-        $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+        // Fetch customers using model
+        $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
 
-        // Fetch associates (users with role='associate' and status='active')
-        // For associate assignment in booking
-        $associates = $this->db->query("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+        // Fetch associates using model
+        $associates = \App\Models\User::getAssociates('active', ['id', 'name', 'email']);
 
         return $this->render('admin/bookings/create', [
             'page_title' => 'Add New Booking - APS Dream Home',

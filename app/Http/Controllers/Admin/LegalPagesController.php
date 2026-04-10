@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Database;
 use Exception;
 
@@ -12,7 +12,7 @@ use Exception;
  * This controller handles CRUD operations for Terms and Conditions
  * and Privacy Policy pages, allowing admin users to update content.
  */
-class LegalPagesController extends BaseController
+class LegalPagesController extends AdminController
 {
     protected $db;
 
@@ -27,7 +27,6 @@ class LegalPagesController extends BaseController
      */
     public function index()
     {
-        // Check if user is admin
         if (!isset($_SESSION['admin_id'])) {
             $this->redirect('/admin/login');
             return;

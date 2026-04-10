@@ -83,7 +83,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                         <td><?php echo htmlspecialchars($plan['booking_number'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($plan['customer_name'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($plan['property_title'] ?? '-'); ?></td>
-                                        <td>₹<?php echo number_format($plan['emi_amount'] ?? 0); ?>/month</td>
+                                        <td>₹<?php echo number_format(floatval(plan['emi_amount'] ?? 0) ?? 0); ?>/month</td>
                                         <td><?php echo $plan['tenure_months'] ?? 0; ?> months</td>
                                         <td>
                                             <span class="badge bg-<?php echo ($plan['status'] ?? '') === 'active' ? 'success' : (($plan['status'] ?? '') === 'completed' ? 'info' : 'danger'); ?>">

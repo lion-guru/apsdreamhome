@@ -1,4 +1,4 @@
-<?php include __DIR__ . "/../../../layouts/admin_header.php"; ?>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -71,7 +71,7 @@
                                     <select class="form-select" id="state_id" name="state_id">
                                         <option value="">Select State</option>
                                         <?php foreach ($states as $state): ?>
-                                            <option value="<?php echo $state['id']; ?>"><?php echo htmlspecialchars($state['name']); ?></option>
+                                            <option value="<?php echo $state['id']; ?>"><?php echo htmlspecialchars(state['name'] ?? ''); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -82,7 +82,7 @@
                                     <select class="form-select" id="district_id" name="district_id">
                                         <option value="">Select District</option>
                                         <?php foreach ($districts as $district): ?>
-                                            <option value="<?php echo $district['id']; ?>"><?php echo htmlspecialchars($district['name']); ?></option>
+                                            <option value="<?php echo $district['id']; ?>"><?php echo htmlspecialchars(district['name'] ?? ''); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -93,7 +93,7 @@
                                     <select class="form-select" id="colony_id" name="colony_id">
                                         <option value="">Select Colony</option>
                                         <?php foreach ($colonies as $colony): ?>
-                                            <option value="<?php echo $colony['id']; ?>"><?php echo htmlspecialchars($colony['name']); ?></option>
+                                            <option value="<?php echo $colony['id']; ?>"><?php echo htmlspecialchars(colony['name'] ?? ''); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -233,4 +233,3 @@
     </div>
 </div>
 
-<?php include __DIR__ . "/../../../layouts/admin_footer.php"; ?>

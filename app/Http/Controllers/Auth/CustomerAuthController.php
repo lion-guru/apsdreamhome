@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Customer Authentication Controller
  * Handles customer registration and login
@@ -21,7 +22,7 @@ class CustomerAuthController extends BaseController
     public function login()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         // Redirect if already logged in
         if (isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'customer') {
             header('Location: ' . BASE_URL . '/customer/dashboard');
@@ -65,10 +66,14 @@ class CustomerAuthController extends BaseController
                 $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
-                $_SESSION['user_type'] = 'customer';
+                $_SESSION['user_phone'] = $user['phone'] ?? '';
+                $_SESSION['user_type'] = $user['user_type'] ?? 'customer';
+                $_SESSION['user_role'] = $user['role'] ?? 'user';
                 $_SESSION['logged_in'] = true;
 
-                header('Location: ' . BASE_URL . '/customer/dashboard');
+                // Role-based redirect
+                $redirectUrl = $this->getRedirectUrl($user['user_type'] ?? 'customer', $user['role'] ?? 'user');
+                header('Location: ' . BASE_URL . $redirectUrl);
                 exit;
             } else {
                 // Also check if user exists but wrong password
@@ -169,10 +174,86 @@ class CustomerAuthController extends BaseController
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
+            $newUserId = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email])['id'];
+
+            // Create wallet entry for new user
+            $db->insert('wallet_points', [
+                'user_id' => $newUserId,
+                'points_balance' => 0.00,
+                'total_earned' => 0.00,
+                'total_used' => 0.00,
+                'total_transferred_to_emi' => 0.00,
+                'referral_earnings' => 0.00,
+                'commission_earnings' => 0.00,
+                'bonus_earnings' => 0.00,
+                'status' => 'active',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            // Handle referral rewards if referral code was used
+            if ($referrer_id) {
+                // Get referrer's wallet
+                $referrerWallet = $db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$referrer_id]);
+
+                if ($referrerWallet) {
+                    // Calculate reward points (100 points for customer referral)
+                    $rewardPoints = 100.00;
+
+                    // Update referrer's wallet
+                    $newBalance = $referrerWallet['points_balance'] + $rewardPoints;
+                    $newTotalEarned = $referrerWallet['total_earned'] + $rewardPoints;
+                    $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
+
+                    $db->query(
+                        "UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?",
+                        [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrer_id]
+                    );
+
+                    // Create transaction record
+                    $db->insert('wallet_transactions', [
+                        'user_id' => $referrer_id,
+                        'transaction_type' => 'credit',
+                        'transaction_category' => 'referral',
+                        'amount' => $rewardPoints,
+                        'balance_before' => $referrerWallet['points_balance'],
+                        'balance_after' => $newBalance,
+                        'description' => "Referral reward for customer: $name",
+                        'reference_id' => $newUserId,
+                        'reference_type' => 'user',
+                        'related_user_id' => $newUserId,
+                        'status' => 'completed',
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+
+                    // Create referral reward record
+                    $db->insert('referral_rewards', [
+                        'referrer_id' => $referrer_id,
+                        'referred_id' => $newUserId,
+                        'reward_amount' => $rewardPoints,
+                        'reward_type' => 'points',
+                        'reward_percentage' => 0.00,
+                        'referral_code' => $referral,
+                        'status' => 'credited',
+                        'credited_at' => date('Y-m-d H:i:s'),
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
+            }
+
             $_SESSION['success'] = "Registration successful! Your Customer ID: $customer_id. Please login.";
+
+            // Mark visitor as converted
+            try {
+                require_once __DIR__ . '/../../Services/VisitorTrackingService.php';
+                $visitorTracking = new \App\Services\VisitorTrackingService();
+                $visitorTracking->markAsConverted($newUserId);
+            } catch (Exception $e) {
+                error_log("Visitor conversion tracking failed: " . $e->getMessage());
+            }
+
             header('Location: ' . BASE_URL . '/login');
             exit;
-
         } catch (\Exception $e) {
             error_log("Registration error: " . $e->getMessage());
             $_SESSION['errors'] = ["Registration failed: " . $e->getMessage()];
@@ -187,5 +268,41 @@ class CustomerAuthController extends BaseController
         session_destroy();
         header('Location: ' . BASE_URL . '/login');
         exit;
+    }
+
+    /**
+     * Get redirect URL based on user type and role
+     */
+    private function getRedirectUrl($userType, $role)
+    {
+        // Executive Level
+        if (in_array($role, ['super_admin', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro'])) {
+            return '/admin/dashboard';
+        }
+
+        // Management Level
+        if (in_array($role, ['director', 'sales_director', 'marketing_director', 'construction_director'])) {
+            return '/admin/dashboard';
+        }
+
+        // Departmental Level
+        if (in_array($role, ['department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager'])) {
+            return '/admin/dashboard';
+        }
+
+        // User Type Based Redirect
+        switch ($userType) {
+            case 'admin':
+                return '/admin/dashboard';
+            case 'associate':
+                return '/associate/dashboard';
+            case 'agent':
+                return '/agent/dashboard';
+            case 'employee':
+                return '/employee/dashboard';
+            case 'customer':
+            default:
+                return '/customer/dashboard';
+        }
     }
 }

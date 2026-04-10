@@ -1,8 +1,8 @@
 // MASTER TEST RUNNER - APS Dream Home A-to-Z Test Suite
 // Runs all phases: DB health -> Seeds -> Header visuals -> Admin flows -> E2E user flows -> Report
-const { chromium } = require('playwright');
-const { execSync } = require('child_process');
-const fs = require('fs');
+import { chromium } from 'playwright';
+import { execSync } from 'child_process';
+import fs from 'fs';
 
 const BASE = 'http://localhost/apsdreamhome';
 const REPORT = 'testing/visual_tests/TEST_REPORT.txt';

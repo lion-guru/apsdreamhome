@@ -61,15 +61,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="row">
                     <div class="col-md-2">
                         <p class="text-muted mb-1">Total Amount</p>
-                        <h6>₹<?php echo number_format($emi_plan['total_amount'] ?? 0); ?></h6>
+                        <h6>₹<?php echo number_format(floatval(emi_plan['total_amount'] ?? 0) ?? 0); ?></h6>
                     </div>
                     <div class="col-md-2">
                         <p class="text-muted mb-1">Down Payment</p>
-                        <h6>₹<?php echo number_format($emi_plan['down_payment'] ?? 0); ?></h6>
+                        <h6>₹<?php echo number_format(floatval(emi_plan['down_payment'] ?? 0) ?? 0); ?></h6>
                     </div>
                     <div class="col-md-2">
                         <p class="text-muted mb-1">Loan Amount</p>
-                        <h6>₹<?php echo number_format($emi_plan['loan_amount'] ?? 0); ?></h6>
+                        <h6>₹<?php echo number_format(floatval(emi_plan['loan_amount'] ?? 0) ?? 0); ?></h6>
                     </div>
                     <div class="col-md-2">
                         <p class="text-muted mb-1">Interest Rate</p>
@@ -81,7 +81,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     </div>
                     <div class="col-md-2">
                         <p class="text-muted mb-1">Monthly EMI</p>
-                        <h6>₹<?php echo number_format($emi_plan['emi_amount'] ?? 0); ?></h6>
+                        <h6>₹<?php echo number_format(floatval(emi_plan['emi_amount'] ?? 0) ?? 0); ?></h6>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             <tr>
                                                 <td><?php echo $item['installment_number']; ?></td>
                                                 <td><?php echo isset($item['due_date']) ? date('M d, Y', strtotime($item['due_date'])) : '-'; ?></td>
-                                                <td>₹<?php echo number_format($item['due_amount'] ?? 0); ?></td>
+                                                <td>₹<?php echo number_format(floatval(item['due_amount'] ?? 0) ?? 0); ?></td>
                                                 <td>
                                                     <span class="badge bg-<?php echo ($item['status'] ?? '') === 'paid' ? 'success' : (($item['status'] ?? '') === 'pending' ? 'warning' : 'danger'); ?>">
                                                         <?php echo ucfirst($item['status'] ?? 'unknown'); ?>
@@ -154,7 +154,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                     <div class="list-group-item">
                                         <div class="d-flex justify-content-between">
                                             <span>Installment #<?php echo $payment['installment_number'] ?? '-'; ?></span>
-                                            <span class="fw-bold">₹<?php echo number_format($payment['amount'] ?? 0); ?></span>
+                                            <span class="fw-bold">₹<?php echo number_format(floatval(payment['amount'] ?? 0) ?? 0); ?></span>
                                         </div>
                                         <small class="text-muted">
                                             <?php echo isset($payment['payment_date']) ? date('M d, Y', strtotime($payment['payment_date'])) : '-'; ?> | 

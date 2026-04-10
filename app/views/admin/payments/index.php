@@ -76,7 +76,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                         <td><?php echo htmlspecialchars($payment['transaction_id'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($payment['booking_number'] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($payment['customer_name'] ?? '-'); ?></td>
-                                        <td>₹<?php echo number_format($payment['amount'] ?? 0); ?></td>
+                                        <td>₹<?php echo number_format(floatval(payment['amount'] ?? 0) ?? 0); ?></td>
                                         <td><?php echo ucfirst($payment['payment_method'] ?? '-'); ?></td>
                                         <td>
                                             <span class="badge bg-<?php echo ($payment['status'] ?? '') === 'completed' ? 'success' : (($payment['status'] ?? '') === 'pending' ? 'warning' : 'danger'); ?>">

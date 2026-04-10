@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../../../layouts/admin_header.php'; ?>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -118,4 +118,4 @@
     </div>
 </div>
 
-<?php include __DIR__ . '/../../../layouts/admin_footer.php'; ?>
+

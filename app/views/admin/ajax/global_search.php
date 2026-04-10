@@ -56,7 +56,7 @@ try {
     foreach ($propertyRows as $row) {
         $results[] = [
             'title' => h($row['title']),
-            'description' => h($row['location']) . ' - ₹' . number_format($row['price']) . ' - ' . h($mlSupport->translate(ucfirst($row['status']))),
+            'description' => h($row['location']) . ' - ₹' . number_format(floatval(row['price'] ?? 0)) . ' - ' . h($mlSupport->translate(ucfirst($row['status']))),
             'url' => BASE_URL . 'admin/properties.php?property_id=' . intval($row['id']),
             'type' => h($mlSupport->translate('Property'))
         ];
@@ -80,7 +80,7 @@ try {
     foreach ($bookingRows as $row) {
         $results[] = [
             'title' => h($row['customer_name']) . ' - ' . h($row['property_title']),
-            'description' => '₹' . number_format($row['total_amount']) . ' - ' . h($mlSupport->translate(ucfirst($row['status']))),
+            'description' => '₹' . number_format(floatval(row['total_amount'] ?? 0)) . ' - ' . h($mlSupport->translate(ucfirst($row['status']))),
             'url' => BASE_URL . 'admin/bookings.php?booking_id=' . intval($row['id']),
             'type' => h($mlSupport->translate('Booking'))
         ];

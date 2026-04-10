@@ -5,7 +5,6 @@
  */
 
 $page_title = 'Plot Development Cost Calculator - APS Dream Home';
-include __DIR__ . '/../../layouts/admin_header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -19,14 +18,14 @@ include __DIR__ . '/../../layouts/admin_header.php';
 
     <?php if (isset($_SESSION['success'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
-        <?= htmlspecialchars($_SESSION['success']) ?>
+        <?= htmlspecialchars(_SESSION['success'] ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['success']); endif; ?>
 
     <?php if (isset($_SESSION['error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show">
-        <?= htmlspecialchars($_SESSION['error']) ?>
+        <?= htmlspecialchars(_SESSION['error'] ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['error']); endif; ?>
@@ -64,9 +63,9 @@ include __DIR__ . '/../../layouts/admin_header.php';
                                 </td>
                                 <td><?= htmlspecialchars($colony['location'] ?? 'N/A') ?></td>
                                 <td><span class="badge bg-info"><?= intval($colony['total_plots']) ?></span></td>
-                                <td><?= number_format($colony['total_area_sqft'] ?? 0) ?></td>
+                                <td><?= number_format(floatval(colony['total_area_sqft'] ?? 0) ?? 0) ?></td>
                                 <td>
-                                    <strong class="text-success">₹<?= number_format($colony['total_cost'] ?? 0) ?></strong>
+                                    <strong class="text-success">₹<?= number_format(floatval(colony['total_cost'] ?? 0) ?? 0) ?></strong>
                                 </td>
                                 <td>
                                     <?php 
@@ -131,4 +130,4 @@ include __DIR__ . '/../../layouts/admin_header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

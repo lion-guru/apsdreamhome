@@ -64,7 +64,7 @@ Page Header -->
                                                 Conversion Rate
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= number_format($report['conversion_rate'] ?? 0, 1) ?>%
+                                                <?= number_format(floatval(report['conversion_rate'] ?? 0) ?? 0, 1) ?>%
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -84,7 +84,7 @@ Page Header -->
                                                 Average Budget
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                ₹<?= number_format($report['avg_budget'] ?? 0) ?>
+                                                ₹<?= number_format(floatval(report['avg_budget'] ?? 0) ?? 0) ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -164,7 +164,7 @@ Page Header -->
                                                 </tr>
                                                 <tr>
                                                     <td>Conversion Rate</td>
-                                                    <td><?= number_format($report['conversion_rate'] ?? 0, 1) ?>%</td>
+                                                    <td><?= number_format(floatval(report['conversion_rate'] ?? 0) ?? 0, 1) ?>%</td>
                                                     <td>
                                                         <span class="badge bg-warning">
                                                             <i class="fas fa-minus me-1"></i>
@@ -219,7 +219,7 @@ Page Header -->
                                                     <?php foreach ($report['source_performance'] as $source): ?>
                                                         <tr>
                                                             <td>
-                                                                <strong><?= htmlspecialchars($source['source_name']) ?></strong>
+                                                                <strong><?= htmlspecialchars(source['source_name'] ?? '') ?></strong>
                                                             </td>
                                                             <td><?= $source['total_leads'] ?></td>
                                                             <td><?= $source['converted_leads'] ?></td>
@@ -227,11 +227,11 @@ Page Header -->
                                                                 <div class="progress">
                                                                     <div class="progress-bar bg-success"
                                                                         style="width: <?= $source['conversion_rate'] ?>%">
-                                                                        <?= number_format($source['conversion_rate'], 1) ?>%
+                                                                        <?= number_format(floatval(source['conversion_rate'] ?? 0), 1) ?>%
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td>₹<?= number_format($source['avg_budget'] ?? 0) ?></td>
+                                                            <td>₹<?= number_format(floatval(source['avg_budget'] ?? 0) ?? 0) ?></td>
                                                         </tr>
                                                     <?php endforeach; ?>
                                                 <?php else: ?>

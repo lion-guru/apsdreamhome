@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../../../layouts/admin_header.php'; ?>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -174,4 +174,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include __DIR__ . '/../../../layouts/admin_footer.php'; ?>
+

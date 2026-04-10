@@ -1,23 +1,23 @@
 /**
- * navigation - APS Dream Home Component
- * 
- * @package APS Dream Home
- * @version 1.0.0
- * @author APS Dream Home Team
- * @copyright 2026 APS Dream Home
- * 
- * Description: Handles navigation functionality
- * 
- * Features:
- * - Secure input validation
- * - Comprehensive error handling
- * - Performance optimization
- * - Database integration
- * - Session management
- * - CSRF protection
- * 
- * @see https://apsdreamhome.com/docs
- */
+* navigation - APS Dream Home Component
+*
+* @package APS Dream Home
+* @version 1.0.0
+* @author APS Dream Home Team
+* @copyright 2026 APS Dream Home
+*
+* Description: Handles navigation functionality
+*
+* Features:
+* - Secure input validation
+* - Comprehensive error handling
+* - Performance optimization
+* - Database integration
+* - Session management
+* - CSRF protection
+*
+* @see https://apsdreamhome.com/docs
+*/
 <?php
 
 // Navigation Menu for APS Dream Homes
@@ -27,19 +27,20 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?></title>
     <meta name="description" content="<?php echo $page_description; ?>">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-color: #667eea;
@@ -52,52 +53,52 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             --dark-color: #2c3e50;
             --light-color: #ecf0f1;
         }
-        
+
         body {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         .hero-section {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             padding: 80px 0 60px;
             color: white;
             text-align: center;
         }
-        
+
         .hero-title {
             font-size: 3rem;
             font-weight: 800;
             margin-bottom: 20px;
         }
-        
+
         .hero-subtitle {
             font-size: 1.3rem;
             opacity: 0.9;
             margin-bottom: 30px;
         }
-        
+
         .navigation-section {
             padding: 60px 0;
         }
-        
+
         .nav-card {
             background: white;
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             height: 100%;
             position: relative;
             overflow: hidden;
         }
-        
+
         .nav-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
-        
+
         .nav-card::before {
             content: '';
             position: absolute;
@@ -107,42 +108,42 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             height: 5px;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
-        
+
         .nav-icon {
             font-size: 3rem;
             margin-bottom: 20px;
             display: inline-block;
         }
-        
+
         .nav-icon.main {
             color: var(--primary-color);
         }
-        
+
         .nav-icon.feature {
             color: var(--success-color);
         }
-        
+
         .nav-icon.marketing {
             color: var(--info-color);
         }
-        
+
         .nav-icon.admin {
             color: var(--warning-color);
         }
-        
+
         .nav-title {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--dark-color);
             margin-bottom: 15px;
         }
-        
+
         .nav-description {
             color: #666;
             line-height: 1.6;
             margin-bottom: 20px;
         }
-        
+
         .nav-link {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
@@ -153,13 +154,13 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             display: inline-block;
             transition: all 0.3s ease;
         }
-        
+
         .nav-link:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             color: white;
         }
-        
+
         .nav-status {
             display: inline-block;
             padding: 5px 15px;
@@ -168,12 +169,12 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             font-weight: 600;
             margin-bottom: 15px;
         }
-        
+
         .nav-status.complete {
             background: #d4edda;
             color: var(--success-color);
         }
-        
+
         .category-title {
             font-size: 2rem;
             font-weight: 800;
@@ -181,15 +182,15 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             margin-bottom: 30px;
             text-align: center;
         }
-        
+
         .quick-actions {
             background: white;
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             margin-bottom: 60px;
         }
-        
+
         .action-btn {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
@@ -202,39 +203,40 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             display: inline-block;
             transition: all 0.3s ease;
         }
-        
+
         .action-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             color: white;
         }
-        
+
         .action-btn.secondary {
             background: transparent;
             border: 2px solid var(--primary-color);
             color: var(--primary-color);
         }
-        
+
         .action-btn.secondary:hover {
             background: var(--primary-color);
             color: white;
         }
-        
+
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 2rem;
             }
-            
+
             .hero-subtitle {
                 font-size: 1.1rem;
             }
-            
+
             .nav-card {
                 padding: 20px;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Hero Section -->
     <section class="hero-section">
@@ -260,7 +262,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                     </a>
                 </div>
             </div>
-            
+
             <!-- Main Pages -->
             <h2 class="category-title" data-aos="fade-up">🏠 Main Pages</h2>
             <div class="row mb-5">
@@ -281,7 +283,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -299,7 +301,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -317,7 +319,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -335,7 +337,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -353,7 +355,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -372,7 +374,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                     </div>
                 </div>
             </div>
-            
+
             <!-- Feature Pages -->
             <h2 class="category-title" data-aos="fade-up">⭐ Feature Pages</h2>
             <div class="row mb-5">
@@ -393,7 +395,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -411,7 +413,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -429,7 +431,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -447,7 +449,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -465,7 +467,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -483,7 +485,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="700">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -502,7 +504,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                     </div>
                 </div>
             </div>
-            
+
             <!-- Marketing Pages -->
             <h2 class="category-title" data-aos="fade-up">📊 Marketing & Admin</h2>
             <div class="row mb-5">
@@ -523,7 +525,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -541,7 +543,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -559,7 +561,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -577,7 +579,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -595,7 +597,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
                     <div class="nav-card">
                         <div class="nav-status complete">
@@ -614,18 +616,18 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                     </div>
                 </div>
             </div>
-            
+
             <!-- User Section -->
             <div class="text-center mt-5" data-aos="fade-up">
                 <h2 style="margin-bottom: 30px;">👤 User Section</h2>
                 <div class="d-flex justify-content-center flex-wrap">
-                    <a href="login.php" class="action-btn">
+                    <a href="<?= BASE_URL ?>/login" class="action-btn">
                         <i class="fas fa-sign-in-alt me-2"></i>Login
                     </a>
-                    <a href="register.php" class="action-btn secondary">
+                    <a href="<?= BASE_URL ?>/register" class="action-btn secondary">
                         <i class="fas fa-user-plus me-2"></i>Register
                     </a>
-                    <a href="dashboard.php" class="action-btn secondary">
+                    <a href="<?= BASE_URL ?>/dashboard" class="action-btn secondary">
                         <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                     </a>
                 </div>
@@ -636,7 +638,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
+
     <script>
         // Initialize AOS
         AOS.init({
@@ -650,7 +652,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             link.addEventListener('click', function(e) {
                 const pageName = this.textContent.trim();
                 console.log(`Navigating to: ${pageName}`);
-                
+
                 // Add visual feedback
                 this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
@@ -664,7 +666,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             card.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateY(-15px) scale(1.02)';
             });
-            
+
             card.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0) scale(1)';
             });
@@ -680,6 +682,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
         });
     </script>
 </body>
+
 </html>
 
 //
