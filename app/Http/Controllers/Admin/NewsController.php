@@ -39,7 +39,7 @@ class NewsController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             // Build query
-            $sql = "SELECT n.*, COALESCE(n.author_name, 'Admin') as author_name
+            $sql = "SELECT n.*
                     FROM news n
                     WHERE 1=1";
             $params = [];
@@ -63,7 +63,7 @@ class NewsController extends AdminController
             // Count total
             $countSql = preg_replace('/SELECT .* FROM/', 'SELECT COUNT(*) as total FROM', $sql, 1);
             $countResult = $this->db->fetch($countSql, $params);
-            $total = $countResult['total'];
+            $total = $countResult['total'] ?? 0;
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";
@@ -88,8 +88,9 @@ class NewsController extends AdminController
 
             return $this->render('admin/news/index', $data);
         } catch (Exception $e) {
+            error_log("News Index error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             $this->loggingService->error("News Index error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load news');
+            $this->setFlash('error', 'Failed to load news: ' . $e->getMessage());
             return $this->redirect(BASE_URL . '/admin/dashboard');
         }
     }
