@@ -15,7 +15,6 @@ use Exception;
 class NewsController extends AdminController
 {
     private $loggingService;
-    protected $layout = null;
 
     public function __construct()
     {
@@ -63,18 +62,15 @@ class NewsController extends AdminController
 
             // Count total
             $countSql = preg_replace('/SELECT .* FROM/', 'SELECT COUNT(*) as total FROM', $sql, 1);
-            $countStmt = $this->db->prepare($countSql);
-            $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $countResult = $this->db->fetch($countSql, $params);
+            $total = $countResult['total'];
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";
             $params[] = $offset;
             $params[] = $perPage;
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            $news = $stmt->fetchAll();
+            $news = $this->db->fetchAll($sql, $params);
 
             $data = [
                 'page_title' => 'News Management - APS Dream Home',
