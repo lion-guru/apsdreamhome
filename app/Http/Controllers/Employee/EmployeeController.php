@@ -306,8 +306,19 @@ class EmployeeController extends BaseController
         $query = "SELECT id, name, email, phone, created_at FROM users WHERE id = ?";
         $employee = $this->db->fetchOne($query, [$employeeId]);
 
-        // Include profile view
-        require_once __DIR__ . '/../../../views/employees/profile.php';
+        // Define BASE_PATH for shared view
+        if (!defined('BASE_PATH')) {
+            define('BASE_PATH', dirname(__DIR__, 4));
+        }
+
+        // Set variables for shared view
+        $userRole = 'employee';
+        $profileUrl = BASE_URL . '/employee/profile';
+        $securityUrl = null; // Employees don't have security page yet
+        $canEdit = true;
+
+        // Use unified shared profile view
+        include __DIR__ . '/../../../views/shared/profile.php';
     }
 
     /**

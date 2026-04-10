@@ -140,15 +140,19 @@ class UserController extends BaseController
             }
         }
 
-        $data = [
-            'page_title' => 'My Profile - APS Dream Home',
-            'page_description' => 'Manage your account settings',
-            'user' => $user,
-            'error' => $error,
-            'success' => $success,
-        ];
+        // Define BASE_PATH for shared view
+        if (!defined('BASE_PATH')) {
+            define('BASE_PATH', dirname(__DIR__, 3));
+        }
 
-        $this->render('pages/user_profile', $data);
+        // Set variables for shared view
+        $userRole = $user['role'] ?? 'customer';
+        $profileUrl = BASE_URL . '/user/profile';
+        $securityUrl = null; // Front users don't have security page yet
+        $canEdit = true;
+
+        // Use unified shared profile view
+        include __DIR__ . '/../../../views/shared/profile.php';
     }
     
     /**
