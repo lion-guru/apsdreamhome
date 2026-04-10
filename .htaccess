@@ -38,9 +38,3 @@
     AddType image/png .png
     AddType image/svg+xml .svg
 </IfModule>
-
-# Allow access to assets directory
-<Directory "assets">
-    AllowOverride All
-    Require all granted
-</Directory>
