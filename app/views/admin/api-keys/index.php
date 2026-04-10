@@ -110,14 +110,14 @@ $extraHead .= '<style>
                         <?php foreach ($api_keys as $key): ?>
                             <tr class="<?= $key['is_active'] ? 'key-active' : 'key-inactive' ?>">
                                 <td>
-                                    <strong><?= htmlspecialchars($key['service_name']) ?></strong>
+                                    <strong><?= htmlspecialchars(key['service_name'] ?? '') ?></strong>
                                 </td>
                                 <td>
-                                    <code><?= htmlspecialchars($key['key_name']) ?></code>
+                                    <code><?= htmlspecialchars(key['key_name'] ?? '') ?></code>
                                 </td>
                                 <td>
                                     <span class="key-value">
-                                        <?= substr(htmlspecialchars($key['key_value']), 0, 20) . '...' ?>
+                                        <?= substr(htmlspecialchars(key['key_value'] ?? ''), 0, 20) . '...' ?>
                                     </span>
                                 </td>
                                 <td>

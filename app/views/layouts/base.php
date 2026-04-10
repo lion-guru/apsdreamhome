@@ -9,7 +9,7 @@
     <meta name="keywords" content="real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Varanasi, Uttar Pradesh, property, residential, commercial">
     <meta name="author" content="APS Dream Home">
     <meta name="robots" content="index, follow">
-    
+
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="<?php echo $page_title ?? 'APS Dream Home - Premium Real Estate'; ?>">
@@ -17,15 +17,15 @@
     <meta property="og:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
     <meta property="og:url" content="<?php echo BASE_URL . ($_SERVER['REQUEST_URI'] ?? '/'); ?>">
     <meta property="og:site_name" content="APS Dream Home">
-    
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?php echo $page_title ?? 'APS Dream Home'; ?>">
     <meta name="twitter:description" content="<?php echo $page_description ?? 'Premium Real Estate in Uttar Pradesh'; ?>">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="<?php echo BASE_URL . ($_SERVER['REQUEST_URI'] ?? '/'); ?>">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
 
@@ -329,21 +329,20 @@
         }
     </style>
     <script>
-      // Dynamically set header height for page offset
-      (function(){
-        function setHeaderHeight(){
-          var hdr = document.querySelector('header.premium-header');
-          var h = hdr ? hdr.offsetHeight : 80;
-          document.documentElement.style.setProperty('--header-height', h + 'px');
-        }
-        window.addEventListener('load', setHeaderHeight);
-        window.addEventListener('resize', setHeaderHeight);
-      })();
+        // Dynamically set header height for page offset
+        (function() {
+            function setHeaderHeight() {
+                var hdr = document.querySelector('header.premium-header');
+                var h = hdr ? hdr.offsetHeight : 80;
+                document.documentElement.style.setProperty('--header-height', h + 'px');
+            }
+            window.addEventListener('load', setHeaderHeight);
+            window.addEventListener('resize', setHeaderHeight);
+        })();
     </script>
 
     <!-- Custom CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/header-modern.css" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/images/apple-touch-icon.png">
@@ -433,7 +432,7 @@
                 </button>
             </div>
         </div>
-        
+
         <!-- Floating Button -->
         <button class="ai-float-btn" id="aiFloatBtn" onclick="toggleChat()">
             <i class="fas fa-comments"></i>
@@ -453,7 +452,7 @@
             left: 30px;
             z-index: 9999;
         }
-        
+
         .ai-float-btn {
             width: 65px;
             height: 65px;
@@ -467,12 +466,12 @@
             transition: all 0.3s ease;
             position: relative;
         }
-        
+
         .ai-float-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 8px 30px rgba(102, 126, 234, 0.7);
         }
-        
+
         .ai-pulse {
             position: absolute;
             width: 100%;
@@ -484,12 +483,19 @@
             top: 0;
             left: 0;
         }
-        
+
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.7; }
-            100% { transform: scale(1.5); opacity: 0; }
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
         }
-        
+
         .ai-chat-popup {
             position: absolute;
             bottom: 80px;
@@ -498,22 +504,29 @@
             height: 550px;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
             display: none;
             flex-direction: column;
             overflow: hidden;
             animation: slideUp 0.3s ease;
         }
-        
+
         .ai-chat-popup.active {
             display: flex;
         }
-        
+
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .ai-chat-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -522,7 +535,7 @@
             align-items: center;
             gap: 12px;
         }
-        
+
         .ai-avatar {
             position: relative;
             width: 45px;
@@ -534,13 +547,13 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .ai-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        
+
         .online-indicator {
             position: absolute;
             bottom: 2px;
@@ -551,22 +564,22 @@
             border-radius: 50%;
             border: 2px solid white;
         }
-        
+
         .ai-header-info {
             flex: 1;
         }
-        
+
         .ai-header-info h5 {
             margin: 0;
             font-size: 16px;
             font-weight: 600;
         }
-        
+
         .status-text {
             font-size: 12px;
             opacity: 0.9;
         }
-        
+
         .ai-close-btn {
             background: none;
             border: none;
@@ -576,68 +589,75 @@
             padding: 0;
             line-height: 1;
         }
-        
+
         .ai-chat-body {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
             background: #f8f9fa;
         }
-        
+
         .ai-message {
             margin-bottom: 15px;
             max-width: 85%;
             animation: fadeIn 0.3s ease;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .ai-message.bot {
             margin-right: auto;
         }
-        
+
         .ai-message.user {
             margin-left: auto;
             text-align: right;
         }
-        
+
         .ai-message-content {
             padding: 12px 16px;
             border-radius: 18px;
             line-height: 1.5;
             font-size: 14px;
         }
-        
+
         .ai-message.bot .ai-message-content {
             background: white;
             color: #333;
             border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .ai-message.user .ai-message-content {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-bottom-right-radius: 4px;
         }
-        
+
         .ai-time {
             font-size: 10px;
             color: #999;
             margin-top: 4px;
             display: block;
         }
-        
+
         .quick-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
             margin-top: 15px;
         }
-        
+
         .quick-btn {
             background: white;
             border: 1px solid #e0e0e0;
@@ -651,18 +671,18 @@
             gap: 6px;
             color: #333;
         }
-        
+
         .quick-btn:hover {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-color: transparent;
             transform: translateY(-2px);
         }
-        
+
         .quick-btn i {
             font-size: 14px;
         }
-        
+
         .ai-chat-footer {
             padding: 15px;
             background: white;
@@ -670,7 +690,7 @@
             display: flex;
             gap: 10px;
         }
-        
+
         .ai-chat-footer input {
             flex: 1;
             padding: 12px 16px;
@@ -679,11 +699,11 @@
             outline: none;
             font-size: 14px;
         }
-        
+
         .ai-chat-footer input:focus {
             border-color: #667eea;
         }
-        
+
         .ai-send-btn {
             width: 45px;
             height: 45px;
@@ -697,11 +717,11 @@
             justify-content: center;
             transition: all 0.2s ease;
         }
-        
+
         .ai-send-btn:hover {
             transform: scale(1.1);
         }
-        
+
         .typing-indicator {
             display: flex;
             gap: 4px;
@@ -710,9 +730,9 @@
             border-radius: 18px;
             width: fit-content;
             margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .typing-indicator span {
             width: 8px;
             height: 8px;
@@ -720,22 +740,34 @@
             border-radius: 50%;
             animation: typing 1.4s infinite;
         }
-        
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes typing {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
         }
-        
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
         .ai-suggestions {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             margin-top: 10px;
         }
-        
+
         .ai-suggestion {
             background: #f0f0f0;
             padding: 6px 12px;
@@ -744,12 +776,12 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .ai-suggestion:hover {
             background: #667eea;
             color: white;
         }
-        
+
         /* WhatsApp Button - Right Side */
         .whatsapp-float-btn {
             position: fixed;
@@ -769,25 +801,25 @@
             transition: all 0.3s ease;
             text-decoration: none;
         }
-        
+
         .whatsapp-float-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
         }
-        
+
         @media (max-width: 480px) {
             .ai-chat-popup {
                 width: calc(100vw - 20px);
                 left: -10px;
                 height: 70vh;
             }
-            
+
             .ai-float-btn {
                 width: 55px;
                 height: 55px;
                 font-size: 24px;
             }
-            
+
             .whatsapp-float-btn {
                 width: 50px;
                 height: 50px;
@@ -795,7 +827,7 @@
                 bottom: 25px;
                 right: 25px;
             }
-            
+
             .ai-chatbot-container {
                 left: 15px;
                 bottom: 25px;
@@ -805,7 +837,7 @@
 
     <script>
         let chatOpen = false;
-        
+
         function toggleChat() {
             const popup = document.getElementById('chatPopup');
             chatOpen = !chatOpen;
@@ -816,23 +848,26 @@
                 popup.classList.remove('active');
             }
         }
-        
+
         function addMessage(text, isUser = false) {
             const chatBody = document.getElementById('chatBody');
             const msgDiv = document.createElement('div');
             msgDiv.className = `ai-message ${isUser ? 'user' : 'bot'}`;
-            
-            const time = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'});
-            
+
+            const time = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
             msgDiv.innerHTML = `
                 <div class="ai-message-content">${text.replace(/\n/g, '<br>')}</div>
                 <span class="ai-time">${time}</span>
             `;
-            
+
             chatBody.appendChild(msgDiv);
             chatBody.scrollTop = chatBody.scrollHeight;
         }
-        
+
         function showTyping() {
             const chatBody = document.getElementById('chatBody');
             const typing = document.createElement('div');
@@ -842,40 +877,44 @@
             chatBody.appendChild(typing);
             chatBody.scrollTop = chatBody.scrollHeight;
         }
-        
+
         function hideTyping() {
             const typing = document.getElementById('typingIndicator');
             if (typing) typing.remove();
         }
-        
+
         function sendQuickMessage(message) {
             document.getElementById('chatInput').value = message;
             sendChatMessage();
         }
-        
+
         async function sendChatMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
             if (!message) return;
-            
+
             addMessage(message, true);
             input.value = '';
-            
+
             showTyping();
-            
+
             try {
-                const response = await fetch('<?php echo BASE_URL; ?>/api/ai/chatbot', {
+                const response = await fetch('<?php echo BASE_URL; ?>/api/gemini/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message
+                    })
                 });
-                
+
                 const data = await response.json();
                 hideTyping();
-                
+
                 if (data.success) {
                     addMessage(data.reply);
-                    
+
                     // Add quick reply suggestions
                     if (data.quick_replies && data.quick_replies.length > 0) {
                         const chatBody = document.getElementById('chatBody');
@@ -894,11 +933,11 @@
                 addMessage("Connection issue! Please try again or call <strong>+91 92771 21112</strong> for instant help.");
             }
         }
-        
+
         function handleChatKeypress(e) {
             if (e.key === 'Enter') sendChatMessage();
         }
-        
+
         // Auto-greet after 10 seconds
         setTimeout(() => {
             if (!chatOpen) {

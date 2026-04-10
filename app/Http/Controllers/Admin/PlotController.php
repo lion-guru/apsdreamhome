@@ -86,6 +86,22 @@ class PlotController extends AdminController
             $stmt->execute($params);
             $plots = $stmt->fetchAll();
 
+            // Get stats
+            $statsSql = "SELECT 
+                            COUNT(CASE WHEN status = 'available' THEN 1 END) as available,
+                            COUNT(CASE WHEN status = 'booked' THEN 1 END) as booked,
+                            COUNT(CASE WHEN status = 'sold' THEN 1 END) as sold
+                        FROM plots";
+            $statsStmt = $this->db->prepare($statsSql);
+            $statsStmt->execute();
+            $stats = $statsStmt->fetch();
+
+            // Get colonies
+            $coloniesSql = "SELECT DISTINCT location FROM plots WHERE location IS NOT NULL ORDER BY location";
+            $coloniesStmt = $this->db->prepare($coloniesSql);
+            $coloniesStmt->execute();
+            $colonies = $coloniesStmt->fetchAll();
+
             $data = [
                 'page_title' => 'Plot Management - APS Dream Home',
                 'active_page' => 'plots',
@@ -98,7 +114,9 @@ class PlotController extends AdminController
                     'search' => $search,
                     'status' => $status,
                     'type' => $type
-                ]
+                ],
+                'stats' => $stats,
+                'colonies' => $colonies
             ];
 
             return $this->render('admin/plots/index', $data);

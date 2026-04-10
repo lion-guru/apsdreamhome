@@ -72,7 +72,7 @@
                                             <td><?php echo h($payout['beneficiary_user_id']); ?></td>
                                             <td><?php echo h($payout['associate_name']); ?></td>
                                             <td><?php echo h($payout['transaction_reference'] ?? $mlSupport->translate('N/A')); ?></td>
-                                            <td><?php echo h(number_format($payout['amount'], 2)); ?></td>
+                                            <td><?php echo h(number_format(floatval(payout['amount'] ?? 0), 2)); ?></td>
                                             <td><?php echo h(date('d M Y', strtotime($payout['updated_at']))); ?></td>
                                             <td>
                                                 <span class="badge bg-success-light text-success"><?php echo h($mlSupport->translate('Approved')); ?></span>

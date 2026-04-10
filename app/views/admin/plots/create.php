@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../../../layouts/admin_header.php'; ?>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <?php if (isset($_SESSION['error'])): ?>
                         <div class="alert alert-danger">
-                            <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+                            <?php echo htmlspecialchars(_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
                         </div>
                     <?php endif; ?>
                     
@@ -101,4 +101,4 @@ function calculateTotalPrice() {
 }
 </script>
 
-<?php include __DIR__ . '/../../../layouts/admin_footer.php'; ?>
+

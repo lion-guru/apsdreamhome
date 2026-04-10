@@ -13,8 +13,8 @@
             <div class="card border-start border-primary border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Total Projects</h6>
-                    <h3><?php echo number_format($construction_stats['total_projects'] ?? 0); ?></h3>
-                    <p class="text-success mb-0"><i class="fas fa-check-circle me-1"></i><?php echo number_format($construction_stats['completed_projects'] ?? 0); ?> Completed</p>
+                    <h3><?php echo number_format(floatval(construction_stats['total_projects'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-success mb-0"><i class="fas fa-check-circle me-1"></i><?php echo number_format(floatval(construction_stats['completed_projects'] ?? 0) ?? 0); ?> Completed</p>
                 </div>
             </div>
         </div>
@@ -22,7 +22,7 @@
             <div class="card border-start border-warning border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Ongoing Projects</h6>
-                    <h3><?php echo number_format($construction_stats['ongoing_projects'] ?? 0); ?></h3>
+                    <h3><?php echo number_format(floatval(construction_stats['ongoing_projects'] ?? 0) ?? 0); ?></h3>
                     <p class="text-muted mb-0">In Progress</p>
                 </div>
             </div>
@@ -31,8 +31,8 @@
             <div class="card border-start border-info border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Material Cost</h6>
-                    <h3>₹<?php echo number_format($material_stats['total_material_cost'] ?? 0); ?></h3>
-                    <p class="text-muted mb-0"><?php echo number_format($material_stats['total_materials'] ?? 0); ?> Items</p>
+                    <h3>₹<?php echo number_format(floatval(material_stats['total_material_cost'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-muted mb-0"><?php echo number_format(floatval(material_stats['total_materials'] ?? 0) ?? 0); ?> Items</p>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
             <div class="card border-start border-success border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Workforce</h6>
-                    <h3><?php echo number_format($workforce_stats['active_workers'] ?? 0); ?></h3>
+                    <h3><?php echo number_format(floatval(workforce_stats['active_workers'] ?? 0) ?? 0); ?></h3>
                     <p class="text-muted mb-0">Active Workers</p>
                 </div>
             </div>
@@ -82,25 +82,25 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-primary"><?php echo number_format($material_stats['total_materials'] ?? 0); ?></h4>
+                                <h4 class="text-primary"><?php echo number_format(floatval(material_stats['total_materials'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Total Materials</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-danger"><?php echo number_format($material_stats['low_stock_materials'] ?? 0); ?></h4>
+                                <h4 class="text-danger"><?php echo number_format(floatval(material_stats['low_stock_materials'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Low Stock Items</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-info"><?php echo number_format($workforce_stats['masons'] ?? 0); ?></h4>
+                                <h4 class="text-info"><?php echo number_format(floatval(workforce_stats['masons'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Masons</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-success"><?php echo number_format($workforce_stats['carpenters'] ?? 0); ?></h4>
+                                <h4 class="text-success"><?php echo number_format(floatval(workforce_stats['carpenters'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Carpenters</p>
                             </div>
                         </div>
@@ -123,10 +123,10 @@
                             <?php foreach ($activities as $activity): ?>
                                 <div class="list-group-item">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1"><?php echo htmlspecialchars($activity['activity_type']); ?></h6>
+                                        <h6 class="mb-1"><?php echo htmlspecialchars(activity['activity_type'] ?? ''); ?></h6>
                                         <small class="text-muted"><?php echo date('M d, Y H:i', strtotime($activity['created_at'])); ?></small>
                                     </div>
-                                    <p class="mb-1"><?php echo htmlspecialchars($activity['description']); ?></p>
+                                    <p class="mb-1"><?php echo htmlspecialchars(activity['description'] ?? ''); ?></p>
                                 </div>
                             <?php endforeach; ?>
                         </div>

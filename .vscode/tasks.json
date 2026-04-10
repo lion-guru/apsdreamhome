@@ -3,11 +3,33 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "PHP: Serve application",
+			"label": "PHP: Serve application (Dev)",
 			"command": "php",
 			"args": [
 				"-S",
-				"127.0.0.1:8001",
+				"localhost:8080",
+				"-t",
+				"public"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"isBackground": true,
+			"presentation": {
+				"echo": true,
+				"focus": false,
+				"panel": "dedicated",
+				"reveal": "always"
+			},
+			"problemMatcher": []
+		},
+		{
+			"type": "shell",
+			"label": "PHP: Serve application (Production)",
+			"command": "php",
+			"args": [
+				"-S",
+				"localhost:80",
 				"-t",
 				"${workspaceFolder}"
 			],
@@ -20,6 +42,254 @@
 				"focus": false,
 				"panel": "dedicated",
 				"reveal": "always"
+			},
+			"problemMatcher": []
+		},
+		{
+			"type": "shell",
+			"label": "Playwright: Run Tests",
+			"command": "npx",
+			"args": [
+				"playwright",
+				"test"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"type": "shell",
+			"label": "Playwright: Run Tests UI",
+			"command": "npx",
+			"args": [
+				"playwright",
+				"test",
+				"--ui"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "ESLint: Fix Code",
+			"command": "npx",
+			"args": [
+				"eslint",
+				".",
+				"--ext",
+				".js",
+				"--fix"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": ["$eslint-compact"]
+		},
+		{
+			"type": "shell",
+			"label": "Prettier: Format Code",
+			"command": "npx",
+			"args": [
+				"prettier",
+				"--write",
+				"."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Workflow: Database Setup",
+			"command": "node",
+			"args": [
+				"scripts/sequential-workflow-manager.js",
+				"database-setup"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Workflow: Full System Test",
+			"command": "node",
+			"args": [
+				"scripts/sequential-workflow-manager.js",
+				"full-system-test"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Workflow: Code Quality",
+			"command": "node",
+			"args": [
+				"scripts/sequential-workflow-manager.js",
+				"code-quality"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "MCP: Test Tools",
+			"command": "node",
+			"args": [
+				"scripts/test-mcp-tools.js"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Database: Test Connection",
+			"command": "php",
+			"args": [
+				"test_mysql_connection.php"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Project: Setup",
+			"command": "node",
+			"args": [
+				"scripts/setup-project.js"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Project: Build All",
+			"dependsOrder": "parallel",
+			"dependsOn": [
+				"ESLint: Fix Code",
+				"Prettier: Format Code",
+				"Playwright: Run Tests"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"type": "shell",
+			"label": "XAMPP: Start Apache",
+			"command": "C:\\xampp\\apache\\bin\\httpd.exe",
+			"args": [],
+			"options": {
+				"cwd": "C:\\xampp"
+			},
+			"isBackground": true,
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
+			"type": "shell",
+			"label": "XAMPP: Start MySQL",
+			"command": "C:\\xampp\\mysql\\bin\\mysqld.exe",
+			"args": [
+				"--defaults-file=C:\\xampp\\mysql\\bin\\my.ini",
+				"--standalone"
+			],
+			"options": {
+				"cwd": "C:\\xampp"
+			},
+			"isBackground": true,
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "dedicated"
 			},
 			"problemMatcher": []
 		}

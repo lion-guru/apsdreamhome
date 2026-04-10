@@ -5,7 +5,6 @@
  */
 
 $page_title = 'Cost Report - APS Dream Home';
-include __DIR__ . '/../../layouts/admin_header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -43,7 +42,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
             <div class="row">
                 <div class="col-md-3 text-center border-end">
                     <h6 class="text-muted">Total Investment</h6>
-                    <h2 class="text-primary">₹<?= number_format($report['total_investment'] ?? 0) ?></h2>
+                    <h2 class="text-primary">₹<?= number_format(floatval(report['total_investment'] ?? 0) ?? 0) ?></h2>
                 </div>
                 <div class="col-md-3 text-center border-end">
                     <h6 class="text-muted">Total Plots</h6>
@@ -51,11 +50,11 @@ include __DIR__ . '/../../layouts/admin_header.php';
                 </div>
                 <div class="col-md-3 text-center border-end">
                     <h6 class="text-muted">Total Area</h6>
-                    <h2><?= number_format($report['total_area_sqft'] ?? 0) ?> sqft</h2>
+                    <h2><?= number_format(floatval(report['total_area_sqft'] ?? 0) ?? 0) ?> sqft</h2>
                 </div>
                 <div class="col-md-3 text-center">
                     <h6 class="text-muted">Avg Cost/sqft</h6>
-                    <h2 class="text-success">₹<?= number_format($report['avg_cost_per_sqft'] ?? 0, 2) ?></h2>
+                    <h2 class="text-success">₹<?= number_format(floatval(report['avg_cost_per_sqft'] ?? 0) ?? 0, 2) ?></h2>
                 </div>
             </div>
         </div>
@@ -81,7 +80,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                             <?php foreach ($report['cost_breakdown'] as $item): ?>
                             <tr>
                                 <td><?= ucfirst($item['category']) ?></td>
-                                <td class="text-end">₹<?= number_format($item['amount']) ?></td>
+                                <td class="text-end">₹<?= number_format(floatval(item['amount'] ?? 0)) ?></td>
                                 <td class="text-end"><?= round($item['percentage'], 1) ?>%</td>
                             </tr>
                             <?php endforeach; ?>
@@ -89,7 +88,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                         <tfoot class="table-secondary">
                             <tr>
                                 <th>Total</th>
-                                <th class="text-end">₹<?= number_format($report['total_investment']) ?></th>
+                                <th class="text-end">₹<?= number_format(floatval(report['total_investment'] ?? 0)) ?></th>
                                 <th class="text-end">100%</th>
                             </tr>
                         </tfoot>
@@ -107,17 +106,17 @@ include __DIR__ . '/../../layouts/admin_header.php';
                     <div class="row text-center">
                         <div class="col-6 border-end">
                             <h6 class="text-muted">Min Price/sqft</h6>
-                            <h3 class="text-success">₹<?= number_format($report['recommended_price_min'] ?? 0, 2) ?></h3>
+                            <h3 class="text-success">₹<?= number_format(floatval(report['recommended_price_min'] ?? 0) ?? 0, 2) ?></h3>
                         </div>
                         <div class="col-6">
                             <h6 class="text-muted">Max Price/sqft</h6>
-                            <h3 class="text-primary">₹<?= number_format($report['recommended_price_max'] ?? 0, 2) ?></h3>
+                            <h3 class="text-primary">₹<?= number_format(floatval(report['recommended_price_max'] ?? 0) ?? 0, 2) ?></h3>
                         </div>
                     </div>
                     <hr>
                     <div class="text-center">
                         <h6 class="text-muted">Suggested Selling Price</h6>
-                        <h2 class="text-success">₹<?= number_format($report['recommended_price_avg'] ?? 0, 2) ?><small class="text-muted">/sqft</small></h2>
+                        <h2 class="text-success">₹<?= number_format(floatval(report['recommended_price_avg'] ?? 0) ?? 0, 2) ?><small class="text-muted">/sqft</small></h2>
                     </div>
                 </div>
             </div>
@@ -150,14 +149,14 @@ include __DIR__ . '/../../layouts/admin_header.php';
                         <tbody>
                             <?php foreach ($report['plot_analyses'] as $plot): ?>
                             <tr>
-                                <td><?= htmlspecialchars($plot['plot_number']) ?></td>
-                                <td class="text-end"><?= number_format($plot['area_sqft']) ?></td>
-                                <td class="text-end">₹<?= number_format($plot['land_cost']) ?></td>
-                                <td class="text-end">₹<?= number_format($plot['development_cost']) ?></td>
-                                <td class="text-end fw-bold">₹<?= number_format($plot['total_cost']) ?></td>
-                                <td class="text-end">₹<?= number_format($plot['cost_per_sqft'], 2) ?></td>
-                                <td class="text-end text-success">₹<?= number_format($plot['min_price']) ?></td>
-                                <td class="text-end text-primary fw-bold">₹<?= number_format($plot['selling_price']) ?></td>
+                                <td><?= htmlspecialchars(plot['plot_number'] ?? '') ?></td>
+                                <td class="text-end"><?= number_format(floatval(plot['area_sqft'] ?? 0)) ?></td>
+                                <td class="text-end">₹<?= number_format(floatval(plot['land_cost'] ?? 0)) ?></td>
+                                <td class="text-end">₹<?= number_format(floatval(plot['development_cost'] ?? 0)) ?></td>
+                                <td class="text-end fw-bold">₹<?= number_format(floatval(plot['total_cost'] ?? 0)) ?></td>
+                                <td class="text-end">₹<?= number_format(floatval(plot['cost_per_sqft'] ?? 0), 2) ?></td>
+                                <td class="text-end text-success">₹<?= number_format(floatval(plot['min_price'] ?? 0)) ?></td>
+                                <td class="text-end text-primary fw-bold">₹<?= number_format(floatval(plot['selling_price'] ?? 0)) ?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -175,4 +174,4 @@ include __DIR__ . '/../../layouts/admin_header.php';
 }
 </style>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

@@ -39,7 +39,7 @@ $error = $error ?? null;
                         <option value="">All Jobs</option>
                         <?php foreach ($jobs as $job): ?>
                             <option value="<?php echo $job['id']; ?>" <?php echo $selected_job == $job['id'] ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($job['title']); ?>
+                                <?php echo htmlspecialchars(job['title'] ?? ''); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -96,12 +96,12 @@ $error = $error ?? null;
                                         <small class="text-muted"><?php echo htmlspecialchars($app['city'] ?? 'N/A'); ?></small>
                                     </td>
                                     <td>
-                                        <span class="badge bg-info"><?php echo htmlspecialchars($app['job_title']); ?></span>
+                                        <span class="badge bg-info"><?php echo htmlspecialchars(app['job_title'] ?? ''); ?></span>
                                     </td>
                                     <td>
                                         <small>
-                                            <i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($app['email']); ?><br>
-                                            <i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($app['phone']); ?>
+                                            <i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars(app['email'] ?? ''); ?><br>
+                                            <i class="fas fa-phone me-1"></i><?php echo htmlspecialchars(app['phone'] ?? ''); ?>
                                         </small>
                                     </td>
                                     <td><?php echo htmlspecialchars($app['experience'] ?? 'N/A'); ?></td>

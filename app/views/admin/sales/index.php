@@ -34,7 +34,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Today's Sales</p>
-                                <h4 class="mb-0">₹<?php echo number_format($sales_data['today_sales'] ?? 0); ?></h4>
+                                <h4 class="mb-0">₹<?php echo number_format(floatval(sales_data['today_sales'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-success bg-opacity-10 rounded p-2">
                                 <i class="fas fa-rupee-sign text-success"></i>
@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">This Month</p>
-                                <h4 class="mb-0">₹<?php echo number_format($sales_data['month_sales'] ?? 0); ?></h4>
+                                <h4 class="mb-0">₹<?php echo number_format(floatval(sales_data['month_sales'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-primary bg-opacity-10 rounded p-2">
                                 <i class="fas fa-calendar text-primary"></i>
@@ -64,7 +64,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Total Bookings</p>
-                                <h4 class="mb-0"><?php echo number_format($sales_data['total_bookings'] ?? 0); ?></h4>
+                                <h4 class="mb-0"><?php echo number_format(floatval(sales_data['total_bookings'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-info bg-opacity-10 rounded p-2">
                                 <i class="fas fa-file-contract text-info"></i>
@@ -79,7 +79,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Avg Deal Size</p>
-                                <h4 class="mb-0">₹<?php echo number_format($sales_data['avg_deal'] ?? 0); ?></h4>
+                                <h4 class="mb-0">₹<?php echo number_format(floatval(sales_data['avg_deal'] ?? 0) ?? 0); ?></h4>
                             </div>
                             <div class="bg-warning bg-opacity-10 rounded p-2">
                                 <i class="fas fa-chart-line text-warning"></i>
@@ -112,9 +112,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                                 <?php echo $index + 1; ?>
                                             <?php endif; ?>
                                         </td>
-                                        <td><?php echo htmlspecialchars($performer['name']); ?></td>
+                                        <td><?php echo htmlspecialchars(performer['name'] ?? ''); ?></td>
                                         <td><?php echo $performer['bookings']; ?></td>
-                                        <td>₹<?php echo number_format($performer['revenue']); ?></td>
+                                        <td>₹<?php echo number_format(floatval(performer['revenue'] ?? 0)); ?></td>
                                         <td><?php echo $performer['conversion']; ?>%</td>
                                     </tr>
                                 <?php endforeach; ?>

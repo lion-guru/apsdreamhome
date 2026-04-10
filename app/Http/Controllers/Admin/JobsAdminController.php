@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Core\Controller;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Database\Database;
 use App\Services\CoreFunctionsServiceCustom;
 
-class JobsAdminController extends Controller
+class JobsAdminController extends AdminController
 {
     protected $db;
     
@@ -71,7 +71,7 @@ class JobsAdminController extends Controller
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return $this->jsonError('Invalid request method', 405);
+            return $this->jsonFail('Invalid request method', 405);
         }
         
         try {
@@ -104,14 +104,14 @@ class JobsAdminController extends Controller
             
             $jobId = $this->db->lastInsertId();
             
-            return $this->jsonResponse([
+            return $this->jsonRespond([
                 'success' => true, 
                 'message' => 'Job posted successfully',
                 'job_id' => $jobId
             ]);
             
         } catch (\Exception $e) {
-            return $this->jsonError('Failed to create job: ' . $e->getMessage(), 500);
+            return $this->jsonFail('Failed to create job: ' . $e->getMessage(), 500);
         }
     }
     
@@ -149,7 +149,7 @@ class JobsAdminController extends Controller
     public function update($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return $this->jsonError('Invalid request method', 405);
+            return $this->jsonFail('Invalid request method', 405);
         }
         
         try {
@@ -167,9 +167,9 @@ class JobsAdminController extends Controller
                 $_POST['status'], $_POST['closing_date'] ?: null, $id
             ]);
             
-            return $this->jsonResponse(['success' => true, 'message' => 'Job updated successfully']);
+            return $this->jsonRespond(['success' => true, 'message' => 'Job updated successfully']);
         } catch (\Exception $e) {
-            return $this->jsonError('Failed to update job: ' . $e->getMessage(), 500);
+            return $this->jsonFail('Failed to update job: ' . $e->getMessage(), 500);
         }
     }
     
@@ -183,9 +183,9 @@ class JobsAdminController extends Controller
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$id]);
             
-            return $this->jsonResponse(['success' => true, 'message' => 'Job deleted successfully']);
+            return $this->jsonRespond(['success' => true, 'message' => 'Job deleted successfully']);
         } catch (\Exception $e) {
-            return $this->jsonError('Failed to delete job: ' . $e->getMessage(), 500);
+            return $this->jsonFail('Failed to delete job: ' . $e->getMessage(), 500);
         }
     }
     
@@ -272,7 +272,7 @@ class JobsAdminController extends Controller
     public function updateApplicationStatus($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return $this->jsonError('Invalid request method', 405);
+            return $this->jsonFail('Invalid request method', 405);
         }
         
         try {
@@ -290,12 +290,12 @@ class JobsAdminController extends Controller
                 $id
             ]);
             
-            return $this->jsonResponse([
+            return $this->jsonRespond([
                 'success' => true, 
                 'message' => 'Application status updated to: ' . ucfirst($status)
             ]);
         } catch (\Exception $e) {
-            return $this->jsonError('Failed to update status: ' . $e->getMessage(), 500);
+            return $this->jsonFail('Failed to update status: ' . $e->getMessage(), 500);
         }
     }
     
@@ -319,7 +319,7 @@ class JobsAdminController extends Controller
     /**
      * JSON response helper
      */
-    private function jsonResponse($data)
+    private function jsonRespond($data)
     {
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -329,7 +329,7 @@ class JobsAdminController extends Controller
     /**
      * JSON error helper
      */
-    private function jsonError($message, $code = 400)
+    private function jsonFail($message, $code = 400)
     {
         http_response_code($code);
         header('Content-Type: application/json');

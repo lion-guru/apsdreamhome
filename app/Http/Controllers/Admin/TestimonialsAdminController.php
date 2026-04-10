@@ -10,7 +10,7 @@ use App\Core\Controller;
 use App\Core\Database\Database;
 use App\Services\CoreFunctionsServiceCustom;
 
-class TestimonialsAdminController extends Controller
+class TestimonialsAdminController extends AdminController
 {
     protected $db;
     
@@ -57,7 +57,7 @@ class TestimonialsAdminController extends Controller
             $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
             // Get stats
-            $stats = $this->getStats();
+            $stats = $this->getTestimonialStats();
             
             $this->view('admin/testimonials/index', [
                 'page_title' => 'Testimonials Management',
@@ -111,7 +111,7 @@ class TestimonialsAdminController extends Controller
     public function updateStatus($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return $this->jsonError('Invalid request', 405);
+            return $this->jsonFail('Invalid request', 405);
         }
         
         try {
@@ -131,12 +131,12 @@ class TestimonialsAdminController extends Controller
                 $id
             ]);
             
-            return $this->jsonResponse([
+            return $this->jsonRespond([
                 'success' => true,
                 'message' => 'Testimonial ' . $status . ' successfully'
             ]);
         } catch (\Exception $e) {
-            return $this->jsonError('Failed to update: ' . $e->getMessage(), 500);
+            return $this->jsonFail('Failed to update: ' . $e->getMessage(), 500);
         }
     }
     
@@ -150,16 +150,16 @@ class TestimonialsAdminController extends Controller
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$id]);
             
-            return $this->jsonResponse(['success' => true, 'message' => 'Deleted']);
+            return $this->jsonRespond(['success' => true, 'message' => 'Deleted']);
         } catch (\Exception $e) {
-            return $this->jsonError('Failed to delete', 500);
+            return $this->jsonFail('Failed to delete', 500);
         }
     }
     
     /**
      * Get statistics
      */
-    private function getStats()
+    private function getTestimonialStats()
     {
         $sql = "SELECT 
                     COUNT(*) as total,
@@ -173,14 +173,14 @@ class TestimonialsAdminController extends Controller
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
     
-    private function jsonResponse($data)
+    private function jsonRespond($data)
     {
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;
     }
     
-    private function jsonError($message, $code = 400)
+    private function jsonFail($message, $code = 400)
     {
         http_response_code($code);
         header('Content-Type: application/json');

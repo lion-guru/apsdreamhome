@@ -1,10 +1,10 @@
-<?php include __DIR__ . "/../../../layouts/admin_header.php"; ?>
+
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-building"></i> Edit Project: <?php echo htmlspecialchars($project['name']); ?></h2>
+                <h2><i class="fas fa-building"></i> Edit Project: <?php echo htmlspecialchars(project['name'] ?? ''); ?></h2>
                 <div>
                     <a href="/admin/projects" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Projects
@@ -20,7 +20,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Project Name *</label>
-                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($project['name']); ?>" required>
+                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars(project['name'] ?? ''); ?>" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -38,7 +38,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"><?php echo htmlspecialchars($project['description']); ?></textarea>
+                            <textarea class="form-control" id="description" name="description" rows="3"><?php echo htmlspecialchars(project['description'] ?? ''); ?></textarea>
                         </div>
 
                         <h5 class="mb-3 mt-4">Developer Information</h5>
@@ -46,19 +46,19 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="developer_name" class="form-label">Developer Name</label>
-                                    <input type="text" class="form-control" id="developer_name" name="developer_name" value="<?php echo htmlspecialchars($project['developer_name']); ?>">
+                                    <input type="text" class="form-control" id="developer_name" name="developer_name" value="<?php echo htmlspecialchars(project['developer_name'] ?? ''); ?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="developer_contact" class="form-label">Developer Contact</label>
-                                    <input type="text" class="form-control" id="developer_contact" name="developer_contact" value="<?php echo htmlspecialchars($project['developer_contact']); ?>">
+                                    <input type="text" class="form-control" id="developer_contact" name="developer_contact" value="<?php echo htmlspecialchars(project['developer_contact'] ?? ''); ?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="developer_phone" class="form-label">Developer Phone</label>
-                                    <input type="text" class="form-control" id="developer_phone" name="developer_phone" value="<?php echo htmlspecialchars($project['developer_phone']); ?>">
+                                    <input type="text" class="form-control" id="developer_phone" name="developer_phone" value="<?php echo htmlspecialchars(project['developer_phone'] ?? ''); ?>">
                                 </div>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                                     <select class="form-select" id="state_id" name="state_id">
                                         <option value="">Select State</option>
                                         <?php foreach ($states as $state): ?>
-                                            <option value="<?php echo $state['id']; ?>" <?php echo $project['state_id'] == $state['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($state['name']); ?></option>
+                                            <option value="<?php echo $state['id']; ?>" <?php echo $project['state_id'] == $state['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars(state['name'] ?? ''); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -82,7 +82,7 @@
                                     <select class="form-select" id="district_id" name="district_id">
                                         <option value="">Select District</option>
                                         <?php foreach ($districts as $district): ?>
-                                            <option value="<?php echo $district['id']; ?>" <?php echo $project['district_id'] == $district['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($district['name']); ?></option>
+                                            <option value="<?php echo $district['id']; ?>" <?php echo $project['district_id'] == $district['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars(district['name'] ?? ''); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -93,7 +93,7 @@
                                     <select class="form-select" id="colony_id" name="colony_id">
                                         <option value="">Select Colony</option>
                                         <?php foreach ($colonies as $colony): ?>
-                                            <option value="<?php echo $colony['id']; ?>" <?php echo $project['colony_id'] == $colony['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($colony['name']); ?></option>
+                                            <option value="<?php echo $colony['id']; ?>" <?php echo $project['colony_id'] == $colony['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars(colony['name'] ?? ''); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -101,7 +101,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="2"><?php echo htmlspecialchars($project['address']); ?></textarea>
+                            <textarea class="form-control" id="address" name="address" rows="2"><?php echo htmlspecialchars(project['address'] ?? ''); ?></textarea>
                         </div>
 
                         <h5 class="mb-3 mt-4">Project Details</h5>
@@ -197,11 +197,11 @@
                         <h5 class="mb-3 mt-4">Marketing</h5>
                         <div class="mb-3">
                             <label for="marketing_description" class="form-label">Marketing Description</label>
-                            <textarea class="form-control" id="marketing_description" name="marketing_description" rows="3"><?php echo htmlspecialchars($project['marketing_description']); ?></textarea>
+                            <textarea class="form-control" id="marketing_description" name="marketing_description" rows="3"><?php echo htmlspecialchars(project['marketing_description'] ?? ''); ?></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="tags" class="form-label">Tags</label>
-                            <input type="text" class="form-control" id="tags" name="tags" value="<?php echo htmlspecialchars($project['tags']); ?>" placeholder="Comma separated tags">
+                            <input type="text" class="form-control" id="tags" name="tags" value="<?php echo htmlspecialchars(project['tags'] ?? ''); ?>" placeholder="Comma separated tags">
                         </div>
                         <div class="row">
                             <div class="col-md-6">
@@ -233,4 +233,3 @@
     </div>
 </div>
 
-<?php include __DIR__ . "/../../../layouts/admin_footer.php"; ?>

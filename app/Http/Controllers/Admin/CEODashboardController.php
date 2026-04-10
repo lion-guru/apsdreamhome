@@ -7,15 +7,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 
-class CEODashboardController extends BaseController
+class CEODashboardController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-        $this->requireAdmin();
     }
 
     /**

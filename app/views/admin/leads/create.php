@@ -36,7 +36,7 @@
                                 <option value="">Select Property</option>
                                 <?php if (!empty($properties)): ?>
                                 <?php foreach ($properties as $property): ?>
-                                <option value="<?php echo $property['id']; ?>"><?php echo htmlspecialchars($property['title']); ?></option>
+                                <option value="<?php echo $property['id']; ?>"><?php echo htmlspecialchars($property['title'] ?? ''); ?></option>
                                 <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>

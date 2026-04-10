@@ -25,7 +25,7 @@ class DashboardController extends BaseController
             }
 
             $userType = $_SESSION['user_type'] ?? 'customer';
-            
+
             // Redirect based on user type
             switch ($userType) {
                 case 'customer':
@@ -56,7 +56,6 @@ class DashboardController extends BaseController
                 'recent_inquiries' => $recentInquiries,
                 'recommended_properties' => $recommendedProperties
             ], 'layouts/base');
-
         } catch (Exception $e) {
             $this->setFlash('error', 'Failed to load dashboard: ' . $e->getMessage());
             $this->redirect('/');
@@ -92,7 +91,7 @@ class DashboardController extends BaseController
 
             // Get recent activities (Inquiries + Favorites)
             $activities = [];
-            
+
             // Fetch inquiries
             $inquiries = $this->db->fetchAll("
                 SELECT 'inquiry' as type, p.title as property, i.created_at as date
@@ -114,16 +113,17 @@ class DashboardController extends BaseController
             ", [$userId]);
 
             $recent_activities = array_merge($inquiries, $favorites);
-            usort($recent_activities, function($a, $b) {
+            usort($recent_activities, function ($a, $b) {
                 return strtotime($b['date'] ?? 'now') - strtotime($a['date'] ?? 'now');
             });
             $recent_activities = array_slice($recent_activities, 0, 5);
 
-            // Get recommended properties (simple logic for now)
+            // Get recommended properties - select only needed columns for performance
             $recommended_properties = $this->db->fetchAll("
-                SELECT * FROM properties 
-                WHERE status = 'available' 
-                ORDER BY created_at DESC 
+                SELECT id, title, property_type, location, price, status, created_at
+                FROM properties
+                WHERE status = 'available'
+                ORDER BY created_at DESC
                 LIMIT 4
             ");
 
@@ -141,7 +141,6 @@ class DashboardController extends BaseController
             ];
 
             $this->render('dashboard/customer', $data);
-
         } catch (Exception $e) {
             error_log("Error loading customer dashboard: " . $e->getMessage());
             $this->render('dashboard/customer', [
@@ -157,7 +156,7 @@ class DashboardController extends BaseController
     public function profile()
     {
         $userId = $_SESSION['user_id'];
-        
+
         $user = [
             'name' => $_SESSION['user_name'] ?? 'User',
             'email' => $_SESSION['user_email'] ?? 'user@example.com',
@@ -221,7 +220,6 @@ class DashboardController extends BaseController
             }
 
             $this->redirect('/dashboard/profile');
-
         } catch (Exception $e) {
             $_SESSION['errors'] = ["An error occurred: " . $e->getMessage()];
             $this->redirect('/dashboard/profile');
@@ -288,7 +286,6 @@ class DashboardController extends BaseController
             // Add to favorites (simplified for demo)
             echo json_encode(['success' => true, 'message' => 'Property added to favorites']);
             exit;
-
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             exit;
@@ -317,7 +314,6 @@ class DashboardController extends BaseController
             // Remove from favorites (simplified for demo)
             echo json_encode(['success' => true, 'message' => 'Property removed from favorites']);
             exit;
-
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             exit;
@@ -356,7 +352,6 @@ class DashboardController extends BaseController
             // Submit inquiry (simplified for demo)
             echo json_encode(['success' => true, 'message' => 'Inquiry submitted successfully!']);
             exit;
-
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             exit;
@@ -370,13 +365,13 @@ class DashboardController extends BaseController
     {
         try {
             $userId = $_SESSION['user_id'];
-            
+
             // Get performance and commission data
             $perfCalculator = new \App\Services\PerformanceRankCalculator();
             $commCalculator = new \App\Services\DifferentialCommissionCalculator();
-            
+
             $perfData = $perfCalculator->calculateRank($userId);
-            
+
             // Get recent activities (sales and commissions)
             $stmt = $this->db->prepare("
                 SELECT 'commission' as type, amount, created_at as date, type as subtype 
@@ -416,7 +411,6 @@ class DashboardController extends BaseController
             ];
 
             $this->render('dashboard/associate', $data);
-
         } catch (Exception $e) {
             error_log("Error loading associate dashboard: " . $e->getMessage());
             echo "Error loading associate dashboard. Please check logs.";

@@ -14,7 +14,7 @@ use Exception;
 
 class AgentDashboardController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {
@@ -28,22 +28,22 @@ class AgentDashboardController extends BaseController
     public function index()
     {
         $this->requireLogin();
-        
+
         $userId = $_SESSION['user_id'] ?? 0;
 
         try {
             // Get agent statistics
             $agentStats = $this->getAgentStatistics($userId);
-            
+
             // Get recent leads
             $recentLeads = $this->getRecentLeads($userId);
-            
+
             // Get properties assigned to agent
             $assignedProperties = $this->getAssignedProperties($userId);
-            
+
             // Get commission summary
             $commissionSummary = $this->getCommissionSummary($userId);
-            
+
             $this->render('agent/dashboard', [
                 'page_title' => 'Agent Dashboard - APS Dream Home',
                 'page_description' => 'Manage your real estate business',
@@ -52,7 +52,6 @@ class AgentDashboardController extends BaseController
                 'assigned_properties' => $assignedProperties,
                 'commission_summary' => $commissionSummary
             ]);
-            
         } catch (Exception $e) {
             error_log("Agent Dashboard Error: " . $e->getMessage());
             $this->render('agent/dashboard', [
@@ -110,7 +109,6 @@ class AgentDashboardController extends BaseController
                 'total_commission' => number_format($totalCommission['total'] ?? 0),
                 'conversion_rate' => $conversionRate . '%'
             ];
-
         } catch (Exception $e) {
             error_log("Agent Statistics Error: " . $e->getMessage());
             return [
@@ -147,7 +145,6 @@ class AgentDashboardController extends BaseController
             );
 
             return $leads;
-
         } catch (Exception $e) {
             error_log("Recent Leads Error: " . $e->getMessage());
             return [];
@@ -176,7 +173,6 @@ class AgentDashboardController extends BaseController
             );
 
             return $properties;
-
         } catch (Exception $e) {
             error_log("Assigned Properties Error: " . $e->getMessage());
             return [];
@@ -222,7 +218,6 @@ class AgentDashboardController extends BaseController
                 'property_commission' => number_format($propertyCommission),
                 'referral_commission' => number_format($referralCommission)
             ];
-
         } catch (Exception $e) {
             error_log("Commission Summary Error: " . $e->getMessage());
             return [
@@ -275,7 +270,6 @@ class AgentDashboardController extends BaseController
                 'message' => 'Lead added successfully',
                 'lead' => $leadData
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -307,7 +301,6 @@ class AgentDashboardController extends BaseController
                 'message' => 'Lead status updated successfully',
                 'status' => $status
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -322,23 +315,23 @@ class AgentDashboardController extends BaseController
     private function getRequestData(): array
     {
         $data = [];
-        
+
         // Get JSON data
         $input = file_get_contents('php://input');
         if (!empty($input)) {
             $data = json_decode($input, true) ?: [];
         }
-        
+
         // Merge with POST data
         if (!empty($_POST)) {
             $data = array_merge($data, $_POST);
         }
-        
+
         // Merge with GET data
         if (!empty($_GET)) {
             $data = array_merge($data, $_GET);
         }
-        
+
         return $data;
     }
 }

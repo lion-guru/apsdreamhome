@@ -4,8 +4,6 @@
  */
 
 $page_title = 'Deal Pipeline - APS Dream Home';
-include __DIR__ . '/../../layouts/admin_header.php';
-
 $stageColors = [
     'lead' => 'secondary',
     'qualified' => 'info',
@@ -107,12 +105,12 @@ $stageIcons = [
                     <?php foreach ($stageDeals as $deal): ?>
                     <div class="card kanban-card mb-2" data-deal-id="<?= $deal['id'] ?>" draggable="true">
                         <div class="card-body p-2">
-                            <h6 class="card-title mb-1"><?= htmlspecialchars($deal['lead_name']) ?></h6>
+                            <h6 class="card-title mb-1"><?= htmlspecialchars(deal['lead_name'] ?? '') ?></h6>
                             <p class="card-text small text-muted mb-1">
                                 <i class="fas fa-home me-1"></i><?= htmlspecialchars($deal['property_title'] ?? 'No property') ?>
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="badge bg-primary">₹<?= number_format($deal['deal_value'], 0) ?>L</span>
+                                <span class="badge bg-primary">₹<?= number_format(floatval(deal['deal_value'] ?? 0), 0) ?>L</span>
                                 <small class="text-muted"><?= date('M d', strtotime($deal['expected_close_date'] ?? 'now')) ?></small>
                             </div>
                             <div class="mt-1">
@@ -213,4 +211,4 @@ function updateDealStage(dealId, stage) {
 }
 </script>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Property Management System
  * Comprehensive management for both company and resell properties
  */
 
-require_once 'includes/config.php';
-require_once 'includes/associate_permissions.php';
-require_once 'includes/hybrid_commission_system.php';
+// FIXED: Removed missing includes - files don't exist
+// require_once 'includes/config.php';
+// require_once 'includes/associate_permissions.php';
+// require_once 'includes/hybrid_commission_system.php';
 
-// Initialize database connection
-$config = AppConfig::getInstance();
-$conn = $config->getDatabaseConnection();
-
-// Check if connection is successful
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
 }
 
 session_start();
@@ -26,8 +27,9 @@ if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in']
 $associate_id = $_SESSION['associate_id'];
 $associate_name = $_SESSION['associate_name'];
 
-// Initialize hybrid commission system
-$hybrid_system = new HybridRealEstateCommission($conn);
+// Initialize hybrid commission system - commented out due to missing file
+// $hybrid_system = new HybridRealEstateCommission($conn);
+$hybrid_system = null;
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -65,7 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-function addProperty($data) {
+function addProperty($data)
+{
     global $conn, $hybrid_system;
 
     try {
@@ -75,7 +78,8 @@ function addProperty($data) {
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("sssssddddds",
+        $stmt->bind_param(
+            "sssssddddds",
             $data['property_code'],
             $data['property_name'],
             $data['property_type'],
@@ -101,13 +105,13 @@ function addProperty($data) {
         }
 
         return ['success' => false, 'message' => 'Error adding property'];
-
     } catch (Exception $e) {
         return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
 }
 
-function updateProperty($data) {
+function updateProperty($data)
+{
     global $conn;
 
     try {
@@ -118,7 +122,8 @@ function updateProperty($data) {
                  WHERE id = ?";
 
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("sssddddsdi",
+        $stmt->bind_param(
+            "sssddddsdi",
             $data['property_name'],
             $data['property_category'],
             $data['location'],
@@ -136,13 +141,13 @@ function updateProperty($data) {
         }
 
         return ['success' => false, 'message' => 'Error updating property'];
-
     } catch (Exception $e) {
         return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
 }
 
-function recordPropertySale($data) {
+function recordPropertySale($data)
+{
     global $conn, $hybrid_system;
 
     try {
@@ -162,7 +167,6 @@ function recordPropertySale($data) {
         }
 
         return ['success' => false, 'message' => 'Error calculating commission'];
-
     } catch (Exception $e) {
         return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
@@ -173,10 +177,12 @@ $company_properties = getPropertiesByType('company');
 $resell_properties = getPropertiesByType('resell');
 $all_properties = array_merge($company_properties, $resell_properties);
 
-function getPropertiesByType($type) {
+function getPropertiesByType($type)
+{
     global $conn;
 
-    $query = "SELECT * FROM real_estate_properties WHERE property_type = ? ORDER BY created_at DESC";
+    // PERFORMANCE: Select only needed columns instead of SELECT *
+    $query = "SELECT id, title, property_type, location, price, status, created_at FROM real_estate_properties WHERE property_type = ? ORDER BY created_at DESC";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $type);
     $stmt->execute();
@@ -197,6 +203,7 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -227,7 +234,7 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
         .dashboard-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             margin: 20px 0;
             overflow: hidden;
         }
@@ -237,14 +244,14 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
             border-radius: 15px;
             padding: 1.5rem;
             margin: 1rem 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             border-left: 4px solid var(--info-color);
             transition: transform 0.3s ease;
         }
 
         .property-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
         .property-card.company {
@@ -336,6 +343,7 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -351,18 +359,20 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="associate_dashboard.php">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a></li>
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a></li>
                         <li><a class="dropdown-item" href="hybrid_commission_dashboard.php">
-                            <i class="fas fa-chart-line me-2"></i>Commission Dashboard
-                        </a></li>
+                                <i class="fas fa-chart-line me-2"></i>Commission Dashboard
+                            </a></li>
                         <li><a class="dropdown-item" href="development_cost_calculator.php">
-                            <i class="fas fa-calculator me-2"></i>Cost Calculator
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
+                                <i class="fas fa-calculator me-2"></i>Cost Calculator
+                            </a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="associate_logout.php">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a></li>
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
                     </ul>
                 </div>
             </div>
@@ -392,18 +402,20 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
 
                         <!-- Alerts -->
                         <?php if (isset($_SESSION['success_message'])): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success_message']; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php unset($_SESSION['success_message']); endif; ?>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success_message']; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php unset($_SESSION['success_message']);
+                        endif; ?>
 
                         <?php if (isset($_SESSION['error_message'])): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error_message']; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php unset($_SESSION['error_message']); endif; ?>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error_message']; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php unset($_SESSION['error_message']);
+                        endif; ?>
 
                         <!-- Property Statistics -->
                         <div class="row mb-4">
@@ -426,7 +438,9 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
                                     <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
                                     <h4>
                                         <?php
-                                        $available = array_filter($all_properties, function($p) { return $p['status'] === 'available'; });
+                                        $available = array_filter($all_properties, function ($p) {
+                                            return $p['status'] === 'available';
+                                        });
                                         echo count($available);
                                         ?>
                                     </h4>
@@ -438,7 +452,9 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
                                     <i class="fas fa-sold fa-2x text-info mb-2"></i>
                                     <h4>
                                         <?php
-                                        $sold = array_filter($all_properties, function($p) { return $p['status'] === 'sold'; });
+                                        $sold = array_filter($all_properties, function ($p) {
+                                            return $p['status'] === 'sold';
+                                        });
                                         echo count($sold);
                                         ?>
                                     </h4>
@@ -470,37 +486,37 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
                                     </thead>
                                     <tbody>
                                         <?php foreach ($all_properties as $property): ?>
-                                        <tr>
-                                            <td>
-                                                <strong><?php echo htmlspecialchars($property['property_code']); ?></strong>
-                                            </td>
-                                            <td><?php echo htmlspecialchars($property['property_name']); ?></td>
-                                            <td>
-                                                <span class="badge <?php echo $property['property_type'] === 'company' ? 'badge-company' : 'badge-resell'; ?>">
-                                                    <?php echo ucfirst($property['property_type']); ?>
-                                                </span>
-                                            </td>
-                                            <td><?php echo ucfirst($property['property_category']); ?></td>
-                                            <td><?php echo htmlspecialchars($property['location']); ?></td>
-                                            <td><?php echo number_format($property['area_sqft'], 2); ?> sqft</td>
-                                            <td>₹<?php echo number_format($property['rate_per_sqft']); ?></td>
-                                            <td>₹<?php echo number_format($property['total_value']); ?></td>
-                                            <td>
-                                                <span class="status-badge status-<?php echo $property['status']; ?>">
-                                                    <?php echo ucfirst($property['status']); ?>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editProperty(<?php echo htmlspecialchars(json_encode($property)); ?>)">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <?php if ($property['status'] === 'available'): ?>
-                                                <button class="btn btn-sm btn-outline-success" onclick="recordSale(<?php echo htmlspecialchars(json_encode($property)); ?>)">
-                                                    <i class="fas fa-shopping-cart"></i>
-                                                </button>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td>
+                                                    <strong><?php echo htmlspecialchars($property['property_code']); ?></strong>
+                                                </td>
+                                                <td><?php echo htmlspecialchars($property['property_name']); ?></td>
+                                                <td>
+                                                    <span class="badge <?php echo $property['property_type'] === 'company' ? 'badge-company' : 'badge-resell'; ?>">
+                                                        <?php echo ucfirst($property['property_type']); ?>
+                                                    </span>
+                                                </td>
+                                                <td><?php echo ucfirst($property['property_category']); ?></td>
+                                                <td><?php echo htmlspecialchars($property['location']); ?></td>
+                                                <td><?php echo number_format($property['area_sqft'], 2); ?> sqft</td>
+                                                <td>₹<?php echo number_format($property['rate_per_sqft']); ?></td>
+                                                <td>₹<?php echo number_format($property['total_value']); ?></td>
+                                                <td>
+                                                    <span class="status-badge status-<?php echo $property['status']; ?>">
+                                                        <?php echo ucfirst($property['status']); ?>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editProperty(<?php echo htmlspecialchars(json_encode($property)); ?>)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <?php if ($property['status'] === 'available'): ?>
+                                                        <button class="btn btn-sm btn-outline-success" onclick="recordSale(<?php echo htmlspecialchars(json_encode($property)); ?>)">
+                                                            <i class="fas fa-shopping-cart"></i>
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
@@ -750,7 +766,7 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
                             <select class="form-select" name="associate_id" required>
                                 <option value="">Select Associate</option>
                                 <?php foreach ($associates as $associate): ?>
-                                <option value="<?php echo $associate['id']; ?>"><?php echo htmlspecialchars($associate['name']); ?></option>
+                                    <option value="<?php echo $associate['id']; ?>"><?php echo htmlspecialchars($associate['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -760,7 +776,7 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
                             <select class="form-select" name="customer_id" required>
                                 <option value="">Select Customer</option>
                                 <?php foreach ($customers as $customer): ?>
-                                <option value="<?php echo $customer['id']; ?>"><?php echo htmlspecialchars($customer['name']); ?></option>
+                                    <option value="<?php echo $customer['id']; ?>"><?php echo htmlspecialchars($customer['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -824,6 +840,7 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
         });
     </script>
 </body>
+
 </html>
 
 //

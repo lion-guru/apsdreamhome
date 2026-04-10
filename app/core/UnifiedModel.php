@@ -15,14 +15,14 @@ abstract class UnifiedModel extends Model
      *
      * @var array
      */
-    protected array $fillable = [];
+    protected $fillable = [];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected array $casts = [];
+    protected $casts = [];
 
     /**
      * Create a new model instance.

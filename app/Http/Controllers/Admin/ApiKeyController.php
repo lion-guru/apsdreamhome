@@ -1,22 +1,15 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
-class ApiKeyController extends BaseController
+class ApiKeyController extends AdminController
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->layout = 'layouts/admin';
-    }
-
     private function checkAdmin()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
+            $this->redirect('/admin/login');
         }
     }
 

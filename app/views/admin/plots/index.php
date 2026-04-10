@@ -143,22 +143,22 @@
                                 <tr>
                                     <td><input type="checkbox" class="plot-checkbox" value="<?php echo $plot['id']; ?>"></td>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($plot['plot_number']); ?></strong>
+                                        <strong><?php echo htmlspecialchars(plot['plot_number'] ?? ''); ?></strong>
                                         <?php if ($plot['is_featured']): ?>
                                             <i class="fas fa-star text-warning"></i>
                                         <?php endif; ?>
                                     </td>
                                     <td>
                                         <small>
-                                            <?php echo htmlspecialchars($plot['colony_name']); ?><br>
-                                            <?php echo htmlspecialchars($plot['district_name']); ?>
+                                            <?php echo htmlspecialchars(plot['colony_name'] ?? ''); ?><br>
+                                            <?php echo htmlspecialchars(plot['district_name'] ?? ''); ?>
                                         </small>
                                     </td>
                                     <td>
-                                        <span class="badge bg-info"><?php echo htmlspecialchars($plot['plot_type']); ?></span>
+                                        <span class="badge bg-info"><?php echo htmlspecialchars(plot['plot_type'] ?? ''); ?></span>
                                     </td>
                                     <td>
-                                        <?php echo number_format($plot['area_sqft']); ?>
+                                        <?php echo number_format(floatval(plot['area_sqft'] ?? 0)); ?>
                                         <?php if ($plot['corner_plot']): ?>
                                             <i class="fas fa-crown text-warning" title="Corner Plot"></i>
                                         <?php endif; ?>
@@ -167,7 +167,7 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <strong>₹<?php echo number_format($plot['total_price']); ?></strong>
+                                        <strong>₹<?php echo number_format(floatval(plot['total_price'] ?? 0)); ?></strong>
                                     </td>
                                     <td>
                                         <span class="badge bg-<?php 
@@ -187,7 +187,7 @@
                                     <td>
                                         <?php if ($plot['customer_name']): ?>
                                             <small>
-                                                <?php echo htmlspecialchars($plot['customer_name']); ?><br>
+                                                <?php echo htmlspecialchars(plot['customer_name'] ?? ''); ?><br>
                                                 <?php echo htmlspecialchars($plot['customer_phone'] ?? ''); ?>
                                             </small>
                                         <?php else: ?>

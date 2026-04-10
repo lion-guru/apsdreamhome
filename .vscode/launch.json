@@ -1,28 +1,48 @@
 {
-    "configurations": [
-        {
-            "name": "Containers: Node.js Launch",
-            "type": "docker",
-            "request": "launch",
-            "preLaunchTask": "docker-run: debug",
-            "platform": "node",
-            "node": {
-                "package": "${workspaceFolder}/public/mobile/package.json",
-                "localRoot": "${workspaceFolder}/public/mobile"
-            }
-        },
-        {
-            "name": "Launch Local Laravel",
-            "type": "pwa-chrome",
-            "request": "launch",
-            "url": "http://127.0.0.1:8000",
-            "webRoot": "${workspaceFolder}/public",
-            "preLaunchTask": "PHP: Serve application",
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "Laravel development server started:.*",
-                "uriFormat": "http://127.0.0.1:8000"
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for XDebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "C:/xampp/htdocs/apsdreamhome": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Launch currently open script",
+      "type": "php",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${fileDirname}",
+      "port": 9003
+    },
+    {
+      "name": "Debug Playwright Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/playwright",
+      "args": [
+        "test",
+        "--debug"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "PWDEBUG": "1"
+      }
+    },
+    {
+      "name": "Run Playwright Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/playwright",
+      "args": [
+        "test"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
 }

@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../../layouts/admin_header.php'; ?>
+
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -112,12 +112,12 @@
                                 <tr>
                                     <td><?php echo $p['id']; ?></td>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($p['name']); ?></strong>
+                                        <strong><?php echo htmlspecialchars($p['name'] ?? ''); ?></strong>
                                         <br><small class="text-muted"><?php echo $p['area_sqft']; ?> sq ft</small>
                                     </td>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($p['name']); ?></strong>
-                                        <br><small><?php echo htmlspecialchars($p['phone']); ?></small>
+                                        <strong><?php echo htmlspecialchars($p['name'] ?? ''); ?></strong>
+                                        <br><small><?php echo htmlspecialchars($p['phone'] ?? ''); ?></small>
                                     </td>
                                     <td>
                                         <?php echo htmlspecialchars($p['city_name'] ?? ''); ?>,
@@ -125,7 +125,7 @@
                                         <br><small class="text-muted"><?php echo htmlspecialchars($p['state_name'] ?? ''); ?></small>
                                     </td>
                                     <td>
-                                        <strong class="text-success">₹<?php echo number_format($p['price']); ?></strong>
+                                        <strong class="text-success">₹<?php echo number_format(floatval($p['price'] ?? 0)); ?></strong>
                                         <br><small class="text-muted"><?php echo ucfirst($p['price_type']); ?></small>
                                     </td>
                                     <td>
@@ -196,4 +196,4 @@
     </div>
 </div>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

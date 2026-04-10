@@ -55,7 +55,7 @@
                                     </td>
                                     <td class="text-end pe-4 fw-bold <?= $transaction['type'] === 'Income' ? 'text-success' : 'text-danger' ?>">
                                         <?= $transaction['type'] === 'Income' ? '+' : '-' ?>
-                                        <?= h($currency_symbol ?? '₹') ?><?= number_format($transaction['amount'], 2) ?>
+                                        <?= h($currency_symbol ?? '₹') ?><?= number_format(floatval(transaction['amount'] ?? 0), 2) ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

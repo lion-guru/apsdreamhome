@@ -1,21 +1,9 @@
 <?php
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Check admin authentication
-if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
-    header('Location: ' . BASE_URL . '/admin/login');
-    exit;
-}
+include APP_PATH . '/views/admin/layouts/header.php';
 
 // Set page variables
-$$page_title = 'AI Properties Management - APS Dream Home';
+$page_title = 'AI Properties Management - APS Dream Home';
 $active_page = 'properties';
-
-// Content for base layout
-ob_start();
 ?>
 
 <!-- AI Properties Header -->
@@ -623,8 +611,5 @@ ob_start();
 </script>
 
 <?php
-$content = ob_get_clean();
-
-// Include enterprise dashboard layout
-require_once __DIR__ . '/enterprise_dashboard.php';
+include APP_PATH . '/views/admin/layouts/footer.php';
 ?>

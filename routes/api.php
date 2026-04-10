@@ -47,6 +47,16 @@ $router->post('/api/notification', 'Api\NotificationController@create');
 $router->post('/api/ai/chat', 'AIAssistantController@chat');
 $router->post('/api/v2/mobile/ai/parse-lead', 'AIAssistantController@parseLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
+// Gemini AI API Routes
+$router->post('/api/gemini/chat', 'Api\GeminiApiController@chat');
+$router->post('/api/gemini/generate', 'Api\GeminiApiController@generateContent');
+$router->post('/api/gemini/recommendations', 'Api\GeminiApiController@propertyRecommendations');
+$router->post('/api/gemini/support', 'Api\GeminiApiController@customerSupport');
+$router->post('/api/gemini/market-analysis', 'Api\GeminiApiController@marketAnalysis');
+$router->post('/api/gemini/social-media', 'Api\GeminiApiController@socialMediaContent');
+$router->get('/api/gemini/test', 'Api\GeminiApiController@testConnection');
+$router->get('/api/gemini/status', 'Api\GeminiApiController@getStatus');
+
 // Dependency Injection Container Routes
 require_once __DIR__ . '/container.php';
 

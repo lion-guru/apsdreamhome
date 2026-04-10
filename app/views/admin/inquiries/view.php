@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="text-muted small">Name</label>
-                        <div class="fw-semibold"><?php echo htmlspecialchars($inquiry['name']); ?></div>
+                        <div class="fw-semibold"><?php echo htmlspecialchars(inquiry['name'] ?? ''); ?></div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="text-muted small">Email</label>
@@ -30,8 +30,8 @@
                     <div class="col-md-6 mb-3">
                         <label class="text-muted small">Phone</label>
                         <div class="fw-semibold">
-                            <?php echo htmlspecialchars($inquiry['phone']); ?>
-                            <a href="tel:<?php echo htmlspecialchars($inquiry['phone']); ?>" class="btn btn-sm btn-success ms-2">
+                            <?php echo htmlspecialchars(inquiry['phone'] ?? ''); ?>
+                            <a href="tel:<?php echo htmlspecialchars(inquiry['phone'] ?? ''); ?>" class="btn btn-sm btn-success ms-2">
                                 <i class="fas fa-phone"></i>
                             </a>
                             <a href="https://wa.me/91<?php echo preg_replace('/[^0-9]/', '', $inquiry['phone']); ?>" target="_blank" class="btn btn-sm btn-success">
@@ -55,7 +55,7 @@
                 <h5 class="mb-0">Message</h5>
             </div>
             <div class="card-body">
-                <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;"><?php echo htmlspecialchars($inquiry['message']); ?></pre>
+                <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;"><?php echo htmlspecialchars(inquiry['message'] ?? ''); ?></pre>
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="tel:<?php echo htmlspecialchars($inquiry['phone']); ?>" class="btn btn-success">
+                    <a href="tel:<?php echo htmlspecialchars(inquiry['phone'] ?? ''); ?>" class="btn btn-success">
                         <i class="fas fa-phone me-2"></i>Call Customer
                     </a>
                     <a href="https://wa.me/91<?php echo preg_replace('/[^0-9]/', '', $inquiry['phone']); ?>?text=Hi <?php echo urlencode($inquiry['name']); ?>, Thank you for your inquiry from our website." target="_blank" class="btn btn-success">

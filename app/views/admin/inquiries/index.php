@@ -115,13 +115,13 @@
                     <?php foreach ($inquiries as $inq): ?>
                     <tr class="<?php echo $inq['status'] === 'new' ? 'table-warning' : ''; ?>">
                         <td class="ps-4">
-                            <div class="fw-semibold"><?php echo htmlspecialchars($inq['name']); ?></div>
+                            <div class="fw-semibold"><?php echo htmlspecialchars(inq['name'] ?? ''); ?></div>
                             <?php if (!empty($inq['email'])): ?>
-                            <small class="text-muted"><?php echo htmlspecialchars($inq['email']); ?></small>
+                            <small class="text-muted"><?php echo htmlspecialchars(inq['email'] ?? ''); ?></small>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <div><i class="fas fa-phone text-muted me-1"></i> <?php echo htmlspecialchars($inq['phone']); ?></div>
+                            <div><i class="fas fa-phone text-muted me-1"></i> <?php echo htmlspecialchars(inq['phone'] ?? ''); ?></div>
                         </td>
                         <td>
                             <span class="badge bg-secondary"><?php echo htmlspecialchars(ucfirst($inq['type'] ?? 'General')); ?></span>

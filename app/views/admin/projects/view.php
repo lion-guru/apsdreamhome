@@ -1,10 +1,10 @@
-<?php include __DIR__ . "/../../../layouts/admin_header.php"; ?>
+
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-building"></i> View Project: <?php echo htmlspecialchars($project['name']); ?></h2>
+                <h2><i class="fas fa-building"></i> View Project: <?php echo htmlspecialchars(project['name'] ?? ''); ?></h2>
                 <div>
                     <a href="/admin/projects" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Projects
@@ -22,11 +22,11 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <p><strong>Project Name:</strong> <?php echo htmlspecialchars($project['name']); ?></p>
-                            <p><strong>Type:</strong> <?php echo ucfirst(htmlspecialchars($project['project_type'])); ?></p>
-                            <p><strong>Developer:</strong> <?php echo htmlspecialchars($project['developer_name']); ?></p>
-                            <p><strong>Contact:</strong> <?php echo htmlspecialchars($project['developer_contact']); ?></p>
-                            <p><strong>Phone:</strong> <?php echo htmlspecialchars($project['developer_phone']); ?></p>
+                            <p><strong>Project Name:</strong> <?php echo htmlspecialchars(project['name'] ?? ''); ?></p>
+                            <p><strong>Type:</strong> <?php echo ucfirst(htmlspecialchars(project['project_type'] ?? '')); ?></p>
+                            <p><strong>Developer:</strong> <?php echo htmlspecialchars(project['developer_name'] ?? ''); ?></p>
+                            <p><strong>Contact:</strong> <?php echo htmlspecialchars(project['developer_contact'] ?? ''); ?></p>
+                            <p><strong>Phone:</strong> <?php echo htmlspecialchars(project['developer_phone'] ?? ''); ?></p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Status:</strong> <?php echo ucfirst(str_replace('_', ' ', $project['status'])); ?></p>
@@ -40,16 +40,16 @@
                     <div class="row">
                         <div class="col-md-6">
                             <p><strong>Location:</strong>
-                                <?php if ($project['colony_name']): ?><?php echo htmlspecialchars($project['colony_name']); ?>,<?php endif; ?>
-                                <?php if ($project['district_name']): ?><?php echo htmlspecialchars($project['district_name']); ?>,<?php endif; ?>
-                                <?php if ($project['state_name']): ?><?php echo htmlspecialchars($project['state_name']); ?><?php endif; ?>
+                                <?php if ($project['colony_name']): ?><?php echo htmlspecialchars(project['colony_name'] ?? ''); ?>,<?php endif; ?>
+                                <?php if ($project['district_name']): ?><?php echo htmlspecialchars(project['district_name'] ?? ''); ?>,<?php endif; ?>
+                                <?php if ($project['state_name']): ?><?php echo htmlspecialchars(project['state_name'] ?? ''); ?><?php endif; ?>
                             </p>
-                            <p><strong>Address:</strong> <?php echo htmlspecialchars($project['address']); ?></p>
+                            <p><strong>Address:</strong> <?php echo htmlspecialchars(project['address'] ?? ''); ?></p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Price Range:</strong> ₹<?php echo number_format($project['price_range_min']); ?> - ₹<?php echo number_format($project['price_range_max']); ?></p>
-                            <p><strong>Avg Price per Sqft:</strong> ₹<?php echo number_format($project['avg_price_per_sqft']); ?></p>
-                            <p><strong>Total Area:</strong> <?php echo number_format($project['total_area']); ?> sq ft</p>
+                            <p><strong>Price Range:</strong> ₹<?php echo number_format(floatval(project['price_range_min'] ?? 0)); ?> - ₹<?php echo number_format(floatval(project['price_range_max'] ?? 0)); ?></p>
+                            <p><strong>Avg Price per Sqft:</strong> ₹<?php echo number_format(floatval(project['avg_price_per_sqft'] ?? 0)); ?></p>
+                            <p><strong>Total Area:</strong> <?php echo number_format(floatval(project['total_area'] ?? 0)); ?> sq ft</p>
                         </div>
                     </div>
                     <hr>
@@ -68,7 +68,7 @@
                     <div class="row">
                         <div class="col-12">
                             <p><strong>Description:</strong></p>
-                            <p><?php echo nl2br(htmlspecialchars($project['description'])); ?></p>
+                            <p><?php echo nl2br(htmlspecialchars(project['description'] ?? '')); ?></p>
                         </div>
                     </div>
                     <?php if ($project['marketing_description']): ?>
@@ -76,7 +76,7 @@
                     <div class="row">
                         <div class="col-12">
                             <p><strong>Marketing Description:</strong></p>
-                            <p><?php echo nl2br(htmlspecialchars($project['marketing_description'])); ?></p>
+                            <p><?php echo nl2br(htmlspecialchars(project['marketing_description'] ?? '')); ?></p>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -84,7 +84,7 @@
                     <hr>
                     <div class="row">
                         <div class="col-12">
-                            <p><strong>Tags:</strong> <?php echo htmlspecialchars($project['tags']); ?></p>
+                            <p><strong>Tags:</strong> <?php echo htmlspecialchars(project['tags'] ?? ''); ?></p>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -112,4 +112,3 @@
     </div>
 </div>
 
-<?php include __DIR__ . "/../../../layouts/admin_footer.php"; ?>

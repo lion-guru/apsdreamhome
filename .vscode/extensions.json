@@ -1,0 +1,56 @@
+{
+  "recommendations": [
+    // PHP Development
+    "bmewburn.vscode-intelephense-client",
+    "xdebug.php-debug",
+    "formulahendry.auto-rename-tag",
+    "bradlc.vscode-tailwindcss",
+    
+    // JavaScript/TypeScript
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.vscode-typescript-next",
+    
+    // Playwright Testing
+    "ms-playwright.playwright",
+    "ms-vscode.test-adapter-converter",
+    
+    // MCP & AI Tools
+    "modelcontextprotocol.vscode-mcp",
+    "github.copilot",
+    "github.copilot-chat",
+    
+    // Database Tools
+    "cweijan.vscode-redis-client",
+    "formulahendry.vscode-mysql",
+    
+    // Git & Version Control
+    "eamodio.gitlens",
+    "donjayamanne.githistory",
+    
+    // Productivity & Accuracy
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "ms-vscode.vscode-markdown",
+    "streetsidesoftware.code-spell-checker",
+    "gruntfuggly.todo-tree",
+    
+    // Web Development
+    "ritwickdey.liveserver",
+    "ms-vscode.vscode-browser-preview",
+    "ms-vscode.vscode-live-server",
+    
+    // Security & Quality
+    "ms-vscode.vscode-security-scan",
+    "sonarsource.sonarlint-vscode",
+    
+    // Project Management
+    "ms-vscode.vscode-tasks",
+    "ms-vscode.vscode-project",
+    "ms-vscode.vscode-workspaces"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-php",
+    "felixfbecker.php-debug"
+  ]
+}

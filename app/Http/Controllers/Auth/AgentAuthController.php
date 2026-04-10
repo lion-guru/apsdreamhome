@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Agent Authentication Controller
  */
@@ -70,12 +71,87 @@ class AgentAuthController extends BaseController
             $hashed = password_hash($password, PASSWORD_DEFAULT);
 
             $db->insert('users', [
-                'customer_id' => $agent_id, 'name' => $name, 'email' => $email,
-                'phone' => $phone, 'password' => $hashed, 'referral_code' => $referral_code,
-                'referred_by' => $referrer_id, 'user_type' => 'agent', 'role' => 'agent',
-                'experience' => $experience, 'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')
+                'customer_id' => $agent_id,
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'password' => $hashed,
+                'referral_code' => $referral_code,
+                'referred_by' => $referrer_id,
+                'user_type' => 'agent',
+                'role' => 'agent',
+                'experience' => $experience,
+                'status' => 'active',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]);
+
+            $newUserId = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email])['id'];
+
+            // Create wallet entry for new agent
+            $db->insert('wallet_points', [
+                'user_id' => $newUserId,
+                'points_balance' => 0.00,
+                'total_earned' => 0.00,
+                'total_used' => 0.00,
+                'total_transferred_to_emi' => 0.00,
+                'referral_earnings' => 0.00,
+                'commission_earnings' => 0.00,
+                'bonus_earnings' => 0.00,
+                'status' => 'active',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            // Handle referral rewards if referral code was used
+            if ($referrer_id) {
+                // Get referrer's wallet
+                $referrerWallet = $db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$referrer_id]);
+
+                if ($referrerWallet) {
+                    // Calculate reward points (250 points for agent referral)
+                    $rewardPoints = 250.00;
+
+                    // Update referrer's wallet
+                    $newBalance = $referrerWallet['points_balance'] + $rewardPoints;
+                    $newTotalEarned = $referrerWallet['total_earned'] + $rewardPoints;
+                    $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
+
+                    $db->query(
+                        "UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?",
+                        [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrer_id]
+                    );
+
+                    // Create transaction record
+                    $db->insert('wallet_transactions', [
+                        'user_id' => $referrer_id,
+                        'transaction_type' => 'credit',
+                        'transaction_category' => 'referral',
+                        'amount' => $rewardPoints,
+                        'balance_before' => $referrerWallet['points_balance'],
+                        'balance_after' => $newBalance,
+                        'description' => "Referral reward for agent: $name",
+                        'reference_id' => $newUserId,
+                        'reference_type' => 'user',
+                        'related_user_id' => $newUserId,
+                        'status' => 'completed',
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+
+                    // Create referral reward record
+                    $db->insert('referral_rewards', [
+                        'referrer_id' => $referrer_id,
+                        'referred_id' => $newUserId,
+                        'reward_amount' => $rewardPoints,
+                        'reward_type' => 'points',
+                        'reward_percentage' => 0.00,
+                        'referral_code' => $referral,
+                        'status' => 'credited',
+                        'credited_at' => date('Y-m-d H:i:s'),
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
+            }
 
             $_SESSION['success'] = "Agent registration successful! ID: $agent_id. Please login.";
             header('Location: ' . BASE_URL . '/agent/login');

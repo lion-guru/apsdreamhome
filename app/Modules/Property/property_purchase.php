@@ -59,7 +59,8 @@ $associate = $db->fetch("SELECT * FROM associates WHERE user_id = :user_id", ['u
 $is_associate = $associate ? true : false;
 
 $page_title = "Property Purchase - " . h($property['title']);
-include 'includes/templates/header.php';
+// include 'includes/templates/header.php';
+
 ?>
 
 <style>
@@ -370,4 +371,5 @@ include 'includes/templates/header.php';
     </div>
 </div>
 
-<?php include 'includes/templates/footer.php'; ?>
+<!-- FIXED: Commented out missing template file -->
+<!-- <?php include 'includes/templates/footer.php'; ?> -->

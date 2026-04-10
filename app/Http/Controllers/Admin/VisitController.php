@@ -103,10 +103,10 @@ class VisitController extends AdminController
             $stmt->execute($params);
             $visits = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Get dropdown options
-            $properties = $this->db->query("SELECT id, title, location FROM properties ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
-            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $associates = $this->db->query("SELECT id, name, email FROM users WHERE role IN ('admin', 'associate', 'manager') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get dropdown options using models/services
+            $properties = \App\Models\Property::getForSelect(['id', 'title', 'location'], 'all');
+            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $associates = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Visits - APS Dream Home',
@@ -142,10 +142,10 @@ class VisitController extends AdminController
     public function create()
     {
         try {
-            // Get dropdown options
-            $properties = $this->db->query("SELECT id, title, location FROM properties ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
-            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $associates = $this->db->query("SELECT id, name, email FROM users WHERE role IN ('admin', 'associate', 'manager') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get dropdown options using models/services
+            $properties = \App\Models\Property::getForSelect(['id', 'title', 'location'], 'all');
+            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $associates = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Schedule Visit - APS Dream Home',
@@ -316,10 +316,10 @@ class VisitController extends AdminController
                 return $this->redirect('admin/visits');
             }
 
-            // Get dropdown options
-            $properties = $this->db->query("SELECT id, title, location FROM properties ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
-            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $associates = $this->db->query("SELECT id, name, email FROM users WHERE role IN ('admin', 'associate', 'manager') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get dropdown options using models/services
+            $properties = \App\Models\Property::getForSelect(['id', 'title', 'location'], 'all');
+            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $associates = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Edit Visit - APS Dream Home',

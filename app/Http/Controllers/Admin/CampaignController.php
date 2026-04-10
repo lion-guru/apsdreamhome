@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\CampaignService;
 use Exception;
 
-class CampaignController extends BaseController
+class CampaignController extends AdminController
 {
     private $campaignService;
 
@@ -21,8 +21,6 @@ class CampaignController extends BaseController
      */
     public function index()
     {
-        $this->middleware('admin.auth');
-
         $campaigns = $this->campaignService->getActiveCampaigns();
 
         $this->data['campaigns'] = $campaigns;

@@ -143,7 +143,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             ?>
                                                 <tr>
                                                     <td><?php echo $label; ?></td>
-                                                    <td>₹<?php echo number_format($data[$i] ?? 0); ?></td>
+                                                    <td>₹<?php echo number_format(floatval(data[$i] ?? 0) ?? 0); ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>

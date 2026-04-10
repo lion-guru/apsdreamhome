@@ -15,10 +15,10 @@
                     <div class="card-body">
                         <h3 class="card-title">Our Mission</h3>
                         <p>To provide transparent and hassle-free real estate services with a focus on customer satisfaction and quality construction.</p>
-                        
+
                         <h4>Our Vision</h4>
                         <p>To become the most trusted real estate developer in Uttar Pradesh by delivering excellence in every project.</p>
-                        
+
                         <h4>Our Values</h4>
                         <ul class="list-unstyled">
                             <li><i class="fas fa-check text-success me-2"></i> Transparency</li>
@@ -42,7 +42,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <img src="assets/images/team/amit.jpg" class="card-img-top" alt="Amit Kumar Singh">
+                            <img src="assets/images/property-placeholder.jpg" class="card-img-top" alt="Amit Kumar Singh">
                             <div class="card-body">
                                 <h5 class="card-title">Amit Kumar Singh</h5>
                                 <p class="text-muted">Managing Director</p>
@@ -53,7 +53,7 @@
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <img src="assets/images/team/priya.jpg" class="card-img-top" alt="Priya Singh">
+                            <img src="assets/images/property-placeholder.jpg" class="card-img-top" alt="Priya Singh">
                             <div class="card-body">
                                 <h5 class="card-title">Priya Singh</h5>
                                 <p class="text-muted">Operations Head</p>
@@ -64,7 +64,7 @@
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <img src="assets/images/team/rahul.jpg" class="card-img-top" alt="Rahul Verma">
+                            <img src="assets/images/property-placeholder.jpg" class="card-img-top" alt="Rahul Verma">
                             <div class="card-body">
                                 <h5 class="card-title">Rahul Verma</h5>
                                 <p class="text-muted">Technical Director</p>
@@ -97,9 +97,9 @@
                                 <p>Years Experience</p>
                             </div>
                         </div>
-                        
+
                         <hr>
-                        
+
                         <div class="text-center">
                             <h5>Registration No: U70109UP2022PTC163047</h5>
                             <p class="small text-muted">Government Registered Real Estate Developer</p>

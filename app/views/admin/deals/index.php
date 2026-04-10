@@ -4,7 +4,6 @@
  */
 
 $page_title = 'Deal Tracking - APS Dream Home';
-include __DIR__ . '/../../layouts/admin_header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -31,7 +30,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Pipeline Value</h6>
-                            <h3 class="mb-0">₹<?= number_format($stats['pipeline_value'] ?? 0, 0) ?>L</h3>
+                            <h3 class="mb-0">₹<?= number_format(floatval(stats['pipeline_value'] ?? 0) ?? 0, 0) ?>L</h3>
                         </div>
                         <i class="fas fa-funnel-dollar fa-2x opacity-50"></i>
                     </div>
@@ -57,7 +56,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Total Revenue</h6>
-                            <h3 class="mb-0">₹<?= number_format($stats['total_revenue'] ?? 0, 0) ?>L</h3>
+                            <h3 class="mb-0">₹<?= number_format(floatval(stats['total_revenue'] ?? 0) ?? 0, 0) ?>L</h3>
                         </div>
                         <i class="fas fa-rupee-sign fa-2x opacity-50"></i>
                     </div>
@@ -104,7 +103,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                 </div>
                 <div class="col-md-5">
                     <label class="form-label">Search</label>
-                    <input type="text" class="form-control" name="search" value="<?= htmlspecialchars($filters['search']) ?>" placeholder="Lead name, email, property...">
+                    <input type="text" class="form-control" name="search" value="<?= htmlspecialchars(filters['search'] ?? '') ?>" placeholder="Lead name, email, property...">
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary me-2">
@@ -141,11 +140,11 @@ include __DIR__ . '/../../layouts/admin_header.php';
                         ?>
                         <tr>
                             <td>
-                                <strong><?= htmlspecialchars($deal['lead_name']) ?></strong>
-                                <br><small class="text-muted"><?= htmlspecialchars($deal['lead_email']) ?></small>
+                                <strong><?= htmlspecialchars(deal['lead_name'] ?? '') ?></strong>
+                                <br><small class="text-muted"><?= htmlspecialchars(deal['lead_email'] ?? '') ?></small>
                             </td>
                             <td><?= htmlspecialchars($deal['property_title'] ?? 'Not specified') ?></td>
-                            <td><strong>₹<?= number_format($deal['deal_value'], 0) ?>L</strong></td>
+                            <td><strong>₹<?= number_format(floatval(deal['deal_value'] ?? 0), 0) ?>L</strong></td>
                             <td>
                                 <span class="badge bg-<?= $stageColor ?>">
                                     <?= ucfirst($deal['stage']) ?>
@@ -201,4 +200,4 @@ function updateStage(dealId, stage) {
 }
 </script>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

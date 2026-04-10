@@ -13,8 +13,8 @@
             <div class="card border-start border-primary border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Total Properties</h6>
-                    <h3><?php echo number_format($business_stats['total_properties'] ?? 0); ?></h3>
-                    <p class="text-muted mb-0"><?php echo number_format($business_stats['available_properties'] ?? 0); ?> Available</p>
+                    <h3><?php echo number_format(floatval(business_stats['total_properties'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-muted mb-0"><?php echo number_format(floatval(business_stats['available_properties'] ?? 0) ?? 0); ?> Available</p>
                 </div>
             </div>
         </div>
@@ -22,8 +22,8 @@
             <div class="card border-start border-success border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Total Revenue</h6>
-                    <h3>₹<?php echo number_format($revenue_stats['total_revenue'] ?? 0); ?></h3>
-                    <p class="text-success mb-0"><i class="fas fa-arrow-up me-1"></i>+₹<?php echo number_format($revenue_stats['pending_revenue'] ?? 0); ?> Pending</p>
+                    <h3>₹<?php echo number_format(floatval(revenue_stats['total_revenue'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-success mb-0"><i class="fas fa-arrow-up me-1"></i>+₹<?php echo number_format(floatval(revenue_stats['pending_revenue'] ?? 0) ?? 0); ?> Pending</p>
                 </div>
             </div>
         </div>
@@ -31,8 +31,8 @@
             <div class="card border-start border-info border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Team Size</h6>
-                    <h3><?php echo number_format($team_stats['total_users'] ?? 0); ?></h3>
-                    <p class="text-muted mb-0"><?php echo number_format($team_stats['active_users'] ?? 0); ?> Active</p>
+                    <h3><?php echo number_format(floatval(team_stats['total_users'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-muted mb-0"><?php echo number_format(floatval(team_stats['active_users'] ?? 0) ?? 0); ?> Active</p>
                 </div>
             </div>
         </div>
@@ -40,8 +40,8 @@
             <div class="card border-start border-warning border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Commission Paid</h6>
-                    <h3>₹<?php echo number_format($commission_stats['total_commissions'] ?? 0); ?></h3>
-                    <p class="text-muted mb-0">Avg: ₹<?php echo number_format($commission_stats['avg_commission'] ?? 0); ?></p>
+                    <h3>₹<?php echo number_format(floatval(commission_stats['total_commissions'] ?? 0) ?? 0); ?></h3>
+                    <p class="text-muted mb-0">Avg: ₹<?php echo number_format(floatval(commission_stats['avg_commission'] ?? 0) ?? 0); ?></p>
                 </div>
             </div>
         </div>
@@ -82,19 +82,19 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="text-center">
-                                <h4 class="text-primary"><?php echo number_format($team_stats['admin_users'] ?? 0); ?></h4>
+                                <h4 class="text-primary"><?php echo number_format(floatval(team_stats['admin_users'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Admin Users</p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="text-center">
-                                <h4 class="text-info"><?php echo number_format($team_stats['associate_users'] ?? 0); ?></h4>
+                                <h4 class="text-info"><?php echo number_format(floatval(team_stats['associate_users'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Associates</p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="text-center">
-                                <h4 class="text-success"><?php echo number_format($team_stats['customer_users'] ?? 0); ?></h4>
+                                <h4 class="text-success"><?php echo number_format(floatval(team_stats['customer_users'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Customers</p>
                             </div>
                         </div>
@@ -117,10 +117,10 @@
                             <?php foreach ($activities as $activity): ?>
                                 <div class="list-group-item">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1"><?php echo htmlspecialchars($activity['activity_type']); ?></h6>
+                                        <h6 class="mb-1"><?php echo htmlspecialchars(activity['activity_type'] ?? ''); ?></h6>
                                         <small class="text-muted"><?php echo date('M d, Y H:i', strtotime($activity['created_at'])); ?></small>
                                     </div>
-                                    <p class="mb-1"><?php echo htmlspecialchars($activity['description']); ?></p>
+                                    <p class="mb-1"><?php echo htmlspecialchars(activity['description'] ?? ''); ?></p>
                                 </div>
                             <?php endforeach; ?>
                         </div>

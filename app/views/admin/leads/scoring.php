@@ -5,7 +5,6 @@
  */
 
 $page_title = 'Lead Scoring Dashboard - APS Dream Home';
-include __DIR__ . '/../../layouts/admin_header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -124,7 +123,7 @@ include __DIR__ . '/../../layouts/admin_header.php';
                         <option value="">All Agents</option>
                         <?php foreach ($agents as $agent): ?>
                         <option value="<?= $agent['id'] ?>" <?= $filters['assigned_to'] == $agent['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($agent['name']) ?>
+                            <?= htmlspecialchars(agent['name'] ?? '') ?>
                         </option>
                         <?php endforeach; ?>
                     </select>
@@ -217,24 +216,24 @@ include __DIR__ . '/../../layouts/admin_header.php';
                                 <small class="text-muted"><?= $scoreLabel ?></small>
                             </td>
                             <td>
-                                <strong><?= htmlspecialchars($lead['name']) ?></strong>
+                                <strong><?= htmlspecialchars(lead['name'] ?? '') ?></strong>
                                 <br><small class="text-muted">#<?= $lead['id'] ?></small>
                             </td>
                             <td>
-                                <i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($lead['email']) ?>
-                                <br><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars($lead['phone']) ?>
+                                <i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars(lead['email'] ?? '') ?>
+                                <br><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars(lead['phone'] ?? '') ?>
                             </td>
                             <td>
                                 <?= $lead['property_interest'] ? ucfirst($lead['property_interest']) : '-' ?>
                                 <?php if ($lead['budget']): ?>
-                                <br><small class="text-success">₹<?= number_format($lead['budget']) ?></small>
+                                <br><small class="text-success">₹<?= number_format(floatval(lead['budget'] ?? 0)) ?></small>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <span class="badge bg-light text-dark"><?= ucfirst($lead['source']) ?></span>
                             </td>
                             <td>
-                                <?= $lead['assigned_name'] ? htmlspecialchars($lead['assigned_name']) : '<span class="text-muted">Unassigned</span>' ?>
+                                <?= $lead['assigned_name'] ? htmlspecialchars(lead['assigned_name'] ?? '') : '<span class="text-muted">Unassigned</span>' ?>
                             </td>
                             <td>
                                 <span class="badge bg-<?= getLeadStatusColor($lead['status']) ?>">
@@ -354,5 +353,4 @@ function getLeadStatusColor($status) {
     return $colors[$status] ?? 'light';
 }
 
-include __DIR__ . '/../../layouts/admin_footer.php';
 ?>

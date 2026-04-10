@@ -1,47 +1,49 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-class CommissionAdminController 
+use App\Http\Controllers\Admin\AdminController;
+
+class CommissionAdminController extends AdminController
 {
     public function index() 
     {
-        // Commission Dashboard
-        include __DIR__ . "/../../../views/admin/commission/index.php";
+        $this->data['page_title'] = 'Commission Dashboard';
+        return $this->render('admin/commission/index');
     }
     
     public function rules() 
     {
-        // Commission Rules Management
-        include __DIR__ . "/../../../views/admin/commission/rules.php";
+        $this->data['page_title'] = 'Commission Rules';
+        return $this->render('admin/commission/rules');
     }
     
     public function createRule() 
     {
-        // Create New Commission Rule
-        include __DIR__ . "/../../../views/admin/commission/create_rule.php";
+        $this->data['page_title'] = 'Create Commission Rule';
+        return $this->render('admin/commission/create_rule');
     }
     
     public function editRule($id) 
     {
-        // Edit Commission Rule
-        include __DIR__ . "/../../../views/admin/commission/edit_rule.php";
+        $this->data['page_title'] = 'Edit Commission Rule';
+        return $this->render('admin/commission/edit_rule');
     }
     
     public function calculations() 
     {
-        // Commission Calculations
-        include __DIR__ . "/../../../views/admin/commission/calculations.php";
+        $this->data['page_title'] = 'Commission Calculations';
+        return $this->render('admin/commission/calculations');
     }
     
     public function payments() 
     {
-        // Commission Payments
-        include __DIR__ . "/../../../views/admin/commission/payments.php";
+        $this->data['page_title'] = 'Commission Payments';
+        return $this->render('admin/commission/payments');
     }
     
     public function reports() 
     {
-        // Commission Reports
-        include __DIR__ . "/../../../views/admin/commission/reports.php";
+        $this->data['page_title'] = 'Commission Reports';
+        return $this->render('admin/commission/reports');
     }
 }

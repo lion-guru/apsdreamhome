@@ -43,9 +43,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <option value="">Choose a booking...</option>
                                 <?php foreach ($bookings as $booking): ?>
                                     <option value="<?php echo $booking['id']; ?>" data-amount="<?php echo $booking['total_amount']; ?>">
-                                        <?php echo htmlspecialchars($booking['booking_number']); ?> - 
-                                        <?php echo htmlspecialchars($booking['customer_name']); ?> - 
-                                        ₹<?php echo number_format($booking['total_amount']); ?>
+                                        <?php echo htmlspecialchars(booking['booking_number'] ?? ''); ?> - 
+                                        <?php echo htmlspecialchars(booking['customer_name'] ?? ''); ?> - 
+                                        ₹<?php echo number_format(floatval(booking['total_amount'] ?? 0)); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>

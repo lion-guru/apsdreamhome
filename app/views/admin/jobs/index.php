@@ -57,13 +57,13 @@ $error = $error ?? null;
                             <?php foreach ($jobs as $job): ?>
                                 <tr>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($job['title']); ?></strong>
-                                        <br><small class="text-muted"><?php echo htmlspecialchars($job['experience']); ?></small>
+                                        <strong><?php echo htmlspecialchars(job['title'] ?? ''); ?></strong>
+                                        <br><small class="text-muted"><?php echo htmlspecialchars(job['experience'] ?? ''); ?></small>
                                     </td>
-                                    <td><?php echo htmlspecialchars($job['department']); ?></td>
-                                    <td><?php echo htmlspecialchars($job['location']); ?></td>
+                                    <td><?php echo htmlspecialchars(job['department'] ?? ''); ?></td>
+                                    <td><?php echo htmlspecialchars(job['location'] ?? ''); ?></td>
                                     <td>
-                                        <span class="badge bg-info"><?php echo htmlspecialchars($job['job_type']); ?></span>
+                                        <span class="badge bg-info"><?php echo htmlspecialchars(job['job_type'] ?? ''); ?></span>
                                     </td>
                                     <td>
                                         <?php echo date('M d, Y', strtotime($job['posted_date'])); ?>

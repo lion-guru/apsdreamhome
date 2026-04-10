@@ -6,10 +6,16 @@
  */
 
 session_start();
-require_once __DIR__ . '/../../../includes/config.php';
+// FIXED: Removed missing include - file doesn't exist
+// require_once __DIR__ . '/../../../includes/config.php';
 
-$config = AppConfig::getInstance();
-$conn = $config->getDatabaseConnection();
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
 $message = '';
 $message_type = '';

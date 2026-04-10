@@ -1,14 +1,23 @@
 ﻿<?php
+
 /**
  * Add Colonies and Plots Tables
  * This script adds the colonies and plots tables if they don't exist
  */
 
-// Include database configuration
-require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/db_connection.php';
+// FIXED: Removed missing includes - files don't exist
+// require_once __DIR__ . '/includes/config.php';
+// require_once __DIR__ . '/includes/db_connection.php';
 
-echo "≡ƒöì Adding Colonies and Plots Tables...\n\n";
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
+
+echo "Adding Colonies and Plots Tables...\n\n";
 
 $sql = [];
 
@@ -71,7 +80,7 @@ foreach ($sql as $query) {
 // Insert sample data if tables were created successfully
 if ($success) {
     echo "\n≡ƒôÑ Inserting sample data...\n";
-    
+
     // Sample colonies data
     $colonies = [
         [
@@ -143,7 +152,7 @@ if ($success) {
             'developer' => 'APS Dream Homes Private Limited'
         ]
     ];
-    
+
     // Insert colonies
     $colonyIds = [];
     foreach ($colonies as $colony) {
@@ -164,31 +173,31 @@ if ($success) {
             }
         }
     }
-    
+
     // Sample plots data
     $plots = [
         // Suryoday Colony plots
         ['colonies_id' => $colonyIds['Suryoday Colony'], 'plot_number' => 'SYD-101', 'size' => 2000.00, 'price' => 1500000.00, 'status' => 'sold', 'facing' => 'East', 'corner_plot' => 0, 'booking_amount' => 150000.00],
         ['colonies_id' => $colonyIds['Suryoday Colony'], 'plot_number' => 'SYD-102', 'size' => 2200.00, 'price' => 1650000.00, 'status' => 'sold', 'facing' => 'North', 'corner_plot' => 1, 'booking_amount' => 165000.00],
-        
+
         // Raghunath Nagari plots
         ['colonies_id' => $colonyIds['Raghunath Nagari'], 'plot_number' => 'RN-201', 'size' => 2500.00, 'price' => 1800000.00, 'status' => 'sold', 'facing' => 'South', 'corner_plot' => 1, 'booking_amount' => 180000.00],
         ['colonies_id' => $colonyIds['Raghunath Nagari'], 'plot_number' => 'RN-202', 'size' => 2300.00, 'price' => 1740000.00, 'status' => 'sold', 'facing' => 'East', 'corner_plot' => 0, 'booking_amount' => 174000.00],
-        
+
         // Brajradha Nagri plots
         ['colonies_id' => $colonyIds['Brajradha Nagri'], 'plot_number' => 'BN-301', 'size' => 1500.00, 'price' => 1300000.00, 'status' => 'sold', 'facing' => 'North', 'corner_plot' => 0, 'booking_amount' => 130000.00],
-        
+
         // Stuti Bihar plots
         ['colonies_id' => $colonyIds['Stuti Bihar'], 'plot_number' => 'SB-401', 'size' => 1200.00, 'price' => 1100000.00, 'status' => 'sold', 'facing' => 'West', 'corner_plot' => 0, 'booking_amount' => 110000.00]
     ];
-    
+
     // Insert plots
     foreach ($plots as $plot) {
         $stmt = $pdo->prepare("INSERT IGNORE INTO plots (" . implode(',', array_keys($plot)) . ") VALUES (" . str_repeat('?,', count($plot) - 1) . "?)");
         $stmt->execute(array_values($plot));
         echo "Γ£à Added plot: " . $plot['plot_number'] . " (Colony ID: " . $plot['colony_id'] . ")\n";
     }
-    
+
     echo "\nΓ£à Sample data inserted successfully!\n";
 }
 

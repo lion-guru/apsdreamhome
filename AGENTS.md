@@ -6,6 +6,28 @@
 - Database: MySQL (port 3307)
 - Server: XAMPP Apache (port 80)
 
+## MCP Tools Available (API-Key Free)
+
+### Active MCP Servers
+| Tool | Package | Purpose |
+|------|---------|---------|
+| **MySQL** | `@f4ww4z/mcp-mysql-server` | Direct database queries, schema management |
+| **Sequential Thinking** | `@modelcontextprotocol/server-sequential-thinking` | Step-by-step reasoning for complex problems |
+| **Playwright** | `@playwright/mcp` | Browser automation, visual testing |
+| **Filesystem** | `@modelcontextprotocol/server-filesystem` | File operations |
+| **Memory** | `@modelcontextprotocol/server-memory` | Knowledge graph storage |
+
+### MySQL Configuration
+```json
+{
+  "MYSQL_HOST": "127.0.0.1",
+  "MYSQL_PORT": "3307",
+  "MYSQL_USER": "root",
+  "MYSQL_PASSWORD": "",
+  "MYSQL_DATABASE": "apsdreamhome"
+}
+```
+
 ## Quick Commands
 - **Start server**: http://localhost/apsdreamhome/
 - **Admin**: http://localhost/apsdreamhome/admin/login
@@ -18,6 +40,56 @@
 - Views: `app/Views/`
 - Routes: `routes/web.php`, `routes/api.php`
 - Core: `app/Core/`
+
+## Project Scale (2026)
+- **Controllers:** 210 PHP files
+- **Models:** 146 PHP files  
+- **Views:** 492 PHP files
+- **Routes:** 737 routes
+- **Database Tables:** 597 tables
+- **Total PHP Files:** 1000+
+
+## 📖 Project Documentation
+- **PROJECT_MAP.md** → Complete architecture guide
+- **MCP_TOOLS_INSTALLATION_REPORT.md** → Tools setup
+- **This file (AGENTS.md)** → Project status & rules
+
+## 🧭 Quick Navigation Guide
+
+### Where to Find Things:
+
+| Feature | Controller | View | Service |
+|---------|------------|------|---------|
+| **Homepage** | `Front\PageController::home()` | `pages/home.php` | - |
+| **Properties** | `Front\PageController::properties()` | `pages/properties.php` | - |
+| **Property Detail** | `Front\PageController@propertyDetails()` | `pages/property_detail.php` | - |
+| **Customer Dashboard** | `Front\UserController::dashboard()` | `pages/user_dashboard.php` | - |
+| **Customer Properties** | `Front\UserController::myProperties()` | `pages/user_properties.php` | - |
+| **Customer Inquiries** | `Front\UserController::myInquiries()` | `pages/user_inquiries.php` | - |
+| **Login/Register** | `Auth\CustomerAuthController` | `auth/customer_*.php` | - |
+| **Admin Dashboard** | `Admin\AdminController` | `admin/dashboard.php` | - |
+| **AI Chatbot** | `Front\AIBotController` | - | `AI\AIManager` |
+| **Training System** | - | - | `Training\TrainingService` |
+
+### Folder Structure:
+```
+app/
+├── Core/           → Framework (Database, Router, Auth)
+├── Http/
+│   └── Controllers/
+│       ├── Admin/      → Admin panel (30+ controllers)
+│       ├── Auth/       → Login/Register (5 controllers)
+│       ├── Front/      → Public pages (10+ controllers)
+│       ├── Employee/   → Employee portal
+│       ├── MLM/        → Network marketing
+│       ├── AI/         → AI features
+│       └── Api/        → API endpoints
+├── Models/         → 146 models (User, Property, Lead, etc.)
+├── Services/       → Business logic (AI, Payment, Training)
+├── Modules/        → Feature packages
+├── Views/          → 492 view templates
+└── Helpers/        → Utility functions
+```
 
 ---
 

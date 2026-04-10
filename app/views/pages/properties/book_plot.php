@@ -7,10 +7,21 @@
  * Direct booking system for APS own colonies
  */
 
-require_once 'includes/db_connection.php';
-require_once 'includes/enhanced_universal_template.php';
+// FIXED: Removed missing includes - files don't exist
+// require_once 'includes/db_connection.php';
+// require_once 'includes/enhanced_universal_template.php';
 
-$template = new EnhancedUniversalTemplate();
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
+
+// FIXED: Commented out missing template class
+// $template = new EnhancedUniversalTemplate();
+$template = null;
 
 // Page metadata
 $$page_title = 'Book Your Plot - APS Dream Home';
@@ -120,6 +131,7 @@ $payment_plans = [
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -138,14 +150,14 @@ $payment_plans = [
             background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             margin-bottom: 30px;
         }
 
         .plot-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .plot-image {
@@ -283,14 +295,14 @@ $payment_plans = [
             background: white;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             height: 100%;
         }
 
         .plan-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
         .plan-header {
@@ -328,7 +340,7 @@ $payment_plans = [
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .process-step {
@@ -369,7 +381,7 @@ $payment_plans = [
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .form-group {
@@ -429,6 +441,7 @@ $payment_plans = [
         }
     </style>
 </head>
+
 <body>
     <!-- Hero Section -->
     <section class="booking-hero">
@@ -838,6 +851,7 @@ $payment_plans = [
         });
     </script>
 </body>
+
 </html>
 
 //

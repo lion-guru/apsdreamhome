@@ -31,7 +31,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-eye fa-2x text-primary mb-2"></i>
-                        <h4><?php echo number_format($engagement_data['total_views'] ?? 0); ?></h4>
+                        <h4><?php echo number_format(floatval(engagement_data['total_views'] ?? 0) ?? 0); ?></h4>
                         <p class="text-muted mb-0">Total Views</p>
                     </div>
                 </div>
@@ -40,7 +40,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-heart fa-2x text-danger mb-2"></i>
-                        <h4><?php echo number_format($engagement_data['favorites'] ?? 0); ?></h4>
+                        <h4><?php echo number_format(floatval(engagement_data['favorites'] ?? 0) ?? 0); ?></h4>
                         <p class="text-muted mb-0">Favorites</p>
                     </div>
                 </div>
@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-share fa-2x text-info mb-2"></i>
-                        <h4><?php echo number_format($engagement_data['shares'] ?? 0); ?></h4>
+                        <h4><?php echo number_format(floatval(engagement_data['shares'] ?? 0) ?? 0); ?></h4>
                         <p class="text-muted mb-0">Shares</p>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-comment fa-2x text-success mb-2"></i>
-                        <h4><?php echo number_format($engagement_data['reviews'] ?? 0); ?></h4>
+                        <h4><?php echo number_format(floatval(engagement_data['reviews'] ?? 0) ?? 0); ?></h4>
                         <p class="text-muted mb-0">Reviews</p>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <div class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
                                     <i class="fas fa-<?php echo $activity['icon'] ?? 'circle'; ?> me-2 text-<?php echo $activity['color'] ?? 'primary'; ?>"></i>
-                                    <?php echo htmlspecialchars($activity['description']); ?>
+                                    <?php echo htmlspecialchars(activity['description'] ?? ''); ?>
                                 </div>
                                 <small class="text-muted"><?php echo $activity['time']; ?></small>
                             </div>

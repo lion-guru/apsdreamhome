@@ -1,11 +1,17 @@
 <?php
+
 /**
  * List Property Page - Simple & Easy Property Posting
- * Now with Smart Location Dropdowns
+ * Now with Smart Location Dropdowns & Guest Support
  */
+if (session_status() === PHP_SESSION_NONE) session_start();
+
 $success = isset($_SESSION['flash_success']) ? $_SESSION['flash_success'] : null;
 $error = isset($_SESSION['flash_error']) ? $_SESSION['flash_error'] : null;
 unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+// Check if user is logged in
+$isLoggedIn = isset($_SESSION['user_id']);
 
 // Load states for dropdown
 $db = \App\Core\Database\Database::getInstance();
@@ -20,21 +26,21 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 </section>
 
 <?php if ($success): ?>
-<div class="container mt-4">
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($success); ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="container mt-4">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($success); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     </div>
-</div>
 <?php endif; ?>
 
 <?php if ($error): ?>
-<div class="container mt-4">
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="container mt-4">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     </div>
-</div>
 <?php endif; ?>
 
 <!-- Simple Form -->
@@ -98,7 +104,7 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <!-- Hidden fields for state/district IDs -->
                             <input type="hidden" name="state_id" id="state_id_hidden">
                             <input type="hidden" name="district_id" id="district_id_hidden">
@@ -139,13 +145,23 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                             </div>
 
                             <!-- Submit -->
-                            <button type="submit" class="btn btn-success btn-lg w-100">
-                                <i class="fas fa-paper-plane me-2"></i>Submit Karo - FREE!
-                            </button>
+                            <?php if ($isLoggedIn): ?>
+                                <button type="submit" class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Karo - FREE!
+                                </button>
+                            <?php else: ?>
+                                <button type="button" class="btn btn-success btn-lg w-100" onclick="handleGuestSubmit()">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Karo - FREE!
+                                </button>
+                                <div class="alert alert-info mt-3 mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Guest Posting:</strong> Quick signup required to post your property. It's FREE and takes 10 seconds!
+                                </div>
+                            <?php endif; ?>
                         </form>
                     </div>
                 </div>
-                
+
                 <!-- Info Box -->
                 <div class="alert alert-info mt-4">
                     <h5><i class="fas fa-info-circle me-2"></i>Kaise Kaam Karta Hai?</h5>
@@ -251,53 +267,79 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 
 <!-- Smart Form JavaScript -->
 <script src="<?= BASE_URL ?>/assets/js/components/smart-form-autocomplete.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize location cascade
-    const smartForm = new SmartFormAutocomplete();
-    
-    // State change - load districts
-    document.getElementById('state_id').addEventListener('change', async function() {
-        const stateId = this.value;
-        const districtSelect = document.getElementById('district_id');
-        
-        if (!stateId) {
-            districtSelect.innerHTML = '<option value="">Select State First...</option>';
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize location cascade
+        const smartForm = new SmartFormAutocomplete();
+
+        // State change - load districts
+        document.getElementById('state_id').addEventListener('change', async function() {
+            const stateId = this.value;
+            const districtSelect = document.getElementById('district_id');
+
+            if (!stateId) {
+                districtSelect.innerHTML = '<option value="">Select State First...</option>';
+                districtSelect.disabled = true;
+                return;
+            }
+
             districtSelect.disabled = true;
+            districtSelect.innerHTML = '<option value="">Loading...</option>';
+
+            try {
+                const response = await fetch('/api/locations/districts?state_id=' + stateId);
+                const districts = await response.json();
+
+                districtSelect.innerHTML = '<option value="">Select District...</option>';
+                districts.forEach(d => {
+                    const option = document.createElement('option');
+                    option.value = d.name; // Use name for the form field
+                    option.dataset.id = d.id;
+                    option.textContent = d.name;
+                    districtSelect.appendChild(option);
+                });
+                districtSelect.disabled = false;
+
+            } catch (error) {
+                console.error('Error loading districts:', error);
+                districtSelect.innerHTML = '<option value="">Error loading</option>';
+            }
+        });
+
+        // District change - update hidden fields
+        document.getElementById('district_id').addEventListener('change', function() {
+            const stateSelect = document.getElementById('state_id');
+            const selectedOption = this.options[this.selectedIndex];
+
+            document.getElementById('state_id_hidden').value = stateSelect.value;
+            document.getElementById('district_id_hidden').value = selectedOption.dataset.id || '';
+            document.getElementById('city_name_hidden').value = this.value;
+        });
+    });
+
+    // Handle guest submit - show quick register modal
+    function handleGuestSubmit() {
+        // Validate form first
+        const name = document.querySelector('input[name="name"]').value;
+        const phone = document.querySelector('input[name="phone"]').value;
+
+        if (!name || !phone) {
+            alert('Please fill in your name and phone number first');
             return;
         }
-        
-        districtSelect.disabled = true;
-        districtSelect.innerHTML = '<option value="">Loading...</option>';
-        
-        try {
-            const response = await fetch('/api/locations/districts?state_id=' + stateId);
-            const districts = await response.json();
-            
-            districtSelect.innerHTML = '<option value="">Select District...</option>';
-            districts.forEach(d => {
-                const option = document.createElement('option');
-                option.value = d.name; // Use name for the form field
-                option.dataset.id = d.id;
-                option.textContent = d.name;
-                districtSelect.appendChild(option);
-            });
-            districtSelect.disabled = false;
-            
-        } catch (error) {
-            console.error('Error loading districts:', error);
-            districtSelect.innerHTML = '<option value="">Error loading</option>';
-        }
-    });
-    
-    // District change - update hidden fields
-    document.getElementById('district_id').addEventListener('change', function() {
-        const stateSelect = document.getElementById('state_id');
-        const selectedOption = this.options[this.selectedIndex];
-        
-        document.getElementById('state_id_hidden').value = stateSelect.value;
-        document.getElementById('district_id_hidden').value = selectedOption.dataset.id || '';
-        document.getElementById('city_name_hidden').value = this.value;
-    });
-});
+
+        // Pre-fill quick register modal with form data
+        document.getElementById('qrName').value = name;
+        document.getElementById('qrPhone').value = phone;
+        document.getElementById('qrEmail').value = '';
+        document.getElementById('qrReferralCode').value = '';
+
+        // Show quick register modal
+        const modal = new bootstrap.Modal(document.getElementById('quickRegisterModal'));
+        modal.show();
+    }
 </script>
+
+<!-- Include Quick Register Modal -->
+<?php include __DIR__ . '/../components/quick_register_modal.php'; ?>

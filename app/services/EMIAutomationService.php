@@ -61,10 +61,10 @@ class EMIAutomationService
     public function updateInstallmentStatus()
     {
         // Get all pending installments that are overdue
-        $query = "UPDATE emi_installments 
-                  SET status = 'overdue',
+        $query = "UPDATE emi_installments
+                  SET payment_status = 'overdue',
                       updated_at = NOW()
-                  WHERE status = 'pending' 
+                  WHERE payment_status = 'pending'
                   AND due_date < CURDATE()";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
@@ -75,7 +75,7 @@ class EMIAutomationService
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
                   JOIN customers c ON ep.customer_id = c.id
                   JOIN properties p ON ep.property_id = p.id
-                  WHERE ei.status = 'overdue'
+                  WHERE ei.payment_status = 'overdue'
                   AND (ei.last_reminder_date IS NULL 
                   OR ei.last_reminder_date < DATE_SUB(NOW(), INTERVAL 3 DAY))";
 
@@ -130,7 +130,7 @@ class EMIAutomationService
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
                   JOIN customers c ON ep.customer_id = c.id
                   JOIN properties p ON ep.property_id = p.id
-                  WHERE ei.status = 'pending'
+                  WHERE ei.payment_status = 'pending'
                   AND ei.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
                   AND (ei.reminder_sent IS NULL OR ei.reminder_sent = 0)";
 
@@ -189,7 +189,7 @@ class EMIAutomationService
                   JOIN customers c ON ep.customer_id = c.id
                   JOIN properties p ON ep.property_id = p.id
                   WHERE ep.status = 'active'
-                  AND ei.status = 'overdue'
+                  AND ei.payment_status = 'overdue'
                   GROUP BY ep.id
                   HAVING overdue_count >= 3";
 

@@ -1,0 +1,187 @@
+{
+  // PHP Configuration
+  "php.validate.executablePath": "C:\\xampp\\php\\php.exe",
+  "php.debug.executablePath": "C:\\xampp\\php\\php.exe",
+  "intelephense.environment.phpVersion": "8.2",
+  "intelephense.files.maxSize": 5000000,
+  "intelephense.files.associations": ["*.php", "*.phtml"],
+  
+  // Playwright Configuration
+  "playwright.reuseBrowser": false,
+  "playwright.showTrace": false,
+  "playwright.test-attribute": "test",
+  "playwright.inspect": true,
+  
+  // Testing Configuration
+  "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
+  "testing.followRunningTest": true,
+  "testing.openTesting": "openOnTestStart",
+  
+  // Code Quality & Formatting
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.workingDirectories": ["."],
+  "prettier.configPath": ".prettierrc",
+  
+  // File Associations
+  "files.associations": {
+    "*.blade.php": "php",
+    "*.tpl": "php",
+    "*.module": "php"
+  },
+  
+  // Project Specific Settings
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/.git": true,
+    "**/storage/logs/*": true,
+    "**/storage/cache/*": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true
+  },
+  
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/storage/logs": true,
+    "**/storage/cache": true,
+    "**/.git": true
+  },
+  
+  // IntelliSense & Autocompletion
+  "php.suggest.basic": false,
+  "intelephense.diagnostics.enable": true,
+  "intelephense.diagnostics.errorReporting": true,
+  "intelephense.diagnostics.run": true,
+  
+  // Database Integration
+  "database-client.autoConnect": false,
+  "database-client.defaultPort": 3307,
+  
+  // Git Integration
+  "gitlens.advanced.messages": {
+    "suppressCommitHasNoPreviousCommitWarning": false,
+    "suppressCommitNotFoundWarning": false,
+    "suppressFileNotUnderSourceControlWarning": false,
+    "suppressGitVersionWarning": false,
+    "suppressLineUncommittedWarning": false,
+    "suppressNoRepositoryWarning": false,
+    "suppressResultsExplorerNotice": false,
+    "suppressShowKeyBindingsNotice": true,
+    "suppressUpdateNotice": false,
+    "suppressWelcomeNotice": true
+  },
+  
+  // Task Runner
+  "task.problemMatchers": [
+    {
+      "owner": "php",
+      "fileLocation": ["relative", "${workspaceFolder}"],
+      "pattern": {
+        "regexp": "^(.*)\\s+in\\s+(.*)\\s+on\\s+line\\s+(\\d+)$",
+        "severity": "error",
+        "file": 2,
+        "line": 3,
+        "message": 1
+      }
+    },
+    {
+      "owner": "eslint",
+      "fileLocation": ["relative", "${workspaceFolder}"],
+      "pattern": {
+        "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*)\\s+\\[(.*)\\]$",
+        "severity": 1,
+        "file": 1,
+        "line": 2,
+        "column": 3,
+        "message": 4,
+        "code": 5
+      }
+    }
+  ],
+  
+  // Terminal Configuration
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  
+  // Performance Settings
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  
+  // MCP Integration
+  "mcp.enabled": true,
+  "mcp.servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "c:\\xampp\\htdocs\\apsdreamhome"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    }
+  },
+  
+  // Security Settings
+  "security.workspace.trust.untrustedFiles": "open",
+  "security.allowedUntrustedRootFolders": [
+    "c:\\xampp\\htdocs\\apsdreamhome"
+  ],
+  
+  // Workspace Settings
+  "workbench.colorTheme": "Default Dark+",
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.editor.enablePreview": false,
+  "workbench.sideBar.location": "left",
+  
+  // Language Specific Settings
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on"
+  },
+  
+  // Debug Configuration
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.inlineBreakpointEnabled": true,
+  "debug.openDebug": "openOnDebugBreak",
+  
+  // Live Server Settings
+  "liveServer.settings.port": 8080,
+  "liveServer.settings.root": "/",
+  "liveServer.settings.wait": 500,
+  
+  // AI & Copilot Settings
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": false,
+    "plaintext": false,
+    "markdown": true
+  },
+  "github.copilot.advanced": {
+    "debug.useInlineChat": true,
+    "debug.showDebugInlineChatHints": true
+  }
+}

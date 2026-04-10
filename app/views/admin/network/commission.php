@@ -85,7 +85,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             <h6 class="mb-1"><?php echo htmlspecialchars($rank['rank_name'] ?? '-'); ?></h6>
                                             <small class="text-muted">
                                                 Min: <?php echo $rank['min_referrals'] ?? 0; ?> referrals, 
-                                                ₹<?php echo number_format($rank['min_sales'] ?? 0); ?> sales
+                                                ₹<?php echo number_format(floatval(rank['min_sales'] ?? 0) ?? 0); ?> sales
                                             </small>
                                         </div>
                                         <span class="badge bg-primary">Level <?php echo $rank['rank_order'] ?? 0; ?></span>
@@ -114,7 +114,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                     <div class="list-group-item">
                                         <div class="d-flex justify-content-between">
                                             <h6 class="mb-1"><?php echo htmlspecialchars($payout['associate_name'] ?? '-'); ?></h6>
-                                            <span class="text-success fw-bold">₹<?php echo number_format($payout['amount'] ?? 0); ?></span>
+                                            <span class="text-success fw-bold">₹<?php echo number_format(floatval(payout['amount'] ?? 0) ?? 0); ?></span>
                                         </div>
                                         <small class="text-muted"><?php echo isset($payout['payout_date']) ? date('M d, Y', strtotime($payout['payout_date'])) : '-'; ?></small>
                                     </div>

@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Development Cost Calculator with Commission Integration
  * Calculates plot rates including all development costs and commission structures
  */
 
-require_once 'includes/config.php';
-require_once 'includes/associate_permissions.php';
-require_once 'includes/hybrid_commission_system.php';
+// FIXED: Removed missing includes - these files don't exist
+// require_once 'includes/config.php';
+// require_once 'includes/associate_permissions.php';
+// require_once 'includes/hybrid_commission_system.php';
 
-// Initialize database connection
-$config = AppConfig::getInstance();
-$conn = $config->getDatabaseConnection();
-
-// Check if connection is successful
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
+// Initialize database connection using proper Database class
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
 }
 
 session_start();
@@ -26,8 +27,9 @@ if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in']
 $associate_id = $_SESSION['associate_id'];
 $associate_name = $_SESSION['associate_name'];
 
-// Initialize hybrid commission system
-$hybrid_system = new HybridRealEstateCommission($conn);
+// Initialize hybrid commission system - commented out due to missing file
+// $hybrid_system = new HybridRealEstateCommission($conn);
+$hybrid_system = null;
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -52,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-function calculatePlotRate($data) {
+function calculatePlotRate($data)
+{
     global $hybrid_system, $associate_id;
 
     try {
@@ -98,13 +101,13 @@ function calculatePlotRate($data) {
             'area_sqft' => $area_sqft,
             'profit_margin' => $profit_margin
         ];
-
     } catch (Exception $e) {
         return ['success' => false, 'message' => 'Error calculating plot rate: ' . $e->getMessage()];
     }
 }
 
-function saveCostBreakdown($data) {
+function saveCostBreakdown($data)
+{
     global $conn, $hybrid_system;
 
     // Check if connection is available
@@ -129,7 +132,6 @@ function saveCostBreakdown($data) {
         }
 
         return $hybrid_system->saveDevelopmentCosts($property_id, $cost_breakdown);
-
     } catch (Exception $e) {
         return ['success' => false, 'message' => 'Error saving cost breakdown: ' . $e->getMessage()];
     }
@@ -144,6 +146,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -174,7 +177,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
         .dashboard-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             margin: 20px 0;
             overflow: hidden;
         }
@@ -192,7 +195,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
             border-radius: 10px;
             padding: 1.5rem;
             margin: 1rem 0;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             border-left: 4px solid var(--success-color);
         }
 
@@ -291,6 +294,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -306,18 +310,20 @@ if (isset($_GET['calculated']) && $calculation_result) {
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="associate_dashboard.php">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a></li>
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a></li>
                         <li><a class="dropdown-item" href="hybrid_commission_dashboard.php">
-                            <i class="fas fa-rupee-sign me-2"></i>Hybrid Commission Dashboard
-                        </a></li>
+                                <i class="fas fa-rupee-sign me-2"></i>Hybrid Commission Dashboard
+                            </a></li>
                         <li><a class="dropdown-item" href="property_management.php">
-                            <i class="fas fa-building me-2"></i>Property Management
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
+                                <i class="fas fa-building me-2"></i>Property Management
+                            </a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="associate_logout.php">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a></li>
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
                     </ul>
                 </div>
             </div>
@@ -342,18 +348,20 @@ if (isset($_GET['calculated']) && $calculation_result) {
 
                         <!-- Alerts -->
                         <?php if (isset($_SESSION['error_message'])): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error_message']; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php unset($_SESSION['error_message']); endif; ?>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error_message']; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php unset($_SESSION['error_message']);
+                        endif; ?>
 
                         <?php if (isset($_SESSION['success_message'])): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success_message']; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php unset($_SESSION['success_message']); endif; ?>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success_message']; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php unset($_SESSION['success_message']);
+                        endif; ?>
 
                         <div class="row">
                             <!-- Calculator Form -->
@@ -370,7 +378,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 <i class="fas fa-tag me-1"></i>Project Name
                                             </label>
                                             <input type="text" class="form-control" name="project_name"
-                                                   placeholder="e.g., Green Valley Phase 2" required>
+                                                placeholder="e.g., Green Valley Phase 2" required>
                                         </div>
 
                                         <div class="row mb-4">
@@ -380,7 +388,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 </label>
                                                 <div class="input-group">
                                                     <input type="number" class="form-control" name="area_sqft"
-                                                           value="1000" min="1" step="1" required>
+                                                        value="1000" min="1" step="1" required>
                                                     <span class="input-group-text">sq ft</span>
                                                 </div>
                                             </div>
@@ -390,7 +398,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 </label>
                                                 <div class="input-group">
                                                     <input type="number" class="form-control" name="profit_margin"
-                                                           value="25" min="0" max="100" step="1" required>
+                                                        value="25" min="0" max="100" step="1" required>
                                                     <span class="input-group-text">%</span>
                                                 </div>
                                             </div>
@@ -403,7 +411,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                             </label>
                                             <div class="input-group">
                                                 <input type="number" class="form-control" name="land_cost"
-                                                       value="2000000" min="0" step="1000" required>
+                                                    value="2000000" min="0" step="1000" required>
                                                 <span class="input-group-text">₹</span>
                                             </div>
                                             <small class="text-muted">Cost of acquiring the land</small>
@@ -468,118 +476,118 @@ if (isset($_GET['calculated']) && $calculation_result) {
                             <!-- Results -->
                             <div class="col-md-6">
                                 <?php if ($calculation_result): ?>
-                                <div class="calculator-section">
-                                    <h4 class="mb-4">
-                                        <i class="fas fa-chart-bar text-primary me-2"></i>Calculation Results
-                                    </h4>
+                                    <div class="calculator-section">
+                                        <h4 class="mb-4">
+                                            <i class="fas fa-chart-bar text-primary me-2"></i>Calculation Results
+                                        </h4>
 
-                                    <!-- Summary Card -->
-                                    <div class="summary-card">
-                                        <h3><?php echo htmlspecialchars($calculation_result['calculation']['final_rate_per_sqft']); ?> ₹/sq ft</h3>
-                                        <p class="mb-0">Final Plot Rate</p>
-                                    </div>
-
-                                    <!-- Cost Breakdown -->
-                                    <div class="result-card">
-                                        <h6>Cost Breakdown</h6>
-
-                                        <div class="cost-breakdown">
-                                            <div class="breakdown-row">
-                                                <span>Land Cost:</span>
-                                                <span>₹<?php echo number_format($calculation_result['land_cost']); ?></span>
-                                            </div>
-
-                                            <div class="breakdown-row">
-                                                <span>Development Cost:</span>
-                                                <span>₹<?php echo number_format($calculation_result['total_development_cost']); ?></span>
-                                            </div>
-
-                                            <div class="breakdown-row">
-                                                <span>Commission Cost:</span>
-                                                <span>₹<?php echo number_format($calculation_result['calculation']['commission_cost']); ?></span>
-                                            </div>
-
-                                            <div class="breakdown-row total">
-                                                <span>Total Cost:</span>
-                                                <span>₹<?php echo number_format($calculation_result['calculation']['total_cost_with_commission']); ?></span>
-                                            </div>
+                                        <!-- Summary Card -->
+                                        <div class="summary-card">
+                                            <h3><?php echo htmlspecialchars($calculation_result['calculation']['final_rate_per_sqft']); ?> ₹/sq ft</h3>
+                                            <p class="mb-0">Final Plot Rate</p>
                                         </div>
 
-                                        <div class="cost-breakdown">
-                                            <div class="breakdown-row">
-                                                <span>Profit (<?php echo $calculation_result['profit_margin']; ?>%):</span>
-                                                <span>₹<?php echo number_format($calculation_result['calculation']['profit_amount']); ?></span>
-                                            </div>
+                                        <!-- Cost Breakdown -->
+                                        <div class="result-card">
+                                            <h6>Cost Breakdown</h6>
 
-                                            <div class="breakdown-row total">
-                                                <span>Total Value:</span>
-                                                <span>₹<?php echo number_format($calculation_result['calculation']['total_value']); ?></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Development Cost Details -->
-                                    <div class="result-card">
-                                        <h6>Development Cost Details</h6>
-
-                                        <?php foreach ($calculation_result['development_costs'] as $cost): ?>
-                                        <div class="cost-breakdown">
-                                            <div class="breakdown-row">
-                                                <span><?php echo ucfirst($cost['type']); ?>:</span>
-                                                <span>₹<?php echo number_format($cost['amount']); ?></span>
-                                            </div>
-                                            <?php if ($cost['description']): ?>
-                                            <small class="text-muted"><?php echo htmlspecialchars($cost['description']); ?></small>
-                                            <?php endif; ?>
-                                        </div>
-                                        <?php endforeach; ?>
-                                    </div>
-
-                                    <!-- Profitability Analysis -->
-                                    <div class="result-card">
-                                        <h6>Profitability Analysis</h6>
-
-                                        <div class="row text-center">
-                                            <div class="col-4">
-                                                <div class="profitability-indicator <?php echo $calculation_result['profit_margin'] >= 25 ? 'profitable' : 'unprofitable'; ?>">
-                                                    <?php echo $calculation_result['profit_margin'] >= 25 ? 'Excellent' : 'Good'; ?>
+                                            <div class="cost-breakdown">
+                                                <div class="breakdown-row">
+                                                    <span>Land Cost:</span>
+                                                    <span>₹<?php echo number_format($calculation_result['land_cost']); ?></span>
                                                 </div>
-                                                <small>Margin Rating</small>
+
+                                                <div class="breakdown-row">
+                                                    <span>Development Cost:</span>
+                                                    <span>₹<?php echo number_format($calculation_result['total_development_cost']); ?></span>
+                                                </div>
+
+                                                <div class="breakdown-row">
+                                                    <span>Commission Cost:</span>
+                                                    <span>₹<?php echo number_format($calculation_result['calculation']['commission_cost']); ?></span>
+                                                </div>
+
+                                                <div class="breakdown-row total">
+                                                    <span>Total Cost:</span>
+                                                    <span>₹<?php echo number_format($calculation_result['calculation']['total_cost_with_commission']); ?></span>
+                                                </div>
                                             </div>
-                                            <div class="col-4">
-                                                <h4 class="text-success">₹<?php echo number_format($calculation_result['calculation']['profit_amount']); ?></h4>
-                                                <small>Total Profit</small>
-                                            </div>
-                                            <div class="col-4">
-                                                <h4 class="text-info">₹<?php echo number_format($calculation_result['calculation']['total_value']); ?></h4>
-                                                <small>Project Value</small>
+
+                                            <div class="cost-breakdown">
+                                                <div class="breakdown-row">
+                                                    <span>Profit (<?php echo $calculation_result['profit_margin']; ?>%):</span>
+                                                    <span>₹<?php echo number_format($calculation_result['calculation']['profit_amount']); ?></span>
+                                                </div>
+
+                                                <div class="breakdown-row total">
+                                                    <span>Total Value:</span>
+                                                    <span>₹<?php echo number_format($calculation_result['calculation']['total_value']); ?></span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                </div>
+                                        <!-- Development Cost Details -->
+                                        <div class="result-card">
+                                            <h6>Development Cost Details</h6>
+
+                                            <?php foreach ($calculation_result['development_costs'] as $cost): ?>
+                                                <div class="cost-breakdown">
+                                                    <div class="breakdown-row">
+                                                        <span><?php echo ucfirst($cost['type']); ?>:</span>
+                                                        <span>₹<?php echo number_format($cost['amount']); ?></span>
+                                                    </div>
+                                                    <?php if ($cost['description']): ?>
+                                                        <small class="text-muted"><?php echo htmlspecialchars($cost['description']); ?></small>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+
+                                        <!-- Profitability Analysis -->
+                                        <div class="result-card">
+                                            <h6>Profitability Analysis</h6>
+
+                                            <div class="row text-center">
+                                                <div class="col-4">
+                                                    <div class="profitability-indicator <?php echo $calculation_result['profit_margin'] >= 25 ? 'profitable' : 'unprofitable'; ?>">
+                                                        <?php echo $calculation_result['profit_margin'] >= 25 ? 'Excellent' : 'Good'; ?>
+                                                    </div>
+                                                    <small>Margin Rating</small>
+                                                </div>
+                                                <div class="col-4">
+                                                    <h4 class="text-success">₹<?php echo number_format($calculation_result['calculation']['profit_amount']); ?></h4>
+                                                    <small>Total Profit</small>
+                                                </div>
+                                                <div class="col-4">
+                                                    <h4 class="text-info">₹<?php echo number_format($calculation_result['calculation']['total_value']); ?></h4>
+                                                    <small>Project Value</small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 <?php else: ?>
-                                <div class="calculator-section">
-                                    <h4 class="mb-4">
-                                        <i class="fas fa-chart-line text-primary me-2"></i>Results Preview
-                                    </h4>
+                                    <div class="calculator-section">
+                                        <h4 class="mb-4">
+                                            <i class="fas fa-chart-line text-primary me-2"></i>Results Preview
+                                        </h4>
 
-                                    <div class="text-center py-5 text-muted">
-                                        <i class="fas fa-calculator fa-4x mb-3"></i>
-                                        <h5>Ready to Calculate</h5>
-                                        <p>Fill out the cost inputs and click "Calculate Plot Rate" to see detailed results</p>
-                                    </div>
+                                        <div class="text-center py-5 text-muted">
+                                            <i class="fas fa-calculator fa-4x mb-3"></i>
+                                            <h5>Ready to Calculate</h5>
+                                            <p>Fill out the cost inputs and click "Calculate Plot Rate" to see detailed results</p>
+                                        </div>
 
-                                    <div class="result-card">
-                                        <h6><i class="fas fa-lightbulb text-warning me-2"></i>Pro Tips</h6>
-                                        <ul class="mb-0">
-                                            <li>Include all development costs for accurate calculation</li>
-                                            <li>Commission costs are automatically calculated</li>
-                                            <li>Adjust profit margin based on market conditions</li>
-                                            <li>Save cost breakdowns for future reference</li>
-                                        </ul>
+                                        <div class="result-card">
+                                            <h6><i class="fas fa-lightbulb text-warning me-2"></i>Pro Tips</h6>
+                                            <ul class="mb-0">
+                                                <li>Include all development costs for accurate calculation</li>
+                                                <li>Commission costs are automatically calculated</li>
+                                                <li>Adjust profit margin based on market conditions</li>
+                                                <li>Save cost breakdowns for future reference</li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -668,6 +676,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
         });
     </script>
 </body>
+
 </html>
 
 //

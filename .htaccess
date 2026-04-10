@@ -29,3 +29,18 @@
     php_flag display_errors on
     php_value error_log logs/php_error.log
 </IfModule>
+
+# MIME Types for static files
+<IfModule mod_mime.c>
+    AddType application/javascript .js
+    AddType text/css .css
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType image/svg+xml .svg
+</IfModule>
+
+# Allow access to assets directory
+<Directory "assets">
+    AllowOverride All
+    Require all granted
+</Directory>

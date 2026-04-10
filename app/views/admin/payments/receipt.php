@@ -67,7 +67,7 @@
 
     <div class="amount-box">
         <div class="amount-label">Amount Received</div>
-        <div class="amount-value">₹<?php echo number_format($payment['amount'], 2); ?></div>
+        <div class="amount-value">₹<?php echo number_format(floatval(payment['amount'] ?? 0), 2); ?></div>
         <div style="margin-top: 5px; font-size: 14px; color: #7f8c8d;">
             <?php echo ucwords(str_replace('_', ' ', $payment['payment_type'])); ?> Payment
         </div>
@@ -76,7 +76,7 @@
     <?php if (!empty($payment['notes'])): ?>
     <div class="info-group">
         <span class="label">Description / Notes</span>
-        <span class="value"><?php echo nl2br(htmlspecialchars($payment['notes'])); ?></span>
+        <span class="value"><?php echo nl2br(htmlspecialchars(payment['notes'] ?? '')); ?></span>
     </div>
     <?php endif; ?>
 

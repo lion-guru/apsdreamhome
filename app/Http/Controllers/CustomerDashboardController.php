@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Customer Dashboard Controller
  * Shows plots, bookings, EMI, payment history
@@ -31,11 +32,11 @@ class CustomerDashboardController extends BaseController
             // Get customer's bookings/properties
             $bookings = $db->fetchAll("SELECT b.*, p.title as property_name, p.location, p.price FROM bookings b LEFT JOIN properties p ON b.property_id = p.id WHERE b.customer_id = ? ORDER BY b.created_at DESC", [$user_id]) ?? [];
 
-            // Get EMI schedule
-            $emi_schedule = $db->fetchAll("SELECT * FROM emi_schedule WHERE customer_id = ? ORDER BY due_date ASC", [$user_id]) ?? [];
+            // Get EMI schedule - select only needed columns for performance
+            $emi_schedule = $db->fetchAll("SELECT id, due_date, amount, status, paid_date FROM emi_schedule WHERE customer_id = ? ORDER BY due_date ASC", [$user_id]) ?? [];
 
-            // Get payment history
-            $payment_history = $db->fetchAll("SELECT * FROM payments WHERE customer_id = ? ORDER BY created_at DESC LIMIT 10", [$user_id]) ?? [];
+            // Get payment history - select only needed columns for performance
+            $payment_history = $db->fetchAll("SELECT id, amount, payment_date, payment_method, status FROM payments WHERE customer_id = ? ORDER BY created_at DESC LIMIT 10", [$user_id]) ?? [];
 
             // Stats
             $stats = [
@@ -44,7 +45,6 @@ class CustomerDashboardController extends BaseController
                 'pending_emi' => count(array_filter($emi_schedule, fn($e) => ($e['status'] ?? '') === 'pending')),
                 'total_investment' => array_sum(array_column($bookings, 'amount'))
             ];
-
         } catch (\Exception $e) {
             error_log("Customer dashboard error: " . $e->getMessage());
             $bookings = [];

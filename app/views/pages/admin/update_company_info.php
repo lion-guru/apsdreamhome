@@ -1,4 +1,5 @@
 ﻿<?php
+
 /**
  * Quick Company Information Updater
  * This script helps you quickly update your company details
@@ -11,10 +12,13 @@ $company_email = "info@apsdreamhome.com"; // Change to your email
 $company_address = "Gorakhpur, Uttar Pradesh, India"; // Change to your address
 $company_description = "Your trusted partner in real estate solutions. We provide comprehensive property services with modern technology and personalized approach."; // Your description
 
-require_once 'includes/db_connection.php';
+// FIXED: Removed missing include - file doesn't exist
+// require_once 'includes/db_connection.php';
 
+// Initialize database connection using proper Database class
 try {
-    $conn = getMysqliConnection();
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
 
     echo "<h2>≡ƒÅó Updating Company Information</h2>\n";
 
@@ -67,7 +71,6 @@ try {
     echo "<a href='about.php' class='btn btn-secondary'>View About Page</a>\n";
     echo "<a href='contact.php' class='btn btn-success'>View Contact Page</a>\n";
     echo "</div>\n";
-
 } catch (PDOException $e) {
     echo "<h3>Γ¥î Database Error:</h3>\n";
     echo "<p>Error: " . $e->getMessage() . "</p>\n";
@@ -77,12 +80,14 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Company Info - APS Dream Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -110,4 +115,5 @@ try {
         </div>
     </div>
 </body>
+
 </html>

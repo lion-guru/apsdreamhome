@@ -1,0 +1,143 @@
+{
+  "php.validate.executablePath": "C:\\xampp\\php\\php.exe",
+  "php.debug.executablePath": "C:\\xampp\\php\\php.exe",
+  "intelephense.environment.phpVersion": "8.2",
+  "intelephense.files.maxSize": 5000000,
+  "intelephense.files.associations": ["*.php", "*.phtml"],
+  "playwright.reuseBrowser": false,
+  "playwright.showTrace": false,
+  "playwright.test-attribute": "test",
+  "playwright.inspect": true,
+  "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
+  "testing.followRunningTest": true,
+  "testing.openTesting": "openOnTestStart",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.workingDirectories": ["."],
+  "prettier.configPath": ".prettierrc",
+  "files.associations": {
+    "*.blade.php": "php",
+    "*.tpl": "php",
+    "*.module": "php"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/.git": true,
+    "**/storage/logs/*": true,
+    "**/storage/cache/*": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/test-results": true,
+    "**/playwright-report": true,
+    "**/playwright/.cache": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/storage/logs": true,
+    "**/storage/cache": true,
+    "**/.git": true,
+    "**/test-results": true,
+    "**/playwright-report": true
+  },
+  "php.suggest.basic": false,
+  "intelephense.diagnostics.enable": true,
+  "intelephense.diagnostics.errorReporting": true,
+  "intelephense.diagnostics.run": true,
+  "database-client.autoConnect": false,
+  "database-client.defaultPort": 3307,
+  "gitlens.advanced.messages": {
+    "suppressCommitHasNoPreviousCommitWarning": false,
+    "suppressCommitNotFoundWarning": false,
+    "suppressFileNotUnderSourceControlWarning": false,
+    "suppressGitVersionWarning": false,
+    "suppressLineUncommittedWarning": false,
+    "suppressNoRepositoryWarning": false,
+    "suppressResultsExplorerNotice": false,
+    "suppressShowKeyBindingsNotice": true,
+    "suppressUpdateNotice": false,
+    "suppressWelcomeNotice": true
+  },
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  "mcp.enabled": true,
+  "mcp.servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "c:\\xampp\\htdocs\\apsdreamhome"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "mysql": {
+      "command": "npx",
+      "args": ["-y", "@f4ww4z/mcp-mysql-server"],
+      "env": {
+        "MYSQL_HOST": "127.0.0.1",
+        "MYSQL_PORT": "3307",
+        "MYSQL_USER": "root",
+        "MYSQL_PASSWORD": "",
+        "MYSQL_DATABASE": "apsdreamhome"
+      }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    }
+  },
+  "security.workspace.trust.untrustedFiles": "open",
+  "security.allowedUntrustedRootFolders": ["c:\\xampp\\htdocs\\apsdreamhome"],
+  "workbench.colorTheme": "Default Dark+",
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.editor.enablePreview": false,
+  "workbench.sideBar.location": "left",
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on"
+  },
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.inlineBreakpointEnabled": true,
+  "debug.openDebug": "openOnDebugBreak",
+  "liveServer.settings.port": 8080,
+  "liveServer.settings.root": "/",
+  "liveServer.settings.wait": 500,
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": false,
+    "plaintext": false,
+    "markdown": true
+  },
+  "github.copilot.advanced": {
+    "debug.useInlineChat": true,
+    "debug.showDebugInlineChatHints": true
+  },
+  "testing.automaticallyOpenTestResults": "openOnTestStart",
+  "sonarlint.connectedMode.project": {
+    "connectionId": "twilio",
+    "projectKey": "twilio_twilio-php"
+  }
+}
