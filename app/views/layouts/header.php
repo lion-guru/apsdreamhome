@@ -644,21 +644,6 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
 <script>
     // Set BASE_URL for JavaScript
     window.BASE_URL = '<?php echo BASE_URL; ?>';
-
-    // Track visitor session via AJAX to avoid header issues
-    <?php if (!isset($_SESSION['visitor_tracked'])): ?>
-        fetch('<?php echo BASE_URL; ?>/track/page-view', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'page_url=' + encodeURIComponent(window.location.pathname) + '&page_title=' + encodeURIComponent(document.title)
-        }).catch(err => console.error('Visitor tracking failed:', err));
-    <?php
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        $_SESSION['visitor_tracked'] = true;
-    endif;
-    ?>
 </script>
 
 <script src="<?php echo BASE_URL; ?>/js/visitor-tracking.js"></script>
