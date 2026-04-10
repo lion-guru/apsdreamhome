@@ -7,7 +7,7 @@ if (!defined('BASE_PATH')) exit;
 
 $page_title = 'My Profile';
 $active_page = 'profile';
-$user = $user ?? [];
+$user = $user ?? $user_data ?? [];
 $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['success'], $_SESSION['error']);

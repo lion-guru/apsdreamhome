@@ -51,15 +51,18 @@ class AdminProfileController extends AdminController
             }
         }
 
-        error_log("Profile index: user_id=" . ($userId ?? 'null') . ", user_found=" . (!empty($user) ? 'yes' : 'no'));
+        // Define BASE_PATH to prevent early exit in view
+        if (!defined('BASE_PATH')) {
+            define('BASE_PATH', dirname(__DIR__, 3));
+        }
 
-        // Use BaseController's render method
-        return $this->render('admin/profile', [
-            'active_page' => 'profile',
-            'page_title' => 'My Profile',
-            'page_description' => 'Manage your profile information',
-            'user' => $user ?: []
-        ]);
+        // Directly include view with header/footer
+        $active_page = 'profile';
+        $page_title = 'My Profile';
+        $page_description = 'Manage your profile information';
+        $user_data = $user ?: [];
+
+        include __DIR__ . '/../../../views/admin/profile.php';
     }
 
     /**

@@ -20,10 +20,17 @@ class AdminAuthController extends BaseController
 
         // Test-only shortcut: allow auto-login to admin dashboard when test_login=1
         if (isset($_GET['test_login']) && $_GET['test_login'] == '1') {
-            $_SESSION['admin_id'] = 0;
-            $_SESSION['admin_email'] = 'testadmin@example.com';
-            $_SESSION['admin_role'] = 'admin';
-            $_SESSION['admin_name'] = 'Test Admin';
+            // Fetch actual admin from database
+            $db = Database::getInstance();
+            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' LIMIT 1");
+            if (!$admin) {
+                $admin = $db->fetchOne("SELECT * FROM users WHERE email = 'testadmin@example.com' AND role IN ('admin', 'super_admin') LIMIT 1");
+            }
+
+            $_SESSION['admin_id'] = $admin['id'] ?? 1;
+            $_SESSION['admin_email'] = $admin['email'] ?? 'testadmin@example.com';
+            $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
+            $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Test Admin';
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }
@@ -34,10 +41,16 @@ class AdminAuthController extends BaseController
             exit;
         }
 
+        // Set cache control headers to prevent page caching
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Cache-Control: post-check=0, pre-check=0', false);
+        header('Pragma: no-cache');
+        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+
         // Generate CSRF token
         $csrf_token = $this->getCsrfToken();
 
-        // Generate CAPTCHA
+        // Generate CAPTCHA (force new question on every load)
         $num1 = rand(1, 10);
         $num2 = rand(1, 10);
         $_SESSION['captcha_result'] = $num1 + $num2;
@@ -71,10 +84,17 @@ class AdminAuthController extends BaseController
         // TEST MODE: auto login for admin to enable end-to-end testing without CAPTCHA/DB dependencies
         if (getenv('TEST_MODE') === 'true') {
             if (session_status() === PHP_SESSION_NONE) session_start();
-            $_SESSION['admin_id'] = 0;
-            $_SESSION['admin_email'] = 'testadmin@example.com';
-            $_SESSION['admin_role'] = 'admin';
-            $_SESSION['admin_name'] = 'Test Admin';
+            // Fetch actual admin from database
+            $db = Database::getInstance();
+            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' LIMIT 1");
+            if (!$admin) {
+                $admin = $db->fetchOne("SELECT * FROM users WHERE email = 'testadmin@example.com' AND role IN ('admin', 'super_admin') LIMIT 1");
+            }
+
+            $_SESSION['admin_id'] = $admin['id'] ?? 1;
+            $_SESSION['admin_email'] = $admin['email'] ?? 'testadmin@example.com';
+            $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
+            $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Test Admin';
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }
