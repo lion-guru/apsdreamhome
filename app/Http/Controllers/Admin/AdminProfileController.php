@@ -15,6 +15,8 @@ class AdminProfileController extends AdminController
     public function __construct()
     {
         parent::__construct();
+        // Disable layout since profile view uses direct header/footer includes
+        $this->layout = null;
     }
 
     /**
@@ -49,14 +51,15 @@ class AdminProfileController extends AdminController
             }
         }
 
-        $data = [
+        error_log("Profile index: user_id=" . ($userId ?? 'null') . ", user_found=" . (!empty($user) ? 'yes' : 'no'));
+
+        // Use BaseController's render method
+        return $this->render('admin/profile', [
             'active_page' => 'profile',
             'page_title' => 'My Profile',
             'page_description' => 'Manage your profile information',
             'user' => $user ?: []
-        ];
-
-        return $this->render('admin/profile', $data);
+        ]);
     }
 
     /**
