@@ -12,7 +12,35 @@ class CustomerController
     public function profile() 
     {
         // Customer Profile Management
-        include __DIR__ . "/../../views/customer/profile.php";
+        
+        // Get customer data from session
+        $userId = $_SESSION['user_id'] ?? null;
+        $user = [];
+
+        if ($userId) {
+            try {
+                $user = $this->db->fetch(
+                    "SELECT * FROM users WHERE id = ? AND status = 'active'",
+                    [$userId]
+                );
+            } catch (\Exception $e) {
+                error_log("Error getting customer: " . $e->getMessage());
+            }
+        }
+
+        // Define BASE_PATH for shared view
+        if (!defined('BASE_PATH')) {
+            define('BASE_PATH', dirname(__DIR__, 3));
+        }
+
+        // Set variables for shared view
+        $userRole = 'customer';
+        $profileUrl = BASE_URL . '/customer/profile';
+        $securityUrl = null; // Customers don't have security page yet
+        $canEdit = true;
+
+        // Use unified shared profile view
+        include __DIR__ . '/../../../views/shared/profile.php';
     }
     
     public function wishlist() 
