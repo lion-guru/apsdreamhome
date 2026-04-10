@@ -16,11 +16,11 @@ $router = new Router();
 $router->get('/', 'Front\\PageController@home');
 
 // Redirect /public to /
-$router->get('/public', function() {
+$router->get('/public', function () {
     header('Location: /', true, 301);
     exit;
 });
-$router->get('/public/', function() {
+$router->get('/public/', function () {
     header('Location: /', true, 301);
     exit;
 });
@@ -43,11 +43,36 @@ $router->get('/gallery', 'Front\\PageController@gallery');
 $router->get('/resell', 'Front\\PageController@resell');
 $router->get('/careers', 'Front\PageController@careers');
 $router->get('/coming-soon', 'Front\\PageController@comingSoon');
+$router->get('/become-associate', function () {
+    include __DIR__ . '/../app/views/pages/become_associate.php';
+});
 
 // Support
 $router->get('/support', 'Front\\SupportController@index');
 $router->post('/support', 'Front\\SupportController@store');
 $router->get('/whatsapp-chat', 'Front\\PageController@whatsappChat');
+
+// Google OAuth
+$router->get('/auth/google', 'Auth\\GoogleAuthController@googleRedirect');
+$router->get('/auth/google/redirect', 'Auth\\GoogleAuthController@googleRedirect');
+$router->get('/auth/google/callback', 'Auth\\GoogleAuthController@callback');
+$router->get('/auth/google/role-selection', 'Auth\\GoogleAuthController@roleSelection');
+$router->post('/auth/google/complete-registration', 'Auth\\GoogleAuthController@completeRegistration');
+
+// Quick Auth (for casual visitors, booking, etc.)
+$router->post('/auth/quick-register', 'Auth\\QuickAuthController@quickRegister');
+$router->post('/auth/request-referral-code', 'Auth\\QuickAuthController@requestReferralCode');
+$router->post('/auth/auto-generate-user', 'Auth\\QuickAuthController@autoGenerateUser');
+
+// Visitor Tracking & Lead Capture
+$router->post('/track/page-view', 'VisitorTrackingController@trackPageView');
+$router->post('/track/incomplete-registration', 'VisitorTrackingController@trackIncompleteRegistration');
+$router->post('/track/interest', 'VisitorTrackingController@trackInterest');
+$router->get('/admin/visitor-stats', 'VisitorTrackingController@getVisitorStats');
+
+// Lead Follow-up System
+$router->post('/admin/send-follow-ups', 'Admin\\LeadFollowUpController@sendFollowUps');
+$router->get('/admin/follow-up-stats', 'Admin\\LeadFollowUpController@getFollowUpStats');
 $router->get('/user-ai-suggestions', 'Front\\PageController@userAiSuggestions');
 $router->get('/user/investments', 'Front\\PageController@userInvestments');
 $router->get('/builder-registration', 'Front\\PageController@builderRegistration');
@@ -184,7 +209,7 @@ $router->post('/agent/register', 'Auth\\AgentAuthController@handleRegister');
 $router->get('/agent/login', 'Auth\\AgentAuthController@login');
 $router->post('/agent/login', 'Auth\\AgentAuthController@authenticate');
 $router->get('/agent/logout', 'Auth\\AgentAuthController@logout');
-$router->get('/agent/dashboard', 'Auth\\AgentAuthController@login');
+$router->get('/agent/dashboard', 'Agent\\AgentDashboardController@index');
 
 // Associate Auth
 $router->get('/associate/register', 'Auth\\AssociateAuthController@associateRegister');
@@ -192,7 +217,14 @@ $router->post('/associate/register', 'Auth\\AssociateAuthController@handleAssoci
 $router->get('/associate/login', 'Auth\\AssociateAuthController@associateLogin');
 $router->post('/associate/login', 'Auth\\AssociateAuthController@authenticateAssociate');
 $router->get('/associate/logout', 'Auth\\AssociateAuthController@logout');
-$router->get('/associate/dashboard', 'DashboardController@associate');
+$router->get('/associate/dashboard', 'AssociateController@dashboard');
+$router->get('/associate/add-property', 'AssociateController@addProperty');
+$router->get('/associate/leads', 'AssociateController@leads');
+$router->get('/associate/commissions', 'AssociateController@commissions');
+$router->get('/associate/properties', 'AssociateController@properties');
+$router->get('/associate/sold', 'AssociateController@sold');
+$router->get('/associate/pending', 'AssociateController@pending');
+$router->get('/associate/profile', 'AssociateController@profile');
 
 // Employee Auth
 $router->get('/employee/login', 'Employee\\EmployeeController@login');
@@ -295,6 +327,9 @@ $router->get('/admin/properties/{id}/edit', 'App\\Http\\Controllers\\Admin\\Prop
 $router->post('/admin/properties/{id}/update', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@update');
 $router->post('/admin/properties/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@destroy');
 $router->get('/admin/properties/check-availability', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@checkAvailability');
+
+// AI Aggregator Trigger Route
+$router->post('/admin/ai-aggregator/fetch', 'App\\Http\\Controllers\\Admin\\AIAggregatorController@triggerFetch');
 
 // Admin Users
 $router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\UserController@index');
@@ -451,6 +486,14 @@ $router->post('/admin/profile', 'App\\Http\\Controllers\\Admin\\AdminProfileCont
 $router->get('/admin/profile/security', 'App\\Http\\Controllers\\Admin\\AdminProfileController@security');
 $router->post('/admin/profile/change-password', 'App\\Http\\Controllers\\Admin\\AdminProfileController@changePassword');
 
+// Admin Menu Permissions Management (RBAC)
+$router->get('/admin/menu-permissions', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@index');
+$router->post('/admin/menu-permissions/update-role', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@updateRolePermissions');
+$router->post('/admin/menu-permissions/update-user', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@updateUserPermissions');
+$router->post('/admin/menu-permissions/revoke-user', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@revokeUserPermission');
+$router->get('/admin/menu-permissions/get-users', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@getUsers');
+$router->get('/admin/menu-permissions/get-user-permissions', 'App\\Http\\Controllers\\Admin\\AdminMenuPermissionController@getUserPermissions');
+
 // ============================================================
 // AI & SENIOR DEVELOPER
 // ============================================================
@@ -594,17 +637,28 @@ $router->get('/payment/settings', 'App\Http\Controllers\PaymentController@settin
 $router->post('/payment/settings', 'App\Http\Controllers\PaymentController@settings');
 
 // Missing Routes
-$router->get('/privacy-policy', function() { include __DIR__ . '/../app/views/pages/privacy-policy.php'; });
-$router->get('/terms', function() { include __DIR__ . '/../app/views/pages/terms.php'; });
-$router->get('/inquiry', function() { include __DIR__ . '/../app/views/pages/inquiry.php'; });
-$router->post('/inquiry', function() { 
-    header('Location: /inquiry?success=1'); 
-    exit; 
+$router->get('/privacy-policy', function () {
+    include __DIR__ . '/../app/views/pages/privacy-policy.php';
+});
+$router->get('/terms', function () {
+    include __DIR__ . '/../app/views/pages/terms.php';
+});
+$router->get('/inquiry', function () {
+    include __DIR__ . '/../app/views/pages/inquiry.php';
+});
+$router->post('/inquiry', function () {
+    header('Location: /inquiry?success=1');
+    exit;
 });
 
 
 // Standalone Pages
-$router->get('/plots', function() { include __DIR__ . '/../app/views/pages/plots.php'; });
+$router->get('/plots', function () {
+    include __DIR__ . '/../app/views/pages/plots.php';
+});
+
+// Admin Analytics
+$router->get('/admin/analytics', 'App\\Http\\Controllers\\Admin\\AnalyticsController@index');
 
 // Newsletter Subscribe
 $router->post('/subscribe', 'Api\NewsletterController@subscribe');
@@ -632,17 +686,48 @@ $router->get('/api/banks/{id}/branches', 'Api\BankController@branches');
 // Service Interest
 $router->post('/service-interest', 'Front\PageController@serviceInterest');
 
+// ============================================================
+// WALLET SYSTEM
+// ============================================================
+
+// Wallet Dashboard
+$router->get('/wallet', 'WalletController@index');
+$router->get('/wallet/dashboard', 'WalletController@index');
+
+// Wallet Transactions
+$router->get('/wallet/transactions', 'WalletController@transactions');
+
+// Wallet Transfer to EMI
+$router->get('/wallet/transfer-emi', 'WalletController@transferToEmi');
+$router->post('/wallet/transfer-emi/process', 'WalletController@processEmiTransfer');
+
+// Wallet Withdrawal
+$router->get('/wallet/withdrawal', 'WalletController@withdrawal');
+$router->post('/wallet/withdrawal/process', 'WalletController@processWithdrawal');
+
+// Bank Account Management
+$router->get('/wallet/bank-accounts', 'WalletController@bankAccounts');
+$router->post('/wallet/bank-accounts/add', 'WalletController@addBankAccount');
+
+// Referral Network
+$router->get('/wallet/referral-network', 'WalletController@referralNetwork');
+
+// Wallet Analytics
+$router->get('/wallet/analytics', 'WalletController@analytics');
+
 // User Authentication (Customer)
 $router->get('/user/logout', 'Auth\CustomerAuthController@logout');
 $router->get('/user/dashboard', 'Front\UserController@dashboard');
 $router->get('/user/properties', 'Front\UserController@myProperties');
 $router->get('/user/inquiries', 'Front\UserController@myInquiries');
-$router->get('/user/profile', 'Front\UserController@profile');
-$router->post('/user/profile', 'Front\UserController@profile');
+$router->get('/user/profile', 'Front\\UserController@profile');
+$router->post('/user/profile', 'Front\\UserController@updateProfile');
 $router->get('/user/bank-details', 'Front\UserController@bankDetails');
 $router->post('/user/bank-details/save', 'Front\UserController@saveBankDetails');
-$router->get('/user/network', function() { include __DIR__ . '/../app/views/pages/user_network.php'; });
-$router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\CommissionController@payouts');
+$router->get('/user/network', function () {
+    include __DIR__ . '/../app/views/pages/user_network.php';
+});
+$router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\MLMController@payouts');
 
 $router->get('/admin/network/tree', 'App\\Http\\Controllers\\Admin\\MlmController@tree');
 
