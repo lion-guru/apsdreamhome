@@ -2,11 +2,8 @@
 // Web Routes - APS Dream Home
 // Clean, deduplicated route definitions
 
-// Include router
-require_once __DIR__ . '/router.php';
-
-// Initialize router
-$router = new Router();
+// IMPORTANT: Router is already initialized in public/index.php
+// Do NOT create new Router instance here - use the existing $router
 
 // ============================================================
 // PUBLIC FRONTEND PAGES
@@ -250,6 +247,19 @@ $router->get('/employee/documents', 'Employee\\EmployeeController@documents');
 $router->get('/employee/leaves', 'Employee\\EmployeeController@leaves');
 $router->get('/employee/reporting', 'Employee\\EmployeeController@reporting');
 $router->get('/employee/settings', 'Employee\\EmployeeController@dashboard');
+
+// User Portal Routes (Customer Dashboard)
+$router->get('/user/logout', 'Auth\\CustomerAuthController@logout');
+$router->get('/user/dashboard', 'Front\\UserController@dashboard');
+$router->get('/user/properties', 'Front\\UserController@myProperties');
+$router->get('/user/inquiries', 'Front\\UserController@myInquiries');
+$router->get('/user/profile', 'Front\\UserController@profile');
+$router->post('/user/profile', 'Front\\UserController@updateProfile');
+$router->get('/user/bank-details', 'Front\\UserController@bankDetails');
+$router->post('/user/bank-details/save', 'Front\\UserController@saveBankDetails');
+$router->get('/user/network', function () {
+    include __DIR__ . '/../app/views/pages/user_network.php';
+});
 
 // MLM/Team
 $router->get('/team/genealogy', 'Admin\\NetworkController@genealogy');
@@ -714,23 +724,3 @@ $router->get('/wallet/referral-network', 'WalletController@referralNetwork');
 
 // Wallet Analytics
 $router->get('/wallet/analytics', 'WalletController@analytics');
-
-// User Authentication (Customer)
-$router->get('/user/logout', 'Auth\CustomerAuthController@logout');
-$router->get('/user/dashboard', 'Front\UserController@dashboard');
-$router->get('/user/properties', 'Front\UserController@myProperties');
-$router->get('/user/inquiries', 'Front\UserController@myInquiries');
-$router->get('/user/profile', 'Front\\UserController@profile');
-$router->post('/user/profile', 'Front\\UserController@updateProfile');
-$router->get('/user/bank-details', 'Front\UserController@bankDetails');
-$router->post('/user/bank-details/save', 'Front\UserController@saveBankDetails');
-$router->get('/user/network', function () {
-    include __DIR__ . '/../app/views/pages/user_network.php';
-});
-$router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\MLMController@payouts');
-
-$router->get('/admin/network/tree', 'App\\Http\\Controllers\\Admin\\MlmController@tree');
-
-$router->get('/admin/network/genealogy', 'App\\Http\\Controllers\\Admin\\MlmController@genealogy');
-
-$router->get('/admin/network/ranks', 'App\\Http\\Controllers\\Admin\\MlmController@ranks');
