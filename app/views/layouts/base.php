@@ -863,6 +863,29 @@
             isLoggedIn: <?php echo (isset($_SESSION['user_id']) || isset($_SESSION['admin_id'])) ? 'true' : 'false'; ?>
         };
 
+        // Chat Language Toggle
+        let chatLanguage = localStorage.getItem('chatLanguage') || 'hinglish';
+
+        function toggleChatLanguage() {
+            chatLanguage = chatLanguage === 'hinglish' ? 'english' : 'hinglish';
+            localStorage.setItem('chatLanguage', chatLanguage);
+            updateLanguageButton();
+
+            // Show feedback message
+            const langName = chatLanguage === 'hinglish' ? 'Hinglish' : 'English';
+            addMessage(`Switched to ${langName}! 🌐`, false, {
+                animate: true
+            });
+        }
+
+        function updateLanguageButton() {
+            const btn = document.getElementById('langToggle');
+            if (btn) {
+                btn.textContent = chatLanguage === 'hinglish' ? '🇮🇳 HI' : '🇬🇧 EN';
+                btn.title = chatLanguage === 'hinglish' ? 'Switch to English' : 'Hinglish mein badlein';
+            }
+        }
+
         // Chatbot State Management
         const ChatbotState = {
             userName: ChatbotUserContext.userName || localStorage.getItem('chatbot_user_name') || null,
