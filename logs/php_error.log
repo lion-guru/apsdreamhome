@@ -35910,3 +35910,73 @@ Stack trace:
 [11-Apr-2026 16:40:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
 [11-Apr-2026 16:40:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
 [11-Apr-2026 16:40:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:41:11 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:41:11 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:41:18 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:41:18 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:41:22 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:41:22 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:41:52 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:41:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:41:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:41:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:42:11 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:42:11 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:42:18 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:42:18 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:42:22 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:42:22 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:42:52 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:42:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:42:54 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:42:54 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:43:11 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:43:11 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:43:18 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:43:18 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:43:22 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:43:22 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:43:52 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:43:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:43:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:43:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:44:11 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:44:11 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:44:18 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:44:18 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:44:22 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:44:22 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:44:52 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:44:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:44:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:44:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:45:11 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:45:11 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:45:18 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:45:18 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:45:22 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:45:22 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:45:52 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:45:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:45:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:45:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:46:11 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:46:11 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:46:18 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:46:18 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:46:22 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:46:22 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:46:52 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:46:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:46:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:46:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:47:11 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:47:11 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:47:18 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:47:18 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:47:22 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:47:22 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:47:52 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:47:52 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
+[11-Apr-2026 16:47:53 Europe/Berlin] Router: Looking for controller at: C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/VisitorTrackingController.php
+[11-Apr-2026 16:47:53 Europe/Berlin] Router: Controller class: App\Http\Controllers\VisitorTrackingController
