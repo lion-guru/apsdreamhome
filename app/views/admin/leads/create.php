@@ -31,14 +31,12 @@
                             <input type="text" class="form-control" id="phone" name="phone">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="property_id" class="form-label fw-semibold">Interested Property</label>
-                            <select class="form-select" id="property_id" name="property_id">
-                                <option value="">Select Property</option>
-                                <?php if (!empty($properties)): ?>
-                                <?php foreach ($properties as $property): ?>
-                                <option value="<?php echo $property['id']; ?>"><?php echo htmlspecialchars($property['title'] ?? ''); ?></option>
+                            <label for="source_id" class="form-label fw-semibold">Source</label>
+                            <select class="form-select" id="source_id" name="source_id">
+                                <option value="">-- Select Source --</option>
+                                <?php foreach ($sources as $source): ?>
+                                    <option value="<?php echo $source['id']; ?>"><?php echo htmlspecialchars($source['name'] ?? ''); ?></option>
                                 <?php endforeach; ?>
-                                <?php endif; ?>
                             </select>
                         </div>
                     </div>
@@ -47,27 +45,25 @@
                         <div class="col-md-6 mb-3">
                             <label for="status" class="form-label fw-semibold">Status</label>
                             <select class="form-select" id="status" name="status">
-                                <option value="new">New</option>
-                                <option value="contacted">Contacted</option>
-                                <option value="interested">Interested</option>
-                                <option value="converted">Converted</option>
+                                <?php foreach ($statuses as $status): ?>
+                                    <option value="<?php echo $status['status_name']; ?>"><?php echo ucfirst($status['status_name']); ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="source" class="form-label fw-semibold">Source</label>
-                            <select class="form-select" id="source" name="source">
-                                <option value="website">Website</option>
-                                <option value="phone">Phone</option>
-                                <option value="walk-in">Walk-in</option>
-                                <option value="referral">Referral</option>
-                                <option value="social-media">Social Media</option>
+                            <label for="assigned_to" class="form-label fw-semibold">Assigned To</label>
+                            <select class="form-select" id="assigned_to" name="assigned_to">
+                                <option value="">-- Unassigned --</option>
+                                <?php foreach ($assignees as $assignee): ?>
+                                    <option value="<?php echo $assignee['id']; ?>"><?php echo htmlspecialchars($assignee['name'] ?? ''); ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label for="notes" class="form-label fw-semibold">Notes</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Additional notes about this lead..."></textarea>
+                        <label for="message" class="form-label fw-semibold">Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="3" placeholder="Lead requirements or message..."></textarea>
                     </div>
 
                     <div class="d-flex gap-3">

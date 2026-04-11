@@ -190,31 +190,118 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                     }
                     ?>
 
-                    <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id']): ?>
+                    <?php
+                    // Check which user type is logged in
+                    $isCustomer = isset($_SESSION['user_id']) && $_SESSION['user_id'];
+                    $isAssociate = isset($_SESSION['associate_id']) && $_SESSION['associate_id'];
+                    $isAgent = isset($_SESSION['agent_id']) && $_SESSION['agent_id'];
+                    $isEmployee = isset($_SESSION['employee_id']) && $_SESSION['employee_id'];
+                    $isAdmin = isset($_SESSION['admin_user_id']) && $_SESSION['admin_user_id'];
+                    $isLoggedIn = $isCustomer || $isAssociate || $isAgent || $isEmployee || $isAdmin;
+
+                    if ($isLoggedIn):
+                        // Determine user info based on role
+                        if ($isAssociate) {
+                            $userName = $_SESSION['associate_name'] ?? 'Associate';
+                            $userRole = 'Associate';
+                            $userIcon = 'fa-handshake';
+                            $dashboardUrl = '/associate/dashboard';
+                            $menuItems = [
+                                ['label' => 'Dashboard', 'url' => '/associate/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => 'Post Property', 'url' => '/associate/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
+                                ['label' => 'My Network', 'url' => '/associate/genealogy', 'icon' => 'fa-sitemap'],
+                                ['label' => 'My Leads', 'url' => '/associate/leads', 'icon' => 'fa-users'],
+                                ['label' => 'My Properties', 'url' => '/associate/properties', 'icon' => 'fa-building'],
+                                ['label' => 'Commissions', 'url' => '/associate/commissions', 'icon' => 'fa-money-bill-wave'],
+                                ['label' => 'My Profile', 'url' => '/associate/profile', 'icon' => 'fa-user-cog'],
+                                ['label' => 'Bank Details', 'url' => '/associate/bank-details', 'icon' => 'fa-university'],
+                            ];
+                            $logoutUrl = '/associate/logout';
+                        } elseif ($isAgent) {
+                            $userName = $_SESSION['agent_name'] ?? 'Agent';
+                            $userRole = 'Agent';
+                            $userIcon = 'fa-briefcase';
+                            $dashboardUrl = '/agent/dashboard';
+                            $menuItems = [
+                                ['label' => 'Dashboard', 'url' => '/agent/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => 'My Leads', 'url' => '/agent/leads', 'icon' => 'fa-users'],
+                                ['label' => 'Properties', 'url' => '/agent/properties', 'icon' => 'fa-building'],
+                                ['label' => 'Commissions', 'url' => '/agent/commissions', 'icon' => 'fa-money-bill-wave'],
+                                ['label' => 'My Profile', 'url' => '/agent/profile', 'icon' => 'fa-user-cog'],
+                            ];
+                            $logoutUrl = '/agent/logout';
+                        } elseif ($isEmployee) {
+                            $userName = $_SESSION['employee_name'] ?? 'Employee';
+                            $userRole = 'Employee';
+                            $userIcon = 'fa-user-tie';
+                            $dashboardUrl = '/employee/dashboard';
+                            $menuItems = [
+                                ['label' => 'Dashboard', 'url' => '/employee/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => 'My Tasks', 'url' => '/employee/tasks', 'icon' => 'fa-tasks'],
+                                ['label' => 'Attendance', 'url' => '/employee/attendance', 'icon' => 'fa-clock'],
+                                ['label' => 'Performance', 'url' => '/employee/performance', 'icon' => 'fa-chart-line'],
+                                ['label' => 'My Profile', 'url' => '/employee/profile', 'icon' => 'fa-user-cog'],
+                            ];
+                            $logoutUrl = '/employee/logout';
+                        } elseif ($isAdmin) {
+                            $userName = $_SESSION['admin_name'] ?? 'Admin';
+                            $userRole = 'Admin';
+                            $userIcon = 'fa-user-shield';
+                            $dashboardUrl = '/admin/dashboard';
+                            $menuItems = [
+                                ['label' => 'Admin Dashboard', 'url' => '/admin/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => 'Leads', 'url' => '/admin/leads', 'icon' => 'fa-users'],
+                                ['label' => 'Properties', 'url' => '/admin/properties', 'icon' => 'fa-building'],
+                                ['label' => 'God Mode', 'url' => '/admin/godmode', 'icon' => 'fa-crown'],
+                                ['label' => 'My Profile', 'url' => '/admin/profile', 'icon' => 'fa-user-cog'],
+                            ];
+                            $logoutUrl = '/admin/logout';
+                        } else {
+                            // Customer (default)
+                            $userName = $_SESSION['user_name'] ?? 'My Account';
+                            $userRole = 'Customer';
+                            $userIcon = 'fa-user';
+                            $dashboardUrl = '/user/dashboard';
+                            $menuItems = [
+                                ['label' => 'Dashboard', 'url' => '/user/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => 'Post Property', 'url' => '/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
+                                ['label' => 'My Properties', 'url' => '/user/properties', 'icon' => 'fa-building'],
+                                ['label' => 'My Inquiries', 'url' => '/user/inquiries', 'icon' => 'fa-envelope'],
+                                ['label' => 'My Profile', 'url' => '/user/profile', 'icon' => 'fa-user-cog'],
+                                ['label' => 'Bank Details', 'url' => '/user/bank-details', 'icon' => 'fa-university'],
+                            ];
+                            $logoutUrl = '/user/logout';
+                        }
+                    ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle user-link" href="#" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i>
-                                <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'My Account'); ?>
+                                <i class="fas <?php echo $userIcon; ?> me-1"></i>
+                                <span class="d-none d-sm-inline"><?php echo htmlspecialchars($userName); ?></span>
+                                <span class="badge bg-<?php echo $isAdmin ? 'danger' : ($isAssociate ? 'success' : 'primary'); ?> ms-1 d-none d-md-inline"><?php echo $userRole; ?></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/user/dashboard">
-                                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                                    </a></li>
-                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/user/properties">
-                                        <i class="fas fa-building me-2"></i>My Properties
-                                    </a></li>
-                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/user/inquiries">
-                                        <i class="fas fa-envelope me-2"></i>My Inquiries
-                                    </a></li>
-                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/user/profile">
-                                        <i class="fas fa-user-cog me-2"></i>Profile
-                                    </a></li>
+                                <li class="dropdown-header">
+                                    <i class="fas <?php echo $userIcon; ?> me-2"></i><?php echo htmlspecialchars($userName); ?>
+                                    <span class="badge bg-<?php echo $isAdmin ? 'danger' : ($isAssociate ? 'success' : 'primary'); ?> ms-1"><?php echo $userRole; ?></span>
+                                </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>/user/logout">
+                                <?php foreach ($menuItems as $item): ?>
+                                    <li>
+                                        <a class="dropdown-item" href="<?php echo BASE_URL . $item['url']; ?>">
+                                            <i class="fas <?php echo $item['icon']; ?> me-2"></i><?php echo $item['label']; ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="<?php echo BASE_URL . $logoutUrl; ?>">
                                         <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                    </a></li>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     <?php else: ?>
@@ -258,12 +345,14 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             <span class="d-none d-lg-inline">+91 92771 21112</span>
                         </a>
                     </li>
-                    <li class="nav-item ms-2">
-                        <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm">
-                            <i class="fas fa-user-lock me-1"></i>
-                            <span class="d-none d-lg-inline">Admin</span>
-                        </a>
-                    </li>
+                    <?php if (!$isLoggedIn): ?>
+                        <li class="nav-item ms-2">
+                            <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm">
+                                <i class="fas fa-user-lock me-1"></i>
+                                <span class="d-none d-lg-inline">Admin</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Analytics Dashboard View
  */
@@ -9,6 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-light">
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -25,7 +28,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
         </div>
-        
+
         <!-- KPI Cards -->
         <div class="row mb-4">
             <div class="col-md-3">
@@ -34,7 +37,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Total Revenue</p>
-                                <h4 class="mb-0">₹<?php echo number_format(floatval(analytics_data['total_revenue'] ?? 0) ?? 0); ?></h4>
+                                <h4 class="mb-0">₹<?php echo number_format(floatval($analytics_data['total_revenue'] ?? 0)); ?></h4>
                             </div>
                             <div class="bg-success bg-opacity-10 rounded p-2">
                                 <i class="fas fa-rupee-sign text-success"></i>
@@ -49,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Active Users</p>
-                                <h4 class="mb-0"><?php echo number_format(floatval(analytics_data['active_users'] ?? 0) ?? 0); ?></h4>
+                                <h4 class="mb-0"><?php echo number_format(floatval($analytics_data['active_users'] ?? 0)); ?></h4>
                             </div>
                             <div class="bg-primary bg-opacity-10 rounded p-2">
                                 <i class="fas fa-users text-primary"></i>
@@ -64,7 +67,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">New Leads</p>
-                                <h4 class="mb-0"><?php echo number_format(floatval(analytics_data['new_leads'] ?? 0) ?? 0); ?></h4>
+                                <h4 class="mb-0"><?php echo number_format(floatval($analytics_data['new_leads'] ?? 0)); ?></h4>
                             </div>
                             <div class="bg-warning bg-opacity-10 rounded p-2">
                                 <i class="fas fa-bullseye text-warning"></i>
@@ -89,7 +92,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 </div>
             </div>
         </div>
-        
+
         <!-- Charts Section -->
         <div class="row">
             <div class="col-md-8">
@@ -101,12 +104,18 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <?php if (!empty($charts['revenue'])): ?>
                             <div class="table-responsive">
                                 <table class="table table-sm">
-                                    <thead><tr><th>Date</th><th>Revenue</th><th>Bookings</th></tr></thead>
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Revenue</th>
+                                            <th>Bookings</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         <?php foreach ($charts['revenue'] as $item): ?>
                                             <tr>
                                                 <td><?php echo date('M d', strtotime($item['date'])); ?></td>
-                                                <td>₹<?php echo number_format(floatval(item['amount'] ?? 0)); ?></td>
+                                                <td>₹<?php echo number_format(floatval($item['amount'] ?? 0)); ?></td>
                                                 <td><?php echo $item['count']; ?></td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -141,7 +150,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 </div>
             </div>
         </div>
-        
+
         <!-- Property Views -->
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white">
@@ -152,15 +161,20 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr><th>Property</th><th>Views</th><th>Inquiries</th><th>Conversion</th></tr>
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Views</th>
+                                    <th>Inquiries</th>
+                                    <th>Conversion</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($analytics_data['top_properties'] as $prop): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars(prop['title'] ?? ''); ?></td>
-                                        <td><?php echo number_format(floatval(prop['views'] ?? 0)); ?></td>
-                                        <td><?php echo number_format(floatval(prop['inquiries'] ?? 0)); ?></td>
-                                        <td><?php echo $prop['conversion']; ?>%</td>
+                                        <td><?php echo htmlspecialchars($prop['title'] ?? ''); ?></td>
+                                        <td><?php echo number_format(floatval($prop['views'] ?? 0)); ?></td>
+                                        <td><?php echo number_format(floatval($prop['inquiries'] ?? 0)); ?></td>
+                                        <td><?php echo $prop['conversion'] ?? 0; ?>%</td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -172,7 +186,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

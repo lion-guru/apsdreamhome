@@ -673,3 +673,448 @@
 .activity-list::-webkit-scrollbar-thumb:hover {
   background: #ccc;
 }
+
+/* ========================================
+   MOBILE RESPONSIVENESS FIXES
+   ======================================== */
+
+/* Table Horizontal Scroll for Mobile */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100vw;
+}
+
+.table-responsive table {
+  min-width: 600px;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Mobile Font Size Improvements */
+@media (max-width: 768px) {
+  /* Increase base font size */
+  body {
+    font-size: 16px !important;
+    line-height: 1.6;
+  }
+
+  /* Headings */
+  h1, .h1 {
+    font-size: 1.75rem !important;
+  }
+
+  h2, .h2 {
+    font-size: 1.5rem !important;
+  }
+
+  h3, .h3 {
+    font-size: 1.25rem !important;
+  }
+
+  h4, .h4 {
+    font-size: 1.1rem !important;
+  }
+
+  /* Table text */
+  .table {
+    font-size: 0.95rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Buttons - larger touch targets */
+  .btn {
+    font-size: 1rem !important;
+    padding: 12px 20px !important;
+    min-height: 44px;
+  }
+
+  .btn-sm {
+    font-size: 0.9rem !important;
+    padding: 8px 14px !important;
+    min-height: 36px;
+  }
+
+  /* Form inputs */
+  .form-control {
+    font-size: 16px !important; /* Prevents iOS zoom */
+    padding: 12px 15px;
+    min-height: 44px;
+  }
+
+  /* Card text */
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  .card-text {
+    font-size: 0.95rem;
+  }
+
+  /* Stats cards */
+  .stat-value {
+    font-size: 2rem !important;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+  }
+
+  /* Sidebar adjustments */
+  .sidebar {
+    width: 280px;
+  }
+
+  .sidebar.collapsed {
+    margin-left: -290px;
+  }
+
+  /* Navbar text */
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  .nav-link {
+    font-size: 1rem;
+    padding: 12px 15px;
+  }
+
+  /* Dashboard cards */
+  .dashboard-stat-value {
+    font-size: 1.75rem;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    font-size: 0.9rem;
+  }
+
+  /* Alerts */
+  .alert {
+    font-size: 0.95rem;
+    padding: 15px;
+  }
+
+  /* Modal */
+  .modal-title {
+    font-size: 1.25rem;
+  }
+
+  .modal-body {
+    font-size: 1rem;
+  }
+
+  /* Pagination */
+  .pagination {
+    font-size: 0.95rem;
+  }
+
+  .page-link {
+    padding: 10px 15px;
+    min-width: 44px;
+    min-height: 44px;
+    text-align: center;
+  }
+
+  /* Links - make more prominent */
+  a:not(.btn) {
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  /* Badges */
+  .badge {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    font-size: 1rem;
+  }
+
+  .empty-state-icon {
+    font-size: 3rem;
+  }
+}
+
+/* Extra Small Devices */
+@media (max-width: 576px) {
+  body {
+    font-size: 15px !important;
+  }
+
+  h1, .h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2, .h2 {
+    font-size: 1.3rem !important;
+  }
+
+  .btn {
+    font-size: 0.95rem !important;
+    padding: 10px 16px !important;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.9rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem !important;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .btn,
+  .nav-link,
+  .dropdown-item,
+  .page-link {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .form-control,
+  .form-select {
+    min-height: 44px;
+  }
+
+  /* Increase spacing for touch */
+  .table td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .list-group-item {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+
+/* ========================================
+   TABLE SEARCH BOX STYLES
+   ======================================== */
+.table-search-container {
+  margin-bottom: 1rem;
+}
+
+.table-search-input {
+  border-radius: 25px;
+  padding-left: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-size: 16px;
+}
+
+.table-search-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: #80bdff;
+}
+
+/* ========================================
+   LOADING STATES
+   ======================================== */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-top: -8px;
+  margin-left: -8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: button-spinner 0.6s linear infinite;
+}
+
+@keyframes button-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   TREND INDICATORS
+   ======================================== */
+.stat-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.stat-trend.up {
+  color: #28a745;
+}
+
+.stat-trend.down {
+  color: #dc3545;
+}
+
+.stat-trend.neutral {
+  color: #6c757d;
+}
+
+.stat-trend i {
+  font-size: 0.75rem;
+}
+
+/* ========================================
+   FORM VALIDATION IMPROVEMENTS
+   ======================================== */
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form-error::before {
+  content: '\f071';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.75rem;
+}
+
+.form-control.is-invalid {
+  background-image: none;
+  padding-right: 1rem;
+}
+
+.form-control.is-valid {
+  background-image: none;
+  padding-right: 1rem;
+}
+
+.is-invalid ~ .form-error {
+  display: flex;
+}
+
+/* ========================================
+   STICKY HEADER (Optional)
+   ======================================== */
+.header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   EMPTY STATE STYLES
+   ======================================== */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: #6c757d;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: #dee2e6;
+}
+
+.empty-state-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #495057;
+}
+
+.empty-state-text {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ========================================
+   ACCESSIBILITY IMPROVEMENTS
+   ======================================== */
+/* Focus visible for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #007bff;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .btn-loading::after {
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn {
+    border: 2px solid currentColor;
+  }
+
+  .table th,
+  .table td {
+    border: 1px solid currentColor;
+  }
+}

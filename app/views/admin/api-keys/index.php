@@ -21,14 +21,16 @@ $extraHead .= '<style>
 
     <?php if (isset($_SESSION['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <?= $_SESSION['success']; unset($_SESSION['success']); ?>
+            <?= $_SESSION['success'];
+            unset($_SESSION['success']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
-    
+
     <?php if (isset($_SESSION['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+            <?= $_SESSION['error'];
+            unset($_SESSION['error']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -110,14 +112,14 @@ $extraHead .= '<style>
                         <?php foreach ($api_keys as $key): ?>
                             <tr class="<?= $key['is_active'] ? 'key-active' : 'key-inactive' ?>">
                                 <td>
-                                    <strong><?= htmlspecialchars(key['service_name'] ?? '') ?></strong>
+                                    <strong><?= htmlspecialchars($key['service_name'] ?? '') ?></strong>
                                 </td>
                                 <td>
-                                    <code><?= htmlspecialchars(key['key_name'] ?? '') ?></code>
+                                    <code><?= htmlspecialchars($key['key_name'] ?? '') ?></code>
                                 </td>
                                 <td>
                                     <span class="key-value">
-                                        <?= substr(htmlspecialchars(key['key_value'] ?? ''), 0, 20) . '...' ?>
+                                        <?= substr(htmlspecialchars($key['key_value'] ?? ''), 0, 20) . '...' ?>
                                     </span>
                                 </td>
                                 <td>
@@ -175,21 +177,21 @@ $extraHead .= '<style>
 </div>
 
 <script>
-function testKey(id) {
-    $('#testModal').modal('show');
-    $('#testResult').html('<div class="spinner-border text-primary" role="status"></div><p class="mt-2">Testing...</p>');
-    
-    fetch('<?= BASE_URL ?>/admin/api-keys/test/' + id)
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                $('#testResult').html('<i class="fas fa-check-circle text-success fa-3x"></i><h4 class="mt-3 text-success">Valid!</h4><p>' + data.message + '</p>');
-            } else {
-                $('#testResult').html('<i class="fas fa-times-circle text-danger fa-3x"></i><h4 class="mt-3 text-danger">Invalid!</h4><p>' + data.message + '</p>');
-            }
-        })
-        .catch(err => {
-            $('#testResult').html('<i class="fas fa-exclamation-triangle text-warning fa-3x"></i><h4 class="mt-3 text-warning">Error</h4><p>' + err + '</p>');
-        });
-}
+    function testKey(id) {
+        $('#testModal').modal('show');
+        $('#testResult').html('<div class="spinner-border text-primary" role="status"></div><p class="mt-2">Testing...</p>');
+
+        fetch('<?= BASE_URL ?>/admin/api-keys/test/' + id)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    $('#testResult').html('<i class="fas fa-check-circle text-success fa-3x"></i><h4 class="mt-3 text-success">Valid!</h4><p>' + data.message + '</p>');
+                } else {
+                    $('#testResult').html('<i class="fas fa-times-circle text-danger fa-3x"></i><h4 class="mt-3 text-danger">Invalid!</h4><p>' + data.message + '</p>');
+                }
+            })
+            .catch(err => {
+                $('#testResult').html('<i class="fas fa-exclamation-triangle text-warning fa-3x"></i><h4 class="mt-3 text-warning">Error</h4><p>' + err + '</p>');
+            });
+    }
 </script>

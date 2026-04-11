@@ -29,7 +29,7 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM sites WHERE status IN ('active', 'completed') ORDER BY site_name LIMIT 6");
             $stmt->execute();
             $all_projects = $stmt->fetchAll(\PDO::FETCH_OBJ);
-            
+
             // Map to featured format
             foreach ($all_projects as $project) {
                 $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));
@@ -85,7 +85,7 @@ class PageController extends BaseController
                     $stmt->execute([$name, $email, $phone, $subject, $message, $ip]);
                     $success = true;
                     $_POST = [];
-                    
+
                     // Also save to inquiries table for CRM
                     try {
                         $inqStmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'new', 'medium', NOW())");
@@ -113,7 +113,7 @@ class PageController extends BaseController
     public function serviceInterest()
     {
         header('Content-Type: application/json');
-        
+
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
@@ -129,7 +129,7 @@ class PageController extends BaseController
         try {
             // Check if service_interests table exists
             $this->db->query("SELECT 1 FROM service_interests LIMIT 1");
-            
+
             $stmt = $this->db->prepare("
                 INSERT INTO service_interests (service_type, property_id, status, notes, created_at) 
                 VALUES (?, ?, 'new', ?, NOW())
@@ -228,7 +228,7 @@ class PageController extends BaseController
         // Try to fetch from database first
         try {
             $this->db->query("SELECT 1 FROM user_properties LIMIT 1");
-            
+
             $where = "WHERE status = 'approved'";
             $params = [];
 
@@ -253,7 +253,7 @@ class PageController extends BaseController
                 $params[] = $maxPrice;
             }
 
-            $orderBy = match($sortBy) {
+            $orderBy = match ($sortBy) {
                 'price_low' => 'price ASC',
                 'price_high' => 'price DESC',
                 'oldest' => 'created_at ASC',
@@ -271,7 +271,6 @@ class PageController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
         } catch (\Exception $e) {
             // Table doesn't exist or error, use sample data
         }
@@ -280,7 +279,7 @@ class PageController extends BaseController
         if (empty($properties)) {
             $sampleProperties = $this->getSampleProperties();
             $total = count($sampleProperties);
-            
+
             // Apply filters to sample data
             if ($type) {
                 $sampleProperties = array_filter($sampleProperties, fn($p) => strtolower($p['type']) === strtolower($type));
@@ -291,16 +290,16 @@ class PageController extends BaseController
             if ($location) {
                 $sampleProperties = array_filter($sampleProperties, fn($p) => stripos($p['location'], $location) !== false);
             }
-            
+
             // Sort
-            usort($sampleProperties, function($a, $b) use ($sortBy) {
-                return match($sortBy) {
+            usort($sampleProperties, function ($a, $b) use ($sortBy) {
+                return match ($sortBy) {
                     'price_low' => $a['price_num'] <=> $b['price_num'],
                     'price_high' => $b['price_num'] <=> $a['price_num'],
                     default => 0
                 };
             });
-            
+
             $total = count($sampleProperties);
             $properties = array_slice($sampleProperties, $offset, $perPage);
         }
@@ -515,7 +514,7 @@ class PageController extends BaseController
             $team_members = [];
             error_log("Team error: " . $e->getMessage());
         }
-        
+
         $data = [
             'page_title' => 'Our Team - APS Dream Home',
             'page_description' => 'Meet the team behind APS Dream Home',
@@ -535,7 +534,7 @@ class PageController extends BaseController
             $careers = [];
             error_log("Careers error: " . $e->getMessage());
         }
-        
+
         $data = [
             'page_title' => 'Careers - APS Dream Home',
             'page_description' => 'Join our team at APS Dream Home',
@@ -624,7 +623,7 @@ class PageController extends BaseController
             $property_types = [];
             error_log("Resell error: " . $e->getMessage());
         }
-        
+
         $filters = [
             'search' => $_GET['search'] ?? '',
             'city' => $_GET['city'] ?? '',
@@ -632,7 +631,7 @@ class PageController extends BaseController
             'min_price' => $_GET['min_price'] ?? '',
             'max_price' => $_GET['max_price'] ?? ''
         ];
-        
+
         $data = [
             'page_title' => 'Resell Property - APS Dream Home',
             'page_description' => 'Sell your property through APS Dream Home',
@@ -785,7 +784,7 @@ class PageController extends BaseController
             $downloads = [];
             error_log("Downloads error: " . $e->getMessage());
         }
-        
+
         $data = [
             'page_title' => 'Downloads - APS Dream Home',
             'page_description' => 'Download brochures and documents from APS Dream Home',
@@ -965,7 +964,7 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM sites WHERE status IN ('active', 'under_development') ORDER BY state, city, site_name");
             $stmt->execute();
             $projects = $stmt->fetchAll(\PDO::FETCH_OBJ);
-            
+
             // Group by state
             $grouped = [];
             // Group by state > district
@@ -986,7 +985,7 @@ class PageController extends BaseController
             $grouped = [];
             error_log("Projects error: " . $e->getMessage());
         }
-        
+
         $data = [
             'page_title' => 'Our Projects - APS Dream Home',
             'page_description' => 'Explore our residential and commercial projects',
@@ -1001,38 +1000,38 @@ class PageController extends BaseController
     {
         $project = null;
         $plots = [];
-        
+
         if ($slug) {
             try {
                 // Convert slug to site name format
                 $searchName = str_replace('-', ' ', $slug);
                 $searchName = preg_replace('/\s+/', ' ', trim($searchName));
-                
+
                 // Try exact match on site_name
                 $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name = ? LIMIT 1");
                 $stmt->execute([ucwords($searchName)]);
                 $project = $stmt->fetch(\PDO::FETCH_OBJ);
-                
+
                 // Try case-insensitive match
                 if (!$project) {
                     $stmt = $this->db->prepare("SELECT * FROM sites WHERE LOWER(site_name) = LOWER(?) LIMIT 1");
                     $stmt->execute([$searchName]);
                     $project = $stmt->fetch(\PDO::FETCH_OBJ);
                 }
-                
+
                 // Try LIKE match
                 if (!$project) {
                     $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE ? LIMIT 1");
                     $stmt->execute(['%' . $searchName . '%']);
                     $project = $stmt->fetch(\PDO::FETCH_OBJ);
                 }
-                
+
                 // Get any active project as final fallback
                 if (!$project) {
                     $stmt = $this->db->query("SELECT * FROM sites WHERE status = 'active' LIMIT 1");
                     $project = $stmt->fetch(\PDO::FETCH_OBJ);
                 }
-                
+
                 // Get plots for this site
                 if ($project) {
                     try {
@@ -1042,7 +1041,7 @@ class PageController extends BaseController
                     } catch (\Exception $e) {
                         $plots = [];
                     }
-                    
+
                     // Get related projects (same district, excluding current)
                     try {
                         $relatedStmt = $this->db->prepare("SELECT * FROM sites WHERE district = ? AND id != ? AND status IN ('active', 'completed') ORDER BY site_name LIMIT 4");
@@ -1056,7 +1055,7 @@ class PageController extends BaseController
                 error_log("Project details error: " . $e->getMessage());
             }
         }
-        
+
         $data = [
             'page_title' => $project ? ($project->site_name ?? 'Project') . ' - APS Dream Home' : 'Project Not Found',
             'page_description' => $project ? 'View details of ' . ($project->site_name ?? 'our project') : 'Project details',
@@ -1151,7 +1150,7 @@ class PageController extends BaseController
         } catch (\Exception $e) {
             $project = null;
         }
-        
+
         $data = [
             'page_title' => 'Suyoday Colony - APS Dream Home',
             'page_description' => 'Premium residential plots in Suyoday Colony, Gorakhpur',
@@ -1170,7 +1169,7 @@ class PageController extends BaseController
         } catch (\Exception $e) {
             $project = null;
         }
-        
+
         $data = [
             'page_title' => 'Raghunat Nagri - APS Dream Home',
             'page_description' => 'Premium residential plots in Raghunat Nagri, Gorakhpur',
@@ -1189,7 +1188,7 @@ class PageController extends BaseController
         } catch (\Exception $e) {
             $project = null;
         }
-        
+
         $data = [
             'page_title' => 'Braj Radha Nagri - APS Dream Home',
             'page_description' => 'Affordable residential plots in Braj Radha Nagri',
@@ -1208,7 +1207,7 @@ class PageController extends BaseController
         } catch (\Exception $e) {
             $project = null;
         }
-        
+
         $data = [
             'page_title' => 'Budh Bihar Colony - APS Dream Home',
             'page_description' => 'Integrated township at Budh Bihar Colony, Kushinagar',
@@ -1227,7 +1226,7 @@ class PageController extends BaseController
         } catch (\Exception $e) {
             $project = null;
         }
-        
+
         $data = [
             'page_title' => 'Awadhpuri - APS Dream Home',
             'page_description' => 'Premium project at Awadhpuri, Lucknow',
@@ -1591,7 +1590,8 @@ class PageController extends BaseController
                 try {
                     $contactStmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
                     $contactStmt->execute([$name, $email, $phone, 'Quick Inquiry - ' . ucfirst(str_replace('_', ' ', $requirement)), $fullMessage, $_SERVER['REMOTE_ADDR'] ?? 'unknown']);
-                } catch (\Exception $e2) {}
+                } catch (\Exception $e2) {
+                }
 
                 // Track service interests based on requirement
                 $this->trackServiceInterests($name, $phone, $email, $requirement, $inquiryId);
@@ -1672,17 +1672,40 @@ class PageController extends BaseController
                     }
                 }
 
+                // Track WHO posted this property (associate/customer/agent)
+                $postedBy = null;
+                $postedByType = null;
+                $userId = null;
+
+                if (session_status() === PHP_SESSION_NONE) session_start();
+
+                if (isset($_SESSION['associate_id'])) {
+                    $postedBy = $_SESSION['associate_id'];
+                    $postedByType = 'associate';
+                    $userId = $_SESSION['associate_id'];
+                } elseif (isset($_SESSION['user_id'])) {
+                    $postedBy = $_SESSION['user_id'];
+                    $postedByType = 'customer';
+                    $userId = $_SESSION['user_id'];
+                } elseif (isset($_SESSION['agent_id'])) {
+                    $postedBy = $_SESSION['agent_id'];
+                    $postedByType = 'agent';
+                    $userId = $_SESSION['agent_id'];
+                }
+
                 // Try to save to user_properties table
                 $savedToUserProperties = false;
                 try {
                     $this->db->query("SELECT 1 FROM user_properties LIMIT 1");
-                    
+
                     $stmt = $this->db->prepare("
-                        INSERT INTO user_properties (user_id, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                        INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
                     ");
                     $stmt->execute([
-                        null,
+                        $userId,
+                        $postedBy,
+                        $postedByType,
                         $name,
                         $phone,
                         $email,
@@ -1695,17 +1718,20 @@ class PageController extends BaseController
                         $description,
                         $imagePath
                     ]);
+                    $propertyId = $this->db->lastInsertId();
                     $savedToUserProperties = true;
                 } catch (\Exception $e1) {
                     // Table might not exist, create it
                     if (strpos($e1->getMessage(), "doesn't exist") !== false) {
                         $this->createUserPropertiesTable();
                         $stmt = $this->db->prepare("
-                            INSERT INTO user_properties (user_id, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                            INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
                         ");
                         $stmt->execute([
-                            null,
+                            $userId,
+                            $postedBy,
+                            $postedByType,
                             $name,
                             $phone,
                             $email,
@@ -1718,6 +1744,7 @@ class PageController extends BaseController
                             $description,
                             $imagePath
                         ]);
+                        $propertyId = $this->db->lastInsertId();
                         $savedToUserProperties = true;
                     }
                 }
@@ -1731,13 +1758,26 @@ class PageController extends BaseController
                 $message .= "Description: " . $description;
 
                 try {
-                    $inqStmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'property_listing', 'new', 'medium', NOW())");
-                    $inqStmt->execute([$name, $email, $phone, $message]);
+                    $inqStmt = $this->db->prepare("
+                        INSERT INTO inquiries (name, email, phone, message, type, status, priority, posted_by, posted_by_type, created_at) 
+                        VALUES (?, ?, ?, ?, 'property_listing', 'new', 'medium', ?, ?, NOW())
+                    ");
+                    $inqStmt->execute([$name, $email, $phone, $message, $postedBy, $postedByType]);
                 } catch (\Exception $e2) {
                     error_log("Inquiry save error: " . $e2->getMessage());
                 }
 
+                // Success message with user-specific redirect
                 $_SESSION['flash_success'] = 'Thank you! Your property listing request has been submitted. Our team will contact you within 24 hours to verify the details.';
+
+                // Redirect based on user type
+                if ($postedByType === 'associate') {
+                    $this->redirect('/associate/properties');
+                    return;
+                } elseif ($postedByType === 'customer') {
+                    $this->redirect('/user/properties');
+                    return;
+                }
             } catch (\Exception $e) {
                 error_log("Property listing error: " . $e->getMessage());
                 $_SESSION['flash_error'] = 'Failed to submit. Please try again or call us directly.';

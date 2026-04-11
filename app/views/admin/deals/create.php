@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Create Deal Form
  */
@@ -12,7 +13,7 @@ $page_title = 'Create Deal - APS Dream Home';
             <h1 class="h3 mb-2"><i class="fas fa-plus-circle me-2"></i>Create Deal</h1>
             <p class="text-muted">Create a new deal from a qualified lead</p>
         </div>
-        <a href="/admin/deals" class="btn btn-outline-secondary">
+        <a href="<?= BASE_URL ?>/admin/deals" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-2"></i>Back to Deals
         </a>
     </div>
@@ -24,16 +25,16 @@ $page_title = 'Create Deal - APS Dream Home';
                     <h5 class="mb-0"><i class="fas fa-handshake me-2"></i>Deal Information</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/admin/deals/store">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/deals/store">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Select Lead</label>
                                 <select class="form-select" name="lead_id" required>
                                     <option value="">Choose a lead...</option>
                                     <?php foreach ($leads as $lead): ?>
-                                    <option value="<?= $lead['id'] ?>" <?= ($selected_lead['id'] ?? '') == $lead['id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($lead['name'] ?? '') ?> - <?= htmlspecialchars($lead['phone'] ?? '') ?>
-                                    </option>
+                                        <option value="<?= $lead['id'] ?>" <?= ($selected_lead['id'] ?? '') == $lead['id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($lead['name'] ?? '') ?> - <?= htmlspecialchars($lead['phone'] ?? '') ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -72,7 +73,7 @@ $page_title = 'Create Deal - APS Dream Home';
                                     $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
                                     foreach ($properties as $property):
                                     ?>
-                                    <option value="<?= $property['id'] ?>"><?= htmlspecialchars($property['title'] ?? '') ?> - <?= htmlspecialchars($property['location'] ?? '') ?></option>
+                                        <option value="<?= $property['id'] ?>"><?= htmlspecialchars($property['title'] ?? '') ?> - <?= htmlspecialchars($property['location'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -81,7 +82,7 @@ $page_title = 'Create Deal - APS Dream Home';
                                 <select class="form-select" name="assigned_to">
                                     <option value="">Select Agent</option>
                                     <?php foreach ($agents as $agent): ?>
-                                    <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
+                                        <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -153,5 +154,3 @@ $page_title = 'Create Deal - APS Dream Home';
         </div>
     </div>
 </div>
-
-

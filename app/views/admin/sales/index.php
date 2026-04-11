@@ -1,133 +1,176 @@
 <?php
-/**
- * Sales Dashboard View
- */
-$sales_data = $sales_data ?? [];
-$performance = $performance ?? [];
-$page_title = $page_title ?? 'Sales Dashboard';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$sales = $sales ?? [];
+$total = $total ?? 0;
+$page = $page ?? 1;
+$per_page = $per_page ?? 20;
+$total_pages = $total_pages ?? 1;
+$filters = $filters ?? ['search' => '', 'status' => '', 'associate_id' => ''];
+$associates = $associates ?? [];
+$page_title = $page_title ?? 'Sales Management';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title); ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container-fluid py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="mb-1"><i class="fas fa-chart-bar me-2 text-primary"></i>Sales Dashboard</h2>
-                <p class="text-muted mb-0">Track sales performance and targets</p>
-            </div>
-            <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">Sales</h1>
+            <p class="text-muted mb-0">Manage sales and transactions</p>
         </div>
-        
-        <!-- Sales Stats -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p class="text-muted mb-1">Today's Sales</p>
-                                <h4 class="mb-0">₹<?php echo number_format(floatval(sales_data['today_sales'] ?? 0) ?? 0); ?></h4>
-                            </div>
-                            <div class="bg-success bg-opacity-10 rounded p-2">
-                                <i class="fas fa-rupee-sign text-success"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p class="text-muted mb-1">This Month</p>
-                                <h4 class="mb-0">₹<?php echo number_format(floatval(sales_data['month_sales'] ?? 0) ?? 0); ?></h4>
-                            </div>
-                            <div class="bg-primary bg-opacity-10 rounded p-2">
-                                <i class="fas fa-calendar text-primary"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p class="text-muted mb-1">Total Bookings</p>
-                                <h4 class="mb-0"><?php echo number_format(floatval(sales_data['total_bookings'] ?? 0) ?? 0); ?></h4>
-                            </div>
-                            <div class="bg-info bg-opacity-10 rounded p-2">
-                                <i class="fas fa-file-contract text-info"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p class="text-muted mb-1">Avg Deal Size</p>
-                                <h4 class="mb-0">₹<?php echo number_format(floatval(sales_data['avg_deal'] ?? 0) ?? 0); ?></h4>
-                            </div>
-                            <div class="bg-warning bg-opacity-10 rounded p-2">
-                                <i class="fas fa-chart-line text-warning"></i>
-                            </div>
-                        </div>
-                    </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="h2 mb-0 text-primary"><?= $total ?></div>
+                    <small class="text-muted">Total Sales</small>
                 </div>
             </div>
         </div>
-        
-        <!-- Top Performers -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="fas fa-trophy me-2 text-warning"></i>Top Sales Performers</h5>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="h2 mb-0 text-success"><?= count(array_filter($sales, fn($s) => ($s['status'] ?? '') === 'completed')) ?></div>
+                    <small class="text-muted">Completed</small>
+                </div>
             </div>
-            <div class="card-body">
-                <?php if (!empty($performance)): ?>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr><th>Rank</th><th>Sales Person</th><th>Bookings</th><th>Revenue</th><th>Conversion</th></tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($performance as $index => $performer): ?>
-                                    <tr>
-                                        <td>
-                                            <?php if ($index < 3): ?>
-                                                <i class="fas fa-medal text-<?php echo ['gold', 'silver', 'bronze'][$index] ?? 'muted'; ?>"></i>
-                                            <?php else: ?>
-                                                <?php echo $index + 1; ?>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><?php echo htmlspecialchars(performer['name'] ?? ''); ?></td>
-                                        <td><?php echo $performer['bookings']; ?></td>
-                                        <td>₹<?php echo number_format(floatval(performer['revenue'] ?? 0)); ?></td>
-                                        <td><?php echo $performer['conversion']; ?>%</td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <p class="text-muted">No performance data available</p>
-                <?php endif; ?>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="h2 mb-0 text-warning"><?= count(array_filter($sales, fn($s) => ($s['status'] ?? '') === 'pending')) ?></div>
+                    <small class="text-muted">Pending</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="h2 mb-0 text-info">₹<?= number_format(array_sum(array_column($sales, 'sale_value')), 0) ?></div>
+                    <small class="text-muted">Total Value</small>
+                </div>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+    <!-- Filter Form -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" action="<?= BASE_URL ?>/admin/sales" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Search sale #, property, customer..." value="<?= htmlspecialchars($filters['search']) ?>">
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="completed" <?= $filters['status'] === 'completed' ? 'selected' : '' ?>>Completed</option>
+                        <option value="pending" <?= $filters['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
+                        <option value="cancelled" <?= $filters['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="associate_id" class="form-select">
+                        <option value="">All Associates</option>
+                        <?php foreach ($associates as $associate): ?>
+                            <option value="<?= $associate['id'] ?>" <?= $filters['associate_id'] == $associate['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($associate['name'] ?? '') ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i>Filter
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="<?= BASE_URL ?>/admin/sales" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-times me-1"></i>Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sales Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Sale #</th>
+                            <th>Property</th>
+                            <th>Customer</th>
+                            <th>Associate</th>
+                            <th>Value</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($sales)): ?>
+                            <?php foreach ($sales as $sale): ?>
+                                <tr>
+                                    <td class="ps-4">
+                                        <span class="fw-semibold"><?= htmlspecialchars($sale['sale_number'] ?? 'N/A') ?></span>
+                                        <?php if (!empty($sale['booking_number'])): ?>
+                                            <br><small class="text-muted">Booking: <?= htmlspecialchars($sale['booking_number']) ?></small>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($sale['property_title'] ?? 'N/A') ?>
+                                        <br><small class="text-muted">₹<?= number_format($sale['property_price'] ?? 0, 0) ?></small>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($sale['customer_name'] ?? 'N/A') ?>
+                                        <br><small class="text-muted"><?= htmlspecialchars($sale['customer_email'] ?? '') ?></small>
+                                    </td>
+                                    <td><?= htmlspecialchars($sale['associate_name'] ?? 'Unassigned') ?></td>
+                                    <td>
+                                        <span class="fw-semibold">₹<?= number_format($sale['sale_value'] ?? 0, 0) ?></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<?= ($sale['status'] ?? '') === 'completed' ? 'success' : (($sale['status'] ?? '') === 'pending' ? 'warning' : 'danger') ?>">
+                                            <?= ucfirst($sale['status'] ?? 'Unknown') ?>
+                                        </span>
+                                    </td>
+                                    <td><?= isset($sale['created_at']) ? date('d M Y', strtotime($sale['created_at'])) : 'N/A' ?></td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    <i class="fas fa-handshake fa-2x mb-2"></i>
+                                    <p class="mb-0">No sales found</p>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        <?php if ($total_pages > 1): ?>
+            <div class="card-footer bg-white">
+                <nav aria-label="Sales pagination">
+                    <ul class="pagination justify-content-center mb-0">
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                <a class="page-link" href="<?= BASE_URL ?>/admin/sales?page=<?= $i ?>&search=<?= urlencode($filters['search']) ?>&status=<?= urlencode($filters['status']) ?>&associate_id=<?= urlencode($filters['associate_id']) ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+                    </ul>
+                </nav>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Deal Tracking - List View
  */
@@ -13,10 +14,10 @@ $page_title = 'Deal Tracking - APS Dream Home';
             <p class="text-muted">Manage sales deals through the pipeline</p>
         </div>
         <div class="btn-group">
-            <a href="/admin/deals/create" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/admin/deals/create" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Create Deal
             </a>
-            <a href="/admin/deals/kanban" class="btn btn-outline-secondary">
+            <a href="<?= BASE_URL ?>/admin/deals/kanban" class="btn btn-outline-secondary">
                 <i class="fas fa-columns me-2"></i>Kanban View
             </a>
         </div>
@@ -30,7 +31,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Pipeline Value</h6>
-                            <h3 class="mb-0">₹<?= number_format(floatval(stats['pipeline_value'] ?? 0) ?? 0, 0) ?>L</h3>
+                            <h3 class="mb-0">₹<?= number_format(floatval($stats['pipeline_value'] ?? 0), 0) ?>L</h3>
                         </div>
                         <i class="fas fa-funnel-dollar fa-2x opacity-50"></i>
                     </div>
@@ -56,7 +57,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Total Revenue</h6>
-                            <h3 class="mb-0">₹<?= number_format(floatval(stats['total_revenue'] ?? 0) ?? 0, 0) ?>L</h3>
+                            <h3 class="mb-0">₹<?= number_format(floatval($stats['total_revenue'] ?? 0), 0) ?>L</h3>
                         </div>
                         <i class="fas fa-rupee-sign fa-2x opacity-50"></i>
                     </div>
@@ -95,21 +96,21 @@ $page_title = 'Deal Tracking - APS Dream Home';
                     <select class="form-select" name="stage">
                         <option value="">All Stages</option>
                         <?php foreach ($stages as $stage): ?>
-                        <option value="<?= $stage['id'] ?>" <?= $filters['stage'] == $stage['id'] ? 'selected' : '' ?>>
-                            <?= $stage['name'] ?>
-                        </option>
+                            <option value="<?= $stage['id'] ?>" <?= $filters['stage'] == $stage['id'] ? 'selected' : '' ?>>
+                                <?= $stage['name'] ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-5">
                     <label class="form-label">Search</label>
-                    <input type="text" class="form-control" name="search" value="<?= htmlspecialchars(filters['search'] ?? '') ?>" placeholder="Lead name, email, property...">
+                    <input type="text" class="form-control" name="search" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Lead name, email, property...">
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-search me-2"></i>Apply
                     </button>
-                    <a href="/admin/deals" class="btn btn-outline-secondary">Reset</a>
+                    <a href="<?= BASE_URL ?>/admin/deals" class="btn btn-outline-secondary">Reset</a>
                 </div>
             </form>
         </div>
@@ -138,33 +139,33 @@ $page_title = 'Deal Tracking - APS Dream Home';
                         <?php foreach ($deals as $deal):
                             $stageColor = array_column($stages, 'color', 'id')[$deal['stage']] ?? 'secondary';
                         ?>
-                        <tr>
-                            <td>
-                                <strong><?= htmlspecialchars(deal['lead_name'] ?? '') ?></strong>
-                                <br><small class="text-muted"><?= htmlspecialchars(deal['lead_email'] ?? '') ?></small>
-                            </td>
-                            <td><?= htmlspecialchars($deal['property_title'] ?? 'Not specified') ?></td>
-                            <td><strong>₹<?= number_format(floatval(deal['deal_value'] ?? 0), 0) ?>L</strong></td>
-                            <td>
-                                <span class="badge bg-<?= $stageColor ?>">
-                                    <?= ucfirst($deal['stage']) ?>
-                                </span>
-                            </td>
-                            <td>
-                                <?= $deal['expected_close_date'] ? date('M d, Y', strtotime($deal['expected_close_date'])) : 'Not set' ?>
-                            </td>
-                            <td><?= htmlspecialchars($deal['assigned_to_name'] ?? 'Unassigned') ?></td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-success" onclick="updateStage(<?= $deal['id'] ?>, 'won')" title="Mark as Won">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-outline-danger" onclick="updateStage(<?= $deal['id'] ?>, 'lost')" title="Mark as Lost">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    <strong><?= htmlspecialchars($deal['lead_name'] ?? '') ?></strong>
+                                    <br><small class="text-muted"><?= htmlspecialchars($deal['lead_email'] ?? '') ?></small>
+                                </td>
+                                <td><?= htmlspecialchars($deal['property_title'] ?? 'Not specified') ?></td>
+                                <td><strong>₹<?= number_format(floatval($deal['deal_value'] ?? 0), 0) ?>L</strong></td>
+                                <td>
+                                    <span class="badge bg-<?= $stageColor ?>">
+                                        <?= ucfirst($deal['stage']) ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <?= $deal['expected_close_date'] ? date('M d, Y', strtotime($deal['expected_close_date'])) : 'Not set' ?>
+                                </td>
+                                <td><?= htmlspecialchars($deal['assigned_to_name'] ?? 'Unassigned') ?></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-success" onclick="updateStage(<?= $deal['id'] ?>, 'won')" title="Mark as Won">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="updateStage(<?= $deal['id'] ?>, 'lost')" title="Mark as Lost">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -174,30 +175,28 @@ $page_title = 'Deal Tracking - APS Dream Home';
 </div>
 
 <script>
-function updateStage(dealId, stage) {
-    if (!confirm('Are you sure you want to mark this deal as ' + stage.toUpperCase() + '?')) {
-        return;
-    }
-
-    fetch('/admin/deals/' + dealId + '/stage', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'stage=' + stage
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            alert('Failed to update deal stage');
+    function updateStage(dealId, stage) {
+        if (!confirm('Are you sure you want to mark this deal as ' + stage.toUpperCase() + '?')) {
+            return;
         }
-    })
-    .catch(error => {
-        alert('Error updating deal stage');
-    });
-}
+
+        fetch('/admin/deals/' + dealId + '/stage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'stage=' + stage
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to update deal stage');
+                }
+            })
+            .catch(error => {
+                alert('Error updating deal stage');
+            });
+    }
 </script>
-
-
