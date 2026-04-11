@@ -258,6 +258,15 @@ $router->get('/associate/settings', 'AssociateController@settings');
 $router->get('/associate/list-property', 'AssociateController@listProperty');
 $router->post('/associate/list-property/submit', 'AssociateController@submitProperty');
 
+// Associate Exports
+$router->get('/associate/export/my-earnings', 'Associate\ExportController@myEarnings');
+$router->get('/associate/export/active-team', 'Associate\ExportController@activeTeam');
+$router->get('/associate/export/my-payouts', 'Associate\ExportController@myPayouts');
+$router->get('/associate/export/downline', 'Associate\ExportController@downline');
+$router->get('/associate/export/new-directs', 'Associate\ExportController@newDirects');
+$router->get('/associate/export/plot-sales', 'Associate\ExportController@plotSales');
+$router->get('/associate/export/registry', 'Associate\ExportController@registry');
+
 // Employee Auth
 $router->get('/employee/login', 'Employee\\EmployeeController@login');
 $router->post('/employee/login', 'Employee\\EmployeeController@authenticate');
