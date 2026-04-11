@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Associate Dashboard View
  */
@@ -11,6 +12,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,11 +20,25 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        .dashboard-card { transition: transform 0.2s; }
-        .dashboard-card:hover { transform: translateY(-5px); }
-        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .dashboard-card {
+            transition: transform 0.2s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
+
 <body class="bg-light">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -52,7 +68,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="<?php echo $base; ?>/customer/profile">Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="<?php echo $base; ?>/logout">Logout</a></li>
                         </ul>
                     </li>
@@ -213,7 +231,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="card border-0 shadow-sm">
+                <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
                     </div>
@@ -231,10 +249,43 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         </div>
                     </div>
                 </div>
+
+                <!-- Export Data -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-download me-2"></i>Export Data</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="<?php echo $base; ?>/associate/export/my-earnings" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-file-csv me-2"></i>My Earnings
+                            </a>
+                            <a href="<?php echo $base; ?>/associate/export/my-payouts" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-file-csv me-2"></i>My Payouts
+                            </a>
+                            <a href="<?php echo $base; ?>/associate/export/downline" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-file-csv me-2"></i>Downline Report
+                            </a>
+                            <a href="<?php echo $base; ?>/associate/export/plot-sales" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-file-csv me-2"></i>Plot Sales
+                            </a>
+                            <a href="<?php echo $base; ?>/associate/export/active-team" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-file-csv me-2"></i>Active Team Stats
+                            </a>
+                            <a href="<?php echo $base; ?>/associate/export/new-directs" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-file-csv me-2"></i>New Directs
+                            </a>
+                            <a href="<?php echo $base; ?>/associate/export/registry" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-file-csv me-2"></i>Registry Data
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
