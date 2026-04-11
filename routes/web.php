@@ -6,6 +6,25 @@
 // Do NOT create new Router instance here - use the existing $router
 
 // ============================================================
+// CONTROLLER INCLUDES (Fix for route loading issues)
+// ============================================================
+
+// MLM Tree Controller
+if (file_exists(__DIR__ . '/../app/Http/Controllers/MLMTreeController.php')) {
+    require_once __DIR__ . '/../app/Http/Controllers/MLMTreeController.php';
+}
+
+// SMS Controller
+if (file_exists(__DIR__ . '/../app/Http/Controllers/SMSController.php')) {
+    require_once __DIR__ . '/../app/Http/Controllers/SMSController.php';
+}
+
+// God Mode Controller
+if (file_exists(__DIR__ . '/../app/Http/Controllers/Admin/GodModeController.php')) {
+    require_once __DIR__ . '/../app/Http/Controllers/Admin/GodModeController.php';
+}
+
+// ============================================================
 // PUBLIC FRONTEND PAGES
 // ============================================================
 
@@ -139,7 +158,17 @@ $router->get('/admin/api-keys/edit/{id}', 'App\\Http\\Controllers\\Admin\\ApiKey
 $router->post('/admin/api-keys/update/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@update');
 $router->get('/admin/api-keys/delete/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@delete');
 $router->get('/admin/api-keys/toggle/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@toggle');
-$router->get('/admin/api-keys/test/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@test');
+$router->get('/admin/api-keys/test/{id}', 'App\Http\Controllers\Admin\ApiKeyController@test');
+
+// Admin AI Chatbot Training
+$router->get('/admin/ai-training', function () {
+    require_once __DIR__ . '/../app/views/admin/ai-training.php';
+});
+
+// Admin WhatsApp Integration
+$router->get('/admin/whatsapp-integration', function () {
+    require_once __DIR__ . '/../app/views/admin/whatsapp_integration.php';
+});
 
 // Missing frontend routes (from header/footer links)
 $router->get('/financial-services', 'Front\\PageController@financialServices');
@@ -222,6 +251,12 @@ $router->get('/associate/properties', 'AssociateController@properties');
 $router->get('/associate/sold', 'AssociateController@sold');
 $router->get('/associate/pending', 'AssociateController@pending');
 $router->get('/associate/profile', 'AssociateController@profile');
+$router->get('/associate/genealogy', 'MLMTreeController@genealogy');
+$router->get('/associate/wallet', 'WalletController@associateWallet');
+$router->get('/associate/bank-details', 'WalletController@bankAccounts');
+$router->get('/associate/settings', 'AssociateController@settings');
+$router->get('/associate/list-property', 'AssociateController@listProperty');
+$router->post('/associate/list-property/submit', 'AssociateController@submitProperty');
 
 // Employee Auth
 $router->get('/employee/login', 'Employee\\EmployeeController@login');
@@ -543,6 +578,11 @@ $router->post('/api/gemini/social-media', 'Api\\GeminiApiController@socialMediaC
 $router->get('/api/gemini/test', 'Api\\GeminiApiController@testConnection');
 $router->get('/api/gemini/status', 'Api\\GeminiApiController@getStatus');
 
+// Smart AI Chatbot (RBAC-enabled, Human-like)
+$router->post('/api/ai/chat', 'SmartAIController@chat');
+$router->get('/api/ai/history', 'SmartAIController@history');
+$router->get('/ai-assistant', 'SmartAIController@assistantPage');
+
 // Notifications API
 $router->get('/api/notifications', 'NotificationController@getNotifications');
 $router->post('/api/notifications/mark-read', 'NotificationController@markAsRead');
@@ -568,6 +608,15 @@ if (file_exists(__DIR__ . '/api.php')) {
     require_once __DIR__ . '/api.php';
 }
 
+// God Mode - Admin Super Powers
+$router->get('/admin/godmode', 'App\\Http\\Controllers\\Admin\\GodModeController@dashboard');
+$router->post('/admin/godmode/impersonate/{id}', 'App\\Http\\Controllers\\Admin\\GodModeController@impersonate');
+$router->post('/admin/godmode/stop-impersonation', 'App\\Http\\Controllers\\Admin\\GodModeController@stopImpersonation');
+$router->post('/admin/godmode/switch-role', 'App\\Http\\Controllers\\Admin\\GodModeController@switchRole');
+$router->post('/admin/godmode/restore-role', 'App\\Http\\Controllers\\Admin\\GodModeController@restoreRole');
+$router->get('/admin/godmode/users', 'App\\Http\\Controllers\\Admin\\GodModeController@getUsersList');
+$router->post('/admin/godmode/execute-command', 'App\\Http\\Controllers\\Admin\\GodModeController@executeCommand');
+$router->get('/admin/godmode/system-health', 'App\\Http\\Controllers\\Admin\\GodModeController@systemHealth');
 
 // MLM Management Routes
 $router->get('/admin/mlm', 'App\Http\Controllers\Admin\MLMController@index');
@@ -724,3 +773,6 @@ $router->get('/wallet/referral-network', 'WalletController@referralNetwork');
 
 // Wallet Analytics
 $router->get('/wallet/analytics', 'WalletController@analytics');
+
+// Include additional admin routes
+require_once __DIR__ . '/admin_routes.php';

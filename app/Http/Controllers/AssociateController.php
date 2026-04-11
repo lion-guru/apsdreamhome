@@ -128,7 +128,7 @@ class AssociateController extends BaseController
             'page_title' => 'Associate Dashboard - APS Dream Home',
             'page_description' => 'Manage your property listings and client relationships',
             'dashboardData' => $dashboardData
-        ]);
+        ], 'layouts/associate');
     }
 
     /**
@@ -243,5 +243,206 @@ class AssociateController extends BaseController
         $canEdit = true;
 
         include __DIR__ . '/../../../views/shared/profile.php';
+    }
+
+    /**
+     * Associate Settings Page
+     */
+    public function settings()
+    {
+        $this->requireAuth();
+
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        // Get associate info
+        $associateId = $_SESSION['associate_id'] ?? null;
+        $associateName = $_SESSION['associate_name'] ?? '';
+        $associateEmail = $_SESSION['associate_email'] ?? '';
+        $associatePhone = $_SESSION['associate_phone'] ?? '';
+
+        // Get notification preferences (if table exists)
+        $notifications = [
+            'email_leads' => true,
+            'email_commissions' => true,
+            'sms_important' => false,
+            'marketing_emails' => true
+        ];
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $prefs = $db->fetchOne("SELECT * FROM user_notification_preferences WHERE user_id = ? AND user_type = 'associate' LIMIT 1", [$associateId]);
+            if ($prefs) {
+                $notifications = [
+                    'email_leads' => $prefs['email_leads'] ?? true,
+                    'email_commissions' => $prefs['email_commissions'] ?? true,
+                    'sms_important' => $prefs['sms_important'] ?? false,
+                    'marketing_emails' => $prefs['marketing_emails'] ?? true
+                ];
+            }
+        } catch (\Exception $e) {
+            // Table might not exist, use defaults
+        }
+
+        $success = $_SESSION['flash_success'] ?? null;
+        $error = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+        $data = [
+            'page_title' => 'Settings - Associate Dashboard',
+            'page_description' => 'Manage your account settings and preferences',
+            'associate_name' => $associateName,
+            'associate_email' => $associateEmail,
+            'associate_phone' => $associatePhone,
+            'notifications' => $notifications,
+            'success' => $success,
+            'error' => $error
+        ];
+
+        $this->render('pages/associate_settings', $data, 'layouts/associate');
+    }
+
+    /**
+     * List Property page for Associates
+     */
+    public function listProperty()
+    {
+        $this->requireAuth();
+
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        // Get associate info
+        $associateId = $_SESSION['associate_id'] ?? null;
+        $associateName = $_SESSION['associate_name'] ?? '';
+        $associatePhone = $_SESSION['associate_phone'] ?? '';
+        $associateEmail = $_SESSION['associate_email'] ?? '';
+
+        // Load states for dropdown
+        $db = \App\Core\Database\Database::getInstance();
+        $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER BY name LIMIT 50");
+
+        $success = $_SESSION['flash_success'] ?? null;
+        $error = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+        $data = [
+            'page_title' => 'Post Property - Associate Dashboard',
+            'page_description' => 'List properties as an associate',
+            'associate_name' => $associateName,
+            'associate_phone' => $associatePhone,
+            'associate_email' => $associateEmail,
+            'states' => $states,
+            'success' => $success,
+            'error' => $error
+        ];
+
+        $this->render('pages/associate_list_property', $data, 'layouts/associate');
+    }
+
+    /**
+     * Submit property listing from Associate
+     */
+    public function submitProperty()
+    {
+        $this->requireAuth();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/list-property');
+            return;
+        }
+
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $associateId = $_SESSION['associate_id'] ?? null;
+        $associateName = $_SESSION['associate_name'] ?? '';
+        $associatePhone = $_SESSION['associate_phone'] ?? '';
+
+        // Get form data
+        $name = trim($_POST['name'] ?? $associateName);
+        $phone = trim($_POST['phone'] ?? $associatePhone);
+        $email = trim($_POST['email'] ?? '');
+        $propertyType = trim($_POST['property_type'] ?? '');
+        $listingType = trim($_POST['listing_type'] ?? 'sell');
+        $price = (float)str_replace([',', ' '], '', $_POST['price'] ?? 0);
+        $location = trim($_POST['location'] ?? '');
+        $stateId = (int)($_POST['state_id'] ?? 0);
+        $districtId = (int)($_POST['district_id'] ?? 0);
+        $cityName = trim($_POST['city_name'] ?? '');
+        $area = (int)str_replace([',', ' '], '', $_POST['area'] ?? 0);
+        $description = trim($_POST['description'] ?? '');
+
+        if (empty($name) || empty($phone) || empty($propertyType)) {
+            $_SESSION['flash_error'] = 'Please fill in all required fields.';
+            $this->redirect('/associate/list-property');
+            return;
+        }
+
+        try {
+            // Handle image upload
+            $imagePath = null;
+            if (!empty($_FILES['property_image']['name'])) {
+                $uploadDir = __DIR__ . '/../../../assets/images/properties/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                $ext = strtolower(pathinfo($_FILES['property_image']['name'], PATHINFO_EXTENSION));
+                $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+                if (in_array($ext, $allowed) && $_FILES['property_image']['size'] <= 5 * 1024 * 1024) {
+                    $newName = 'prop_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                    $targetPath = $uploadDir . $newName;
+                    if (move_uploaded_file($_FILES['property_image']['tmp_name'], $targetPath)) {
+                        $imagePath = 'properties/' . $newName;
+                    }
+                }
+            }
+
+            // Save to user_properties table with associate tracking
+            $db = \App\Core\Database\Database::getInstance();
+
+            $stmt = $db->prepare("
+                INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
+                VALUES (?, ?, 'associate', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+            ");
+            $stmt->execute([
+                $associateId,
+                $associateId,
+                $name,
+                $phone,
+                $email,
+                $propertyType,
+                $listingType,
+                $location,
+                $area,
+                $price,
+                $listingType === 'rent' ? 'month' : 'lakh',
+                $description,
+                $imagePath
+            ]);
+
+            // Also save to inquiries for CRM tracking
+            $message = "Posted by Associate: {$associateName}\n";
+            $message .= "Property Type: " . ucfirst($propertyType) . "\n";
+            $message .= "Listing Type: " . ucfirst($listingType) . "\n";
+            $message .= "Price: " . $price . "\n";
+            $message .= "Area: " . $area . " sq ft\n";
+            $message .= "Location: " . $location . "\n";
+            $message .= "Description: " . $description;
+
+            try {
+                $inqStmt = $db->prepare("
+                    INSERT INTO inquiries (name, email, phone, message, type, status, priority, posted_by, posted_by_type, created_at) 
+                    VALUES (?, ?, ?, ?, 'property_listing', 'new', 'medium', ?, 'associate', NOW())
+                ");
+                $inqStmt->execute([$name, $email, $phone, $message, $associateId]);
+            } catch (\Exception $e2) {
+                error_log("Inquiry save error: " . $e2->getMessage());
+            }
+
+            $_SESSION['flash_success'] = 'Thank you! Your property listing has been submitted. Our team will verify and publish it soon.';
+        } catch (\Exception $e) {
+            error_log("Associate property listing error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to submit. Please try again or contact support.';
+        }
+
+        $this->redirect('/associate/properties');
     }
 }

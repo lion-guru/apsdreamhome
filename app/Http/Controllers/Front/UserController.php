@@ -14,8 +14,16 @@ class UserController extends BaseController
     private function requireCustomerLogin()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
-        if (!isset($_SESSION['user_id']) || ($_SESSION['user_type'] ?? '') !== 'customer') {
+
+        // Check if user is logged in (user_id exists and user_type is customer or empty)
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        // Accept customer type OR default to customer if not specified
+        $userType = $_SESSION['user_type'] ?? '';
+        if ($userType !== '' && $userType !== 'customer') {
             header('Location: /login');
             exit;
         }
@@ -58,7 +66,7 @@ class UserController extends BaseController
             'loginSuccess' => isset($_GET['login']),
         ];
 
-        $this->render('pages/user_dashboard', $data);
+        $this->render('pages/user_dashboard', $data, 'layouts/customer');
     }
 
     public function myProperties()
@@ -77,7 +85,7 @@ class UserController extends BaseController
             'properties' => $properties,
         ];
 
-        $this->render('pages/user_properties', $data);
+        $this->render('pages/user_properties', $data, 'layouts/customer');
     }
 
     public function myInquiries()
@@ -96,7 +104,7 @@ class UserController extends BaseController
             'inquiries' => $inquiries,
         ];
 
-        $this->render('pages/user_inquiries', $data);
+        $this->render('pages/user_inquiries', $data, 'layouts/customer');
     }
 
     public function profile()
@@ -123,7 +131,7 @@ class UserController extends BaseController
                     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     $stmt = $this->db->prepare("UPDATE users SET name = ?, phone = ?, password = ? WHERE id = ?");
                     $stmt->execute([$name, $phone, $hashedPassword, $_SESSION['user_id']]);
-                    
+
                     $_SESSION['user_name'] = $name;
                     $success = true;
                     $user['name'] = $name;
@@ -132,7 +140,7 @@ class UserController extends BaseController
             } else {
                 $stmt = $this->db->prepare("UPDATE users SET name = ?, phone = ? WHERE id = ?");
                 $stmt->execute([$name, $phone, $_SESSION['user_id']]);
-                
+
                 $_SESSION['user_name'] = $name;
                 $success = true;
                 $user['name'] = $name;
@@ -154,35 +162,35 @@ class UserController extends BaseController
         // Use unified shared profile view
         include __DIR__ . '/../../../views/shared/profile.php';
     }
-    
+
     /**
      * Bank Details Page
      */
     public function bankDetails()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['flash_error'] = 'Please login first';
             header('Location: /login?redirect=/user/bank-details');
             exit;
         }
-        
-        $this->render('pages/user_bank_details');
+
+        $this->render('pages/user_bank_details', [], 'layouts/customer');
     }
-    
+
     /**
      * Save Bank Details
      */
     public function saveBankDetails()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /login');
             exit;
         }
-        
+
         $userId = $_SESSION['user_id'];
         $accountHolder = trim($_POST['account_holder'] ?? '');
         $accountNumber = trim($_POST['account_number'] ?? '');
@@ -191,20 +199,20 @@ class UserController extends BaseController
         $branchName = trim($_POST['branch_name'] ?? '');
         $accountType = $_POST['account_type'] ?? 'savings';
         $upiId = trim($_POST['upi_id'] ?? '');
-        
+
         // Validation
         if (empty($accountHolder) || empty($accountNumber) || empty($ifscCode)) {
             $_SESSION['flash_error'] = 'Please fill all required fields';
             header('Location: /user/bank-details');
             exit;
         }
-        
+
         // Check if account already exists
         $existing = $this->db->fetch(
             "SELECT id FROM user_bank_accounts WHERE user_id = ?",
             [$userId]
         );
-        
+
         if ($existing) {
             // Update existing
             $stmt = $this->db->prepare("
@@ -223,7 +231,7 @@ class UserController extends BaseController
             ");
             $stmt->execute([$userId, $accountHolder, $accountNumber, $ifscCode, $bankName, $branchName, $accountType, $upiId]);
         }
-        
+
         $_SESSION['flash_success'] = 'Bank details saved successfully!';
         header('Location: /user/bank-details');
         exit;

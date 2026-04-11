@@ -87,7 +87,8 @@ class CustomerController extends AdminController
             $countSql = str_replace("SELECT c.*, COUNT(b.id) as booking_count", "SELECT COUNT(DISTINCT c.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $countResult = $countStmt->fetch();
+            $total = $countResult ? ($countResult['total'] ?? 0) : 0;
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";

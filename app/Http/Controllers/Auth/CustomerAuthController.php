@@ -245,7 +245,6 @@ class CustomerAuthController extends BaseController
 
             // Mark visitor as converted
             try {
-                require_once __DIR__ . '/../../Services/VisitorTrackingService.php';
                 $visitorTracking = new \App\Services\VisitorTrackingService();
                 $visitorTracking->markAsConverted($newUserId);
             } catch (Exception $e) {

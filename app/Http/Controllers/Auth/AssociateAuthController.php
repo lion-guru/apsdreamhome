@@ -155,11 +155,8 @@ class AssociateAuthController extends BaseController
 
             // Mark visitor as converted
             try {
-                if (file_exists(__DIR__ . '/../../Services/VisitorTrackingService.php')) {
-                    require_once __DIR__ . '/../../Services/VisitorTrackingService.php';
-                    $visitorTracking = new \App\Services\VisitorTrackingService();
-                    $visitorTracking->markAsConverted($newUserId);
-                }
+                $visitorTracking = new \App\Services\VisitorTrackingService();
+                $visitorTracking->markAsConverted($newUserId);
             } catch (\Exception $e) {
                 error_log("Visitor conversion tracking failed: " . $e->getMessage());
             }

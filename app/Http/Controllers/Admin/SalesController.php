@@ -31,11 +31,33 @@ class SalesController extends AdminController
     public function index()
     {
         try {
+            // Check if sales table exists
+            $tableExists = $this->db->query("SHOW TABLES LIKE 'sales'")->fetchColumn();
+            
             $search = $_GET['search'] ?? '';
             $status = $_GET['status'] ?? '';
             $associateId = $_GET['associate_id'] ?? '';
             $page = (int)($_GET['page'] ?? 1);
             $perPage = (int)($_GET['per_page'] ?? 20);
+            
+            if (!$tableExists) {
+                $data = [
+                    'page_title' => 'Sales Management - APS Dream Home',
+                    'active_page' => 'sales',
+                    'sales' => [],
+                    'total' => 0,
+                    'page' => 1,
+                    'per_page' => 20,
+                    'total_pages' => 1,
+                    'filters' => [
+                        'search' => $search,
+                        'status' => $status,
+                        'associate_id' => $associateId
+                    ],
+                    'associates' => []
+                ];
+                return $this->render('admin/sales/index', $data);
+            }
 
             $offset = ($page - 1) * $perPage;
 

@@ -1,76 +1,117 @@
 <?php
+
 /**
  * APS Dream Home - Universal Path Manager
  * Handles all project URLs and paths with consistency
  */
 
-class PathManager {
-    private static $baseUrl = 'http://localhost/apsdreamhome';
+class PathManager
+{
+    // Auto-detect base URL - works on localhost AND live domain!
+    private static $baseUrl = null;
     private static $projectRoot = 'c:\\xampp\\htdocs\\apsdreamhome';
     private static $basePath = '/apsdreamhome/';
-    
+
     /**
-     * Get project base URL
+     * Get project base URL (auto-detects domain)
      */
-    public static function getBaseUrl() {
+    public static function getBaseUrl()
+    {
+        if (self::$baseUrl === null) {
+            self::$baseUrl = self::detectBaseUrl();
+        }
         return self::$baseUrl;
     }
-    
+
+    /**
+     * Auto-detect base URL from server variables
+     * Works on: localhost, localhost:8080, www.apsdreamhome.com, etc.
+     */
+    private static function detectBaseUrl(): string
+    {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+        // Detect if running in subfolder (e.g., /apsdreamhome)
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $scriptDir = dirname($scriptName);
+
+        // Remove /public or /index.php from path
+        $basePath = $scriptDir;
+        if (substr($basePath, -7) === '/public') {
+            $basePath = substr($basePath, 0, -7);
+        }
+        if (substr($basePath, -10) === '/index.php') {
+            $basePath = substr($basePath, 0, -10);
+        }
+
+        $basePath = rtrim($basePath, '/');
+
+        return "$protocol://$host$basePath";
+    }
+
     /**
      * Get project root path
      */
-    public static function getProjectRoot() {
+    public static function getProjectRoot()
+    {
         return self::$projectRoot;
     }
-    
+
     /**
      * Get base path for URLs
      */
-    public static function getBasePath() {
+    public static function getBasePath()
+    {
         return self::$basePath;
     }
-    
+
     /**
      * Helper function for base URL generation
      */
-    public static function base_url($path = '') {
+    public static function base_url($path = '')
+    {
         return self::buildUrl($path);
     }
-    
+
     /**
      * Build internal URL with correct base path
      */
-    public static function buildUrl($path) {
+    public static function buildUrl($path)
+    {
         // Remove leading slash if present
         $path = ltrim($path, '/');
-        
+
         // If already has base path, return as is
         if (strpos($path, 'apsdreamhome') === 0) {
             return self::$baseUrl . '/' . $path;
         }
-        
+
         // Add base path
         return self::$baseUrl . '/' . $path;
     }
-    
+
     /**
      * Build API endpoint URL
      */
-    public static function buildApiUrl($endpoint) {
+    public static function buildApiUrl($endpoint)
+    {
         return self::buildUrl('config/' . $endpoint);
     }
-    
+
     /**
      * Build file path within project
      */
-    public static function buildPath($relativePath) {
+    public static function buildPath($relativePath)
+    {
         return self::$projectRoot . '\\' . str_replace('/', '\\', $relativePath);
     }
-    
+
     /**
      * Get MCP system URLs (updated for MVC structure)
      */
-    public static function getMcpUrls() {
+    public static function getMcpUrls()
+    {
         return [
             'dashboard' => self::buildUrl('mcp_dashboard'),
             'configuration' => self::buildUrl('mcp_configuration_gui'),
@@ -83,11 +124,12 @@ class PathManager {
             'backup_backend' => self::buildApiUrl('restore_backup_backend')
         ];
     }
-    
+
     /**
      * Get app system URLs
      */
-    public static function getAppUrls() {
+    public static function getAppUrls()
+    {
         return [
             'home' => self::buildUrl('index.php'),
             'properties' => self::buildUrl('index.php/properties'),
@@ -101,11 +143,12 @@ class PathManager {
             'user_dashboard' => self::buildUrl('index.php/dashboard')
         ];
     }
-    
+
     /**
      * Get file paths
      */
-    public static function getFilePaths() {
+    public static function getFilePaths()
+    {
         return [
             'mcp_config' => self::buildPath('config/mcp_servers.json'),
             'backup_manifest' => self::buildPath('backups/backup_manifest.json'),
@@ -118,58 +161,64 @@ class PathManager {
             'core_dir' => self::buildPath('app/Core')
         ];
     }
-    
+
     /**
      * Validate if URL is internal to project
      */
-    public static function isInternalUrl($url) {
+    public static function isInternalUrl($url)
+    {
         return strpos($url, self::$baseUrl) === 0 || strpos($url, self::$basePath) === 0;
     }
-    
+
     /**
      * Convert relative URL to absolute
      */
-    public static function makeAbsolute($url) {
+    public static function makeAbsolute($url)
+    {
         if (self::isInternalUrl($url)) {
             return $url;
         }
-        
+
         return self::buildUrl($url);
     }
-    
+
     /**
      * Get current protocol and host
      */
-    public static function getCurrentHost() {
+    public static function getCurrentHost()
+    {
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
         return $protocol . '://' . $host;
     }
-    
+
     /**
      * Detect if running in CLI vs web
      */
-    public static function isCli() {
+    public static function isCli()
+    {
         return php_sapi_name() === 'cli';
     }
-    
+
     /**
      * Get appropriate base URL for current environment
      */
-    public static function getEnvironmentBaseUrl() {
+    public static function getEnvironmentBaseUrl()
+    {
         if (self::isCli()) {
             return self::$baseUrl;
         }
-        
+
         return self::getCurrentHost() . self::$basePath;
     }
-    
+
     /**
      * Generate JavaScript URL configuration
      */
-    public static function generateJsConfig() {
+    public static function generateJsConfig()
+    {
         $urls = array_merge(self::getMcpUrls(), self::getAppUrls());
-        
+
         return [
             'baseUrl' => self::getEnvironmentBaseUrl(),
             'basePath' => self::$basePath,
@@ -178,11 +227,12 @@ class PathManager {
             'paths' => self::getFilePaths()
         ];
     }
-    
+
     /**
      * Output JavaScript configuration
      */
-    public static function outputJsConfig() {
+    public static function outputJsConfig()
+    {
         $config = self::generateJsConfig();
         echo '<script>';
         echo 'window.APS_CONFIG = ' . json_encode($config) . ';';
@@ -191,19 +241,22 @@ class PathManager {
 }
 
 // Helper functions for global use
-function base_url($path = '') {
+function base_url($path = '')
+{
     return PathManager::buildUrl($path);
 }
 
-function api_url($endpoint = '') {
+function api_url($endpoint = '')
+{
     return PathManager::buildApiUrl($endpoint);
 }
 
-function project_path($relativePath = '') {
+function project_path($relativePath = '')
+{
     return PathManager::buildPath($relativePath);
 }
 
-function is_internal_url($url) {
+function is_internal_url($url)
+{
     return PathManager::isInternalUrl($url);
 }
-?>

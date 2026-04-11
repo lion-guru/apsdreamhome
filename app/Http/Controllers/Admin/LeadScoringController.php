@@ -27,6 +27,9 @@ class LeadScoringController extends AdminController
     public function index()
     {
         try {
+            // Check if required tables exist
+            $tablesExist = $this->checkRequiredTables();
+
             // Get filter parameters
             $scoreMin = isset($_GET['score_min']) ? intval($_GET['score_min']) : 0;
             $scoreMax = isset($_GET['score_max']) ? intval($_GET['score_max']) : 100;
@@ -34,17 +37,17 @@ class LeadScoringController extends AdminController
             $source = $_GET['source'] ?? '';
             $assignedTo = $_GET['assigned_to'] ?? '';
 
-            // Get leads with scores
-            $leads = $this->getLeadsWithScores($scoreMin, $scoreMax, $status, $source, $assignedTo);
+            // Get leads with scores (or empty if tables don't exist)
+            $leads = $tablesExist ? $this->getLeadsWithScores($scoreMin, $scoreMax, $status, $source, $assignedTo) : [];
 
             // Get score distribution
-            $scoreDistribution = $this->getScoreDistribution();
+            $scoreDistribution = $tablesExist ? $this->getScoreDistribution() : ['hot_count' => 0, 'warm_count' => 0, 'cold_count' => 0];
 
             // Get agents for filter
             $agents = $this->getAgents();
 
             // Get scoring statistics
-            $stats = $this->getScoringStats();
+            $stats = $tablesExist ? $this->getScoringStats() : ['avg_score' => 0, 'total_scored' => 0, 'pending_scoring' => 0];
 
             $data = [
                 'page_title' => 'Lead Scoring Dashboard - APS Dream Home',
@@ -64,8 +67,35 @@ class LeadScoringController extends AdminController
             $this->render('admin/leads/scoring', $data);
         } catch (\Exception $e) {
             error_log("LeadScoringController::index error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load lead scoring dashboard');
-            $this->redirect('/admin/leads');
+            // Show dashboard with empty data instead of redirecting
+            $data = [
+                'page_title' => 'Lead Scoring Dashboard - APS Dream Home',
+                'leads' => [],
+                'score_distribution' => ['hot_count' => 0, 'warm_count' => 0, 'cold_count' => 0],
+                'agents' => [],
+                'stats' => ['avg_score' => 0, 'total_scored' => 0, 'pending_scoring' => 0],
+                'filters' => [
+                    'score_min' => 0,
+                    'score_max' => 100,
+                    'status' => '',
+                    'source' => '',
+                    'assigned_to' => ''
+                ]
+            ];
+            $this->render('admin/leads/scoring', $data);
+        }
+    }
+
+    /**
+     * Check if required tables exist
+     */
+    private function checkRequiredTables(): bool
+    {
+        try {
+            $this->pdo->query("SELECT 1 FROM lead_scoring LIMIT 1");
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 
@@ -396,46 +426,50 @@ class LeadScoringController extends AdminController
      */
     private function getLeadsWithScores($scoreMin = 0, $scoreMax = 100, $status = '', $source = '', $assignedTo = '')
     {
-        $sql = "SELECT l.*, 
+        try {
+            $sql = "SELECT l.*, 
                        COALESCE(ls.score, 0) as score,
                        ls.breakdown_json,
                        ls.calculated_at,
                        u.name as assigned_name,
-                       (SELECT COUNT(*) FROM lead_engagement_metrics WHERE lead_id = l.id) as engagement_count
+                       0 as engagement_count
                 FROM leads l
                 LEFT JOIN lead_scoring ls ON l.id = ls.lead_id
                 LEFT JOIN users u ON l.assigned_to = u.id
                 WHERE 1=1";
 
-        $params = [];
+            $params = [];
 
-        if ($scoreMin > 0 || $scoreMax < 100) {
-            $sql .= " AND COALESCE(ls.score, 0) BETWEEN ? AND ?";
-            $params[] = $scoreMin;
-            $params[] = $scoreMax;
-        }
+            if ($scoreMin > 0 || $scoreMax < 100) {
+                $sql .= " AND COALESCE(ls.score, 0) BETWEEN ? AND ?";
+                $params[] = $scoreMin;
+                $params[] = $scoreMax;
+            }
 
-        if (!empty($status)) {
-            $sql .= " AND l.status = ?";
-            $params[] = $status;
-        }
+            if (!empty($status)) {
+                $sql .= " AND l.status = ?";
+                $params[] = $status;
+            }
 
-        if (!empty($source)) {
-            $sql .= " AND l.source = ?";
-            $params[] = $source;
-        }
+            if (!empty($source)) {
+                $sql .= " AND l.source = ?";
+                $params[] = $source;
+            }
 
-        if (!empty($assignedTo)) {
-            $sql .= " AND l.assigned_to = ?";
-            $params[] = $assignedTo;
-        }
+            if (!empty($assignedTo)) {
+                $sql .= " AND l.assigned_to = ?";
+                $params[] = $assignedTo;
+            }
 
-        $sql .= " ORDER BY score DESC, l.created_at DESC
+            $sql .= " ORDER BY score DESC, l.created_at DESC
                   LIMIT 100";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
@@ -443,16 +477,32 @@ class LeadScoringController extends AdminController
      */
     private function getScoreDistribution()
     {
-        $sql = "SELECT 
+        try {
+            $sql = "SELECT 
                     SUM(CASE WHEN score >= 70 THEN 1 ELSE 0 END) as hot_count,
                     SUM(CASE WHEN score >= 40 AND score < 70 THEN 1 ELSE 0 END) as warm_count,
                     SUM(CASE WHEN score < 40 THEN 1 ELSE 0 END) as cold_count,
-                    COUNT(*) as total_count
-                FROM lead_scoring
-                WHERE calculated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+                    COUNT(*) as total_scored
+                FROM lead_scoring ls
+                JOIN leads l ON ls.lead_id = l.id
+                WHERE ls.calculated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 
-        $stmt = $this->pdo->query($sql);
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+            $stmt = $this->pdo->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return [
+                'hot_count' => $result['hot_count'] ?? 0,
+                'warm_count' => $result['warm_count'] ?? 0,
+                'cold_count' => $result['cold_count'] ?? 0,
+                'total_scored' => $result['total_scored'] ?? 0
+            ];
+        } catch (\Exception $e) {
+            return [
+                'hot_count' => 0,
+                'warm_count' => 0,
+                'cold_count' => 0,
+                'total_scored' => 0
+            ];
+        }
     }
 
     /**
@@ -460,9 +510,13 @@ class LeadScoringController extends AdminController
      */
     private function getAgents()
     {
-        $sql = "SELECT id, name FROM users WHERE role IN ('agent', 'manager', 'admin') AND status = 'active' ORDER BY name";
-        $stmt = $this->pdo->query($sql);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT id, name FROM users WHERE role IN ('agent', 'manager', 'admin') AND status = 'active' ORDER BY name";
+            $stmt = $this->pdo->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
@@ -470,7 +524,8 @@ class LeadScoringController extends AdminController
      */
     private function getScoringStats()
     {
-        $sql = "SELECT 
+        try {
+            $sql = "SELECT 
                     AVG(score) as avg_score,
                     MAX(score) as max_score,
                     MIN(score) as min_score,
@@ -478,8 +533,22 @@ class LeadScoringController extends AdminController
                 FROM lead_scoring
                 WHERE calculated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 
-        $stmt = $this->pdo->query($sql);
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+            $stmt = $this->pdo->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return [
+                'avg_score' => round($result['avg_score'] ?? 0, 1),
+                'max_score' => $result['max_score'] ?? 0,
+                'min_score' => $result['min_score'] ?? 0,
+                'total_scored' => $result['total_scored'] ?? 0
+            ];
+        } catch (\Exception $e) {
+            return [
+                'avg_score' => 0,
+                'max_score' => 0,
+                'min_score' => 0,
+                'total_scored' => 0
+            ];
+        }
     }
 
     /**

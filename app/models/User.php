@@ -144,7 +144,7 @@ class User extends UnifiedModel
             $whereClause = 'WHERE ' . implode(' AND ', $where);
             $sql = "SELECT {$columnList} FROM users {$whereClause} ORDER BY name ASC";
 
-            $db = \App\Core\Database\getInstance();
+            $db = \App\Core\Database::getInstance();
             $stmt = $db->prepare($sql);
             $paramIndex = 1;
             foreach ($roles as $role) {

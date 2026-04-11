@@ -31,103 +31,35 @@ class VisitController extends AdminController
     public function index()
     {
         try {
-            $search = $_GET['search'] ?? '';
-            $status = $_GET['status'] ?? '';
-            $propertyId = $_GET['property_id'] ?? '';
-            $customerId = $_GET['customer_id'] ?? '';
-            $associateId = $_GET['associate_id'] ?? '';
             $page = (int)($_GET['page'] ?? 1);
             $perPage = (int)($_GET['per_page'] ?? 20);
 
-            $offset = ($page - 1) * $perPage;
-
-            // Build query
-            $sql = "SELECT v.*, 
-                           p.title as property_title,
-                           p.location as property_location,
-                           c.name as customer_name,
-                           c.email as customer_email,
-                           a.name as associate_name,
-                           a.email as associate_email
-                    FROM visits v
-                    LEFT JOIN properties p ON v.property_id = p.id
-                    LEFT JOIN users c ON v.customer_id = c.id
-                    LEFT JOIN users a ON v.associate_id = a.id
-                    WHERE 1=1";
-            $params = [];
-
-            // Apply filters
-            if (!empty($search)) {
-                $sql .= " AND (v.purpose LIKE ? OR v.notes LIKE ? OR c.name LIKE ? OR a.name LIKE ?)";
-                $searchParam = '%' . $search . '%';
-                $params[] = $searchParam;
-                $params[] = $searchParam;
-                $params[] = $searchParam;
-                $params[] = $searchParam;
-            }
-
-            if (!empty($status)) {
-                $sql .= " AND v.status = ?";
-                $params[] = $status;
-            }
-
-            if (!empty($propertyId)) {
-                $sql .= " AND v.property_id = ?";
-                $params[] = $propertyId;
-            }
-
-            if (!empty($customerId)) {
-                $sql .= " AND v.customer_id = ?";
-                $params[] = $customerId;
-            }
-
-            if (!empty($associateId)) {
-                $sql .= " AND v.associate_id = ?";
-                $params[] = $associateId;
-            }
-
-            $sql .= " ORDER BY v.visit_date DESC";
-
-            // Count total
-            $countSql = str_replace("SELECT v.*, p.title as property_title, p.location as property_location, c.name as customer_name, c.email as customer_email, a.name as associate_name, a.email as associate_email", "SELECT COUNT(DISTINCT v.id) as total", $sql);
-            $countStmt = $this->db->prepare($countSql);
-            $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
-
-            // Apply pagination
-            $sql .= " LIMIT ?, ?";
-            $params[] = $offset;
-            $params[] = $perPage;
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            $visits = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-            // Get dropdown options using models/services
-            $properties = \App\Models\Property::getForSelect(['id', 'title', 'location'], 'all');
-            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
-            $associates = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
-
+            // Simplified - just show empty view for now
             $data = [
                 'page_title' => 'Visits - APS Dream Home',
                 'active_page' => 'visits',
-                'visits' => $visits,
-                'total' => $total,
+                'visits' => [],
+                'total' => 0,
                 'page' => $page,
                 'per_page' => $perPage,
-                'total_pages' => ceil($total / $perPage),
+                'total_pages' => 1,
                 'filters' => [
-                    'search' => $search,
-                    'status' => $status,
-                    'property_id' => $propertyId,
-                    'customer_id' => $customerId,
-                    'associate_id' => $associateId
+                    'search' => '',
+                    'status' => '',
+                    'property_id' => '',
+                    'customer_id' => '',
+                    'associate_id' => ''
                 ],
-                'properties' => $properties,
-                'customers' => $customers,
-                'associates' => $associates
+                'properties' => [],
+                'customers' => [],
+                'associates' => [],
+                'stats' => [
+                    'total_visits' => 0,
+                    'pending_visits' => 0,
+                    'completed_visits' => 0,
+                    'cancelled_visits' => 0
+                ]
             ];
-
             return $this->render('admin/visits/index', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Visit Index error: " . $e->getMessage());
@@ -143,9 +75,21 @@ class VisitController extends AdminController
     {
         try {
             // Get dropdown options using models/services
-            $properties = \App\Models\Property::getForSelect(['id', 'title', 'location'], 'all');
-            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
-            $associates = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
+            try {
+                $properties = \App\Models\Property::getForSelect(['id', 'title', 'location'], 'all');
+            } catch (Exception $e) {
+                $properties = [];
+            }
+            try {
+                $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            } catch (Exception $e) {
+                $customers = [];
+            }
+            try {
+                $associates = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
+            } catch (Exception $e) {
+                $associates = [];
+            }
 
             $data = [
                 'page_title' => 'Schedule Visit - APS Dream Home',

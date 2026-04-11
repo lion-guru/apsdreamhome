@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Schedule Site Visit Form
  */
@@ -12,7 +13,7 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
             <h1 class="h3 mb-2"><i class="fas fa-calendar-plus me-2"></i>Schedule Site Visit</h1>
             <p class="text-muted">Schedule a new property site visit for a lead</p>
         </div>
-        <a href="/admin/visits" class="btn btn-outline-secondary">
+        <a href="<?= BASE_URL ?>/admin/visits" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-2"></i>Back to Visits
         </a>
     </div>
@@ -24,16 +25,16 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
                     <h5 class="mb-0"><i class="fas fa-car me-2"></i>Visit Details</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/admin/visits/store">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/visits/store">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Select Lead</label>
                                 <select class="form-select" name="lead_id" required>
                                     <option value="">Choose a lead...</option>
                                     <?php foreach ($leads as $lead): ?>
-                                    <option value="<?= $lead['id'] ?>">
-                                        <?= htmlspecialchars($lead['name'] ?? '') ?> - <?= htmlspecialchars($lead['phone'] ?? '') ?> (<?= ucfirst($lead['status']) ?>)
-                                    </option>
+                                        <option value="<?= $lead['id'] ?>">
+                                            <?= htmlspecialchars($lead['name'] ?? '') ?> - <?= htmlspecialchars($lead['phone'] ?? '') ?> (<?= ucfirst($lead['status']) ?>)
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -42,9 +43,9 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
                                 <select class="form-select" name="property_id" required>
                                     <option value="">Choose a property...</option>
                                     <?php foreach ($properties as $property): ?>
-                                    <option value="<?= $property['id'] ?>">
-                                        <?= htmlspecialchars($property['title'] ?? '') ?> - <?= htmlspecialchars($property['location'] ?? '') ?>
-                                    </option>
+                                        <option value="<?= $property['id'] ?>">
+                                            <?= htmlspecialchars($property['title'] ?? '') ?> - <?= htmlspecialchars($property['location'] ?? '') ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -64,7 +65,7 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
                                 <select class="form-select" name="agent_id">
                                     <option value="">Select Agent</option>
                                     <?php foreach ($agents as $agent): ?>
-                                    <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
+                                        <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -115,5 +116,3 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
         </div>
     </div>
 </div>
-
-

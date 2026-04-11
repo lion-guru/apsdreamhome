@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Core\Database;
-use App\Core\BaseController;
+use App\Http\Controllers\BaseController;
 
 class WalletController extends BaseController
 {
@@ -20,7 +20,7 @@ class WalletController extends BaseController
     public function index()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
             exit;
@@ -30,7 +30,7 @@ class WalletController extends BaseController
 
         // Get wallet information
         $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
-        
+
         if (!$wallet) {
             // Create wallet if not exists
             $this->db->insert('wallet_points', [
@@ -91,7 +91,7 @@ class WalletController extends BaseController
     public function transactions()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
             exit;
@@ -150,7 +150,7 @@ class WalletController extends BaseController
     public function transferToEmi()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
             exit;
@@ -188,7 +188,7 @@ class WalletController extends BaseController
     public function processEmiTransfer()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
             exit;
@@ -246,7 +246,6 @@ class WalletController extends BaseController
 
             echo json_encode(['success' => true, 'message' => 'EMI transfer successful']);
             exit;
-
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Transfer failed: ' . $e->getMessage()]);
             exit;
@@ -259,7 +258,7 @@ class WalletController extends BaseController
     public function withdrawal()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
             exit;
@@ -309,7 +308,7 @@ class WalletController extends BaseController
     public function processWithdrawal()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
             exit;
@@ -347,7 +346,6 @@ class WalletController extends BaseController
 
             echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted successfully']);
             exit;
-
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Withdrawal failed: ' . $e->getMessage()]);
             exit;
@@ -360,7 +358,7 @@ class WalletController extends BaseController
     public function bankAccounts()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
             exit;
@@ -394,7 +392,7 @@ class WalletController extends BaseController
     public function addBankAccount()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
             exit;
@@ -450,7 +448,6 @@ class WalletController extends BaseController
 
             echo json_encode(['success' => true, 'message' => 'Bank account added successfully']);
             exit;
-
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Failed to add bank account: ' . $e->getMessage()]);
             exit;
@@ -463,7 +460,7 @@ class WalletController extends BaseController
     public function referralNetwork()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
             exit;
@@ -509,7 +506,7 @@ class WalletController extends BaseController
     public function analytics()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
             exit;
@@ -554,5 +551,85 @@ class WalletController extends BaseController
 
         $this->layout = 'layouts/base';
         $this->render('wallet/analytics', $data);
+    }
+
+    /**
+     * Associate Wallet Dashboard
+     */
+    public function associateWallet()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        if (!isset($_SESSION['associate_id'])) {
+            header('Location: ' . BASE_URL . '/associate/login');
+            exit;
+        }
+
+        $associateId = $_SESSION['associate_id'];
+
+        // Get wallet information (using associate_id as user_id)
+        $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$associateId]);
+
+        if (!$wallet) {
+            // Create wallet if not exists
+            $this->db->insert('wallet_points', [
+                'user_id' => $associateId,
+                'points_balance' => 0.00,
+                'total_earned' => 0.00,
+                'total_used' => 0.00,
+                'total_transferred_to_emi' => 0.00,
+                'referral_earnings' => 0.00,
+                'commission_earnings' => 0.00,
+                'bonus_earnings' => 0.00,
+                'status' => 'active',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$associateId]);
+        }
+
+        // Get recent transactions
+        $recentTransactions = $this->db->fetchAll(
+            "SELECT * FROM wallet_transactions WHERE user_id = ? ORDER BY created_at DESC LIMIT 10",
+            [$associateId]
+        );
+
+        // Get commission earnings from commissions table
+        $commissionStats = $this->db->fetchOne(
+            "SELECT 
+                COUNT(*) as total_commissions,
+                COALESCE(SUM(amount), 0) as total_earned
+            FROM commissions 
+            WHERE user_id = ? AND status = 'approved'",
+            [$associateId]
+        );
+
+        // Get network stats
+        $networkStats = $this->db->fetchOne(
+            "SELECT 
+                (SELECT COUNT(*) FROM network_tree WHERE parent_id = ?) as direct_referrals,
+                (SELECT COUNT(*) FROM network_tree WHERE associate_id = ? OR parent_id = ?) as network_size",
+            [$associateId, $associateId, $associateId]
+        );
+
+        // Get wallet configuration
+        $config = $this->db->fetchAll("SELECT * FROM wallet_configuration");
+        $walletConfig = [];
+        foreach ($config as $item) {
+            $walletConfig[$item['config_key']] = $item['config_value'];
+        }
+
+        $data = [
+            'wallet' => $wallet,
+            'recentTransactions' => $recentTransactions,
+            'commissionStats' => $commissionStats,
+            'networkStats' => $networkStats,
+            'config' => $walletConfig,
+            'user_name' => $_SESSION['associate_name'] ?? 'Associate',
+            'is_associate' => true
+        ];
+
+        $this->layout = 'layouts/associate';
+        $this->render('wallet/associate_dashboard', $data);
     }
 }

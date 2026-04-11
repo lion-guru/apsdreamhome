@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Lead Scoring Dashboard
  * Admin view for lead scoring and management
@@ -15,10 +16,10 @@ $page_title = 'Lead Scoring Dashboard - APS Dream Home';
             <p class="text-muted">AI-powered lead scoring and prioritization</p>
         </div>
         <div class="btn-group">
-            <a href="/admin/leads/scoring/recalculate" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/admin/leads/scoring/recalculate" class="btn btn-primary">
                 <i class="fas fa-sync me-2"></i>Recalculate All Scores
             </a>
-            <a href="/admin/leads/scoring/export?<?= http_build_query($_GET) ?>" class="btn btn-success">
+            <a href="<?= BASE_URL ?>/admin/leads/scoring/export?<?= http_build_query($_GET) ?>" class="btn btn-success">
                 <i class="fas fa-download me-2"></i>Export
             </a>
         </div>
@@ -98,7 +99,7 @@ $page_title = 'Lead Scoring Dashboard - APS Dream Home';
             <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
         </div>
         <div class="card-body">
-            <form method="GET" action="/admin/leads/scoring" class="row g-3">
+            <form method="GET" action="<?= BASE_URL ?>/admin/leads/scoring" class="row g-3">
                 <div class="col-md-2">
                     <label class="form-label">Min Score</label>
                     <input type="number" class="form-control" name="score_min" value="<?= $filters['score_min'] ?>" min="0" max="100">
@@ -122,9 +123,9 @@ $page_title = 'Lead Scoring Dashboard - APS Dream Home';
                     <select class="form-select" name="assigned_to">
                         <option value="">All Agents</option>
                         <?php foreach ($agents as $agent): ?>
-                        <option value="<?= $agent['id'] ?>" <?= $filters['assigned_to'] == $agent['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars(agent['name'] ?? '') ?>
-                        </option>
+                            <option value="<?= $agent['id'] ?>" <?= $filters['assigned_to'] == $agent['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($agent['name'] ?? '') ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -132,7 +133,7 @@ $page_title = 'Lead Scoring Dashboard - APS Dream Home';
                     <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-search me-2"></i>Apply
                     </button>
-                    <a href="/admin/leads/scoring" class="btn btn-outline-secondary">Reset</a>
+                    <a href="<?= BASE_URL ?>/admin/leads/scoring" class="btn btn-outline-secondary">Reset</a>
                 </div>
             </form>
         </div>
@@ -152,17 +153,17 @@ $page_title = 'Lead Scoring Dashboard - APS Dream Home';
                     $warmPct = ($score_distribution['warm_count'] / $total) * 100;
                     $coldPct = ($score_distribution['cold_count'] / $total) * 100;
                 ?>
-                <div class="progress-bar bg-success" style="width: <?= $hotPct ?>%" title="Hot: <?= $score_distribution['hot_count'] ?>">
-                    <?= round($hotPct) ?>%
-                </div>
-                <div class="progress-bar bg-warning" style="width: <?= $warmPct ?>%" title="Warm: <?= $score_distribution['warm_count'] ?>">
-                    <?= round($warmPct) ?>%
-                </div>
-                <div class="progress-bar bg-secondary" style="width: <?= $coldPct ?>%" title="Cold: <?= $score_distribution['cold_count'] ?>">
-                    <?= round($coldPct) ?>%
-                </div>
+                    <div class="progress-bar bg-success" style="width: <?= $hotPct ?>%" title="Hot: <?= $score_distribution['hot_count'] ?>">
+                        <?= round($hotPct) ?>%
+                    </div>
+                    <div class="progress-bar bg-warning" style="width: <?= $warmPct ?>%" title="Warm: <?= $score_distribution['warm_count'] ?>">
+                        <?= round($warmPct) ?>%
+                    </div>
+                    <div class="progress-bar bg-secondary" style="width: <?= $coldPct ?>%" title="Cold: <?= $score_distribution['cold_count'] ?>">
+                        <?= round($coldPct) ?>%
+                    </div>
                 <?php else: ?>
-                <div class="progress-bar bg-light text-dark" style="width: 100%">No data</div>
+                    <div class="progress-bar bg-light text-dark" style="width: 100%">No data</div>
                 <?php endif; ?>
             </div>
             <div class="d-flex justify-content-center mt-2">
@@ -199,56 +200,56 @@ $page_title = 'Lead Scoring Dashboard - APS Dream Home';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($leads as $lead): 
+                        <?php foreach ($leads as $lead):
                             $scoreClass = $lead['score'] >= 70 ? 'success' : ($lead['score'] >= 40 ? 'warning' : 'secondary');
                             $scoreLabel = $lead['score'] >= 70 ? 'Hot' : ($lead['score'] >= 40 ? 'Warm' : 'Cold');
                         ?>
-                        <tr data-score="<?= $lead['score'] ?>">
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="me-2">
-                                        <span class="badge bg-<?= $scoreClass ?> fs-6"><?= round($lead['score']) ?></span>
+                            <tr data-score="<?= $lead['score'] ?>">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            <span class="badge bg-<?= $scoreClass ?> fs-6"><?= round($lead['score']) ?></span>
+                                        </div>
+                                        <div class="progress flex-grow-1" style="width: 60px; height: 8px;">
+                                            <div class="progress-bar bg-<?= $scoreClass ?>" style="width: <?= $lead['score'] ?>"></div>
+                                        </div>
                                     </div>
-                                    <div class="progress flex-grow-1" style="width: 60px; height: 8px;">
-                                        <div class="progress-bar bg-<?= $scoreClass ?>" style="width: <?= $lead['score'] ?>"></div>
-                                    </div>
-                                </div>
-                                <small class="text-muted"><?= $scoreLabel ?></small>
-                            </td>
-                            <td>
-                                <strong><?= htmlspecialchars(lead['name'] ?? '') ?></strong>
-                                <br><small class="text-muted">#<?= $lead['id'] ?></small>
-                            </td>
-                            <td>
-                                <i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars(lead['email'] ?? '') ?>
-                                <br><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars(lead['phone'] ?? '') ?>
-                            </td>
-                            <td>
-                                <?= $lead['property_interest'] ? ucfirst($lead['property_interest']) : '-' ?>
-                                <?php if ($lead['budget']): ?>
-                                <br><small class="text-success">₹<?= number_format(floatval(lead['budget'] ?? 0)) ?></small>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <span class="badge bg-light text-dark"><?= ucfirst($lead['source']) ?></span>
-                            </td>
-                            <td>
-                                <?= $lead['assigned_name'] ? htmlspecialchars(lead['assigned_name'] ?? '') : '<span class="text-muted">Unassigned</span>' ?>
-                            </td>
-                            <td>
-                                <span class="badge bg-<?= getLeadStatusColor($lead['status']) ?>">
-                                    <?= ucfirst($lead['status']) ?>
-                                </span>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-outline-info" onclick="viewScoreDetails(<?= $lead['id'] ?>)">
-                                    <i class="fas fa-chart-pie"></i> Score
-                                </button>
-                                <a href="/admin/leads/<?= $lead['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-eye"></i> View
-                                </a>
-                            </td>
-                        </tr>
+                                    <small class="text-muted"><?= $scoreLabel ?></small>
+                                </td>
+                                <td>
+                                    <strong><?= htmlspecialchars(lead['name'] ?? '') ?></strong>
+                                    <br><small class="text-muted">#<?= $lead['id'] ?></small>
+                                </td>
+                                <td>
+                                    <i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars(lead['email'] ?? '') ?>
+                                    <br><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars(lead['phone'] ?? '') ?>
+                                </td>
+                                <td>
+                                    <?= $lead['property_interest'] ? ucfirst($lead['property_interest']) : '-' ?>
+                                    <?php if ($lead['budget']): ?>
+                                        <br><small class="text-success">₹<?= number_format(floatval(lead['budget'] ?? 0)) ?></small>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark"><?= ucfirst($lead['source']) ?></span>
+                                </td>
+                                <td>
+                                    <?= $lead['assigned_name'] ? htmlspecialchars(lead['assigned_name'] ?? '') : '<span class="text-muted">Unassigned</span>' ?>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<?= getLeadStatusColor($lead['status']) ?>">
+                                        <?= ucfirst($lead['status']) ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-info" onclick="viewScoreDetails(<?= $lead['id'] ?>)">
+                                        <i class="fas fa-chart-pie"></i> Score
+                                    </button>
+                                    <a href="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -277,29 +278,29 @@ $page_title = 'Lead Scoring Dashboard - APS Dream Home';
 </div>
 
 <script>
-function filterByScore(type) {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        const score = parseInt(row.getAttribute('data-score'));
-        let show = false;
-        
-        if (type === 'hot' && score >= 70) show = true;
-        else if (type === 'warm' && score >= 40 && score < 70) show = true;
-        else if (type === 'cold' && score < 40) show = true;
-        
-        row.style.display = show ? '' : 'none';
-    });
-}
+    function filterByScore(type) {
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const score = parseInt(row.getAttribute('data-score'));
+            let show = false;
 
-function viewScoreDetails(leadId) {
-    const modal = new bootstrap.Modal(document.getElementById('scoreModal'));
-    modal.show();
-    
-    fetch(`/api/leads/${leadId}/score-details`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                let html = `
+            if (type === 'hot' && score >= 70) show = true;
+            else if (type === 'warm' && score >= 40 && score < 70) show = true;
+            else if (type === 'cold' && score < 40) show = true;
+
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    function viewScoreDetails(leadId) {
+        const modal = new bootstrap.Modal(document.getElementById('scoreModal'));
+        modal.show();
+
+        fetch(`/api/leads/${leadId}/score-details`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let html = `
                     <div class="text-center mb-4">
                         <h2 class="display-4 text-primary">${data.lead.score}</h2>
                         <p class="text-muted">Overall Score</p>
@@ -314,9 +315,9 @@ function viewScoreDetails(leadId) {
                         </thead>
                         <tbody>
                 `;
-                
-                for (const [key, value] of Object.entries(data.score_breakdown)) {
-                    html += `
+
+                    for (const [key, value] of Object.entries(data.score_breakdown)) {
+                        html += `
                         <tr>
                             <td>${value.factor}</td>
                             <td>
@@ -327,20 +328,21 @@ function viewScoreDetails(leadId) {
                             <td>${Math.round((value.max/100)*100)}%</td>
                         </tr>
                     `;
+                    }
+
+                    html += '</tbody></table>';
+                    document.getElementById('scoreModalBody').innerHTML = html;
                 }
-                
-                html += '</tbody></table>';
-                document.getElementById('scoreModalBody').innerHTML = html;
-            }
-        })
-        .catch(error => {
-            document.getElementById('scoreModalBody').innerHTML = '<div class="alert alert-danger">Failed to load score details</div>';
-        });
-}
+            })
+            .catch(error => {
+                document.getElementById('scoreModalBody').innerHTML = '<div class="alert alert-danger">Failed to load score details</div>';
+            });
+    }
 </script>
 
 <?php
-function getLeadStatusColor($status) {
+function getLeadStatusColor($status)
+{
     $colors = [
         'new' => 'info',
         'contacted' => 'warning',

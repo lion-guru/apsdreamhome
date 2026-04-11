@@ -1,570 +1,325 @@
 <?php
+/**
+ * SMS Service
+ * MSG91 Integration for OTP, Notifications, and Alerts
+ */
 
 namespace App\Services\Communication;
 
-use App\Core\Database;
-use Psr\Log\LoggerInterface;
+use App\Core\Database\Database;
 
-/**
- * Modern SMS Service
- * Handles SMS communications with multiple providers and proper MVC patterns
- */
-class SmsService
+class SMSService
 {
-    private Database $db;
-    private LoggerInterface $logger;
-    private array $config;
-    private array $providers;
-
-    public function __construct(Database $db, LoggerInterface $logger, array $config = [])
+    private $db;
+    private $authKey;
+    private $senderId;
+    private $templateId;
+    private $apiUrl = 'https://api.msg91.com/api/v5/flow/';
+    private $otpApiUrl = 'https://control.msg91.com/api/v5/otp/';
+    
+    public function __construct()
     {
-        $this->db = $db;
-        $this->logger = $logger;
-        $this->config = array_merge([
-            'default_provider' => 'twilio',
-            'max_retry_attempts' => 3,
-            'retry_delay' => 300, // 5 minutes
-            'rate_limit' => [
-                'messages_per_minute' => 60,
-                'messages_per_hour' => 1000
-            ],
-            'providers' => [
-                'twilio' => [
-                    'account_sid' => '',
-                    'auth_token' => '',
-                    'phone_number' => '',
-                    'enabled' => false
-                ],
-                'nexmo' => [
-                    'api_key' => '',
-                    'api_secret' => '',
-                    'phone_number' => '',
-                    'enabled' => false
-                ],
-                'aws_sns' => [
-                    'access_key' => '',
-                    'secret_key' => '',
-                    'region' => 'us-east-1',
-                    'enabled' => false
+        $this->db = Database::getInstance();
+        $this->authKey = $_ENV['MSG91_AUTH_KEY'] ?? '';
+        $this->senderId = $_ENV['MSG91_SENDER_ID'] ?? 'APSDHM';
+        $this->templateId = $_ENV['MSG91_TEMPLATE_ID'] ?? '';
+    }
+    
+    /**
+     * Send OTP to mobile number
+     */
+    public function sendOTP($mobile, $otp = null, $templateId = null)
+    {
+        try {
+            // Generate OTP if not provided
+            if (!$otp) {
+                $otp = $this->generateOTP();
+            }
+            
+            // Clean mobile number
+            $mobile = $this->cleanMobileNumber($mobile);
+            
+            // Save OTP to database for verification
+            $this->saveOTP($mobile, $otp);
+            
+            $payload = [
+                'template_id' => $templateId ?? $this->templateId,
+                'short_url' => '0',
+                'realTimeResponse' => 'true',
+                'recipients' => [
+                    [
+                        'mobiles' => $mobile,
+                        'OTP' => $otp
+                    ]
                 ]
-            ]
-        ], $config);
-
-        $this->providers = $this->config['providers'];
-    }
-
-    /**
-     * Send SMS message
-     */
-    public function sendSms(string $to, string $message, array $options = []): array
-    {
-        try {
-            // Validate phone number
-            if (!$this->validatePhoneNumber($to)) {
-                return [
-                    'success' => false,
-                    'message' => 'Invalid phone number format'
-                ];
-            }
-
-            // Check rate limiting
-            if (!$this->checkRateLimit($to)) {
-                return [
-                    'success' => false,
-                    'message' => 'Rate limit exceeded. Please try again later.'
-                ];
-            }
-
-            // Validate message
-            $validation = $this->validateMessage($message);
-            if (!$validation['valid']) {
-                return [
-                    'success' => false,
-                    'message' => 'Message validation failed',
-                    'errors' => $validation['errors']
-                ];
-            }
-
-            // Get provider
-            $provider = $options['provider'] ?? $this->config['default_provider'];
-            if (!isset($this->providers[$provider]) || !$this->providers[$provider]['enabled']) {
-                return [
-                    'success' => false,
-                    'message' => 'SMS provider not available'
-                ];
-            }
-
-            // Create SMS record
-            $smsId = $this->createSmsRecord($to, $message, $provider, $options);
-
-            // Send SMS
-            $result = $this->sendViaProvider($provider, $to, $message, $options);
-
-            // Update SMS record
-            $this->updateSmsRecord($smsId, $result);
-
-            if ($result['success']) {
-                $this->logger->info('SMS sent successfully', [
-                    'sms_id' => $smsId,
-                    'to' => $to,
-                    'provider' => $provider,
-                    'message_length' => strlen($message)
-                ]);
-
-                return [
-                    'success' => true,
-                    'message' => 'SMS sent successfully',
-                    'sms_id' => $smsId,
-                    'provider' => $provider,
-                    'message_id' => $result['message_id'] ?? null
-                ];
-            } else {
-                $this->logger->error('SMS sending failed', [
-                    'sms_id' => $smsId,
-                    'to' => $to,
-                    'provider' => $provider,
-                    'error' => $result['error'] ?? 'Unknown error'
-                ]);
-
-                return [
-                    'success' => false,
-                    'message' => $result['error'] ?? 'SMS sending failed',
-                    'sms_id' => $smsId
-                ];
-            }
-
-        } catch (\Exception $e) {
-            $this->logger->error('SMS service error', [
-                'to' => $to,
-                'error' => $e->getMessage()
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'SMS service error: ' . $e->getMessage()
             ];
-        }
-    }
-
-    /**
-     * Send bulk SMS
-     */
-    public function sendBulkSms(array $recipients, string $message, array $options = []): array
-    {
-        try {
-            $results = [];
-            $successCount = 0;
-            $failureCount = 0;
-
-            foreach ($recipients as $recipient) {
-                $phone = is_array($recipient) ? $recipient['phone'] : $recipient;
-                $recipientOptions = is_array($recipient) ? array_merge($options, $recipient) : $options;
-
-                $result = $this->sendSms($phone, $message, $recipientOptions);
-                
-                $results[] = [
-                    'phone' => $phone,
-                    'result' => $result
-                ];
-
-                if ($result['success']) {
-                    $successCount++;
-                } else {
-                    $failureCount++;
-                }
-
-                // Small delay to avoid rate limiting
-                usleep(100000); // 0.1 second
-            }
-
+            
+            $result = $this->callAPI($this->apiUrl, $payload);
+            
+            // Log the SMS
+            $this->logSMS($mobile, 'OTP', "Your OTP is: {$otp}", $result['type'] ?? 'unknown');
+            
             return [
                 'success' => true,
-                'message' => "Bulk SMS completed. Success: {$successCount}, Failures: {$failureCount}",
-                'total_sent' => count($recipients),
-                'success_count' => $successCount,
-                'failure_count' => $failureCount,
-                'results' => $results
+                'otp' => $otp,
+                'message_id' => $result['message_id'] ?? null
             ];
-
+            
         } catch (\Exception $e) {
-            $this->logger->error('Bulk SMS error', ['error' => $e->getMessage()]);
-            return [
-                'success' => false,
-                'message' => 'Bulk SMS failed: ' . $e->getMessage()
-            ];
+            error_log("SMS OTP send failed: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
         }
     }
-
+    
     /**
-     * Get SMS delivery status
+     * Verify OTP
      */
-    public function getSmsStatus(int $smsId): ?array
+    public function verifyOTP($mobile, $otp)
     {
         try {
-            $sql = "SELECT * FROM sms_logs WHERE id = ?";
-            $sms = $this->db->fetchOne($sql, [$smsId]);
+            $mobile = $this->cleanMobileNumber($mobile);
             
-            if ($sms) {
-                $sms['metadata'] = json_decode($sms['metadata'] ?? '{}', true) ?? [];
-                
-                // Check external provider status if needed
-                if ($sms['status'] === 'sent' && !empty($sms['provider_message_id'])) {
-                    $externalStatus = $this->getProviderStatus($sms['provider'], $sms['provider_message_id']);
-                    if ($externalStatus) {
-                        $sms['external_status'] = $externalStatus;
-                    }
-                }
+            // Get stored OTP
+            $record = $this->db->fetchOne(
+                "SELECT * FROM sms_otp_logs 
+                 WHERE mobile = ? AND status = 'pending' 
+                 AND created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)
+                 ORDER BY created_at DESC LIMIT 1",
+                [$mobile]
+            );
+            
+            if (!$record) {
+                return ['success' => false, 'error' => 'OTP expired or not found'];
             }
             
-            return $sms;
-
+            if ($record['otp'] !== $otp) {
+                return ['success' => false, 'error' => 'Invalid OTP'];
+            }
+            
+            // Mark as verified
+            $this->db->query(
+                "UPDATE sms_otp_logs SET status = 'verified', verified_at = NOW() WHERE id = ?",
+                [$record['id']]
+            );
+            
+            return ['success' => true];
+            
         } catch (\Exception $e) {
-            $this->logger->error('Failed to get SMS status', ['sms_id' => $smsId, 'error' => $e->getMessage()]);
-            return null;
+            error_log("OTP verification failed: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
         }
     }
-
+    
+    /**
+     * Send welcome SMS to new user
+     */
+    public function sendWelcomeSMS($mobile, $name, $userType = 'customer')
+    {
+        $message = $userType === 'associate' 
+            ? "Hi {$name}, Welcome to APS Dream Home Associate Program! Your referral journey starts now. Login: " . BASE_URL . "/associate/login"
+            : "Hi {$name}, Welcome to APS Dream Home! Your dream property awaits. Start browsing: " . BASE_URL . "/properties";
+        
+        return $this->sendSMS($mobile, $message, 'WELCOME');
+    }
+    
+    /**
+     * Send payment confirmation SMS
+     */
+    public function sendPaymentConfirmationSMS($mobile, $amount, $bookingId)
+    {
+        $message = "Payment Successful! Amount: Rs.{$amount} received for Booking #{$bookingId}. Thank you for choosing APS Dream Home.";
+        
+        return $this->sendSMS($mobile, $message, 'PAYMENT');
+    }
+    
+    /**
+     * Send commission credit SMS
+     */
+    public function sendCommissionSMS($mobile, $amount, $walletBalance)
+    {
+        $message = "Commission Credited! Rs.{$amount} added to your wallet. Current Balance: Rs.{$walletBalance}. Keep referring!";
+        
+        return $this->sendSMS($mobile, $message, 'COMMISSION');
+    }
+    
+    /**
+     * Send property approval SMS
+     */
+    public function sendPropertyApprovalSMS($mobile, $propertyTitle)
+    {
+        $message = "Your property listing '{$propertyTitle}' has been approved and is now live on APS Dream Home!";
+        
+        return $this->sendSMS($mobile, $message, 'PROPERTY');
+    }
+    
+    /**
+     * Send site visit reminder
+     */
+    public function sendVisitReminderSMS($mobile, $propertyTitle, $visitDate, $visitTime)
+    {
+        $formattedDate = date('d M Y', strtotime($visitDate));
+        $message = "Reminder: Site visit scheduled for {$propertyTitle} on {$formattedDate} at {$visitTime}. Our executive will meet you there.";
+        
+        return $this->sendSMS($mobile, $message, 'VISIT_REMINDER');
+    }
+    
+    /**
+     * Send payout confirmation
+     */
+    public function sendPayoutSMS($mobile, $amount, $transactionId)
+    {
+        $message = "Payout Processed! Rs.{$amount} has been transferred to your bank account. Transaction ID: {$transactionId}";
+        
+        return $this->sendSMS($mobile, $message, 'PAYOUT');
+    }
+    
+    /**
+     * Generic SMS send method
+     */
+    private function sendSMS($mobile, $message, $type = 'GENERAL')
+    {
+        try {
+            $mobile = $this->cleanMobileNumber($mobile);
+            
+            $payload = [
+                'template_id' => $this->templateId,
+                'short_url' => '0',
+                'realTimeResponse' => 'true',
+                'recipients' => [
+                    [
+                        'mobiles' => $mobile,
+                        'message' => $message
+                    ]
+                ]
+            ];
+            
+            $result = $this->callAPI($this->apiUrl, $payload);
+            
+            $this->logSMS($mobile, $type, $message, $result['type'] ?? 'unknown');
+            
+            return ['success' => true, 'message_id' => $result['message_id'] ?? null];
+            
+        } catch (\Exception $e) {
+            error_log("SMS send failed: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Make API call to MSG91
+     */
+    private function callAPI($url, $payload)
+    {
+        $ch = curl_init();
+        
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'authkey: ' . $this->authKey,
+            'accept: application/json',
+            'content-type: application/json'
+        ]);
+        
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+        
+        if ($error) {
+            throw new \Exception("CURL Error: " . $error);
+        }
+        
+        $result = json_decode($response, true);
+        
+        if (isset($result['type']) && $result['type'] === 'error') {
+            throw new \Exception("MSG91 Error: " . ($result['message'] ?? 'Unknown error'));
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Generate random OTP
+     */
+    private function generateOTP($length = 6)
+    {
+        return str_pad(mt_rand(0, pow(10, $length) - 1), $length, '0', STR_PAD_LEFT);
+    }
+    
+    /**
+     * Clean and format mobile number
+     */
+    private function cleanMobileNumber($mobile)
+    {
+        // Remove all non-numeric characters
+        $mobile = preg_replace('/[^0-9]/', '', $mobile);
+        
+        // Add country code if not present
+        if (strlen($mobile) === 10) {
+            $mobile = '91' . $mobile;
+        }
+        
+        return $mobile;
+    }
+    
+    /**
+     * Save OTP to database
+     */
+    private function saveOTP($mobile, $otp)
+    {
+        // Invalidate old OTPs
+        $this->db->query(
+            "UPDATE sms_otp_logs SET status = 'expired' WHERE mobile = ? AND status = 'pending'",
+            [$mobile]
+        );
+        
+        // Save new OTP
+        $this->db->insert('sms_otp_logs', [
+            'mobile' => $mobile,
+            'otp' => $otp,
+            'status' => 'pending',
+            'created_at' => date('Y-m-d H:i:s'),
+            'expires_at' => date('Y-m-d H:i:s', strtotime('+10 minutes'))
+        ]);
+    }
+    
+    /**
+     * Log SMS to database
+     */
+    private function logSMS($mobile, $type, $message, $status)
+    {
+        try {
+            $this->db->insert('sms_logs', [
+                'mobile' => $mobile,
+                'type' => $type,
+                'message' => substr($message, 0, 500),
+                'status' => $status,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+        } catch (\Exception $e) {
+            error_log("SMS logging failed: " . $e->getMessage());
+        }
+    }
+    
     /**
      * Get SMS statistics
      */
-    public function getSmsStats(array $filters = []): array
+    public function getStats($days = 30)
     {
-        try {
-            $stats = [];
-
-            // Total SMS sent
-            $sql = "SELECT COUNT(*) as total FROM sms_logs";
-            $params = [];
-            
-            if (!empty($filters['date_from'])) {
-                $sql .= " WHERE created_at >= ?";
-                $params[] = $filters['date_from'];
-            }
-            
-            if (!empty($filters['date_to'])) {
-                $sql .= (empty($params) ? " WHERE" : " AND") . " created_at <= ?";
-                $params[] = $filters['date_to'];
-            }
-            
-            $stats['total_sent'] = $this->db->fetchOne($sql, $params) ?? 0;
-
-            // SMS by status
-            $statusSql = "SELECT status, COUNT(*) as count FROM sms_logs";
-            $statusParams = [];
-            
-            if (!empty($filters['date_from'])) {
-                $statusSql .= " WHERE created_at >= ?";
-                $statusParams[] = $filters['date_from'];
-            }
-            
-            if (!empty($filters['date_to'])) {
-                $statusSql .= (empty($statusParams) ? " WHERE" : " AND") . " created_at <= ?";
-                $statusParams[] = $filters['date_to'];
-            }
-            
-            $statusSql .= " GROUP BY status";
-            
-            $statusStats = $this->db->fetchAll($statusSql, $statusParams);
-            $stats['by_status'] = [];
-            foreach ($statusStats as $stat) {
-                $stats['by_status'][$stat['status']] = $stat['count'];
-            }
-
-            // SMS by provider
-            $providerSql = "SELECT provider, COUNT(*) as count FROM sms_logs";
-            $providerParams = [];
-            
-            if (!empty($filters['date_from'])) {
-                $providerSql .= " WHERE created_at >= ?";
-                $providerParams[] = $filters['date_from'];
-            }
-            
-            if (!empty($filters['date_to'])) {
-                $providerSql .= (empty($providerParams) ? " WHERE" : " AND") . " created_at <= ?";
-                $providerParams[] = $filters['date_to'];
-            }
-            
-            $providerSql .= " GROUP BY provider";
-            
-            $providerStats = $this->db->fetchAll($providerSql, $providerParams);
-            $stats['by_provider'] = [];
-            foreach ($providerStats as $stat) {
-                $stats['by_provider'][$stat['provider']] = $stat['count'];
-            }
-
-            // Recent SMS
-            $recentSql = "SELECT * FROM sms_logs ORDER BY created_at DESC LIMIT 10";
-            $stats['recent'] = $this->db->fetchAll($recentSql);
-
-            return $stats;
-
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to get SMS stats', ['error' => $e->getMessage()]);
-            return [];
-        }
-    }
-
-    /**
-     * Schedule SMS for later delivery
-     */
-    public function scheduleSms(string $to, string $message, string $scheduledAt, array $options = []): array
-    {
-        try {
-            // Validate scheduled time
-            $scheduledTimestamp = strtotime($scheduledAt);
-            if ($scheduledTimestamp <= time()) {
-                return [
-                    'success' => false,
-                    'message' => 'Scheduled time must be in the future'
-                ];
-            }
-
-            // Create scheduled SMS record
-            $sql = "INSERT INTO scheduled_sms 
-                    (to_phone, message, scheduled_at, provider, options, created_at) 
-                    VALUES (?, ?, ?, ?, ?, NOW())";
-            
-            $this->db->execute($sql, [
-                $to,
-                $message,
-                date('Y-m-d H:i:s', $scheduledTimestamp),
-                $options['provider'] ?? $this->config['default_provider'],
-                json_encode($options)
-            ]);
-
-            $scheduledId = $this->db->lastInsertId();
-
-            $this->logger->info('SMS scheduled', [
-                'scheduled_id' => $scheduledId,
-                'to' => $to,
-                'scheduled_at' => $scheduledAt
-            ]);
-
-            return [
-                'success' => true,
-                'message' => 'SMS scheduled successfully',
-                'scheduled_id' => $scheduledId,
-                'scheduled_at' => $scheduledAt
-            ];
-
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to schedule SMS', ['to' => $to, 'error' => $e->getMessage()]);
-            return [
-                'success' => false,
-                'message' => 'Failed to schedule SMS: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Process scheduled SMS
-     */
-    public function processScheduledSms(): array
-    {
-        try {
-            $sql = "SELECT * FROM scheduled_sms 
-                    WHERE scheduled_at <= NOW() AND status = 'pending' 
-                    ORDER BY scheduled_at ASC";
-            
-            $scheduledSms = $this->db->fetchAll($sql);
-            
-            $processed = 0;
-            $successCount = 0;
-            $failureCount = 0;
-
-            foreach ($scheduledSms as $sms) {
-                $options = json_decode($sms['options'] ?? '{}', true) ?? [];
-                
-                $result = $this->sendSms($sms['to_phone'], $sms['message'], $options);
-                
-                // Update scheduled SMS status
-                $updateSql = "UPDATE scheduled_sms 
-                             SET status = ?, processed_at = NOW(), result = ? 
-                             WHERE id = ?";
-                
-                $status = $result['success'] ? 'sent' : 'failed';
-                $this->db->execute($updateSql, [$status, json_encode($result), $sms['id']]);
-                
-                $processed++;
-                if ($result['success']) {
-                    $successCount++;
-                } else {
-                    $failureCount++;
-                }
-            }
-
-            return [
-                'success' => true,
-                'message' => "Processed {$processed} scheduled SMS",
-                'processed' => $processed,
-                'success_count' => $successCount,
-                'failure_count' => $failureCount
-            ];
-
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to process scheduled SMS', ['error' => $e->getMessage()]);
-            return [
-                'success' => false,
-                'message' => 'Failed to process scheduled SMS: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Private helper methods
-     */
-    private function validatePhoneNumber(string $phone): bool
-    {
-        // Remove all non-numeric characters
-        $phone = preg_replace('/[^0-9+]/', '', $phone);
-        
-        // Check if phone number is valid (basic validation)
-        return preg_match('/^\+?[1-9]\d{6,14}$/', $phone);
-    }
-
-    private function validateMessage(string $message): array
-    {
-        $errors = [];
-        $valid = true;
-
-        if (empty($message)) {
-            $errors[] = 'Message cannot be empty';
-            $valid = false;
-        }
-
-        if (strlen($message) > 1600) { // SMS limit
-            $errors[] = 'Message too long (max 1600 characters)';
-            $valid = false;
-        }
-
-        return ['valid' => $valid, 'errors' => $errors];
-    }
-
-    private function checkRateLimit(string $phone): bool
-    {
-        $sql = "SELECT COUNT(*) as count FROM sms_logs 
-                WHERE to_phone = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)";
-        
-        $count = $this->db->fetchOne($sql, [$phone]) ?? 0;
-        
-        return $count < $this->config['rate_limit']['messages_per_minute'];
-    }
-
-    private function createSmsRecord(string $to, string $message, string $provider, array $options): int
-    {
-        $sql = "INSERT INTO sms_logs 
-                (to_phone, message, provider, status, options, created_at) 
-                VALUES (?, ?, ?, 'pending', ?, NOW())";
-        
-        $this->db->execute($sql, [$to, $message, $provider, json_encode($options)]);
-        
-        return $this->db->lastInsertId();
-    }
-
-    private function updateSmsRecord(int $smsId, array $result): void
-    {
-        $sql = "UPDATE sms_logs 
-                SET status = ?, provider_message_id = ?, error_message = ?, updated_at = NOW() 
-                WHERE id = ?";
-        
-        $this->db->execute($sql, [
-            $result['success'] ? 'sent' : 'failed',
-            $result['message_id'] ?? null,
-            $result['error'] ?? null,
-            $smsId
-        ]);
-    }
-
-    private function sendViaProvider(string $provider, string $to, string $message, array $options): array
-    {
-        switch ($provider) {
-            case 'twilio':
-                return $this->sendTwilioSms($to, $message, $options);
-            case 'nexmo':
-                return $this->sendNexmoSms($to, $message, $options);
-            case 'aws_sns':
-                return $this->sendAwsSnsSms($to, $message, $options);
-            default:
-                return ['success' => false, 'error' => 'Unknown provider'];
-        }
-    }
-
-    private function sendTwilioSms(string $to, string $message, array $options): array
-    {
-        try {
-            $config = $this->providers['twilio'];
-            
-            if (!$config['enabled'] || empty($config['account_sid']) || empty($config['auth_token'])) {
-                return ['success' => false, 'error' => 'Twilio not configured'];
-            }
-
-            // Mock implementation - in real scenario, use Twilio SDK
-            // $client = new Client($config['account_sid'], $config['auth_token']);
-            // $result = $client->messages->create($to, [
-            //     'from' => $config['phone_number'],
-            //     'body' => $message
-            // ]);
-            
-            // For demo purposes, simulate success
-            return [
-                'success' => true,
-                'message_id' => 'twilio_' . uniqid(),
-                'provider' => 'twilio'
-            ];
-
-        } catch (\Exception $e) {
-            return ['success' => false, 'error' => 'Twilio error: ' . $e->getMessage()];
-        }
-    }
-
-    private function sendNexmoSms(string $to, string $message, array $options): array
-    {
-        try {
-            $config = $this->providers['nexmo'];
-            
-            if (!$config['enabled'] || empty($config['api_key']) || empty($config['api_secret'])) {
-                return ['success' => false, 'error' => 'Nexmo not configured'];
-            }
-
-            // Mock implementation
-            return [
-                'success' => true,
-                'message_id' => 'nexmo_' . uniqid(),
-                'provider' => 'nexmo'
-            ];
-
-        } catch (\Exception $e) {
-            return ['success' => false, 'error' => 'Nexmo error: ' . $e->getMessage()];
-        }
-    }
-
-    private function sendAwsSnsSms(string $to, string $message, array $options): array
-    {
-        try {
-            $config = $this->providers['aws_sns'];
-            
-            if (!$config['enabled'] || empty($config['access_key']) || empty($config['secret_key'])) {
-                return ['success' => false, 'error' => 'AWS SNS not configured'];
-            }
-
-            // Mock implementation
-            return [
-                'success' => true,
-                'message_id' => 'sns_' . uniqid(),
-                'provider' => 'aws_sns'
-            ];
-
-        } catch (\Exception $e) {
-            return ['success' => false, 'error' => 'AWS SNS error: ' . $e->getMessage()];
-        }
-    }
-
-    private function getProviderStatus(string $provider, string $messageId): ?array
-    {
-        // Mock implementation - would check actual provider status
         return [
-            'status' => 'delivered',
-            'delivered_at' => date('Y-m-d H:i:s')
+            'total_sent' => $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM sms_logs WHERE status = 'success' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                [$days]
+            )['count'] ?? 0,
+            'total_failed' => $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM sms_logs WHERE status = 'error' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                [$days]
+            )['count'] ?? 0,
+            'otp_sent' => $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM sms_logs WHERE type = 'OTP' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                [$days]
+            )['count'] ?? 0
         ];
     }
 }

@@ -393,6 +393,7 @@
                     <h5>APS Property Assistant</h5>
                     <span class="status-text">Online • Ready to Help</span>
                 </div>
+                <button class="ai-lang-btn" id="langToggle" onclick="toggleChatLanguage()" title="Switch Language">🇮🇳 HI</button>
                 <button class="ai-close-btn" onclick="toggleChat()">&times;</button>
             </div>
             <div class="ai-chat-body" id="chatBody">
@@ -588,6 +589,23 @@
             cursor: pointer;
             padding: 0;
             line-height: 1;
+        }
+
+        .ai-lang-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .ai-lang-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
 
         .ai-chat-body {
@@ -832,11 +850,52 @@
                 left: 15px;
                 bottom: 25px;
             }
-        }
     </style>
 
     <script>
         let chatOpen = false;
+
+        // PHP Session Data - User Context
+        const ChatbotUserContext = {
+            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['user_role']) ? $_SESSION['user_role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>',
+            userId: '<?php echo $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? ''; ?>',
+            userName: '<?php echo addslashes($_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? ''); ?>',
+            isLoggedIn: <?php echo (isset($_SESSION['user_id']) || isset($_SESSION['admin_id'])) ? 'true' : 'false'; ?>
+        };
+
+        // Chatbot State Management
+        const ChatbotState = {
+            userName: ChatbotUserContext.userName || localStorage.getItem('chatbot_user_name') || null,
+            conversationHistory: JSON.parse(localStorage.getItem('chatbot_history') || '[]'),
+            isTyping: false,
+            sessionId: 'session_' + Date.now(),
+            userRole: ChatbotUserContext.role,
+
+            saveUserName(name) {
+                this.userName = name;
+                localStorage.setItem('chatbot_user_name', name);
+            },
+
+            addToHistory(role, message) {
+                this.conversationHistory.push({
+                    role,
+                    message,
+                    timestamp: new Date().toISOString()
+                });
+                // Keep only last 20 messages
+                if (this.conversationHistory.length > 20) {
+                    this.conversationHistory = this.conversationHistory.slice(-20);
+                }
+                localStorage.setItem('chatbot_history', JSON.stringify(this.conversationHistory));
+            },
+
+            getContextForAI() {
+                return this.conversationHistory.slice(-5).map(h => ({
+                    role: h.role,
+                    content: h.message
+                }));
+            }
+        };
 
         function toggleChat() {
             const popup = document.getElementById('chatPopup');
@@ -849,38 +908,43 @@
             }
         }
 
-        function addMessage(text, isUser = false) {
-            const chatBody = document.getElementById('chatBody');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `ai-message ${isUser ? 'user' : 'bot'}`;
-
-            const time = new Date().toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-
-            msgDiv.innerHTML = `
-                <div class="ai-message-content">${text.replace(/\n/g, '<br>')}</div>
-                <span class="ai-time">${time}</span>
-            `;
-
-            chatBody.appendChild(msgDiv);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
+        // Show typing indicator
         function showTyping() {
             const chatBody = document.getElementById('chatBody');
+            hideTyping();
+
             const typing = document.createElement('div');
             typing.id = 'typingIndicator';
-            typing.className = 'typing-indicator';
-            typing.innerHTML = '<span></span><span></span><span></span>';
+            typing.className = 'typing-indicator ai-message bot';
+            typing.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-bubbles">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
             chatBody.appendChild(typing);
             chatBody.scrollTop = chatBody.scrollHeight;
+            ChatbotState.isTyping = true;
         }
 
         function hideTyping() {
             const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
+            if (typing) {
+                typing.remove();
+            }
+            ChatbotState.isTyping = false;
+        }
+
+        // Realistic typing delay based on message length
+        function calculateTypingDelay(message) {
+            const baseDelay = 1000;
+            const charDelay = 30;
+            const maxDelay = 4000;
+            return Math.min(baseDelay + (message.length * charDelay), maxDelay);
         }
 
         function sendQuickMessage(message) {
@@ -888,63 +952,241 @@
             sendChatMessage();
         }
 
+        // Enhanced Message Addition with Rich Formatting
+        function addMessage(text, isUser = false, options = {}) {
+            const chatBody = document.getElementById('chatBody');
+            const time = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `ai-message ${isUser ? 'user' : 'bot'}`;
+
+            const avatar = isUser ?
+                `<div class="user-avatar"><i class="fas fa-user"></i></div>` :
+                `<div class="message-avatar"><i class="fas fa-robot"></i></div>`;
+
+            const displayText = isUser ? escapeHtml(text) : formatBotResponse(text);
+
+            messageDiv.innerHTML = `
+                ${!isUser ? avatar : ''}
+                <div class="message-content">
+                    <div class="message-text">${displayText}</div>
+                    <span class="message-time">${time}</span>
+                </div>
+                ${isUser ? avatar : ''}
+            `;
+
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Save to history
+            ChatbotState.addToHistory(isUser ? 'user' : 'assistant', text);
+
+            return messageDiv;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatBotResponse(text) {
+            let formatted = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/• (.*)/g, '<li>$1</li>')
+                .replace(/\n/g, '<br>');
+
+            if (formatted.includes('<li>')) {
+                formatted = formatted.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            }
+
+            return formatted;
+        }
+
+        // Check if user has provided name
+        function getPersonalizedGreeting() {
+            if (ChatbotState.userName) {
+                const greetings = [
+                    `Welcome back, ${ChatbotState.userName}! 🙏`,
+                    `Namaste ${ChatbotState.userName}! Kaise madad kar sakta hoon?`,
+                    `Hello ${ChatbotState.userName}! Ready to find your dream property?`
+                ];
+                return greetings[Math.floor(Math.random() * greetings.length)];
+            }
+            return null;
+        }
+
+        // Extract name from message
+        function extractName(message) {
+            const patterns = [
+                /(?:mera|my)\s+naam\s+(\w+)/i,
+                /(?:i am|i'm|iam)\s+(\w+)/i,
+                /(?:namaste|hello|hi)\s+(\w+)/i,
+                /(?:this is)\s+(\w+)/i
+            ];
+
+            for (const pattern of patterns) {
+                const match = message.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        // Enhanced Chat Message Handler
         async function sendChatMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
-            if (!message) return;
+            if (!message || ChatbotState.isTyping) return;
 
-            addMessage(message, true);
+            // Add user message
+            addMessage(message, true, {
+                animate: true
+            });
             input.value = '';
 
+            // Check for name in message
+            const extractedName = extractName(message);
+            if (extractedName && !ChatbotState.userName) {
+                ChatbotState.saveUserName(extractedName);
+            }
+
+            // Show typing indicator
             showTyping();
 
             try {
-                const response = await fetch('<?php echo BASE_URL; ?>/api/gemini/chat', {
+                const apiUrl = '<?php echo BASE_URL; ?>/api/gemini/chat';
+
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Session-ID': ChatbotState.sessionId
                     },
                     body: JSON.stringify({
-                        message
+                        message: message,
+                        session_id: ChatbotState.sessionId,
+                        user_name: ChatbotState.userName,
+                        user_role: ChatbotState.userRole,
+                        context: ChatbotState.getContextForAI(),
+                        language: chatLanguage
                     })
                 });
 
                 const data = await response.json();
+
+                // Calculate realistic typing delay
+                const replyText = data.reply || data.response || "Sorry, I didn't understand that.";
+                const typingDelay = calculateTypingDelay(replyText);
+
+                // Wait for typing delay before showing response
+                await new Promise(resolve => setTimeout(resolve, typingDelay));
+
                 hideTyping();
 
                 if (data.success) {
-                    addMessage(data.reply);
+                    // Add bot response with animation
+                    addMessage(replyText, false, {
+                        animate: true
+                    });
 
-                    // Add quick reply suggestions
+                    // Add quick reply suggestions with delay
                     if (data.quick_replies && data.quick_replies.length > 0) {
-                        const chatBody = document.getElementById('chatBody');
-                        const suggestionsDiv = document.createElement('div');
-                        suggestionsDiv.className = 'ai-suggestions';
-                        data.quick_replies.forEach(reply => {
-                            suggestionsDiv.innerHTML += `<span class="ai-suggestion" onclick="sendQuickMessage('${reply}')">${reply}</span>`;
-                        });
-                        chatBody.appendChild(suggestionsDiv);
+                        setTimeout(() => {
+                            addQuickReplies(data.quick_replies);
+                        }, 500);
                     }
                 } else {
-                    addMessage("Sorry, I'm having trouble understanding. Try calling us at <strong>+91 92771 21112</strong> or <a href='<?php echo BASE_URL; ?>/contact'>Contact Form</a>");
+                    addMessage("Sorry, I'm having trouble understanding. Try calling us at <strong>+91 92771 21112</strong> or <a href='<?php echo BASE_URL; ?>/contact'>Contact Form</a>", false, {
+                        animate: true
+                    });
                 }
             } catch (error) {
+                console.error('Chat error:', error);
                 hideTyping();
-                addMessage("Connection issue! Please try again or call <strong>+91 92771 21112</strong> for instant help.");
+                addMessage("Connection issue! Please try again or call <strong>+91 92771 21112</strong> for instant help.", false, {
+                    animate: true
+                });
             }
+        }
+
+        function addQuickReplies(replies) {
+            const chatBody = document.getElementById('chatBody');
+            const suggestionsDiv = document.createElement('div');
+            suggestionsDiv.className = 'quick-replies-container';
+            suggestionsDiv.style.cssText = 'display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;';
+
+            replies.forEach(reply => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-reply-btn';
+                btn.textContent = reply;
+                btn.style.cssText = 'background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:12px;';
+                btn.onclick = () => sendQuickMessage(reply);
+                suggestionsDiv.appendChild(btn);
+            });
+
+            chatBody.appendChild(suggestionsDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
 
         function handleChatKeypress(e) {
-            if (e.key === 'Enter') sendChatMessage();
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
         }
 
-        // Auto-greet after 10 seconds
+        // Proactive greeting based on page context
+        function getPageContextGreeting() {
+            const path = window.location.pathname;
+            if (path.includes('property') || path.includes('plot')) {
+                return "Looking for a property? I can help you find the perfect one! 🏠";
+            } else if (path.includes('contact')) {
+                return "Need to get in touch? I can connect you with our team! 📞";
+            } else if (path.includes('loan') || path.includes('finance')) {
+                return "Looking for home loan options? Let me help! 🏦";
+            }
+            return null;
+        }
+
+        // Initialize chatbot with enhanced greeting
+        function initializeChatbot() {
+            const savedName = ChatbotState.userName;
+            const pageGreeting = getPageContextGreeting();
+
+            // Initialize language button
+            updateLanguageButton();
+
+            if (savedName) {
+                setTimeout(() => {
+                    const greeting = getPersonalizedGreeting();
+                    addMessage(greeting, false, {
+                        animate: true
+                    });
+                }, 1500);
+            } else if (pageGreeting) {
+                setTimeout(() => {
+                    addMessage(pageGreeting, false, {
+                        animate: true
+                    });
+                }, 2000);
+            }
+        }
+
+        // Auto-greet with pulse animation
         setTimeout(() => {
             if (!chatOpen) {
                 const btn = document.getElementById('aiFloatBtn');
-                btn.style.animation = 'pulse 1s infinite';
+                if (btn) btn.style.animation = 'pulse 1s infinite';
             }
         }, 10000);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeChatbot);
     </script>
 
     <!-- Custom JS -->

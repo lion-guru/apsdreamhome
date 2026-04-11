@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Site Visit Management - List View
  */
@@ -13,10 +14,10 @@ $page_title = 'Site Visit Management - APS Dream Home';
             <p class="text-muted">Schedule and track property site visits</p>
         </div>
         <div class="btn-group">
-            <a href="/admin/visits/create" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/admin/visits/create" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Schedule Visit
             </a>
-            <a href="/admin/visits/calendar" class="btn btn-outline-secondary">
+            <a href="<?= BASE_URL ?>/admin/visits/calendar" class="btn btn-outline-secondary">
                 <i class="fas fa-calendar-alt me-2"></i>Calendar View
             </a>
         </div>
@@ -107,7 +108,7 @@ $page_title = 'Site Visit Management - APS Dream Home';
                     <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-search me-2"></i>Apply
                     </button>
-                    <a href="/admin/visits" class="btn btn-outline-secondary">Reset</a>
+                    <a href="<?= BASE_URL ?>/admin/visits" class="btn btn-outline-secondary">Reset</a>
                 </div>
             </form>
         </div>
@@ -133,7 +134,7 @@ $page_title = 'Site Visit Management - APS Dream Home';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($visits as $visit): 
+                        <?php foreach ($visits as $visit):
                             $statusBadge = [
                                 'scheduled' => 'primary',
                                 'completed' => 'success',
@@ -141,43 +142,43 @@ $page_title = 'Site Visit Management - APS Dream Home';
                                 'no_show' => 'warning'
                             ][$visit['status']] ?? 'secondary';
                         ?>
-                        <tr>
-                            <td>
-                                <strong><?= date('M d, Y', strtotime($visit['visit_date'])) ?></strong>
-                                <br><small class="text-muted"><?= date('h:i A', strtotime($visit['visit_time'])) ?></small>
-                            </td>
-                            <td>
-                                <strong><?= htmlspecialchars(visit['lead_name'] ?? '') ?></strong>
-                                <br><small class="text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars(visit['lead_phone'] ?? '') ?></small>
-                            </td>
-                            <td>
-                                <strong><?= htmlspecialchars(visit['property_title'] ?? '') ?></strong>
-                                <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(visit['property_location'] ?? '') ?></small>
-                            </td>
-                            <td><?= htmlspecialchars($visit['agent_name'] ?? 'Unassigned') ?></td>
-                            <td>
-                                <span class="badge bg-<?= $statusBadge ?>">
-                                    <?= ucfirst($visit['status']) ?>
-                                </span>
-                            </td>
-                            <td>
-                                <?php if ($visit['outcome']): ?>
-                                    <span class="badge bg-<?= $visit['outcome'] == 'interested' ? 'success' : ($visit['outcome'] == 'not_interested' ? 'danger' : 'info') ?>">
-                                        <?= ucfirst(str_replace('_', ' ', $visit['outcome'])) ?>
+                            <tr>
+                                <td>
+                                    <strong><?= date('M d, Y', strtotime($visit['visit_date'])) ?></strong>
+                                    <br><small class="text-muted"><?= date('h:i A', strtotime($visit['visit_time'])) ?></small>
+                                </td>
+                                <td>
+                                    <strong><?= htmlspecialchars(visit['lead_name'] ?? '') ?></strong>
+                                    <br><small class="text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars(visit['lead_phone'] ?? '') ?></small>
+                                </td>
+                                <td>
+                                    <strong><?= htmlspecialchars(visit['property_title'] ?? '') ?></strong>
+                                    <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(visit['property_location'] ?? '') ?></small>
+                                </td>
+                                <td><?= htmlspecialchars($visit['agent_name'] ?? 'Unassigned') ?></td>
+                                <td>
+                                    <span class="badge bg-<?= $statusBadge ?>">
+                                        <?= ucfirst($visit['status']) ?>
                                     </span>
-                                <?php else: ?>
-                                    <span class="text-muted">-</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-outline-success" onclick="updateStatus(<?= $visit['id'] ?>, 'completed')">
-                                    <i class="fas fa-check" title="Mark Completed"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="updateStatus(<?= $visit['id'] ?>, 'cancelled')">
-                                    <i class="fas fa-times" title="Cancel"></i>
-                                </button>
-                            </td>
-                        </tr>
+                                </td>
+                                <td>
+                                    <?php if ($visit['outcome']): ?>
+                                        <span class="badge bg-<?= $visit['outcome'] == 'interested' ? 'success' : ($visit['outcome'] == 'not_interested' ? 'danger' : 'info') ?>">
+                                            <?= ucfirst(str_replace('_', ' ', $visit['outcome'])) ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-success" onclick="updateStatus(<?= $visit['id'] ?>, 'completed')">
+                                        <i class="fas fa-check" title="Mark Completed"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="updateStatus(<?= $visit['id'] ?>, 'cancelled')">
+                                        <i class="fas fa-times" title="Cancel"></i>
+                                    </button>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -187,30 +188,28 @@ $page_title = 'Site Visit Management - APS Dream Home';
 </div>
 
 <script>
-function updateStatus(visitId, status) {
-    if (!confirm('Are you sure you want to mark this visit as ' + status + '?')) {
-        return;
-    }
-    
-    fetch('/admin/visits/' + visitId + '/status', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'status=' + status
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            alert('Failed to update status');
+    function updateStatus(visitId, status) {
+        if (!confirm('Are you sure you want to mark this visit as ' + status + '?')) {
+            return;
         }
-    })
-    .catch(error => {
-        alert('Error updating status');
-    });
-}
+
+        fetch('/admin/visits/' + visitId + '/status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'status=' + status
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to update status');
+                }
+            })
+            .catch(error => {
+                alert('Error updating status');
+            });
+    }
 </script>
-
-

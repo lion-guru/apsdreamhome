@@ -10,18 +10,40 @@ $success = isset($_SESSION['flash_success']) ? $_SESSION['flash_success'] : null
 $error = isset($_SESSION['flash_error']) ? $_SESSION['flash_error'] : null;
 unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 
-// Check if user is logged in
-$isLoggedIn = isset($_SESSION['user_id']);
+// Check if user is logged in (customer, associate, or agent)
+$isCustomer = isset($_SESSION['user_id']) && $_SESSION['user_id'];
+$isAssociate = isset($_SESSION['associate_id']) && $_SESSION['associate_id'];
+$isAgent = isset($_SESSION['agent_id']) && $_SESSION['agent_id'];
+$isLoggedIn = $isCustomer || $isAssociate || $isAgent;
+
+// Get user info for pre-fill
+$userName = '';
+$userPhone = '';
+$userEmail = '';
+if ($isCustomer) {
+    $userName = $_SESSION['user_name'] ?? '';
+    $userPhone = $_SESSION['user_phone'] ?? '';
+    $userEmail = $_SESSION['user_email'] ?? '';
+} elseif ($isAssociate) {
+    $userName = $_SESSION['associate_name'] ?? '';
+    $userPhone = $_SESSION['associate_phone'] ?? '';
+    $userEmail = $_SESSION['associate_email'] ?? '';
+} elseif ($isAgent) {
+    $userName = $_SESSION['agent_name'] ?? '';
+    $userPhone = $_SESSION['agent_phone'] ?? '';
+    $userEmail = $_SESSION['agent_email'] ?? '';
+}
 
 // Load states for dropdown
 $db = \App\Core\Database\Database::getInstance();
 $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER BY name LIMIT 50");
 ?>
+
 <!-- Hero Section -->
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-home me-3"></i>Apni Property Free Mein List Karein</h1>
-        <p class="lead">Bas 1 minute mein form fill karein - Aapke property ko buyers dhundhenge!</p>
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-home me-3"></i>List Your Property for Free</h1>
+        <p class="lead">Fill the form in just 1 minute - Verified buyers will find your property!</p>
     </div>
 </section>
 
@@ -50,24 +72,24 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
             <div class="col-lg-6">
                 <div class="card shadow-lg border-0">
                     <div class="card-header bg-success text-white text-center py-3">
-                        <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Property Details Submit Karein</h4>
+                        <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Submit Your Property Details</h4>
                     </div>
                     <div class="card-body p-4">
                         <form action="<?php echo BASE_URL; ?>/list-property/submit" method="POST" enctype="multipart/form-data">
                             <!-- Property Type -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Kya karna hai? *</label>
+                                <label class="form-label fw-bold">What is the purpose of listing? *</label>
                                 <div class="d-flex gap-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="listing_type" value="sell" id="sell" checked>
                                         <label class="form-check-label" for="sell">
-                                            <i class="fas fa-tag text-success me-1"></i> Sell Karna Hai
+                                            <i class="fas fa-tag text-success me-1"></i> Sell
                                         </label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="listing_type" value="rent" id="rent">
                                         <label class="form-check-label" for="rent">
-                                            <i class="fas fa-key text-primary me-1"></i> Rent Karna Hai
+                                            <i class="fas fa-key text-primary me-1"></i> Rent
                                         </label>
                                     </div>
                                 </div>
@@ -75,9 +97,9 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 
                             <!-- Property Type -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Property Type *</label>
-                                <select name="property_type" class="form-select" required>
-                                    <option value="">Select karein...</option>
+                                <label for="property_type" class="form-label fw-bold">Property Type *</label>
+                                <select name="property_type" id="property_type" class="form-select" required autocomplete="property-type">
+                                    <option value="">Select...</option>
                                     <option value="plot">Plot (Naksha)</option>
                                     <option value="house">House / Villa</option>
                                     <option value="flat">Flat / Apartment</option>
@@ -89,8 +111,8 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                             <!-- Location with Smart Dropdowns -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">State *</label>
-                                    <select id="state_id" class="form-select" required>
+                                    <label for="state_id" class="form-label fw-bold">State *</label>
+                                    <select id="state_id" name="state_id" class="form-select" required autocomplete="address-level1">
                                         <option value="">Select State...</option>
                                         <?php foreach ($states as $state): ?>
                                             <option value="<?= $state['id'] ?>"><?= htmlspecialchars($state['name']) ?></option>
@@ -98,8 +120,8 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">District/City *</label>
-                                    <select id="district_id" name="location" class="form-select" required disabled>
+                                    <label for="district_id" class="form-label fw-bold">District/City *</label>
+                                    <select id="district_id" name="location" class="form-select" required disabled autocomplete="address-level2">
                                         <option value="">Select District First...</option>
                                     </select>
                                 </div>
@@ -112,46 +134,49 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 
                             <!-- Price -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Expected Price *</label>
+                                <label for="price" class="form-label fw-bold">Expected Price (₹) *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
-                                    <input type="text" name="price" class="form-control" placeholder="e.g. 25 Lakh ya 15000/month" required>
+                                    <input type="text" name="price" id="price" class="form-control" placeholder="e.g. 25 Lakh or 15000/month" required autocomplete="transaction-amount">
                                 </div>
                             </div>
 
                             <!-- Name & Phone -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Your Name *</label>
-                                    <input type="text" name="name" class="form-control" placeholder="Naam" required>
+                                    <label for="name" class="form-label fw-bold">Your Name *</label>
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="Name" required autocomplete="name" value="<?php echo htmlspecialchars($userName); ?>">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Phone Number *</label>
-                                    <input type="tel" name="phone" class="form-control" placeholder="+91 XXXXXXXXXX" required>
+                                    <label for="phone" class="form-label fw-bold">Phone Number *</label>
+                                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="+91 XXXXXXXXXX" required autocomplete="tel" value="<?php echo htmlspecialchars($userPhone); ?>">
                                 </div>
                             </div>
 
                             <!-- Description -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Short Description</label>
-                                <textarea name="description" class="form-control" rows="3" placeholder="Plot size, road width, kya special hai..."></textarea>
+                                <label for="description" class="form-label fw-bold">Full Address / Location</label>
+                                <textarea name="description" id="description" class="form-control" rows="3" placeholder="Plot size, road width, nearby landmarks..." autocomplete="street-address"></textarea>
                             </div>
 
                             <!-- Image Upload -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Property Image (Optional)</label>
-                                <input type="file" name="property_image" class="form-control" accept="image/jpeg,image/png,image/webp">
+                                <label for="property_image" class="form-label fw-bold">Property Image (Optional)</label>
+                                <input type="file" name="property_image" id="property_image" class="form-control" accept="image/jpeg,image/png,image/webp" autocomplete="photo">
                                 <small class="text-muted">Upload JPG, PNG or WEBP (Max 5MB)</small>
                             </div>
 
                             <!-- Submit -->
                             <?php if ($isLoggedIn): ?>
-                                <button type="submit" class="btn btn-success btn-lg w-100">
-                                    <i class="fas fa-paper-plane me-2"></i>Submit Karo - FREE!
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Property Listing
                                 </button>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">By submitting, you agree to our <a href="/terms">Terms of Service</a></small>
+                                </div>
                             <?php else: ?>
                                 <button type="button" class="btn btn-success btn-lg w-100" onclick="handleGuestSubmit()">
-                                    <i class="fas fa-paper-plane me-2"></i>Submit Karo - FREE!
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Property Listing
                                 </button>
                                 <div class="alert alert-info mt-3 mb-0">
                                     <i class="fas fa-info-circle me-2"></i>
@@ -164,12 +189,12 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 
                 <!-- Info Box -->
                 <div class="alert alert-info mt-4">
-                    <h5><i class="fas fa-info-circle me-2"></i>Kaise Kaam Karta Hai?</h5>
+                    <h5><i class="fas fa-info-circle me-2"></i>How It Works?</h5>
                     <ol class="mb-0">
-                        <li>Aap form submit karte hain</li>
-                        <li>Hum aapko call karke verify karte hain</li>
-                        <li>Aapki property ko buyers ko dikhate hain</li>
-                        <li>Jab buyer milta hai → Aap deal karte hain!</li>
+                        <li>You submit the form</li>
+                        <li>We verify your details</li>
+                        <li>We connect you with verified buyers</li>
+                        <li>You close the deal!</li>
                     </ol>
                 </div>
             </div>
@@ -192,7 +217,7 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Aapko Milega</h5>
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>What You Get</h5>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mb-0">
@@ -207,14 +232,14 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                 <div class="card border-0 shadow-sm bg-light">
                     <div class="card-body text-center">
                         <i class="fas fa-headset fa-3x text-primary mb-3"></i>
-                        <h5>Help Chahiye?</h5>
-                        <p class="text-muted mb-3">Hum aapki madad ke liye hain!</p>
+                        <h5>Need Help?</h5>
+                        <p class="text-muted mb-3">We're here to assist you!</p>
                         <div class="d-grid gap-2">
                             <a href="tel:+919277121112" class="btn btn-success">
                                 <i class="fas fa-phone me-2"></i>Call: +91 92771 21112
                             </a>
                             <a href="https://wa.me/919277121112?text=Hi, I want to list my property for sale" target="_blank" class="btn btn-outline-success">
-                                <i class="fab fa-whatsapp me-2"></i>WhatsApp Karein
+                                <i class="fab fa-whatsapp me-2"></i>WhatsApp Us
                             </a>
                         </div>
                     </div>
@@ -227,28 +252,29 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 <!-- How It Works -->
 <section class="py-5 bg-light">
     <div class="container">
-        <h3 class="text-center mb-4">Kaise Kaam Karta Hai?</h3>
+        <h3 class="text-center mb-4">How It Works?</h3>
         <div class="row text-center">
             <div class="col-md-4 mb-4">
                 <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                     <span class="h2 mb-0">1</span>
                 </div>
-                <h5>Form Fill Karein</h5>
-                <p class="text-muted">Bas 1 minute - Name, Phone, Property Details</p>
+                <h5>Submit Your Property Details</h5>
+                <p class="text-muted">Fill the form in just 1 minute</p>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                     <span class="h2 mb-0">2</span>
                 </div>
-                <h5>Hum Call Karenge</h5>
-                <p class="text-muted">Verification aur property ki details lenge</p>
+                <h5>We Verify Your Details</h5>
+                <p class="text-muted">We'll contact you to verify your property details</p>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                     <span class="h2 mb-0">3</span>
                 </div>
-                <h5>Buyer Mil Jayega!</h5>
-                <p class="text-muted">Serious buyers aapse contact karenge</p>
+                <h5>Get Connected with Buyers</h5>
+                <p class="text-muted">We'll connect you with verified buyers</p>
+                <p class="text-muted">Serious buyers will contact you directly</p>
             </div>
         </div>
     </div>
@@ -257,21 +283,19 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 <!-- CTA -->
 <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container">
-        <h3>Abhi Property List Karein!</h3>
-        <p class="mb-4">Free hai - Koi charge nahi!</p>
+        <h3>List Your Property Today!</h3>
+        <p class="mb-4">It's completely FREE - No charges at all!</p>
         <a href="#form" class="btn btn-warning btn-lg">
-            <i class="fas fa-arrow-up me-2"></i>Form Bharein
+            <i class="fas fa-arrow-up me-2"></i>Fill the Form
         </a>
     </div>
 </section>
 
 <!-- Smart Form JavaScript -->
-<script src="<?= BASE_URL ?>/assets/js/components/smart-form-autocomplete.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize location cascade
-        const smartForm = new SmartFormAutocomplete();
+        // Location cascade functionality
 
         // State change - load districts
         document.getElementById('state_id').addEventListener('change', async function() {
