@@ -783,5 +783,30 @@ $router->get('/wallet/referral-network', 'WalletController@referralNetwork');
 // Wallet Analytics
 $router->get('/wallet/analytics', 'WalletController@analytics');
 
+// ============================================================
+// ML & AI API ROUTES
+// ============================================================
+
+// ML Dashboard API
+$router->get('/api/ml/dashboard', 'MLController@getMLDashboard');
+
+// ML Predictions
+$router->get('/api/ml/predict-price', 'MLController@predictPrice');
+$router->get('/api/ml/recommendations', 'MLController@getRecommendations');
+
+// ML User Behavior
+$router->get('/api/ml/analyze-behavior', 'MLController@analyzeUserBehavior');
+
+// ============================================================
+// FRAUD DETECTION API ROUTES
+// ============================================================
+
+// Fraud Detection
+$router->get('/api/fraud/detect', 'MLController@detectFraud');
+$router->post('/api/fraud/detect', 'MLController@detectFraud');
+
+// Fraud Dashboard
+$router->get('/api/fraud/dashboard', 'MLController@fraudDashboard');
+
 // Include additional admin routes
 require_once __DIR__ . '/admin_routes.php';
