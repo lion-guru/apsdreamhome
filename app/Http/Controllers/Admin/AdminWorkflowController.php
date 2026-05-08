@@ -1,0 +1,618 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Core\Controller;
+use App\Services\WorkflowEngineService;
+use App\Services\ReportBuilderService;
+use App\Services\AuditTrailService;
+use App\Services\ImportExportService;
+use App\Services\BackupRestoreService;
+use App\Services\EmailQueueService;
+use App\Services\APIDocumentationService;
+
+/**
+ * Admin Workflow Controller
+ * Manages workflows, reports, audit trail, import/export, backups
+ */
+class AdminWorkflowController extends Controller
+{
+    private $workflowService;
+    private $reportService;
+    private $auditService;
+    private $importExportService;
+    private $backupService;
+    private $emailQueueService;
+    private $apiDocService;
+    
+    public function __construct()
+    {
+        parent::__construct();
+        $this->workflowService = new WorkflowEngineService();
+        $this->reportService = new ReportBuilderService();
+        $this->auditService = new AuditTrailService();
+        $this->importExportService = new ImportExportService();
+        $this->backupService = new BackupRestoreService();
+        $this->emailQueueService = new EmailQueueService();
+        $this->apiDocService = new APIDocumentationService();
+    }
+    
+    /**
+     * Main dashboard for workflows & tools
+     */
+    public function dashboard()
+    {
+        $this->checkAdminAuth();
+        
+        $stats = [
+            'workflows' => $this->workflowService->getAllWorkflows(),
+            'pending_approvals' => $this->workflowService->getPendingForUser(
+                $_SESSION['admin_id'] ?? 0, 
+                $_SESSION['admin_role'] ?? 'admin'
+            ),
+            'audit_stats' => $this->auditService->getStats('today'),
+            'email_stats' => $this->emailQueueService->getStats(),
+            'backups' => $this->backupService->listBackups()
+        ];
+        
+        $this->render('admin/workflows/dashboard', [
+            'title' => 'Workflows & Tools Dashboard',
+            'stats' => $stats
+        ]);
+    }
+    
+    // ==================== WORKFLOW MANAGEMENT ====================
+    
+    /**
+     * List all workflows
+     */
+    public function workflows()
+    {
+        $this->checkAdminAuth();
+        
+        $workflows = $this->workflowService->getAllWorkflows();
+        
+        $this->render('admin/workflows/list', [
+            'title' => 'Workflow Management',
+            'workflows' => $workflows
+        ]);
+    }
+    
+    /**
+     * Create new workflow
+     */
+    public function createWorkflow()
+    {
+        $this->checkAdminAuth();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $this->workflowService->createWorkflow(
+                $_POST['code'],
+                $_POST['name'],
+                $_POST['entity_type'],
+                $_POST['description'] ?? ''
+            );
+            
+            if ($id) {
+                $this->setFlash('Workflow created successfully', 'success');
+                header('Location: /admin/workflows/' . $id . '/steps');
+                exit;
+            } else {
+                $this->setFlash('Failed to create workflow', 'error');
+            }
+        }
+        
+        $this->render('admin/workflows/create', [
+            'title' => 'Create Workflow'
+        ]);
+    }
+    
+    /**
+     * Manage workflow steps
+     */
+    public function workflowSteps(int $workflowId)
+    {
+        $this->checkAdminAuth();
+        
+        $workflow = $this->workflowService->getWorkflowByCode(''); // Need to fetch by ID
+        $steps = $this->workflowService->getWorkflowSteps($workflowId);
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->workflowService->addWorkflowStep(
+                $workflowId,
+                (int)$_POST['step_order'],
+                $_POST['step_name'],
+                $_POST['approver_type'],
+                $_POST['approver_id'] ?? null,
+                $_POST['approver_role'] ?? null
+            );
+            
+            $this->setFlash('Step added successfully', 'success');
+            header("Location: /admin/workflows/{$workflowId}/steps");
+            exit;
+        }
+        
+        $this->render('admin/workflows/steps', [
+            'title' => 'Workflow Steps',
+            'workflow' => $workflow,
+            'steps' => $steps
+        ]);
+    }
+    
+    /**
+     * Pending approvals list
+     */
+    public function pendingApprovals()
+    {
+        $this->checkAdminAuth();
+        
+        $pending = $this->workflowService->getPendingForUser(
+            $_SESSION['admin_id'] ?? 0,
+            $_SESSION['admin_role'] ?? 'admin'
+        );
+        
+        $this->render('admin/workflows/pending', [
+            'title' => 'Pending Approvals',
+            'pending' => $pending
+        ]);
+    }
+    
+    /**
+     * Process workflow action
+     */
+    public function processWorkflowAction(int $instanceId)
+    {
+        $this->checkAdminAuth();
+        
+        $result = $this->workflowService->processAction(
+            $instanceId,
+            $_POST['action'],
+            $_SESSION['admin_id'] ?? 0,
+            'admin',
+            $_POST['comments'] ?? ''
+        );
+        
+        echo json_encode($result);
+        exit;
+    }
+    
+    // ==================== REPORT BUILDER ====================
+    
+    /**
+     * Report builder dashboard
+     */
+    public function reports()
+    {
+        $this->checkAdminAuth();
+        
+        $savedReports = $this->reportService->getSavedReports($_SESSION['admin_id'] ?? 0);
+        
+        $this->render('admin/reports/dashboard', [
+            'title' => 'Report Builder',
+            'saved_reports' => $savedReports
+        ]);
+    }
+    
+    /**
+     * Generate sales report
+     */
+    public function salesReport()
+    {
+        $this->checkAdminAuth();
+        
+        $filters = [
+            'date_from' => $_GET['date_from'] ?? date('Y-m-01'),
+            'date_to' => $_GET['date_to'] ?? date('Y-m-d'),
+            'group_by' => $_GET['group_by'] ?? 'daily'
+        ];
+        
+        $data = $this->reportService->generateSalesReport($filters);
+        
+        if ($_GET['export'] ?? false) {
+            $export = $this->reportService->exportReport('sales', $filters, $_GET['format'] ?? 'csv');
+            
+            if ($export['success']) {
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="' . $export['filename'] . '"');
+                readfile($export['filepath']);
+                exit;
+            }
+        }
+        
+        $this->render('admin/reports/sales', [
+            'title' => 'Sales Report',
+            'data' => $data,
+            'filters' => $filters
+        ]);
+    }
+    
+    /**
+     * Generate leads report
+     */
+    public function leadsReport()
+    {
+        $this->checkAdminAuth();
+        
+        $filters = [
+            'date_from' => $_GET['date_from'] ?? date('Y-m-01'),
+            'date_to' => $_GET['date_to'] ?? date('Y-m-d')
+        ];
+        
+        $data = $this->reportService->generateLeadsReport($filters);
+        
+        $this->render('admin/reports/leads', [
+            'title' => 'Leads Report',
+            'data' => $data,
+            'filters' => $filters
+        ]);
+    }
+    
+    /**
+     * Generate commission report
+     */
+    public function commissionReport()
+    {
+        $this->checkAdminAuth();
+        
+        $filters = [
+            'date_from' => $_GET['date_from'] ?? date('Y-m-01'),
+            'date_to' => $_GET['date_to'] ?? date('Y-m-d'),
+            'associate_id' => $_GET['associate_id'] ?? null
+        ];
+        
+        $data = $this->reportService->generateCommissionReport($filters);
+        
+        $this->render('admin/reports/commission', [
+            'title' => 'Commission Report',
+            'data' => $data,
+            'filters' => $filters
+        ]);
+    }
+    
+    /**
+     * Save custom report
+     */
+    public function saveReport()
+    {
+        $this->checkAdminAuth();
+        
+        $id = $this->reportService->saveReport(
+            $_POST['name'],
+            $_POST['type'],
+            [
+                'data_source' => $_POST['data_source'] ?? 'database',
+                'filters' => $_POST['filters'] ?? [],
+                'columns' => $_POST['columns'] ?? [],
+                'chart_type' => $_POST['chart_type'] ?? null
+            ],
+            $_SESSION['admin_id'] ?? 0
+        );
+        
+        echo json_encode(['success' => true, 'report_id' => $id]);
+        exit;
+    }
+    
+    // ==================== AUDIT TRAIL ====================
+    
+    /**
+     * Audit trail viewer
+     */
+    public function auditTrail()
+    {
+        $this->checkAdminAuth();
+        
+        $filters = [
+            'user_id' => $_GET['user_id'] ?? null,
+            'action' => $_GET['action'] ?? null,
+            'entity_type' => $_GET['entity_type'] ?? null,
+            'severity' => $_GET['severity'] ?? null,
+            'date_from' => $_GET['date_from'] ?? null,
+            'date_to' => $_GET['date_to'] ?? null,
+            'search' => $_GET['search'] ?? null
+        ];
+        
+        $page = (int)($_GET['page'] ?? 1);
+        $limit = (int)($_GET['limit'] ?? 50);
+        
+        $logs = $this->auditService->query(array_filter($filters), $page, $limit);
+        
+        $this->render('admin/audit/trail', [
+            'title' => 'Audit Trail',
+            'logs' => $logs,
+            'filters' => $filters
+        ]);
+    }
+    
+    /**
+     * Entity history
+     */
+    public function entityHistory(string $entityType, int $entityId)
+    {
+        $this->checkAdminAuth();
+        
+        $history = $this->auditService->getEntityHistory($entityType, $entityId);
+        
+        echo json_encode($history);
+        exit;
+    }
+    
+    /**
+     * User activity
+     */
+    public function userActivity(int $userId)
+    {
+        $this->checkAdminAuth();
+        
+        $activity = $this->auditService->getUserActivity(
+            $userId, 
+            $_GET['user_type'] ?? 'admin',
+            (int)($_GET['days'] ?? 30)
+        );
+        
+        echo json_encode($activity);
+        exit;
+    }
+    
+    // ==================== IMPORT/EXPORT ====================
+    
+    /**
+     * Import/Export dashboard
+     */
+    public function importExport()
+    {
+        $this->checkAdminAuth();
+        
+        $this->render('admin/import-export/dashboard', [
+            'title' => 'Import & Export'
+        ]);
+    }
+    
+    /**
+     * Import data
+     */
+    public function importData()
+    {
+        $this->checkAdminAuth();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
+            $type = $_POST['import_type'] ?? 'properties';
+            $file = $_FILES['import_file']['tmp_name'];
+            
+            $result = match($type) {
+                'properties' => $this->importExportService->importProperties($file, $_POST),
+                'leads' => $this->importExportService->importLeads($file, $_POST),
+                default => ['success' => false, 'error' => 'Invalid import type']
+            };
+            
+            $this->render('admin/import-export/results', [
+                'title' => 'Import Results',
+                'result' => $result,
+                'type' => $type
+            ]);
+            return;
+        }
+        
+        $this->render('admin/import-export/import', [
+            'title' => 'Import Data'
+        ]);
+    }
+    
+    /**
+     * Export data
+     */
+    public function exportData()
+    {
+        $this->checkAdminAuth();
+        
+        $type = $_GET['type'] ?? 'properties';
+        $filters = $_GET['filters'] ?? [];
+        
+        $result = match($type) {
+            'properties' => $this->importExportService->exportProperties($filters),
+            'leads' => $this->importExportService->exportLeads($filters),
+            default => ['success' => false, 'error' => 'Invalid export type']
+        };
+        
+        if ($result['success']) {
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="' . $result['filename'] . '"');
+            readfile($result['filepath']);
+            exit;
+        }
+        
+        $this->setFlash($result['error'] ?? 'Export failed', 'error');
+        header('Location: /admin/import-export');
+        exit;
+    }
+    
+    /**
+     * Download import template
+     */
+    public function downloadTemplate(string $type)
+    {
+        $this->checkAdminAuth();
+        
+        $result = $this->importExportService->downloadTemplate($type);
+        
+        if ($result['success']) {
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="' . $result['filename'] . '"');
+            readfile($result['filepath']);
+            exit;
+        }
+        
+        $this->setFlash('Template not found', 'error');
+        header('Location: /admin/import-export');
+        exit;
+    }
+    
+    // ==================== BACKUP & RESTORE ====================
+    
+    /**
+     * Backup management
+     */
+    public function backups()
+    {
+        $this->checkAdminAuth();
+        
+        $backups = $this->backupService->listBackups();
+        
+        $this->render('admin/backups/list', [
+            'title' => 'Backup Management',
+            'backups' => $backups
+        ]);
+    }
+    
+    /**
+     * Create backup
+     */
+    public function createBackup()
+    {
+        $this->checkAdminAuth();
+        
+        $result = $this->backupService->createFullBackup($_SESSION['admin_id'] ?? null);
+        
+        if ($result['success']) {
+            $this->setFlash('Backup created successfully: ' . $result['size'], 'success');
+        } else {
+            $this->setFlash('Backup failed: ' . $result['error'], 'error');
+        }
+        
+        header('Location: /admin/backups');
+        exit;
+    }
+    
+    /**
+     * Download backup
+     */
+    public function downloadBackup(string $filename)
+    {
+        $this->checkAdminAuth();
+        
+        $filepath = STORAGE_PATH . '/backups/' . $filename;
+        
+        if (file_exists($filepath)) {
+            header('Content-Type: application/gzip');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Content-Length: ' . filesize($filepath));
+            readfile($filepath);
+            exit;
+        }
+        
+        $this->setFlash('Backup file not found', 'error');
+        header('Location: /admin/backups');
+        exit;
+    }
+    
+    // ==================== EMAIL QUEUE ====================
+    
+    /**
+     * Email queue management
+     */
+    public function emailQueue()
+    {
+        $this->checkAdminAuth();
+        
+        $stats = $this->emailQueueService->getStats();
+        
+        $this->render('admin/emails/queue', [
+            'title' => 'Email Queue',
+            'stats' => $stats
+        ]);
+    }
+    
+    /**
+     * Process email queue
+     */
+    public function processEmailQueue()
+    {
+        $this->checkAdminAuth();
+        
+        $result = $this->emailQueueService->processQueue($_POST['limit'] ?? 50);
+        
+        echo json_encode($result);
+        exit;
+    }
+    
+    /**
+     * Retry failed emails
+     */
+    public function retryFailedEmails()
+    {
+        $this->checkAdminAuth();
+        
+        $count = $this->emailQueueService->retryFailed();
+        
+        echo json_encode(['success' => true, 'retried' => $count]);
+        exit;
+    }
+    
+    // ==================== API DOCUMENTATION ====================
+    
+    /**
+     * API Documentation
+     */
+    public function apiDocs()
+    {
+        $this->checkAdminAuth();
+        
+        $spec = $this->apiDocService->generateSpec();
+        
+        // Generate HTML docs
+        $html = $this->apiDocService->generateHtmlDocs();
+        
+        $this->render('admin/api/docs', [
+            'title' => 'API Documentation',
+            'spec' => $spec,
+            'html_docs' => $html
+        ]);
+    }
+    
+    /**
+     * Export API spec
+     */
+    public function exportApiSpec(string $format)
+    {
+        $this->checkAdminAuth();
+        
+        if ($format === 'json') {
+            $spec = $this->apiDocService->generateSpec();
+            
+            header('Content-Type: application/json');
+            header('Content-Disposition: attachment; filename="api-spec.json"');
+            echo json_encode($spec, JSON_PRETTY_PRINT);
+            exit;
+        }
+        
+        if ($format === 'html') {
+            $html = $this->apiDocService->generateHtmlDocs();
+            
+            header('Content-Type: text/html');
+            header('Content-Disposition: attachment; filename="api-docs.html"');
+            echo $html;
+            exit;
+        }
+        
+        header('Location: /admin/api-docs');
+        exit;
+    }
+    
+    /**
+     * Check admin authentication
+     */
+    private function checkAdminAuth()
+    {
+        if (empty($_SESSION['admin_id'])) {
+            header('Location: /admin/login');
+            exit;
+        }
+    }
+    
+    /**
+     * Set flash message
+     */
+    private function setFlash(string $message, string $type = 'info'): void
+    {
+        $_SESSION['flash'] = ['message' => $message, 'type' => $type];
+    }
+}

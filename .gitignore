@@ -103,4 +103,62 @@ database/backups/
 .env.local
 .env.*.local
 
+# MCP configuration files (contains secrets)
+.windsurf/mcp_servers.json
+config/mcp_servers.json
+scripts/save_mcp_to_database.php
+
+# Token/secret files
+**/GITHUB_TOKEN_SETUP.md
+**/cookies.txt
+
+# Gradle build artifacts (mobile apps)
+**/.gradle/
+**/build/
+
+# Junk directories from testing branch
+aaaaa/
+backup/
+test-results/
+playwright-report/
+
+# Root-level Flutter artifacts (canonical app is in mobile/)
+/android/
+/lib/
+/core/
+/data/
+/presentation/
+/main.dart
+/pubspec.yaml
+/pubspec.lock
+/analysis_options.yaml
+/.dart_tool/
+/.idea/
+/.metadata
+
+# Individual junk files at root
+/build_log.txt
+/debug_tokens.php
+/tokens.txt
+/test1.php
+/test2.php
+/fix_admin_urls.php
+/agent_dashboard.php
+/auto_orchestrator.php
+/orchestrator_ui.php
+
+# Test artifact directory at root (Flutter test for root-level project)
+/test/
+
+# Logs directory
+/logs/
+
+# Test output artifacts
+/testing/visual_tests/TEST_REPORT.txt
+
+# IDE/agent junk files
+/aps_dream_home/
+/aps_dream_home_fixed.iml
+/.agents/orchestrator_state.json
+/.windsurf/mcp_config.json
 

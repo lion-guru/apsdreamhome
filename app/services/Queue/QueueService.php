@@ -1,0 +1,508 @@
+<?php
+
+namespace App\Services\Queue;
+
+use App\Core\Database\Database;
+
+/**
+ * Queue Service
+ * Background job processing with database queue
+ */
+class QueueService
+{
+    private $database;
+    private $defaultQueue;
+    
+    public function __construct(string $defaultQueue = 'default')
+    {
+        $this->database = Database::getInstance();
+        $this->defaultQueue = $defaultQueue;
+        $this->ensureTablesExist();
+    }
+    
+    /**
+     * Ensure queue tables exist
+     */
+    private function ensureTablesExist(): void
+    {
+        $pdo = $this->database->getConnection();
+        
+        // Jobs table
+        $pdo->exec("CREATE TABLE IF NOT EXISTS queue_jobs (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            queue VARCHAR(50) NOT NULL DEFAULT 'default',
+            job_class VARCHAR(255) NOT NULL,
+            job_data JSON NOT NULL,
+            attempts INT DEFAULT 0,
+            max_attempts INT DEFAULT 3,
+            reserved_at TIMESTAMP NULL,
+            available_at TIMESTAMP NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_queue_reserved (queue, reserved_at, available_at),
+            INDEX idx_available (available_at),
+            INDEX idx_attempts (attempts, max_attempts)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        
+        // Failed jobs table
+        $pdo->exec("CREATE TABLE IF NOT EXISTS failed_jobs (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            queue VARCHAR(50) NOT NULL,
+            job_class VARCHAR(255) NOT NULL,
+            job_data JSON NOT NULL,
+            exception TEXT NOT NULL,
+            failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_queue (queue),
+            INDEX idx_failed (failed_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        
+        // Job batches (for batch processing)
+        $pdo->exec("CREATE TABLE IF NOT EXISTS job_batches (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            batch_id VARCHAR(50) NOT NULL UNIQUE,
+            total_jobs INT NOT NULL,
+            pending_jobs INT NOT NULL,
+            failed_jobs INT DEFAULT 0,
+            processed_jobs INT DEFAULT 0,
+            options JSON NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            finished_at TIMESTAMP NULL,
+            cancelled_at TIMESTAMP NULL,
+            INDEX idx_batch (batch_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        
+        // Batch jobs
+        $pdo->exec("CREATE TABLE IF NOT EXISTS batch_jobs (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            batch_id VARCHAR(50) NOT NULL,
+            job_id BIGINT NOT NULL,
+            status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
+            INDEX idx_batch (batch_id),
+            INDEX idx_status (status)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        
+        // Queue workers table
+        $pdo->exec("CREATE TABLE IF NOT EXISTS queue_workers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            worker_id VARCHAR(100) NOT NULL UNIQUE,
+            queue VARCHAR(50) NOT NULL,
+            process_id INT NOT NULL,
+            started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_seen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            jobs_processed INT DEFAULT 0,
+            is_active TINYINT(1) DEFAULT 1,
+            INDEX idx_queue (queue),
+            INDEX idx_active (is_active)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    }
+    
+    /**
+     * Push job to queue
+     */
+    public function push(string $jobClass, array $data = [], ?string $queue = null, int $delay = 0): int
+    {
+        $queue = $queue ?? $this->defaultQueue;
+        $availableAt = date('Y-m-d H:i:s', time() + $delay);
+        
+        $sql = "INSERT INTO queue_jobs 
+            (queue, job_class, job_data, available_at)
+            VALUES (?, ?, ?, ?)";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([
+            $queue,
+            $jobClass,
+            json_encode($data),
+            $availableAt
+        ]);
+        
+        return $this->database->lastInsertId();
+    }
+    
+    /**
+     * Push multiple jobs
+     */
+    public function pushBulk(array $jobs, ?string $queue = null): int
+    {
+        $queue = $queue ?? $this->defaultQueue;
+        $count = 0;
+        
+        foreach ($jobs as $job) {
+            $this->push($job['class'], $job['data'] ?? [], $queue, $job['delay'] ?? 0);
+            $count++;
+        }
+        
+        return $count;
+    }
+    
+    /**
+     * Pop next available job
+     */
+    public function pop(?string $queue = null): ?array
+    {
+        $queue = $queue ?? $this->defaultQueue;
+        
+        // Find and reserve next available job
+        $sql = "SELECT * FROM queue_jobs 
+            WHERE queue = ? 
+            AND reserved_at IS NULL 
+            AND available_at <= NOW()
+            AND attempts < max_attempts
+            ORDER BY id ASC
+            LIMIT 1
+            FOR UPDATE SKIP LOCKED";
+        
+        // For MySQL < 8.0, use different approach
+        $sql = "SELECT * FROM queue_jobs 
+            WHERE queue = ? 
+            AND reserved_at IS NULL 
+            AND available_at <= NOW()
+            AND attempts < max_attempts
+            ORDER BY id ASC
+            LIMIT 1";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$queue]);
+        $job = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if (!$job) {
+            return null;
+        }
+        
+        // Reserve the job
+        $reserveSql = "UPDATE queue_jobs SET 
+            reserved_at = NOW(),
+            attempts = attempts + 1
+            WHERE id = ? AND reserved_at IS NULL";
+        
+        $reserveStmt = $this->database->prepare($reserveSql);
+        $reserveStmt->execute([$job['id']]);
+        
+        if ($reserveStmt->rowCount() === 0) {
+            // Job was taken by another worker
+            return null;
+        }
+        
+        return $job;
+    }
+    
+    /**
+     * Mark job as completed
+     */
+    public function complete(int $jobId): bool
+    {
+        $sql = "DELETE FROM queue_jobs WHERE id = ?";
+        $stmt = $this->database->prepare($sql);
+        return $stmt->execute([$jobId]);
+    }
+    
+    /**
+     * Mark job as failed
+     */
+    public function fail(int $jobId, string $exception, ?string $queue = null): bool
+    {
+        // Get job data
+        $sql = "SELECT * FROM queue_jobs WHERE id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$jobId]);
+        $job = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if (!$job) {
+            return false;
+        }
+        
+        // Add to failed jobs
+        $failSql = "INSERT INTO failed_jobs 
+            (queue, job_class, job_data, exception)
+            VALUES (?, ?, ?, ?)";
+        
+        $failStmt = $this->database->prepare($failSql);
+        $failStmt->execute([
+            $job['queue'],
+            $job['job_class'],
+            $job['job_data'],
+            $exception
+        ]);
+        
+        // Remove from queue
+        $deleteSql = "DELETE FROM queue_jobs WHERE id = ?";
+        $deleteStmt = $this->database->prepare($deleteSql);
+        return $deleteStmt->execute([$jobId]);
+    }
+    
+    /**
+     * Release job back to queue (for retry)
+     */
+    public function release(int $jobId, int $delay = 0): bool
+    {
+        $availableAt = date('Y-m-d H:i:s', time() + $delay);
+        
+        $sql = "UPDATE queue_jobs SET 
+            reserved_at = NULL,
+            available_at = ?
+            WHERE id = ?";
+        
+        $stmt = $this->database->prepare($sql);
+        return $stmt->execute([$availableAt, $jobId]);
+    }
+    
+    /**
+     * Retry failed job
+     */
+    public function retryFailed(int $failedJobId): bool
+    {
+        // Get failed job
+        $sql = "SELECT * FROM failed_jobs WHERE id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$failedJobId]);
+        $job = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if (!$job) {
+            return false;
+        }
+        
+        // Push back to queue
+        $this->push($job['job_class'], json_decode($job['job_data'], true), $job['queue']);
+        
+        // Remove from failed
+        $deleteSql = "DELETE FROM failed_jobs WHERE id = ?";
+        $deleteStmt = $this->database->prepare($deleteSql);
+        return $deleteStmt->execute([$failedJobId]);
+    }
+    
+    /**
+     * Get queue size
+     */
+    public function size(?string $queue = null): int
+    {
+        $queue = $queue ?? $this->defaultQueue;
+        
+        $sql = "SELECT COUNT(*) FROM queue_jobs 
+            WHERE queue = ? 
+            AND reserved_at IS NULL 
+            AND available_at <= NOW()";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$queue]);
+        
+        return (int) $stmt->fetchColumn();
+    }
+    
+    /**
+     * Get queue statistics
+     */
+    public function getStats(): array
+    {
+        $sql = "SELECT 
+            queue,
+            COUNT(*) as total,
+            SUM(CASE WHEN reserved_at IS NULL AND available_at <= NOW() THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN reserved_at IS NOT NULL THEN 1 ELSE 0 END) as reserved,
+            SUM(CASE WHEN available_at > NOW() THEN 1 ELSE 0 END) as delayed
+            FROM queue_jobs
+            GROUP BY queue";
+        
+        $stmt = $this->database->query($sql);
+        
+        return [
+            'queues' => $stmt->fetchAll(\PDO::FETCH_ASSOC),
+            'failed' => $this->getFailedCount()
+        ];
+    }
+    
+    /**
+     * Get failed jobs count
+     */
+    private function getFailedCount(): int
+    {
+        $sql = "SELECT COUNT(*) FROM failed_jobs";
+        $stmt = $this->database->query($sql);
+        return (int) $stmt->fetchColumn();
+    }
+    
+    /**
+     * Clear queue
+     */
+    public function clear(?string $queue = null): int
+    {
+        $queue = $queue ?? $this->defaultQueue;
+        
+        $sql = "DELETE FROM queue_jobs WHERE queue = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$queue]);
+        
+        return $stmt->rowCount();
+    }
+    
+    /**
+     * Flush all failed jobs
+     */
+    public function flushFailed(): int
+    {
+        $sql = "DELETE FROM failed_jobs";
+        $stmt = $this->database->query($sql);
+        return $stmt->rowCount();
+    }
+    
+    /**
+     * Create job batch
+     */
+    public function createBatch(array $jobs, array $options = []): string
+    {
+        $batchId = uniqid('batch_');
+        
+        $sql = "INSERT INTO job_batches 
+            (batch_id, total_jobs, pending_jobs, options)
+            VALUES (?, ?, ?, ?)";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([
+            $batchId,
+            count($jobs),
+            count($jobs),
+            json_encode($options)
+        ]);
+        
+        // Add jobs to batch
+        foreach ($jobs as $job) {
+            $jobId = $this->push($job['class'], $job['data'] ?? [], $options['queue'] ?? null);
+            
+            $batchJobSql = "INSERT INTO batch_jobs (batch_id, job_id) VALUES (?, ?)";
+            $batchJobStmt = $this->database->prepare($batchJobSql);
+            $batchJobStmt->execute([$batchId, $jobId]);
+        }
+        
+        return $batchId;
+    }
+    
+    /**
+     * Get batch status
+     */
+    public function getBatchStatus(string $batchId): ?array
+    {
+        $sql = "SELECT * FROM job_batches WHERE batch_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$batchId]);
+        
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+    }
+    
+    /**
+     * Process job
+     */
+    public function processJob(array $job): bool
+    {
+        $class = $job['job_class'];
+        $data = json_decode($job['job_data'], true);
+        
+        try {
+            if (class_exists($class)) {
+                $instance = new $class();
+                if (method_exists($instance, 'handle')) {
+                    $instance->handle($data);
+                }
+            }
+            
+            $this->complete($job['id']);
+            return true;
+            
+        } catch (\Exception $e) {
+            // Check if should retry
+            if ($job['attempts'] < $job['max_attempts']) {
+                $this->release($job['id'], 60); // Retry after 60 seconds
+            } else {
+                $this->fail($job['id'], $e->getMessage());
+            }
+            return false;
+        }
+    }
+    
+    /**
+     * Run worker (to be called by cron or supervisor)
+     */
+    public function work(?string $queue = null, int $sleep = 3, int $tries = 0): void
+    {
+        $queue = $queue ?? $this->defaultQueue;
+        $workerId = getmypid() . '_' . uniqid();
+        
+        // Register worker
+        $this->registerWorker($workerId, $queue);
+        
+        $processed = 0;
+        
+        while (true) {
+            $job = $this->pop($queue);
+            
+            if ($job) {
+                $this->processJob($job);
+                $processed++;
+                
+                // Update worker stats
+                $this->updateWorker($workerId, $processed);
+                
+                // Check if should exit
+                if ($tries > 0 && $processed >= $tries) {
+                    break;
+                }
+            } else {
+                // No jobs, sleep
+                sleep($sleep);
+            }
+        }
+        
+        // Unregister worker
+        $this->unregisterWorker($workerId);
+    }
+    
+    /**
+     * Register worker
+     */
+    private function registerWorker(string $workerId, string $queue): void
+    {
+        $sql = "INSERT INTO queue_workers 
+            (worker_id, queue, process_id)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            started_at = NOW(),
+            is_active = 1";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$workerId, $queue, getmypid()]);
+    }
+    
+    /**
+     * Update worker
+     */
+    private function updateWorker(string $workerId, int $jobsProcessed): void
+    {
+        $sql = "UPDATE queue_workers SET 
+            jobs_processed = ?,
+            last_seen_at = NOW()
+            WHERE worker_id = ?";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$jobsProcessed, $workerId]);
+    }
+    
+    /**
+     * Unregister worker
+     */
+    private function unregisterWorker(string $workerId): void
+    {
+        $sql = "UPDATE queue_workers SET is_active = 0 WHERE worker_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$workerId]);
+    }
+    
+    /**
+     * Get active workers
+     */
+    public function getWorkers(): array
+    {
+        $sql = "SELECT * FROM queue_workers WHERE is_active = 1 
+            AND last_seen_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+            ORDER BY started_at DESC";
+        
+        $stmt = $this->database->query($sql);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+}

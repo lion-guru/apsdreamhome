@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Payment Controller
  * Handles Razorpay integration and callbacks
@@ -12,43 +13,43 @@ use App\Services\Payment\RazorpayService;
 class PaymentController extends BaseController
 {
     private $razorpayService;
-    
+
     public function __construct()
     {
         parent::__construct();
         $this->razorpayService = new RazorpayService();
     }
-    
+
     /**
      * Initialize payment for booking
      */
     public function initPayment()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         $bookingId = $_POST['booking_id'] ?? null;
         $amount = $_POST['amount'] ?? 0;
         $userId = $_SESSION['user_id'] ?? null;
-        
+
         if (!$bookingId || !$amount || !$userId) {
             $_SESSION['error'] = "Invalid payment request";
             header('Location: ' . BASE_URL . '/bookings');
             exit;
         }
-        
+
         // Initialize payment
         $result = $this->razorpayService->processBookingPayment($bookingId, $userId, $amount);
-        
+
         if (!$result['success']) {
             $_SESSION['error'] = $result['error'];
             header('Location: ' . BASE_URL . '/bookings');
             exit;
         }
-        
+
         // Render checkout page
         $this->renderCheckout($result);
     }
-    
+
     /**
      * Razorpay checkout page
      */
@@ -58,7 +59,10 @@ class PaymentController extends BaseController
         $orderId = $paymentData['order_id'];
         $amount = $paymentData['amount'];
         $keyId = $paymentData['key_id'];
-        
+        $userName = $_SESSION['user_name'] ?? 'Customer';
+        $userEmail = $_SESSION['user_email'] ?? '';
+        $userPhone = $_SESSION['user_phone'] ?? '';
+
         echo <<<HTML
 <!DOCTYPE html>
 <html>
@@ -103,9 +107,9 @@ class PaymentController extends BaseController
                         "&signature=" + response.razorpay_signature;
                 },
                 "prefill": {
-                    "name": "{$_SESSION['user_name'] ?? 'Customer'}",
-                    "email": "{$_SESSION['user_email'] ?? ''}",
-                    "contact": "{$_SESSION['user_phone'] ?? ''}"
+                    "name": "{$_SESSION['user_name']}",
+                    "email": "{$_SESSION['user_email']}",
+                    "contact": "{$_SESSION['user_phone']}"
                 },
                 "theme": {
                     "color": "#4f46e5"
@@ -120,27 +124,27 @@ class PaymentController extends BaseController
 HTML;
         exit;
     }
-    
+
     /**
      * Handle payment success callback
      */
     public function success()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         $paymentId = $_GET['payment_id'] ?? null;
         $orderId = $_GET['order_id'] ?? null;
         $signature = $_GET['signature'] ?? null;
-        
+
         if (!$paymentId || !$orderId || !$signature) {
             $_SESSION['error'] = "Invalid payment response";
             header('Location: ' . BASE_URL . '/bookings');
             exit;
         }
-        
+
         // Process payment success
         $result = $this->razorpayService->handlePaymentSuccess($paymentId, $orderId, $signature);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = "Payment successful! Your booking is confirmed.";
             header('Location: ' . BASE_URL . '/bookings/' . $result['booking_id']);
@@ -150,28 +154,28 @@ HTML;
         }
         exit;
     }
-    
+
     /**
      * EMI Calculator page
      */
     public function emiCalculator()
     {
         $base = BASE_URL;
-        
+
         // Calculate EMI for sample amounts
         $propertyPrice = $_GET['amount'] ?? 5000000;
         $interestRate = 8.5; // 8.5% per annum
         $tenureYears = $_GET['years'] ?? 20;
-        
+
         $monthlyRate = $interestRate / (12 * 100);
         $numPayments = $tenureYears * 12;
-        
-        $emi = ($propertyPrice * $monthlyRate * pow(1 + $monthlyRate, $numPayments)) / 
-               (pow(1 + $monthlyRate, $numPayments) - 1);
-        
+
+        $emi = ($propertyPrice * $monthlyRate * pow(1 + $monthlyRate, $numPayments)) /
+            (pow(1 + $monthlyRate, $numPayments) - 1);
+
         $totalPayment = $emi * $numPayments;
         $totalInterest = $totalPayment - $propertyPrice;
-        
+
         $this->render('payments/emi_calculator', [
             'propertyPrice' => $propertyPrice,
             'interestRate' => $interestRate,
@@ -182,20 +186,20 @@ HTML;
             'base' => $base
         ]);
     }
-    
+
     /**
      * Payment history
      */
     public function history()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
+
         $userId = $_SESSION['user_id'] ?? null;
         if (!$userId) {
             header('Location: ' . BASE_URL . '/login');
             exit;
         }
-        
+
         $db = Database::getInstance();
         $payments = $db->fetchAll(
             "SELECT p.*, b.property_id, pr.title as property_title 
@@ -206,7 +210,7 @@ HTML;
              ORDER BY p.created_at DESC",
             [$userId]
         );
-        
+
         $this->render('payments/history', [
             'payments' => $payments,
             'base' => BASE_URL

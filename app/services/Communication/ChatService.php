@@ -1,0 +1,471 @@
+<?php
+
+namespace App\Services\Communication;
+
+use App\Core\Database\Database;
+
+/**
+ * Real-time Chat Service
+ * Customer to Agent communication
+ */
+class ChatService
+{
+    private $database;
+    
+    public function __construct()
+    {
+        $this->database = Database::getInstance();
+        $this->ensureTablesExist();
+    }
+    
+    /**
+     * Ensure chat tables exist
+     */
+    private function ensureTablesExist(): void
+    {
+        $pdo = $this->database->getConnection();
+        
+        // Chat conversations
+        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_conversations (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            property_id INT NULL,
+            lead_id INT NULL,
+            customer_id INT NOT NULL,
+            agent_id INT NOT NULL,
+            status ENUM('active', 'closed', 'archived') DEFAULT 'active',
+            source ENUM('website', 'mobile', 'whatsapp', 'property_page') DEFAULT 'website',
+            last_message_at TIMESTAMP NULL,
+            last_message_preview VARCHAR(255) NULL,
+            customer_unread_count INT DEFAULT 0,
+            agent_unread_count INT DEFAULT 0,
+            metadata JSON NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_customer (customer_id),
+            INDEX idx_agent (agent_id),
+            INDEX idx_status (status),
+            INDEX idx_property (property_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        
+        // Chat messages
+        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_messages (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            conversation_id INT NOT NULL,
+            sender_id INT NOT NULL,
+            sender_type ENUM('customer', 'agent', 'system', 'bot') NOT NULL,
+            message_type ENUM('text', 'image', 'file', 'location', 'property_card', 'template') DEFAULT 'text',
+            message TEXT NOT NULL,
+            attachments JSON NULL,
+            is_read TINYINT(1) DEFAULT 0,
+            read_at TIMESTAMP NULL,
+            reply_to_message_id BIGINT NULL,
+            metadata JSON NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_conversation (conversation_id),
+            INDEX idx_sender (sender_id, sender_type),
+            INDEX idx_created (created_at),
+            INDEX idx_unread (conversation_id, is_read)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        
+        // Chat participants (for group chats in future)
+        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_participants (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            conversation_id INT NOT NULL,
+            user_id INT NOT NULL,
+            user_type ENUM('customer', 'agent', 'admin') NOT NULL,
+            role ENUM('owner', 'participant', 'viewer') DEFAULT 'participant',
+            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            left_at TIMESTAMP NULL,
+            is_active TINYINT(1) DEFAULT 1,
+            UNIQUE KEY unique_participant (conversation_id, user_id, user_type),
+            INDEX idx_conversation (conversation_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        
+        // Quick replies / templates
+        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_quick_replies (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            agent_id INT NULL,
+            title VARCHAR(100) NOT NULL,
+            message TEXT NOT NULL,
+            category VARCHAR(50) NULL,
+            is_global TINYINT(1) DEFAULT 0,
+            shortcut VARCHAR(20) NULL,
+            usage_count INT DEFAULT 0,
+            is_active TINYINT(1) DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_agent (agent_id),
+            INDEX idx_global (is_global)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        
+        // Chat settings per user
+        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_user_settings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            user_type ENUM('customer', 'agent') NOT NULL,
+            sound_enabled TINYINT(1) DEFAULT 1,
+            desktop_notifications TINYINT(1) DEFAULT 1,
+            email_notifications TINYINT(1) DEFAULT 1,
+            auto_reply_enabled TINYINT(1) DEFAULT 0,
+            auto_reply_message TEXT NULL,
+            working_hours_start TIME DEFAULT '09:00',
+            working_hours_end TIME DEFAULT '18:00',
+            timezone VARCHAR(50) DEFAULT 'Asia/Kolkata',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_user (user_id, user_type)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    }
+    
+    /**
+     * Start new conversation
+     */
+    public function startConversation(int $customerId, int $agentId, array $context = []): array
+    {
+        try {
+            // Check if active conversation exists
+            $existingSql = "SELECT id FROM chat_conversations 
+                WHERE customer_id = ? AND agent_id = ? AND status = 'active'
+                LIMIT 1";
+            $existingStmt = $this->database->prepare($existingSql);
+            $existingStmt->execute([$customerId, $agentId]);
+            $existing = $existingStmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if ($existing) {
+                return [
+                    'success' => true,
+                    'conversation_id' => $existing['id'],
+                    'is_new' => false
+                ];
+            }
+            
+            // Create new conversation
+            $sql = "INSERT INTO chat_conversations 
+                (customer_id, agent_id, property_id, lead_id, source, metadata)
+                VALUES (?, ?, ?, ?, ?, ?)";
+            
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([
+                $customerId,
+                $agentId,
+                $context['property_id'] ?? null,
+                $context['lead_id'] ?? null,
+                $context['source'] ?? 'website',
+                json_encode($context['metadata'] ?? [])
+            ]);
+            
+            $conversationId = $this->database->lastInsertId();
+            
+            // Add system welcome message
+            $this->sendMessage($conversationId, 0, 'system', 
+                'Welcome to APS Dream Home! How can we help you today?', 
+                ['type' => 'system_welcome']
+            );
+            
+            return [
+                'success' => true,
+                'conversation_id' => $conversationId,
+                'is_new' => true
+            ];
+            
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Send message
+     */
+    public function sendMessage(int $conversationId, int $senderId, string $senderType, 
+        string $message, array $metadata = [], array $attachments = []): array
+    {
+        try {
+            // Get conversation details
+            $convSql = "SELECT * FROM chat_conversations WHERE id = ?";
+            $convStmt = $this->database->prepare($convSql);
+            $convStmt->execute([$conversationId]);
+            $conversation = $convStmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if (!$conversation) {
+                return ['success' => false, 'error' => 'Conversation not found'];
+            }
+            
+            // Insert message
+            $sql = "INSERT INTO chat_messages 
+                (conversation_id, sender_id, sender_type, message_type, message, 
+                 attachments, metadata, reply_to_message_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([
+                $conversationId,
+                $senderId,
+                $senderType,
+                $metadata['type'] ?? 'text',
+                $message,
+                json_encode($attachments),
+                json_encode($metadata),
+                $metadata['reply_to'] ?? null
+            ]);
+            
+            $messageId = $this->database->lastInsertId();
+            
+            // Update conversation
+            $updateSql = "UPDATE chat_conversations SET 
+                last_message_at = NOW(),
+                last_message_preview = ?,
+                customer_unread_count = CASE WHEN ? = 'agent' THEN customer_unread_count + 1 ELSE customer_unread_count END,
+                agent_unread_count = CASE WHEN ? = 'customer' THEN agent_unread_count + 1 ELSE agent_unread_count END,
+                updated_at = NOW()
+                WHERE id = ?";
+            
+            $updateStmt = $this->database->prepare($updateSql);
+            $preview = substr($message, 0, 100);
+            $updateStmt->execute([$preview, $senderType, $senderType, $conversationId]);
+            
+            // Send push notification
+            $this->sendNotification($conversation, $senderType, $message);
+            
+            return [
+                'success' => true,
+                'message_id' => $messageId,
+                'timestamp' => date('Y-m-d H:i:s')
+            ];
+            
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Get conversation messages
+     */
+    public function getMessages(int $conversationId, int $userId, string $userType, 
+        int $limit = 50, ?int $beforeId = null): array
+    {
+        try {
+            // Verify user is part of conversation
+            $verifySql = "SELECT id FROM chat_conversations 
+                WHERE id = ? AND (customer_id = ? OR agent_id = ?)
+                LIMIT 1";
+            $verifyStmt = $this->database->prepare($verifySql);
+            $verifyStmt->execute([$conversationId, $userId, $userId]);
+            
+            if (!$verifyStmt->fetch()) {
+                return ['success' => false, 'error' => 'Access denied'];
+            }
+            
+            // Get messages
+            $sql = "SELECT m.*, 
+                CASE 
+                    WHEN m.sender_type = 'customer' THEN c.name
+                    WHEN m.sender_type = 'agent' THEN a.name
+                    ELSE 'System'
+                END as sender_name
+                FROM chat_messages m
+                LEFT JOIN customers c ON m.sender_id = c.id AND m.sender_type = 'customer'
+                LEFT JOIN associates a ON m.sender_id = a.id AND m.sender_type = 'agent'
+                WHERE m.conversation_id = ? 
+                " . ($beforeId ? "AND m.id < ?" : "") . "
+                ORDER BY m.id DESC
+                LIMIT ?";
+            
+            $stmt = $this->database->prepare($sql);
+            $params = [$conversationId];
+            if ($beforeId) $params[] = $beforeId;
+            $params[] = $limit;
+            $stmt->execute($params);
+            
+            $messages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Mark messages as read
+            $this->markAsRead($conversationId, $userType);
+            
+            return [
+                'success' => true,
+                'messages' => array_reverse($messages),
+                'has_more' => count($messages) >= $limit
+            ];
+            
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Get user conversations
+     */
+    public function getConversations(int $userId, string $userType, string $status = 'active'): array
+    {
+        $column = $userType === 'customer' ? 'customer_id' : 'agent_id';
+        
+        $sql = "SELECT c.*,
+            CASE 
+                WHEN ? = 'customer' THEN a.name
+                ELSE cust.name
+            END as other_party_name,
+            CASE 
+                WHEN ? = 'customer' THEN a.phone
+                ELSE cust.phone
+            END as other_party_phone,
+            p.title as property_title
+            FROM chat_conversations c
+            LEFT JOIN customers cust ON c.customer_id = cust.id
+            LEFT JOIN associates a ON c.agent_id = a.id
+            LEFT JOIN properties p ON c.property_id = p.id
+            WHERE c.{$column} = ? AND c.status = ?
+            ORDER BY c.last_message_at DESC";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$userType, $userType, $userId, $status]);
+        
+        return [
+            'success' => true,
+            'conversations' => $stmt->fetchAll(\PDO::FETCH_ASSOC)
+        ];
+    }
+    
+    /**
+     * Mark messages as read
+     */
+    private function markAsRead(int $conversationId, string $userType): void
+    {
+        $counterColumn = $userType === 'customer' ? 'agent_unread_count' : 'customer_unread_count';
+        $senderTypeToMark = $userType === 'customer' ? 'agent' : 'customer';
+        
+        // Reset unread count
+        $updateSql = "UPDATE chat_conversations SET {$counterColumn} = 0 WHERE id = ?";
+        $updateStmt = $this->database->prepare($updateSql);
+        $updateStmt->execute([$conversationId]);
+        
+        // Mark messages as read
+        $msgSql = "UPDATE chat_messages SET is_read = 1, read_at = NOW()
+            WHERE conversation_id = ? AND sender_type = ? AND is_read = 0";
+        $msgStmt = $this->database->prepare($msgSql);
+        $msgStmt->execute([$conversationId, $senderTypeToMark]);
+    }
+    
+    /**
+     * Send push notification
+     */
+    private function sendNotification(array $conversation, string $senderType, string $message): void
+    {
+        // Get recipient
+        $recipientId = $senderType === 'customer' ? $conversation['agent_id'] : $conversation['customer_id'];
+        $recipientType = $senderType === 'customer' ? 'agent' : 'customer';
+        
+        // This would integrate with NotificationService
+        // For now, just log it
+        // NotificationService::sendPush($recipientId, $recipientType, 'New message', substr($message, 0, 100));
+    }
+    
+    /**
+     * Close conversation
+     */
+    public function closeConversation(int $conversationId, int $closedBy, string $reason = ''): array
+    {
+        $sql = "UPDATE chat_conversations SET 
+            status = 'closed',
+            metadata = JSON_SET(COALESCE(metadata, '{}'), '$.closed_by', ?, '$.closed_reason', ?, '$.closed_at', NOW())
+            WHERE id = ?";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$closedBy, $reason, $conversationId]);
+        
+        // Add system message
+        $this->sendMessage($conversationId, 0, 'system', 
+            'This conversation has been closed.', 
+            ['type' => 'system_close']
+        );
+        
+        return ['success' => true];
+    }
+    
+    /**
+     * Get or create quick replies
+     */
+    public function getQuickReplies(?int $agentId = null): array
+    {
+        $sql = "SELECT * FROM chat_quick_replies 
+            WHERE is_global = 1 OR agent_id = ?
+            AND is_active = 1
+            ORDER BY usage_count DESC, category ASC";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$agentId ?? 0]);
+        
+        return [
+            'success' => true,
+            'replies' => $stmt->fetchAll(\PDO::FETCH_ASSOC)
+        ];
+    }
+    
+    /**
+     * Save quick reply
+     */
+    public function saveQuickReply(int $agentId, string $title, string $message, 
+        string $category = '', ?string $shortcut = null): array
+    {
+        $sql = "INSERT INTO chat_quick_replies 
+            (agent_id, title, message, category, shortcut)
+            VALUES (?, ?, ?, ?, ?)";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$agentId, $title, $message, $category, $shortcut]);
+        
+        return [
+            'success' => true,
+            'reply_id' => $this->database->lastInsertId()
+        ];
+    }
+    
+    /**
+     * Get chat statistics
+     */
+    public function getChatStats(int $agentId, string $dateFrom = null, string $dateTo = null): array
+    {
+        $dateFrom = $dateFrom ?? date('Y-m-d', strtotime('-30 days'));
+        $dateTo = $dateTo ?? date('Y-m-d');
+        
+        $sql = "SELECT 
+            COUNT(DISTINCT c.id) as total_conversations,
+            COUNT(DISTINCT CASE WHEN c.status = 'active' THEN c.id END) as active_conversations,
+            COUNT(m.id) as total_messages,
+            AVG(CASE WHEN m.sender_type = 'agent' THEN 1 END) as agent_messages,
+            AVG(TIMESTAMPDIFF(MINUTE, c.created_at, c.last_message_at)) as avg_conversation_duration
+            FROM chat_conversations c
+            LEFT JOIN chat_messages m ON c.id = m.conversation_id
+            WHERE c.agent_id = ? AND DATE(c.created_at) BETWEEN ? AND ?";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$agentId, $dateFrom, $dateTo]);
+        
+        return [
+            'success' => true,
+            'stats' => $stmt->fetch(\PDO::FETCH_ASSOC)
+        ];
+    }
+    
+    /**
+     * Get unread count
+     */
+    public function getUnreadCount(int $userId, string $userType): array
+    {
+        if ($userType === 'customer') {
+            $sql = "SELECT SUM(customer_unread_count) as total,
+                COUNT(CASE WHEN customer_unread_count > 0 THEN 1 END) as conversations
+                FROM chat_conversations WHERE customer_id = ? AND status = 'active'";
+        } else {
+            $sql = "SELECT SUM(agent_unread_count) as total,
+                COUNT(CASE WHEN agent_unread_count > 0 THEN 1 END) as conversations
+                FROM chat_conversations WHERE agent_id = ? AND status = 'active'";
+        }
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$userId]);
+        
+        return [
+            'success' => true,
+            'unread' => $stmt->fetch(\PDO::FETCH_ASSOC)
+        ];
+    }
+}

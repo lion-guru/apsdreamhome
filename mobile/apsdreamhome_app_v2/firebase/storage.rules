@@ -1,0 +1,79 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        request.auth.token.role == 'admin';
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Profile images - Users can upload their own
+    match /profile_images/{userId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Colony images - Public read, Admin write
+    match /colonies/{colonyId}/{allPaths=**} {
+      allow read: if true; // Public
+      allow write: if isAdmin();
+    }
+    
+    // Plot master plans - Public read, Admin write
+    match /master_plans/{colonyId}/{allPaths=**} {
+      allow read: if true; // Public
+      allow write: if isAdmin();
+    }
+    
+    // Documents - KYC, Agreements (Private)
+    match /documents/{userId}/{documentType}/{allPaths=**} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow write: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Booking documents - Accessible to customer and admin
+    match /booking_documents/{bookingId}/{allPaths=**} {
+      allow read: if isAuthenticated(); // Check ownership in app logic
+      allow write: if isAdmin();
+    }
+    
+    // Site visit photos
+    match /site_visits/{visitId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+    
+    // Lead attachments
+    match /lead_attachments/{leadId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+    
+    // Temporary uploads
+    match /temp/{userId}/{allPaths=**} {
+      allow read: if isAuthenticated() && isOwner(userId);
+      allow write: if isAuthenticated() && isOwner(userId);
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Public assets - Logos, banners
+    match /public/{allPaths=**} {
+      allow read: if true; // Public
+      allow write: if isAdmin();
+    }
+    
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
