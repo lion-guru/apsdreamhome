@@ -10,8 +10,8 @@ class DifferentialCommissionCalculator
 {
     protected $db;
     protected $ranks = [
-        'Associate' => ['percent' => 6, 'team_percent' => 2, 'target' => 1000000],
-        'Sr. Associate' => ['percent' => 8, 'team_percent' => 3, 'target' => 3500000],
+        'Associate' => ['percent' => 5, 'team_percent' => 2, 'target' => 1000000],
+        'Sr. Associate' => ['percent' => 7, 'team_percent' => 3, 'target' => 3500000],
         'BDM' => ['percent' => 10, 'team_percent' => 4, 'target' => 7000000],
         'Sr. BDM' => ['percent' => 12, 'team_percent' => 5, 'target' => 15000000],
         'Vice President' => ['percent' => 15, 'team_percent' => 6, 'target' => 30000000],
@@ -84,7 +84,6 @@ class DifferentialCommissionCalculator
                 'total_distributed' => $distributedPercent,
                 'commissions' => $commissions
             ];
-
         } catch (Exception $e) {
             error_log("MLM Calculation Error: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];

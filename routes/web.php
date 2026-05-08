@@ -28,6 +28,52 @@ if (file_exists(__DIR__ . '/../app/Http/Controllers/Admin/GodModeController.php'
 // PUBLIC FRONTEND PAGES
 // ============================================================
 
+// Agent System Routes
+$router->get('/auto_orchestrator', function () {
+    include __DIR__ . '/../auto_orchestrator.php';
+});
+$router->get('/orchestrator', function () {
+    include __DIR__ . '/../auto_orchestrator.php';
+});
+$router->get('/agent_dashboard', function () {
+    include __DIR__ . '/../agent_dashboard.php';
+});
+$router->get('/agents', function () {
+    include __DIR__ . '/../agent_dashboard.php';
+});
+$router->get('/project_health_check', function () {
+    include __DIR__ . '/../project_health_check.php';
+});
+$router->get('/project_health', function () {
+    include __DIR__ . '/../project_health_check.php';
+});
+$router->get('/health', function () {
+    include __DIR__ . '/../project_health_check.php';
+});
+
+// Missing Admin Routes
+$router->get('/admin/visits', function() {
+    include __DIR__ . '/../app/views/admin/visits/index.php';
+});
+$router->get('/admin/gallery', function() {
+    include __DIR__ . '/../app/views/admin/gallery/index.php';
+});
+$router->get('/admin/testimonials', function() {
+    include __DIR__ . '/../app/views/admin/testimonials/index.php';
+});
+$router->get('/admin/news', function() {
+    include __DIR__ . '/../app/views/admin/news/index.php';
+});
+$router->get('/admin/ai-settings', function() {
+    include __DIR__ . '/../app/views/admin/ai/settings.php';
+});
+$router->get('/admin/locations/states', function() {
+    include __DIR__ . '/../app/views/admin/locations/states.php';
+});
+$router->get('/admin/legal-pages', function() {
+    include __DIR__ . '/../app/views/admin/legal-pages/index.php';
+});
+
 // Home
 $router->get('/', 'Front\\PageController@home');
 
@@ -807,6 +853,48 @@ $router->post('/api/fraud/detect', 'MLController@detectFraud');
 
 // Fraud Dashboard
 $router->get('/api/fraud/dashboard', 'MLController@fraudDashboard');
+
+// Admin Reports
+$router->get('/admin/reports', 'App\\Http\\Controllers\\Admin\\ReportController@index');
+
+// Admin Network MLM
+$router->get('/admin/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
+$router->get('/admin/network/genealogy', 'App\\Http\\Controllers\\Admin\\NetworkController@genealogy');
+$router->get('/admin/network/ranks', function() { require __DIR__ . '/../app/views/admin/network/ranks.php'; });
+
+// Admin Payouts
+$router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@payouts');
+
+// Admin Payments
+$router->get('/admin/payments', function() { require __DIR__ . '/../app/views/admin/payments/index.php'; });
+
+// Admin EMI
+$router->get('/admin/emi', function() { require __DIR__ . '/../app/views/admin/emi/index.php'; });
+
+// Admin Accounting
+$router->get('/admin/accounting', function() { require __DIR__ . '/../app/views/admin/accounting/transactions.php'; });
+
+// Admin Tasks
+$router->get('/admin/tasks', 'App\\Http\\Controllers\\Admin\\TaskController@index');
+
+// Admin Support Tickets
+$router->get('/admin/support_tickets', 'App\\Http\\Controllers\\Admin\\SupportTicketController@index');
+
+// Admin Media
+$router->get('/admin/media', function() { require __DIR__ . '/../app/views/admin/media/index.php'; });
+
+// Admin Engagement
+$router->get('/admin/engagement', function() { require __DIR__ . '/../app/views/admin/engagement/index.php'; });
+
+// Admin Careers
+$router->get('/admin/careers', function() { require __DIR__ . '/../app/views/admin/jobs/index.php'; });
+
+// Admin AI
+$router->get('/admin/ai', function() { require __DIR__ . '/../app/views/admin/ai/hub.php'; });
+$router->get('/admin/ai/analytics', function() { require __DIR__ . '/../app/views/admin/ai/analytics.php'; });
+
+// Admin Resell Properties
+$router->get('/admin/resell-properties', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@index');
 
 // Include additional admin routes
 require_once __DIR__ . '/admin_routes.php';

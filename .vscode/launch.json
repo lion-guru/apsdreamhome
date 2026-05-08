@@ -2,6 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Flutter Debug",
+      "type": "dart",
+      "request": "launch",
+      "program": "mobile_apps/lib/main.dart",
+      "cwd": "${workspaceFolder}/mobile_apps",
+      "outFiles": ["${workspaceFolder}/mobile_apps/build/**/*.dart"]
+    },
+    {
       "name": "Listen for XDebug",
       "type": "php",
       "request": "launch",
@@ -23,10 +31,7 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/node_modules/.bin/playwright",
-      "args": [
-        "test",
-        "--debug"
-      ],
+      "args": ["test", "--debug"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
@@ -38,9 +43,7 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/node_modules/.bin/playwright",
-      "args": [
-        "test"
-      ],
+      "args": ["test"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }

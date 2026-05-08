@@ -20,6 +20,15 @@ class MLMTreeController extends BaseController
     }
 
     /**
+     * Show MLM tree page
+     */
+    public function tree()
+    {
+        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        include __DIR__ . '/../views/admin/mlm/tree.php';
+    }
+
+    /**
      * Show MLM genealogy tree page
      */
     public function genealogy()
