@@ -17,6 +17,12 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
         </div>
     </div>
 
+    <!-- Search and Export -->
+    <?php require __DIR__ . '/../partials/search_bar.php'; ?>
+    <?php require __DIR__ . '/../partials/export_buttons.php'; ?>
+    <?php require __DIR__ . '/../partials/mobile_optimization.php'; ?>
+    <?php require __DIR__ . '/../partials/realtime_updates.php'; ?>
+
     <!-- Stats Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
@@ -145,7 +151,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                 </table>
             </div>
         </div>
-        
+
         <!-- Pagination -->
         <?php if ($total_pages > 1): ?>
             <div class="card-footer bg-white">
