@@ -10,11 +10,17 @@
 </div>
 
 <?php if (isset($success) && $success): ?>
-<div class="alert alert-success alert-dismissible fade show">
-    <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 <?php endif; ?>
+
+<!-- Search and Export -->
+<?php require __DIR__ . '/../partials/search_bar.php'; ?>
+<?php require __DIR__ . '/../partials/export_buttons.php'; ?>
+<?php require __DIR__ . '/../partials/mobile_optimization.php'; ?>
+<?php require __DIR__ . '/../partials/realtime_updates.php'; ?>
 
 <!-- Stats Row -->
 <div class="row g-3 mb-4">
@@ -69,33 +75,33 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($leads)): ?>
-                    <?php foreach ($leads as $lead): ?>
-                    <tr>
-                        <td class="ps-4">
-                            <div class="fw-semibold"><?php echo htmlspecialchars($lead['name'] ?? 'Unknown'); ?></div>
-                        </td>
-                        <td>
-                            <div><i class="fas fa-envelope text-muted me-1"></i> <?php echo htmlspecialchars($lead['email'] ?? ''); ?></div>
-                            <small><i class="fas fa-phone text-muted me-1"></i> <?php echo htmlspecialchars($lead['phone'] ?? 'N/A'); ?></small>
-                        </td>
-                        <td><?php echo htmlspecialchars($lead['property_name'] ?? 'General Inquiry'); ?></td>
-                        <td>
-                            <span class="badge bg-<?php echo ($lead['status'] ?? 'new') === 'converted' ? 'success' : (($lead['status'] ?? 'new') === 'contacted' ? 'warning' : 'info'); ?>">
-                                <?php echo ucfirst($lead['status'] ?? 'new'); ?>
-                            </span>
-                        </td>
-                        <td><?php echo date('M d, Y', strtotime($lead['created_at'] ?? 'now')); ?></td>
-                        <td class="text-end pe-4">
-                            <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
-                            <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                            <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>/destroy" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this lead?');"><i class="fas fa-trash"></i></a>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
+                        <?php foreach ($leads as $lead): ?>
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-semibold"><?php echo htmlspecialchars($lead['name'] ?? 'Unknown'); ?></div>
+                                </td>
+                                <td>
+                                    <div><i class="fas fa-envelope text-muted me-1"></i> <?php echo htmlspecialchars($lead['email'] ?? ''); ?></div>
+                                    <small><i class="fas fa-phone text-muted me-1"></i> <?php echo htmlspecialchars($lead['phone'] ?? 'N/A'); ?></small>
+                                </td>
+                                <td><?php echo htmlspecialchars($lead['property_name'] ?? 'General Inquiry'); ?></td>
+                                <td>
+                                    <span class="badge bg-<?php echo ($lead['status'] ?? 'new') === 'converted' ? 'success' : (($lead['status'] ?? 'new') === 'contacted' ? 'warning' : 'info'); ?>">
+                                        <?php echo ucfirst($lead['status'] ?? 'new'); ?>
+                                    </span>
+                                </td>
+                                <td><?php echo date('M d, Y', strtotime($lead['created_at'] ?? 'now')); ?></td>
+                                <td class="text-end pe-4">
+                                    <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                    <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                    <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>/destroy" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this lead?');"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     <?php else: ?>
-                    <tr>
-                        <td colspan="6" class="text-center py-4 text-muted">No leads found</td>
-                    </tr>
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No leads found</td>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
