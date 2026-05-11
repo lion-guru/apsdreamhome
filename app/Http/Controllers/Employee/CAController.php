@@ -17,6 +17,7 @@ class CAController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = Database::getInstance();
         $this->initializeEmployeeSession();
     }

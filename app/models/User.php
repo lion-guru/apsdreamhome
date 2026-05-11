@@ -137,8 +137,8 @@ class User extends UnifiedModel
             $params = $roles;
 
             if ($status !== 'all') {
-                $where[] = "status = :status";
-                $params['status'] = $status;
+                $where[] = "status = ?";
+                $params[] = $status;
             }
 
             $whereClause = 'WHERE ' . implode(' AND ', $where);
@@ -146,14 +146,7 @@ class User extends UnifiedModel
 
             $db = \App\Core\Database::getInstance();
             $stmt = $db->prepare($sql);
-            $paramIndex = 1;
-            foreach ($roles as $role) {
-                $stmt->bindValue($paramIndex++, $role);
-            }
-            if ($status !== 'all') {
-                $stmt->bindValue(':' . 'status', $status);
-            }
-            $stmt->execute();
+            $stmt->execute($params);
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {

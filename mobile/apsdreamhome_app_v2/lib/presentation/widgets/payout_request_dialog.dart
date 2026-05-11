@@ -92,9 +92,9 @@ class _PayoutRequestDialogState extends ConsumerState<PayoutRequestDialog> {
           .requestPayout(amount, _remarksController.text);
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Request submitted!')),
-        );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text((result['message'] as String?) ?? 'Request submitted!')),
+          );
       }
     } catch (e) {
       if (mounted) {

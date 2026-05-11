@@ -7,7 +7,7 @@ use App\Core\Database;
 
 class QuickAuthController extends Controller
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

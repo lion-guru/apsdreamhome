@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../../Core/autoload.php';
 use App\Core\App;
 $db = \App\Core\App::database();
-if (!isset($_SESSION['auser'])) { header('Location: ../login.php'); exit(); }
+if (!isset($_SESSION['auser'])) { $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; header('Location: ' . $base . '/login'); exit(); }
 $user_id = $_SESSION['auser'];
 $logs = $db->fetch(
     "SELECT action, details, created_at FROM audit_log WHERE user_id=:user_id ORDER BY created_at DESC LIMIT 50",

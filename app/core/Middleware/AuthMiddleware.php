@@ -114,7 +114,7 @@ class AuthMiddleware {
 
     public static function requireAdminAuth() {
         if (!self::isAdminSessionValid()) {
-            header('Location: /admin/login.php');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/login');
             exit();
         }
     }

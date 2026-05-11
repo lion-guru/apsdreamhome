@@ -1,34 +1,32 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Core\Database;
+use App\Core\Database\Database;
+use App\Http\Controllers\BaseController;
 
-class LayoutController {
-    private $db;
+class LayoutController extends BaseController {
     
     public function __construct() {
-        $this->db = new Database();
-        
-        // Check if admin is logged in
-        session_start();
-        if (!isset($_SESSION['admin_id'])) {
-            header('Location: /admin/login');
-            exit;
-        }
+        parent::__construct();
+        $this->db = Database::getInstance();
     }
     
-    // Layout Manager Page
     public function layoutManager() {
-        require_once __DIR__ . '/../../Services/LayoutManager.php';
+        require_once __DIR__ . '/../../../Services/LayoutManager.php';
+        $layoutManager = new \App\Services\LayoutManager($this->db);
+        $settings = $layoutManager->getLayoutSettings();
+        $site = [];
+        $site['nav_json'] = $layoutManager->generateNavigationJson($settings['navigation_items']);
+        $site['footer_html'] = $layoutManager->generateFooterHtml($settings['footer_content']);
+        $premium_layout = $settings['premium_layout'];
         require_once __DIR__ . '/../../../views/admin/layout_manager.php';
     }
     
-    // Update Layout Settings
     public function updateLayoutSettings() {
-        require_once __DIR__ . '/../../Services/LayoutManager.php';
+        require_once __DIR__ . '/../../../Services/LayoutManager.php';
         
-        $layoutManager = new LayoutManager($this->db);
+        $layoutManager = new \App\Services\LayoutManager($this->db);
         
         $settings = [
             'premium_layout' => isset($_POST['premium_layout']),
@@ -43,7 +41,7 @@ class LayoutController {
         $layoutManager->updateLayoutSettings($settings);
         
         $_SESSION['success'] = 'Layout settings updated successfully!';
-        header('Location: /admin/layout-manager');
+        header('Location: ' . BASE_URL . '/admin/layout-manager');
         exit;
     }
 }

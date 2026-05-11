@@ -410,12 +410,7 @@ class LeadScoringController extends AdminController
                 $stmt->execute([$leadId, $score['total'], $breakdownJson]);
             }
 
-            // Also save to history
-            $sql = "INSERT INTO lead_scoring_history 
-                    (lead_id, score, calculated_at) 
-                    VALUES (?, ?, NOW())";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$leadId, $score['total']]);
+            // Lead score updates are already saved above in lead_scoring table
         } catch (\Exception $e) {
             error_log("LeadScoringController::saveLeadScore error: " . $e->getMessage());
         }
@@ -585,14 +580,43 @@ class LeadScoringController extends AdminController
      */
     private function getScoreHistory($leadId)
     {
-        $sql = "SELECT score, calculated_at 
-                FROM lead_scoring_history 
+        $sql = "SELECT score, created_at as calculated_at 
+                FROM lead_scoring 
                 WHERE lead_id = ? 
-                ORDER BY calculated_at DESC 
+                ORDER BY created_at DESC 
                 LIMIT 10";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$leadId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Show lead score detail
+     */
+    public function show($id)
+    {
+        try {
+            $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ?", [$id]);
+            $score = $lead ? $this->calculateLeadScore($lead) : null;
+            $history = $id ? $this->getScoreHistory($id) : [];
+
+            $data = [
+                'page_title' => 'Lead Score Detail',
+                'lead' => $lead,
+                'score' => $score,
+                'history' => $history
+            ];
+
+            $this->render('admin/leads/scoring_show', $data);
+        } catch (\Exception $e) {
+            error_log("LeadScoringController::show error: " . $e->getMessage());
+            $this->render('admin/leads/scoring_show', [
+                'page_title' => 'Lead Score Detail',
+                'lead' => null,
+                'score' => null,
+                'history' => []
+            ]);
+        }
     }
 }

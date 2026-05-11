@@ -6,7 +6,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../providers/auth_provider.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/connectivity_provider.dart';
+import '../../../data/models/user_model.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/glass_card.dart';
 
@@ -15,7 +17,7 @@ class ProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider).value;
+    final user = ref.watch(authProvider);
     final connectivity = ref.watch(connectivityProvider);
 
     return Scaffold(
@@ -82,7 +84,7 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, user) {
+  Widget _buildProfileHeader(BuildContext context, User user) {
     return GlassCard(
       child: Column(
         children: [
@@ -159,7 +161,7 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildUserInfo(BuildContext context, user) {
+  Widget _buildUserInfo(BuildContext context, User user) {
     return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,7 +198,7 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildRankInfo(BuildContext context, user) {
+  Widget _buildRankInfo(BuildContext context, User user) {
     return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +235,7 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context, user) {
+  Widget _buildQuickActions(BuildContext context, User user) {
     return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,7 +438,7 @@ class ProfilePage extends ConsumerWidget {
     }
   }
 
-  void _shareProfile(user) {
+  void _shareProfile(User user) {
     // TODO: Implement share profile functionality
   }
 

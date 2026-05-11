@@ -12,7 +12,7 @@ require_once __DIR__ . '/init.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['uid']) || (isset($_SESSION['utype']) && $_SESSION['utype'] !== 'user' && $_SESSION['utype'] !== 'customer')) {
-    header("Location: login.php");
+    header("Location: " . BASE_URL . "/login");
     exit;
 }
 

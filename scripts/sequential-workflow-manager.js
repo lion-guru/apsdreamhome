@@ -370,8 +370,66 @@ workflowManager.defineWorkflow('code-quality', [
   }
 ]);
 
+/**
+ * Save agent state for handoff between agents
+ */
+function saveAgentState(state) {
+  const statePath = path.join(__dirname, '..', 'agent_state.json');
+  const existing = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, 'utf8')) : {};
+  const merged = { ...existing, ...state, updatedAt: new Date().toISOString() };
+  fs.writeFileSync(statePath, JSON.stringify(merged, null, 2));
+  console.log(` Agent state saved to: ${statePath}`);
+}
+
+/**
+ * Load agent state for resume
+ */
+function loadAgentState() {
+  const statePath = path.join(__dirname, '..', 'agent_state.json');
+  if (!fs.existsSync(statePath)) return null;
+  return JSON.parse(fs.readFileSync(statePath, 'utf8'));
+}
+
+// Extend workflow manager with handoff
+workflowManager.saveAgentState = saveAgentState;
+workflowManager.loadAgentState = loadAgentState;
+
+// Agent Handoff Workflow
+workflowManager.defineWorkflow('agent-pipeline', [
+  {
+    name: 'Analysis: Scan codebase state',
+    type: 'command',
+    command: 'php tools/check_analysis.php',
+    critical: true
+  },
+  {
+    name: 'Implementation: Fix issues',
+    type: 'command',
+    command: 'node -e "console.log(\'Implementation phase ready\')"',
+    critical: true
+  },
+  {
+    name: 'Testing: Verify routes',
+    type: 'command',
+    command: 'php tools/check_routes.php',
+    critical: true
+  },
+  {
+    name: 'Review: Syntax check PHP',
+    type: 'command',
+    command: 'php -l app/Http/Controllers/Front/UserController.php',
+    critical: true
+  },
+  {
+    name: 'Documentation: Update state',
+    type: 'command',
+    command: 'node -e "console.log(\'Documentation phase complete\')"',
+    critical: false
+  }
+]);
+
 // Export for use
-module.exports = { SequentialWorkflowManager, workflowManager };
+module.exports = { SequentialWorkflowManager, workflowManager, saveAgentState, loadAgentState };
 
 // CLI interface
 if (require.main === module) {

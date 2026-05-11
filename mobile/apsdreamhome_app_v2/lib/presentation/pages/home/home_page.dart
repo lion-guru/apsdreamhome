@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../providers/auth_provider.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/connectivity_provider.dart';
 import '../../providers/sync_provider.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/sync_indicator.dart';
@@ -15,7 +16,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider).value;
+    final user = ref.watch(authProvider);
     final syncState = ref.watch(syncStateProvider);
     final connectivity = ref.watch(connectivityProvider);
 

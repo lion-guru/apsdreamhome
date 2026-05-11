@@ -26,6 +26,22 @@ class PlotManagementController extends AdminController
     }
 
     /**
+     * Show create plot form
+     */
+    public function create()
+    {
+        try {
+            $sites = $this->db->fetchAll("SELECT id, site_name FROM sites ORDER BY site_name");
+        } catch (\Exception $e) {
+            $sites = [];
+        }
+        $this->render('admin/plots/create', [
+            'page_title' => 'Create New Plot',
+            'sites' => $sites
+        ]);
+    }
+
+    /**
      * List plots for a specific site
      */
     public function index($siteId = null)
@@ -700,6 +716,52 @@ class PlotManagementController extends AdminController
             'exported_at' => date('Y-m-d H:i:s')
         ]);
 
+        exit;
+    }
+
+    public function show($id = null)
+    {
+        if (!$id) { $this->redirect('/admin/plots'); return; }
+        $this->data['page_title'] = 'Plot Details';
+        $stmt = $this->db->prepare("SELECT p.*, c.name as colony_name, d.name as district_name, s.name as state_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id LEFT JOIN districts d ON c.district_id = d.id LEFT JOIN states s ON d.state_id = s.id WHERE p.id = ?");
+        $stmt->execute([$id]);
+        $this->data['plot'] = $stmt->fetch() ?: [];
+        $this->render('admin/plots/show');
+    }
+
+    public function edit($id = null)
+    {
+        if (!$id) { $this->redirect('/admin/plots'); return; }
+        $this->data['page_title'] = 'Edit Plot';
+        $stmt = $this->db->prepare("SELECT p.*, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.id = ?");
+        $stmt->execute([$id]);
+        $this->data['plot'] = $stmt->fetch() ?: [];
+        $this->render('admin/plots/edit');
+    }
+
+    public function update($id)
+    {
+        $this->setFlash('info', 'Update via this interface not yet available');
+        $this->redirect('/admin/plots');
+    }
+
+    public function destroy($id)
+    {
+        $this->setFlash('info', 'Delete via this interface not yet available');
+        $this->redirect('/admin/plots');
+    }
+
+    public function checkAvailability()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['available' => true]);
+        exit;
+    }
+
+    public function updateStatus($id)
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Not implemented']);
         exit;
     }
 }

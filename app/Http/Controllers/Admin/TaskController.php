@@ -78,7 +78,7 @@ class TaskController extends AdminController
             $countSql = str_replace("SELECT t.*, u.name as assigned_to_name, u.email as assigned_to_email", "SELECT COUNT(DISTINCT t.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = (int)($countStmt->fetch()['total'] ?? 0);
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";

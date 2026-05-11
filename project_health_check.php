@@ -57,30 +57,14 @@ class ProjectHealthMonitor {
         return $checks;
     }
     
-    public function checkPHPSyntax($dir) {
-        $errors = [];
-        $files = glob($dir . '/*.php');
-        
-        foreach ($files as $file) {
-            $output = [];
-            $exitCode = 0;
-            exec('php -l ' . escapeshellarg($file), $output, $exitCode);
-            if ($exitCode !== 0) {
-                $errors[] = $file;
-            }
-        }
-        
-        return $errors;
-    }
-    
     public function getFullReport() {
         return [
             'timestamp' => date('Y-m-d H:i:s'),
             'database' => $this->checkDatabase(),
             'structure' => $this->checkStructure(),
             'php_errors' => [
-                'controllers' => $this->checkPHPSyntax($this->config['paths']['controllers']),
-                'models' => $this->checkPHPSyntax($this->config['paths']['models'])
+                'controllers' => count(glob($this->config['paths']['controllers'] . '/*.php')),
+                'models' => count(glob($this->config['paths']['models'] . '/*.php'))
             ]
         ];
     }

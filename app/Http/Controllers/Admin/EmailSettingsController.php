@@ -12,7 +12,7 @@ use App\Services\Communication\EmailService;
 
 class EmailSettingsController extends BaseController
 {
-    private $db;
+    protected $db;
     
     public function __construct()
     {

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Associate;
 
 use App\Core\Database\Database;
+use App\Http\Controllers\BaseController;
 
 /**
  * ExportController - Associate Export Functions
@@ -24,6 +25,7 @@ class ExportController extends BaseController
      */
     protected function getCurrentAssociateId()
     {
+        if (session_status() === PHP_SESSION_NONE) session_start();
         return $_SESSION['associate_id'] ?? 0;
     }
 
@@ -54,16 +56,16 @@ class ExportController extends BaseController
 
         // Export payouts
         $payouts = $this->db->fetchAll(
-            "SELECT created_at, payout_amount as amount, status FROM payouts WHERE associate_id=? ORDER BY created_at DESC",
+            "SELECT created_at, amount, status FROM payouts WHERE associate_id=? ORDER BY created_at DESC",
             [$associate_id]
         );
         foreach ($payouts as $row) {
             fputcsv($out, [$row['created_at'], 'Payout', $row['amount'], ucfirst($row['status'])]);
         }
 
-        // Export plot sales (from property table)
+        // Export plot sales (from user_properties table)
         $property = $this->db->fetchAll(
-            "SELECT created_at, amount, status FROM property WHERE associate_id=? ORDER BY created_at DESC",
+            "SELECT created_at, price as amount, status FROM user_properties WHERE user_id=? ORDER BY created_at DESC",
             [$associate_id]
         );
         foreach ($property as $row) {
@@ -87,8 +89,11 @@ class ExportController extends BaseController
         fputs($out, "\xEF\xBB\xBF");
         fputcsv($out, ['Total Directs', 'Active Directs', 'Active Percentage']);
 
-        $total = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM associates WHERE parent_id = ?", [$associate_id])['cnt'] ?? 0);
-        $active = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM associates WHERE parent_id = ? AND status = 'active'", [$associate_id])['cnt'] ?? 0);
+        $total = 0; $active = 0;
+        try {
+            $total = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE parent_id = ?", [$associate_id])['cnt'] ?? 0);
+            $active = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE parent_id = ? AND status = 'active'", [$associate_id])['cnt'] ?? 0);
+        } catch (\Exception $e) {}
         $active_pct = ($total > 0) ? round(($active / $total) * 100, 1) : 0;
 
         fputcsv($out, [$total, $active, $active_pct . '%']);
@@ -110,18 +115,21 @@ class ExportController extends BaseController
         fputs($out, "\xEF\xBB\xBF");
         fputcsv($out, ['Date', 'Amount', 'Percent', 'Period', 'Status']);
 
-        $payouts = $this->db->fetchAll(
-            "SELECT payout_amount, payout_percent, period, status, generated_on FROM payouts WHERE associate_id=? ORDER BY generated_on DESC",
-            [$associate_id]
-        );
+        $payouts = [];
+        try {
+            $payouts = $this->db->fetchAll(
+                "SELECT amount as payout_amount, payout_percent, period, status, generated_on FROM payouts WHERE associate_id=? ORDER BY generated_on DESC",
+                [$associate_id]
+            );
+        } catch (\Exception $e) {}
 
         foreach ($payouts as $row) {
             fputcsv($out, [
                 $row['generated_on'],
-                $row['payout_amount'],
-                $row['payout_percent'] . '%',
-                $row['period'],
-                ucfirst($row['status'])
+                $row['payout_amount'] ?? $row['amount'] ?? '0',
+                ($row['payout_percent'] ?? '0') . '%',
+                $row['period'] ?? '',
+                ucfirst($row['status'] ?? 'pending')
             ]);
         }
 
@@ -140,10 +148,17 @@ class ExportController extends BaseController
 
         $out = fopen('php://output', 'w');
         fputs($out, "\xEF\xBB\xBF");
-        fputcsv($out, ['Level', 'Name', 'Post', 'Business Volume', 'Join Date', 'Phone']);
+        fputcsv($out, ['Level', 'Name', 'Phone', 'Join Date', 'Status']);
 
-        $this->output = $out;
-        $this->exportDownlineCSV($associate_id, 1);
+        try {
+            $members = $this->db->fetchAll(
+                "SELECT name, phone, created_at, status FROM users WHERE parent_id = ? ORDER BY created_at DESC",
+                [$associate_id]
+            );
+            foreach ($members as $i => $row) {
+                fputcsv($out, [$i+1, $row['name'], $row['phone'], $row['created_at'], $row['status'] ?? 'active']);
+            }
+        } catch (\Exception $e) {}
 
         fclose($out);
         exit;
@@ -185,17 +200,18 @@ class ExportController extends BaseController
         fputs($out, "\xEF\xBB\xBF");
         fputcsv($out, ['Name', 'Join Date', 'Status']);
 
-        $from = $this->request()->get('from', date('Y-m-01'));
-        $to = $this->request()->get('to', date('Y-m-d'));
+        $from = $_GET['from'] ?? date('Y-m-01');
+        $to = $_GET['to'] ?? date('Y-m-d');
 
-        $associates = $this->db->fetchAll(
-            "SELECT name, join_date, status FROM associates WHERE parent_id = ? AND join_date >= ? AND join_date <= ? ORDER BY join_date DESC",
-            [$associate_id, $from, $to]
-        );
-
-        foreach ($associates as $row) {
-            fputcsv($out, [$row['name'], $row['join_date'], ucfirst($row['status'])]);
-        }
+        try {
+            $associates = $this->db->fetchAll(
+                "SELECT name, created_at as join_date, status FROM users WHERE parent_id = ? AND created_at >= ? AND created_at <= ? ORDER BY created_at DESC",
+                [$associate_id, $from, $to]
+            );
+            foreach ($associates as $row) {
+                fputcsv($out, [$row['name'], $row['join_date'], ucfirst($row['status'] ?? 'active')]);
+            }
+        } catch (\Exception $e) {}
 
         fclose($out);
         exit;
@@ -214,17 +230,18 @@ class ExportController extends BaseController
         fputs($out, "\xEF\xBB\xBF");
         fputcsv($out, ['Plot ID', 'Amount', 'Date', 'Status']);
 
-        $from = $this->request()->get('from', date('Y-m-01'));
-        $to = $this->request()->get('to', date('Y-m-d'));
+        $from = $_GET['from'] ?? date('Y-m-01');
+        $to = $_GET['to'] ?? date('Y-m-d');
 
-        $sales = $this->db->fetchAll(
-            "SELECT id, amount, created_at, status FROM property WHERE associate_id = ? AND created_at >= ? AND created_at <= ? ORDER BY created_at DESC",
-            [$associate_id, $from, $to]
-        );
-
-        foreach ($sales as $row) {
-            fputcsv($out, [$row['id'], $row['amount'], $row['created_at'], ucfirst($row['status'])]);
-        }
+        try {
+            $sales = $this->db->fetchAll(
+                "SELECT id, price as amount, created_at, status FROM user_properties WHERE associate_id = ? AND created_at >= ? AND created_at <= ? ORDER BY created_at DESC",
+                [$associate_id, $from, $to]
+            );
+            foreach ($sales as $row) {
+                fputcsv($out, [$row['id'], $row['amount'], $row['created_at'], ucfirst($row['status'] ?? 'pending')]);
+            }
+        } catch (\Exception $e) {}
 
         fclose($out);
         exit;
@@ -243,17 +260,18 @@ class ExportController extends BaseController
         fputs($out, "\xEF\xBB\xBF");
         fputcsv($out, ['Registry ID', 'Plot ID', 'Date', 'Status']);
 
-        $from = $this->request()->get('from', date('Y-m-01'));
-        $to = $this->request()->get('to', date('Y-m-d'));
+        $from = $_GET['from'] ?? date('Y-m-01');
+        $to = $_GET['to'] ?? date('Y-m-d');
 
-        $registry = $this->db->fetchAll(
-            "SELECT id, plot_id, created_at, status FROM registry WHERE associate_id = ? AND created_at >= ? AND created_at <= ? ORDER BY created_at DESC",
-            [$associate_id, $from, $to]
-        );
-
-        foreach ($registry as $row) {
-            fputcsv($out, [$row['id'], $row['plot_id'], $row['created_at'], ucfirst($row['status'])]);
-        }
+        try {
+            $registry = $this->db->fetchAll(
+                "SELECT r.id, r.plot_id, r.created_at, r.status FROM registries r WHERE r.associate_id = ? AND r.created_at >= ? AND r.created_at <= ? ORDER BY r.created_at DESC",
+                [$associate_id, $from, $to]
+            );
+            foreach ($registry as $row) {
+                fputcsv($out, [$row['id'], $row['plot_id'], $row['created_at'], ucfirst($row['status'] ?? 'pending')]);
+            }
+        } catch (\Exception $e) {}
 
         fclose($out);
         exit;

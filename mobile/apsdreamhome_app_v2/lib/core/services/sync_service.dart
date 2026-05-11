@@ -380,38 +380,8 @@ class SyncResult {
   SyncResult({required this.success, required this.message});
 }
 
-// Riverpod providers
+// Riverpod provider
 final syncServiceProvider = Provider<SyncService>((ref) => SyncService());
-
-final syncStateProvider = StateNotifierProvider<SyncNotifier, SyncState>((ref) {
-  return SyncNotifier(ref.watch(syncServiceProvider));
-});
-
-class SyncNotifier extends StateNotifier<SyncState> {
-  SyncNotifier(this._syncService) : super(const SyncState.initial());
-
-  final SyncService _syncService;
-
-  Future<void> sync() async {
-    state = const SyncState.syncing();
-
-    try {
-      final result = await _syncService.performSync();
-      state = SyncState.completed(result.message);
-    } catch (e) {
-      state = SyncState.error(e.toString());
-    }
-  }
-
-  Future<void> checkPendingItems() async {
-    try {
-      final pendingItems = await _syncService.getPendingSyncItems();
-      state = SyncState.pending(pendingItems.length);
-    } catch (e) {
-      state = SyncState.error(e.toString());
-    }
-  }
-}
 
 class SyncState {
   const SyncState._({this.message, this.pendingCount});

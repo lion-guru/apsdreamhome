@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../providers/auth_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../../widgets/glass_card.dart';
 import 'package:dio/dio.dart';
 
@@ -39,7 +39,7 @@ class CustomerBookingsPage extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 itemCount: bookings.length,
                 itemBuilder: (context, index) {
-                  final booking = bookings[index];
+                  final booking = bookings[index] as Map<String, dynamic>;
                   return _buildBookingCard(context, booking);
                 },
               ),
@@ -82,15 +82,15 @@ class CustomerBookingsPage extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Booking #${booking['id']}',
+                      'Booking #${booking['id'] as num}',
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
-                    _buildStatusChip(booking['status']),
+                    _buildStatusChip(booking['status'] as String),
                   ],
                 ),
                 const Divider(height: 24),
                 Text(
-                  booking['property_name'] ?? 'Property Name',
+                  (booking['property_name'] as String?) ?? 'Property Name',
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
@@ -99,7 +99,7 @@ class CustomerBookingsPage extends ConsumerWidget {
                     Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade500),
                     const SizedBox(width: 8),
                     Text(
-                      'Booked on: ${booking['created_at'].toString().split('T').first}',
+                      'Booked on: ${(booking['created_at'] as String).split('T').first}',
                       style: TextStyle(color: Colors.grey.shade600),
                     ),
                   ],
@@ -113,7 +113,7 @@ class CustomerBookingsPage extends ConsumerWidget {
                       children: [
                         const Text('Booking Amount', style: TextStyle(fontSize: 12, color: Colors.grey)),
                         Text(
-                          '₹${booking['amount']}',
+                          '₹${booking['amount'] as num}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,

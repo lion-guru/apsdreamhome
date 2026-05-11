@@ -5,7 +5,7 @@ require_once __DIR__ . '/includes/universal_template.php';
 
 // Check if customer is logged in
 if (!isset($_SESSION['customer_logged_in']) || $_SESSION['customer_logged_in'] !== true) {
-    header('Location: clean_login.php');
+    header('Location: ' . BASE_URL . '/login');
     exit();
 }
 

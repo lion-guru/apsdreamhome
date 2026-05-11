@@ -20,7 +20,7 @@ try {
 
 session_start();
 if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
-    header("Location: associate_login.php");
+    header("Location: " . BASE_URL . "/login");
     exit();
 }
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = calculatePlotRate($_POST);
         if ($result['success']) {
             $_SESSION['calculation_result'] = $result;
-            header("Location: development_cost_calculator.php?calculated=1");
+            header("Location: " . BASE_URL . "/tools/development-cost-calculator?calculated=1");
             exit();
         } else {
             $_SESSION['error_message'] = $result['message'];

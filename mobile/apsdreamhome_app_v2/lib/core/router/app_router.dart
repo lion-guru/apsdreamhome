@@ -27,10 +27,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/login',
     redirect: (context, state) {
-      final isAuthenticated = authState.maybeWhen(
-        data: (user) => user != null,
-        orElse: () => false,
-      );
+      final isAuthenticated = authState != null;
 
       final isLoginPage = state.uri.toString() == '/login';
 

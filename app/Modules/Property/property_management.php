@@ -20,7 +20,7 @@ try {
 
 session_start();
 if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
-    header("Location: associate_login.php");
+    header("Location: " . BASE_URL . "/login");
     exit();
 }
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = addProperty($_POST);
         if ($result['success']) {
             $_SESSION['success_message'] = $result['message'];
-            header("Location: property_management.php?added=1");
+            header("Location: " . BASE_URL . "/admin/properties?added=1");
             exit();
         } else {
             $_SESSION['error_message'] = $result['message'];
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = updateProperty($_POST);
         if ($result['success']) {
             $_SESSION['success_message'] = $result['message'];
-            header("Location: property_management.php?updated=1");
+            header("Location: " . BASE_URL . "/admin/properties?updated=1");
             exit();
         } else {
             $_SESSION['error_message'] = $result['message'];
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = recordPropertySale($_POST);
         if ($result['success']) {
             $_SESSION['success_message'] = $result['message'];
-            header("Location: property_management.php?sale_recorded=1");
+            header("Location: " . BASE_URL . "/admin/properties?sale_recorded=1");
             exit();
         } else {
             $_SESSION['error_message'] = $result['message'];

@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../config.php';
-if (!isset($_SESSION['auser'])) { header('Location: ../login.php'); exit(); }
+if (!isset($_SESSION['auser'])) { $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; header('Location: ' . $base . '/login'); exit(); }
 $user_id = $_SESSION['auser'];
 // Generate CSRF token
 if (empty($_SESSION['csrf_token'])) {

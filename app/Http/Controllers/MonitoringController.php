@@ -109,8 +109,13 @@ class MonitoringController extends BaseController
             $responseTime = microtime(true) - $startTime;
 
             // Check table counts
-            $tableCountResult = $this->db->fetchColumn("SHOW TABLES");
-            $tableCount = is_array($tableCountResult) ? count($tableCountResult) : 0;
+            $tableCount = 0;
+            try {
+                $tableCountResult = $this->db->fetchColumn("SHOW TABLES");
+                $tableCount = is_array($tableCountResult) ? count($tableCountResult) : 0;
+            } catch (\Exception $e) {
+                $tableCount = 0;
+            }
 
             // Check slow queries
             $slowQueries = $this->getSlowQueryCount();
@@ -234,9 +239,14 @@ class MonitoringController extends BaseController
         }
 
         // Get database performance stats
-        $dbStats = $this->db->getPerformanceStats();
+        $dbStats = [];
+        try {
+            $dbStats = $this->db->getPerformanceStats();
+        } catch (\Exception $e) {
+            $dbStats = ['query_count' => 0, 'slow_queries' => 0, 'average_time' => 0];
+        }
 
-        if ($dbStats['slow_queries'] > 5) {
+        if (($dbStats['slow_queries'] ?? 0) > 5) {
             $status = 'critical';
             $issues[] = 'Multiple slow queries detected';
         }
@@ -244,9 +254,9 @@ class MonitoringController extends BaseController
         return [
             'status' => $status,
             'execution_time' => round($executionTime * 1000, 2) . 'ms',
-            'database_queries' => $dbStats['query_count'],
-            'slow_queries' => $dbStats['slow_queries'],
-            'average_query_time' => round($dbStats['average_time'] * 1000, 2) . 'ms',
+            'database_queries' => $dbStats['query_count'] ?? 0,
+            'slow_queries' => $dbStats['slow_queries'] ?? 0,
+            'average_query_time' => round(($dbStats['average_time'] ?? 0) * 1000, 2) . 'ms',
             'issues' => $issues
         ];
     }
@@ -307,7 +317,7 @@ class MonitoringController extends BaseController
                 ]
             ]);
 
-            $url = 'http://localhost:8000' . $endpoint;
+            $url = 'http://localhost/apsdreamhome' . $endpoint;
             $response = @file_get_contents($url, false, $context);
 
             $responseTime = microtime(true) - $startTime;

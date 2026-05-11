@@ -17,14 +17,14 @@ class UserController extends BaseController
 
         // Check if user is logged in (user_id exists and user_type is customer or empty)
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
 
         // Accept customer type OR default to customer if not specified
         $userType = $_SESSION['user_type'] ?? '';
         if ($userType !== '' && $userType !== 'customer') {
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
     }
@@ -36,7 +36,7 @@ class UserController extends BaseController
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$user) {
-            header('Location: /user/logout');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/user/logout');
             exit;
         }
 
@@ -172,7 +172,7 @@ class UserController extends BaseController
 
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['flash_error'] = 'Please login first';
-            header('Location: /login?redirect=/user/bank-details');
+            header('Location: ' . BASE_URL . '/login?redirect=/user/bank-details');
             exit;
         }
 
@@ -187,7 +187,7 @@ class UserController extends BaseController
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /login');
+            header('Location: ' . BASE_URL . '/login');
             exit;
         }
 
@@ -203,7 +203,7 @@ class UserController extends BaseController
         // Validation
         if (empty($accountHolder) || empty($accountNumber) || empty($ifscCode)) {
             $_SESSION['flash_error'] = 'Please fill all required fields';
-            header('Location: /user/bank-details');
+            header('Location: ' . BASE_URL . '/user/bank-details');
             exit;
         }
 
@@ -233,7 +233,12 @@ class UserController extends BaseController
         }
 
         $_SESSION['flash_success'] = 'Bank details saved successfully!';
-        header('Location: /user/bank-details');
+        header('Location: ' . BASE_URL . '/user/bank-details');
         exit;
+    }
+
+    public function updateProfile()
+    {
+        $this->profile();
     }
 }

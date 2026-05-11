@@ -6,7 +6,7 @@
 require_once dirname(__DIR__) . '/layouts/header.php';
 session_start();
 if (!isset($_SESSION['uid']) || $_SESSION['utype'] !== 'employee') {
-    header('Location: login.php');
+    header('Location: ' . BASE_URL . '/login');
     exit();
 }
 // Example employee stats (replace with real queries)

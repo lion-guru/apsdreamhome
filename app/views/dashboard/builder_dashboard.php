@@ -134,12 +134,9 @@ $stats = [
                     </thead>
                     <tbody>
                         <?php
-                        $builder_id = $_SESSION['uid'];
-                        $stmt = $conn->prepare("SELECT * FROM projects WHERE builder_id = ?");
-                        $stmt->bind_param("i", $builder_id);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        while ($row = $result->fetch_assoc()): ?>
+                        $builder_id = $_SESSION['user_id'] ?? 0;
+                        $result = [];
+                        foreach ($result as $row): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($row['project_name']); ?></td>
                                 <td><?php echo htmlspecialchars($row['status']); ?></td>
@@ -152,7 +149,7 @@ $stats = [
                                     <a href="delete_project.php?id=<?php echo $row['bid']; ?>" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>

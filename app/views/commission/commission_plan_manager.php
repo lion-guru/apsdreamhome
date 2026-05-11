@@ -9,14 +9,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
-    header("Location: associate_login.php");
+    header("Location: " . BASE_URL . "/login");
     exit();
 }
 
 $associate_id = $_SESSION['associate_id'];
 if (!isAssociateAdmin($associate_id)) {
     $_SESSION['error_message'] = "You don't have permission to access plan management.";
-    header("Location: associate_dashboard.php");
+    header("Location: " . BASE_URL . "/associate/dashboard");
     exit();
 }
 
@@ -61,7 +61,7 @@ function createCommissionPlan($data) {
         createDefaultLevels($plan_id);
 
         $_SESSION['success_message'] = "Commission plan created successfully!";
-        header("Location: commission_plan_manager.php");
+        header("Location: " . BASE_URL . "/admin/commission/plans");
         exit();
 
     } catch (Exception $e) {
@@ -138,7 +138,7 @@ function activatePlan($plan_id) {
         $stmt->execute();
 
         $_SESSION['success_message'] = "Commission plan activated successfully!";
-        header("Location: commission_plan_manager.php");
+        header("Location: " . BASE_URL . "/admin/commission/plans");
         exit();
 
     } catch (Exception $e) {
@@ -156,7 +156,7 @@ function deactivatePlan($plan_id) {
         $stmt->execute();
 
         $_SESSION['success_message'] = "Commission plan deactivated successfully!";
-        header("Location: commission_plan_manager.php");
+        header("Location: " . BASE_URL . "/admin/commission/plans");
         exit();
 
     } catch (Exception $e) {
@@ -177,7 +177,7 @@ function deletePlan($plan_id) {
 
         if ($plan['status'] == 'active') {
             $_SESSION['error_message'] = "Cannot delete active plan. Please deactivate first.";
-            header("Location: commission_plan_manager.php");
+            header("Location: " . BASE_URL . "/admin/commission/plans");
             exit();
         }
 
@@ -187,7 +187,7 @@ function deletePlan($plan_id) {
         $stmt->execute();
 
         $_SESSION['success_message'] = "Commission plan deleted successfully!";
-        header("Location: commission_plan_manager.php");
+        header("Location: " . BASE_URL . "/admin/commission/plans");
         exit();
 
     } catch (Exception $e) {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../data/models/incentive_model.dart';
 import '../../providers/incentive_provider.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/glass_card.dart';
@@ -38,7 +39,7 @@ class IncentiveDashboardPage extends ConsumerWidget {
               );
             }
 
-            final currentIncentive = incentives.first;
+            final Incentive currentIncentive = incentives.first as Incentive;
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -68,7 +69,7 @@ class IncentiveDashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, dynamic incentive) {
+  Widget _buildHeader(BuildContext context, Incentive incentive) {
     return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +154,7 @@ class IncentiveDashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildIncentiveCard(BuildContext context, dynamic incentive) {
+  Widget _buildIncentiveCard(BuildContext context, Incentive incentive) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(

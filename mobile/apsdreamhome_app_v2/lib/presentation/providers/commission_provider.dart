@@ -3,11 +3,11 @@ import '../../core/services/database_helper.dart';
 import '../../core/constants/app_constants.dart';
 import '../../data/models/commission_model.dart';
 
-final commissionsProvider = StateNotifierProvider<CommissionNotifier, AsyncValue<List<Commission>>>((ref) {
+final commissionsProvider = StateNotifierProvider<CommissionNotifier, AsyncValue<List<CommissionModel>>>((ref) {
   return CommissionNotifier();
 });
 
-class CommissionNotifier extends StateNotifier<AsyncValue<List<Commission>>> {
+class CommissionNotifier extends StateNotifier<AsyncValue<List<CommissionModel>>> {
   CommissionNotifier() : super(const AsyncValue.loading()) {
     _loadCommissions();
   }
@@ -15,10 +15,10 @@ class CommissionNotifier extends StateNotifier<AsyncValue<List<Commission>>> {
   Future<void> _loadCommissions() async {
     try {
       final commissions = await DatabaseHelper.query(AppConstants.commissionsTable);
-      final commissionList = commissions.map((json) => Commission.fromJson(json)).toList();
+      final commissionList = commissions.map((json) => CommissionModel.fromJson(json)).toList();
       
       // Sort by creation date (newest first)
-      commissionList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      commissionList.sort((a, b) => (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)));
       
       state = AsyncValue.data(commissionList);
     } catch (e) {
@@ -31,20 +31,17 @@ class CommissionNotifier extends StateNotifier<AsyncValue<List<Commission>>> {
     await _loadCommissions();
   }
   
-  Future<void> addCommission(Commission commission) async {
+  Future<void> addCommission(CommissionModel commission) async {
     try {
       // Add to local database
       await DatabaseHelper.insert(AppConstants.commissionsTable, {
-        'commission_id': commission.commissionId,
+        'id': commission.id,
         'user_id': commission.userId,
-        'source_id': commission.sourceId,
-        'source_type': commission.sourceType,
         'amount': commission.amount,
         'percentage': commission.percentage,
-        'rank': commission.rank,
+        'type': commission.type,
         'status': commission.status,
-        'created_at': commission.createdAt,
-        'updated_at': commission.updatedAt,
+        'created_at': commission.createdAt?.toIso8601String(),
       });
       
       // Update local state
@@ -56,7 +53,7 @@ class CommissionNotifier extends StateNotifier<AsyncValue<List<Commission>>> {
     }
   }
   
-  Future<void> updateCommissionStatus(Commission commission, String newStatus) async {
+  Future<void> updateCommissionStatus(CommissionModel commission, String newStatus) async {
     try {
       // Update local database
       await DatabaseHelper.update(
@@ -65,14 +62,14 @@ class CommissionNotifier extends StateNotifier<AsyncValue<List<Commission>>> {
           'status': newStatus,
           'updated_at': DateTime.now().toIso8601String(),
         },
-        where: 'commission_id = ?',
-        whereArgs: [commission.commissionId],
+        where: 'id = ?',
+        whereArgs: [commission.id],
       );
       
       // Update local state
       final currentList = state.value ?? [];
       final updatedList = currentList.map((c) {
-        if (c.commissionId == commission.commissionId) {
+        if (c.id == commission.id) {
           return c.copyWith(status: newStatus);
         }
         return c;
@@ -102,18 +99,18 @@ class CommissionNotifier extends StateNotifier<AsyncValue<List<Commission>>> {
     final commissions = state.value ?? [];
     
     final totalEarned = commissions
-        .where((c) => c.isPaid)
+        .where((c) => c.status == 'paid')
         .fold<double>(0, (sum, c) => sum + c.amount);
     
     final pendingAmount = commissions
-        .where((c) => c.isPending)
+        .where((c) => c.status == 'pending')
         .fold<double>(0, (sum, c) => sum + c.amount);
     
     final thisMonth = commissions
         .where((c) {
-          final date = DateTime.parse(c.createdAt);
+          if (c.createdAt == null) return false;
           final now = DateTime.now();
-          return date.month == now.month && date.year == now.year;
+          return c.createdAt!.month == now.month && c.createdAt!.year == now.year;
         })
         .fold<double>(0, (sum, c) => sum + c.amount);
     

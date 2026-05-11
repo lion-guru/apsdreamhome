@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Core\Database;
-use App\Http\Controllers\BaseController;
+use App\Core\Database\Database;
 
 class WalletController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

@@ -11,7 +11,7 @@ use App\Core\Database\Database;
 
 class PropertyImageController extends BaseController
 {
-    private $db;
+    protected $db;
     private $uploadPath;
     private $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     private $maxFileSize = 10 * 1024 * 1024; // 10MB

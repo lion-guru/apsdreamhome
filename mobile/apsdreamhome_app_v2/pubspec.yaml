@@ -53,6 +53,9 @@ dependencies:
   speech_to_text: ^7.3.0
   flutter_tts: ^4.2.2
   
+  # Geolocation for Site Visit Tracking
+  geolocator: ^11.0.0
+
   # Camera & Image Picker for KYC
   camera: ^0.10.5+5
   image_picker: ^1.0.4

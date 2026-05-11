@@ -53,20 +53,39 @@ class ProjectsAdminController extends AdminController
 
     public function edit($id)
     {
+        $db = Database::getInstance();
+        $project = $db->fetch("SELECT * FROM projects WHERE id = ?", [$id]);
+        $this->data['project'] = $project ?: [];
+        $this->data['states'] = $db->fetchAll("SELECT * FROM states ORDER BY name");
+        $this->data['districts'] = $db->fetchAll("SELECT * FROM districts ORDER BY name");
+        $this->data['colonies'] = $db->fetchAll("SELECT * FROM colonies ORDER BY name");
         $this->data['page_title'] = 'Edit Project';
         return $this->render('admin/projects/edit');
     }
 
     public function show($id)
     {
+        $db = Database::getInstance();
+        $project = $db->fetch("SELECT * FROM projects WHERE id = ?", [$id]);
+        $this->data['project'] = $project ?: [];
         $this->data['page_title'] = 'View Project';
         return $this->render('admin/projects/view');
     }
 
     public function images($id)
     {
+        $db = Database::getInstance();
+        $project = $db->fetch("SELECT * FROM projects WHERE id = ?", [$id]);
+        $images = $db->fetchAll("SELECT * FROM project_images WHERE project_id = ? ORDER BY display_order", [$id]);
+        $this->data['project'] = $project ?: [];
+        $this->data['images'] = $images ?: [];
         $this->data['page_title'] = 'Project Images';
         return $this->render('admin/projects/images');
+    }
+
+    public function delete($id)
+    {
+        $this->destroy($id);
     }
 
     public function destroy($id)

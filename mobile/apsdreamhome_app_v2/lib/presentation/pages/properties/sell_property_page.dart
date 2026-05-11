@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../providers/auth_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 class SellPropertyPage extends ConsumerStatefulWidget {
   const SellPropertyPage({super.key});
@@ -53,11 +53,11 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
                   prefixIcon: Icon(Icons.title),
                   border: OutlineInputBorder(),
                 ),
-                validator: (v) => v!.isEmpty ? 'Enter title' : null,
+                validator: (v) => v == null || v.isEmpty ? 'Enter title' : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                initialValue: _propertyType,
+                value: _propertyType,
                 decoration: const InputDecoration(
                   labelText: 'Property Type',
                   prefixIcon: Icon(Icons.category),
@@ -77,7 +77,7 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
                   prefixIcon: Icon(Icons.currency_rupee),
                   border: OutlineInputBorder(),
                 ),
-                validator: (v) => v!.isEmpty ? 'Enter price' : null,
+                validator: (v) => v == null || v.isEmpty ? 'Enter price' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -87,7 +87,7 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
                   prefixIcon: Icon(Icons.location_on),
                   border: OutlineInputBorder(),
                 ),
-                validator: (v) => v!.isEmpty ? 'Enter location' : null,
+                validator: (v) => v == null || v.isEmpty ? 'Enter location' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -142,7 +142,7 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.data['message'] ?? 'Submitted!'),
+            content: Text((response.data['message'] as String?) ?? 'Submitted!'),
             backgroundColor: Colors.green,
           ),
         );

@@ -1,0 +1,74 @@
+---
+description: AI Agent Orchestration Pipeline for autonomous dev workflow
+globs:
+alwaysApply: true
+---
+
+# Agent Orchestration Pipeline
+
+## 🏢 Dev Company Workflow
+
+This project uses a multi-agent pipeline simulating a dev company. Agents hand off work sequentially.
+
+### Agent Roles
+
+| Role | Responsibility | Entry Point |
+|------|---------------|-------------|
+| **🔍 Analysis Agent** | Deep scan, find issues, plan fixes | Reads AGENTS.md, scans codebase |
+| **⚡ Implementation Agent** | Code fixes, new features | Applies changes, runs php -l |
+| **🧪 Testing Agent** | Run tests, verify correctness | Runs Playwright, checks routes |
+| **📋 Review Agent** | Code review, lint, security | Checks for hardcoded paths, orphaned files |
+| **📝 Documentation Agent** | Update AGENTS.md, commit messages | Writes summaries, git commit |
+
+### Pipeline Flow
+
+```
+Analysis → Implementation → Testing → Review → Documentation → Repeat
+```
+
+### State Handoff Protocol
+
+Each agent writes its state to `agent_state.json` before handing off:
+```json
+{
+  "current_agent": "analysis",
+  "next_agent": "implementation",
+  "completed_tasks": [...],
+  "pending_tasks": [...],
+  "errors": [...],
+  "context": {
+    "last_scan_time": "2026-05-10T12:00:00",
+    "files_touched": [...],
+    "test_results": {...}
+  }
+}
+```
+
+### Available Tools per Agent
+
+All agents have access to:
+- **MySQL** (`@f4ww4z/mcp-mysql-server`) — Direct DB queries
+- **Filesystem** — File read/write
+- **Playwright** — Browser testing
+- **Sequential Thinking** — Step-by-step reasoning
+- **Memory** — Knowledge graph persistence
+
+## Starting a New Task
+
+1. Start with **Analysis Agent** — it reads the current state, scans for issues
+2. Pass to **Implementation Agent** to fix
+3. Pass to **Testing Agent** to verify
+4. Pass to **Review Agent** for quality check
+5. Pass to **Documentation Agent** to update status
+
+## Queries
+- To start pipeline: `run pipeline [task description]`
+- To check state: `show agent state`
+- To resume: `continue from [agent name]`
+
+## Critical Rules
+- Always run `php -l` before committing PHP changes
+- Always verify route accessibility after adding routes
+- Use `BASE_URL` constant for all redirects
+- Never delete files without 3-step orphan check
+- Update AGENTS.md on significant progress

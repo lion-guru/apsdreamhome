@@ -25,7 +25,13 @@ class MLMTreeController extends BaseController
     public function tree()
     {
         $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
-        include __DIR__ . '/../views/admin/mlm/tree.php';
+        $viewPath = __DIR__ . '/../views/admin/mlm/tree.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            echo "<h2>MLM Tree</h2><p>Tree view not available. Please ensure the view file exists.</p>";
+            echo "<a href='" . $base . "/admin/dashboard' class='btn btn-primary'>Back to Dashboard</a>";
+        }
     }
 
     /**

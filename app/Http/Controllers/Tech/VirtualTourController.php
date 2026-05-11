@@ -40,6 +40,11 @@ class VirtualTourController extends BaseController
     /**
      * Display virtual tour interface
      */
+    public function show($property_id)
+    {
+        $this->index($property_id);
+    }
+
     public function index($property_id = null)
     {
         // If no property_id, show virtual tour listing or redirect

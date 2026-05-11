@@ -220,7 +220,7 @@ class AuthMiddleware
         session_destroy();
 
         // Redirect to login
-        header('Location: /admin/login.php');
+        header('Location: ' . BASE_URL . '/admin/login');
         exit();
     }
 
@@ -235,7 +235,7 @@ class AuthMiddleware
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
             ]);
 
-            header('Location: /admin/login.php');
+            header('Location: ' . BASE_URL . '/admin/login');
             exit();
         }
     }
@@ -260,7 +260,7 @@ function adminAuth()
             echo json_encode(['error' => 'Admin authentication required']);
             exit;
         }
-        header('Location: /admin/login.php');
+        header('Location: ' . BASE_URL . '/admin/login');
         exit;
     }
 }
@@ -275,7 +275,7 @@ function employeeAuth()
             echo json_encode(['error' => 'Employee authentication required']);
             exit;
         }
-        header('Location: /employee/login.php');
+        header('Location: ' . BASE_URL . '/employee/login');
         exit;
     }
 }

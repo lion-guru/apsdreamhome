@@ -86,7 +86,7 @@ class AdvancedAIController extends BaseController
     public function smartRecommendations()
     {
         if (!$this->isLoggedIn()) {
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             return;
         }
 
@@ -106,7 +106,7 @@ class AdvancedAIController extends BaseController
     public function marketAnalysis()
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             return;
         }
 
@@ -129,7 +129,7 @@ class AdvancedAIController extends BaseController
     public function modelTraining()
     {
         if (!$this->isAdmin()) {
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             return;
         }
 

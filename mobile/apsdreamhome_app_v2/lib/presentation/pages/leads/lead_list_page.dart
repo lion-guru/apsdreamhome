@@ -5,9 +5,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/lead_model.dart';
-import '../../providers/auth_provider.dart';
+import '../../../core/providers/connectivity_provider.dart';
 import '../../providers/lead_provider.dart';
 import '../../widgets/common_widgets.dart';
+import '../../widgets/status_badge.dart';
 import '../../widgets/voice_lead_dialog.dart';
 import 'lead_details_sheet.dart';
 
@@ -216,7 +217,7 @@ class _LeadListPageState extends ConsumerState<LeadListPage> {
 
       // Status filter
       final matchesStatus =
-          _selectedStatus == 'All' || lead.status == _selectedStatus;
+          _selectedStatus == 'All' || (lead.status ?? '') == _selectedStatus;
 
       return matchesSearch && matchesStatus;
     }).toList();
@@ -326,8 +327,8 @@ class LeadCard extends StatelessWidget {
                     ),
                   ),
                   StatusBadge(
-                    status: lead.status,
-                    color: _getStatusColor(lead.status),
+                    status: lead.status ?? '',
+                    color: _getStatusColor(lead.status ?? ''),
                   ),
                 ],
               ),
@@ -370,7 +371,7 @@ class LeadCard extends StatelessWidget {
                 ],
               ),
 
-              if (lead.propertyInterest != null) ...[
+              if (lead.interestedIn != null) ...[
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -381,7 +382,7 @@ class LeadCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Interested in: ${lead.propertyInterest}',
+                      'Interested in: ${lead.interestedIn}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey.shade600,
                           ),
@@ -390,7 +391,7 @@ class LeadCard extends StatelessWidget {
                 ),
               ],
 
-              if (lead.budget != null) ...[
+              if (lead.budgetMin != null) ...[
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -401,7 +402,7 @@ class LeadCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Budget: ${lead.formattedBudget}',
+                      'Budget: ${lead.displayBudget ?? ''}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey.shade600,
                           ),

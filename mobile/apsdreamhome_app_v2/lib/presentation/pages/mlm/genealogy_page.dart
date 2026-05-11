@@ -35,7 +35,7 @@ class GenealogyPage extends ConsumerWidget {
                 padding: const EdgeInsets.all(AppConstants.defaultPadding),
                 itemCount: data.length,
                 itemBuilder: (context, index) {
-                  return _buildRecursiveNode(data[index], 0);
+                  return _buildRecursiveNode(data[index] as Map<String, dynamic>, 0);
                 },
               ),
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -45,19 +45,19 @@ class GenealogyPage extends ConsumerWidget {
   }
 
   Widget _buildRecursiveNode(Map<String, dynamic> person, int depth) {
-    final List<dynamic> children = person['children'] ?? [];
+    final children = (person['children'] as List<dynamic>?) ?? [];
     
     return Column(
       children: [
         _TeamMemberTile(
-          name: person['name'] ?? 'Unknown Agent',
-          rank: person['rank'] ?? 'Associate',
-          teamSize: person['team_size'] ?? 0,
+          name: (person['name'] as String?) ?? 'Unknown Agent',
+          rank: (person['rank'] as String?) ?? 'Associate',
+          teamSize: (person['team_size'] as int?) ?? 0,
           depth: depth,
           isMe: depth == 0 && person['parent_id'] == null,
         ),
         if (children.isNotEmpty)
-          ...children.map((child) => _buildRecursiveNode(child, depth + 1)),
+          ...children.map((child) => _buildRecursiveNode(child as Map<String, dynamic>, depth + 1)),
       ],
     );
   }

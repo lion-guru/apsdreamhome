@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($login === 'admin@example.com' && $password === 'password') {
             $_SESSION['customer_logged_in'] = true;
             $_SESSION['customer_name'] = 'Admin User';
-            header('Location: customer_dashboard.php');
+            header('Location: ' . BASE_URL . '/user/dashboard');
             exit();
         } else {
             $message = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Invalid credentials!</div>';
