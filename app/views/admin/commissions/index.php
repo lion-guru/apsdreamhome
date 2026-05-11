@@ -1,11 +1,12 @@
 <?php
+
 /**
  * Commissions Management - APS Dream Home Admin
  */
 
 session_start();
-if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
-    header("Location: " . BASE_URL . "/login");
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: " . BASE_URL . "/admin/login");
     exit();
 }
 
