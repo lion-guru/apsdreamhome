@@ -24,6 +24,12 @@ ob_start();
         </div>
     </div>
 
+    <!-- Search and Export -->
+    <?php require __DIR__ . '/../partials/search_bar.php'; ?>
+    <?php require __DIR__ . '/../partials/export_buttons.php'; ?>
+    <?php require __DIR__ . '/../partials/mobile_optimization.php'; ?>
+    <?php require __DIR__ . '/../partials/realtime_updates.php'; ?>
+
     <!-- Stats -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6">

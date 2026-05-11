@@ -29,7 +29,10 @@ $associate_name = $_SESSION['associate_name'];
 // Get all available plans
 $plans_query = "SELECT * FROM mlm_commission_plans WHERE status != 'archived' ORDER BY status DESC, created_at DESC";
 $plans_result = $conn->query($plans_query);
-$plans = $plans_result->fetch_all(MYSQLI_ASSOC);
+$plans = [];
+if ($plans_result) {
+    $plans = $plans_result->fetchAll(PDO::FETCH_ASSOC);
+}
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
