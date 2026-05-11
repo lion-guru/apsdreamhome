@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../providers/auth_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../../widgets/glass_card.dart';
 
 class EmiSchedulePage extends ConsumerStatefulWidget {
@@ -36,7 +36,7 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
       );
       if (mounted) {
         setState(() {
-          _installments = response.data['data'] ?? [];
+          _installments = (response.data['data'] as List<dynamic>?) ?? [];
           _isLoading = false;
         });
       }
@@ -62,7 +62,7 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
                   padding: const EdgeInsets.all(16),
                   itemCount: _installments.length,
                   itemBuilder: (context, index) {
-                    final emi = _installments[index];
+                    final emi = _installments[index] as Map<String, dynamic>;
                     return _buildEmiTile(emi);
                   },
                 ),
@@ -70,8 +70,9 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
   }
 
   Widget _buildEmiTile(Map<String, dynamic> emi) {
-    final bool isPaid = emi['status'] == 'paid';
-    final bool isOverdue = emi['status'] == 'overdue';
+    final String status = emi['status'] as String;
+    final bool isPaid = status == 'paid';
+    final bool isOverdue = status == 'overdue';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -91,7 +92,7 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
                 ),
                 child: Center(
                   child: Text(
-                    emi['emi_number'].toString(),
+                    (emi['emi_number'] as num).toString(),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: isPaid ? Colors.green : Colors.blue,
@@ -105,12 +106,12 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '₹${emi['amount']}',
+                      '₹${emi['amount'] as num}',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     Text(
-                      'Due: ${emi['due_date']}',
+                      'Due: ${emi['due_date'] as String}',
                       style:
                           TextStyle(color: Colors.grey.shade600, fontSize: 13),
                     ),
@@ -152,7 +153,7 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
       builder: (context) => AlertDialog(
         title: const Text('Confirm Payment'),
         content: Text(
-            'Do you want to pay ₹${emi['amount']} for EMI #${emi['emi_number']}?'),
+            'Do you want to pay ₹${emi['amount'] as num} for EMI #${emi['emi_number'] as num}?'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -173,7 +174,7 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
       final token = await ref.read(authProvider.notifier).getToken();
       await dio.post(
         '${AppConstants.apiVersion}/customer/pay-emi',
-        data: {'emi_id': emi['id'], 'amount': emi['amount']},
+        data: {'emi_id': emi['id'] as num, 'amount': emi['amount'] as num},
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
@@ -191,9 +192,4 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
   }
 }
 
-extension on ElevatedButton {
-  static styleFrom({required Color backgroundColor}) {
-    // Dummy for compilation context if literal doesn't support
-  }
-}
-// Note: fixing styling above for real code
+// Note: styling handled inline above

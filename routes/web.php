@@ -52,25 +52,25 @@ $router->get('/health', function () {
 });
 
 // Missing Admin Routes
-$router->get('/admin/visits', function() {
+$router->get('/admin/visits', function () {
     include __DIR__ . '/../app/views/admin/visits/index.php';
 });
-$router->get('/admin/gallery', function() {
+$router->get('/admin/gallery', function () {
     include __DIR__ . '/../app/views/admin/gallery/index.php';
 });
-$router->get('/admin/testimonials', function() {
+$router->get('/admin/testimonials', function () {
     include __DIR__ . '/../app/views/admin/testimonials/index.php';
 });
-$router->get('/admin/news', function() {
+$router->get('/admin/news', function () {
     include __DIR__ . '/../app/views/admin/news/index.php';
 });
-$router->get('/admin/ai-settings', function() {
+$router->get('/admin/ai-settings', function () {
     include __DIR__ . '/../app/views/admin/ai/settings.php';
 });
-$router->get('/admin/locations/states', function() {
+$router->get('/admin/locations/states', function () {
     include __DIR__ . '/../app/views/admin/locations/states.php';
 });
-$router->get('/admin/legal-pages', function() {
+$router->get('/admin/legal-pages', function () {
     include __DIR__ . '/../app/views/admin/legal-pages/index.php';
 });
 
@@ -223,6 +223,17 @@ $router->get('/legal/terms-conditions', 'Front\\PageController@legalTermsConditi
 $router->get('/legal/services', 'Front\\PageController@legalServices');
 $router->get('/legal/documents', 'Front\\PageController@legalDocuments');
 $router->get('/user/edit-profile', 'Front\\PageController@userEditProfile');
+$router->get('/user/logout', 'Auth\\CustomerAuthController@logout');
+$router->get('/user/dashboard', 'Front\\UserController@dashboard');
+$router->get('/user/properties', 'Front\\UserController@myProperties');
+$router->get('/user/inquiries', 'Front\\UserController@myInquiries');
+$router->get('/user/profile', 'Front\\UserController@profile');
+$router->post('/user/profile', 'Front\\UserController@updateProfile');
+$router->get('/user/bank-details', 'Front\\UserController@bankDetails');
+$router->post('/user/bank-details/save', 'Front\\UserController@saveBankDetails');
+$router->get('/user/network', function () {
+    include __DIR__ . '/../app/views/pages/user_network.php';
+});
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
 $router->get('/dashboard', 'DashboardController@index');
@@ -337,19 +348,6 @@ $router->get('/employee/documents', 'Employee\\EmployeeController@documents');
 $router->get('/employee/leaves', 'Employee\\EmployeeController@leaves');
 $router->get('/employee/reporting', 'Employee\\EmployeeController@reporting');
 $router->get('/employee/settings', 'Employee\\EmployeeController@dashboard');
-
-// User Portal Routes (Customer Dashboard)
-$router->get('/user/logout', 'Auth\\CustomerAuthController@logout');
-$router->get('/user/dashboard', 'Front\\UserController@dashboard');
-$router->get('/user/properties', 'Front\\UserController@myProperties');
-$router->get('/user/inquiries', 'Front\\UserController@myInquiries');
-$router->get('/user/profile', 'Front\\UserController@profile');
-$router->post('/user/profile', 'Front\\UserController@updateProfile');
-$router->get('/user/bank-details', 'Front\\UserController@bankDetails');
-$router->post('/user/bank-details/save', 'Front\\UserController@saveBankDetails');
-$router->get('/user/network', function () {
-    include __DIR__ . '/../app/views/pages/user_network.php';
-});
 
 // MLM/Team
 $router->get('/team/genealogy', 'Admin\\NetworkController@genealogy');
@@ -860,19 +858,27 @@ $router->get('/admin/reports', 'App\\Http\\Controllers\\Admin\\ReportController@
 // Admin Network MLM
 $router->get('/admin/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
 $router->get('/admin/network/genealogy', 'App\\Http\\Controllers\\Admin\\NetworkController@genealogy');
-$router->get('/admin/network/ranks', function() { require __DIR__ . '/../app/views/admin/network/ranks.php'; });
+$router->get('/admin/network/ranks', function () {
+    require __DIR__ . '/../app/views/admin/network/ranks.php';
+});
 
 // Admin Payouts
 $router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@payouts');
 
 // Admin Payments
-$router->get('/admin/payments', function() { require __DIR__ . '/../app/views/admin/payments/index.php'; });
+$router->get('/admin/payments', function () {
+    require __DIR__ . '/../app/views/admin/payments/index.php';
+});
 
 // Admin EMI
-$router->get('/admin/emi', function() { require __DIR__ . '/../app/views/admin/emi/index.php'; });
+$router->get('/admin/emi', function () {
+    require __DIR__ . '/../app/views/admin/emi/index.php';
+});
 
 // Admin Accounting
-$router->get('/admin/accounting', function() { require __DIR__ . '/../app/views/admin/accounting/transactions.php'; });
+$router->get('/admin/accounting', function () {
+    require __DIR__ . '/../app/views/admin/accounting/transactions.php';
+});
 
 // Admin Tasks
 $router->get('/admin/tasks', 'App\\Http\\Controllers\\Admin\\TaskController@index');
@@ -881,20 +887,64 @@ $router->get('/admin/tasks', 'App\\Http\\Controllers\\Admin\\TaskController@inde
 $router->get('/admin/support_tickets', 'App\\Http\\Controllers\\Admin\\SupportTicketController@index');
 
 // Admin Media
-$router->get('/admin/media', function() { require __DIR__ . '/../app/views/admin/media/index.php'; });
+$router->get('/admin/media', function () {
+    require __DIR__ . '/../app/views/admin/media/index.php';
+});
 
 // Admin Engagement
-$router->get('/admin/engagement', function() { require __DIR__ . '/../app/views/admin/engagement/index.php'; });
+$router->get('/admin/engagement', function () {
+    require __DIR__ . '/../app/views/admin/engagement/index.php';
+});
 
 // Admin Careers
-$router->get('/admin/careers', function() { require __DIR__ . '/../app/views/admin/jobs/index.php'; });
+$router->get('/admin/careers', function () {
+    require __DIR__ . '/../app/views/admin/jobs/index.php';
+});
 
 // Admin AI
-$router->get('/admin/ai', function() { require __DIR__ . '/../app/views/admin/ai/hub.php'; });
-$router->get('/admin/ai/analytics', function() { require __DIR__ . '/../app/views/admin/ai/analytics.php'; });
+$router->get('/admin/ai', function () {
+    require __DIR__ . '/../app/views/admin/ai/hub.php';
+});
+$router->get('/admin/ai/analytics', function () {
+    require __DIR__ . '/../app/views/admin/ai/analytics.php';
+});
 
 // Admin Resell Properties
 $router->get('/admin/resell-properties', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@index');
 
 // Include additional admin routes
 require_once __DIR__ . '/admin_routes.php';
+
+// ============================================================
+// MISSING ADMIN ROUTES (FIXED)
+// ============================================================
+
+// CRM Dashboard
+$router->get('/admin/crm', function () {
+    require __DIR__ . '/../app/views/admin/crm/index.php';
+});
+
+// Colonies Management
+$router->get('/admin/colonies', function () {
+    require __DIR__ . '/../app/views/admin/colonies/index.php';
+});
+
+// Employees Management
+$router->get('/admin/employees', function () {
+    require __DIR__ . '/../app/views/admin/employees/index.php';
+});
+
+// Commissions Management
+$router->get('/admin/commissions', function () {
+    require __DIR__ . '/../app/views/admin/commissions/index.php';
+});
+
+// Accounts/Financial Management
+$router->get('/admin/accounts', function () {
+    require __DIR__ . '/../app/views/admin/accounts/index.php';
+});
+
+// Developer Tools
+$router->get('/admin/dev-tools', function () {
+    require __DIR__ . '/../app/views/admin/dev-tools/index.php';
+});

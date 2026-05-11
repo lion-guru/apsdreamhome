@@ -63,7 +63,8 @@ try {
 // Check if user is logged in
 if (!isset($_SESSION['auser'])) {
     $_SESSION['error'] = 'Please log in to access this page';
-    header('Location: /login.php');
+    $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+    header('Location: ' . $base . '/login');
     exit();
 }
 
@@ -106,7 +107,7 @@ try {
 } catch (Exception $e) {
     error_log('Error in self_service_portal.php: ' . $e->getMessage());
     $_SESSION['error'] = 'An error occurred. Please try again later.';
-    header('Location: /error.php');
+    header('Location: ' . BASE_URL . '/error');
     exit();
 }
 ?>

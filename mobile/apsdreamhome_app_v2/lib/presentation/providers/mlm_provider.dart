@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
-import 'auth_provider.dart';
+import '../../core/providers/auth_provider.dart';
 
 final mlmProvider =
     StateNotifierProvider<MLMNotifier, AsyncValue<Map<String, dynamic>>>((ref) {
@@ -23,8 +23,8 @@ class MLMNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
-      if (response.data['success']) {
-        state = AsyncValue.data(response.data['data']);
+      if (response.data['success'] as bool) {
+        state = AsyncValue.data(response.data['data'] as Map<String, dynamic>);
       } else {
         throw Exception(
             response.data['message'] ?? 'Failed to fetch MLM summary');
@@ -42,7 +42,7 @@ class MLMNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
-      if (response.data['success']) {
+      if (response.data['success'] as bool) {
         return response.data['data'] as List<dynamic>;
       } else {
         throw Exception(
@@ -61,7 +61,7 @@ class MLMNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
-      if (response.data['success']) {
+      if (response.data['success'] as bool) {
         return response.data['data'] as List<dynamic>;
       } else {
         throw Exception(
@@ -85,7 +85,7 @@ class MLMNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
-      return response.data;
+      return response.data as Map<String, dynamic>;
     } catch (e) {
       rethrow;
     }

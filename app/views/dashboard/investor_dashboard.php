@@ -9,7 +9,7 @@ require_once __DIR__ . '/init.php';
 
 // Check if user is logged in as investor
 if (!isset($_SESSION['uid']) || (isset($_SESSION['utype']) && $_SESSION['utype'] !== 'investor')) {
-    header("Location: login.php");
+    header("Location: " . BASE_URL . "/login");
     exit;
 }
 
@@ -20,7 +20,7 @@ $uid = $_SESSION['uid'];
 $investor = $db->fetch("SELECT * FROM users WHERE id = :uid AND role = 'investor'", ['uid' => $uid]);
 
 if (!$investor) {
-    header("Location: login.php?error=investor_not_found");
+    header("Location: " . BASE_URL . "/login?error=investor_not_found");
     exit;
 }
 

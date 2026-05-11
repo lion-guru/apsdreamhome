@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/property_provider.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/connectivity_provider.dart';
+import '../../providers/property_providers.dart';
 import '../../widgets/glass_card.dart';
 
 class AdminToolsPage extends ConsumerWidget {
@@ -215,7 +216,7 @@ class AdminToolsPage extends ConsumerWidget {
   }
 
   Widget _buildQuickStats(BuildContext context, WidgetRef ref) {
-    final propertiesAsync = ref.watch(propertyProvider);
+    final propertiesAsync = ref.watch(propertiesProvider(null));
 
     return GlassCard(
       child: Column(

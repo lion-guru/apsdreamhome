@@ -42,24 +42,24 @@ class _AddLeadSheetState extends ConsumerState<AddLeadSheet> {
   void _submitLead() {
     if (_formKey.currentState!.validate()) {
       final lead = Lead(
-        leadId: const Uuid().v4(),
+        id: const Uuid().v4(),
         name: _nameController.text.trim(),
         phone: _phoneController.text.trim(),
         email: _emailController.text.trim().isNotEmpty
             ? _emailController.text.trim()
             : null,
-        propertyInterest: _propertyController.text.trim().isNotEmpty
+        interestedIn: _propertyController.text.trim().isNotEmpty
             ? _propertyController.text.trim()
             : null,
-        budget: _budgetController.text.trim().isNotEmpty
+        budgetMin: _budgetController.text.trim().isNotEmpty
             ? double.tryParse(_budgetController.text.trim())
             : null,
         status: 'New',
-        notes: _notesController.text.trim().isNotEmpty
+        followUpNotes: _notesController.text.trim().isNotEmpty
             ? _notesController.text.trim()
             : null,
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       widget.onLeadAdded(lead);
@@ -306,8 +306,8 @@ class LeadDetailsSheet extends StatelessWidget {
                     children: [
                       // Status Badge
                       StatusBadge(
-                        status: lead.status,
-                        color: _getStatusColor(lead.status),
+                        status: lead.status ?? '',
+                        color: _getStatusColor(lead.status ?? ''),
                       ),
 
                       const SizedBox(height: 20),
@@ -333,29 +333,29 @@ class LeadDetailsSheet extends StatelessWidget {
                       const SizedBox(height: 20),
 
                       // Property Information
-                      if (lead.propertyInterest != null ||
-                          lead.budget != null) ...[
+                      if (lead.interestedIn != null ||
+                          lead.budgetMin != null) ...[
                         _buildSectionTitle('Property Information'),
                         const SizedBox(height: 12),
-                        if (lead.propertyInterest != null)
+                        if (lead.interestedIn != null)
                           _buildDetailRow(
                             context,
                             'Interested In',
-                            lead.propertyInterest!,
+                            lead.interestedIn!,
                             Icons.apartment,
                           ),
-                        if (lead.budget != null)
+                        if (lead.budgetMin != null)
                           _buildDetailRow(
                             context,
                             'Budget',
-                            lead.formattedBudget,
+                            lead.displayBudget ?? '',
                             Icons.monetization_on,
                           ),
                         const SizedBox(height: 20),
                       ],
 
                       // Notes
-                      if (lead.notes != null && lead.notes!.isNotEmpty) ...[
+                      if (lead.followUpNotes != null && lead.followUpNotes!.isNotEmpty) ...[
                         _buildSectionTitle('Notes'),
                         const SizedBox(height: 12),
                         Container(
@@ -366,7 +366,7 @@ class LeadDetailsSheet extends StatelessWidget {
                             border: Border.all(color: Colors.grey.shade200),
                           ),
                           child: Text(
-                            lead.notes!,
+                            lead.followUpNotes!,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
@@ -379,13 +379,13 @@ class LeadDetailsSheet extends StatelessWidget {
                       _buildDetailRow(
                         context,
                         'Created',
-                        _formatDate(lead.createdAt),
+                        _formatDate(lead.createdAt?.toIso8601String() ?? ''),
                         Icons.calendar_today,
                       ),
                       _buildDetailRow(
                         context,
                         'Last Updated',
-                        _formatDate(lead.updatedAt),
+                        _formatDate(lead.updatedAt?.toIso8601String() ?? ''),
                         Icons.update,
                       ),
 

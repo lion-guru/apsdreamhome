@@ -5,10 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/property_model.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/property_provider.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/connectivity_provider.dart';
+import '../../providers/property_providers.dart';
 import '../../widgets/common_widgets.dart';
 import 'property_card.dart';
+import 'property_details_sheet.dart';
 
 class PropertyListPage extends ConsumerStatefulWidget {
   const PropertyListPage({super.key});
@@ -31,7 +33,7 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final propertiesAsync = ref.watch(propertyProvider);
+    final propertiesAsync = ref.watch(propertiesProvider(null));
     final connectivity = ref.watch(connectivityProvider);
 
     return Scaffold(
@@ -201,7 +203,7 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
     );
   }
 
-  List<Property> _filterProperties(List<Property> properties) {
+  List<PropertyModel> _filterProperties(List<PropertyModel> properties) {
     var filtered = properties.where((property) {
       // Search filter
       final searchQuery = _searchController.text.toLowerCase();
@@ -305,10 +307,10 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
   }
 
   Future<void> _refreshProperties() async {
-    await ref.read(propertyProvider.notifier).refreshProperties();
+    ref.invalidate(propertiesProvider(null));
   }
 
-  void _showPropertyDetails(Property property) {
+  void _showPropertyDetails(PropertyModel property) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -316,11 +318,9 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
     );
   }
 
-  void _updatePropertyStatus(Property property, String newStatus) async {
+  void _updatePropertyStatus(PropertyModel property, String newStatus) async {
     try {
-      await ref
-          .read(propertyProvider.notifier)
-          .updatePropertyStatus(property, newStatus);
+      ref.invalidate(propertiesProvider(null));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Property status updated')),

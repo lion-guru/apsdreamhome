@@ -9,7 +9,7 @@ require_once __DIR__ . '/init.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['uid'])) {
-    header("Location: login.php");
+    header("Location: " . BASE_URL . "/login");
     exit;
 }
 
@@ -29,7 +29,7 @@ if ($pid > 0) {
 }
 
 if (!$property) {
-    header("Location: dashboards/user_dashboard.php");
+    header("Location: " . BASE_URL . "/user/dashboard");
     exit;
 }
 

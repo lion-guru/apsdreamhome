@@ -13,7 +13,7 @@ use App\Services\ML\FraudDetectionService;
  */
 class MLController extends BaseController
 {
-    private $db;
+    protected $db;
     private $fraudDetection;
 
     public function __construct()
@@ -266,12 +266,17 @@ class MLController extends BaseController
         $highRiskUsers = $this->fraudDetection->getHighRiskUsers(0.6);
 
         // Get recent fraud alerts
-        $recentAlerts = $this->db->fetchAll(
-            "SELECT * FROM fraud_alerts 
-             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-             ORDER BY created_at DESC 
-             LIMIT 10"
-        );
+        $recentAlerts = [];
+        try {
+            $recentAlerts = $this->db->fetchAll(
+                "SELECT * FROM fraud_alerts 
+                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+                 ORDER BY created_at DESC 
+                 LIMIT 10"
+            );
+        } catch (\Exception $e) {
+            $recentAlerts = [];
+        }
 
         echo json_encode([
             "success" => true,

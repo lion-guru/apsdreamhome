@@ -142,7 +142,7 @@ class AuthMiddleware
                 echo json_encode(['error' => 'Admin authentication required']);
                 exit;
             }
-            header('Location: /admin/login.php');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/login');
             exit();
         }
     }

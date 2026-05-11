@@ -136,7 +136,7 @@
 			"label": "Workflow: Database Setup",
 			"command": "node",
 			"args": [
-				"scripts/sequential-workflow-manager.js",
+				"scripts/sequential-workflow-manager.cjs",
 				"database-setup"
 			],
 			"options": {
@@ -155,7 +155,7 @@
 			"label": "Workflow: Full System Test",
 			"command": "node",
 			"args": [
-				"scripts/sequential-workflow-manager.js",
+				"scripts/sequential-workflow-manager.cjs",
 				"full-system-test"
 			],
 			"options": {
@@ -174,7 +174,7 @@
 			"label": "Workflow: Code Quality",
 			"command": "node",
 			"args": [
-				"scripts/sequential-workflow-manager.js",
+				"scripts/sequential-workflow-manager.cjs",
 				"code-quality"
 			],
 			"options": {

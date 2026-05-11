@@ -727,4 +727,55 @@ class PropertyManagementController extends AdminController
 
         exit;
     }
+
+    public function show($id = null)
+    {
+        if (!$id) { $this->redirect('/admin/properties'); return; }
+        $data = [];
+        try {
+            $stmt = $this->db->prepare("SELECT p.*, s.site_name FROM properties p LEFT JOIN sites s ON p.site_id = s.id WHERE p.id = ?");
+            $stmt->execute([$id]);
+            $data['property'] = $stmt->fetch() ?: [];
+        } catch (Exception $e) {}
+        $data['sites'] = [];
+        $data['property_types'] = [];
+        $data['property_statuses'] = [];
+        $data['categories'] = [];
+        $this->data = array_merge($this->data, $data);
+        $this->data['page_title'] = 'Property Details';
+        $this->render('admin/properties/create');
+    }
+
+    public function edit($id = null)
+    {
+        if (!$id) { $this->redirect('/admin/properties'); return; }
+        $data = ['sites' => [], 'property_types' => [], 'property_statuses' => [], 'categories' => []];
+        try {
+            $stmt = $this->db->prepare("SELECT p.*, s.site_name FROM properties p LEFT JOIN sites s ON p.site_id = s.id WHERE p.id = ?");
+            $stmt->execute([$id]);
+            $data['property'] = $stmt->fetch() ?: [];
+        } catch (Exception $e) {}
+        $this->data = array_merge($this->data, $data);
+        $this->data['page_title'] = 'Edit Property';
+        $this->render('admin/properties/create');
+    }
+
+    public function update($id)
+    {
+        $this->setFlash('info', 'Update functionality not yet implemented');
+        $this->redirect('/admin/properties');
+    }
+
+    public function destroy($id)
+    {
+        $this->setFlash('info', 'Delete functionality not yet implemented');
+        $this->redirect('/admin/properties');
+    }
+
+    public function checkAvailability()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['available' => true]);
+        exit;
+    }
 }

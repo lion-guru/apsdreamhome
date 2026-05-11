@@ -25,10 +25,10 @@ class FraudDetectionService
     public function analyzeUserBehavior($userId)
     {
         $sql = "SELECT DATEDIFF(NOW(), created_at) as account_age, 
-                       verification_status, 
-                       login_attempts,
-                       last_login_ip,
-                       is_active
+                       status as verification_status, 
+                       COALESCE(login_attempts, 0) as login_attempts,
+                       '' as last_login_ip,
+                       status
                 FROM users WHERE id = ?";
 
         $user = $this->db->fetch($sql, [$userId]);
@@ -69,7 +69,7 @@ class FraudDetectionService
         }
 
         // Account status
-        if (!$user["is_active"]) {
+        if (($user["status"] ?? 'active') !== 'active') {
             $riskScore += 0.1;
             $riskFactors["inactive_account"] = true;
         }
@@ -290,7 +290,7 @@ class FraudDetectionService
     public function getHighRiskUsers($threshold = 0.6)
     {
         // Get all users and analyze them
-        $users = $this->db->fetchAll("SELECT id FROM users WHERE is_active = 1 LIMIT 1000");
+        $users = $this->db->fetchAll("SELECT id FROM users WHERE status = 'active' LIMIT 1000");
         
         $highRiskUsers = [];
         foreach ($users as $user) {

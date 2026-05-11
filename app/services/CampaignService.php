@@ -26,7 +26,7 @@ class CampaignService
     public function createCampaign($data)
     {
         try {
-            $query = "INSERT INTO campaigns (title, description, type, target_audience, start_date, end_date, is_active, created_by, created_at) 
+            $query = "INSERT INTO campaigns (title, description, type, target_audience, start_date, end_date, status, created_by, created_at) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $params = [
@@ -36,7 +36,7 @@ class CampaignService
                 $data['target_audience'] ?? 'all',
                 $data['start_date'] ?? date('Y-m-d'),
                 $data['end_date'] ?? date('Y-m-d', strtotime('+30 days')),
-                $data['is_active'] ?? 1,
+                $data['status'] ?? 'active',
                 $data['created_by'] ?? 0,
                 date('Y-m-d H:i:s')
             ];
@@ -56,7 +56,7 @@ class CampaignService
     {
         try {
             $query = "SELECT * FROM campaigns 
-                     WHERE is_active = 1 
+                     WHERE status = 'active' 
                      AND start_date <= CURDATE() 
                      AND end_date >= CURDATE() 
                      AND (target_audience = ? OR target_audience = 'all')

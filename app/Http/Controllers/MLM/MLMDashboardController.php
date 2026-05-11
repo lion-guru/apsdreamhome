@@ -23,7 +23,7 @@ class MLMDashboardController extends BaseController
 
         // Ensure user is logged in
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
     }
@@ -611,5 +611,10 @@ class MLMDashboardController extends BaseController
     private function generateReferralCode()
     {
         return 'APS' . strtoupper(substr(uniqid(), -6));
+    }
+
+    public function dashboard()
+    {
+        $this->index();
     }
 }

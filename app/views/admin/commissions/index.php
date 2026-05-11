@@ -1,24 +1,135 @@
 <?php
 /**
- * Admin View - Auto-generated stub
+ * Commissions Management - APS Dream Home Admin
  */
-$page_title = $page_title ?? "Admin";
+
+session_start();
+if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
+    header("Location: " . BASE_URL . "/login");
+    exit();
+}
+
+$page_title = 'Commissions Management';
+$page_description = 'Manage MLM commissions and payouts';
+
+ob_start();
 ?>
+
 <div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-2">Commissions Management</h1>
+            <p class="text-muted">Manage MLM commissions, plans and payouts</p>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
+                                <i class="fas fa-coins fa-2x"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-1">Total Commission</h6>
+                            <h3 class="mb-0">₹12.5L</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="bg-success bg-opacity-10 text-success rounded p-3">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-1">Paid Out</h6>
+                            <h3 class="mb-0">₹8.2L</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="bg-warning bg-opacity-10 text-warning rounded p-3">
+                                <i class="fas fa-clock fa-2x"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-1">Pending</h6>
+                            <h3 class="mb-0">₹4.3L</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="bg-info bg-opacity-10 text-info rounded p-3">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-1">Associates</h6>
+                            <h3 class="mb-0">234</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="fas fa-admin"></i> <?= $page_title ?></h5>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Commission Tools</h5>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> 
-                        This page is under development. Controller exists but view needs design.
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a href="<?php echo BASE_URL; ?>/admin/payouts" class="btn btn-outline-primary w-100 py-3">
+                                <i class="fas fa-wallet mb-2 d-block" style="font-size: 1.5rem;"></i>
+                                Process Payouts
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="<?php echo BASE_URL; ?>/admin/commission/calculator" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-calculator mb-2 d-block" style="font-size: 1.5rem;"></i>
+                                Calculator
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="<?php echo BASE_URL; ?>/admin/mlm" class="btn btn-outline-info w-100 py-3">
+                                <i class="fas fa-sitemap mb-2 d-block" style="font-size: 1.5rem;"></i>
+                                MLM Network
+                            </a>
+                        </div>
                     </div>
-                    <p class="text-muted">Route is working correctly.</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../../layouts/admin.php';
+?>

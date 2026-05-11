@@ -278,4 +278,32 @@ class AchievementController extends BaseController
         ];
         return $descriptions[$action] ?? 'Activity points';
     }
+
+    public function getPoints()
+    {
+        header('Content-Type: application/json');
+        try {
+            $userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? 0;
+            $stmt = $this->pdo->prepare("SELECT SUM(points) as total FROM user_points WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            echo json_encode(['success' => true, 'points' => (int)$stmt->fetchColumn()]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'points' => 0]);
+        }
+        exit;
+    }
+
+    public function getBadges()
+    {
+        header('Content-Type: application/json');
+        try {
+            $userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? 0;
+            $stmt = $this->pdo->prepare("SELECT b.* FROM badges b JOIN user_badges ub ON b.id = ub.badge_id WHERE ub.user_id = ?");
+            $stmt->execute([$userId]);
+            echo json_encode(['success' => true, 'badges' => $stmt->fetchAll()]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'badges' => []]);
+        }
+        exit;
+    }
 }

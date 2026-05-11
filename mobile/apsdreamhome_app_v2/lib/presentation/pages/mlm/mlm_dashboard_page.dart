@@ -6,18 +6,20 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/commission_model.dart';
 import '../../../data/models/user_model.dart';
-import '../../providers/auth_provider.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/connectivity_provider.dart';
 import '../../providers/commission_provider.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/payout_request_dialog.dart';
+import '../../widgets/status_badge.dart';
 
 class MLMDashboardPage extends ConsumerWidget {
   const MLMDashboardPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider).value;
+    final user = ref.watch(authProvider);
     final commissionsAsync = ref.watch(commissionsProvider);
     final connectivity = ref.watch(connectivityProvider);
 
@@ -315,20 +317,20 @@ class MLMDashboardPage extends ConsumerWidget {
   }
 
   Widget _buildCommissionStats(
-      BuildContext context, List<Commission> commissions, User? user) {
+      BuildContext context, List<CommissionModel> commissions, User? user) {
     final totalCommission = commissions.fold<double>(0, (sum, commission) {
-      return commission.isPaid ? sum + commission.amount : sum;
+      return commission.status == 'paid' ? sum + commission.amount : sum;
     });
 
     final pendingCommission = commissions.fold<double>(0, (sum, commission) {
-      return commission.isPending ? sum + commission.amount : sum;
+      return commission.status == 'pending' ? sum + commission.amount : sum;
     });
 
     final thisMonthCommission = commissions.where((commission) {
-      final commissionDate = DateTime.parse(commission.createdAt);
+      if (commission.createdAt == null) return false;
       final now = DateTime.now();
-      return commissionDate.month == now.month &&
-          commissionDate.year == now.year;
+      return commission.createdAt!.month == now.month &&
+          commission.createdAt!.year == now.year;
     }).fold<double>(0, (sum, commission) => sum + commission.amount);
 
     return GlassCard(
@@ -543,7 +545,7 @@ class CommissionCard extends StatelessWidget {
     required this.commission,
   });
 
-  final Commission commission;
+  final CommissionModel commission;
 
   @override
   Widget build(BuildContext context) {
@@ -571,7 +573,7 @@ class CommissionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    commission.commissionType,
+                    commission.type,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -584,7 +586,9 @@ class CommissionCard extends StatelessWidget {
                         ),
                   ),
                   Text(
-                    _formatDate(commission.createdAt),
+                    commission.createdAt != null
+                        ? _formatDate(commission.createdAt!.toIso8601String())
+                        : '',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.grey.shade500,
                         ),
@@ -596,7 +600,7 @@ class CommissionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  commission.formattedAmount,
+                  _formatAmount(commission.amount),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppTheme.primaryColor,
@@ -644,5 +648,17 @@ class CommissionCard extends StatelessWidget {
   String _formatDate(String dateString) {
     final date = DateTime.parse(dateString);
     return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String _formatAmount(double amount) {
+    if (amount >= 10000000) {
+      return '₹${(amount / 10000000).toStringAsFixed(2)} Cr';
+    } else if (amount >= 100000) {
+      return '₹${(amount / 100000).toStringAsFixed(1)} L';
+    } else if (amount >= 1000) {
+      return '₹${(amount / 1000).toStringAsFixed(0)} K';
+    } else {
+      return '₹${amount.toStringAsFixed(0)}';
+    }
   }
 }

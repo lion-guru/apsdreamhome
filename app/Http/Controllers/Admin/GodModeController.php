@@ -8,17 +8,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Core\Database\Database;
-use App\Core\Auth\AuthManager;
 
 class GodModeController extends \App\Http\Controllers\BaseController
 {
-    private $auth;
-
     public function __construct()
     {
         parent::__construct();
         $this->db = Database::getInstance();
-        $this->auth = AuthManager::getInstance();
     }
 
     /**

@@ -517,4 +517,23 @@ class VisitController extends AdminController
         echo json_encode(['success' => false, 'message' => $message]);
         exit;
     }
+
+    public function calendar()
+    {
+        $this->index();
+    }
+
+    public function updateStatus($id)
+    {
+        if (!$id) { $this->redirect('/admin/visits'); return; }
+        $status = $_POST['status'] ?? 'pending';
+        try {
+            $stmt = $this->db->prepare("UPDATE visits SET status = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$status, $id]);
+            $this->setFlash('success', 'Visit status updated');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed to update status');
+        }
+        $this->redirect('/admin/visits');
+    }
 }

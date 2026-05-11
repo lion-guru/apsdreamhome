@@ -56,5 +56,54 @@ class NotificationController
         // Preview Template
         include __DIR__ . "/../../views/notification/preview.php";
     }
+
+    public function getNotifications()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'notifications' => []]);
+        exit;
+    }
+
+    public function markAsRead()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    public function getUnreadCount()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'count' => 0]);
+        exit;
+    }
+
+    public function getPopups()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'popups' => []]);
+        exit;
+    }
+
+    public function dismissPopup()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    public function createNotification()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Notification created']);
+        exit;
+    }
+
+    public function createPopup()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Popup created']);
+        exit;
+    }
 }
 ?>

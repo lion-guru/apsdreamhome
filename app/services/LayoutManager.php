@@ -10,18 +10,14 @@ class LayoutManager {
         $this->db = $database;
     }
     
-    // Get current layout settings
     public function getLayoutSettings() {
-        $query = "SELECT * FROM layout_settings WHERE id = 1";
-        $result = $this->db->query($query);
+        $result = $this->db->fetch("SELECT * FROM layout_settings WHERE id = 1");
         return $result ? json_decode($result['settings'], true) : $this->getDefaultSettings();
     }
     
-    // Update layout settings
     public function updateLayoutSettings($settings) {
         $json = json_encode($settings);
-        $query = "UPDATE layout_settings SET settings = ?, updated_at = NOW() WHERE id = 1";
-        $this->db->query($query, [$json]);
+        $this->db->query("UPDATE layout_settings SET settings = ?, updated_at = NOW() WHERE id = 1", [$json]);
         return true;
     }
     
@@ -54,13 +50,3 @@ class LayoutManager {
         return $content;
     }
 }
-
-// Usage example in controllers:
-$layoutManager = new LayoutManager($database);
-$settings = $layoutManager->getLayoutSettings();
-
-// Set global variables for layout
-$premium_layout = $settings['premium_layout'];
-$site['nav_json'] = $layoutManager->generateNavigationJson($settings['navigation_items']);
-$site['footer_html'] = $layoutManager->generateFooterHtml($settings['footer_content']);
-?>

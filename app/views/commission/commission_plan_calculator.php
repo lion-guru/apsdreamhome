@@ -17,17 +17,12 @@ try {
 // Check if user is admin
 session_start();
 if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
-    header("Location: associate_login.php");
+    header("Location: " . BASE_URL . "/login");
     exit();
 }
 
 $associate_id = $_SESSION['associate_id'];
 // Commented out missing function isAssociateAdmin()
-// if (!isAssociateAdmin($associate_id)) {
-//     $_SESSION['error_message'] = "You don't have permission to access plan calculator.";
-//     header("Location: associate_dashboard.php");
-//     exit();
-// }
 
 $associate_name = $_SESSION['associate_name'];
 
@@ -42,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = calculateScenario($_POST);
         if ($result['success']) {
             $_SESSION['calculation_result'] = $result;
-            header("Location: commission_plan_calculator.php?calculated=1");
+            header("Location: " . BASE_URL . "/admin/commission/calculator?calculated=1");
             exit();
         } else {
             $_SESSION['error_message'] = $result['message'];

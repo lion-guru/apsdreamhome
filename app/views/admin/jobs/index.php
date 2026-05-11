@@ -4,6 +4,7 @@
  * HR/Admin can view and manage all job postings
  */
 
+$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 $page_title = $page_title ?? 'Job Management';
 $jobs = $jobs ?? [];
 $error = $error ?? null;
@@ -16,10 +17,10 @@ $error = $error ?? null;
             <p class="text-muted mb-0">Manage job postings and view applications</p>
         </div>
         <div>
-            <a href="<?php echo BASE_URL; ?>/admin/jobs/applications" class="btn btn-outline-primary me-2">
+            <a href="<?php echo $base; ?>/admin/jobs/applications" class="btn btn-outline-primary me-2">
                 <i class="fas fa-users me-1"></i>Applications
             </a>
-            <a href="<?php echo BASE_URL; ?>/admin/jobs/create" class="btn btn-primary">
+            <a href="<?php echo $base; ?>/admin/jobs/create" class="btn btn-primary">
                 <i class="fas fa-plus me-1"></i>Post New Job
             </a>
         </div>
@@ -50,38 +51,38 @@ $error = $error ?? null;
                             <tr>
                                 <td colspan="8" class="text-center py-4 text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2"></i>
-                                    <p>No jobs posted yet. <a href="<?php echo BASE_URL; ?>/admin/jobs/create">Post your first job</a></p>
+                                    <p>No jobs posted yet. <a href="<?php echo $base; ?>/admin/jobs/create">Post your first job</a></p>
                                 </td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($jobs as $job): ?>
                                 <tr>
                                     <td>
-                                        <strong><?php echo htmlspecialchars(job['title'] ?? ''); ?></strong>
-                                        <br><small class="text-muted"><?php echo htmlspecialchars(job['experience'] ?? ''); ?></small>
+                                        <strong><?php echo htmlspecialchars($job['title'] ?? ''); ?></strong>
+                                        <br><small class="text-muted"><?php echo htmlspecialchars($job['experience'] ?? ''); ?></small>
                                     </td>
-                                    <td><?php echo htmlspecialchars(job['department'] ?? ''); ?></td>
-                                    <td><?php echo htmlspecialchars(job['location'] ?? ''); ?></td>
+                                    <td><?php echo htmlspecialchars($job['department'] ?? ''); ?></td>
+                                    <td><?php echo htmlspecialchars($job['location'] ?? ''); ?></td>
                                     <td>
-                                        <span class="badge bg-info"><?php echo htmlspecialchars(job['job_type'] ?? ''); ?></span>
+                                        <span class="badge bg-info"><?php echo htmlspecialchars($job['job_type'] ?? ''); ?></span>
                                     </td>
                                     <td>
-                                        <?php echo date('M d, Y', strtotime($job['posted_date'])); ?>
+                                        <?php echo isset($job['posted_date']) ? date('M d, Y', strtotime($job['posted_date'])) : 'N/A'; ?>
                                         <br><small class="text-muted">by <?php echo htmlspecialchars($job['posted_by_name'] ?? 'Admin'); ?></small>
                                     </td>
                                     <td>
-                                        <span class="badge bg-<?php echo $job['status'] === 'active' ? 'success' : ($job['status'] === 'closed' ? 'danger' : 'secondary'); ?>">
-                                            <?php echo ucfirst($job['status']); ?>
+                                        <span class="badge bg-<?php echo ($job['status'] ?? '') === 'active' ? 'success' : (($job['status'] ?? '') === 'closed' ? 'danger' : 'secondary'); ?>">
+                                            <?php echo ucfirst($job['status'] ?? 'unknown'); ?>
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="<?php echo BASE_URL; ?>/admin/jobs/applications/<?php echo $job['id']; ?>" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-users me-1"></i><?php echo $job['application_count']; ?> Applications
+                                        <a href="<?php echo $base; ?>/admin/jobs/applications/<?php echo $job['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-users me-1"></i><?php echo $job['application_count'] ?? 0; ?> Applications
                                         </a>
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="<?php echo BASE_URL; ?>/admin/jobs/edit/<?php echo $job['id']; ?>" class="btn btn-outline-secondary" title="Edit">
+                                            <a href="<?php echo $base; ?>/admin/jobs/edit/<?php echo $job['id']; ?>" class="btn btn-outline-secondary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <button type="button" class="btn btn-outline-danger" onclick="deleteJob(<?php echo $job['id']; ?>)" title="Delete">
@@ -102,7 +103,7 @@ $error = $error ?? null;
 <script>
 function deleteJob(id) {
     if (confirm('Are you sure you want to delete this job posting? All applications will also be deleted.')) {
-        fetch('<?php echo BASE_URL; ?>/admin/jobs/delete/' + id, {
+        fetch('<?php echo $base; ?>/admin/jobs/delete/' + id, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'

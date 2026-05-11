@@ -140,24 +140,24 @@ class _VoiceToLeadPageState extends ConsumerState<VoiceToLeadPage> {
     }
 
     final lead = Lead(
-      leadId: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: _nameController.text.trim(),
       phone: _phoneController.text.trim(),
       email: _emailController.text.trim().isNotEmpty
           ? _emailController.text.trim()
           : null,
-      propertyInterest: _propertyController.text.trim().isNotEmpty
+      interestedIn: _propertyController.text.trim().isNotEmpty
           ? _propertyController.text.trim()
           : null,
-      budget: _budgetController.text.trim().isNotEmpty
+      budgetMin: _budgetController.text.trim().isNotEmpty
           ? double.tryParse(_budgetController.text.trim())
           : null,
       status: 'New',
-      notes: _notesController.text.trim().isNotEmpty
+      followUpNotes: _notesController.text.trim().isNotEmpty
           ? 'Voice input: ${_notesController.text.trim()}'
           : null,
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
 
     ref.read(leadsProvider.notifier).addLead(lead);

@@ -414,7 +414,20 @@ class EmployeeController extends BaseController
 
     public function activities()
     {
-        $data = ['page_title' => 'Activities', 'page_description' => 'Your recent activities'];
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $activities = [];
+        if ($employeeId > 0) {
+            try {
+                $activities = $this->db->fetchAll("SELECT * FROM activity_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT 100", [$employeeId]);
+            } catch (\Exception $e) {
+                $activities = [];
+            }
+        }
+        $data = [
+            'page_title' => 'Activities',
+            'page_description' => 'Your recent activities',
+            'activities' => $activities
+        ];
         $this->render('employees/activities', $data);
     }
 
@@ -432,13 +445,39 @@ class EmployeeController extends BaseController
 
     public function salary()
     {
-        $data = ['page_title' => 'Salary History', 'page_description' => 'Your salary records'];
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $salary_history = [];
+        if ($employeeId > 0) {
+            try {
+                $salary_history = $this->db->fetchAll("SELECT * FROM salary_records WHERE employee_id = ? ORDER BY pay_date DESC LIMIT 12", [$employeeId]);
+            } catch (\Exception $e) {
+                $salary_history = [];
+            }
+        }
+        $data = [
+            'page_title' => 'Salary History',
+            'page_description' => 'Your salary records',
+            'salary_history' => $salary_history
+        ];
         $this->render('employees/salary_history', $data);
     }
 
     public function documents()
     {
-        $data = ['page_title' => 'Documents', 'page_description' => 'Your documents'];
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $documents = [];
+        if ($employeeId > 0) {
+            try {
+                $documents = $this->db->fetchAll("SELECT * FROM employee_documents WHERE employee_id = ? ORDER BY created_at DESC", [$employeeId]);
+            } catch (\Exception $e) {
+                $documents = [];
+            }
+        }
+        $data = [
+            'page_title' => 'Documents',
+            'page_description' => 'Your documents',
+            'documents' => $documents
+        ];
         $this->render('employees/documents', $data);
     }
 
@@ -452,5 +491,38 @@ class EmployeeController extends BaseController
     {
         $data = ['page_title' => 'Reporting', 'page_description' => 'Your reporting structure'];
         $this->render('employees/reporting_structure', $data);
+    }
+
+    public function getTasks()
+    {
+        header('Content-Type: application/json');
+        try {
+            echo json_encode(['success' => true, 'tasks' => $this->getEmployeeTasks($_SESSION['employee_id'] ?? 0)]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'tasks' => []]);
+        }
+        exit;
+    }
+
+    public function getPerformance()
+    {
+        header('Content-Type: application/json');
+        try {
+            echo json_encode(['success' => true, 'performance' => $this->getEmployeePerformance($_SESSION['employee_id'] ?? 0)]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'performance' => []]);
+        }
+        exit;
+    }
+
+    public function getAttendanceRecords()
+    {
+        header('Content-Type: application/json');
+        try {
+            echo json_encode(['success' => true, 'attendance' => $this->getEmployeeAttendance($_SESSION['employee_id'] ?? 0)]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'attendance' => []]);
+        }
+        exit;
     }
 }

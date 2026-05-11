@@ -110,8 +110,8 @@ class RoleBasedDashboardController extends BaseController
         $dashboardData = [
             'role' => 'enterprise',
             'title' => 'Enterprise Dashboard',
-            'widgets' => $this->getEnterpriseWidgets(),
-            'analytics' => $this->getEnterpriseAnalytics()
+            'widgets' => $this->getDashboardByRole('enterprise'),
+            'analytics' => []
         ];
 
         $this->render('dashboard/enterprise_dashboard', $dashboardData);
@@ -620,10 +620,6 @@ class RoleBasedDashboardController extends BaseController
     {
         return 0;
     }
-    private function getTeamPerformance()
-    {
-        return 0;
-    }
     private function getAssociateProperties()
     {
         return 0;
@@ -743,5 +739,106 @@ class RoleBasedDashboardController extends BaseController
     private function getFeaturedListingsData()
     {
         return [];
+    }
+
+    public function getPerformanceData($role = null)
+    {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'role' => $role,
+            'data' => [
+                'leads' => 0,
+                'conversions' => 0,
+                'revenue' => 0,
+                'properties' => 0
+            ]
+        ]);
+        exit;
+    }
+
+    public function getAnalytics($role = null)
+    {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'role' => $role,
+            'data' => [
+                'views' => 0,
+                'inquiries' => 0,
+                'bookings' => 0
+            ]
+        ]);
+        exit;
+    }
+
+    /**
+     * Get network tree (API)
+     */
+    public function getNetworkTree()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => []]);
+        exit;
+    }
+
+    /**
+     * Get revenue analytics (API)
+     */
+    public function getRevenueAnalytics()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => ['total_revenue' => 0, 'monthly' => []]]);
+        exit;
+    }
+
+    /**
+     * Get team performance (was private, now public for API route)
+     */
+    public function getTeamPerformance()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => ['members' => 0, 'performance' => []]]);
+        exit;
+    }
+
+    /**
+     * Get financial analytics (API)
+     */
+    public function getFinancialAnalytics()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => ['total_revenue' => 0, 'expenses' => 0, 'profit' => 0]]);
+        exit;
+    }
+
+    /**
+     * Get expense breakdown (API)
+     */
+    public function getExpenseBreakdown()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => ['categories' => []]]);
+        exit;
+    }
+
+    /**
+     * Get construction analytics (API)
+     */
+    public function getConstructionAnalytics()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => ['projects' => 0, 'milestones' => []]]);
+        exit;
+    }
+
+    /**
+     * Get material status (API)
+     */
+    public function getMaterialStatus()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => ['materials' => []]]);
+        exit;
     }
 }

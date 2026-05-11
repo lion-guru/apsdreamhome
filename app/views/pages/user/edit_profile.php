@@ -5,15 +5,13 @@
  * Allow users to update their personal information and password at APS Dream Homes
  */
 
-require_once __DIR__ . '/init.php';
-
 // Check if user is logged in
-if (!isset($_SESSION['uid'])) {
-    header("Location: login.php");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: " . BASE_URL . "/login");
     exit;
 }
 
-$db = \App\Core\App::database();
+$db = \App\Core\Database\Database::getInstance();
 $msg = '';
 $error = '';
 
@@ -27,9 +25,9 @@ if (isset($_POST['update_basic'])) {
         $msg = "Invalid user session!";
         $msg_type = "error";
     } else {
-        $name = trim(Security::sanitize($_POST['name'] ?? ''));
-        $email = trim(Security::sanitize($_POST['email'] ?? ''));
-        $phone = trim(Security::sanitize($_POST['phone'] ?? ''));
+        $name = trim(\App\Core\Security::sanitize($_POST['name'] ?? ''));
+        $email = trim(\App\Core\Security::sanitize($_POST['email'] ?? ''));
+        $phone = trim(\App\Core\Security::sanitize($_POST['phone'] ?? ''));
 
         if (!empty($name) && !empty($email)) {
             try {
@@ -58,9 +56,9 @@ if (isset($_POST['update_basic'])) {
 
 // Handle Password Update
 if (isset($_POST['update_password'])) {
-    $old_pass = Security::sanitize($_POST['old_password'] ?? '');
-    $new_pass = Security::sanitize($_POST['new_password'] ?? '');
-    $conf_pass = Security::sanitize($_POST['confirm_password'] ?? '');
+    $old_pass = \App\Core\Security::sanitize($_POST['old_password'] ?? '');
+    $new_pass = \App\Core\Security::sanitize($_POST['new_password'] ?? '');
+    $conf_pass = \App\Core\Security::sanitize($_POST['confirm_password'] ?? '');
 
     if (!empty($old_pass) && !empty($new_pass) && $new_pass === $conf_pass) {
         try {
@@ -93,7 +91,7 @@ if (isset($_POST['update_password'])) {
 $user_data = $db->fetch("SELECT * FROM users WHERE id = :uid", ['uid' => $uid]);
 
 if (!$user_data) {
-    header("Location: login.php?error=user_not_found");
+    header("Location: " . BASE_URL . "/login?error=user_not_found");
     exit;
 }
 

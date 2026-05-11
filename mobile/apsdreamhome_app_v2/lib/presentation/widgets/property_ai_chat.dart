@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
-import '../providers/auth_provider.dart';
+import '../../core/providers/auth_provider.dart';
 
 class PropertyAIChat extends ConsumerStatefulWidget {
   final int propertyId;
@@ -202,7 +202,7 @@ class _PropertyAIChatState extends ConsumerState<PropertyAIChat> {
           _isTyping = false;
           _messages.add({
             'role': 'assistant',
-            'text': response.data['response'] ??
+            'text': (response.data['response'] as String?) ??
                 'I am here to help. Could you clarify your question?'
           });
         });
@@ -246,7 +246,4 @@ class _PropertyAIChatState extends ConsumerState<PropertyAIChat> {
   }
 }
 
-// Fix whitee typo in code
-extension on TextStyle {
-  static const whitee = Colors.white;
-}
+// Note: whitee removed, using Colors.white directly

@@ -9,7 +9,7 @@ require_once __DIR__ . '/init.php';
 
 // Check if user is logged in as tenant
 if (!isset($_SESSION['uid']) || (isset($_SESSION['utype']) && $_SESSION['utype'] !== 'tenant')) {
-    header("Location: login.php");
+    header("Location: " . BASE_URL . "/login");
     exit;
 }
 
@@ -20,7 +20,7 @@ $uid = $_SESSION['uid'];
 $tenant = $db->fetch("SELECT * FROM users WHERE id = :uid AND role = 'tenant'", ['uid' => $uid]);
 
 if (!$tenant) {
-    header("Location: login.php?error=tenant_not_found");
+    header("Location: " . BASE_URL . "/login?error=tenant_not_found");
     exit;
 }
 

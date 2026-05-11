@@ -1,5 +1,6 @@
 <?php
-// TODO: Add proper error handling with try-catch blocks
+$mlSupport = $mlSupport ?? new class { public function translate($s) { return $s; } public function getCurrentLanguage() { return 'EN'; } };
+$aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'; } };
 ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.css">

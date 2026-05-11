@@ -47,7 +47,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
             <div class="card border-primary">
                 <div class="card-body text-center">
                     <h6 class="text-primary">Land Cost</h6>
-                    <h3 class="mb-0">₹<?= number_format(floatval(costs['land'] ?? 0) ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format(floatval($costs['land'] ?? 0) ?? 0) ?></h3>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
             <div class="card border-success">
                 <div class="card-body text-center">
                     <h6 class="text-success">Development Cost</h6>
-                    <h3 class="mb-0">₹<?= number_format(floatval(costs['development'] ?? 0) ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format(floatval($costs['development'] ?? 0) ?? 0) ?></h3>
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
             <div class="card border-warning">
                 <div class="card-body text-center">
                     <h6 class="text-warning">Amenities Cost</h6>
-                    <h3 class="mb-0">₹<?= number_format(floatval(costs['amenities'] ?? 0) ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format(floatval($costs['amenities'] ?? 0) ?? 0) ?></h3>
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
             <div class="card border-danger">
                 <div class="card-body text-center">
                     <h6 class="text-danger">Total Cost</h6>
-                    <h3 class="mb-0">₹<?= number_format(floatval(costs['total'] ?? 0) ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format(floatval($costs['total'] ?? 0) ?? 0) ?></h3>
                 </div>
             </div>
         </div>
@@ -151,7 +151,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                                 <?= ucfirst($cb['cost_type']) ?>
                             </span>
                         </td>
-                        <td class="text-end">₹<?= number_format(floatval(cb['total'] ?? 0)) ?></td>
+                        <td class="text-end">₹<?= number_format(floatval($cb['total'] ?? 0)) ?></td>
                         <td class="text-center"><?= $cb['entries'] ?></td>
                         <td class="text-end"><?= $costs['total'] > 0 ? round(($cb['total'] / $costs['total']) * 100, 1) : 0 ?>%</td>
                     </tr>
@@ -160,7 +160,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                 <tfoot class="table-dark">
                     <tr>
                         <th>Total</th>
-                        <th class="text-end">₹<?= number_format(floatval(costs['total'] ?? 0)) ?></th>
+                        <th class="text-end">₹<?= number_format(floatval($costs['total'] ?? 0)) ?></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -224,10 +224,10 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                             <?php foreach ($plots as $plot): ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td>
-                                <td><?= number_format(floatval(plot['area_sqft'] ?? 0) ?? 0) ?></td>
-                                <td>₹<?= number_format(floatval(plot['cost_price'] ?? 0) ?? 0) ?></td>
+                                <td><?= number_format(floatval($plot['area_sqft'] ?? 0) ?? 0) ?></td>
+                                <td>₹<?= number_format(floatval($plot['cost_price'] ?? 0) ?? 0) ?></td>
                                 <td class="text-success">
-                                    <strong>₹<?= number_format(floatval(plot['total_price'] ?? 0) ?? 0) ?></strong>
+                                    <strong>₹<?= number_format(floatval($plot['total_price'] ?? 0) ?? 0) ?></strong>
                                 </td>
                                 <td>
                                     <?php 

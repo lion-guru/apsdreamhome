@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Payment Controller
- * Handles Razorpay integration and callbacks
- */
-
 namespace App\Http\Controllers;
 
 use App\Core\Database\Database;
@@ -20,9 +15,6 @@ class PaymentController extends BaseController
         $this->razorpayService = new RazorpayService();
     }
 
-    /**
-     * Initialize payment for booking
-     */
     public function initPayment()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -37,7 +29,6 @@ class PaymentController extends BaseController
             exit;
         }
 
-        // Initialize payment
         $result = $this->razorpayService->processBookingPayment($bookingId, $userId, $amount);
 
         if (!$result['success']) {
@@ -46,13 +37,9 @@ class PaymentController extends BaseController
             exit;
         }
 
-        // Render checkout page
         $this->renderCheckout($result);
     }
 
-    /**
-     * Razorpay checkout page
-     */
     private function renderCheckout($paymentData)
     {
         $base = BASE_URL;
@@ -63,8 +50,7 @@ class PaymentController extends BaseController
         $userEmail = $_SESSION['user_email'] ?? '';
         $userPhone = $_SESSION['user_phone'] ?? '';
 
-        echo <<<HTML
-<!DOCTYPE html>
+        echo '<!DOCTYPE html>
 <html>
 <head>
     <title>Checkout | APS Dream Home</title>
@@ -78,12 +64,12 @@ class PaymentController extends BaseController
                 <div class="card shadow">
                     <div class="card-body text-center p-5">
                         <h3 class="mb-4">Complete Your Payment</h3>
-                        <h2 class="text-primary mb-4">₹{$amount}</h2>
+                        <h2 class="text-primary mb-4">₹' . $amount . '</h2>
                         <p class="text-muted mb-4">Click below to pay securely via Razorpay</p>
                         <button id="payBtn" class="btn btn-primary btn-lg">
                             <i class="fas fa-lock me-2"></i>Pay Now
                         </button>
-                        <a href="{$base}/bookings" class="btn btn-outline-secondary ms-2">Cancel</a>
+                        <a href="' . $base . '/bookings" class="btn btn-outline-secondary ms-2">Cancel</a>
                     </div>
                 </div>
             </div>
@@ -91,25 +77,24 @@ class PaymentController extends BaseController
     </div>
     
     <script>
-        document.getElementById('payBtn').onclick = function(e) {
+        document.getElementById(\'payBtn\').onclick = function(e) {
             var options = {
-                "key": "{$keyId}",
-                "amount": {$amount}00,
+                "key": "' . $keyId . '",
+                "amount": ' . $amount . '00,
                 "currency": "INR",
                 "name": "APS Dream Home",
                 "description": "Property Booking Payment",
-                "order_id": "{$orderId}",
+                "order_id": "' . $orderId . '",
                 "handler": function(response) {
-                    // Redirect to success handler
-                    window.location.href = "{$base}/payment/success?" + 
+                    window.location.href = "' . $base . '/payment/success?" + 
                         "payment_id=" + response.razorpay_payment_id +
                         "&order_id=" + response.razorpay_order_id +
                         "&signature=" + response.razorpay_signature;
                 },
                 "prefill": {
-                    "name": "{$_SESSION['user_name']}",
-                    "email": "{$_SESSION['user_email']}",
-                    "contact": "{$_SESSION['user_phone']}"
+                    "name": "' . htmlspecialchars($userName) . '",
+                    "email": "' . htmlspecialchars($userEmail) . '",
+                    "contact": "' . htmlspecialchars($userPhone) . '"
                 },
                 "theme": {
                     "color": "#4f46e5"
@@ -120,14 +105,10 @@ class PaymentController extends BaseController
         };
     </script>
 </body>
-</html>
-HTML;
+</html>';
         exit;
     }
 
-    /**
-     * Handle payment success callback
-     */
     public function success()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -142,7 +123,6 @@ HTML;
             exit;
         }
 
-        // Process payment success
         $result = $this->razorpayService->handlePaymentSuccess($paymentId, $orderId, $signature);
 
         if ($result['success']) {
@@ -155,16 +135,11 @@ HTML;
         exit;
     }
 
-    /**
-     * EMI Calculator page
-     */
     public function emiCalculator()
     {
         $base = BASE_URL;
-
-        // Calculate EMI for sample amounts
         $propertyPrice = $_GET['amount'] ?? 5000000;
-        $interestRate = 8.5; // 8.5% per annum
+        $interestRate = 8.5;
         $tenureYears = $_GET['years'] ?? 20;
 
         $monthlyRate = $interestRate / (12 * 100);
@@ -187,9 +162,6 @@ HTML;
         ]);
     }
 
-    /**
-     * Payment history
-     */
     public function history()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -213,6 +185,121 @@ HTML;
 
         $this->render('payments/history', [
             'payments' => $payments,
+            'base' => BASE_URL
+        ]);
+    }
+
+    // ========== Additional routes ==========
+
+    public function index()
+    {
+        $this->render('payments/index', [
+            'page_title' => 'Payments - APS Dream Home',
+            'base' => BASE_URL
+        ]);
+    }
+
+    public function initiate()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $amount = $_POST['amount'] ?? ($_GET['amount'] ?? 0);
+        $purpose = $_POST['purpose'] ?? ($_GET['purpose'] ?? 'booking');
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$amount || !$userId) {
+            $_SESSION['error'] = "Invalid payment request";
+            header('Location: ' . BASE_URL . '/payment');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['booking_id'])) {
+            $this->initPayment();
+            return;
+        }
+
+        $this->render('payments/initiate', [
+            'page_title' => 'Initiate Payment',
+            'amount' => $amount,
+            'purpose' => $purpose,
+            'base' => BASE_URL
+        ]);
+    }
+
+    public function process()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Direct processing not supported']);
+    }
+
+    public function failure()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $error = $_SESSION['error'] ?? 'Payment was cancelled or failed';
+        unset($_SESSION['error']);
+
+        $this->render('payments/failure', [
+            'page_title' => 'Payment Failed',
+            'error' => $error,
+            'base' => BASE_URL
+        ]);
+    }
+
+    public function webhook()
+    {
+        header('Content-Type: application/json');
+        $payload = file_get_contents('php://input');
+        $data = json_decode($payload, true);
+
+        $logFile = __DIR__ . '/../../storage/logs/payments.log';
+        file_put_contents($logFile, date('Y-m-d H:i:s') . " WEBHOOK: " . $payload . PHP_EOL, FILE_APPEND);
+
+        echo json_encode(['success' => true, 'message' => 'Webhook received']);
+    }
+
+    public function plans()
+    {
+        $this->render('payments/plans', [
+            'page_title' => 'Payment Plans - APS Dream Home',
+            'base' => BASE_URL
+        ]);
+    }
+
+    public function refund()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $paymentId = $_POST['payment_id'] ?? '';
+            $_SESSION['success'] = "Refund initiated for payment #$paymentId";
+            header('Location: ' . BASE_URL . '/payment/history');
+            exit;
+        }
+
+        $this->render('payments/refund', [
+            'page_title' => 'Request Refund',
+            'base' => BASE_URL
+        ]);
+    }
+
+    public function settings()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $_SESSION['success'] = "Payment settings updated";
+            header('Location: ' . BASE_URL . '/payment/settings');
+            exit;
+        }
+
+        $this->render('payments/settings', [
+            'page_title' => 'Payment Settings',
             'base' => BASE_URL
         ]);
     }

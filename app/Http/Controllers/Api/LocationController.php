@@ -25,7 +25,7 @@ class LocationController extends Controller
     {
         $search = $_GET['q'] ?? '';
         
-        $sql = "SELECT id, name, iso_code, phone_code FROM countries WHERE is_active = 1";
+        $sql = "SELECT id, name, iso_code, phone_code FROM countries";
         $params = [];
         
         if ($search) {
@@ -49,7 +49,7 @@ class LocationController extends Controller
         $countryId = intval($_GET['country_id'] ?? 1);
         $search = $_GET['q'] ?? '';
         
-        $sql = "SELECT id, name, code FROM states WHERE country_id = ? AND is_active = 1";
+        $sql = "SELECT id, name, code FROM states WHERE country_id = ?";
         $params = [$countryId];
         
         if ($search) {
@@ -77,7 +77,7 @@ class LocationController extends Controller
             $this->errorResponse('State ID required', 400);
         }
         
-        $sql = "SELECT id, name FROM districts WHERE state_id = ? AND is_active = 1";
+        $sql = "SELECT id, name FROM districts WHERE state_id = ?";
         $params = [$stateId];
         
         if ($search) {
@@ -110,7 +110,7 @@ class LocationController extends Controller
         $sql = "SELECT c.id, c.name, c.type, d.name as district_name 
                 FROM cities c 
                 LEFT JOIN districts d ON c.district_id = d.id
-                WHERE c.is_active = 1";
+                WHERE 1=1";
         $params = [];
         
         if ($districtId) {
@@ -158,7 +158,7 @@ class LocationController extends Controller
                 LEFT JOIN districts d ON c.district_id = d.id
                 LEFT JOIN states s ON d.state_id = s.id
                 LEFT JOIN countries co ON s.country_id = co.id
-                WHERE c.is_active = 1 AND c.name LIKE ?
+                WHERE c.name LIKE ?
                 ORDER BY c.name
                 LIMIT 50";
         

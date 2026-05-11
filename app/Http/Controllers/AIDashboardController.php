@@ -343,4 +343,11 @@ class AIDashboardController extends BaseController
         }
         exit;
     }
+
+    public function assistant()
+    {
+        $this->render('pages/ai-assistant', [
+            'page_title' => 'AI Assistant - APS Dream Home',
+        ]);
+    }
 }

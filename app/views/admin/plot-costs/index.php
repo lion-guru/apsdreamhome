@@ -63,9 +63,9 @@ $page_title = 'Plot Development Cost Calculator - APS Dream Home';
                                 </td>
                                 <td><?= htmlspecialchars($colony['location'] ?? 'N/A') ?></td>
                                 <td><span class="badge bg-info"><?= intval($colony['total_plots']) ?></span></td>
-                                <td><?= number_format(floatval(colony['total_area_sqft'] ?? 0) ?? 0) ?></td>
+                                <td><?= number_format(floatval($colony['total_area_sqft'] ?? 0) ?? 0) ?></td>
                                 <td>
-                                    <strong class="text-success">₹<?= number_format(floatval(colony['total_cost'] ?? 0) ?? 0) ?></strong>
+                                    <strong class="text-success">₹<?= number_format(floatval($colony['total_cost'] ?? 0) ?? 0) ?></strong>
                                 </td>
                                 <td>
                                     <?php 

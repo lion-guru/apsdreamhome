@@ -11,7 +11,7 @@
 require_once __DIR__ . '/init.php';
 require_once 'includes/functions/property_sales_mlm_integration.php';
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: ' . BASE_URL . '/login');
     exit();
 }
 
@@ -19,7 +19,7 @@ if (!isset($_SESSION['user_id'])) {
 $property_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($property_id === 0) {
-    header('Location: properties.php');
+    header('Location: ' . BASE_URL . '/properties');
     exit();
 }
 
@@ -29,7 +29,7 @@ $db = \App\Core\App::database();
 $property = $db->fetch("SELECT * FROM properties WHERE id = :id", ['id' => $property_id]);
 
 if (!$property) {
-    header('Location: properties.php');
+    header('Location: ' . BASE_URL . '/properties');
     exit();
 }
 
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::sanitize($_POST['submit_b
 
     if ($result['success']) {
         // Redirect to success page
-        header('Location: property_sale_success.php?id=' . $property_id);
+        header('Location: ' . BASE_URL . '/properties/success?id=' . $property_id);
         exit();
     } else {
         $error_message = $result['message'];

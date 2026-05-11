@@ -19,7 +19,7 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
   String _selectedLocation = 'all';
   double _minPrice = 0;
   double _maxPrice = 5000000;
-  final bool _isLoading = false;
+  bool _isLoading = false;
 
   final List<Map<String, dynamic>> _sampleProperties = [
     {
@@ -75,7 +75,7 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
   @override
   Widget build(BuildContext context) {
     final userAsync = ref.watch(authProvider);
-    final isLoggedIn = userAsync.valueOrNull != null;
+    final isLoggedIn = userAsync != null;
 
     return Scaffold(
       appBar: AppBar(
