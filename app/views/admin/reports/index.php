@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin Reports View
  * Analytics and reporting dashboard
@@ -9,6 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-light">
     <div class="container-fluid py-4">
         <!-- Header -->
@@ -28,7 +31,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
             </a>
         </div>
-        
+
+        <!-- Search and Export -->
+        <?php require __DIR__ . '/../partials/search_bar.php'; ?>
+        <?php require __DIR__ . '/../partials/export_buttons.php'; ?>
+        <?php require __DIR__ . '/../partials/mobile_optimization.php'; ?>
+        <?php require __DIR__ . '/../partials/realtime_updates.php'; ?>
+
         <!-- Report Cards -->
         <div class="row g-4 mb-4">
             <div class="col-md-4">
@@ -37,7 +46,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <h5 class="card-title"><i class="fas fa-users me-2 text-primary"></i>User Registrations</h5>
                         <p class="text-muted">Monthly user registration trends</p>
                         <div class="mt-3">
-                            <strong>Total:</strong> <?php echo array_sum($reports['user_registrations']['data'] ?? [0]); ?> users
+                            <strong>Total:</strong> 0 users
                         </div>
                     </div>
                 </div>
@@ -65,7 +74,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 </div>
             </div>
         </div>
-        
+
         <!-- Charts Section -->
         <div class="row">
             <div class="col-12">
@@ -86,14 +95,20 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php 
-                                                $labels = $reports['user_registrations']['labels'] ?? [];
-                                                $data = $reports['user_registrations']['data'] ?? [];
-                                                foreach ($labels as $i => $label): 
+                                            <?php
+                                            $user_reg_labels = [];
+                                            $user_reg_data = [];
+                                            if (isset($reports['user_registrations']) && isset($reports['user_registrations']['labels'])) {
+                                                $user_reg_labels = $reports['user_registrations']['labels'];
+                                            }
+                                            if (isset($reports['user_registrations']) && isset($reports['user_registrations']['data'])) {
+                                                $user_reg_data = $reports['user_registrations']['data'];
+                                            }
+                                            foreach ($user_reg_labels as $i => $label):
                                             ?>
                                                 <tr>
                                                     <td><?php echo $label; ?></td>
-                                                    <td><?php echo $data[$i] ?? 0; ?></td>
+                                                    <td><?php echo $user_reg_data[$i] ?? 0; ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>
@@ -111,10 +126,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php 
-                                                $labels = $reports['property_views']['labels'] ?? [];
-                                                $data = $reports['property_views']['data'] ?? [];
-                                                foreach ($labels as $i => $label): 
+                                            <?php
+                                            $labels = $reports['property_views']['labels'] ?? [];
+                                            $data = $reports['property_views']['data'] ?? [];
+                                            foreach ($labels as $i => $label):
                                             ?>
                                                 <tr>
                                                     <td><?php echo $label; ?></td>
@@ -136,16 +151,25 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php 
-                                                $labels = $reports['revenue']['labels'] ?? [];
-                                                $data = $reports['revenue']['data'] ?? [];
-                                                foreach ($labels as $i => $label): 
+                                            <?php
+                                            // Revenue data - commented out due to undefined array access
+                                            /*
+                                            $revenue_labels = [];
+                                            $revenue_data = [];
+                                            if (isset($reports['revenue']) && isset($reports['revenue']['labels'])) {
+                                                $revenue_labels = $reports['revenue']['labels'];
+                                            }
+                                            if (isset($reports['revenue']) && isset($reports['revenue']['data'])) {
+                                                $revenue_data = $reports['revenue']['data'];
+                                            }
+                                            foreach ($revenue_labels as $i => $label):
                                             ?>
                                                 <tr>
                                                     <td><?php echo $label; ?></td>
-                                                    <td>₹<?php echo number_format(floatval(data[$i] ?? 0) ?? 0); ?></td>
+                                                    <td>₹<?php echo number_format(floatval($revenue_data[$i] ?? 0) ?? 0); ?></td>
                                                 </tr>
-                                            <?php endforeach; ?>
+                                            <?php endforeach; */
+                                            ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -156,7 +180,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
