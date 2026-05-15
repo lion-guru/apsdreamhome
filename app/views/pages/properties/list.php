@@ -31,7 +31,7 @@ function safeExecute($callback, $errorMessage = 'Operation failed')
  * APS Dream Homes - Property Listing for Individual Sellers
  */
 
-session_start();
+@session_start();
 // FIXED: Removed missing include - file doesn't exist
 // require_once __DIR__ . '/../../../includes/config.php';
 

@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../includes/header.php'; 
+<?php include APP_PATH . '/views/admin/layouts/header.php'; 
 
 $calculations = $calculations ?? [];
 $properties = $properties ?? [];
@@ -252,4 +252,4 @@ function fillPropertyDetails() {
 }
 </script>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

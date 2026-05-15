@@ -25,7 +25,7 @@ class UnifiedAuthController extends BaseController
      */
     public function login()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // Redirect if already logged in
         if (isset($_SESSION['user_id'])) {
@@ -54,7 +54,7 @@ class UnifiedAuthController extends BaseController
      */
     public function authenticate()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $email = trim($_POST['identity'] ?? $_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
@@ -101,7 +101,7 @@ class UnifiedAuthController extends BaseController
      */
     public function register()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $csrf_token = $this->getCsrfToken();
         $errors = $_SESSION['errors'] ?? [];
@@ -121,7 +121,7 @@ class UnifiedAuthController extends BaseController
      */
     public function handleRegister()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
@@ -282,7 +282,7 @@ class UnifiedAuthController extends BaseController
      */
     public function logout()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         session_destroy();
         header('Location: ' . BASE_URL . '/login');
         exit;

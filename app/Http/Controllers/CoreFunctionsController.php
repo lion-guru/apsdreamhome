@@ -601,7 +601,7 @@ class CoreFunctionsController extends BaseController
     public function initAdminSession()
     {
         try {
-            session_start();
+            @session_start();
 
             $_SESSION['admin_initialized'] = true;
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));

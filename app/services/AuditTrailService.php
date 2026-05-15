@@ -24,67 +24,70 @@ class AuditTrailService
      */
     private function ensureTablesExist(): void
     {
-        // Main audit log table
-        $sql = "CREATE TABLE IF NOT EXISTS audit_log (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            user_id INT NULL,
-            user_type ENUM('admin', 'employee', 'associate', 'customer', 'system') DEFAULT 'system',
-            user_ip VARCHAR(45) NULL,
-            user_agent VARCHAR(500) NULL,
-            session_id VARCHAR(64) NULL,
-            action VARCHAR(100) NOT NULL,
-            entity_type VARCHAR(50) NULL,
-            entity_id INT NULL,
-            old_values JSON NULL,
-            new_values JSON NULL,
-            description TEXT NULL,
-            severity ENUM('info', 'warning', 'error', 'critical') DEFAULT 'info',
-            status ENUM('success', 'failed') DEFAULT 'success',
-            error_message TEXT NULL,
-            request_url VARCHAR(500) NULL,
-            request_method VARCHAR(10) NULL,
-            execution_time_ms INT NULL,
-            INDEX idx_timestamp (timestamp),
-            INDEX idx_user (user_id, user_type),
-            INDEX idx_action (action),
-            INDEX idx_entity (entity_type, entity_id),
-            INDEX idx_severity (severity)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-        
-        $this->database->getConnection()->exec($sql);
-        
-        // Audit log archive table (older records)
-        $sql2 = "CREATE TABLE IF NOT EXISTS audit_log_archive (
-            id BIGINT PRIMARY KEY,
-            timestamp TIMESTAMP NULL,
-            user_id INT NULL,
-            user_type VARCHAR(20) NULL,
-            action VARCHAR(100) NULL,
-            entity_type VARCHAR(50) NULL,
-            entity_id INT NULL,
-            description TEXT NULL,
-            archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_archived_at (archived_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-        
-        $this->database->getConnection()->exec($sql2);
-        
-        // Data change log (for sensitive data)
-        $sql3 = "CREATE TABLE IF NOT EXISTS data_change_log (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            audit_log_id BIGINT NOT NULL,
-            table_name VARCHAR(50) NOT NULL,
-            column_name VARCHAR(50) NOT NULL,
-            old_value TEXT NULL,
-            new_value TEXT NULL,
-            is_sensitive TINYINT(1) DEFAULT 0,
-            INDEX idx_audit_log (audit_log_id),
-            INDEX idx_table (table_name),
-            FOREIGN KEY (audit_log_id) REFERENCES audit_log(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-        
-        $this->database->getConnection()->exec($sql3);
+        try {
+            // Main audit log table
+            $sql = "CREATE TABLE IF NOT EXISTS audit_log (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                user_id INT NULL,
+                user_type VARCHAR(20) DEFAULT 'system',
+                user_ip VARCHAR(45) NULL,
+                user_agent VARCHAR(500) NULL,
+                session_id VARCHAR(64) NULL,
+                action VARCHAR(100) NOT NULL,
+                entity_type VARCHAR(50) NULL,
+                entity_id INT NULL,
+                old_values JSON NULL,
+                new_values JSON NULL,
+                description TEXT NULL,
+                severity VARCHAR(20) DEFAULT 'info',
+                status VARCHAR(20) DEFAULT 'success',
+                error_message TEXT NULL,
+                request_url VARCHAR(500) NULL,
+                request_method VARCHAR(10) NULL,
+                execution_time_ms INT NULL,
+                INDEX idx_timestamp (timestamp),
+                INDEX idx_user (user_id, user_type),
+                INDEX idx_action (action),
+                INDEX idx_entity (entity_type, entity_id),
+                INDEX idx_severity (severity)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+            
+            $this->database->getConnection()->exec($sql);
+            
+            // Audit log archive table (older records)
+            $sql2 = "CREATE TABLE IF NOT EXISTS audit_log_archive (
+                id BIGINT PRIMARY KEY,
+                timestamp TIMESTAMP NULL,
+                user_id INT NULL,
+                user_type VARCHAR(20) NULL,
+                action VARCHAR(100) NULL,
+                entity_type VARCHAR(50) NULL,
+                entity_id INT NULL,
+                description TEXT NULL,
+                archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_archived_at (archived_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+            
+            $this->database->getConnection()->exec($sql2);
+            
+            // Data change log (for sensitive data)
+            $sql3 = "CREATE TABLE IF NOT EXISTS data_change_log (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                audit_log_id BIGINT NOT NULL,
+                table_name VARCHAR(50) NOT NULL,
+                column_name VARCHAR(50) NOT NULL,
+                old_value TEXT NULL,
+                new_value TEXT NULL,
+                is_sensitive TINYINT(1) DEFAULT 0,
+                INDEX idx_audit_log (audit_log_id),
+                INDEX idx_table (table_name)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+            
+            $this->database->getConnection()->exec($sql3);
+        } catch (\Exception $e) {
+            error_log("AuditTrailService table creation error (non-critical): " . $e->getMessage());
+        }
     }
     
     /**

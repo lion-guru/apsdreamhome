@@ -68,6 +68,6 @@ class PropertyController extends BaseController
             'page_description' => 'View detailed information about this property including features, amenities, and contact details.'
         ];
 
-        return $this->render('properties/show', $data, 'layouts/base');
+        return $this->render('properties/detail', $data);
     }
 }

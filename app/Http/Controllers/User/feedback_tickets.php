@@ -1,5 +1,5 @@
 <?php
-session_start();
+@session_start();
 include '../config.php';
 if (!isset($_SESSION['auser'])) { $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; header('Location: ' . $base . '/login'); exit(); }
 $user_id = $_SESSION['auser'];

@@ -88,7 +88,7 @@
                         <i class="fas fa-phone me-2 text-primary"></i>
                         <a href="tel:<?php echo htmlspecialchars($property['phone'] ?? ''); ?>"><?php echo htmlspecialchars($property['phone'] ?? ''); ?></a>
                     </p>
-                    <?php if ($$property['email']): ?>
+                    <?php if (!empty($property['email'])): ?>
                         <p class="mb-0">
                             <i class="fas fa-envelope me-2 text-primary"></i>
                             <a href="mailto:<?php echo htmlspecialchars($property['email'] ?? ''); ?>"><?php echo htmlspecialchars($property['email'] ?? ''); ?></a>

@@ -9,7 +9,7 @@
     "host": "localhost",
     "user": "root",
     "name": "apsdreamhome",
-    "port": "3306",
+    "port": "3307",
     "charset": "utf8mb4",
     "collation": "utf8mb4_unicode_ci"
   },

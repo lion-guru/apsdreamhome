@@ -69,7 +69,7 @@ class AdminBaseController extends BaseController
     protected function getCurrentUser(): ?array
     {
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
         
         $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null;
@@ -114,7 +114,7 @@ class AdminBaseController extends BaseController
     protected function getCurrentUserRole(): string
     {
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
         
         // Try session first

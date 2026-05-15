@@ -24,7 +24,7 @@ class LeadFollowUpController extends AdminController
      */
     public function sendFollowUps()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // Check if user is admin
         if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
@@ -56,7 +56,7 @@ class LeadFollowUpController extends AdminController
      */
     public function getFollowUpStats()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // Check if user is admin
         if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {

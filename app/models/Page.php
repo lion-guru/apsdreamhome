@@ -17,7 +17,7 @@ class Page extends Model {
             'content' => $data['content'],
             'layout' => $data['layout'] ?? 'default',
             'meta_description' => $data['meta_description'] ?? '',
-            'meta_PLACEHOLDER_SECRET_VALUEstatus' => $data['status'] ?? 'draft',
+            'meta_status' => $data['status'] ?? 'draft',
             'created_by' => $data['user_id']
         ]);
     }
@@ -30,7 +30,7 @@ class Page extends Model {
                 'content' => $data['content'],
                 'layout' => $data['layout'],
                 'meta_description' => $data['meta_description'],
-                'meta_PLACEHOLDER_SECRET_VALUEstatus' => $data['status'],
+                'meta_status' => $data['status'],
                 'updated_by' => $data['user_id']
             ]);
     }

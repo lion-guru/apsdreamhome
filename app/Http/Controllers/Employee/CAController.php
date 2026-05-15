@@ -28,7 +28,7 @@ class CAController extends BaseController
     private function initializeEmployeeSession()
     {
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
 
         $this->employeeId = $_SESSION['employee_id'] ?? null;

@@ -16,7 +16,7 @@ class AdminAuthController extends BaseController
 {
     public function adminLogin()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // Test-only shortcut: allow auto-login to admin dashboard when test_login=1
         if (isset($_GET['test_login']) && $_GET['test_login'] == '1') {
@@ -79,11 +79,11 @@ class AdminAuthController extends BaseController
 
     public function authenticateAdmin()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // TEST MODE: auto login for admin to enable end-to-end testing without CAPTCHA/DB dependencies
         if (getenv('TEST_MODE') === 'true') {
-            if (session_status() === PHP_SESSION_NONE) session_start();
+            @session_start();
             // Fetch actual admin from database
             $db = Database::getInstance();
             $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' LIMIT 1");
@@ -161,7 +161,7 @@ class AdminAuthController extends BaseController
 
     public function logout()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         session_destroy();
         header('Location: ' . BASE_URL . '/admin/login');
         exit;

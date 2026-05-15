@@ -33,7 +33,7 @@ return [
         'external_siem' => [
             'enabled' => false,
             'endpoint' => '',
-            'PLACEHOLDER_SECRET_VALUElog_levels' => ['emergency', 'alert', 'critical']
+            'log_levels' => ['emergency', 'alert', 'critical']
         ]
     ],
 
@@ -116,7 +116,7 @@ return [
                 'host' => 'smtp.example.com',
                 'port' => 587,
                 'username' => '',
-                'PLACEHOLDER_SECRET_VALUEencryption' => 'tls'
+                'encryption' => 'tls'
             ]
         ],
         'sms' => [

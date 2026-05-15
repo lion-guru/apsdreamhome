@@ -3,7 +3,7 @@
  * Admin Layout - Full Dashboard with Sidebar Navigation
  */
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) @session_start();
 if (!isset($_SESSION['admin_id'])) {
     header('Location: ' . BASE_URL . '/admin/login');
     exit;
@@ -19,8 +19,8 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?> | APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -184,7 +184,7 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('toggleSidebar')?.addEventListener('click', function() { document.getElementById('sidebar').classList.toggle('show'); });
         document.addEventListener('click', function(e) {

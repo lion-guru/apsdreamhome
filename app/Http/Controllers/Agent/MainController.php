@@ -95,7 +95,7 @@ class AgentController extends BaseController
                 exit();
             }
         }
-        $this->render('auth/login', ['role' => 'agent']);
+        $this->render('auth/agent_login', ['role' => 'agent']);
     }
 
     public function authenticate()

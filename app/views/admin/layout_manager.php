@@ -1,6 +1,6 @@
 <?php
 // Admin Layout Management Interface
-session_start();
+@@session_start();
 
 // Check if admin is logged in
 if (!isset($_SESSION['admin_id'])) {

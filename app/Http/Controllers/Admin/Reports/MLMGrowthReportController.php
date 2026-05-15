@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Reports;
 
-use App\Core\Controller;
 use App\Core\Database\Database;
 
 /**
  * MLM Growth Report Controller
  * Network growth analytics and visualization
  */
-class MLMGrowthReportController extends Controller
+class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminController
 {
     private $database;
     
@@ -24,7 +23,7 @@ class MLMGrowthReportController extends Controller
      */
     public function index(): void
     {
-        $this->requireAuth();
+        $this->requireLogin();
         
         $reportData = $this->generateGrowthReport();
         
@@ -196,7 +195,7 @@ class MLMGrowthReportController extends Controller
      */
     public function exportPdf(): void
     {
-        $this->requireAuth();
+        $this->requireLogin();
         
         $reportData = $this->generateGrowthReport();
         
@@ -211,7 +210,7 @@ class MLMGrowthReportController extends Controller
      */
     public function apiChartData(): void
     {
-        $this->requireAuth();
+        $this->requireLogin();
         
         $reportData = $this->generateGrowthReport();
         

@@ -484,6 +484,14 @@ class NewsController extends AdminController
     }
 
     /**
+     * Delete a news article (alias for destroy)
+     */
+    public function delete($id)
+    {
+        return $this->destroy($id);
+    }
+
+    /**
      * Get news statistics
      */
     public function getStats()

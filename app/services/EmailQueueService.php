@@ -78,50 +78,47 @@ class EmailQueueService
      */
     private function seedTemplates(): void
     {
+        try {
+            // Check if template_code column exists (schema may differ from older migration)
+            $colCheck = $this->database->getConnection()->query(
+                "SHOW COLUMNS FROM email_templates LIKE 'template_code'"
+            );
+            if (!$colCheck || !$colCheck->fetch()) {
+                error_log("EmailQueueService: email_templates table missing 'template_code' column — skipping seed");
+                return;
+            }
+        } catch (\Exception $e) {
+            error_log("EmailQueueService: cannot check email_templates schema: " . $e->getMessage());
+            return;
+        }
+        
         $templates = [
-            [
-                'welcome_email',
-                'Welcome Email',
-                'Welcome to APS Dream Home!',
-                '<h1>Welcome {{name}}!</h1><p>Thank you for joining APS Dream Home.</p>',
-                'Welcome {{name}}! Thank you for joining APS Dream Home.'
-            ],
-            [
-                'booking_confirmation',
-                'Booking Confirmation',
-                'Your Booking is Confirmed - {{booking_id}}',
-                '<h1>Booking Confirmed</h1><p>Dear {{customer_name}}, your booking for {{property_name}} has been confirmed.</p>',
-                'Dear {{customer_name}}, your booking for {{property_name}} has been confirmed. Booking ID: {{booking_id}}'
-            ],
-            [
-                'payment_receipt',
-                'Payment Receipt',
-                'Payment Receipt - {{receipt_number}}',
-                '<h1>Payment Receipt</h1><p>Amount: ₹{{amount}}</p><p>Thank you for your payment!</p>',
-                'Payment Receipt - Amount: ₹{{amount}}. Thank you!'
-            ],
-            [
-                'lead_followup',
-                'Lead Follow-up',
-                'Following up on your property inquiry',
-                '<p>Dear {{lead_name}}, we are following up on your interest in {{property_type}}.</p>',
-                'Dear {{lead_name}}, following up on your property inquiry.'
-            ],
-            [
-                'site_visit_reminder',
-                'Site Visit Reminder',
-                'Reminder: Site Visit Tomorrow',
-                '<h1>Site Visit Reminder</h1><p>Your site visit for {{property_name}} is scheduled for {{visit_date}}.</p>',
-                'Reminder: Your site visit for {{property_name}} is on {{visit_date}}.'
-            ]
+            ['welcome_email', 'Welcome Email', 'Welcome to APS Dream Home!',
+             '<h1>Welcome {{name}}!</h1><p>Thank you for joining APS Dream Home.</p>',
+             'Welcome {{name}}! Thank you for joining APS Dream Home.'],
+            ['booking_confirmation', 'Booking Confirmation', 'Your Booking is Confirmed - {{booking_id}}',
+             '<h1>Booking Confirmed</h1><p>Dear {{customer_name}}, your booking for {{property_name}} has been confirmed.</p>',
+             'Dear {{customer_name}}, your booking for {{property_name}} has been confirmed. Booking ID: {{booking_id}}'],
+            ['payment_receipt', 'Payment Receipt', 'Payment Receipt - {{receipt_number}}',
+             '<h1>Payment Receipt</h1><p>Amount: ₹{{amount}}</p><p>Thank you for your payment!</p>',
+             'Payment Receipt - Amount: ₹{{amount}}. Thank you!'],
+            ['lead_followup', 'Lead Follow-up', 'Following up on your property inquiry',
+             '<p>Dear {{lead_name}}, we are following up on your interest in {{property_type}}.</p>',
+             'Dear {{lead_name}}, following up on your property inquiry.'],
+            ['site_visit_reminder', 'Site Visit Reminder', 'Reminder: Site Visit Tomorrow',
+             '<h1>Site Visit Reminder</h1><p>Your site visit for {{property_name}} is scheduled for {{visit_date}}.</p>',
+             'Reminder: Your site visit for {{property_name}} is on {{visit_date}}.'],
         ];
         
-        $stmt = $this->database->prepare("INSERT IGNORE INTO email_templates 
-            (template_code, template_name, subject, body_html, body_text) 
-            VALUES (?, ?, ?, ?, ?)");
-        
-        foreach ($templates as $template) {
-            $stmt->execute($template);
+        try {
+            $stmt = $this->database->prepare("INSERT IGNORE INTO email_templates 
+                (template_code, template_name, subject, body_html, body_text) 
+                VALUES (?, ?, ?, ?, ?)");
+            foreach ($templates as $template) {
+                $stmt->execute($template);
+            }
+        } catch (\Exception $e) {
+            error_log("EmailQueueService: seed error (non-critical): " . $e->getMessage());
         }
     }
     

@@ -564,17 +564,17 @@ class LandController extends AdminController
             $stats['total_records'] = (int)($result['total'] ?? 0);
 
             // Total land area
-            $sql = "SELECT COALESCE(SUM(total_area), 0) as total FROM land_records";
+            $sql = "SELECT COALESCE(SUM(area), 0) as total FROM land_records";
             $result = $this->db->fetchOne($sql);
             $stats['total_area'] = (float)($result['total'] ?? 0);
 
-            // Land by status
-            $sql = "SELECT status, COUNT(*) as count FROM land_records GROUP BY status";
-            $stats['by_status'] = $this->db->fetchAll($sql) ?: [];
+            // Land by owner
+            $sql = "SELECT owner_name, COUNT(*) as count FROM land_records GROUP BY owner_name";
+            $stats['by_owner'] = $this->db->fetchAll($sql) ?: [];
 
-            // Land by type
-            $sql = "SELECT land_type, COUNT(*) as count FROM land_records GROUP BY land_type";
-            $stats['by_type'] = $this->db->fetchAll($sql) ?: [];
+            // Land by location
+            $sql = "SELECT location, COUNT(*) as count FROM land_records GROUP BY location";
+            $stats['by_location'] = $this->db->fetchAll($sql) ?: [];
 
             return $this->jsonResponse([
                 'success' => true,

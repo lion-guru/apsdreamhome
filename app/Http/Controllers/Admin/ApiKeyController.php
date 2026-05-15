@@ -7,7 +7,7 @@ class ApiKeyController extends AdminController
 {
     private function checkAdmin()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
             $this->redirect('/admin/login');
         }

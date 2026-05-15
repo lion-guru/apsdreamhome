@@ -24,7 +24,7 @@ class CMDashboardController
     {
         // Start session if not started
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
 
         // Check admin authentication

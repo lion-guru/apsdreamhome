@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../includes/header.php'; 
+<?php include APP_PATH . '/views/admin/layouts/header.php'; 
 
 // Initialize default values if not set
 $health = $health ?? [
@@ -95,48 +95,48 @@ $tasks = $tasks ?? [];
                         <?php foreach ($tasks as $task): ?>
                         <tr>
                             <td>
-                                <?php if ($task['is_active']): ?>
+                                <?php if ($task['is_active'] ?? false): ?>
                                     <span class="badge bg-success">Active</span>
                                 <?php else: ?>
                                     <span class="badge bg-secondary">Inactive</span>
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <strong><?= htmlspecialchars($task['name']) ?></strong>
+                                <strong><?= htmlspecialchars($task['name'] ?? 'Untitled') ?></strong>
                                 <br><small class="text-muted"><?= htmlspecialchars($task['description'] ?? '') ?></small>
                             </td>
-                            <td><code><?= htmlspecialchars($task['schedule']) ?></code></td>
+                            <td><code><?= htmlspecialchars($task['schedule'] ?? 'N/A') ?></code></td>
                             <td>
-                                <?= $task['last_run_at'] ? date('Y-m-d H:i', strtotime($task['last_run_at'])) : 'Never' ?>
+                                <?= ($task['last_run_at'] ?? null) ? date('Y-m-d H:i', strtotime($task['last_run_at'])) : 'Never' ?>
                             </td>
                             <td>
-                                <?= $task['next_run_at'] ? date('Y-m-d H:i', strtotime($task['next_run_at'])) : 'Not scheduled' ?>
+                                <?= ($task['next_run_at'] ?? null) ? date('Y-m-d H:i', strtotime($task['next_run_at'])) : 'Not scheduled' ?>
                             </td>
-                            <td><?= $task['run_count'] ?></td>
+                            <td><?= $task['run_count'] ?? 0 ?></td>
                             <td>
-                                <?php if ($task['last_status'] === 'success'): ?>
+                                <?php if (($task['last_status'] ?? '') === 'success'): ?>
                                     <span class="badge bg-success">Success</span>
-                                <?php elseif ($task['last_status'] === 'failed'): ?>
+                                <?php elseif (($task['last_status'] ?? '') === 'failed'): ?>
                                     <span class="badge bg-danger">Failed</span>
-                                <?php elseif ($task['last_status'] === 'running'): ?>
+                                <?php elseif (($task['last_status'] ?? '') === 'running'): ?>
                                     <span class="badge bg-warning">Running</span>
                                 <?php else: ?>
                                     <span class="badge bg-secondary">-</span>
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <a href="/admin/scheduler/task/<?= $task['id'] ?>" class="btn btn-sm btn-info">
+                                <a href="/admin/scheduler/task/<?= $task['id'] ?? 0 ?>" class="btn btn-sm btn-info">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="/admin/scheduler/task/<?= $task['id'] ?>/edit" class="btn btn-sm btn-primary">
+                                <a href="/admin/scheduler/task/<?= $task['id'] ?? 0 ?>/edit" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="/admin/scheduler/task/<?= $task['id'] ?>/run" method="POST" style="display: inline;">
+                                <form action="/admin/scheduler/task/<?= $task['id'] ?? 0 ?>/run" method="POST" style="display: inline;">
                                     <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Run this task now?')">
                                         <i class="fas fa-play"></i>
                                     </button>
                                 </form>
-                                <?php if (!$task['is_system'] ?? true): ?>
+                                <?php if (!($task['is_system'] ?? true)): ?>
                                 <form action="/admin/scheduler/task/<?= $task['id'] ?>/delete" method="POST" style="display: inline;">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this task?')">
                                         <i class="fas fa-trash"></i>
@@ -179,4 +179,4 @@ $(document).ready(function() {
 });
 </script>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

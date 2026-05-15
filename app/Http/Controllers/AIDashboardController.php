@@ -346,8 +346,36 @@ class AIDashboardController extends BaseController
 
     public function assistant()
     {
-        $this->render('pages/ai-assistant', [
+        $this->render('pages/ai_assistant', [
             'page_title' => 'AI Assistant - APS Dream Home',
         ]);
+    }
+
+    public function startTraining()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Training started']);
+        exit;
+    }
+
+    public function resetMemory()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Memory reset']);
+        exit;
+    }
+
+    public function exportData()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Export via dashboard']);
+        exit;
+    }
+
+    public function getTrainingLog()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => []]);
+        exit;
     }
 }

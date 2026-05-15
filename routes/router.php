@@ -24,6 +24,15 @@ class Router
         return $this->addRoute('POST', $path, $handler);
     }
 
+    /**
+     * Register a route that matches any HTTP method (GET or POST)
+     */
+    public function any($path, $handler)
+    {
+        $this->addRoute('GET', $path, $handler);
+        return $this->addRoute('POST', $path, $handler);
+    }
+
     public function put($path, $handler)
     {
         return $this->addRoute('PUT', $path, $handler);
@@ -110,14 +119,7 @@ class Router
 
         // Step 7: Handle no match
         if ($routeData === null) {
-            http_response_code(404);
-            echo '<!DOCTYPE html><html><head><title>404 - Not Found</title>';
-            echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">';
-            echo '</head><body class="bg-light d-flex align-items-center justify-content-center" style="min-height:100vh">';
-            echo '<div class="text-center"><h1 class="display-1 text-muted">404</h1>';
-            echo '<p class="lead">Page not found</p>';
-            echo '<p class="text-muted">' . htmlspecialchars($method . ' ' . $uri) . '</p>';
-            echo '<a href="/" class="btn btn-primary mt-3">Go Home</a></div></body></html>';
+            $this->show404($method, $uri);
             return;
         }
 
@@ -182,10 +184,6 @@ class Router
                     $controllerFile = __DIR__ . '/../app/Http/Controllers/' . str_replace('\\', '/', $controller) . '.php';
                 }
 
-                // Debug logging
-                error_log("Router: Looking for controller at: $controllerFile");
-                error_log("Router: Controller class: $controllerClass");
-                
                 if (file_exists($controllerFile)) {
                     try {
                         // Load base controllers first
@@ -204,28 +202,52 @@ class Router
                         }
                     } catch (\Exception $e) {
                         error_log("Controller error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
-                        http_response_code(500);
-                        echo '<h1>500 - Server Error</h1>';
-                        if (ini_get('display_errors')) {
-                            echo '<pre>' . htmlspecialchars($e->getMessage()) . "\n" . htmlspecialchars($e->getTraceAsString()) . '</pre>';
-                        }
+                        $this->show500($e->getMessage() . "\n" . $e->getTraceAsString());
                     } catch (\Error $e) {
                         error_log("Controller fatal: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
-                        http_response_code(500);
-                        echo '<h1>500 - Fatal Error</h1>';
-                        if (ini_get('display_errors')) {
-                            echo '<pre>' . htmlspecialchars($e->getMessage()) . "\n" . htmlspecialchars($e->getTraceAsString()) . '</pre>';
-                        }
+                        $this->show500($e->getMessage() . "\n" . $e->getTraceAsString());
                     }
                 } else {
                     error_log("Controller file not found: $controllerFile");
-                    http_response_code(500);
-                    echo '<h1>500 - Controller Not Found</h1>';
-                    echo '<p>' . htmlspecialchars($controllerClass) . '</p>';
+                    $this->show500("Controller not found: " . $controllerClass);
                 }
             } else {
                 call_user_func($handler);
             }
+        }
+    }
+
+    /**
+     * Render 404 error page using the template view
+     */
+    private function show404($method, $uri)
+    {
+        http_response_code(404);
+        $errorView = __DIR__ . '/../app/views/errors/404.php';
+        if (file_exists($errorView)) {
+            include $errorView;
+        } else {
+            echo '<html><head><title>404</title></head><body style="font-family:sans-serif;text-align:center;padding:4rem">';
+            echo '<h1>404</h1><p>' . htmlspecialchars($method . ' ' . $uri) . '</p></body></html>';
+        }
+    }
+
+    /**
+     * Render 500 error page using the template view
+     */
+    private function show500($error = '')
+    {
+        http_response_code(500);
+        $errorView = __DIR__ . '/../app/views/errors/500.php';
+        if (file_exists($errorView)) {
+            include $errorView;
+        } else {
+            echo '<html><head><title>500</title></head><body style="font-family:sans-serif;text-align:center;padding:4rem">';
+            echo '<h1>500 - Server Error</h1>';
+            if (ini_get('display_errors')) {
+                echo '<pre>' . htmlspecialchars($error) . '</pre>';
+            }
+            echo '</body></html>';
         }
     }
 

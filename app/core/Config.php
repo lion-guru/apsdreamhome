@@ -89,7 +89,7 @@ if (!function_exists('email_config')) {
             'smtp_host' => env('MAIL_HOST', 'smtp.gmail.com'),
             'smtp_port' => env('MAIL_PORT', 587),
             'smtp_username' => env('MAIL_USERNAME', ''),
-            'smtp_PLACEHOLDER_SECRET_VALUEsmtp_encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'smtp_encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'from_address' => env('MAIL_FROM_ADDRESS', 'noreply@apsdreamhome.com'),
             'from_name' => env('MAIL_FROM_NAME', 'APS Dream Home'),
             'admin_email' => env('ADMIN_EMAIL', 'admin@apsdreamhome.com')
@@ -105,7 +105,7 @@ if (!function_exists('db_config')) {
             'port' => env('DB_PORT', 3306),
             'database' => env('DB_DATABASE', 'apsdreamhome'),
             'username' => env('DB_USERNAME', 'root'),
-            'PLACEHOLDER_SECRET_VALUEcharset' => 'utf8mb4',
+            'charset' => 'utf8mb4',
             'options' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

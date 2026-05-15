@@ -13,7 +13,7 @@ class UserController extends BaseController
 
     private function requireCustomerLogin()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // Check if user is logged in (user_id exists and user_type is customer or empty)
         if (!isset($_SESSION['user_id'])) {
@@ -66,7 +66,8 @@ class UserController extends BaseController
             'loginSuccess' => isset($_GET['login']),
         ];
 
-        $this->render('pages/user_dashboard', $data, 'layouts/customer');
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user_dashboard', $data);
     }
 
     public function myProperties()
@@ -85,7 +86,8 @@ class UserController extends BaseController
             'properties' => $properties,
         ];
 
-        $this->render('pages/user_properties', $data, 'layouts/customer');
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user_properties', $data);
     }
 
     public function myInquiries()
@@ -104,7 +106,8 @@ class UserController extends BaseController
             'inquiries' => $inquiries,
         ];
 
-        $this->render('pages/user_inquiries', $data, 'layouts/customer');
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user_inquiries', $data);
     }
 
     public function profile()
@@ -168,7 +171,7 @@ class UserController extends BaseController
      */
     public function bankDetails()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['flash_error'] = 'Please login first';
@@ -176,7 +179,8 @@ class UserController extends BaseController
             exit;
         }
 
-        $this->render('pages/user_bank_details', [], 'layouts/customer');
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user_bank_details', []);
     }
 
     /**
@@ -184,7 +188,7 @@ class UserController extends BaseController
      */
     public function saveBankDetails()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '/login');

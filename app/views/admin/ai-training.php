@@ -5,11 +5,11 @@
  * Admin can train the chatbot with new Q&A patterns
  */
 
-session_start();
+@@session_start();
 
 // Check admin login
 if (!isset($_SESSION['admin_id'])) {
-    header('Location: /admin/login');
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/') . 'admin/login');
     exit;
 }
 

@@ -26,7 +26,7 @@ class AdminProfileController extends AdminController
     {
         // Start session if not started
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
 
         // Get current user from session

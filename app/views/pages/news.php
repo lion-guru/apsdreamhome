@@ -18,7 +18,11 @@
 }
 </style>
 <?php
+
+$pagination = $pagination ?? []; $categories = $categories ?? [];
 // app/views/pages/news.php
+$pagination = $pagination ?? ['current_category' => 'all', 'current_page' => 1, 'total_pages' => 1];
+$categories = $categories ?? [];
 ?>
 
 <!-- Hero Section -->

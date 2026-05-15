@@ -592,6 +592,116 @@ class LeadScoringController extends AdminController
     }
 
     /**
+     * Auto-assign leads based on scores
+     */
+    public function autoAssign()
+    {
+        try {
+            // Get unscored or high-scoring unassigned leads
+            $sql = "SELECT l.id, l.name, COALESCE(ls.score, 0) as score
+                    FROM leads l
+                    LEFT JOIN lead_scoring ls ON l.id = ls.lead_id
+                    WHERE (l.assigned_to IS NULL OR l.assigned_to = 0)
+                    AND l.status NOT IN ('converted', 'lost')
+                    ORDER BY score DESC
+                    LIMIT 50";
+
+            $stmt = $this->pdo->query($sql);
+            $leads = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            if (empty($leads)) {
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'No leads to assign',
+                    'assigned' => 0
+                ]);
+            }
+
+            // Get available agents (least busy first)
+            $agents = $this->pdo->query(
+                "SELECT u.id, u.name, COUNT(l.id) as lead_count
+                 FROM users u
+                 LEFT JOIN leads l ON u.id = l.assigned_to AND l.status NOT IN ('converted', 'lost')
+                 WHERE u.role IN ('agent', 'manager')
+                 GROUP BY u.id, u.name
+                 ORDER BY lead_count ASC"
+            )->fetchAll(\PDO::FETCH_ASSOC);
+
+            if (empty($agents)) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'No available agents found'
+                ]);
+            }
+
+            $assigned = 0;
+            $agentIndex = 0;
+
+            foreach ($leads as $lead) {
+                $agent = $agents[$agentIndex % count($agents)];
+                $stmt = $this->pdo->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?");
+                $stmt->execute([$agent['id'], $lead['id']]);
+                $assigned++;
+                $agentIndex++;
+            }
+
+            $this->setFlash('success', "Auto-assigned {$assigned} leads to agents");
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => "Auto-assigned {$assigned} leads",
+                'assigned' => $assigned
+            ]);
+        } catch (\Exception $e) {
+            error_log("LeadScoringController::autoAssign error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to auto-assign leads: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Process all leads for scoring
+     */
+    public function processAll()
+    {
+        return $this->recalculateScores();
+    }
+
+    /**
+     * Rescore a single lead
+     */
+    public function rescore($id)
+    {
+        try {
+            $lead = $this->getLeadById($id);
+
+            if (!$lead) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Lead not found'
+                ]);
+            }
+
+            $score = $this->calculateLeadScore($lead);
+            $this->saveLeadScore($id, $score);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Lead rescored successfully',
+                'score' => $score['total'],
+                'breakdown' => $score['breakdown']
+            ]);
+        } catch (\Exception $e) {
+            error_log("LeadScoringController::rescore error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to rescore lead: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
      * Show lead score detail
      */
     public function show($id)

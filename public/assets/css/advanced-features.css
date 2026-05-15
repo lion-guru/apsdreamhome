@@ -1,0 +1,700 @@
+/* APS Dream Home - Advanced Features Styles */
+
+/* Progressive Registration Styles */
+.registration-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.registration-progress-bar {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 30px;
+}
+
+.registration-progress {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    height: 20px;
+    border-radius: 7px;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: width 0.3s ease;
+}
+
+.step-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.step-section.active {
+    display: block;
+}
+
+.step-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.step-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.reg-prev-step,
+.reg-next-step,
+.reg-complete {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reg-prev-step {
+    background: #6c757d;
+    color: white;
+}
+
+.reg-next-step,
+.reg-complete {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.reg-prev-step:hover {
+    background: #5a6268;
+}
+
+.reg-next-step:hover,
+.reg-complete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* OTP Authentication Styles */
+.otp-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.otp-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.otp-input {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.otp-input:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.otp-input.filled {
+    border-color: #28a745;
+    background: #f8fff9;
+}
+
+.otp-timer {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.otp-resend {
+    text-align: center;
+}
+
+.otp-resend button {
+    background: none;
+    border: 1px solid #667eea;
+    color: #667eea;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.otp-resend button:hover:not(:disabled) {
+    background: #667eea;
+    color: white;
+}
+
+.otp-resend button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Social Login Styles */
+.social-login-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.social-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: white;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.social-login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.social-login-btn.google {
+    border-color: #4285f4;
+    color: #4285f4;
+}
+
+.social-login-btn.google:hover {
+    background: #4285f4;
+    color: white;
+}
+
+.social-login-btn.facebook {
+    border-color: #1877f2;
+    color: #1877f2;
+}
+
+.social-login-btn.facebook:hover {
+    background: #1877f2;
+    color: white;
+}
+
+.social-login-btn.linkedin {
+    border-color: #0077b5;
+    color: #0077b5;
+}
+
+.social-login-btn.linkedin:hover {
+    background: #0077b5;
+    color: white;
+}
+
+.social-login-btn i {
+    font-size: 18px;
+}
+
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e9ecef;
+}
+
+.divider span {
+    background: white;
+    padding: 0 15px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* AI Chatbot Styles */
+.chatbot-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.chatbot-widget.open {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.chatbot-header {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chatbot-header h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.chatbot-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.chatbot-controls button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+    transition: background 0.3s ease;
+}
+
+.chatbot-controls button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.chatbot-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f8f9fa;
+}
+
+.bot-message,
+.user-message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    max-width: 80%;
+    line-height: 1.4;
+}
+
+.bot-message {
+    background: white;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 0;
+}
+
+.user-message {
+    background: #667eea;
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+    border-bottom-right-radius: 0;
+}
+
+.chatbot-form {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    background: white;
+    border-radius: 0 0 10px 10px;
+}
+
+.chatbot-form .input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.chatbot-form input {
+    flex: 1;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.chatbot-form input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.chatbot-form button {
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.chatbot-form button:hover {
+    background: #5a6fd8;
+}
+
+.chatbot-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+
+.chatbot-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.chatbot-toggle.hidden {
+    display: none;
+}
+
+/* Campaign Delivery Styles */
+.campaign-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.campaign-stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.campaign-stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.campaign-stat-label {
+    color: #666;
+    font-size: 14px;
+}
+
+.campaign-delivery-chart {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.campaign-delivery-list {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.campaign-delivery-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f3f4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.campaign-delivery-item:last-child {
+    border-bottom: none;
+}
+
+.delivery-type-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.delivery-type-badge.notification {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.delivery-type-badge.email {
+    background: #e8f5e8;
+    color: #388e3c;
+}
+
+.delivery-type-badge.sms {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.delivery-type-badge.whatsapp {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.delivery-status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.delivery-status.sent {
+    background: #e8f5e8;
+    color: #388e3c;
+}
+
+.delivery-status.delivered {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.delivery-status.opened {
+    background: #f3e5f5;
+    color: #9c27b0;
+}
+
+.delivery-status.clicked {
+    background: #e8f5e8;
+    color: #388e3c;
+}
+
+.delivery-status.converted {
+    background: #e8f5e8;
+    color: #388e3c;
+}
+
+.delivery-status.failed {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+/* Notification Toast Styles */
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 300px;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: slideInRight 0.3s ease;
+}
+
+.notification-toast.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.notification-toast.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.notification-toast.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.notification-toast.warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+/* Loading Spinner Styles */
+.spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+.spinner-border-sm {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-width: 1.5px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chatbot-widget {
+        width: 90%;
+        right: 5%;
+        left: 5%;
+        height: 400px;
+    }
+
+    .campaign-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .registration-container {
+        padding: 10px;
+    }
+
+    .step-navigation {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .otp-input-group {
+        justify-content: center;
+    }
+
+    .social-login-container {
+        gap: 10px;
+    }
+
+    .notification-toast {
+        left: 20px;
+        right: 20px;
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .chatbot-widget {
+        height: 350px;
+    }
+
+    .bot-message,
+    .user-message {
+        max-width: 90%;
+    }
+
+    .campaign-delivery-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+    .registration-container,
+    .otp-container,
+    .chatbot-widget,
+    .campaign-stat-card,
+    .campaign-delivery-chart,
+    .campaign-delivery-list {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+
+    .step-title {
+        color: #e2e8f0;
+    }
+
+    .step-navigation {
+        border-top-color: #4a5568;
+    }
+
+    .otp-input {
+        background: #4a5568;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+
+    .chatbot-messages {
+        background: #4a5568;
+    }
+
+    .bot-message {
+        background: #4a5568;
+        color: #e2e8f0;
+    }
+
+    .campaign-delivery-item {
+        border-bottom-color: #4a5568;
+    }
+
+    .divider::before {
+        background: #4a5568;
+    }
+
+    .divider span {
+        background: #2d3748;
+        color: #a0aec0;
+    }
+}

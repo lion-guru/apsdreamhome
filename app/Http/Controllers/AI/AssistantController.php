@@ -1,8 +1,7 @@
 <?php
 
 use App\Http\Controllers\BaseController;
-use Security;
-use Exception;
+use App\Core\Security;
 
 /**
  * AI Property Assistant Controller
@@ -12,7 +11,7 @@ class AIAssistantController extends BaseController
 {
     public function index()
     {
-        $this->render('pages/ai-assistant', [
+        $this->render('pages/ai_assistant', [
             'page_title' => 'AI Property Assistant - APS Dream Home',
             'page_description' => 'Get AI-powered property recommendations and find your dream home with our intelligent assistant'
         ]);

@@ -20,15 +20,16 @@ try {
 }
 
 // FIXED: Commented out missing template class
-// $template = new EnhancedUniversalTemplate();
 $template = null;
 
 // Page metadata
-$$page_title = 'Book Your Plot - APS Dream Home';
+$page_title = 'Book Your Plot - APS Dream Home';
 $page_description = 'Book premium plots in APS Dream Homes colonies across Uttar Pradesh. Easy booking process with flexible payment plans.';
 
-$template->setTitle($page_title);
-$template->setDescription($page_description);
+if ($template) {
+    $template->setTitle($page_title);
+    $template->setDescription($page_description);
+}
 
 // Add CSS
 $css_assets = [

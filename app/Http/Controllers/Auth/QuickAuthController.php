@@ -19,7 +19,7 @@ class QuickAuthController extends Controller
      */
     public function quickRegister()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
@@ -150,7 +150,7 @@ class QuickAuthController extends Controller
      */
     public function requestReferralCode()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
@@ -212,7 +212,7 @@ class QuickAuthController extends Controller
      */
     public function autoGenerateUser()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';

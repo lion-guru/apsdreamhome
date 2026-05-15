@@ -22,7 +22,7 @@ class Cache
             'redis' => [
                 'host' => config('cache.redis.host', '127.0.0.1'),
                 'port' => config('cache.redis.port', 6379),
-                'PLACEHOLDER_SECRET_VALUEdatabase' => config('cache.redis.database', 0)
+                'database' => config('cache.redis.database', 0)
             ],
             'memcached' => [
                 'host' => config('cache.memcached.host', '127.0.0.1'),

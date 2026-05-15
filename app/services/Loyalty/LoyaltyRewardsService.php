@@ -209,7 +209,7 @@ class LoyaltyRewardsService
         ];
         
         $rewardStmt = $this->database->prepare("INSERT IGNORE INTO rewards_catalog 
-            (name, description, points_required, reward_type, reward_value)
+            (reward_name, reward_description, points_cost, reward_type, reward_value)
             VALUES (?, ?, ?, ?, ?)");
         
         foreach ($rewards as $reward) {
@@ -642,9 +642,14 @@ class LoyaltyRewardsService
         $pointsData = $pointsStmt->fetch(\PDO::FETCH_ASSOC);
         
         // Recent redemptions
-        $redemptionSql = "SELECT COUNT(*), SUM(points_used) FROM reward_redemptions WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)";
-        $redemptionStmt = $this->database->query($redemptionSql);
-        $redemptionData = $redemptionStmt->fetch(\PDO::FETCH_NUM);
+        $redemptionData = [0, 0];
+        try {
+            $redemptionSql = "SELECT COUNT(*), COALESCE(SUM(points_used), 0) FROM reward_redemptions WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)";
+            $redemptionStmt = $this->database->query($redemptionSql);
+            $redemptionData = $redemptionStmt->fetch(\PDO::FETCH_NUM);
+        } catch (\Exception $e) {
+            // Table or column may not exist yet
+        }
         
         return [
             'members_by_tier' => $byTier,

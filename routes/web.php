@@ -51,29 +51,6 @@ $router->get('/health', function () {
     include __DIR__ . '/../project_health_check.php';
 });
 
-// Missing Admin Routes
-$router->get('/admin/visits', function () {
-    include __DIR__ . '/../app/views/admin/visits/index.php';
-});
-$router->get('/admin/gallery', function () {
-    include __DIR__ . '/../app/views/admin/gallery/index.php';
-});
-$router->get('/admin/testimonials', function () {
-    include __DIR__ . '/../app/views/admin/testimonials/index.php';
-});
-$router->get('/admin/news', function () {
-    include __DIR__ . '/../app/views/admin/news/index.php';
-});
-$router->get('/admin/ai-settings', function () {
-    include __DIR__ . '/../app/views/admin/ai/settings.php';
-});
-$router->get('/admin/locations/states', function () {
-    include __DIR__ . '/../app/views/admin/locations/states.php';
-});
-$router->get('/admin/legal-pages', function () {
-    include __DIR__ . '/../app/views/admin/legal-pages/index.php';
-});
-
 // Home
 $router->get('/', 'Front\\PageController@home');
 
@@ -96,6 +73,23 @@ $router->get('/team', 'Front\\PageController@team');
 $router->get('/testimonials', 'Front\\PageController@testimonials');
 $router->get('/faq', 'Front\\PageController@faq');
 $router->get('/faqs', 'Front\\PageController@faqs');
+$router->get('/home', 'Front\\PageController@home');
+$router->get('/sitemap.xml', function () {
+    $file = __DIR__ . '/../sitemap.xml';
+    if (file_exists($file)) {
+        header('Content-Type: application/xml');
+        readfile($file);
+        exit;
+    }
+});
+$router->get('/robots.txt', function () {
+    $file = __DIR__ . '/../robots.txt';
+    if (file_exists($file)) {
+        header('Content-Type: text/plain');
+        readfile($file);
+        exit;
+    }
+});
 $router->get('/sitemap', 'Front\\PageController@sitemap');
 $router->get('/privacy', 'Front\\PageController@privacy');
 $router->get('/news', 'Front\\PageController@news');
@@ -143,8 +137,6 @@ $router->post('/builder-registration', 'Front\\PageController@builderRegistratio
 // MLM & AI Dashboard Routes
 $router->get('/mlm-dashboard', 'MLM\MLMDashboardController@dashboard');
 $router->get('/ai-dashboard', 'AIDashboardController@index');
-$router->get('/ai-assistant', 'AIDashboardController@assistant');
-
 // Property Pages
 $router->get('/properties', 'Front\\PageController@properties');
 $router->get('/properties/{id}', 'Front\\PageController@propertyDetails');
@@ -162,6 +154,7 @@ $router->get('/projects', 'Front\\PageController@projects');
 $router->get('/company/projects', 'Front\\PageController@projects');
 $router->get('/projects/{slug}', 'Front\\PageController@projectDetails');
 $router->get('/projects/{location}', 'Front\\PageController@projectsByLocation');
+$router->get('/projects/budha-city', 'Front\\PageController@budhaCity');
 $router->get('/navigation', 'Front\\PageController@navigation');
 $router->get('/downloads', 'Front\\PageController@downloads');
 $router->get('/under-construction', 'Front\\PageController@underConstruction');
@@ -187,7 +180,7 @@ $router->post('/whatsapp-webhook', 'Front\\AIBotController@whatsappWebhook');
 
 // Admin Services
 $router->get('/admin/services', 'App\\Http\\Controllers\\Admin\\ServiceController@index');
-$router->get('/admin/services/view/{id}', 'App\\Http\\Controllers\\Admin\\ServiceController@view');
+$router->get('/admin/services/view/{id}', 'App\\Http\\Controllers\\Admin\\ServiceController@detail');
 $router->post('/admin/services/update-status', 'App\\Http\\Controllers\\Admin\\ServiceController@updateStatus');
 
 // Admin User Properties
@@ -388,20 +381,11 @@ $router->get('/admin/enterprise_dashboard', 'App\\Http\\Controllers\\RoleBasedDa
 $router->get('/admin/', 'App\\Http\\Controllers\\RoleBasedDashboardController@index');
 
 // Role-specific dashboards
-$router->get('/admin/dashboard/superadmin', 'App\\Http\\Controllers\\RoleBasedDashboardController@superadmin');
 $router->get('/admin/dashboard/agent', 'App\\Http\\Controllers\\RoleBasedDashboardController@agent');
 $router->get('/admin/dashboard/builder', 'App\\Http\\Controllers\\RoleBasedDashboardController@builder');
 $router->get('/admin/dashboard/ceo', 'App\\Http\\Controllers\\RoleBasedDashboardController@ceo');
 $router->get('/admin/dashboard/cfo', 'App\\Http\\Controllers\\RoleBasedDashboardController@cfo');
-$router->get('/admin/dashboard/cm', 'App\\Http\\Controllers\\RoleBasedDashboardController@cm');
-$router->get('/admin/dashboard/coo', 'App\\Http\\Controllers\\RoleBasedDashboardController@coo');
 $router->get('/admin/dashboard/cto', 'App\\Http\\Controllers\\RoleBasedDashboardController@cto');
-$router->get('/admin/dashboard/director', 'App\\Http\\Controllers\\RoleBasedDashboardController@director');
-$router->get('/admin/dashboard/finance', 'App\\Http\\Controllers\\RoleBasedDashboardController@finance');
-$router->get('/admin/dashboard/hr', 'App\\Http\\Controllers\\RoleBasedDashboardController@hr');
-$router->get('/admin/dashboard/it', 'App\\Http\\Controllers\\RoleBasedDashboardController@it');
-$router->get('/admin/dashboard/marketing', 'App\\Http\\Controllers\\RoleBasedDashboardController@marketing');
-$router->get('/admin/dashboard/operations', 'App\\Http\\Controllers\\RoleBasedDashboardController@operations');
 $router->get('/admin/dashboard/sales', 'App\\Http\\Controllers\\RoleBasedDashboardController@sales');
 
 // Admin AJAX Dashboard APIs
@@ -490,8 +474,6 @@ $router->post('/admin/inquiries/update-status', 'App\\Http\\Controllers\\Admin\\
 $router->post('/admin/inquiries/delete/{id}', 'App\\Http\\Controllers\\Admin\\InquiryController@delete');
 
 // Admin Plots
-$router->get('/admin/plots', 'App\\Http\\Controllers\\Admin\\PlotManagementController@index');
-$router->get('/admin/plots/create', 'App\\Http\\Controllers\\Admin\\PlotManagementController@create');
 $router->post('/admin/plots', 'App\\Http\\Controllers\\Admin\\PlotManagementController@store');
 $router->get('/admin/plots/{id}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@show');
 $router->get('/admin/plots/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotManagementController@edit');
@@ -686,7 +668,7 @@ $router->get('/admin/projects/create', 'App\Http\Controllers\Admin\ProjectsAdmin
 $router->post('/admin/projects/store', 'App\Http\Controllers\Admin\ProjectsAdminController@store');
 $router->get('/admin/projects/edit/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@edit');
 $router->post('/admin/projects/update/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@update');
-$router->get('/admin/projects/view/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@view');
+$router->get('/admin/projects/view/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@detail');
 $router->get('/admin/projects/images/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@images');
 $router->get('/admin/projects/delete/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@delete');
 $router->post('/admin/projects/status/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@status');
@@ -852,9 +834,6 @@ $router->post('/api/fraud/detect', 'MLController@detectFraud');
 // Fraud Dashboard
 $router->get('/api/fraud/dashboard', 'MLController@fraudDashboard');
 
-// Admin Reports
-$router->get('/admin/reports', 'App\\Http\\Controllers\\Admin\\ReportController@index');
-
 // Admin Network MLM
 $router->get('/admin/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
 $router->get('/admin/network/genealogy', 'App\\Http\\Controllers\\Admin\\NetworkController@genealogy');
@@ -871,9 +850,12 @@ $router->get('/admin/payments', function () {
 });
 
 // Admin EMI
-$router->get('/admin/emi', function () {
-    require __DIR__ . '/../app/views/admin/emi/index.php';
-});
+$router->get('/admin/emi', 'App\\Http\\Controllers\\Admin\\EMIController@index');
+$router->get('/admin/emi/create', 'App\\Http\\Controllers\\Admin\\EMIController@create');
+$router->post('/admin/emi/store', 'App\\Http\\Controllers\\Admin\\EMIController@store');
+$router->get('/admin/emi/{id}', 'App\\Http\\Controllers\\Admin\\EMIController@show');
+$router->post('/admin/emi/payment/{id}', 'App\\Http\\Controllers\\Admin\\EMIController@processPayment');
+$router->get('/admin/emi/stats', 'App\\Http\\Controllers\\Admin\\EMIController@getStats');
 
 // Admin Accounting
 $router->get('/admin/accounting', function () {
@@ -897,9 +879,14 @@ $router->get('/admin/engagement', function () {
 });
 
 // Admin Careers
-$router->get('/admin/careers', function () {
-    require __DIR__ . '/../app/views/admin/jobs/index.php';
-});
+$router->get('/admin/careers', 'App\\Http\\Controllers\\Admin\\CareerController@index');
+$router->get('/admin/careers/create', 'App\\Http\\Controllers\\Admin\\CareerController@create');
+$router->post('/admin/careers/store', 'App\\Http\\Controllers\\Admin\\CareerController@store');
+$router->get('/admin/careers/{id}', 'App\\Http\\Controllers\\Admin\\CareerController@show');
+$router->get('/admin/careers/{id}/edit', 'App\\Http\\Controllers\\Admin\\CareerController@edit');
+$router->post('/admin/careers/{id}/update', 'App\\Http\\Controllers\\Admin\\CareerController@update');
+$router->post('/admin/careers/{id}/destroy', 'App\\Http\\Controllers\\Admin\\CareerController@destroy');
+$router->get('/admin/careers/stats', 'App\\Http\\Controllers\\Admin\\CareerController@getStats');
 
 // Admin AI
 $router->get('/admin/ai', function () {
@@ -948,3 +935,457 @@ $router->get('/admin/accounts', function () {
 $router->get('/admin/dev-tools', function () {
     require __DIR__ . '/../app/views/admin/dev-tools/index.php';
 });
+
+// Missing sidebar menu items - Route stubs for DB-driven menu
+$router->get('/admin/invoices', function () {
+    require __DIR__ . '/../app/views/admin/invoices/index.php';
+});
+$router->get('/admin/roles', function () {
+    require __DIR__ . '/../app/views/admin/roles/index.php';
+});
+$router->get('/admin/associates', function () {
+    header('Location: ' . BASE_URL . '/admin/mlm/associates');
+    exit;
+});
+$router->get('/admin/associates/create', function () {
+    header('Location: ' . BASE_URL . '/admin/mlm/associates/create');
+    exit;
+});
+$router->get('/admin/hrm/employees', function () {
+    require __DIR__ . '/../app/views/admin/employees/index.php';
+});
+
+// ============================================================
+// ADMIN WORKFLOW CONTROLLER ROUTES
+// ============================================================
+
+$router->get('/admin/workflows', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@dashboard');
+$router->get('/admin/workflows/list', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@workflows');
+$router->get('/admin/workflows/create', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@createWorkflow');
+$router->post('/admin/workflows/create', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@createWorkflow');
+$router->get('/admin/workflows/{id}/steps', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@workflowSteps');
+$router->post('/admin/workflows/{id}/steps', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@workflowSteps');
+$router->get('/admin/workflows/pending', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@pendingApprovals');
+$router->post('/admin/workflows/action/{id}', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@processWorkflowAction');
+$router->get('/admin/reports', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@reports');
+$router->get('/admin/reports/sales', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@salesReport');
+$router->get('/admin/reports/leads', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@leadsReport');
+$router->get('/admin/reports/commission', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@commissionReport');
+$router->post('/admin/reports/save', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@saveReport');
+$router->get('/admin/audit', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@auditTrail');
+$router->get('/admin/audit/entity/{type}/{id}', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@entityHistory');
+$router->get('/admin/audit/user/{id}', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@userActivity');
+$router->get('/admin/import-export', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@importExport');
+$router->get('/admin/import-export/import', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@importData');
+$router->post('/admin/import-export/import', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@importData');
+$router->get('/admin/import-export/export', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@exportData');
+$router->get('/admin/import-export/template/{type}', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@downloadTemplate');
+$router->get('/admin/backups', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@backups');
+$router->post('/admin/backups/create', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@createBackup');
+$router->get('/admin/backups/download/{filename}', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@downloadBackup');
+$router->get('/admin/emails', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@emailQueue');
+$router->post('/admin/emails/process', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@processEmailQueue');
+$router->post('/admin/emails/retry', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@retryFailedEmails');
+$router->get('/admin/api-docs', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@apiDocs');
+$router->get('/admin/api-docs/export/{format}', 'App\\Http\\Controllers\\Admin\\AdminWorkflowController@exportApiSpec');
+
+// ============================================================
+// CUSTOM FEATURES CONTROLLER ROUTES
+// ============================================================
+
+$router->get('/features', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@dashboard');
+$router->get('/features/virtual-tours', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@virtualTours');
+$router->post('/features/virtual-tours/create', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@createVirtualTour');
+$router->get('/features/virtual-tours/{propertyId}', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@getVirtualTour');
+$router->get('/features/comparison', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@propertyComparison');
+$router->post('/features/comparison/compare', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@compareProperties');
+$router->post('/features/comparison/save', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@saveComparison');
+$router->get('/features/comparison/saved', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@getSavedComparisons');
+$router->post('/features/comparison/export', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@exportComparison');
+$router->get('/features/investment-calculator', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@investmentCalculator');
+$router->post('/features/investment-calculator/calculate', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@calculateInvestment');
+$router->get('/features/investment-calculator/history', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@getInvestmentHistory');
+$router->get('/features/smart-search', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@smartSearchPage');
+$router->post('/features/smart-search/search', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@smartSearch');
+$router->get('/features/neighborhood/{propertyId}', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@neighborhoodAnalytics');
+$router->get('/features/stats', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@getStats');
+$router->get('/features/properties/{propertyId}/suggestions', 'App\\Http\\Controllers\\CustomFeatures\\CustomFeaturesController@getPropertySuggestions');
+
+// ============================================================
+// LOGGING CONTROLLER ROUTES
+// ============================================================
+
+$router->get('/logging', 'App\\Http\\Controllers\\LoggingController@showDashboard');
+$router->get('/logging/logs', 'App\\Http\\Controllers\\LoggingController@showLogs');
+$router->get('/logging/security-alerts', 'App\\Http\\Controllers\\LoggingController@showSecurityAlerts');
+$router->post('/logging/export', 'App\\Http\\Controllers\\LoggingController@exportLogs');
+$router->post('/logging/clean', 'App\\Http\\Controllers\\LoggingController@cleanLogs');
+$router->get('/logging/stats', 'App\\Http\\Controllers\\LoggingController@getLogStats');
+$router->get('/logging/search', 'App\\Http\\Controllers\\LoggingController@searchLogs');
+$router->get('/logging/details/{id}', 'App\\Http\\Controllers\\LoggingController@viewLogDetails');
+$router->post('/logging/dismiss-alert', 'App\\Http\\Controllers\\LoggingController@dismissAlert');
+$router->get('/logging/stream', 'App\\Http\\Controllers\\LoggingController@getLogStream');
+
+// ============================================================
+// MARKETING CONTROLLER ROUTES
+// ============================================================
+
+$router->get('/marketing', 'App\\Http\\Controllers\\Marketing\\MarketingController@dashboard');
+$router->post('/marketing/campaigns/create', 'App\\Http\\Controllers\\Marketing\\MarketingController@createCampaign');
+$router->post('/marketing/campaigns/execute/{id}', 'App\\Http\\Controllers\\Marketing\\MarketingController@executeCampaign');
+$router->post('/marketing/leads/add', 'App\\Http\\Controllers\\Marketing\\MarketingController@addLead');
+$router->get('/marketing/leads/{id}', 'App\\Http\\Controllers\\Marketing\\MarketingController@getLead');
+$router->post('/marketing/leads/{id}/status', 'App\\Http\\Controllers\\Marketing\\MarketingController@updateLeadStatus');
+$router->post('/marketing/workflows/process', 'App\\Http\\Controllers\\Marketing\\MarketingController@processWorkflows');
+$router->get('/marketing/analytics', 'App\\Http\\Controllers\\Marketing\\MarketingController@getAnalytics');
+$router->get('/marketing/leads', 'App\\Http\\Controllers\\Marketing\\MarketingController@getLeads');
+$router->get('/marketing/lead-scoring', 'App\\Http\\Controllers\\Marketing\\MarketingController@getLeadScoring');
+$router->post('/marketing/leads/export', 'App\\Http\\Controllers\\Marketing\\MarketingController@exportLeads');
+$router->get('/marketing/campaigns/performance', 'App\\Http\\Controllers\\Marketing\\MarketingController@getCampaignPerformance');
+$router->get('/marketing/settings', 'App\\Http\\Controllers\\Marketing\\MarketingController@settings');
+$router->post('/marketing/settings', 'App\\Http\\Controllers\\Marketing\\MarketingController@settings');
+
+// ============================================================
+// ROLE-BASED ADMIN DASHBOARDS
+// ============================================================
+
+$router->get('/admin/ceo-dashboard', 'App\\Http\\Controllers\\Admin\\CEODashboardController@index');
+$router->get('/admin/ceo-dashboard/revenue', 'App\\Http\\Controllers\\Admin\\CEODashboardController@getRevenueAnalytics');
+$router->get('/admin/ceo-dashboard/team', 'App\\Http\\Controllers\\Admin\\CEODashboardController@getTeamPerformance');
+
+$router->get('/admin/cfo-dashboard', 'App\\Http\\Controllers\\Admin\\CFODashboardController@index');
+$router->get('/admin/cfo-dashboard/financial', 'App\\Http\\Controllers\\Admin\\CFODashboardController@getFinancialAnalytics');
+$router->get('/admin/cfo-dashboard/expenses', 'App\\Http\\Controllers\\Admin\\CFODashboardController@getExpenseBreakdown');
+
+$router->get('/admin/builder-dashboard', 'App\\Http\\Controllers\\Admin\\BuilderDashboardController@index');
+$router->get('/admin/builder-dashboard/construction', 'App\\Http\\Controllers\\Admin\\BuilderDashboardController@getConstructionAnalytics');
+$router->get('/admin/builder-dashboard/materials', 'App\\Http\\Controllers\\Admin\\BuilderDashboardController@getMaterialStatus');
+
+// ============================================================
+// ADMIN LAND MANAGEMENT
+// ============================================================
+
+$router->get('/admin/land', 'App\\Http\\Controllers\\Admin\\LandController@index');
+$router->get('/admin/land/create', 'App\\Http\\Controllers\\Admin\\LandController@create');
+$router->post('/admin/land/store', 'App\\Http\\Controllers\\Admin\\LandController@store');
+$router->get('/admin/land/{id}', 'App\\Http\\Controllers\\Admin\\LandController@show');
+$router->get('/admin/land/{id}/edit', 'App\\Http\\Controllers\\Admin\\LandController@edit');
+$router->post('/admin/land/{id}/update', 'App\\Http\\Controllers\\Admin\\LandController@update');
+$router->post('/admin/land/{id}/destroy', 'App\\Http\\Controllers\\Admin\\LandController@destroy');
+$router->get('/admin/land/stats', 'App\\Http\\Controllers\\Admin\\LandController@getStats');
+
+// ============================================================
+// ADMIN LOYALTY PROGRAM
+// ============================================================
+
+$router->get('/admin/loyalty', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@index');
+$router->get('/admin/loyalty/members', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@members');
+$router->get('/admin/loyalty/members/{id}', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@memberDetails');
+$router->post('/admin/loyalty/points/add', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@addPoints');
+$router->get('/admin/loyalty/rewards', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@rewards');
+$router->get('/admin/loyalty/rewards/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@editReward');
+$router->get('/admin/loyalty/redemptions', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@redemptions');
+$router->post('/admin/loyalty/redemptions/status', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@updateRedemptionStatus');
+$router->get('/admin/loyalty/rules', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@rules');
+$router->get('/admin/loyalty/tier-benefits', 'App\\Http\\Controllers\\Admin\\AdminLoyaltyController@tierBenefits');
+
+// ============================================================
+// ADMIN SCHEDULER
+// ============================================================
+
+$router->get('/admin/scheduler', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@index');
+$router->get('/admin/scheduler/tasks/{id}', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@taskDetails');
+$router->get('/admin/scheduler/tasks/create', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@create');
+$router->get('/admin/scheduler/tasks/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@edit');
+$router->post('/admin/scheduler/tasks/delete/{id}', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@delete');
+$router->post('/admin/scheduler/tasks/run/{id}', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@runTask');
+$router->get('/admin/scheduler/logs', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@logs');
+$router->get('/admin/scheduler/health', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@health');
+$router->post('/admin/scheduler/cleanup', 'App\\Http\\Controllers\\Admin\\AdminSchedulerController@cleanup');
+
+// ============================================================
+// ADMIN FILE MANAGER
+// ============================================================
+
+$router->get('/admin/files', 'App\\Http\\Controllers\\Admin\\AdminFileController@index');
+$router->post('/admin/files/upload', 'App\\Http\\Controllers\\Admin\\AdminFileController@upload');
+$router->get('/admin/files/{uuid}', 'App\\Http\\Controllers\\Admin\\AdminFileController@fileDetails');
+$router->get('/admin/files/download/{uuid}', 'App\\Http\\Controllers\\Admin\\AdminFileController@download');
+$router->post('/admin/files/delete/{uuid}', 'App\\Http\\Controllers\\Admin\\AdminFileController@delete');
+$router->post('/admin/files/version/{uuid}', 'App\\Http\\Controllers\\Admin\\AdminFileController@uploadVersion');
+$router->get('/admin/files/browse', 'App\\Http\\Controllers\\Admin\\AdminFileController@browse');
+$router->get('/admin/files/storage', 'App\\Http\\Controllers\\Admin\\AdminFileController@storage');
+
+// ============================================================
+// ADMIN COMMISSION MANAGEMENT
+// ============================================================
+
+$router->get('/admin/commission-manage', 'App\\Http\\Controllers\\Admin\\CommissionController@index');
+$router->get('/admin/commission-manage/calculate', 'App\\Http\\Controllers\\Admin\\CommissionController@calculate');
+$router->post('/admin/commission-manage/calculate', 'App\\Http\\Controllers\\Admin\\CommissionController@processCalculation');
+$router->get('/admin/commission-manage/approve/{id}', 'App\\Http\\Controllers\\Admin\\CommissionController@approve');
+$router->post('/admin/commission-manage/approve', 'App\\Http\\Controllers\\Admin\\CommissionController@processApproval');
+$router->get('/admin/commission-manage/payout', 'App\\Http\\Controllers\\Admin\\CommissionController@payout');
+$router->post('/admin/commission-manage/payout', 'App\\Http\\Controllers\\Admin\\CommissionController@processPayout');
+$router->get('/admin/commission-manage/reports', 'App\\Http\\Controllers\\Admin\\CommissionController@reports');
+
+// ============================================================
+// ADMIN REPORTS
+// ============================================================
+
+$router->get('/admin/mlm-growth-reports', 'App\\Http\\Controllers\\Admin\\Reports\\MLMGrowthReportController@index');
+$router->get('/admin/mlm-growth-reports/export', 'App\\Http\\Controllers\\Admin\\Reports\\MLMGrowthReportController@exportPdf');
+$router->get('/admin/mlm-growth-reports/chart-data', 'App\\Http\\Controllers\\Admin\\Reports\\MLMGrowthReportController@apiChartData');
+
+$router->get('/admin/roi-calculator', 'App\\Http\\Controllers\\Admin\\Reports\\ROICalculatorController@index');
+$router->post('/admin/roi-calculator/calculate', 'App\\Http\\Controllers\\Admin\\Reports\\ROICalculatorController@apiCalculate');
+$router->get('/admin/roi-calculator/compare', 'App\\Http\\Controllers\\Admin\\Reports\\ROICalculatorController@compare');
+
+// ============================================================
+// ADMIN AJAX ENDPOINTS (11 orphaned view files)
+// ============================================================
+
+$router->get('/admin/ajax/advanced-search', 'App\\Http\\Controllers\\Admin\\AjaxController@advancedSearch');
+$router->get('/admin/ajax/consolidated-dashboard', 'App\\Http\\Controllers\\Admin\\AjaxController@consolidatedDashboard');
+$router->get('/admin/ajax/export-dashboard-data', 'App\\Http\\Controllers\\Admin\\AjaxController@exportDashboardData');
+$router->post('/admin/ajax/generate-followup', 'App\\Http\\Controllers\\Admin\\AjaxController@generateFollowup');
+$router->get('/admin/ajax/get-chart-data', 'App\\Http\\Controllers\\Admin\\AjaxController@getChartData');
+$router->get('/admin/ajax/get-component', 'App\\Http\\Controllers\\Admin\\AjaxController@getComponent');
+$router->get('/admin/ajax/get-lead-timeline', 'App\\Http\\Controllers\\Admin\\AjaxController@getLeadTimeline');
+$router->get('/admin/ajax/get-recent-activity', 'App\\Http\\Controllers\\Admin\\AjaxController@getRecentActivity');
+$router->get('/admin/ajax/get-system-status', 'App\\Http\\Controllers\\Admin\\AjaxController@getSystemStatus');
+$router->get('/admin/ajax/global-search', 'App\\Http\\Controllers\\Admin\\AjaxController@globalSearch');
+$router->post('/admin/ajax/save-content', 'App\\Http\\Controllers\\Admin\\AjaxController@saveContent');
+
+// ============================================================
+// ADMIN ROLE-BASED DASHBOARDS (rich admin/dashboards/* views)
+// Each closure starts session, checks admin auth, sets safe defaults, and renders the view
+// ============================================================
+
+// --- Accounting (includes cfo.php) ---
+$router->get('/admin/dashboard/accounting', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $financial_overview = $expense_stats = $commission_stats = $profit_analysis = [];
+    require __DIR__ . '/../app/views/admin/dashboards/accounting.php';
+});
+
+// --- CM / Customer Management (includes sales.php) ---
+$router->get('/admin/dashboard/cm', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $sales_targets = ['target' => 0, 'achieved' => 0];
+    $leads_pipeline = ['hot' => 0, 'warm' => 0, 'cold' => 0, 'total' => 0];
+    require __DIR__ . '/../app/views/admin/dashboards/cm.php';
+});
+
+// --- COO / Operations (standalone, uses ?? defaults) ---
+$router->get('/admin/dashboard/coo', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $project_performance = ['overall' => '0%', 'resources' => '0%', 'active_tasks' => 0];
+    require __DIR__ . '/../app/views/admin/dashboards/coo.php';
+});
+
+// --- Director (includes ceo.php) ---
+$router->get('/admin/dashboard/director', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $business_stats = ['total_properties' => 0, 'available_properties' => 0];
+    $revenue_stats = ['total_revenue' => 0, 'pending_revenue' => 0];
+    $team_stats = ['total_users' => 0, 'active_users' => 0];
+    $commission_stats = ['total_commissions' => 0, 'avg_commission' => 0];
+    require __DIR__ . '/../app/views/admin/dashboards/director.php';
+});
+
+// --- Finance (includes cfo.php) ---
+$router->get('/admin/dashboard/finance', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $financial_overview = $expense_stats = $commission_stats = $profit_analysis = [];
+    require __DIR__ . '/../app/views/admin/dashboards/finance.php';
+});
+
+// --- HR (standalone, uses ?? defaults) ---
+$router->get('/admin/dashboard/hr', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $employee_stats = ['total' => 0, 'new_hires' => 0];
+    $pending_leaves = ['count' => 0, 'list' => []];
+    require __DIR__ . '/../app/views/admin/dashboards/hr.php';
+});
+
+// --- IT (includes cto.php) ---
+$router->get('/admin/dashboard/it', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $server_health = ['uptime' => 'N/A', 'memory_usage' => 'N/A'];
+    $api_usage = ['openrouter_calls' => 0, 'gemini_calls' => 0];
+    $ai_agents_status = [];
+    require __DIR__ . '/../app/views/admin/dashboards/it.php';
+});
+
+// --- Marketing (standalone, uses ?? defaults) ---
+$router->get('/admin/dashboard/marketing', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $leads_pipeline = ['hot' => 0, 'warm' => 0, 'cold' => 0, 'total' => 0];
+    $marketing_roi = ['overall' => '0x', 'active_campaigns' => 0];
+    require __DIR__ . '/../app/views/admin/dashboards/marketing.php';
+});
+
+// --- Operations (standalone, uses ?? defaults) ---
+$router->get('/admin/dashboard/operations', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $inventory_stats = ['total_items' => 0, 'low_stock' => 0];
+    $task_status = ['completed_today' => 0];
+    require __DIR__ . '/../app/views/admin/dashboards/operations.php';
+});
+
+// --- Superadmin (standalone, needs arrays) ---
+$router->get('/admin/dashboard/superadmin', function () {
+    @session_start();
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
+        exit;
+    }
+    $user_management_stats = ['total_admins' => 0, 'active_users' => 0];
+    $ai_agents_status = [];
+    require __DIR__ . '/../app/views/admin/dashboards/superadmin.php';
+});
+
+// ============================================================
+// ORPHANED PUBLIC PAGE ROUTES (added 2026-05-15)
+// ============================================================
+
+// Content pages via PageController
+$router->get('/bank', 'Front\\PageController@bank');
+$router->get('/suyoday-colony', 'Front\\PageController@suyodayColonyPage');
+
+// Legal section
+$router->get('/legal', 'Front\\PageController@legal');
+$router->get('/legal/privacy', 'Front\\PageController@legalPrivacy');
+$router->get('/legal/terms', 'Front\\PageController@legalTermsPage');
+
+// Standalone full-HTML pages
+$router->get('/analytics', function () {
+    include __DIR__ . '/../app/views/pages/analytics.php';
+});
+$router->get('/calc', function () {
+    // Note: calc.php references __DIR__ . '/init.php' (may need fixing)
+    include __DIR__ . '/../app/views/pages/calc.php';
+});
+
+// ============================================================
+// LOCATION PROJECT PAGES (added 2026-05-15)
+// ============================================================
+// NOTE: gorakhpur-raghunath-nagri, gorakhpur-suryoday-colony, and
+// varanasi-ganga-nagri are partial views (no <html>/<head>/<body>).
+// They render as content fragments. For full layout, route through
+// a controller using $this->render('locations/xxx') instead.
+
+$router->get('/locations/gorakhpur-bohisawagar', function () {
+    $projectName = 'Bohi Sawagar - Gorakhpur';
+    include __DIR__ . '/../app/views/locations/gorakhpur-bohisawagar.php';
+});
+$router->get('/locations/gorakhpur-raghunath-nagri', function () {
+    // Partial view: requires ASSETS_URL
+    if (!defined('ASSETS_URL')) define('ASSETS_URL', BASE_URL . '/assets/');
+    include __DIR__ . '/../app/views/locations/gorakhpur-raghunath-nagri.php';
+});
+$router->get('/locations/gorakhpur-suryoday-colony', function () {
+    // Partial view: requires ASSETS_URL
+    if (!defined('ASSETS_URL')) define('ASSETS_URL', BASE_URL . '/assets/');
+    include __DIR__ . '/../app/views/locations/gorakhpur-suryoday-colony.php';
+});
+$router->get('/locations/kushinagar-budha-city', function () {
+    // Uses its own layout via ob_start() + require layout
+    // Replaces missing init.php — helpers.php is already loaded from bootstrap
+    include __DIR__ . '/../app/views/locations/kushinagar-budha-city.php';
+});
+$router->get('/locations/lucknow-ram-nagri', function () {
+    // Uses its own layout via ob_start() + require layout
+    // Replaces missing init.php — helpers.php is already loaded from bootstrap
+    include __DIR__ . '/../app/views/locations/lucknow-ram-nagri.php';
+});
+$router->get('/locations/varanasi-ganga-nagri', function () {
+    // Partial view: requires ASSETS_URL
+    if (!defined('ASSETS_URL')) define('ASSETS_URL', BASE_URL . '/assets/');
+    include __DIR__ . '/../app/views/locations/varanasi-ganga-nagri.php';
+});
+
+// ====== Plot Management ======
+$router->get('/admin/plots', 'App\Http\Controllers\Admin\PlotController@index');
+$router->get('/admin/plots/create', 'App\Http\Controllers\Admin\PlotController@create');
+$router->post('/admin/plots/store', 'App\Http\Controllers\Admin\PlotController@store');
+$router->get('/admin/plots/show/{id}', 'App\Http\Controllers\Admin\PlotController@show');
+$router->get('/admin/plots/edit/{id}', 'App\Http\Controllers\Admin\PlotController@edit');
+$router->post('/admin/plots/update/{id}', 'App\Http\Controllers\Admin\PlotController@update');
+$router->post('/admin/plots/destroy/{id}', 'App\Http\Controllers\Admin\PlotController@destroy');
+
+// ====== Project Management ======
+$router->get('/admin/projects/manage', 'App\Http\Controllers\Admin\ProjectController@index');
+$router->get('/admin/projects/manage/create', 'App\Http\Controllers\Admin\ProjectController@create');
+$router->post('/admin/projects/manage/store', 'App\Http\Controllers\Admin\ProjectController@store');
+$router->get('/admin/projects/manage/show/{id}', 'App\Http\Controllers\Admin\ProjectController@show');
+$router->get('/admin/projects/manage/edit/{id}', 'App\Http\Controllers\Admin\ProjectController@edit');
+$router->post('/admin/projects/manage/update/{id}', 'App\Http\Controllers\Admin\ProjectController@update');
+$router->post('/admin/projects/manage/destroy/{id}', 'App\Http\Controllers\Admin\ProjectController@destroy');
+$router->get('/admin/projects/manage/analytics', 'App\Http\Controllers\Admin\ProjectController@analytics');
+
+// ====== Sales Management ======
+$router->get('/admin/sales', 'App\Http\Controllers\Admin\SalesController@index');
+$router->get('/admin/sales/create', 'App\Http\Controllers\Admin\SalesController@create');
+$router->post('/admin/sales/store', 'App\Http\Controllers\Admin\SalesController@store');
+$router->get('/admin/sales/show/{id}', 'App\Http\Controllers\Admin\SalesController@show');
+$router->get('/admin/sales/edit/{id}', 'App\Http\Controllers\Admin\SalesController@edit');
+$router->post('/admin/sales/update/{id}', 'App\Http\Controllers\Admin\SalesController@update');
+$router->post('/admin/sales/destroy/{id}', 'App\Http\Controllers\Admin\SalesController@destroy');
+$router->get('/admin/sales/analytics', 'App\Http\Controllers\Admin\SalesController@analytics');
+
+// ====== Payout Management ======
+$router->get('/admin/payouts/list', 'App\Http\Controllers\Admin\PayoutController@index');
+$router->get('/admin/payouts/list/all', 'App\Http\Controllers\Admin\PayoutController@list');
+$router->get('/admin/payouts/show/{id}', 'App\Http\Controllers\Admin\PayoutController@show');
+$router->get('/admin/payouts/analytics', 'App\Http\Controllers\Admin\PayoutController@analytics');
+
+// ====== Newsletter Admin ======
+$router->get('/admin/newsletter', 'App\Http\Controllers\Admin\NewsletterAdminController@index');
+
+// ====== Accounting ======
+$router->get('/admin/accounting/income', 'App\Http\Controllers\Admin\AccountingController@income');
+$router->get('/admin/accounting/expenses', 'App\Http\Controllers\Admin\AccountingController@expenses');
+$router->post('/admin/accounting/store-income', 'App\Http\Controllers\Admin\AccountingController@storeIncome');
+$router->post('/admin/accounting/store-expense', 'App\Http\Controllers\Admin\AccountingController@storeExpense');
+
+// ====== MLM Registration ======
+$router->get('/register/associate', 'App\Http\Controllers\RegistrationController@showRegistrationForm');
+$router->post('/register/associate', 'App\Http\Controllers\RegistrationController@register');

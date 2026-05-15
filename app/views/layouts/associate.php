@@ -1,5 +1,133 @@
+<?php
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    @session_start();
+}
+
+// Include database connection for role-based menu
+require_once __DIR__ . '/../../config/database.php';
+
+// Get user role from session
+$userRole = $_SESSION['user_role'] ?? 'associate';
+
+/**
+ * Get role-based sidebar menu
+ */
+function getRoleBasedSidebar($userRole)
+{
+    global $pdo;
+
+    // Static menu for associates (fallback if database menu doesn't exist)
+    if ($userRole === 'associate') {
+        return [
+            [
+                'menu_item' => 'Dashboard',
+                'menu_url' => '/associate/dashboard',
+                'menu_icon' => 'fas fa-tachometer-alt',
+                'menu_order' => 1,
+                'parent_menu' => null
+            ],
+            [
+                'menu_item' => 'My Properties',
+                'menu_url' => '/associate/properties',
+                'menu_icon' => 'fas fa-building',
+                'menu_order' => 2,
+                'parent_menu' => null
+            ],
+            [
+                'menu_item' => 'My Leads',
+                'menu_url' => '/associate/leads',
+                'menu_icon' => 'fas fa-users',
+                'menu_order' => 3,
+                'parent_menu' => null
+            ],
+            [
+                'menu_item' => 'Add Lead',
+                'menu_url' => '/associate/leads/add',
+                'menu_icon' => 'fas fa-plus',
+                'menu_order' => 4,
+                'parent_menu' => 'My Leads'
+            ],
+            [
+                'menu_item' => 'All Leads',
+                'menu_url' => '/associate/leads/all',
+                'menu_icon' => 'fas fa-list',
+                'menu_order' => 5,
+                'parent_menu' => 'My Leads'
+            ],
+            [
+                'menu_item' => 'My Commissions',
+                'menu_url' => '/associate/commissions',
+                'menu_icon' => 'fas fa-rupee-sign',
+                'menu_order' => 6,
+                'parent_menu' => null
+            ],
+            [
+                'menu_item' => 'Commission History',
+                'menu_url' => '/associate/commissions/history',
+                'menu_icon' => 'fas fa-history',
+                'menu_order' => 7,
+                'parent_menu' => 'My Commissions'
+            ],
+            [
+                'menu_item' => 'Withdraw Commission',
+                'menu_url' => '/associate/wallet/withdraw',
+                'menu_icon' => 'fas fa-money-bill-wave',
+                'menu_order' => 8,
+                'parent_menu' => 'My Commissions'
+            ],
+            [
+                'menu_item' => 'Network Tree',
+                'menu_url' => '/associate/genealogy',
+                'menu_icon' => 'fas fa-sitemap',
+                'menu_order' => 9,
+                'parent_menu' => null
+            ],
+            [
+                'menu_item' => 'Team Management',
+                'menu_url' => '/associate/team',
+                'menu_icon' => 'fas fa-users-cog',
+                'menu_order' => 10,
+                'parent_menu' => null
+            ],
+            [
+                'menu_item' => 'Add Team Member',
+                'menu_url' => '/associate/team/add',
+                'menu_icon' => 'fas fa-user-plus',
+                'menu_order' => 11,
+                'parent_menu' => 'Team Management'
+            ],
+            [
+                'menu_item' => 'Team Performance',
+                'menu_url' => '/associate/team/performance',
+                'menu_icon' => 'fas fa-chart-line',
+                'menu_order' => 12,
+                'parent_menu' => 'Team Management'
+            ],
+            [
+                'menu_item' => 'My Profile',
+                'menu_url' => '/associate/profile',
+                'menu_icon' => 'fas fa-user',
+                'menu_order' => 13,
+                'parent_menu' => null
+            ],
+            [
+                'menu_item' => 'Settings',
+                'menu_url' => '/associate/settings',
+                'menu_icon' => 'fas fa-cog',
+                'menu_order' => 14,
+                'parent_menu' => null
+            ]
+        ];
+    }
+
+    return [];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,6 +162,7 @@
             z-index: 1000;
             overflow-y: auto;
             transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar::-webkit-scrollbar {
@@ -111,44 +240,75 @@
 
         .sidebar-menu {
             list-style: none;
-            padding: 0 10px;
+            padding: 0;
             margin: 0;
         }
 
-        .sidebar-item {
-            margin-bottom: 2px;
+        .menu-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar-link {
             display: flex;
             align-items: center;
-            padding: 10px 15px;
-            color: #c7d2fe;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             font-size: 0.9rem;
         }
 
-        .sidebar-link:hover,
-        .sidebar-link.active {
+        .sidebar-link:hover {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
         }
 
-        .sidebar-link i {
-            width: 22px;
-            margin-right: 10px;
-            font-size: 1rem;
+        .sidebar-link.active {
+            background: rgba(165, 180, 252, 0.2);
+            color: #a5b4fc;
+            border-left: 3px solid #a5b4fc;
         }
 
-        .sidebar-badge {
-            margin-left: auto;
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
+        .sidebar-link i {
+            width: 20px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        .submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .sidebar-item:hover .submenu {
+            display: block;
+        }
+
+        .submenu-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px 10px 52px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .submenu-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .submenu-link.active {
+            background: rgba(165, 180, 252, 0.1);
+            color: #a5b4fc;
         }
 
         /* Main Content */
@@ -338,6 +498,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar Toggle Button (Mobile) -->
     <button class="sidebar-toggle" onclick="toggleSidebar()">
@@ -385,8 +546,22 @@
                 <a href="<?php echo BASE_URL; ?>/associate/leads" class="sidebar-link <?php echo $current_page === 'leads' ? 'active' : ''; ?>">
                     <i class="fas fa-users"></i>
                     <span>My Leads</span>
-                    <span class="sidebar-badge">12</span>
                 </a>
+                <!-- Submenu for Leads -->
+                <ul class="submenu">
+                    <li class="submenu-item">
+                        <a href="<?php echo BASE_URL; ?>/associate/leads/add" class="submenu-link">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Lead</span>
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="<?php echo BASE_URL; ?>/associate/leads/all" class="submenu-link">
+                            <i class="fas fa-list"></i>
+                            <span>All Leads</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/associate/properties" class="sidebar-link <?php echo $current_page === 'properties' ? 'active' : ''; ?>">
@@ -401,15 +576,50 @@
         <ul class="sidebar-menu">
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/associate/commissions" class="sidebar-link <?php echo $current_page === 'commissions' ? 'active' : ''; ?>">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>Commissions</span>
+                    <i class="fas fa-rupee-sign"></i>
+                    <span>My Commissions</span>
                 </a>
+                <!-- Submenu for Commissions -->
+                <ul class="submenu">
+                    <li class="submenu-item">
+                        <a href="<?php echo BASE_URL; ?>/associate/commissions/history" class="submenu-link">
+                            <i class="fas fa-history"></i>
+                            <span>Commission History</span>
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="<?php echo BASE_URL; ?>/associate/wallet/withdraw" class="submenu-link">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Withdraw Commission</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
+        </ul>
+
+        <!-- Team Management -->
+        <div class="sidebar-section">Team Management</div>
+        <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/wallet" class="sidebar-link <?php echo $current_page === 'wallet' ? 'active' : ''; ?>">
-                    <i class="fas fa-wallet"></i>
-                    <span>Wallet</span>
+                <a href="<?php echo BASE_URL; ?>/associate/team" class="sidebar-link <?php echo $current_page === 'team' ? 'active' : ''; ?>">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Team Management</span>
                 </a>
+                <!-- Submenu for Team -->
+                <ul class="submenu">
+                    <li class="submenu-item">
+                        <a href="<?php echo BASE_URL; ?>/associate/team/add" class="submenu-link">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Add Team Member</span>
+                        </a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="<?php echo BASE_URL; ?>/associate/team/performance" class="submenu-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Team Performance</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
         </ul>
 
@@ -498,4 +708,5 @@
         });
     </script>
 </body>
+
 </html>

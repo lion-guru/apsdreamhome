@@ -18,7 +18,7 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-session_start();
+@session_start();
 if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
     header("Location: " . BASE_URL . "/login");
     exit();

@@ -61,7 +61,7 @@ class RoleBasedDashboardController extends BaseController
      */
     public function index()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // Auth check
         if (!isset($_SESSION['admin_id'])) {

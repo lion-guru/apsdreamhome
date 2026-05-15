@@ -25,7 +25,7 @@ class ExportController extends BaseController
      */
     protected function getCurrentAssociateId()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         return $_SESSION['associate_id'] ?? 0;
     }
 

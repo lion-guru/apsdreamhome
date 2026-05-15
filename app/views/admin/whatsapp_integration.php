@@ -4,7 +4,7 @@
  * Configure WhatsApp Business API for chatbot
  */
 
-session_start();
+@@session_start();
 
 if (!isset($_SESSION['admin_id'])) {
     header('Location: /admin/login');

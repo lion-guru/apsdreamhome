@@ -1677,7 +1677,7 @@ class PageController extends BaseController
                 $postedByType = null;
                 $userId = null;
 
-                if (session_status() === PHP_SESSION_NONE) session_start();
+                @session_start();
 
                 if (isset($_SESSION['associate_id'])) {
                     $postedBy = $_SESSION['associate_id'];
@@ -1784,6 +1784,96 @@ class PageController extends BaseController
             }
         }
         $this->redirect('/list-property');
+    }
+
+    // Bank Details Page
+    public function bank()
+    {
+        $data = [
+            'page_title' => 'Bank Details - APS Dream Home',
+            'page_description' => 'Official banking information for secure property transactions',
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Bank Details', 'url' => '']
+            ]
+        ];
+        $this->render('pages/bank', $data);
+    }
+
+    // Legal Main Page
+    public function legal()
+    {
+        $legal_docs = [];
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM legal_documents ORDER BY category, title");
+            $stmt->execute();
+            $legal_docs = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            $legal_docs = [];
+        }
+
+        $data = [
+            'page_title' => 'Legal Documents - APS Dream Home',
+            'page_description' => 'View our official certifications and legal papers',
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Legal', 'url' => '']
+            ],
+            'legal_docs' => $legal_docs
+        ];
+        $this->render('pages/legal/legal', $data);
+    }
+
+    // Legal Privacy Policy
+    public function legalPrivacy()
+    {
+        $data = [
+            'page_title' => 'Privacy Policy - APS Dream Home',
+            'page_description' => 'How we collect, use, and protect your data',
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Privacy Policy', 'url' => '']
+            ]
+        ];
+        $this->render('pages/legal/privacy', $data);
+    }
+
+    // Legal Terms of Service
+    public function legalTermsPage()
+    {
+        $data = [
+            'page_title' => 'Terms of Service - APS Dream Home',
+            'page_description' => 'Please read our terms carefully before using our services',
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Terms of Service', 'url' => '']
+            ]
+        ];
+        $this->render('pages/legal/terms', $data);
+    }
+
+    // Budha City Project Page
+    public function budhaCity()
+    {
+        $data = [
+            'page_title' => 'Budha City - APS Dream Home',
+            'page_description' => 'Integrated Township at Premwaliya, Kushinagar Highway',
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Budha City', 'url' => '']
+            ]
+        ];
+        $this->render('pages/budhacity', $data);
+    }
+
+    // Suyoday Colony Page
+    public function suyodayColonyPage()
+    {
+        $data = [
+            'page_title' => 'Suyoday Colony - APS Dream Home',
+            'page_description' => 'Premium residential plots in Gorakhpur with modern infrastructure'
+        ];
+        $this->render('pages/suyoday_colony', $data);
     }
 
     private function createUserPropertiesTable()

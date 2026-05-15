@@ -3,7 +3,7 @@
  * AJAX - Get Lead Activity Timeline & AI Summary
  */
 require_once __DIR__ . '/../../core/init.php';
-require_once __DIR__ . '/../../../app/services/GeminiService.php';
+// GeminiService is autoloaded via Composer/vendor autoloader
 
 use App\Services\GeminiService;
 
@@ -81,3 +81,5 @@ try {
     echo json_encode(['success' => false, 'error' => h($e->getMessage())]);
 }
 ?>
+
+

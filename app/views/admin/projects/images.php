@@ -9,7 +9,7 @@
                     <a href="/admin/projects" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Projects
                     </a>
-                    <a href="/admin/projects/view/<?php echo $project['id']; ?>" class="btn btn-info">
+                    <a href="/admin/projects/view/<?php echo $project['id'] ?? ''; ?>" class="btn btn-info">
                         <i class="fas fa-eye"></i> View Project
                     </a>
                 </div>
@@ -20,7 +20,7 @@
                     <h5 class="mb-0">Upload New Image</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/admin/projects/images/upload/<?php echo $project['id']; ?>" enctype="multipart/form-data">
+                    <form method="POST" action="/admin/projects/images/upload/<?php echo $project['id'] ?? ''; ?>" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
@@ -86,9 +86,9 @@
                                                 <p class="card-text small"><?php echo htmlspecialchars($image['image_description'] ?? ''); ?></p>
                                             <?php endif; ?>
                                             <div class="d-flex justify-content-between">
-                                                <small class="text-muted">Order: <?php echo $image['display_order']; ?></small>
+                                                <small class="text-muted">Order: <?php echo $image['display_order'] ?? 0; ?></small>
                                                 <div>
-                                                    <a href="/admin/projects/images/delete/<?php echo $image['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this image?')">
+                                                    <a href="/admin/projects/images/delete/<?php echo $image['id'] ?? 0; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this image?')">
                                                         <i class="fas fa-trash"></i>
                                                     </a>
                                                 </div>

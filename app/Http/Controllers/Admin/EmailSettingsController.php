@@ -25,7 +25,7 @@ class EmailSettingsController extends BaseController
      */
     public function index()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         
         // Check admin auth
         if (!isset($_SESSION['admin_id'])) {
@@ -46,7 +46,7 @@ class EmailSettingsController extends BaseController
      */
     public function save()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         
         if (!isset($_SESSION['admin_id'])) {
             $_SESSION['error'] = "Unauthorized";
@@ -79,7 +79,7 @@ class EmailSettingsController extends BaseController
      */
     public function test()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         
         header('Content-Type: application/json');
         

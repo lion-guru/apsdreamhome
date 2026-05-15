@@ -72,7 +72,7 @@ class CareerController extends AdminController
             $countSql = str_replace("SELECT c.*, COUNT(ca.id) as application_count", "SELECT COUNT(DISTINCT c.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = $countStmt->fetch()['total'] ?? 0;
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";
@@ -508,10 +508,10 @@ class CareerController extends AdminController
             ]);
         } catch (Exception $e) {
             $this->loggingService->error("Get Career Stats error: " . $e->getMessage());
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to fetch stats'
-            ], 500);
+            http_response_code(200);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Stats unavailable']);
         }
+        exit;
     }
 }

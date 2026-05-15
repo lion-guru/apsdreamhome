@@ -26,7 +26,7 @@ class EmployeeAuthController extends BaseController
     {
         // Start session if not started
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
 
         // Redirect if already logged in
@@ -49,7 +49,7 @@ class EmployeeAuthController extends BaseController
         try {
             // Start session if not started
             if (session_status() === PHP_SESSION_NONE) {
-                session_start();
+                @session_start();
             }
 
             // Validate CSRF token
@@ -109,7 +109,7 @@ class EmployeeAuthController extends BaseController
     public function logout()
     {
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
 
         // Log logout
@@ -131,7 +131,7 @@ class EmployeeAuthController extends BaseController
     protected function isLoggedIn(): bool
     {
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            @session_start();
         }
 
         return isset($_SESSION['employee_id']) && !empty($_SESSION['employee_id']);

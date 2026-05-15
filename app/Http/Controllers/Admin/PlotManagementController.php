@@ -37,8 +37,58 @@ class PlotManagementController extends AdminController
         }
         $this->render('admin/plots/create', [
             'page_title' => 'Create New Plot',
-            'sites' => $sites
+            'colonies' => $sites
         ]);
+    }
+
+    /**
+     * Store a newly created plot
+     */
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $data = $_POST;
+
+            // Validate required fields
+            $required = ['plot_number', 'site_id'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return $this->jsonError(ucfirst(str_replace('_', ' ', $field)) . ' is required', 400);
+                }
+            }
+
+            $sql = "INSERT INTO plots (site_id, plot_number, total_area, status, location, price, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                intval($data['site_id']),
+                CoreFunctionsServiceCustom::validateInput($data['plot_number'], 'string'),
+                floatval($data['total_area'] ?? 0),
+                $data['status'] ?? 'available',
+                CoreFunctionsServiceCustom::validateInput($data['location'] ?? '', 'string'),
+                floatval($data['price'] ?? 0)
+            ]);
+
+            if ($result) {
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_created', [
+                    'plot_number' => $data['plot_number'],
+                    'site_id' => $data['site_id']
+                ]);
+                $this->setFlash('success', 'Plot created successfully');
+                return $this->redirect('/admin/plots');
+            }
+
+            $this->setFlash('error', 'Failed to create plot');
+            return $this->redirect('/admin/plots/create');
+        } catch (Exception $e) {
+            $this->loggingService->error("Plot Store error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to create plot: ' . $e->getMessage());
+            return $this->redirect('/admin/plots/create');
+        }
     }
 
     /**

@@ -623,3 +623,4 @@ function exportBookings($db, $format)
 // 10. Use gzip compression
 //
 //
+

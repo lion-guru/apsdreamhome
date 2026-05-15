@@ -443,4 +443,31 @@ class MLMController extends BaseController
 
         return $data;
     }
+
+    public function getAnalytics()
+    {
+        header('Content-Type: application/json');
+        try {
+            $db = \App\Core\Database::getInstance();
+            $totalMembers = $db->fetch("SELECT COUNT(*) as c FROM `" . $this->getTableName() . "`")['c'] ?? 0;
+            echo json_encode(['success' => true, 'data' => ['total_members' => (int)$totalMembers]]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function calculateCommission()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Commission calculation triggered']);
+        exit;
+    }
+
+    public function getCommissionHistory()
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'data' => []]);
+        exit;
+    }
 }

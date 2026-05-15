@@ -1,5 +1,4 @@
-<?php $this->layout = 'layouts/base'; ?>
-<?php $this->title = 'Wallet Dashboard - APS Dream Home'; ?>
+<?php $page_title = $page_title ?? 'Wallet Dashboard - APS Dream Home'; ?>
 
 <style>
 :root {
@@ -274,12 +273,12 @@
             </div>
             
             <div class="wallet-nav">
-                <a href="/wallet/transactions"><i class="fas fa-history me-2"></i>Transactions</a>
-                <a href="/wallet/transfer-emi"><i class="fas fa-exchange-alt me-2"></i>Transfer to EMI</a>
-                <a href="/wallet/withdrawal"><i class="fas fa-wallet me-2"></i>Withdraw</a>
-                <a href="/wallet/bank-accounts"><i class="fas fa-university me-2"></i>Bank Accounts</a>
-                <a href="/wallet/referral-network"><i class="fas fa-users me-2"></i>Referrals</a>
-                <a href="/wallet/analytics"><i class="fas fa-chart-line me-2"></i>Analytics</a>
+                <a href="<?php echo BASE_URL; ?>/wallet/transactions"><i class="fas fa-history me-2"></i>Transactions</a>
+                <a href="<?php echo BASE_URL; ?>/wallet/transfer-emi"><i class="fas fa-exchange-alt me-2"></i>Transfer to EMI</a>
+                <a href="<?php echo BASE_URL; ?>/wallet/withdrawal"><i class="fas fa-wallet me-2"></i>Withdraw</a>
+                <a href="<?php echo BASE_URL; ?>/wallet/bank-accounts"><i class="fas fa-university me-2"></i>Bank Accounts</a>
+                <a href="<?php echo BASE_URL; ?>/wallet/referral-network"><i class="fas fa-users me-2"></i>Referrals</a>
+                <a href="<?php echo BASE_URL; ?>/wallet/analytics"><i class="fas fa-chart-line me-2"></i>Analytics</a>
             </div>
         </div>
     </div>
@@ -384,7 +383,7 @@
                 <?php endforeach; ?>
                 
                 <div class="text-center mt-3">
-                    <a href="/wallet/transactions" class="btn btn-outline-primary">View All Transactions</a>
+                    <a href="<?php echo BASE_URL; ?>/wallet/transactions" class="btn btn-outline-primary">View All Transactions</a>
                 </div>
             <?php else: ?>
                 <div class="text-center py-5">
@@ -402,7 +401,7 @@
             
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body">
-                    <a href="/wallet/withdrawal" class="d-flex align-items-center text-decoration-none text-dark mb-3">
+                    <a href="<?php echo BASE_URL; ?>/wallet/withdrawal" class="d-flex align-items-center text-decoration-none text-dark mb-3">
                         <div class="bg-success text-white rounded-circle p-3 me-3">
                             <i class="fas fa-wallet"></i>
                         </div>
@@ -412,7 +411,7 @@
                         </div>
                     </a>
                     
-                    <a href="/wallet/transfer-emi" class="d-flex align-items-center text-decoration-none text-dark mb-3">
+                    <a href="<?php echo BASE_URL; ?>/wallet/transfer-emi" class="d-flex align-items-center text-decoration-none text-dark mb-3">
                         <div class="bg-primary text-white rounded-circle p-3 me-3">
                             <i class="fas fa-exchange-alt"></i>
                         </div>
@@ -422,7 +421,7 @@
                         </div>
                     </a>
                     
-                    <a href="/wallet/referral-network" class="d-flex align-items-center text-decoration-none text-dark mb-3">
+                    <a href="<?php echo BASE_URL; ?>/wallet/referral-network" class="d-flex align-items-center text-decoration-none text-dark mb-3">
                         <div class="bg-info text-white rounded-circle p-3 me-3">
                             <i class="fas fa-users"></i>
                         </div>
@@ -432,7 +431,7 @@
                         </div>
                     </a>
                     
-                    <a href="/wallet/bank-accounts" class="d-flex align-items-center text-decoration-none text-dark">
+                    <a href="<?php echo BASE_URL; ?>/wallet/bank-accounts" class="d-flex align-items-center text-decoration-none text-dark">
                         <div class="bg-warning text-white rounded-circle p-3 me-3">
                             <i class="fas fa-university"></i>
                         </div>

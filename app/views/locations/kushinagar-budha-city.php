@@ -4,17 +4,19 @@
  * Migrated from resources/views/Views/budhacity.php
  */
 
-require_once __DIR__ . '/init.php';
+// init.php not found — helpers.php already loaded from bootstrap
 
 // --- Dynamic Data Section ---
 $amenities = [];
 
 // 1. Try to fetch amenities from DB
 try {
-    $db = \App\Core\App::database();
-    $result = $db->fetchAll("SELECT title, image, alt_text FROM amenities_kushinagar ORDER BY id ASC");
-    if ($result) {
-        $amenities = $result;
+    if (class_exists('\App\Core\App')) {
+        $db = \App\Core\App::database();
+        $result = $db->fetchAll("SELECT title, image, alt_text FROM amenities_kushinagar ORDER BY id ASC");
+        if ($result) {
+            $amenities = $result;
+        }
     }
 } catch (Exception $e) {}
 
@@ -29,8 +31,7 @@ if (empty($amenities)) {
     }
 }
 
-$$page_title = 'Budha City Kushinagar | APS Dream Homes';
-$layout = 'modern';
+$page_title = 'Budha City Kushinagar | APS Dream Homes';
 
 ob_start();
 ?>
@@ -127,6 +128,4 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
-
-// Include the layout
-require_once __DIR__ . '/../../layouts/' . $layout . '.php';
+echo $content;

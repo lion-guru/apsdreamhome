@@ -1,16 +1,20 @@
 ﻿<?php
 /**
- * APS Dream Home - System Launch Validator
- * Final system check before going live
+ * System Launch Validator
  */
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once 'includes/db_config.php';
+// Initialize database
+try {
+    $db = \App\Core\Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
-echo "≡ƒÜÇ APS DREAM HOME - SYSTEM LAUNCH VALIDATOR\n";
-echo "=" . str_repeat("=", 50) . "\n";
+echo "APS DREAM HOME - SYSTEM LAUNCH VALIDATOR\n";
+echo "==================================================\n";
 echo "Date: " . date('Y-m-d H:i:s') . "\n\n";
 
 $allTestsPassed = true;

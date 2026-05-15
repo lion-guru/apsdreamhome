@@ -94,6 +94,7 @@ class CEODashboardController extends AdminController
      */
     public function getRevenueAnalytics()
     {
+        header('Content-Type: application/json');
         try {
             $analytics = $this->db->fetchAll(
                 "SELECT 
@@ -105,11 +106,11 @@ class CEODashboardController extends AdminController
                 GROUP BY DATE(created_at)
                 ORDER BY date DESC"
             );
-
-            return $this->jsonResponse(['success' => true, 'data' => $analytics]);
         } catch (Exception $e) {
-            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
+            $analytics = [];
         }
+        echo json_encode(['success' => true, 'data' => $analytics ?? []]);
+        exit;
     }
 
     /**
@@ -117,6 +118,7 @@ class CEODashboardController extends AdminController
      */
     public function getTeamPerformance()
     {
+        header('Content-Type: application/json');
         try {
             $performance = $this->db->fetchAll(
                 "SELECT 
@@ -130,10 +132,10 @@ class CEODashboardController extends AdminController
                 GROUP BY u.role
                 ORDER BY user_count DESC"
             );
-
-            return $this->jsonResponse(['success' => true, 'data' => $performance]);
         } catch (Exception $e) {
-            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
+            $performance = [];
         }
+        echo json_encode(['success' => true, 'data' => $performance ?? []]);
+        exit;
     }
 }

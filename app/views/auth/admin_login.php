@@ -7,7 +7,7 @@ if (!defined('BASE_URL')) {
 $captcha_question = $captcha_question ?? '5 + 3 = ?';
 $csrf_token = $csrf_token ?? '';
 $error = $error ?? null;
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) @session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,12 +16,8 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - APS Dream Home</title>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/app/views/admin/assets/img/favicon.png">
+    
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 

@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Core\Controller;
 use App\Services\File\FileManagerService;
 
 /**
  * Admin File Manager Controller
  * Manage files and documents from admin panel
  */
-class AdminFileController extends Controller
+class AdminFileController extends AdminController
 {
     private $fileService;
     
@@ -17,7 +16,6 @@ class AdminFileController extends Controller
     {
         parent::__construct();
         $this->fileService = new FileManagerService();
-        $this->middleware('admin');
     }
     
     /**

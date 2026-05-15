@@ -1,12 +1,14 @@
 <?php
 
+
+$page_title = $page_title ?? '';
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    @session_start();
 }
 
 // Page title
-$$page_title = 'Reset Password - APS Dream Home';
+$page_title = $page_title ?? 'Reset Password - APS Dream Home';
 
 // Content for base layout
 ob_start();
