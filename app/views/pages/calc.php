@@ -4,10 +4,7 @@
  * Modern Layout Integrated
  */
 
-require_once __DIR__ . '/init.php';
-
-$$page_title = 'EMI Calculator | APS Dream Homes';
-$layout = 'modern';
+$page_title = 'EMI Calculator | APS Dream Homes';
 
 // Handle Calculation
 $amount = isset($_REQUEST['amount']) ? (float)$_REQUEST['amount'] : 0;
@@ -160,7 +157,5 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
-
-// Include the layout
-require_once __DIR__ . '/../../layouts/' . $layout . '.php';
+echo $content;
 ?>

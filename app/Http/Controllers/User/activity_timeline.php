@@ -1,5 +1,5 @@
 <?php
-session_start();
+@session_start();
 require_once __DIR__ . '/../../Core/autoload.php';
 use App\Core\App;
 $db = \App\Core\App::database();

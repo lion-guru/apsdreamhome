@@ -48,7 +48,7 @@ return [
         ],
         'dynamodb' => [
             'driver' => 'dynamodb',
-            'PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEregion' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
             'table' => env('DYNAMODB_CACHE_TABLE', 'cache'),
             'endpoint' => env('DYNAMODB_ENDPOINT'),
         ],

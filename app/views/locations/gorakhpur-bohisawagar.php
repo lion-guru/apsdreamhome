@@ -7,7 +7,7 @@
 
 // Initialize database connection using proper Database class
 try {
-    $db = \App\Core\Database::getInstance();
+    $db = \App\Core\Database\Database::getInstance();
     $conn = $db->getConnection();
 } catch (Exception $e) {
     die("Database connection failed: " . $e->getMessage());
@@ -64,7 +64,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
 <body>
     <!-- Navigation -->
     <!-- FIXED: Commented out missing template file -->
-    <!-- <?php include 'includes/templates/header.php'; ?> -->
+    <?php // include 'includes/templates/header.php'; ?>
 
     <!-- Project Hero Section -->
     <section class="project-hero">
@@ -236,7 +236,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
 
     <!-- Footer -->
     <!-- FIXED: Commented out missing template file -->
-    <!-- <?php include 'includes/templates/footer.php'; ?> -->
+    <?php // include 'includes/templates/footer.php'; ?>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

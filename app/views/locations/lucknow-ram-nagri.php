@@ -4,9 +4,9 @@
  * Migrated from resources/views/Views/lucknow-ram-nagri.php
  */
 
-require_once __DIR__ . '/init.php';
+// init.php not found — helpers.php already loaded from bootstrap
 
-$$page_title = 'Ram Nagri Lucknow | APS Dream Homes';
+$page_title = 'Ram Nagri Lucknow | APS Dream Homes';
 $layout = 'modern';
 
 ob_start();
@@ -92,5 +92,5 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-// Include the layout
-require_once __DIR__ . '/../../layouts/' . $layout . '.php';
+// Layout (modern.php) not found — render content directly
+echo $content;

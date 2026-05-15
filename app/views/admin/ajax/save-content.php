@@ -58,3 +58,4 @@ $result = $adminController->updatePageContent($pageId, $content, $layout);
 // Send response
 header('Content-Type: application/json');
 echo json_encode($result);
+

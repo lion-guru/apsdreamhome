@@ -47,21 +47,30 @@ class BankController extends Controller
     public function branches($bankId)
     {
         $search = $_GET['q'] ?? '';
+        $bankId = intval($bankId);
         
-        $sql = "SELECT id, ifsc, branch, city, district, state, pincode, address
-                FROM bank_branches 
-                WHERE bank_id = ? AND is_active = 1";
-        $params = [intval($bankId)];
-        
-        if ($search) {
-            $sql .= " AND (branch LIKE ? OR city LIKE ?)";
-            $params[] = "%$search%";
-            $params[] = "%$search%";
+        if (!$bankId) {
+            $this->jsonResponse([]);
         }
         
-        $sql .= " ORDER BY branch LIMIT 50";
-        
-        $branches = $this->db->fetchAll($sql, $params);
+        try {
+            $sql = "SELECT id, ifsc, branch, city, district, state, pincode, address
+                    FROM bank_branches 
+                    WHERE bank_id = ? AND is_active = 1";
+            $params = [$bankId];
+            
+            if ($search) {
+                $sql .= " AND (branch LIKE ? OR city LIKE ?)";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            }
+            
+            $sql .= " ORDER BY branch LIMIT 50";
+            
+            $branches = $this->db->fetchAll($sql, $params);
+        } catch (\Exception $e) {
+            $branches = [];
+        }
         
         $this->jsonResponse($branches);
     }
@@ -75,16 +84,20 @@ class BankController extends Controller
         $ifsc = strtoupper(trim($ifsc));
         
         if (empty($ifsc) || strlen($ifsc) < 8) {
-            $this->errorResponse('Valid IFSC code required (e.g., SBIN0001234)', 400);
+            $this->jsonResponse(['found' => false, 'error' => true, 'message' => 'Valid IFSC code required (e.g., SBIN0001234)']);
         }
         
-        $sql = "SELECT bb.ifsc, bb.branch, bb.address, bb.city, bb.district, bb.state, bb.pincode,
-                       b.id as bank_id, b.name as bank_name, b.short_name as bank_short
-                FROM bank_branches bb
-                LEFT JOIN banks b ON bb.bank_id = b.id
-                WHERE bb.ifsc = ? AND bb.is_active = 1";
-        
-        $result = $this->db->fetch($sql, [$ifsc]);
+        try {
+            $sql = "SELECT bb.ifsc, bb.branch, bb.address, bb.city, bb.district, bb.state, bb.pincode,
+                           b.id as bank_id, b.name as bank_name, b.short_name as bank_short
+                    FROM bank_branches bb
+                    LEFT JOIN banks b ON bb.bank_id = b.id
+                    WHERE bb.ifsc = ? AND bb.is_active = 1";
+            
+            $result = $this->db->fetch($sql, [$ifsc]);
+        } catch (\Exception $e) {
+            $result = null;
+        }
         
         if ($result) {
             $this->jsonResponse([
@@ -100,10 +113,13 @@ class BankController extends Controller
                 'pincode' => $result['pincode']
             ]);
         } else {
-            // Try to find partial match
-            $sql2 = "SELECT b.name as bank_name FROM banks b 
-                     WHERE b.is_active = 1 AND b.short_name = ?";
-            $bank = $this->db->fetch($sql2, [substr($ifsc, 0, 4)]);
+            try {
+                $sql2 = "SELECT b.name as bank_name FROM banks b 
+                         WHERE b.is_active = 1 AND b.short_name = ?";
+                $bank = $this->db->fetch($sql2, [substr($ifsc, 0, 4)]);
+            } catch (\Exception $e) {
+                $bank = null;
+            }
             
             $this->jsonResponse([
                 'found' => false,
@@ -124,20 +140,24 @@ class BankController extends Controller
         $search = $_GET['q'] ?? '';
         
         if (strlen($search) < 3) {
-            $this->errorResponse('Minimum 3 characters required', 400);
+            $this->jsonResponse([]);
         }
         
-        $sql = "SELECT bb.id, bb.ifsc, bb.branch, bb.city, b.name as bank_name
-                FROM bank_branches bb
-                LEFT JOIN banks b ON bb.bank_id = b.id
-                WHERE bb.is_active = 1 AND (
-                    bb.ifsc LIKE ? OR bb.branch LIKE ? OR b.name LIKE ? OR bb.city LIKE ?
-                )
-                ORDER BY bb.branch
-                LIMIT 30";
-        
-        $searchParam = "%$search%";
-        $branches = $this->db->fetchAll($sql, [$searchParam, $searchParam, $searchParam, $searchParam]);
+        try {
+            $sql = "SELECT bb.id, bb.ifsc, bb.branch, bb.city, b.name as bank_name
+                    FROM bank_branches bb
+                    LEFT JOIN banks b ON bb.bank_id = b.id
+                    WHERE bb.is_active = 1 AND (
+                        bb.ifsc LIKE ? OR bb.branch LIKE ? OR b.name LIKE ? OR bb.city LIKE ?
+                    )
+                    ORDER BY bb.branch
+                    LIMIT 30";
+            
+            $searchParam = "%$search%";
+            $branches = $this->db->fetchAll($sql, [$searchParam, $searchParam, $searchParam, $searchParam]);
+        } catch (\Exception $e) {
+            $branches = [];
+        }
         
         $this->jsonResponse($branches);
     }
@@ -151,7 +171,7 @@ class BankController extends Controller
         $account = $_GET['account'] ?? '';
         
         if (empty($account) || !is_numeric($account)) {
-            $this->errorResponse('Valid account number required', 400);
+            $this->jsonResponse(['valid' => false, 'message' => 'Valid account number required']);
         }
         
         $length = strlen($account);

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
-use App\Core\Middleware\StrictValidationMiddleware;
 
 /**
  * Import/Export Service - Bulk Data Operations
@@ -12,7 +11,6 @@ use App\Core\Middleware\StrictValidationMiddleware;
 class ImportExportService
 {
     private $database;
-    private $validator;
     private $importPath;
     private $exportPath;
     private $batchSize = 100;
@@ -20,7 +18,6 @@ class ImportExportService
     public function __construct()
     {
         $this->database = Database::getInstance();
-        $this->validator = new StrictValidationMiddleware();
         $this->importPath = STORAGE_PATH . '/imports/';
         $this->exportPath = STORAGE_PATH . '/exports/';
         

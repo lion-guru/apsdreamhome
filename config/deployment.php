@@ -38,7 +38,7 @@ return [
         'port' => getenv('DB_PORT') ?: 3306,
         'database' => getenv('DB_DATABASE') ?: 'apsdreamhome',
         'username' => getenv('DB_USERNAME') ?: 'apsdreamhome_user',
-        'PLACEHOLDER_SECRET_VALUEcharset' => 'utf8mb4',
+        'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
     ],
 
@@ -46,7 +46,7 @@ return [
     'redis' => [
         'host' => getenv('REDIS_HOST') ?: '127.0.0.1',
         'port' => getenv('REDIS_PORT') ?: 6379,
-        'PLACEHOLDER_SECRET_VALUEdatabase' => getenv('REDIS_DB') ?: 0,
+        'database' => getenv('REDIS_DB') ?: 0,
     ],
 
     // Email configuration
@@ -55,7 +55,7 @@ return [
         'host' => getenv('MAIL_HOST') ?: 'smtp.gmail.com',
         'port' => getenv('MAIL_PORT') ?: 587,
         'username' => getenv('MAIL_USERNAME'),
-        'PLACEHOLDER_SECRET_VALUEencryption' => getenv('MAIL_ENCRYPTION') ?: 'tls',
+        'encryption' => getenv('MAIL_ENCRYPTION') ?: 'tls',
         'from_address' => getenv('MAIL_FROM_ADDRESS') ?: 'noreply@apsdreamhome.com',
         'from_name' => getenv('MAIL_FROM_NAME') ?: 'APS Dream Home',
     ],
@@ -74,7 +74,7 @@ return [
 
     // Security settings
     'security' => [
-        'app_PLACEHOLDER_SECRET_VALUEcipher' => 'AES-256-CBC',
+        'cipher' => 'AES-256-CBC',
         'key_length' => 32,
     ],
 

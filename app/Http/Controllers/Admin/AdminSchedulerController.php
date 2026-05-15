@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Core\Controller;
 use App\Services\Scheduler\TaskSchedulerService;
 
 /**
  * Admin Scheduler Controller
  * Manage scheduled tasks from admin panel
  */
-class AdminSchedulerController extends Controller
+class AdminSchedulerController extends AdminController
 {
     private $schedulerService;
     
@@ -17,7 +16,6 @@ class AdminSchedulerController extends Controller
     {
         parent::__construct();
         $this->schedulerService = new TaskSchedulerService();
-        $this->middleware('admin');
     }
     
     /**
@@ -64,7 +62,7 @@ class AdminSchedulerController extends Controller
             'task' => $task,
             'history' => $history,
             'stats' => $stats,
-            'title' => 'Task: ' . $task['name']
+            'title' => 'Task: ' . ($task['name'] ?? 'Unknown')
         ]);
     }
     
@@ -190,7 +188,7 @@ class AdminSchedulerController extends Controller
         
         $db = \App\Core\Database\Database::getInstance();
         
-        $sql = "SELECT tel.*, st.name as task_name
+        $sql = "SELECT tel.*, st.task_name
             FROM task_execution_logs tel
             LEFT JOIN scheduled_tasks st ON tel.task_id = st.id
             ORDER BY tel.started_at DESC

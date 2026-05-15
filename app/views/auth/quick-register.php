@@ -6,7 +6,7 @@
 
 // Start session
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    @session_start();
 }
 
 // Include bootstrap

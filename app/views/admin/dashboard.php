@@ -7,7 +7,7 @@
 if (!defined('BASE_PATH')) {
     // If accessed directly, check auth and include the standalone version
     if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+        @session_start();
     }
     
     if (!isset($_SESSION['admin_id']) && !isset($_SESSION['user_id'])) {

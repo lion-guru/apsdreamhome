@@ -17,7 +17,7 @@ class PaymentController extends BaseController
 
     public function initPayment()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $bookingId = $_POST['booking_id'] ?? null;
         $amount = $_POST['amount'] ?? 0;
@@ -111,7 +111,7 @@ class PaymentController extends BaseController
 
     public function success()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $paymentId = $_GET['payment_id'] ?? null;
         $orderId = $_GET['order_id'] ?? null;
@@ -152,19 +152,18 @@ class PaymentController extends BaseController
         $totalInterest = $totalPayment - $propertyPrice;
 
         $this->render('payments/emi_calculator', [
-            'propertyPrice' => $propertyPrice,
-            'interestRate' => $interestRate,
-            'tenureYears' => $tenureYears,
-            'emi' => round($emi, 2),
-            'totalPayment' => round($totalPayment, 2),
-            'totalInterest' => round($totalInterest, 2),
+            'result' => [
+                'emi' => round($emi, 2),
+                'total_interest' => round($totalInterest, 2),
+                'total_payment' => round($totalPayment, 2),
+            ],
             'base' => $base
         ]);
     }
 
     public function history()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $userId = $_SESSION['user_id'] ?? null;
         if (!$userId) {
@@ -174,17 +173,17 @@ class PaymentController extends BaseController
 
         $db = Database::getInstance();
         $payments = $db->fetchAll(
-            "SELECT p.*, b.property_id, pr.title as property_title 
+            "SELECT p.*, pr.title as property_title 
              FROM payments p 
-             LEFT JOIN bookings b ON p.booking_id = b.id 
-             LEFT JOIN properties pr ON b.property_id = pr.id 
-             WHERE p.user_id = ? 
+             LEFT JOIN properties pr ON p.property_id = pr.id 
+             WHERE p.customer_id = ? 
              ORDER BY p.created_at DESC",
             [$userId]
-        );
+        ) ?: [];
 
         $this->render('payments/history', [
-            'payments' => $payments,
+            'transactions' => $payments,
+            'filters' => ['status' => $_GET['status'] ?? '', 'gateway' => $_GET['gateway'] ?? '', 'from' => $_GET['from'] ?? '', 'to' => $_GET['to'] ?? ''],
             'base' => BASE_URL
         ]);
     }
@@ -193,15 +192,42 @@ class PaymentController extends BaseController
 
     public function index()
     {
+        @session_start();
+
+        try {
+            $db = Database::getInstance();
+            $payments = $db->fetchAll(
+                "SELECT p.*, pr.title as property_title 
+                 FROM payments p 
+                 LEFT JOIN properties pr ON p.property_id = pr.id 
+                 ORDER BY p.created_at DESC LIMIT 20"
+            ) ?: [];
+
+            $stats = $db->fetch(
+                "SELECT 
+                    COALESCE(SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END), 0) as total_received,
+                    COALESCE(SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END), 0) as total_pending,
+                    COALESCE(SUM(CASE WHEN status = 'refunded' THEN amount ELSE 0 END), 0) as total_refunded
+                 FROM payments"
+            ) ?: [];
+        } catch (\Exception $e) {
+            $payments = [];
+            $stats = [];
+        }
+
         $this->render('payments/index', [
-            'page_title' => 'Payments - APS Dream Home',
+            'pageTitle' => 'Payments - APS Dream Home',
+            'payments' => $payments,
+            'totalReceived' => $stats['total_received'] ?? 0,
+            'totalPending' => $stats['total_pending'] ?? 0,
+            'totalRefunded' => $stats['total_refunded'] ?? 0,
             'base' => BASE_URL
         ]);
     }
 
     public function initiate()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $amount = $_POST['amount'] ?? ($_GET['amount'] ?? 0);
         $purpose = $_POST['purpose'] ?? ($_GET['purpose'] ?? 'booking');
@@ -219,7 +245,7 @@ class PaymentController extends BaseController
         }
 
         $this->render('payments/initiate', [
-            'page_title' => 'Initiate Payment',
+            'pageTitle' => 'Initiate Payment',
             'amount' => $amount,
             'purpose' => $purpose,
             'base' => BASE_URL
@@ -234,13 +260,13 @@ class PaymentController extends BaseController
 
     public function failure()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         $error = $_SESSION['error'] ?? 'Payment was cancelled or failed';
         unset($_SESSION['error']);
 
         $this->render('payments/failure', [
-            'page_title' => 'Payment Failed',
-            'error' => $error,
+            'pageTitle' => 'Payment Failed',
+            'errorMessage' => $error,
             'base' => BASE_URL
         ]);
     }
@@ -260,14 +286,14 @@ class PaymentController extends BaseController
     public function plans()
     {
         $this->render('payments/plans', [
-            'page_title' => 'Payment Plans - APS Dream Home',
+            'pageTitle' => 'Payment Plans - APS Dream Home',
             'base' => BASE_URL
         ]);
     }
 
     public function refund()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $paymentId = $_POST['payment_id'] ?? '';
@@ -277,14 +303,14 @@ class PaymentController extends BaseController
         }
 
         $this->render('payments/refund', [
-            'page_title' => 'Request Refund',
+            'pageTitle' => 'Request Refund',
             'base' => BASE_URL
         ]);
     }
 
     public function settings()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         $userId = $_SESSION['user_id'] ?? null;
 
         if (!$userId) {
@@ -299,7 +325,7 @@ class PaymentController extends BaseController
         }
 
         $this->render('payments/settings', [
-            'page_title' => 'Payment Settings',
+            'pageTitle' => 'Payment Settings',
             'base' => BASE_URL
         ]);
     }

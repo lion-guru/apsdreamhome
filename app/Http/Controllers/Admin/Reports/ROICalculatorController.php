@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Reports;
 
-use App\Core\Controller;
 use App\Core\Database\Database;
 
 /**
  * ROI Calculator Controller
  * Property investment return analysis
  */
-class ROICalculatorController extends Controller
+class ROICalculatorController extends \App\Http\Controllers\Admin\AdminController
 {
     private $database;
     
@@ -24,7 +23,7 @@ class ROICalculatorController extends Controller
      */
     public function index(): void
     {
-        $this->requireAuth();
+        $this->requireLogin();
         
         $calculations = [];
         
@@ -205,7 +204,7 @@ class ROICalculatorController extends Controller
      */
     public function compare(): void
     {
-        $this->requireAuth();
+        $this->requireLogin();
         
         $properties = [];
         

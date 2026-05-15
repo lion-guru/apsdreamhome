@@ -4,7 +4,7 @@
  * Colonies Management - APS Dream Home Admin
  */
 
-session_start();
+@@session_start();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: " . BASE_URL . "/admin/login");
     exit();

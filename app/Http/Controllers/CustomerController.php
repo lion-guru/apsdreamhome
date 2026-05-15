@@ -40,7 +40,12 @@ class CustomerController
         $canEdit = true;
 
         // Use unified shared profile view
-        include __DIR__ . '/../../../views/shared/profile.php';
+        $profileView = __DIR__ . '/../../../views/shared/profile.php';
+        if (file_exists($profileView)) {
+            include $profileView;
+        } else {
+            echo '<div class="alert alert-warning">Profile page under construction</div>';
+        }
     }
     
     public function wishlist() 

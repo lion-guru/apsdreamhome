@@ -39,7 +39,7 @@ class MLMTreeController extends BaseController
      */
     public function genealogy()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $userId = $_SESSION['user_id'] ?? null;
         $userType = $_SESSION['user_type'] ?? null;
@@ -72,7 +72,13 @@ class MLMTreeController extends BaseController
         $upline = $this->getUpline($viewUserId);
 
         $base = BASE_URL;
-        include __DIR__ . '/../views/mlm/genealogy.php';
+        $viewPath = __DIR__ . '/../../views/mlm/genealogy.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            // Fallback to admin genealogy if mlm folder doesn't exist
+            include __DIR__ . '/../../views/admin/mlm/genealogy.php';
+        }
     }
 
     /**
@@ -82,7 +88,7 @@ class MLMTreeController extends BaseController
     {
         header('Content-Type: application/json');
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $userId = $_GET['root_id'] ?? ($_SESSION['user_id'] ?? null);
         $levels = min($_GET['levels'] ?? 5, 10); // Max 10 levels
@@ -109,7 +115,7 @@ class MLMTreeController extends BaseController
     {
         header('Content-Type: application/json');
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $query = $_GET['q'] ?? '';
         $rootId = $_SESSION['user_id'] ?? null;

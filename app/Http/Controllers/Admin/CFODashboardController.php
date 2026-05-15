@@ -104,6 +104,7 @@ class CFODashboardController extends AdminController
      */
     public function getFinancialAnalytics()
     {
+        header('Content-Type: application/json');
         try {
             $analytics = $this->db->query(
                 "SELECT 
@@ -115,12 +116,12 @@ class CFODashboardController extends AdminController
                 GROUP BY DATE(created_at)
                 ORDER BY date DESC"
             )->fetchAll(\PDO::FETCH_ASSOC);
-
-            return $this->jsonResponse(['success' => true, 'data' => $analytics]);
         } catch (Exception $e) {
             $this->loggingService->error("Get Financial Analytics error: " . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
+            $analytics = [];
         }
+        echo json_encode(['success' => true, 'data' => $analytics ?? []]);
+        exit;
     }
 
     /**

@@ -15,7 +15,7 @@ class LocationAdminController
     // Check if user is logged in and has admin access
     private function checkAuth()
     {
-        session_start();
+        @session_start();
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
             header('Location: /admin/login');
             exit();

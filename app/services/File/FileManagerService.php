@@ -791,8 +791,11 @@ class FileManagerService
     /**
      * Format bytes
      */
-    private function formatBytes(int $bytes): string
+    private function formatBytes(?int $bytes): string
     {
+        if ($bytes === null) {
+            return '0 B';
+        }
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $unitIndex = 0;
         

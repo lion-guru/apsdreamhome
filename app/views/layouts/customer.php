@@ -302,20 +302,20 @@
         <div class="sidebar-section">Main Menu</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/dashboard" class="sidebar-link <?php echo $current_page === 'dashboard' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/user/dashboard" class="sidebar-link <?php echo ($current_page ?? '') === 'dashboard' ? 'active' : ''; ?>">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/properties" class="sidebar-link <?php echo $current_page === 'properties' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/user/properties" class="sidebar-link <?php echo ($current_page ?? '') === 'properties' ? 'active' : ''; ?>">
                     <i class="fas fa-building"></i>
                     <span>My Properties</span>
                     <span class="sidebar-badge">3</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/inquiries" class="sidebar-link <?php echo $current_page === 'inquiries' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/user/inquiries" class="sidebar-link <?php echo ($current_page ?? '') === 'inquiries' ? 'active' : ''; ?>">
                     <i class="fas fa-envelope"></i>
                     <span>My Inquiries</span>
                     <span class="sidebar-badge">5</span>
@@ -327,25 +327,25 @@
         <div class="sidebar-section">Services</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/properties" class="sidebar-link <?php echo $current_page === 'browse' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/properties" class="sidebar-link <?php echo ($current_page ?? '') === 'browse' ? 'active' : ''; ?>">
                     <i class="fas fa-search"></i>
                     <span>Browse Properties</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/list-property" class="sidebar-link <?php echo $current_page === 'post' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/list-property" class="sidebar-link <?php echo ($current_page ?? '') === 'post' ? 'active' : ''; ?>">
                     <i class="fas fa-plus-circle"></i>
                     <span>Post Property</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/financial-services" class="sidebar-link <?php echo $current_page === 'loan' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/financial-services" class="sidebar-link <?php echo ($current_page ?? '') === 'loan' ? 'active' : ''; ?>">
                     <i class="fas fa-hand-holding-usd"></i>
                     <span>Home Loan</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/interior-design" class="sidebar-link <?php echo $current_page === 'interior' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/interior-design" class="sidebar-link <?php echo ($current_page ?? '') === 'interior' ? 'active' : ''; ?>">
                     <i class="fas fa-couch"></i>
                     <span>Interior Design</span>
                 </a>
@@ -356,19 +356,19 @@
         <div class="sidebar-section">Account</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/profile" class="sidebar-link <?php echo $current_page === 'profile' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/user/profile" class="sidebar-link <?php echo ($current_page ?? '') === 'profile' ? 'active' : ''; ?>">
                     <i class="fas fa-user-cog"></i>
                     <span>My Profile</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/bank-details" class="sidebar-link <?php echo $current_page === 'bank' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/user/bank-details" class="sidebar-link <?php echo ($current_page ?? '') === 'bank' ? 'active' : ''; ?>">
                     <i class="fas fa-university"></i>
                     <span>Bank Details</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/settings" class="sidebar-link <?php echo $current_page === 'settings' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/user/settings" class="sidebar-link <?php echo ($current_page ?? '') === 'settings' ? 'active' : ''; ?>">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>

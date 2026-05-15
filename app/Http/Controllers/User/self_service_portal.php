@@ -41,7 +41,7 @@ if (PHP_VERSION_ID < 70300) {
 }
 
 session_name($session_name);
-session_start();
+@session_start();
 
 // Regenerate session ID to prevent session fixation
 if (!isset($_SESSION['last_regeneration'])) {

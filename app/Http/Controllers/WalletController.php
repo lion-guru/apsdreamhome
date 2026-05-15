@@ -18,7 +18,7 @@ class WalletController extends BaseController
      */
     public function index()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
@@ -71,13 +71,22 @@ class WalletController extends BaseController
             $walletConfig[$item['config_key']] = $item['config_value'];
         }
 
+        $userReferralCode = '';
+        try {
+            $userData = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ?", [$userId]);
+            $userReferralCode = $userData['referral_code'] ?? '';
+        } catch (\Exception $e) {}
+
         $data = [
             'wallet' => $wallet,
             'recentTransactions' => $recentTransactions,
             'referralStats' => $referralStats,
             'config' => $walletConfig,
             'user_name' => $_SESSION['user_name'] ?? 'User',
-            'user_email' => $_SESSION['user_email'] ?? ''
+            'user_email' => $_SESSION['user_email'] ?? '',
+            'user_referral_code' => $userReferralCode,
+            'referral_code' => $userReferralCode,
+            'page_title' => 'Wallet Dashboard'
         ];
 
         $this->layout = 'layouts/base';
@@ -89,7 +98,7 @@ class WalletController extends BaseController
      */
     public function transactions()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
@@ -148,7 +157,7 @@ class WalletController extends BaseController
      */
     public function transferToEmi()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
@@ -186,7 +195,7 @@ class WalletController extends BaseController
      */
     public function processEmiTransfer()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -256,7 +265,7 @@ class WalletController extends BaseController
      */
     public function withdrawal()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
@@ -306,7 +315,7 @@ class WalletController extends BaseController
      */
     public function processWithdrawal()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -356,7 +365,7 @@ class WalletController extends BaseController
      */
     public function bankAccounts()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
@@ -390,7 +399,7 @@ class WalletController extends BaseController
      */
     public function addBankAccount()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -458,7 +467,7 @@ class WalletController extends BaseController
      */
     public function referralNetwork()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
@@ -504,7 +513,7 @@ class WalletController extends BaseController
      */
     public function analytics()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
@@ -557,14 +566,13 @@ class WalletController extends BaseController
      */
     public function associateWallet()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
-        if (!isset($_SESSION['associate_id'])) {
+        $associateId = $_SESSION['user_id'] ?? $_SESSION['associate_id'] ?? null;
+        if (!$associateId) {
             header('Location: ' . BASE_URL . '/associate/login');
             exit;
         }
-
-        $associateId = $_SESSION['associate_id'];
 
         // Get wallet information (using associate_id as user_id)
         $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$associateId]);
@@ -618,17 +626,28 @@ class WalletController extends BaseController
             $walletConfig[$item['config_key']] = $item['config_value'];
         }
 
+        $userReferralCode = '';
+        try {
+            $userData = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ?", [$associateId]);
+            $userReferralCode = $userData['referral_code'] ?? '';
+        } catch (\Exception $e) {}
+
         $data = [
             'wallet' => $wallet,
             'recentTransactions' => $recentTransactions,
             'commissionStats' => $commissionStats,
             'networkStats' => $networkStats,
+            'referralStats' => ['total_referrals' => $networkStats['direct_referrals'] ?? 0],
             'config' => $walletConfig,
-            'user_name' => $_SESSION['associate_name'] ?? 'Associate',
-            'is_associate' => true
+            'user_name' => $_SESSION['associate_name'] ?? $_SESSION['user_name'] ?? 'Associate',
+            'user_email' => $_SESSION['associate_email'] ?? $_SESSION['user_email'] ?? '',
+            'user_referral_code' => $userReferralCode,
+            'referral_code' => $userReferralCode,
+            'is_associate' => true,
+            'page_title' => 'Wallet Dashboard - Associate'
         ];
 
         $this->layout = 'layouts/associate';
-        $this->render('wallet/associate_dashboard', $data);
+        $this->render('wallet/dashboard', $data);
     }
 }

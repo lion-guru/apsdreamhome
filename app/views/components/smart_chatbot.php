@@ -4,7 +4,7 @@
  * Smart AI Chatbot Widget
  * Floating chat interface with RBAC awareness
  */
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) @session_start();
 
 // Detect user context for personalized greeting
 $isLoggedIn = false;

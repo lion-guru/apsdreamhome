@@ -1832,4 +1832,27 @@ class MobileApiController extends BaseController
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
+
+    public function leads()
+    {
+        header('Content-Type: application/json');
+        $db = \App\Core\Database::getInstance();
+        $leads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 20");
+        echo json_encode(['success' => true, 'data' => $leads]);
+        exit;
+    }
+
+    public function userProfile()
+    {
+        header('Content-Type: application/json');
+        $userId = $_GET['user_id'] ?? ($_POST['user_id'] ?? 0);
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'User ID required']);
+            exit;
+        }
+        $db = \App\Core\Database::getInstance();
+        $user = $db->fetch("SELECT id, name, email, phone, created_at FROM users WHERE id = ?", [$userId]);
+        echo json_encode(['success' => true, 'data' => $user ?: []]);
+        exit;
+    }
 }

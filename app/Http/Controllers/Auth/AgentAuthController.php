@@ -15,7 +15,7 @@ class AgentAuthController extends BaseController
 {
     public function register()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         $csrf_token = $this->getCsrfToken();
         $errors = $_SESSION['errors'] ?? [];
         $old = $_SESSION['old_input'] ?? [];
@@ -27,7 +27,7 @@ class AgentAuthController extends BaseController
 
     public function handleRegister()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
@@ -166,7 +166,7 @@ class AgentAuthController extends BaseController
 
     public function login()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         if (isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'agent') {
             header('Location: ' . BASE_URL . '/agent/dashboard');
             exit;
@@ -182,7 +182,7 @@ class AgentAuthController extends BaseController
 
     public function authenticate()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
@@ -217,7 +217,7 @@ class AgentAuthController extends BaseController
 
     public function logout()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         session_destroy();
         header('Location: ' . BASE_URL . '/agent/login');
         exit;

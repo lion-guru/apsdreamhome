@@ -34,7 +34,7 @@ class PropertyImageController extends BaseController
     public function manage($propertyId)
     {
         // Check admin auth
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         if (!isset($_SESSION['admin_id'])) {
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -70,7 +70,7 @@ class PropertyImageController extends BaseController
      */
     public function upload()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         
         $propertyId = $_POST['property_id'] ?? null;
         
@@ -246,7 +246,7 @@ class PropertyImageController extends BaseController
      */
     public function setPrimary()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         
         $imageId = $_POST['image_id'] ?? null;
         $propertyId = $_POST['property_id'] ?? null;
@@ -303,7 +303,7 @@ class PropertyImageController extends BaseController
      */
     public function delete()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         
         $imageId = $_POST['image_id'] ?? null;
         $propertyId = $_POST['property_id'] ?? null;

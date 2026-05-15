@@ -6,7 +6,7 @@ if (!defined('BASE_URL')) {
 }
 $csrf_token = $csrf_token ?? '';
 $error = $error ?? null;
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) @session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">

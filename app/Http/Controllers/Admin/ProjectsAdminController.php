@@ -83,6 +83,50 @@ class ProjectsAdminController extends AdminController
         return $this->render('admin/projects/images');
     }
 
+    /**
+     * Update project status
+     */
+    public function status($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $db = Database::getInstance();
+            $status = $_POST['status'] ?? 'planning';
+
+            $stmt = $db->prepare("UPDATE projects SET status = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$status, $id]);
+
+            $this->setFlash('success', 'Project status updated');
+        }
+        $this->redirect('/admin/projects');
+    }
+
+    /**
+     * Update project details
+     */
+    public function update($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $db = Database::getInstance();
+            $name = $_POST['name'] ?? '';
+            $status = $_POST['status'] ?? 'planning';
+            $description = $_POST['description'] ?? '';
+
+            $stmt = $db->prepare("UPDATE projects SET name = ?, status = ?, description = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$name, $status, $description, $id]);
+
+            $this->setFlash('success', 'Project updated successfully');
+        }
+        $this->redirect('/admin/projects');
+    }
+
+    /**
+     * View a single project (alias for show)
+     */
+    public function detail($id)
+    {
+        return $this->show($id);
+    }
+
     public function delete($id)
     {
         $this->destroy($id);

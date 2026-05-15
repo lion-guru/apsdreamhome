@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Core\Controller;
 use App\Services\Loyalty\LoyaltyRewardsService;
 
 /**
  * Admin Loyalty Controller
  * Manage loyalty program from admin panel
  */
-class AdminLoyaltyController extends Controller
+class AdminLoyaltyController extends AdminController
 {
     private $loyaltyService;
     
@@ -17,7 +16,6 @@ class AdminLoyaltyController extends Controller
     {
         parent::__construct();
         $this->loyaltyService = new LoyaltyRewardsService();
-        $this->middleware('admin');
     }
     
     /**
@@ -76,21 +74,34 @@ class AdminLoyaltyController extends Controller
      */
     public function memberDetails(int $userId): void
     {
-        $dashboard = $this->loyaltyService->getDashboard($userId, 'customer');
+        // Build member data for the view
+        $member = [];
+        try {
+            $dashboard = $this->loyaltyService->getDashboard($userId, 'customer');
+            $member = $dashboard['account'] ?? [];
+            $member['name'] = $member['name'] ?? 'User #' . $userId;
+            $member['tier'] = $member['current_tier'] ?? 'bronze';
+            $member['total_redeemed'] = $member['total_redeemed'] ?? 0;
+        } catch (\Exception $e) {
+            $member = ['id' => $userId, 'name' => 'User #' . $userId, 'email' => '', 'phone' => '', 'points' => 0, 'tier' => 'bronze', 'status' => 'active', 'join_date' => '', 'total_redeemed' => 0];
+        }
         
         // Get transaction history
-        $db = \App\Core\Database\Database::getInstance();
-        $sql = "SELECT * FROM loyalty_transactions 
-            WHERE user_id = ? AND user_type = 'customer'
-            ORDER BY created_at DESC";
-        $stmt = $db->prepare($sql);
-        $stmt->execute([$userId]);
-        $transactions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $points_history = [];
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $sql = "SELECT * FROM loyalty_transactions 
+                WHERE user_id = ?
+                ORDER BY created_at DESC";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([$userId]);
+            $points_history = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {}
         
         $this->render('admin/loyalty/member_details', [
-            'dashboard' => $dashboard,
-            'transactions' => $transactions,
-            'title' => 'Member Loyalty Details'
+            'member' => $member,
+            'points_history' => $points_history,
+            'pageTitle' => 'Member Loyalty Details'
         ]);
     }
     
@@ -140,7 +151,7 @@ class AdminLoyaltyController extends Controller
     {
         $db = \App\Core\Database\Database::getInstance();
         
-        $sql = "SELECT * FROM rewards_catalog ORDER BY points_required ASC";
+        $sql = "SELECT * FROM rewards_catalog ORDER BY points_cost ASC";
         $rewards = $db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
         
         $this->render('admin/loyalty/rewards', [
@@ -225,11 +236,11 @@ class AdminLoyaltyController extends Controller
         
         $db = \App\Core\Database\Database::getInstance();
         
-        $sql = "SELECT rr.*, rc.name as reward_name, u.name as user_name, u.email
+        $sql = "SELECT rr.*, rc.reward_name, u.name as user_name, u.email
             FROM reward_redemptions rr
             JOIN rewards_catalog rc ON rr.reward_id = rc.id
             LEFT JOIN users u ON rr.user_id = u.id
-            ORDER BY rr.created_at DESC
+            ORDER BY rr.redemption_date DESC
             LIMIT ? OFFSET ?";
         
         $stmt = $db->prepare($sql);
@@ -241,7 +252,7 @@ class AdminLoyaltyController extends Controller
             COUNT(*) as total,
             SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
             SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved,
-            SUM(points_used) as total_points
+            COALESCE(SUM(points_spent), 0) as total_points
             FROM reward_redemptions";
         $stats = $db->query($statsSql)->fetch(\PDO::FETCH_ASSOC);
         

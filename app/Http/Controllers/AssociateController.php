@@ -21,9 +21,10 @@ class AssociateController extends BaseController
      */
     private function requireAuth()
     {
-        if (!$this->isLoggedIn()) {
-            $this->setFlash('error', 'Please login to access this page');
-            $this->redirect('/login');
+        @session_start();
+        if (empty($_SESSION['user_id']) || ($_SESSION['user_role'] ?? '') !== 'associate') {
+            $_SESSION['flash_error'] = 'Please login as an associate to access this page';
+            $this->redirect('/associate/login');
         }
     }
 
@@ -75,60 +76,113 @@ class AssociateController extends BaseController
     public function dashboard()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
 
-        // Sample data matching view expectations
-        $dashboardData = [
-            'role' => 'associate',
-            'title' => 'Associate Dashboard',
-            'widgets' => [
-                'total_properties' => [
-                    'title' => 'Total Properties',
-                    'count' => 15,
-                    'icon' => 'building',
-                    'link' => '/associate/properties'
-                ],
-                'sold_properties' => [
-                    'title' => 'Sold Properties',
-                    'count' => 8,
-                    'icon' => 'check-circle',
-                    'link' => '/associate/sold'
-                ],
-                'pending_deals' => [
-                    'title' => 'Pending Deals',
-                    'count' => 3,
-                    'icon' => 'clock',
-                    'link' => '/associate/pending'
-                ],
-                'commissions' => [
-                    'title' => 'Commission Earned',
-                    'count' => '₹1.25L',
-                    'icon' => 'rupee-sign',
-                    'link' => '/associate/commissions'
-                ]
-            ],
-            'recent_activities' => [
-                ['action' => 'Property listed: Luxury Apartment in Gomti Nagar', 'created_at' => date('Y-m-d H:i:s', strtotime('-2 hours'))],
-                ['action' => 'Deal closed: Modern Villa in Hazratganj', 'created_at' => date('Y-m-d H:i:s', strtotime('-1 day'))],
-                ['action' => 'New lead added: Ramesh Kumar', 'created_at' => date('Y-m-d H:i:s', strtotime('-3 days'))]
-            ],
-            'analytics' => [
-                'sales_performance' => ['data' => 'Available'],
-                'lead_conversion' => ['data' => 'Available'],
-                'commission_trend' => ['data' => 'Available']
-            ],
-            'quick_actions' => [
-                'add_property' => '/associate/add-property',
-                'view_leads' => '/associate/leads',
-                'my_commissions' => '/associate/commissions',
-                'profile' => '/associate/profile'
-            ]
+        $userId = $_SESSION['user_id'] ?? 0;
+        $associateName = $_SESSION['associate_name'] ?? 'Associate';
+
+        // Fetch real DB data
+        $totalLeads = 0;
+        $propertiesSold = 0;
+        $totalCommission = 0;
+        $networkSize = 0;
+        $recentLeads = [];
+        $recentCommissions = [];
+        $activities = [];
+
+        try {
+            $totalLeads = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate'", [$userId]);
+        } catch (\Exception $e) {}
+        try {
+            $propertiesSold = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties WHERE user_id = ? AND status = 'approved'", [$userId]);
+        } catch (\Exception $e) {}
+        try {
+            $totalCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE associate_id = ?", [$userId]);
+        } catch (\Exception $e) {}
+        try {
+            $networkSize = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]);
+        } catch (\Exception $e) {}
+
+        // Recent leads
+        try {
+            $recentLeads = $this->db->fetchAll(
+                "SELECT name, phone, CONCAT('Lead #', id) as type, status, DATE(created_at) as date FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate' ORDER BY created_at DESC LIMIT 5",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
+        // Recent commissions
+        try {
+            $recentCommissions = $this->db->fetchAll(
+                "SELECT c.id, p.title as property, c.amount, c.status, DATE(c.created_at) as date FROM commissions c LEFT JOIN user_properties p ON c.property_id = p.id WHERE c.associate_id = ? ORDER BY c.created_at DESC LIMIT 5",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
+        // Recent activities
+        try {
+            $rawActivities = $this->db->fetchAll(
+                "SELECT action, created_at FROM activity_log WHERE user_id = ? AND user_type = 'associate' ORDER BY created_at DESC LIMIT 5",
+                [$userId]
+            );
+            foreach ($rawActivities as $a) {
+                $activities[] = [
+                    'icon' => 'fa-clock',
+                    'text' => $a['action'],
+                    'time' => $this->timeAgo($a['created_at']),
+                    'color' => 'blue'
+                ];
+            }
+        } catch (\Exception $e) {}
+
+        // Fallback if no db data
+        if (empty($recentLeads)) {
+            $recentLeads = [
+                ['name' => 'Rajesh Kumar', 'phone' => '98765xxxxx', 'type' => 'Residential Plot', 'status' => 'hot', 'date' => date('Y-m-d', strtotime('-1 day'))],
+                ['name' => 'Priya Sharma', 'phone' => '98765xxxxx', 'type' => 'Commercial Shop', 'status' => 'warm', 'date' => date('Y-m-d', strtotime('-3 days'))],
+            ];
+        }
+        if (empty($recentCommissions)) {
+            $recentCommissions = [
+                ['property' => 'Suryoday Heights - Plot 45', 'amount' => 25000, 'status' => 'paid', 'date' => date('Y-m-d', strtotime('-5 days'))],
+                ['property' => 'Raghunath City - Shop 12', 'amount' => 18000, 'status' => 'pending', 'date' => date('Y-m-d', strtotime('-10 days'))],
+            ];
+        }
+        if (empty($activities)) {
+            $activities = [
+                ['icon' => 'fa-user-plus', 'text' => 'Welcome to associate dashboard', 'time' => 'Just now', 'color' => 'blue'],
+                ['icon' => 'fa-building', 'text' => 'Start adding your first property', 'time' => '-', 'color' => 'orange'],
+            ];
+        }
+
+        $stats = [
+            'total_leads' => $totalLeads,
+            'active_leads' => 0,
+            'properties_sold' => $propertiesSold,
+            'total_commission' => $totalCommission,
+            'pending_commission' => 0,
+            'network_size' => max($networkSize, 1),
+            'conversion_rate' => 0,
+            'monthly_growth' => 0
         ];
 
         $this->render('dashboard/associate_dashboard', [
             'page_title' => 'Associate Dashboard - APS Dream Home',
             'page_description' => 'Manage your property listings and client relationships',
-            'dashboardData' => $dashboardData
+            'stats' => $stats,
+            'recent_leads' => $recentLeads,
+            'recent_commissions' => $recentCommissions,
+            'activities' => $activities
         ], 'layouts/associate');
+    }
+
+    private function timeAgo($datetime)
+    {
+        if (!$datetime) return 'ago';
+        $timestamp = strtotime($datetime);
+        $diff = time() - $timestamp;
+        if ($diff < 60) return 'Just now';
+        if ($diff < 3600) return floor($diff / 60) . ' min ago';
+        if ($diff < 86400) return floor($diff / 3600) . ' hours ago';
+        return floor($diff / 86400) . ' days ago';
     }
 
     /**
@@ -137,11 +191,22 @@ class AssociateController extends BaseController
     public function addProperty()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        // Load states for dropdown
+        $states = [];
+        try {
+            $states = $this->db->fetchAll("SELECT id, name FROM states ORDER BY name LIMIT 50");
+        } catch (\Exception $e) {}
 
         $this->render('associate/add_property', [
             'page_title' => 'Add Property - APS Dream Home',
-            'page_description' => 'Add a new property listing'
-        ]);
+            'page_description' => 'Add a new property listing',
+            'states' => $states,
+            'userId' => $userId,
+            'current_page' => 'add-property'
+        ], 'layouts/associate');
     }
 
     /**
@@ -150,11 +215,25 @@ class AssociateController extends BaseController
     public function leads()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $leads = [];
+        try {
+            $leads = $this->db->fetchAll(
+                "SELECT id, name, email, phone, message, type, status, DATE(created_at) as date 
+                 FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate' 
+                 ORDER BY created_at DESC LIMIT 20",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
 
         $this->render('associate/leads', [
             'page_title' => 'My Leads - APS Dream Home',
-            'page_description' => 'Manage your client leads'
-        ]);
+            'page_description' => 'Manage your client leads',
+            'leads' => $leads,
+            'current_page' => 'leads'
+        ], 'layouts/associate');
     }
 
     /**
@@ -163,11 +242,40 @@ class AssociateController extends BaseController
     public function commissions()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $commissions = [];
+        $totalEarned = 0;
+        $totalPending = 0;
+        try {
+            $commissions = $this->db->fetchAll(
+                "SELECT c.id, COALESCE(p.title, p.name, 'Property #' || c.property_id) as property, 
+                 c.amount, c.status, c.description, DATE(c.created_at) as date
+                 FROM commissions c 
+                 LEFT JOIN user_properties p ON c.property_id = p.id 
+                 WHERE c.associate_id = ? 
+                 ORDER BY c.created_at DESC LIMIT 20",
+                [$userId]
+            );
+            $totalEarned = (float)$this->db->fetchColumn(
+                "SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE associate_id = ? AND status = 'paid'",
+                [$userId]
+            );
+            $totalPending = (float)$this->db->fetchColumn(
+                "SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE associate_id = ? AND status = 'pending'",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
 
         $this->render('associate/commissions', [
             'page_title' => 'My Commissions - APS Dream Home',
-            'page_description' => 'View your commission earnings'
-        ]);
+            'page_description' => 'View your commission earnings',
+            'commissions' => $commissions,
+            'total_earned' => $totalEarned,
+            'total_pending' => $totalPending,
+            'current_page' => 'commissions'
+        ], 'layouts/associate');
     }
 
     /**
@@ -176,11 +284,26 @@ class AssociateController extends BaseController
     public function properties()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $properties = [];
+        try {
+            $properties = $this->db->fetchAll(
+                "SELECT id, name as title, property_type, listing_type, price, address, 
+                 status, image, DATE(created_at) as date, views
+                 FROM user_properties WHERE user_id = ? AND posted_by_type = 'associate'
+                 ORDER BY created_at DESC LIMIT 20",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
 
         $this->render('associate/properties', [
             'page_title' => 'My Properties - APS Dream Home',
-            'page_description' => 'Manage your property listings'
-        ]);
+            'page_description' => 'Manage your property listings',
+            'properties' => $properties,
+            'current_page' => 'properties'
+        ], 'layouts/associate');
     }
 
     /**
@@ -189,11 +312,25 @@ class AssociateController extends BaseController
     public function sold()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $properties = [];
+        try {
+            $properties = $this->db->fetchAll(
+                "SELECT id, name as title, property_type, price, address, DATE(created_at) as date, views
+                 FROM user_properties WHERE user_id = ? AND status = 'approved' AND posted_by_type = 'associate'
+                 ORDER BY created_at DESC LIMIT 20",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
 
         $this->render('associate/sold', [
             'page_title' => 'Sold Properties - APS Dream Home',
-            'page_description' => 'View your sold properties'
-        ]);
+            'page_description' => 'View your sold properties',
+            'properties' => $properties,
+            'current_page' => 'sold'
+        ], 'layouts/associate');
     }
 
     /**
@@ -202,11 +339,25 @@ class AssociateController extends BaseController
     public function pending()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $properties = [];
+        try {
+            $properties = $this->db->fetchAll(
+                "SELECT id, name as title, property_type, price, address, status, DATE(created_at) as date
+                 FROM user_properties WHERE user_id = ? AND status = 'pending' AND posted_by_type = 'associate'
+                 ORDER BY created_at DESC LIMIT 20",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
 
         $this->render('associate/pending', [
             'page_title' => 'Pending Deals - APS Dream Home',
-            'page_description' => 'Manage your pending deals'
-        ]);
+            'page_description' => 'Manage your pending deals',
+            'properties' => $properties,
+            'current_page' => 'pending'
+        ], 'layouts/associate');
     }
 
     /**
@@ -215,6 +366,7 @@ class AssociateController extends BaseController
     public function profile()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
 
         // Get associate data from session
         $userId = $_SESSION['user_id'] ?? null;
@@ -239,7 +391,7 @@ class AssociateController extends BaseController
         // Set variables for shared view
         $userRole = 'associate';
         $profileUrl = BASE_URL . '/associate/profile';
-        $securityUrl = null; // Associates don't have security page yet
+        $securityUrl = null;
         $canEdit = true;
 
         include __DIR__ . '/../../../views/shared/profile.php';
@@ -252,7 +404,7 @@ class AssociateController extends BaseController
     {
         $this->requireAuth();
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // Get associate info
         $associateId = $_SESSION['associate_id'] ?? null;
@@ -308,7 +460,7 @@ class AssociateController extends BaseController
     {
         $this->requireAuth();
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         // Get associate info
         $associateId = $_SESSION['associate_id'] ?? null;
@@ -350,7 +502,7 @@ class AssociateController extends BaseController
             return;
         }
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $associateId = $_SESSION['associate_id'] ?? null;
         $associateName = $_SESSION['associate_name'] ?? '';

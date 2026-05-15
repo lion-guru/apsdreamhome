@@ -17,7 +17,7 @@ class PaymentGateway {
 
     private function _getPaymentSettingsFromEnv() {
         return [
-            'razorpay_PLACEHOLDER_SECRET_VALUErazorpay_PLACEHOLDER_SECRET_VALUEsandbox_mode' => env('PAYMENT_SANDBOX', true)
+            'sandbox_mode' => env('PAYMENT_SANDBOX', true)
         ];
     }
 

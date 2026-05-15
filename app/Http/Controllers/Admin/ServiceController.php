@@ -146,6 +146,14 @@ class ServiceController extends AdminController
         $this->render('admin/services/view', $data);
     }
 
+    /**
+     * View a single service (alias for show)
+     */
+    public function detail($id = null)
+    {
+        return $this->show($id);
+    }
+
     public function updateStatus()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

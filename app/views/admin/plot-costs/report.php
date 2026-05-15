@@ -42,7 +42,7 @@ $page_title = 'Cost Report - APS Dream Home';
             <div class="row">
                 <div class="col-md-3 text-center border-end">
                     <h6 class="text-muted">Total Investment</h6>
-                    <h2 class="text-primary">₹<?= number_format(floatval($report['total_investment'] ?? 0) ?? 0) ?></h2>
+                    <h2 class="text-primary">₹<?= number_format(floatval($report['total_investment'] ?? 0)) ?></h2>
                 </div>
                 <div class="col-md-3 text-center border-end">
                     <h6 class="text-muted">Total Plots</h6>
@@ -50,11 +50,11 @@ $page_title = 'Cost Report - APS Dream Home';
                 </div>
                 <div class="col-md-3 text-center border-end">
                     <h6 class="text-muted">Total Area</h6>
-                    <h2><?= number_format(floatval($report['total_area_sqft'] ?? 0) ?? 0) ?> sqft</h2>
+                    <h2><?= number_format(floatval($report['total_area_sqft'] ?? 0)) ?> sqft</h2>
                 </div>
                 <div class="col-md-3 text-center">
                     <h6 class="text-muted">Avg Cost/sqft</h6>
-                    <h2 class="text-success">₹<?= number_format(floatval($report['avg_cost_per_sqft'] ?? 0) ?? 0, 2) ?></h2>
+                    <h2 class="text-success">₹<?= number_format(floatval($report['avg_cost_per_sqft'] ?? 0), 2) ?></h2>
                 </div>
             </div>
         </div>
@@ -77,12 +77,14 @@ $page_title = 'Cost Report - APS Dream Home';
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($report['cost_breakdown'] as $item): ?>
+                            <?php foreach (($report['cost_breakdown'] ?? []) as $item): ?>
+                            <?php if (is_array($item)): ?>
                             <tr>
-                                <td><?= ucfirst($item['category']) ?></td>
+                                <td><?= ucfirst($item['category'] ?? '') ?></td>
                                 <td class="text-end">₹<?= number_format(floatval($item['amount'] ?? 0)) ?></td>
-                                <td class="text-end"><?= round($item['percentage'], 1) ?>%</td>
+                                <td class="text-end"><?= round($item['percentage'] ?? 0, 1) ?>%</td>
                             </tr>
+                            <?php endif; ?>
                             <?php endforeach; ?>
                         </tbody>
                         <tfoot class="table-secondary">
@@ -106,17 +108,17 @@ $page_title = 'Cost Report - APS Dream Home';
                     <div class="row text-center">
                         <div class="col-6 border-end">
                             <h6 class="text-muted">Min Price/sqft</h6>
-                            <h3 class="text-success">₹<?= number_format(floatval($report['recommended_price_min'] ?? 0) ?? 0, 2) ?></h3>
+                            <h3 class="text-success">₹<?= number_format(floatval($report['recommended_price_min'] ?? 0), 2) ?></h3>
                         </div>
                         <div class="col-6">
                             <h6 class="text-muted">Max Price/sqft</h6>
-                            <h3 class="text-primary">₹<?= number_format(floatval($report['recommended_price_max'] ?? 0) ?? 0, 2) ?></h3>
+                            <h3 class="text-primary">₹<?= number_format(floatval($report['recommended_price_max'] ?? 0), 2) ?></h3>
                         </div>
                     </div>
                     <hr>
                     <div class="text-center">
                         <h6 class="text-muted">Suggested Selling Price</h6>
-                        <h2 class="text-success">₹<?= number_format(floatval($report['recommended_price_avg'] ?? 0) ?? 0, 2) ?><small class="text-muted">/sqft</small></h2>
+                        <h2 class="text-success">₹<?= number_format(floatval($report['recommended_price_avg'] ?? 0), 2) ?><small class="text-muted">/sqft</small></h2>
                     </div>
                 </div>
             </div>

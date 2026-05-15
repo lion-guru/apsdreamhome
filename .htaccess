@@ -5,7 +5,11 @@
     # Don't redirect testing directory to public
     RewriteCond %{REQUEST_URI} ^/testing/
     RewriteRule ^testing/(.*)$ testing/$1 [L]
-    
+
+    # Route /admin through the PHP router (avoid mod_dir directory redirect)
+    RewriteRule ^admin/?$ public/index.php [L]
+    RewriteRule ^admin/(.*)$ public/index.php [L]
+
     # Redirect all other requests to public/ directory
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteCond %{REQUEST_URI} !^/testing/

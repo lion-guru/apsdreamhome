@@ -273,7 +273,7 @@ class Customer extends Model
             $stmt->execute([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'PLACEHOLDER_SECRET_VALUEphone' => $data['phone']
+                'phone' => $data['phone']
             ]);
 
             $customerId = $this->db->lastInsertId();

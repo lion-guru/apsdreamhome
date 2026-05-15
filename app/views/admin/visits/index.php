@@ -98,11 +98,11 @@ $page_title = 'Site Visit Management - APS Dream Home';
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date From</label>
-                    <input type="date" class="form-control" name="date_from" value="<?= $filters['date_from'] ?>">
+                    <input type="date" class="form-control" name="date_from" value="<?= $filters['date_from'] ?? '' ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date To</label>
-                    <input type="date" class="form-control" name="date_to" value="<?= $filters['date_to'] ?>">
+                    <input type="date" class="form-control" name="date_to" value="<?= $filters['date_to'] ?? '' ?>">
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary me-2">

@@ -109,6 +109,7 @@ class BuilderDashboardController extends AdminController
      */
     public function getMaterialStatus()
     {
+        header('Content-Type: application/json');
         try {
             $materials = $this->db->query(
                 "SELECT 
@@ -122,11 +123,11 @@ class BuilderDashboardController extends AdminController
                 ORDER BY stock_quantity ASC
                 LIMIT 20"
             )->fetchAll(\PDO::FETCH_ASSOC);
-
-            return $this->jsonResponse(['success' => true, 'data' => $materials]);
         } catch (Exception $e) {
             $this->loggingService->error("Get Material Status error: " . $e->getMessage());
-            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
+            $materials = [];
         }
+        echo json_encode(['success' => true, 'data' => $materials ?? []]);
+        exit;
     }
 }

@@ -5,7 +5,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-plus"></i> Add Plot</h2>
-                <a href="/admin/plots" class="btn btn-secondary">
+                <a href="<?php echo BASE_URL; ?>admin/plots" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back
                 </a>
             </div>
@@ -14,11 +14,11 @@
                 <div class="card-body">
                     <?php if (isset($_SESSION['error'])): ?>
                         <div class="alert alert-danger">
-                            <?php echo htmlspecialchars(_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
+                            <?php echo htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
                         </div>
                     <?php endif; ?>
                     
-                    <form method="POST" action="/admin/plots/create" id="plotForm">
+                    <form method="POST" action="<?php echo BASE_URL; ?>admin/plots/create" id="plotForm">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -26,8 +26,8 @@
                                     <select class="form-select" id="colony_id" name="colony_id" required>
                                         <option value="">Select Colony</option>
                                         <?php foreach ($colonies as $colony): ?>
-                                            <option value="<?php echo $colony['id']; ?>">
-                                                <?php echo htmlspecialchars($colony['state_name'] . ' > ' . $colony['district_name'] . ' > ' . $colony['colony_name']); ?>
+                                            <option value="<?php echo $colony['id'] ?? ''; ?>">
+                                                <?php echo htmlspecialchars(($colony['state_name'] ?? '') . ' > ' . ($colony['district_name'] ?? '') . ' > ' . ($colony['colony_name'] ?? '')); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -77,7 +77,7 @@
                         </div>
                         
                         <div class="d-flex justify-content-between">
-                            <a href="/admin/plots" class="btn btn-secondary">
+                            <a href="<?php echo BASE_URL; ?>admin/plots" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

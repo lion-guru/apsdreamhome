@@ -31,7 +31,7 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
                                 <label class="form-label">Select Lead</label>
                                 <select class="form-select" name="lead_id" required>
                                     <option value="">Choose a lead...</option>
-                                    <?php foreach ($leads as $lead): ?>
+                                    <?php foreach (($leads ?? []) as $lead): ?>
                                         <option value="<?= $lead['id'] ?>">
                                             <?= htmlspecialchars($lead['name'] ?? '') ?> - <?= htmlspecialchars($lead['phone'] ?? '') ?> (<?= ucfirst($lead['status']) ?>)
                                         </option>
@@ -42,7 +42,7 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
                                 <label class="form-label">Select Property</label>
                                 <select class="form-select" name="property_id" required>
                                     <option value="">Choose a property...</option>
-                                    <?php foreach ($properties as $property): ?>
+                                    <?php foreach (($properties ?? []) as $property): ?>
                                         <option value="<?= $property['id'] ?>">
                                             <?= htmlspecialchars($property['title'] ?? '') ?> - <?= htmlspecialchars($property['location'] ?? '') ?>
                                         </option>
@@ -64,7 +64,7 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
                                 <label class="form-label">Assign Agent</label>
                                 <select class="form-select" name="agent_id">
                                     <option value="">Select Agent</option>
-                                    <?php foreach ($agents as $agent): ?>
+                                    <?php foreach (($agents ?? []) as $agent): ?>
                                         <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>

@@ -4,7 +4,7 @@
  * List Property Page - Simple & Easy Property Posting
  * Now with Smart Location Dropdowns & Guest Support
  */
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) @session_start();
 
 $success = isset($_SESSION['flash_success']) ? $_SESSION['flash_success'] : null;
 $error = isset($_SESSION['flash_error']) ? $_SESSION['flash_error'] : null;

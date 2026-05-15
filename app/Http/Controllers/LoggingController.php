@@ -21,20 +21,31 @@ class LoggingController extends BaseController
         $this->loggingService = new LoggingService();
     }
 
+    private function normalizeRequest($request): array
+    {
+        if ($request !== null) return $request;
+        return ['get' => $_GET, 'post' => $_POST, 'params' => []];
+    }
+
+    private function checkAuth(string $perm = 'view_logs'): ?\App\Services\Auth\AuthenticationService
+    {
+        $authService = new \App\Services\Auth\AuthenticationService();
+        if (!$authService->isAuthenticated() || !$authService->hasPermission($perm)) {
+            $_SESSION['errors'] = ['Access denied'];
+            $this->redirect('/login');
+            return null;
+        }
+        return $authService;
+    }
+
     /**
      * Show logging dashboard
      */
-    public function showDashboard($request)
+    public function showDashboard($request = null)
     {
-        // Check authentication
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated() || !$authService->hasPermission('view_logs')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
+        $authService = $this->checkAuth();
+        if (!$authService) return;
 
-        // Get log statistics
         $stats = $this->loggingService->getLogStats(24);
 
         $data = [
@@ -53,18 +64,14 @@ class LoggingController extends BaseController
     /**
      * Show log viewer
      */
-    public function showLogs($request)
+    public function showLogs($request = null)
     {
-        // Check authentication
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated() || !$authService->hasPermission('view_logs')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
+        $authService = $this->checkAuth();
+        if (!$authService) return;
 
-        $category = $request['get']['category'] ?? 'system';
-        $page = max(1, intval($request['get']['page'] ?? 1));
+        $req = $this->normalizeRequest($request);
+        $category = $req['get']['category'] ?? 'system';
+        $page = max(1, intval($req['get']['page'] ?? 1));
         $limit = 50;
         $offset = ($page - 1) * $limit;
 
@@ -104,17 +111,13 @@ class LoggingController extends BaseController
     /**
      * Show security alerts
      */
-    public function showSecurityAlerts($request)
+    public function showSecurityAlerts($request = null)
     {
-        // Check authentication
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated() || !$authService->hasPermission('view_security_alerts')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
+        $authService = $this->checkAuth('view_security_alerts');
+        if (!$authService) return;
 
-        $page = max(1, intval($request['get']['page'] ?? 1));
+        $req = $this->normalizeRequest($request);
+        $page = max(1, intval($req['get']['page'] ?? 1));
         $limit = 25;
         $offset = ($page - 1) * $limit;
 
@@ -152,20 +155,17 @@ class LoggingController extends BaseController
     /**
      * Export logs
      */
-    public function exportLogs($request)
+    public function exportLogs($request = null)
     {
-        // Check authentication
         $authService = new \App\Services\Auth\AuthenticationService();
         if (!$authService->isAuthenticated() || !$authService->hasPermission('export_logs')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
+            return ['success' => false, 'message' => 'Access denied'];
         }
 
-        $category = $request['post']['category'] ?? null;
-        $startDate = $request['post']['start_date'] ?? null;
-        $endDate = $request['post']['end_date'] ?? null;
+        $req = $this->normalizeRequest($request);
+        $category = $req['post']['category'] ?? null;
+        $startDate = $req['post']['start_date'] ?? null;
+        $endDate = $req['post']['end_date'] ?? null;
 
         try {
             $csvFile = $this->loggingService->exportLogs($category, $startDate, $endDate);
@@ -189,18 +189,15 @@ class LoggingController extends BaseController
     /**
      * Clean old logs
      */
-    public function cleanLogs($request)
+    public function cleanLogs($request = null)
     {
-        // Check authentication
         $authService = new \App\Services\Auth\AuthenticationService();
         if (!$authService->isAuthenticated() || !$authService->hasPermission('clean_logs')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
+            return ['success' => false, 'message' => 'Access denied'];
         }
 
-        $days = intval($request['post']['days'] ?? 30);
+        $req = $this->normalizeRequest($request);
+        $days = intval($req['post']['days'] ?? 30);
 
         if ($days < 1 || $days > 365) {
             return [
@@ -229,50 +226,37 @@ class LoggingController extends BaseController
     /**
      * Get log statistics (AJAX)
      */
-    public function getLogStats($request)
+    public function getLogStats($request = null)
     {
-        // Check authentication
         $authService = new \App\Services\Auth\AuthenticationService();
         if (!$authService->isAuthenticated() || !$authService->hasPermission('view_logs')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
+            return ['success' => false, 'message' => 'Access denied'];
         }
 
-        $hours = intval($request['get']['hours'] ?? 24);
+        $req = $this->normalizeRequest($request);
+        $hours = intval($req['get']['hours'] ?? 24);
 
-        if ($hours < 1 || $hours > 168) { // Max 7 days
-            return [
-                'success' => false,
-                'message' => 'Hours must be between 1 and 168'
-            ];
+        if ($hours < 1 || $hours > 168) {
+            return ['success' => false, 'message' => 'Hours must be between 1 and 168'];
         }
 
         $stats = $this->loggingService->getLogStats($hours);
 
-        return [
-            'success' => true,
-            'data' => $stats
-        ];
+        return ['success' => true, 'data' => $stats];
     }
 
     /**
      * Search logs
      */
-    public function searchLogs($request)
+    public function searchLogs($request = null)
     {
-        // Check authentication
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated() || !$authService->hasPermission('view_logs')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
+        $authService = $this->checkAuth();
+        if (!$authService) return;
 
-        $search = $request['get']['search'] ?? '';
-        $category = $request['get']['category'] ?? 'system';
-        $page = max(1, intval($request['get']['page'] ?? 1));
+        $req = $this->normalizeRequest($request);
+        $search = $req['get']['search'] ?? '';
+        $category = $req['get']['category'] ?? 'system';
+        $page = max(1, intval($req['get']['page'] ?? 1));
         $limit = 50;
         $offset = ($page - 1) * $limit;
 
@@ -320,17 +304,12 @@ class LoggingController extends BaseController
     /**
      * View log details
      */
-    public function viewLogDetails($request)
+    public function viewLogDetails($id = null)
     {
-        // Check authentication
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated() || !$authService->hasPermission('view_logs')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
+        $authService = $this->checkAuth();
+        if (!$authService) return;
 
-        $logId = $request['params']['id'] ?? null;
+        $logId = $id;
 
         if (!$logId) {
             $_SESSION['errors'] = ['Log ID is required'];
@@ -369,18 +348,15 @@ class LoggingController extends BaseController
     /**
      * Dismiss security alert
      */
-    public function dismissAlert($request)
+    public function dismissAlert($request = null)
     {
-        // Check authentication
         $authService = new \App\Services\Auth\AuthenticationService();
         if (!$authService->isAuthenticated() || !$authService->hasPermission('manage_security_alerts')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
+            return ['success' => false, 'message' => 'Access denied'];
         }
 
-        $alertId = $request['post']['alert_id'] ?? null;
+        $req = $this->normalizeRequest($request);
+        $alertId = $req['post']['alert_id'] ?? null;
 
         if (!$alertId) {
             return [
@@ -424,19 +400,16 @@ class LoggingController extends BaseController
     /**
      * Get real-time log stream (AJAX)
      */
-    public function getLogStream($request)
+    public function getLogStream($request = null)
     {
-        // Check authentication
         $authService = new \App\Services\Auth\AuthenticationService();
         if (!$authService->isAuthenticated() || !$authService->hasPermission('view_logs')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
+            return ['success' => false, 'message' => 'Access denied'];
         }
 
-        $category = $request['get']['category'] ?? 'system';
-        $lastId = intval($request['get']['last_id'] ?? 0);
+        $req = $this->normalizeRequest($request);
+        $category = $req['get']['category'] ?? 'system';
+        $lastId = intval($req['get']['last_id'] ?? 0);
 
         // Get recent logs
         $database = \App\Core\Database::getInstance();

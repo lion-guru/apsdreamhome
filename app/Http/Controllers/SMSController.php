@@ -76,7 +76,7 @@ class SMSController extends BaseController
      */
     public function adminDashboard()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['admin_id'])) {
             header('Location: ' . BASE_URL . '/admin/login');
@@ -97,7 +97,7 @@ class SMSController extends BaseController
      */
     public function adminSend()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['admin_id'])) {
             $_SESSION['error'] = "Unauthorized";
@@ -133,7 +133,7 @@ class SMSController extends BaseController
     {
         header('Content-Type: application/json');
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['admin_id'])) {
             echo json_encode(['error' => 'Unauthorized']);

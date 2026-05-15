@@ -5,7 +5,7 @@
  * APS Dream Homes - Customer Booking Management
  */
 
-session_start();
+@session_start();
 // FIXED: Removed missing include - file doesn't exist
 // require_once __DIR__ . '/../../../includes/config.php';
 

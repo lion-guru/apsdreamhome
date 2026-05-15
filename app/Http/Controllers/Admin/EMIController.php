@@ -429,6 +429,8 @@ class EMIController extends AdminController
      */
     public function getStats()
     {
+        http_response_code(200);
+        header('Content-Type: application/json');
         try {
             $stats = [];
 
@@ -465,10 +467,8 @@ class EMIController extends AdminController
             ]);
         } catch (Exception $e) {
             $this->loggingService->error("Get EMI Stats error: " . $e->getMessage());
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to fetch EMI stats'
-            ], 500);
+            echo json_encode(['success' => false, 'message' => 'Stats unavailable']);
         }
+        exit;
     }
 }

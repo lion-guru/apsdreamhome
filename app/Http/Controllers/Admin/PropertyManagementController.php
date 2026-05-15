@@ -156,6 +156,58 @@ class PropertyManagementController extends AdminController
     }
 
     /**
+     * Store a newly created property
+     */
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $data = $_POST;
+
+            // Validate required fields
+            $required = ['title'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return $this->jsonError(ucfirst($field) . ' is required', 400);
+                }
+            }
+
+            $sql = "INSERT INTO properties (title, description, price, location, property_type, status, site_id, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                CoreFunctionsServiceCustom::validateInput($data['title'], 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['description'] ?? '', 'string'),
+                floatval($data['price'] ?? 0),
+                CoreFunctionsServiceCustom::validateInput($data['location'] ?? '', 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['property_type'] ?? '', 'string'),
+                $data['status'] ?? 'available',
+                intval($data['site_id'] ?? 0)
+            ]);
+
+            if ($result) {
+                $propertyId = $this->db->lastInsertId();
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'property_created', [
+                    'property_id' => $propertyId,
+                    'title' => $data['title']
+                ]);
+                $this->setFlash('success', 'Property created successfully');
+                return $this->redirect('/admin/properties');
+            }
+
+            $this->setFlash('error', 'Failed to create property');
+            return $this->redirect('/admin/properties/create');
+        } catch (Exception $e) {
+            $this->loggingService->error("Property Store error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to create property: ' . $e->getMessage());
+            return $this->redirect('/admin/properties/create');
+        }
+    }
+
+    /**
      * Display property management dashboard
      */
     public function dashboard()

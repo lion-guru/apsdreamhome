@@ -12,7 +12,7 @@ return [
             'host' => env('MAIL_HOST', 'smtp.gmail.com'),
             'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'PLACEHOLDER_SECRET_VALUEtimeout' => null,
+            'timeout' => null,
             'auth_mode' => null,
         ],
         'sendmail' => [
@@ -22,7 +22,7 @@ return [
         'mailgun' => [
             'transport' => 'mailgun',
             'domain' => env('MAILGUN_DOMAIN'),
-            'PLACEHOLDER_SECRET_VALUEendpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+            'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
             'scheme' => 'https',
         ],
     ],

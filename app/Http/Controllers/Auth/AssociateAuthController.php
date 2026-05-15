@@ -15,7 +15,7 @@ class AssociateAuthController extends BaseController
 {
     public function associateRegister()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         $csrf_token = $this->getCsrfToken();
         $errors = $_SESSION['errors'] ?? [];
         $old = $_SESSION['old_input'] ?? [];
@@ -27,7 +27,7 @@ class AssociateAuthController extends BaseController
 
     public function handleAssociateRegister()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         $name = trim($_POST['full_name'] ?? '');
         $email = trim($_POST['email'] ?? '');
@@ -173,7 +173,7 @@ class AssociateAuthController extends BaseController
 
     public function associateLogin()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         if (isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'associate') {
             header('Location: ' . BASE_URL . '/associate/dashboard');
             exit;
@@ -189,7 +189,7 @@ class AssociateAuthController extends BaseController
 
     public function authenticateAssociate()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
@@ -229,7 +229,7 @@ class AssociateAuthController extends BaseController
 
     public function logout()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
         session_destroy();
         header('Location: ' . BASE_URL . '/associate/login');
         exit;

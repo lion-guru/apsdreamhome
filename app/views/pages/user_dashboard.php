@@ -208,7 +208,7 @@ $services = $services ?? [
                                         <i class="fas <?php echo $service['icon']; ?> fa-2x"></i>
                                     </div>
                                     <h6 class="mb-1"><?php echo $service['title']; ?></h6>
-                                    <small class="text-muted"><?php echo $service['desc']; ?></small>
+                                    <small class="text-muted"><?php echo $service['desc'] ?? ''; ?></small>
                                 </div>
                             </a>
                         </div>

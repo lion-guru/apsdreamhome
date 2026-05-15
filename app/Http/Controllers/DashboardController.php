@@ -165,7 +165,7 @@ class DashboardController extends BaseController
             'join_date' => '2024-01-15'
         ];
 
-        $this->render('dashboard/profile', [
+        $this->render('user/profile', [
             'page_title' => 'My Profile - APS Dream Home',
             'page_description' => 'Manage your account settings and preferences',
             'user' => $user
@@ -238,7 +238,7 @@ class DashboardController extends BaseController
             ['id' => 2, 'title' => 'Raghunat Nagri', 'location' => 'Gorakhpur', 'price' => '₹8.5 Lakhs', 'favorited_at' => '2024-02-28']
         ];
 
-        $this->render('dashboard/favorites', [
+        $this->render('user/favorites', [
             'page_title' => 'My Favorites - APS Dream Home',
             'page_description' => 'Your saved property listings',
             'favorites' => $favorites
@@ -257,11 +257,12 @@ class DashboardController extends BaseController
             ['property_title' => 'Budh Bihar Colony', 'price' => '₹5.5 Lakhs', 'location' => 'Kushinagar', 'status' => 'Responded', 'created_at' => '2024-02-28']
         ];
 
-        $this->render('dashboard/inquiries', [
+        $this->layout = 'layouts/base';
+        $this->render('user/enquiries', [
             'page_title' => 'My Inquiries - APS Dream Home',
             'page_description' => 'Your property inquiry history',
-            'inquiries' => $inquiries
-        ], 'layouts/base');
+            'enquiries' => $inquiries
+        ]);
     }
 
     /**

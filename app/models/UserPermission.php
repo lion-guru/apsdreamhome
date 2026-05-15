@@ -71,7 +71,7 @@ class UserPermission extends Model {
             ->select(['u.*'])
             ->from('admin as u')
             ->join(static::$table . ' as up', 'u.id', '=', 'up.user_id')
-            ->where('up.permission_PLACEHOLDER_SECRET_VALUEup.permission_value', '=', $value)
+            ->where('up.permission_value', '=', $value)
             ->get();
     }
 }

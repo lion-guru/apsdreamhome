@@ -132,7 +132,7 @@ class GoogleAuthController extends Controller
      */
     public function roleSelection()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['google_user_data'])) {
             header('Location: /login');
@@ -150,7 +150,7 @@ class GoogleAuthController extends Controller
      */
     public function completeRegistration()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        @session_start();
 
         if (!isset($_SESSION['google_user_data'])) {
             echo json_encode(['success' => false, 'message' => 'Session expired']);

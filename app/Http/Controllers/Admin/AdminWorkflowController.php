@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Core\Controller;
 use App\Services\WorkflowEngineService;
 use App\Services\ReportBuilderService;
 use App\Services\AuditTrailService;
@@ -15,7 +14,7 @@ use App\Services\APIDocumentationService;
  * Admin Workflow Controller
  * Manages workflows, reports, audit trail, import/export, backups
  */
-class AdminWorkflowController extends Controller
+class AdminWorkflowController extends AdminController
 {
     private $workflowService;
     private $reportService;
@@ -28,13 +27,27 @@ class AdminWorkflowController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->workflowService = new WorkflowEngineService();
-        $this->reportService = new ReportBuilderService();
-        $this->auditService = new AuditTrailService();
-        $this->importExportService = new ImportExportService();
-        $this->backupService = new BackupRestoreService();
-        $this->emailQueueService = new EmailQueueService();
-        $this->apiDocService = new APIDocumentationService();
+        try {
+            $this->workflowService = new WorkflowEngineService();
+        } catch (\Exception $e) { error_log("WorkflowEngineService error: " . $e->getMessage()); }
+        try {
+            $this->reportService = new ReportBuilderService();
+        } catch (\Exception $e) { error_log("ReportBuilderService error: " . $e->getMessage()); }
+        try {
+            $this->auditService = new AuditTrailService();
+        } catch (\Exception $e) { error_log("AuditTrailService error: " . $e->getMessage()); }
+        try {
+            $this->importExportService = new ImportExportService();
+        } catch (\Exception $e) { error_log("ImportExportService error: " . $e->getMessage()); }
+        try {
+            $this->backupService = new BackupRestoreService();
+        } catch (\Exception $e) { error_log("BackupRestoreService error: " . $e->getMessage()); }
+        try {
+            $this->emailQueueService = new EmailQueueService();
+        } catch (\Exception $e) { error_log("EmailQueueService error: " . $e->getMessage()); }
+        try {
+            $this->apiDocService = new APIDocumentationService();
+        } catch (\Exception $e) { error_log("APIDocumentationService error: " . $e->getMessage()); }
     }
     
     /**
@@ -94,11 +107,11 @@ class AdminWorkflowController extends Controller
             );
             
             if ($id) {
-                $this->setFlash('Workflow created successfully', 'success');
+                $this->flashMessage('Workflow created successfully', 'success');
                 header('Location: /admin/workflows/' . $id . '/steps');
                 exit;
             } else {
-                $this->setFlash('Failed to create workflow', 'error');
+                $this->flashMessage('Failed to create workflow', 'error');
             }
         }
         
@@ -127,7 +140,7 @@ class AdminWorkflowController extends Controller
                 $_POST['approver_role'] ?? null
             );
             
-            $this->setFlash('Step added successfully', 'success');
+            $this->flashMessage('Step added successfully', 'success');
             header("Location: /admin/workflows/{$workflowId}/steps");
             exit;
         }
@@ -420,7 +433,7 @@ class AdminWorkflowController extends Controller
             exit;
         }
         
-        $this->setFlash($result['error'] ?? 'Export failed', 'error');
+        $this->flashMessage($result['error'] ?? 'Export failed', 'error');
         header('Location: /admin/import-export');
         exit;
     }
@@ -441,7 +454,7 @@ class AdminWorkflowController extends Controller
             exit;
         }
         
-        $this->setFlash('Template not found', 'error');
+        $this->flashMessage('Template not found', 'error');
         header('Location: /admin/import-export');
         exit;
     }
@@ -473,9 +486,9 @@ class AdminWorkflowController extends Controller
         $result = $this->backupService->createFullBackup($_SESSION['admin_id'] ?? null);
         
         if ($result['success']) {
-            $this->setFlash('Backup created successfully: ' . $result['size'], 'success');
+            $this->flashMessage('Backup created successfully: ' . $result['size'], 'success');
         } else {
-            $this->setFlash('Backup failed: ' . $result['error'], 'error');
+            $this->flashMessage('Backup failed: ' . $result['error'], 'error');
         }
         
         header('Location: /admin/backups');
@@ -499,7 +512,7 @@ class AdminWorkflowController extends Controller
             exit;
         }
         
-        $this->setFlash('Backup file not found', 'error');
+        $this->flashMessage('Backup file not found', 'error');
         header('Location: /admin/backups');
         exit;
     }
@@ -611,7 +624,7 @@ class AdminWorkflowController extends Controller
     /**
      * Set flash message
      */
-    private function setFlash(string $message, string $type = 'info'): void
+    private function flashMessage(string $message, string $type = 'info'): void
     {
         $_SESSION['flash'] = ['message' => $message, 'type' => $type];
     }

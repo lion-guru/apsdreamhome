@@ -14,7 +14,7 @@ ini_set('error_log', __DIR__ . '/logs/error.log');
 if (session_status() === PHP_SESSION_NONE) {
     session_name('APS_DREAM_HOME_SESSID');
     session_set_cookie_params(86400, '/', $_SERVER['HTTP_HOST'] ?? '', false, true);
-    session_start();
+    @session_start();
 }
 
 // Include configuration

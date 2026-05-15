@@ -74,20 +74,24 @@ class LocationController extends Controller
         $search = $_GET['q'] ?? '';
         
         if (!$stateId) {
-            $this->errorResponse('State ID required', 400);
+            $this->jsonResponse([]);
         }
         
-        $sql = "SELECT id, name FROM districts WHERE state_id = ?";
-        $params = [$stateId];
-        
-        if ($search) {
-            $sql .= " AND name LIKE ?";
-            $params[] = "%$search%";
+        try {
+            $sql = "SELECT id, name FROM districts WHERE state_id = ?";
+            $params = [$stateId];
+            
+            if ($search) {
+                $sql .= " AND name LIKE ?";
+                $params[] = "%$search%";
+            }
+            
+            $sql .= " ORDER BY name LIMIT 100";
+            
+            $districts = $this->db->fetchAll($sql, $params);
+        } catch (\Exception $e) {
+            $districts = [];
         }
-        
-        $sql .= " ORDER BY name LIMIT 100";
-        
-        $districts = $this->db->fetchAll($sql, $params);
         
         $this->jsonResponse($districts);
     }
@@ -104,38 +108,42 @@ class LocationController extends Controller
         $type = $_GET['type'] ?? '';
         
         if (!$districtId && !$stateId) {
-            $this->errorResponse('District ID or State ID required', 400);
+            $this->jsonResponse([]);
         }
         
-        $sql = "SELECT c.id, c.name, c.type, d.name as district_name 
-                FROM cities c 
-                LEFT JOIN districts d ON c.district_id = d.id
-                WHERE 1=1";
-        $params = [];
-        
-        if ($districtId) {
-            $sql .= " AND c.district_id = ?";
-            $params[] = $districtId;
+        try {
+            $sql = "SELECT c.id, c.name, c.type, d.name as district_name 
+                    FROM cities c 
+                    LEFT JOIN districts d ON c.district_id = d.id
+                    WHERE 1=1";
+            $params = [];
+            
+            if ($districtId) {
+                $sql .= " AND c.district_id = ?";
+                $params[] = $districtId;
+            }
+            
+            if ($stateId) {
+                $sql .= " AND c.district_id IN (SELECT id FROM districts WHERE state_id = ?)";
+                $params[] = $stateId;
+            }
+            
+            if ($search) {
+                $sql .= " AND c.name LIKE ?";
+                $params[] = "%$search%";
+            }
+            
+            if ($type) {
+                $sql .= " AND c.type = ?";
+                $params[] = $type;
+            }
+            
+            $sql .= " ORDER BY c.name LIMIT 100";
+            
+            $cities = $this->db->fetchAll($sql, $params);
+        } catch (\Exception $e) {
+            $cities = [];
         }
-        
-        if ($stateId) {
-            $sql .= " AND c.district_id IN (SELECT id FROM districts WHERE state_id = ?)";
-            $params[] = $stateId;
-        }
-        
-        if ($search) {
-            $sql .= " AND c.name LIKE ?";
-            $params[] = "%$search%";
-        }
-        
-        if ($type) {
-            $sql .= " AND c.type = ?";
-            $params[] = $type;
-        }
-        
-        $sql .= " ORDER BY c.name LIMIT 100";
-        
-        $cities = $this->db->fetchAll($sql, $params);
         
         $this->jsonResponse($cities);
     }
@@ -149,20 +157,24 @@ class LocationController extends Controller
         $search = $_GET['q'] ?? '';
         
         if (strlen($search) < 2) {
-            $this->errorResponse('Minimum 2 characters required', 400);
+            $this->jsonResponse([]);
         }
         
-        $sql = "SELECT c.id, c.name as city, c.type, d.name as district, s.name as state, co.name as country,
-                       CONCAT(c.name, ', ', d.name, ', ', s.name, ', ', co.name) as full_address
-                FROM cities c
-                LEFT JOIN districts d ON c.district_id = d.id
-                LEFT JOIN states s ON d.state_id = s.id
-                LEFT JOIN countries co ON s.country_id = co.id
-                WHERE c.name LIKE ?
-                ORDER BY c.name
-                LIMIT 50";
-        
-        $results = $this->db->fetchAll($sql, ["%$search%"]);
+        try {
+            $sql = "SELECT c.id, c.name as city, c.type, d.name as district, s.name as state, co.name as country,
+                           CONCAT(c.name, ', ', d.name, ', ', s.name, ', ', co.name) as full_address
+                    FROM cities c
+                    LEFT JOIN districts d ON c.district_id = d.id
+                    LEFT JOIN states s ON d.state_id = s.id
+                    LEFT JOIN countries co ON s.country_id = co.id
+                    WHERE c.name LIKE ?
+                    ORDER BY c.name
+                    LIMIT 50";
+            
+            $results = $this->db->fetchAll($sql, ["%$search%"]);
+        } catch (\Exception $e) {
+            $results = [];
+        }
         
         $this->jsonResponse($results);
     }
@@ -174,13 +186,17 @@ class LocationController extends Controller
     public function byPincode($pincode)
     {
         if (empty($pincode) || !preg_match('/^\d{4,10}$/', $pincode)) {
-            $this->errorResponse('Valid pincode required (4-10 digits)', 400);
+            $this->jsonResponse(['found' => false, 'error' => true, 'message' => 'Valid pincode required (4-10 digits)']);
         }
         
-        $result = $this->db->fetch(
-            "SELECT pincode, area_name FROM pincodes WHERE pincode = ? AND is_active = 1 LIMIT 1",
-            [$pincode]
-        );
+        try {
+            $result = $this->db->fetch(
+                "SELECT pincode, area_name FROM pincodes WHERE pincode = ? AND is_active = 1 LIMIT 1",
+                [$pincode]
+            );
+        } catch (\Exception $e) {
+            $result = null;
+        }
         
         if ($result) {
             $this->jsonResponse([
@@ -208,20 +224,24 @@ class LocationController extends Controller
         $search = $_GET['q'] ?? '';
         
         if (strlen($search) < 2) {
-            $this->errorResponse('Minimum 2 characters required', 400);
+            $this->jsonResponse([]);
         }
         
-        $sql = "SELECT p.pincode, p.area_name,
-                       c.name as city, d.name as district, s.name as state
-                FROM pincodes p
-                LEFT JOIN cities c ON p.city_id = c.id
-                LEFT JOIN districts d ON p.district_id = d.id
-                LEFT JOIN states s ON p.state_id = s.id
-                WHERE p.is_active = 1 AND (p.pincode LIKE ? OR p.area_name LIKE ?)
-                ORDER BY p.pincode
-                LIMIT 50";
-        
-        $results = $this->db->fetchAll($sql, ["%$search%", "%$search%"]);
+        try {
+            $sql = "SELECT p.pincode, p.area_name,
+                           c.name as city, d.name as district, s.name as state
+                    FROM pincodes p
+                    LEFT JOIN cities c ON p.city_id = c.id
+                    LEFT JOIN districts d ON p.district_id = d.id
+                    LEFT JOIN states s ON p.state_id = s.id
+                    WHERE p.is_active = 1 AND (p.pincode LIKE ? OR p.area_name LIKE ?)
+                    ORDER BY p.pincode
+                    LIMIT 50";
+            
+            $results = $this->db->fetchAll($sql, ["%$search%", "%$search%"]);
+        } catch (\Exception $e) {
+            $results = [];
+        }
         
         $this->jsonResponse($results);
     }

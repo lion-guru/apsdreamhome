@@ -8,7 +8,7 @@
 require_once __DIR__ . '/../../core/init.php';
 
 use App\Core\Database;
-$db = \App\Core\App::database();
+$db = $db ?? Database::getInstance();
 
 ensureSessionStarted();
 
@@ -115,3 +115,5 @@ function getInventoryStatusData($db, &$response, $mlSupport) {
         $response['message'] = h($e->getMessage());
     }
 }
+
+
