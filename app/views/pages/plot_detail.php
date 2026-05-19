@@ -124,7 +124,10 @@
                 <!-- CTA Buttons -->
                 <div class="d-grid gap-2">
                     <?php if (($plot['status'] ?? '') === 'available'): ?>
-                        <a href="<?= BASE_URL ?>/contact?plot=<?= $plot['id'] ?>&subject=I%27m%20interested%20in%20Plot%20<?= urlencode($plot['plot_number'] ?? '') ?>" class="btn btn-primary btn-lg">
+                        <a href="<?= BASE_URL ?>/plot/<?= $plot['id'] ?>/book" class="btn btn-success btn-lg">
+                            <i class="fas fa-file-contract"></i> Book This Plot
+                        </a>
+                        <a href="<?= BASE_URL ?>/contact?plot=<?= $plot['id'] ?>&subject=I%27m%20interested%20in%20Plot%20<?= urlencode($plot['plot_number'] ?? '') ?>" class="btn btn-primary">
                             <i class="fas fa-phone"></i> Enquire Now
                         </a>
                         <a href="<?= BASE_URL ?>/schedule-visit?plot=<?= $plot['id'] ?>" class="btn btn-outline-primary">

@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Core\Database;
+use App\Services\Accounting\AccountingIntegrationService;
 
 class PlotController extends Controller
 {
@@ -10,7 +11,34 @@ class PlotController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = Database::getInstance();
+    }
+
+    private function requireCustomerLogin()
+    {
+        @session_start();
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+        $userType = $_SESSION['user_type'] ?? '';
+        if ($userType !== '' && $userType !== 'customer') {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+    }
+
+    private function getUser()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if (!$user) {
+            header('Location: ' . BASE_URL . '/user/logout');
+            exit;
+        }
+        return $user;
     }
 
     /**
@@ -212,5 +240,139 @@ class PlotController extends Controller
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'plots' => $plots]);
         exit;
+    }
+
+    /**
+     * Show booking form for a specific plot
+     */
+    public function bookPlot($plotId)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $plot = $this->db->fetchRow("
+            SELECT p.*, c.name as colony_name, c.slug as colony_slug,
+                   d.name as district_name, s.name as state_name
+            FROM plots p
+            JOIN colonies c ON p.colony_id = c.id
+            LEFT JOIN districts d ON c.district_id = d.id
+            LEFT JOIN states s ON d.state_id = s.id
+            WHERE p.id = ? AND p.is_active = 1
+        ", [$plotId]);
+
+        if (!$plot || $plot['status'] !== 'available') {
+            $this->setFlash('error', 'This plot is not available for booking');
+            return $this->redirect('/colony/' . ($plot['colony_slug'] ?? '') . '/plots');
+        }
+
+        $userBookings = $this->db->fetchAll("SELECT * FROM bookings WHERE customer_id = ? ORDER BY created_at DESC LIMIT 5", [$user['id']]);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/plot_booking', [
+            'page_title' => 'Book Plot - ' . $plot['plot_number'] . ' - ' . $plot['colony_name'],
+            'plot' => $plot,
+            'user' => $user,
+            'userBookings' => $userBookings,
+        ]);
+    }
+
+    /**
+     * Process booking form submission
+     */
+    public function storeBooking()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->redirect('/plots');
+        }
+
+        $plotId = intval($_POST['plot_id'] ?? 0);
+        $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available'", [$plotId]);
+        if (!$plot) {
+            $this->setFlash('error', 'Plot not found or no longer available');
+            return $this->redirect('/plots');
+        }
+
+        // Determine final price (negotiated or total)
+        $dealPrice = floatval($_POST['negotiated_price'] ?? $plot['negotiated_price'] ?? $plot['total_price']);
+        if ($dealPrice <= 0) $dealPrice = floatval($plot['total_price']);
+
+        $this->db->beginTransaction();
+        try {
+            // 1. Create booking
+            $bookingId = $this->db->insert('bookings', [
+                'customer_id' => $user['id'],
+                'plot_id' => $plot['id'],
+                'colony_id' => $plot['colony_id'],
+                'booking_number' => 'BK-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6)),
+                'booking_type' => $_POST['booking_type'] ?? 'online_consultation',
+                'booking_date' => date('Y-m-d'),
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'total_amount' => $dealPrice,
+                'amount' => 0,
+                'negotiated_price' => $dealPrice,
+                'notes' => $_POST['notes'] ?? '',
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            // 2. Update plot status to hold
+            $this->db->execute("UPDATE plots SET status = 'hold' WHERE id = ?", [$plot['id']]);
+
+            // 3. Create initial EMI schedule (25% token within 15 days)
+            $tokenAmount = $dealPrice * 0.25;
+            $this->db->insert('booking_emis', [
+                'booking_id' => $bookingId,
+                'installment_no' => 1,
+                'due_date' => date('Y-m-d', strtotime('+15 days')),
+                'amount' => $tokenAmount,
+                'status' => 'pending',
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            // 4. Set flash and redirect
+            $this->setFlash('success', 'Booking request submitted successfully! Booking #' . $bookingId . '. Please complete the 25% token payment within 15 days.');
+            $this->db->commit();
+            return $this->redirect('/user/dashboard?booking=' . $bookingId);
+        } catch (\Exception $e) {
+            $this->db->rollback();
+            $this->setFlash('error', 'Booking failed: ' . $e->getMessage());
+            return $this->redirect('/plot/' . $plotId . '/book');
+        }
+    }
+
+    /**
+     * Show booking confirmation / payment page
+     */
+    public function bookingConfirmation($bookingId)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $booking = $this->db->fetchRow("
+            SELECT b.*, p.plot_number, p.block, p.area_sqft, p.dimension_label, p.total_price as plot_price,
+                   p.corner_plot, p.park_facing, c.name as colony_name
+            FROM bookings b
+            LEFT JOIN plots p ON b.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE b.id = ? AND b.customer_id = ?
+        ", [$bookingId, $user['id']]);
+
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/user/dashboard');
+        }
+
+        $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/booking_confirmation', [
+            'page_title' => 'Booking Confirmation #' . $bookingId,
+            'booking' => $booking,
+            'emis' => $emis,
+            'user' => $user,
+        ]);
     }
 }
