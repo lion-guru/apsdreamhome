@@ -126,6 +126,35 @@ class UserController extends BaseController
         $this->render('pages/user_properties', $data);
     }
 
+    public function userBookings()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $bookings = $this->db->fetchAll("
+            SELECT b.*, 
+                   COALESCE(p.plot_number, p2.plot_number) as plot_number,
+                   COALESCE(p.block, p2.block) as block,
+                   COALESCE(p.area_sqft, p2.area_sqft) as area_sqft,
+                   COALESCE(p.total_price, p2.total_price) as plot_price,
+                   COALESCE(c.name, c2.name) as colony_name
+            FROM bookings b
+            LEFT JOIN plots p ON b.property_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            LEFT JOIN plots p2 ON b.plot_id = p2.id
+            LEFT JOIN colonies c2 ON p2.colony_id = c2.id
+            WHERE b.customer_id = ?
+            ORDER BY b.created_at DESC
+        ", [$user['id']]);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user_bookings', [
+            'page_title' => 'My Bookings - APS Dream Home',
+            'user' => $user,
+            'bookings' => $bookings,
+        ]);
+    }
+
     public function myInquiries()
     {
         $this->requireCustomerLogin();
