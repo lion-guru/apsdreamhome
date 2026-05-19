@@ -75,6 +75,23 @@ if (!empty($allProjects)) {
     }
 }
 
+// Build Plots submenu dynamically from colonies
+$plotsSubmenu = [
+    ['label' => 'All Plots', 'url' => '/plots', 'icon' => 'fas fa-th-large']
+];
+
+if (!empty($allProjects)) {
+    $plotsSubmenu[] = ['label' => '── Browse by Colony ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true];
+    foreach (array_slice($allProjects, 0, 10) as $proj) {
+        $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
+        $plotsSubmenu[] = [
+            'label' => $proj['name'],
+            'url' => '/colony/' . $slug . '/plots',
+            'icon' => 'fas fa-vector-square'
+        ];
+    }
+}
+
 if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     $projectsSubmenu = [
         ['label' => 'All Projects', 'url' => '/projects', 'icon' => 'fas fa-th-large'],
@@ -121,6 +138,19 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 ['label' => 'Residential', 'url' => '/properties?type=residential', 'icon' => 'fas fa-home'],
                                 ['label' => 'Commercial', 'url' => '/properties?type=commercial', 'icon' => 'fas fa-building'],
                                 ['label' => 'Plot/Land', 'url' => '/properties?type=plot', 'icon' => 'fas fa-vector-square'],
+                            ]
+                        ],
+                        [
+                            'label' => 'Plots',
+                            'icon' => 'fas fa-vector-square',
+                            'submenu' => $plotsSubmenu ?? [
+                                ['label' => 'All Plots', 'url' => '/plots', 'icon' => 'fas fa-th-large'],
+                                ['label' => '── By Colony ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
+                                ['label' => 'Suryoday Colony', 'url' => '/colony/suryoday-colony/plots', 'icon' => 'fas fa-home', 'badge' => '287'],
+                                ['label' => 'Raghunath Nagri', 'url' => '/colony/raghunath-nagri/plots', 'icon' => 'fas fa-home', 'badge' => '130'],
+                                ['label' => 'Braj Radha Nagri', 'url' => '/colony/braj-radha-nagri/plots', 'icon' => 'fas fa-city'],
+                                ['label' => 'Kushinagar Colony', 'url' => '/colony/kushinagar-colony/plots', 'icon' => 'fas fa-home'],
+                                ['label' => 'Budh Bihar Colony', 'url' => '/colony/budh-bihar-colony/plots', 'icon' => 'fas fa-home'],
                             ]
                         ],
                         [
