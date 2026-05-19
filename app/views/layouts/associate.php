@@ -135,9 +135,9 @@ function getRoleBasedSidebar($userRole)
     <meta name="description" content="<?php echo $page_description ?? 'Associate Portal'; ?>">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <style>
         * {
@@ -531,19 +531,25 @@ function getRoleBasedSidebar($userRole)
         <div class="sidebar-section">Main Menu</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/dashboard" class="sidebar-link <?php echo $current_page === 'dashboard' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/dashboard" class="sidebar-link <?php echo ($current_page ?? '') === 'dashboard' ? 'active' : ''; ?>">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/genealogy" class="sidebar-link <?php echo $current_page === 'genealogy' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/genealogy" class="sidebar-link <?php echo ($current_page ?? '') === 'genealogy' ? 'active' : ''; ?>">
                     <i class="fas fa-sitemap"></i>
                     <span>My Network</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/leads" class="sidebar-link <?php echo $current_page === 'leads' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/mlm-plan" class="sidebar-link <?php echo ($current_page ?? '') === 'mlm-plan' ? 'active' : ''; ?>">
+                    <i class="fas fa-trophy"></i>
+                    <span>Commission Plan</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo BASE_URL; ?>/associate/leads" class="sidebar-link <?php echo ($current_page ?? '') === 'leads' ? 'active' : ''; ?>">
                     <i class="fas fa-users"></i>
                     <span>My Leads</span>
                 </a>
@@ -564,7 +570,7 @@ function getRoleBasedSidebar($userRole)
                 </ul>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/properties" class="sidebar-link <?php echo $current_page === 'properties' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/properties" class="sidebar-link <?php echo ($current_page ?? '') === 'properties' ? 'active' : ''; ?>">
                     <i class="fas fa-building"></i>
                     <span>My Properties</span>
                 </a>
@@ -575,7 +581,7 @@ function getRoleBasedSidebar($userRole)
         <div class="sidebar-section">Earnings</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/commissions" class="sidebar-link <?php echo $current_page === 'commissions' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/commissions" class="sidebar-link <?php echo ($current_page ?? '') === 'commissions' ? 'active' : ''; ?>">
                     <i class="fas fa-rupee-sign"></i>
                     <span>My Commissions</span>
                 </a>
@@ -601,7 +607,7 @@ function getRoleBasedSidebar($userRole)
         <div class="sidebar-section">Team Management</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/team" class="sidebar-link <?php echo $current_page === 'team' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/team" class="sidebar-link <?php echo ($current_page ?? '') === 'team' ? 'active' : ''; ?>">
                     <i class="fas fa-users-cog"></i>
                     <span>Team Management</span>
                 </a>
@@ -627,19 +633,19 @@ function getRoleBasedSidebar($userRole)
         <div class="sidebar-section">Account</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/profile" class="sidebar-link <?php echo $current_page === 'profile' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/profile" class="sidebar-link <?php echo ($current_page ?? '') === 'profile' ? 'active' : ''; ?>">
                     <i class="fas fa-user-cog"></i>
                     <span>My Profile</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/bank-details" class="sidebar-link <?php echo $current_page === 'bank-details' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/bank-details" class="sidebar-link <?php echo ($current_page ?? '') === 'bank-details' ? 'active' : ''; ?>">
                     <i class="fas fa-university"></i>
                     <span>Bank Details</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/settings" class="sidebar-link <?php echo $current_page === 'settings' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/associate/settings" class="sidebar-link <?php echo ($current_page ?? '') === 'settings' ? 'active' : ''; ?>">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>
@@ -686,7 +692,7 @@ function getRoleBasedSidebar($userRole)
     </main>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Sidebar Toggle Script -->
     <script>

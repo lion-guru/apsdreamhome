@@ -1,0 +1,73 @@
+<?php if (isset($_SESSION['success'])): ?>
+<div class="alert alert-success alert-dismissible fade show"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+<?php endif; ?>
+<?php if (isset($_SESSION['error'])): ?>
+<div class="alert alert-danger alert-dismissible fade show"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+<?php endif; ?>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0"><i class="fas fa-users me-2"></i>Team Members</h4>
+    <a href="<?php echo BASE_URL; ?>/admin/team/create" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i>Add Member
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Email</th>
+                        <th>Expertise</th>
+                        <th>Order</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($members)): ?>
+                    <tr><td colspan="9" class="text-center py-4 text-muted">No team members found.</td></tr>
+                    <?php else: ?>
+                    <?php foreach ($members as $i => $m): ?>
+                    <tr>
+                        <td><?php echo $i + 1; ?></td>
+                        <td>
+                            <?php if (!empty($m['photo'])): ?>
+                            <img src="<?php echo BASE_URL; ?>/assets/images/<?php echo htmlspecialchars($m['photo']); ?>" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:50%;">
+                            <?php else: ?>
+                            <div style="width:40px;height:40px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;color:#6c757d;"><i class="fas fa-user"></i></div>
+                            <?php endif; ?>
+                        </td>
+                        <td class="fw-semibold"><?php echo htmlspecialchars($m['name'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($m['position'] ?? ''); ?></td>
+                        <td><a href="mailto:<?php echo htmlspecialchars($m['email'] ?? ''); ?>" class="text-decoration-none"><?php echo htmlspecialchars($m['email'] ?? '-'); ?></a></td>
+                        <td><?php echo htmlspecialchars($m['expertise'] ?? '-'); ?></td>
+                        <td><?php echo (int)($m['sort_order'] ?? 0); ?></td>
+                        <td>
+                            <?php if (($m['status'] ?? 'active') === 'active'): ?>
+                            <span class="badge bg-success">Active</span>
+                            <?php else: ?>
+                            <span class="badge bg-secondary">Inactive</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="text-end">
+                            <a href="<?php echo BASE_URL; ?>/admin/team/edit/<?php echo $m['id']; ?>" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></a>
+                            <form method="POST" action="<?php echo BASE_URL; ?>/admin/team/destroy/<?php echo $m['id']; ?>" style="display:inline" onsubmit="return confirm('Delete this team member?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

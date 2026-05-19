@@ -1,0 +1,252 @@
+# Mobile Responsiveness Fixes Applied
+
+Generated: 2026-05-17 16:30:19
+
+## Summary
+
+Total fixes applied: 235
+
+### viewport
+
+- **app/views/dashboard/management_dashboard.php**: Added viewport meta tag
+- **app/views/pages/ai_assistant.php**: Added viewport meta tag
+- **app/views/pages/analytics.php**: Added viewport meta tag
+- **app/views/pages/inquiry.php**: Added viewport meta tag
+- **app/views/pages/mlm-dashboard.php**: Added viewport meta tag
+- **app/views/pages/plots.php**: Added viewport meta tag
+- **app/views/pages/privacy-policy.php**: Added viewport meta tag
+- **app/views/pages/terms.php**: Added viewport meta tag
+- **app/views/pages/whatsapp-templates.php**: Added viewport meta tag
+
+### images
+
+- **app/views/admin/users.php**: Added img-fluid class to images
+- **app/views/ai/smart_recommendations.php**: Added img-fluid class to images
+- **app/views/auth/quick-register.php**: Added img-fluid class to images
+- **app/views/commission/commission-opportunity.php**: Added img-fluid class to images
+- **app/views/components/mobile-header.php**: Added img-fluid class to images
+- **app/views/customers/property_views.php**: Added img-fluid class to images
+- **app/views/customers/reviews.php**: Added img-fluid class to images
+- **app/views/dashboard/customer.php**: Added img-fluid class to images
+- **app/views/dashboard/investor_dashboard.php**: Added img-fluid class to images
+- **app/views/dashboard/tenant_dashboard.php**: Added img-fluid class to images
+- **app/views/dashboard/user_dashboard.php**: Added img-fluid class to images
+- **app/views/employees/profile.php**: Added img-fluid class to images
+- **app/views/errors/maintenance.php**: Added img-fluid class to images
+- **app/views/gallery/index.php**: Added img-fluid class to images
+- **app/views/gallery/project.php**: Added img-fluid class to images
+- **app/views/home/portfolio.php**: Added img-fluid class to images
+- **app/views/layouts/base.php**: Added img-fluid class to images
+- **app/views/layouts/header.php**: Added img-fluid class to images
+- **app/views/locations/gorakhpur-raghunath-nagri.php**: Added img-fluid class to images
+- **app/views/locations/gorakhpur-suryoday-colony.php**: Added img-fluid class to images
+- **app/views/locations/kushinagar-budha-city.php**: Added img-fluid class to images
+- **app/views/locations/lucknow-ram-nagri.php**: Added img-fluid class to images
+- **app/views/locations/varanasi-ganga-nagri.php**: Added img-fluid class to images
+- **app/views/metaverse/collaborative_space.php**: Added img-fluid class to images
+- **app/views/metaverse/social_hub.php**: Added img-fluid class to images
+- **app/views/metaverse/vr_tours.php**: Added img-fluid class to images
+- **app/views/pages/about.php**: Added img-fluid class to images
+- **app/views/pages/ai-valuation.php**: Added img-fluid class to images
+- **app/views/pages/bank.php**: Added img-fluid class to images
+- **app/views/pages/blog.php**: Added img-fluid class to images
+- **app/views/pages/budhacity.php**: Added img-fluid class to images
+- **app/views/pages/colonies.php**: Added img-fluid class to images
+- **app/views/pages/company_projects.php**: Added img-fluid class to images
+- **app/views/pages/featured_properties.php**: Added img-fluid class to images
+- **app/views/pages/home.php**: Added img-fluid class to images
+- **app/views/pages/index.php**: Added img-fluid class to images
+- **app/views/pages/news.php**: Added img-fluid class to images
+- **app/views/pages/plots-availability.php**: Added img-fluid class to images
+- **app/views/pages/project_detail.php**: Added img-fluid class to images
+- **app/views/pages/projects.php**: Added img-fluid class to images
+- **app/views/pages/projects_by_location.php**: Added img-fluid class to images
+- **app/views/pages/properties.php**: Added img-fluid class to images
+- **app/views/pages/property_ai_chat.php**: Added img-fluid class to images
+- **app/views/pages/resell.php**: Added img-fluid class to images
+- **app/views/pages/suyoday_colony.php**: Added img-fluid class to images
+- **app/views/pages/team.php**: Added img-fluid class to images
+- **app/views/pages/user_properties.php**: Added img-fluid class to images
+- **app/views/pages/virtual_tour.php**: Added img-fluid class to images
+- **app/views/projects/detail.php**: Added img-fluid class to images
+- **app/views/properties/compare.php**: Added img-fluid class to images
+- **app/views/properties/compare_results.php**: Added img-fluid class to images
+- **app/views/properties/detail.php**: Added img-fluid class to images
+- **app/views/properties/featured.php**: Added img-fluid class to images
+- **app/views/properties/index.php**: Added img-fluid class to images
+- **app/views/properties/property-listings.php**: Added img-fluid class to images
+- **app/views/properties/property_detail.php**: Added img-fluid class to images
+- **app/views/properties/single.php**: Added img-fluid class to images
+- **app/views/team/dashboard.php**: Added img-fluid class to images
+- **app/views/testimonials/index.php**: Added img-fluid class to images
+- **app/views/user/favorites.php**: Added img-fluid class to images
+- **app/views/user/profile.php**: Added img-fluid class to images
+- **app/views/user/saved-properties.php**: Added img-fluid class to images
+- **app/views/virtual_tour/index.php**: Added img-fluid class to images
+
+### tables
+
+- **app/views/admin/advanced_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/ai_configuration.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/api_key_management.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/blockchain_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/blockchain_management.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/compliance_auditing.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/distributed_network.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/edge_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/financial_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/fraud_detection.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/incident_response.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/iot_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/meta_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/mlm_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/payment_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/properties.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/property_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/reports_financial.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/reports_inquiries.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/reports_properties.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/reports_users.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/security_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/social_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/super_meta_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/threat_detection.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/user_analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/users.php**: Wrapped tables for mobile responsiveness
+- **app/views/admin/virtual_tour_management.php**: Wrapped tables for mobile responsiveness
+- **app/views/ai/price_prediction.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/commissions.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/index.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/leads.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/metrics.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/pending.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/properties.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/sold.php**: Wrapped tables for mobile responsiveness
+- **app/views/associate/team.php**: Wrapped tables for mobile responsiveness
+- **app/views/auth/profile.php**: Wrapped tables for mobile responsiveness
+- **app/views/blockchain/certificate.php**: Wrapped tables for mobile responsiveness
+- **app/views/blockchain/document_verification.php**: Wrapped tables for mobile responsiveness
+- **app/views/blockchain/explorer.php**: Wrapped tables for mobile responsiveness
+- **app/views/blockchain/provenance.php**: Wrapped tables for mobile responsiveness
+- **app/views/blockchain/smart_contract.php**: Wrapped tables for mobile responsiveness
+- **app/views/blockchain/transaction_history.php**: Wrapped tables for mobile responsiveness
+- **app/views/blockchain/verification_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/blockchain/verify_property.php**: Wrapped tables for mobile responsiveness
+- **app/views/commission/commission-opportunity.php**: Wrapped tables for mobile responsiveness
+- **app/views/components/mobile-table.php**: Wrapped tables for mobile responsiveness
+- **app/views/customers/alerts.php**: Wrapped tables for mobile responsiveness
+- **app/views/customers/bookings.php**: Wrapped tables for mobile responsiveness
+- **app/views/customers/emi_calculator.php**: Wrapped tables for mobile responsiveness
+- **app/views/customers/emi_history.php**: Wrapped tables for mobile responsiveness
+- **app/views/customers/payments.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/associate.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/associate_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/builder_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/ceo_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/cm_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/hybrid_commission_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/investor_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/mlm-dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/dashboard/user_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/content_delivery.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/cost_analysis.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/fiveg_integration.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/industry_impact.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/mobile_edge.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/performance_benchmarks.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/realtime_processing.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/security_features.php**: Wrapped tables for mobile responsiveness
+- **app/views/edge/sustainability.php**: Wrapped tables for mobile responsiveness
+- **app/views/employee/ca_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/employee/hr_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/employee/land_manager_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/employee/legal_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/employee/telecalling_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/employees/attendance.php**: Wrapped tables for mobile responsiveness
+- **app/views/employees/leaves.php**: Wrapped tables for mobile responsiveness
+- **app/views/employees/performance.php**: Wrapped tables for mobile responsiveness
+- **app/views/employees/salary_history.php**: Wrapped tables for mobile responsiveness
+- **app/views/events/index.php**: Wrapped tables for mobile responsiveness
+- **app/views/farmers/dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/farmers/list.php**: Wrapped tables for mobile responsiveness
+- **app/views/farmers/show.php**: Wrapped tables for mobile responsiveness
+- **app/views/features/analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/features/comparison.php**: Wrapped tables for mobile responsiveness
+- **app/views/features/dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/features/investment-calculator.php**: Wrapped tables for mobile responsiveness
+- **app/views/features/manage.php**: Wrapped tables for mobile responsiveness
+- **app/views/features/smart-search.php**: Wrapped tables for mobile responsiveness
+- **app/views/features/virtual-tours.php**: Wrapped tables for mobile responsiveness
+- **app/views/iot/automation_rules.php**: Wrapped tables for mobile responsiveness
+- **app/views/iot/device_control.php**: Wrapped tables for mobile responsiveness
+- **app/views/iot/energy_monitoring.php**: Wrapped tables for mobile responsiveness
+- **app/views/iot/manage_devices.php**: Wrapped tables for mobile responsiveness
+- **app/views/iot/market_insights.php**: Wrapped tables for mobile responsiveness
+- **app/views/iot/smart_home_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/logging/archive.php**: Wrapped tables for mobile responsiveness
+- **app/views/logging/dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/logging/details.php**: Wrapped tables for mobile responsiveness
+- **app/views/logging/logs.php**: Wrapped tables for mobile responsiveness
+- **app/views/logging/reports.php**: Wrapped tables for mobile responsiveness
+- **app/views/logging/search.php**: Wrapped tables for mobile responsiveness
+- **app/views/logging/security-alerts.php**: Wrapped tables for mobile responsiveness
+- **app/views/logging/viewer.php**: Wrapped tables for mobile responsiveness
+- **app/views/marketing/analytics.php**: Wrapped tables for mobile responsiveness
+- **app/views/marketing/campaigns.php**: Wrapped tables for mobile responsiveness
+- **app/views/metaverse/investment_portfolio.php**: Wrapped tables for mobile responsiveness
+- **app/views/metaverse/virtual_economy.php**: Wrapped tables for mobile responsiveness
+- **app/views/mlm/commissions.php**: Wrapped tables for mobile responsiveness
+- **app/views/mlm/payouts.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/create_template.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/edit_template.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/email_logs.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/index.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/preview.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/send_test.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/settings.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/sms_logs.php**: Wrapped tables for mobile responsiveness
+- **app/views/notification/templates.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/calc.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/customer_dashboard_standalone.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/mlm_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/plot.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/plots-availability.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/plots.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/project_detail.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/security-dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/user_dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/user_inquiries.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/user_network.php**: Wrapped tables for mobile responsiveness
+- **app/views/pages/whatsapp-templates.php**: Wrapped tables for mobile responsiveness
+- **app/views/payment/index.php**: Wrapped tables for mobile responsiveness
+- **app/views/payment/receipt.php**: Wrapped tables for mobile responsiveness
+- **app/views/payments/emi_calculator.php**: Wrapped tables for mobile responsiveness
+- **app/views/payments/history.php**: Wrapped tables for mobile responsiveness
+- **app/views/payments/index.php**: Wrapped tables for mobile responsiveness
+- **app/views/payments/plans.php**: Wrapped tables for mobile responsiveness
+- **app/views/projects/detail.php**: Wrapped tables for mobile responsiveness
+- **app/views/properties/compare.php**: Wrapped tables for mobile responsiveness
+- **app/views/properties/compare_results.php**: Wrapped tables for mobile responsiveness
+- **app/views/properties/single.php**: Wrapped tables for mobile responsiveness
+- **app/views/pwa/index.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/associate.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/customer.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/financial.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/properties.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/property.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/sales.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/scheduled.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/user_activity.php**: Wrapped tables for mobile responsiveness
+- **app/views/reports/view.php**: Wrapped tables for mobile responsiveness
+- **app/views/security/mfa_enhancement.php**: Wrapped tables for mobile responsiveness
+- **app/views/security/quantum_cryptography.php**: Wrapped tables for mobile responsiveness
+- **app/views/sustainability/carbon_footprint.php**: Wrapped tables for mobile responsiveness
+- **app/views/sustainability/green_technology.php**: Wrapped tables for mobile responsiveness
+- **app/views/user/by-role.php**: Wrapped tables for mobile responsiveness
+- **app/views/user/dashboard.php**: Wrapped tables for mobile responsiveness
+- **app/views/user/enquiries.php**: Wrapped tables for mobile responsiveness
+- **app/views/user/index.php**: Wrapped tables for mobile responsiveness
+- **app/views/user/investments.php**: Wrapped tables for mobile responsiveness
+- **app/views/user/network_dashboard.php**: Wrapped tables for mobile responsiveness
+

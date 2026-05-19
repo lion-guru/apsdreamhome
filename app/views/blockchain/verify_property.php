@@ -6,11 +6,11 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property Details</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Title</th><td><?= htmlspecialchars($property['title'] ?? '-') ?></td></tr>
                         <tr><th>City</th><td><?= htmlspecialchars($property['city'] ?? '-') ?></td></tr>
                         <tr><th>Price</th><td>₹<?= number_format($property['price'] ?? 0) ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
             <?php if (!empty($existing_verification)): ?>

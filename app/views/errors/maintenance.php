@@ -106,7 +106,7 @@
 </head>
 <body>
     <div class="maintenance-container">
-        <img src="/assets/images/logo.png" alt="APS Dream Home" class="logo">
+        <img src="/assets/images/logo.png" alt="APS Dream Home" class="logo img-fluid">
         <h1>We'll Be Back Soon!</h1>
         <div class="status">Under Maintenance</div>
         

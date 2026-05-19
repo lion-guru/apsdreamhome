@@ -149,7 +149,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                     <div class="mt-4">
                         <h6 class="font-weight-bold text-gray-900 mb-3">सालाना भुगतान विवरण (Amortization Schedule)</h6>
                         <div class="table-responsive">
-                            <table class="table table-sm table-bordered" id="amortizationTable">
+                            <div class="table-responsive"><table class="table table-sm table-bordered table-responsive" id="amortizationTable">
                                 <thead class="bg-light text-center">
                                     <tr>
                                         <th class="small">वर्ष</th>
@@ -162,7 +162,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                                 <tbody class="text-center small">
                                     <!-- Dynamic Rows -->
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
 

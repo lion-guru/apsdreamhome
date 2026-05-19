@@ -61,7 +61,7 @@
                     <p class="text-muted text-center py-3">No virtual properties in your portfolio yet.</p>
                     <?php else: ?>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <div class="table-responsive"><table class="table table-hover table-responsive">
                             <thead class="table-light">
                                 <tr><th>Property</th><th>Investment</th><th>Current Value</th><th>Return</th></tr>
                             </thead>
@@ -75,7 +75,7 @@
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                     <?php endif; ?>
                 </div>

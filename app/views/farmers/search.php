@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-require_once 'app/views/layouts/header.php'; ?>
+?>
 
 <div class="container-fluid mt-4">
     <!-- Page Header -->
@@ -15,7 +15,7 @@ require_once 'app/views/layouts/header.php'; ?>
                 </h1>
                 <div class="d-flex">
                     <!-- Search Form -->
-                    <form class="form-inline mr-3" method="GET" action="/farmers/search">
+                    <form class="form-inline mr-3" method="GET" action="<?php echo BASE_URL; ?>/farmers/search">
                         <div class="input-group">
                             <input type="text"
                                    name="q"
@@ -29,7 +29,7 @@ require_once 'app/views/layouts/header.php'; ?>
                             </div>
                         </div>
                     </form>
-                    <a href="/farmers" class="btn btn-secondary">
+                    <a href="<?php echo BASE_URL; ?>/farmers" class="btn btn-secondary">
                         <i class="fas fa-arrow-left mr-2"></i>सभी किसान देखें
                     </a>
                 </div>
@@ -60,7 +60,7 @@ require_once 'app/views/layouts/header.php'; ?>
                             "<strong><?= htmlspecialchars($search_term) ?></strong>" के लिए कोई किसान नहीं मिला।
                         </p>
                         <div class="d-flex justify-content-center">
-                            <a href="/farmers/create" class="btn btn-primary mr-3">
+                            <a href="<?php echo BASE_URL; ?>/farmers/create" class="btn btn-primary mr-3">
                                 <i class="fas fa-plus mr-2"></i>नया किसान जोड़ें
                             </a>
                             <button type="button" class="btn btn-secondary" onclick="clearSearch()">
@@ -135,11 +135,11 @@ require_once 'app/views/layouts/header.php'; ?>
                                             </div>
 
                                             <div class="btn-group-vertical btn-group-sm w-100">
-                                                <a href="/farmers/<?= $farmer['id'] ?>"
+                                                <a href="<?php echo BASE_URL; ?>/farmers/<?= $farmer['id'] ?>"
                                                    class="btn btn-outline-info btn-sm">
                                                     <i class="fas fa-eye mr-1"></i>विवरण देखें
                                                 </a>
-                                                <a href="/farmers/<?= $farmer['id'] ?>/edit"
+                                                <a href="<?php echo BASE_URL; ?>/farmers/<?= $farmer['id'] ?>/edit"
                                                    class="btn btn-outline-warning btn-sm">
                                                     <i class="fas fa-edit mr-1"></i>एडिट करें
                                                 </a>
@@ -170,17 +170,17 @@ require_once 'app/views/layouts/header.php'; ?>
                             <div class="col-md-6">
                                 <h6>नाम से खोजें:</h6>
                                 <ul class="list-unstyled">
-                                    <li><a href="/farmers/search?q=राम" class="text-decoration-none">राम</a></li>
-                                    <li><a href="/farmers/search?q=सिंह" class="text-decoration-none">सिंह</a></li>
-                                    <li><a href="/farmers/search?q=कुमार" class="text-decoration-none">कुमार</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=राम" class="text-decoration-none">राम</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=सिंह" class="text-decoration-none">सिंह</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=कुमार" class="text-decoration-none">कुमार</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-6">
                                 <h6>फोन से खोजें:</h6>
                                 <ul class="list-unstyled">
-                                    <li><a href="/farmers/search?q=700" class="text-decoration-none">700xxxxxxx</a></li>
-                                    <li><a href="/farmers/search?q=800" class="text-decoration-none">800xxxxxxx</a></li>
-                                    <li><a href="/farmers/search?q=900" class="text-decoration-none">900xxxxxxx</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=700" class="text-decoration-none">700xxxxxxx</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=800" class="text-decoration-none">800xxxxxxx</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=900" class="text-decoration-none">900xxxxxxx</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -256,4 +256,4 @@ function clearSearch() {
 }
 </style>
 
-<?php require_once 'app/views/layouts/footer.php'; ?>
+

@@ -1,3 +1,4 @@
+// TODO: Consider async file operations for better performance
 <?php
 
 // TODO: Add proper error handling with try-catch blocks

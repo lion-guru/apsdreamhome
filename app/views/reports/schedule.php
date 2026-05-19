@@ -12,7 +12,7 @@
                             <label class="form-label">Report Type <span class="text-danger">*</span></label>
                             <select class="form-select" name="type" required>
                                 <option value="">Select type...</option>
-                                <?php foreach ($reportTypes as $k => $v): ?><option value="<?= $k ?>"><?= $v ?></option><?php endforeach; ?>
+                                <?php foreach ($reportTypes as $k => $v): ?><option value="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($v, ENT_QUOTES, 'UTF-8') ?></option><?php endforeach; ?>
                             </select>
                         </div>
                         <div class="mb-3">

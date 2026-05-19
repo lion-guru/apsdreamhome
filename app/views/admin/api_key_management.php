@@ -95,7 +95,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="mcpKeysTable">
+                                    <div class="table-responsive"><table class="table table-striped table-responsive" id="mcpKeysTable">
                                         <thead>
                                             <tr>
                                                 <th>Service</th>
@@ -111,7 +111,7 @@
                                         <tbody id="mcpKeysTableBody">
                                             <!-- MCP keys will be loaded here -->
                                         </tbody>
-                                    </table>
+                                    </table></div>
                                 </div>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="userKeysTable">
+                                    <div class="table-responsive"><table class="table table-striped table-responsive" id="userKeysTable">
                                         <thead>
                                             <tr>
                                                 <th>API Key</th>
@@ -141,7 +141,7 @@
                                         <tbody id="userKeysTableBody">
                                             <!-- User keys will be loaded here -->
                                         </tbody>
-                                    </table>
+                                    </table></div>
                                 </div>
                             </div>
                         </div>

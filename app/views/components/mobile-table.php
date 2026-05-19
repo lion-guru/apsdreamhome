@@ -13,7 +13,7 @@ $headerClass = $headerClass ?? 'table-light';
     <!-- Desktop Table View -->
     <div class="d-none d-md-block">
         <div class="table-responsive">
-            <table class="table <?php echo htmlspecialchars($tableClass); ?>">
+            <div class="table-responsive"><table class="table <?php echo htmlspecialchars($tableClass); ?> table-responsive">
                 <?php if(isset($headers)): ?>
                     <thead class="<?php echo htmlspecialchars($headerClass); ?>">
                         <tr>
@@ -28,7 +28,7 @@ $headerClass = $headerClass ?? 'table-light';
                 <tbody>
                     <?php if(isset($tableRows)): echo $tableRows; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 

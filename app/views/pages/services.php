@@ -10,6 +10,9 @@
                 <p class="lead text-white-50 mb-4">
                     Discover our comprehensive range of real estate services designed to help you find your perfect property or sell your current one with ease.
                 </p>
+                <?php if (!empty($pageContent)): ?>
+                <div class="cms-content text-white mt-4 mb-4 p-4 bg-white bg-opacity-10 rounded"><?php echo $pageContent; ?></div>
+                <?php endif; ?>
                 <div class="hero-stats">
                     <div class="row g-4">
                         <div class="col-md-3">
@@ -335,6 +338,7 @@
                                         <option value="registry">Registry / Transfer</option>
                                         <option value="mutation">Mutation</option>
                                         <option value="interior">Interior Design</option>
+                                        <option value="construction">Construction / Contracting</option>
                                         <option value="rental_agreement">Rental Agreement</option>
                                         <option value="property_tax">Property Tax</option>
                                     </select>

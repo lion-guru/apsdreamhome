@@ -85,7 +85,7 @@
                 <div class="col-6 col-md-3 mb-4">
                     <div class="card h-100 border-0 shadow-sm text-center p-4">
                         <div class="amenity-icon mb-3">
-                            <img src="<?= ASSETS_URL ?>images/<?= $amenity['image'] ?>" alt="<?= $amenity['title'] ?>" class="img-fluid" style="height: 40px;">
+                            <img src="<?= ASSETS_URL ?>/images/<?= $amenity['image'] ?>" alt="<?= $amenity['title'] ?>" class="img-fluid" style="height: 40px;">
                         </div>
                         <h6 class="fw-bold"><?= $amenity['title'] ?></h6>
                     </div>

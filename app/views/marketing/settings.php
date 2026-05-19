@@ -21,7 +21,7 @@
                             <label class="form-label">Attribution Window (Days)</label>
                             <select name="attribution_window" class="form-select">
                                 <?php foreach ([1,7,14,30,60,90] as $d): ?>
-                                    <option value="<?= $d ?>" <?= ((int)($settings['attribution_window'] ?? 30) === $d) ? 'selected' : '' ?>><?= $d ?> days</option>
+                                    <option value="<?= htmlspecialchars($d, ENT_QUOTES, 'UTF-8') ?>" <?= ((int)($settings['attribution_window'] ?? 30) === $d) ? 'selected' : '' ?>><?= htmlspecialchars($d, ENT_QUOTES, 'UTF-8') ?> days</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

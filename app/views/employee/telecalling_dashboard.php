@@ -54,7 +54,7 @@
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Call Log</h6></div>
                 <div class="card-body">
                     <?php if (!empty($callLog)): ?>
-                        <div class="table-responsive"><table class="table table-sm table-hover mb-0">
+                        <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Customer</th><th>Phone</th><th>Duration</th><th>Status</th><th>Notes</th></tr></thead>
                             <tbody>
                                 <?php foreach ($callLog as $call): ?>
@@ -67,7 +67,7 @@
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table></div>
+                        </table></div></div>
                     <?php else: ?>
                         <div class="text-center py-4"><i class="fas fa-phone-slash fa-2x text-muted mb-2"></i><p class="text-muted mb-0">No calls logged yet</p></div>
                     <?php endif; ?>
@@ -82,7 +82,7 @@
                         <?php foreach ($todayStats as $key => $val): ?>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="small"><?= ucfirst(str_replace('_', ' ', $key)) ?></span>
-                            <strong><?= $val ?></strong>
+                            <strong><?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?></strong>
                         </div>
                         <?php endforeach; ?>
                     <?php else: ?>

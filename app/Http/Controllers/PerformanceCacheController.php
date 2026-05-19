@@ -12,9 +12,9 @@ class PerformanceCacheController extends BaseController
 {
     private PerformanceCacheService $cacheService;
 
-    public function __construct(PerformanceCacheService $cacheService)
+    public function __construct(PerformanceCacheService $cacheService = null)
     {
-        $this->cacheService = $cacheService;
+        $this->cacheService = $cacheService ?? new PerformanceCacheService();
     }
 
     /**
@@ -617,5 +617,23 @@ class PerformanceCacheController extends BaseController
         }
 
         return $recommendations;
+    }
+
+    // ===== MISSING METHODS FOR ROUTE COMPATIBILITY =====
+
+    public function set($key, $value = null)
+    {
+        if ($value !== null) {
+            return parent::set($key, $value);
+        }
+        return $this->setCache($_REQUEST);
+    }
+
+    public function get($key = null, $default = null)
+    {
+        if ($key !== null) {
+            return parent::get($key, $default);
+        }
+        return $this->getCache($_REQUEST);
     }
 }

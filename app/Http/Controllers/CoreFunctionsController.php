@@ -13,11 +13,11 @@ class CoreFunctionsController extends BaseController
     private CoreFunctionsService $coreFunctions;
     private $logger;
 
-    public function __construct(CoreFunctionsService $coreFunctions, Logger $logger)
+    public function __construct(CoreFunctionsService $coreFunctions = null, Logger $logger = null)
     {
         parent::__construct();
-        $this->coreFunctions = $coreFunctions;
-        $this->logger = $logger;
+        $this->coreFunctions = $coreFunctions ?? new CoreFunctionsService();
+        $this->logger = $logger ?? new Logger();
     }
 
     /**
@@ -1011,5 +1011,44 @@ class CoreFunctionsController extends BaseController
         }
 
         return $randomString;
+    }
+
+    // ===== MISSING METHODS FOR ROUTE COMPATIBILITY =====
+
+    public function validateInputs()
+    {
+        return $this->validateMultiple();
+    }
+
+    public function getCsrfToken()
+    {
+        return $this->generateCsrfToken();
+    }
+
+    public function logAction()
+    {
+        return $this->logAdminAction();
+    }
+
+    public function getFileInfo()
+    {
+        header('Content-Type: application/json');
+        try {
+            $file = $_FILES['file'] ?? $_REQUEST['file'] ?? null;
+            if (!$file) {
+                echo json_encode(['success' => false, 'message' => 'No file provided']);
+                exit;
+            }
+            $info = [
+                'name' => is_array($file) ? $file['name'] : basename($file),
+                'size' => is_array($file) ? $file['size'] : @filesize($file),
+                'type' => is_array($file) ? $file['type'] : mime_content_type($file),
+                'exists' => !is_array($file) ? file_exists($file) : true
+            ];
+            echo json_encode(['success' => true, 'data' => $info]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
     }
 }

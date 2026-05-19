@@ -47,7 +47,7 @@ class SiteController extends AdminController
                            COALESCE(SUM(p.price), 0) as total_property_value
                     FROM sites s
                     LEFT JOIN properties p ON s.id = p.site_id
-                    LEFT JOIN projects pr ON s.id = pr.site_id
+                    LEFT JOIN projects pr ON s.id = pr.colony_id
                     WHERE 1=1";
             $params = [];
 
@@ -72,11 +72,28 @@ class SiteController extends AdminController
 
             $sql .= " GROUP BY s.id ORDER BY s.created_at DESC";
 
-            // Count total
-            $countSql = str_replace("SELECT s.*, COUNT(p.id) as property_count, COUNT(pr.id) as project_count, 0 as plot_count, COALESCE(SUM(p.price), 0) as total_property_value", "SELECT COUNT(DISTINCT s.id) as total", $sql);
+            // Count total - use subquery approach instead of str_replace
+            $countSql = "SELECT COUNT(*) as total FROM sites s WHERE 1=1";
+            $countParams = [];
+            if (!empty($search)) {
+                $countSql .= " AND (s.site_name LIKE ? OR s.location LIKE ? OR s.description LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $countParams[] = $searchParam;
+                $countParams[] = $searchParam;
+                $countParams[] = $searchParam;
+            }
+            if (!empty($status)) {
+                $countSql .= " AND s.status = ?";
+                $countParams[] = $status;
+            }
+            if (!empty($type)) {
+                $countSql .= " AND s.site_type = ?";
+                $countParams[] = $type;
+            }
             $countStmt = $this->db->prepare($countSql);
-            $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $countStmt->execute($countParams);
+            $countResult = $countStmt->fetch();
+            $total = (int)($countResult['total'] ?? 0);
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";
@@ -253,7 +270,7 @@ class SiteController extends AdminController
                            COALESCE(SUM(p.price), 0) as total_property_value
                     FROM sites s
                     LEFT JOIN properties p ON s.id = p.site_id
-                    LEFT JOIN projects pr ON s.id = pr.site_id
+                    LEFT JOIN projects pr ON s.id = pr.colony_id
                     LEFT JOIN plots pl ON s.id = pl.site_id
                     WHERE s.id = ?
                     GROUP BY s.id";
@@ -687,6 +704,50 @@ class SiteController extends AdminController
                 'success' => false,
                 'message' => 'Failed to delete site'
             ], 500);
+        }
+    }
+
+    /**
+     * Inventory overview — real-time plot stock by colony
+     */
+    public function inventory()
+    {
+        try {
+            $inventory = $this->db->fetchAll("
+                SELECT 
+                    c.id AS colony_id,
+                    c.name AS colony_name,
+                    c.location,
+                    c.total_plots,
+                    c.available_plots,
+                    COUNT(p.id) AS total_plots_actual,
+                    SUM(CASE WHEN p.status = 'available' THEN 1 ELSE 0 END) AS available,
+                    SUM(CASE WHEN p.status = 'booked' THEN 1 ELSE 0 END) AS booked,
+                    SUM(CASE WHEN p.status = 'sold' THEN 1 ELSE 0 END) AS sold,
+                    SUM(CASE WHEN p.status IN ('hold','reserved','under_construction') THEN 1 ELSE 0 END) AS other
+                FROM colonies c
+                LEFT JOIN plots p ON c.id = p.colony_id
+                GROUP BY c.id
+                ORDER BY c.name
+            ");
+
+            $totalPlots = array_sum(array_column($inventory, 'total_plots_actual'));
+            $totalAvailable = array_sum(array_column($inventory, 'available'));
+            $totalBooked = array_sum(array_column($inventory, 'booked'));
+            $totalSold = array_sum(array_column($inventory, 'sold'));
+
+            $this->render('admin/inventory/index', [
+                'inventory' => $inventory,
+                'totalPlots' => $totalPlots,
+                'totalAvailable' => $totalAvailable,
+                'totalBooked' => $totalBooked,
+                'totalSold' => $totalSold,
+                'page_title' => 'Plot Inventory Overview'
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Inventory error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load inventory data');
+            return $this->redirect('admin/dashboard');
         }
     }
 }

@@ -70,7 +70,7 @@
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Campaign Breakdown</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead class="table-light">
                                 <tr><th>Campaign</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Leads</th><th>Cost/Lead</th><th>ROI</th></tr>
                             </thead>
@@ -95,7 +95,7 @@
                                     <tr><td colspan="7" class="text-center text-muted py-3">No campaign data available.</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

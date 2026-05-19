@@ -1,0 +1,72 @@
+{
+  "multi_agent_mode": "enabled",
+  "parallel_processing": true,
+  "max_concurrent_agents": 5,
+  "agent_profiles": {
+    "database_expert": {
+      "profile": "subagent_explore",
+      "specialization": "database_operations",
+      "tasks": ["schema_analysis", "query_optimization", "data_migration"]
+    },
+    "frontend_expert": {
+      "profile": "subagent_explore",
+      "specialization": "frontend_development",
+      "tasks": ["ui_improvements", "responsive_design", "javascript_optimization"]
+    },
+    "backend_expert": {
+      "profile": "subagent_general",
+      "specialization": "backend_development",
+      "tasks": ["api_development", "controller_logic", "service_optimization"]
+    },
+    "testing_expert": {
+      "profile": "subagent_general",
+      "specialization": "testing",
+      "tasks": ["test_automation", "bug_reproduction", "performance_testing"]
+    },
+    "documentation_expert": {
+      "profile": "subagent_explore",
+      "specialization": "documentation",
+      "tasks": ["doc_generation", "api_documentation", "user_guides"]
+    }
+  },
+  "tool_acceleration": {
+    "enabled": true,
+    "cache_frequent_operations": true,
+    "batch_file_operations": true,
+    "parallel_shell_commands": true
+  },
+  "local_tools": {
+    "php": {
+      "enabled": true,
+      "path": "php",
+      "use_for": ["backend_processing", "database_migrations", "controller_logic"]
+    },
+    "node": {
+      "enabled": true,
+      "path": "node",
+      "use_for": ["testing", "build_processes", "frontend_tasks"]
+    },
+    "mysql": {
+      "enabled": true,
+      "use_for": ["database_queries", "schema_management", "data_analysis"]
+    },
+    "git": {
+      "enabled": true,
+      "use_for": ["version_control", "code_backup", "collaboration"]
+    },
+    "composer": {
+      "enabled": true,
+      "use_for": ["php_dependencies", "package_management"]
+    },
+    "npm": {
+      "enabled": true,
+      "use_for": ["javascript_dependencies", "build_tools"]
+    }
+  },
+  "parallelization_strategy": {
+    "database_queries": "parallel",
+    "file_operations": "batch",
+    "testing": "parallel",
+    "code_analysis": "parallel"
+  }
+}

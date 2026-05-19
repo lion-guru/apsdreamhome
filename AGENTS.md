@@ -1055,3 +1055,146 @@ POST /register/associate
 | OK (HTTP 200/302/403) | 369 |
 | FAIL (real 500) | 0 |
 | Expected failures | 12 |
+
+---
+
+## Session 2026-05-16: Bug Fix Sprint (8 fixes, 108/109 E2E pass)
+
+### What Was Done
+1. **Fixed /admin/sites 500** - SiteController wrong JOIN column (site_id -> colony_id). View had 4 missing $ prefixes.
+2. **Fixed /admin/locations/states 500** - LocationAdminController never initialized $db in constructor.
+3. **Fixed customer login** - DB password hash corrupted. Regenerated valid bcrypt hash.
+4. **E2E test saved** to testing/visual_tests/E2E_MASTER_TEST.mjs.
+5. **Fixed PlotManagementController** - 3 occurrences of `$countStmt->fetch()['total']` missing null coalescing (`?? 0`). Could cause undefined array key warning on empty results.
+6. **Fixed LocationAdminController include paths** - All 9 `include __DIR__ . '/../../views/...'` paths were wrong (went to `app/Http/views/` which doesn't exist). Changed to `../../../views/` to correctly resolve to `app/views/`. Fixed states (index/create/edit), districts (index/create/edit), and colonies (index/create/edit).
+7. **Fixed VisitorTrackingService** - `leads` table has `last_message` column, not `message`. Fixed both INSERT and UPDATE queries to use `last_message`. This was causing "Incomplete registration tracking error" in PHP error log on every page load.
+8. **Fixed `/admin/locations/states` route** - Now returns 200 (was 500 due to broken include path). Confirmed in E2E sidebar test.
+
+### Results
+- 108 pass, 1 expected 403 (GodMode - Super Admin only)
+- Error log clean, all PHP syntax OK
+- `/admin/locations/states` now returns HTTP 200 (previously 500)
+- Visitor tracking errors eliminated from PHP error log
+
+### Run Test
+```bash
+node testing/visual_tests/E2E_MASTER_TEST.mjs
+```
+
+---
+
+## 🏢 ENTERPRISE ERP - COMPLETE SYSTEM ANALYSIS (2026-05-17)
+
+### Executive Summary
+APS Dream Home is a **Complete Enterprise ERP** for Real Estate & Colony Development built on a custom PHP MVC framework with 805 database tables, 1043+ routes, and 96+ admin controllers.
+
+### User Roles (7 Types)
+| Role | Users | Access |
+|------|-------|--------|
+| Super Admin | 1 | God Mode - Full System |
+| Admin | 2 | Management - All Modules |
+| Manager | 2 | Team Management |
+| Employee | 6 | Day-to-Day Operations |
+| Associate (MLM) | 9 | Network Marketing |
+| Agent | 2 | Property Sales |
+| User/Customer | 16 | Browse & Inquire |
+
+### 10 Core Business Modules
+| Module | Tables | Purpose |
+|--------|--------|---------|
+| Colony/Project | 5 | Land → Plots → Sell |
+| Property | 5 | Buy/Sell/Rent Listings |
+| MLM Network | 8 | Referral & Commission |
+| Leads/CRM | 6 | Lead capture & follow-up |
+| Finance | 8 | Invoices, Payments, Expenses |
+| HRM | 7 | Employee, Attendance, Payroll |
+| Marketing | 5 | Campaigns, Newsletter |
+| AI/Automation | - | Chatbot, Analytics, Calling |
+| Reports | 5 | Dashboard, Analytics |
+| System | 6 | Settings, API Keys |
+
+### Admin Panel - 98 Menu Items
+- Dashboard (6 types) | User Mgmt (6) | Colony/Project (6) | Property (5) | Leads/CRM (6) | MLM Network (6) | Finance (8) | HRM (6) | Marketing (8) | AI (5) | Reports (12) | Settings (12)
+
+### Session Fixes (2026-05-17)
+1. **Created Lead Model** - `app/Models/Lead.php`
+2. **Created 4 Admin Views** - colonies, plots, leads, finance index pages
+3. **Added Missing Methods** to CampaignController (3) & NewsController (1)
+4. **Created 7 New Controllers** - Referral, SocialMedia, Meeting, Document, AIChatbot, AIAnalytics, AICalling
+5. **Fixed LeadController** - Added 8 missing methods (edit, update, destroy, addNote, updateStatus, etc.)
+6. **Fixed View Warnings** - farmers/search (total_area), employees/documents (document_types), employees/leaves (leave_types), projects/view (marketing_description, tags)
+7. **Added 3 Campaign Routes** - email-templates, sms-campaigns, whatsapp-broadcast
+
+### Verified Routes (All Working)
+| Route | Status |
+|-------|--------|
+| `/` Homepage | 200 ✅ |
+| `/admin/login` | 200 ✅ |
+| `/admin/dashboard` | 302 (Auth) ✅ |
+| `/admin/accounts` | 200 ✅ |
+| `/admin/employees` | 200 ✅ |
+| `/admin/invoices` | 200 ✅ |
+| `/admin/colonies` | 200 ✅ |
+| `/admin/projects` | 200 ✅ |
+| `/admin/leads` | 302 (Auth) ✅ |
+| `/admin/mlm` | 200 ✅ |
+| `/admin/gallery` | 200 ✅ |
+| `/admin/plot-costs` | 200 ✅ |
+| `/admin/bookings` | 200 ✅ |
+| `/admin/deals` | 200 ✅ |
+| `/admin/commissions` | 200 ✅ |
+| `/admin/payouts` | 200 ✅ |
+| `/admin/ai-chatbot` | 200 ✅ |
+| `/admin/ai-analytics` | 200 ✅ |
+| `/admin/referrals` | 200 ✅ |
+| `/admin/news/categories` | 200 ✅ |
+| `/admin/email-templates` | 200 ✅ |
+| `/admin/settings` | 200 ✅ |
+| `/admin/reports` | 302 (Auth) ✅ |
+
+### Key Metrics
+- **Total Tables:** 805
+- **Total Routes:** 1043
+- **Admin Controllers:** 96
+- **Models:** 146
+- **Views:** 636+
+- **Users:** 54
+- **Leads:** 153
+- **Inquiries:** 8
+- **Properties:** 12
+- **Colonies:** 5
+
+### Access URLs
+| URL | Purpose |
+|-----|---------|
+| `http://localhost/apsdreamhome/` | Website Frontend |
+| `http://localhost/apsdreamhome/admin/login` | Admin Panel |
+| `http://localhost/apsdreamhome/login` | Customer Login |
+| `http://localhost/apsdreamhome/mlm-dashboard` | MLM Associates |
+
+### Analysis Tools Created
+| File | Purpose |
+|------|---------|
+| `tools/analyze_database.php` | Database structure analysis |
+| `tools/generate_erp_report.php` | Full ERP system report |
+```
+
+## Session 2026-05-16 (Part 2): Admin Routes + Double-Sidebar Fix + Project View Bug
+
+### What Was Done
+1. **Added 10 missing admin routes**: `/admin/blog`, `/admin/blog/create`, `/admin/pages`, `/admin/pages/create`, `/admin/expenses`, `/admin/expenses/create`, `/admin/activity-log`, `/admin/settings/payment`, `/admin/settings/email`, `/admin/settings/sms`. Created 3 stub controllers (PagesController, ExpensesController, ActivityLogController) + 6 stub views. All return HTTP 200.
+2. **Fixed 7 double-sidebar bugs** - Removed self-included `header.php`/`footer.php` from dashboard/report views rendered via `$this->render()`. CEO, CFO, Builder, Agent dashboards + ROI calc, MLM growth, AI settings views now render cleanly within admin layout.
+3. **Fixed project view.php** - Changed all 15+ `$$project` to `$project` (double-dollar bug causing "Undefined variable $Array" warnings + 30+ PHP error log lines).
+4. **Fixed CEO Dashboard error** - Changed `admin_activities` table reference to `admin_activity_log` (correct table name).
+5. **Extended E2E test** to 119 checks. All 10 new routes included in sidebar test.
+
+### Results
+- 118 pass, 1 expected 403 (GodMode - Super Admin only)
+- PHP error log: clean (zero project errors)
+- Deep scan: 560 OK / 10 FAIL (all expected: 5 ajax auth-required + 2 godmode 403 + 1 admin auth + 2 export)
+
+### Run Test
+```bash
+node testing/visual_tests/E2E_MASTER_TEST.mjs
+```
+

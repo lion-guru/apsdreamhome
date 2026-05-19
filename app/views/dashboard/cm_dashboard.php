@@ -118,7 +118,7 @@ ob_start();
             </div>
 
             <div class="table-responsive">
-                <table class="table table-dark table-hover">
+                <div class="table-responsive"><table class="table table-dark table-hover table-responsive">
                     <thead>
                         <tr>
                             <th>Team Member</th>
@@ -163,7 +163,7 @@ ob_start();
                             </tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

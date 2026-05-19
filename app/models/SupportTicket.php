@@ -23,7 +23,7 @@ class SupportTicket extends Model
     public function getTicketByNumber($ticketNumber)
     {
         $sql = "SELECT * FROM " . static::$table . " WHERE ticket_number = :ticket_number";
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute(['ticket_number' => $ticketNumber]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -31,7 +31,7 @@ class SupportTicket extends Model
     public function getTicketsByUser($userId)
     {
         $sql = "SELECT * FROM " . static::$table . " WHERE user_id = :user_id ORDER BY created_at DESC";
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -42,7 +42,7 @@ class SupportTicket extends Model
                 FROM " . static::$table . " t 
                 JOIN users u ON t.user_id = u.id 
                 ORDER BY t.created_at DESC";
-        $stmt = $this->db->query($sql);
+        $stmt = static::getDb()->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

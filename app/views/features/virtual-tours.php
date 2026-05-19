@@ -23,7 +23,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th>Property</th><th>Tour Type</th><th>Views</th><th>Duration</th><th>Status</th><th>Actions</th></tr>
                     </thead>
@@ -45,7 +45,7 @@
                             <tr><td colspan="6" class="text-center text-muted py-3">No virtual tours found.</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

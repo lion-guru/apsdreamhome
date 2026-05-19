@@ -49,7 +49,7 @@
         <div class="card-body p-0">
             <?php if (!empty($recent_events ?? [])): ?>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Type</th><th>Priority</th><th>Date</th></tr></thead>
                     <tbody>
                         <?php foreach (($recent_events ?? []) as $e): ?>
@@ -62,7 +62,7 @@
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
             <?php else: ?>
             <div class="text-center py-5 text-muted">

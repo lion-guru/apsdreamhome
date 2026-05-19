@@ -12,6 +12,6 @@
             <a href="https://twitter.com/intent/tweet?text=<?= urlencode($property["title"] ?? "") ?>" target="_blank" class="btn btn-info text-white"><i class="fab fa-twitter me-1"></i>Twitter</a>
         </div>
         <hr>
-        <p class="small text-muted">Or copy link: <input type="text" class="form-control form-control-sm mt-1" value="<?= $base ?>property/<?= $property["id"] ?? "" ?>" readonly onclick="this.select()"></p>
+        <p class="small text-muted">Or copy link: <input type="text" class="form-control form-control-sm mt-1" value="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>property/<?= $property["id"] ?? "" ?>" readonly onclick="this.select()"></p>
     </div></div>
 </div>

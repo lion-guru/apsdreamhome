@@ -578,9 +578,7 @@ class BlockchainController extends BaseController
             if ($success) {
                 // In production, trigger actual blockchain verification
                 // For now, simulate processing delay
-                sleep(3);
-
-                // Mark as verified (in demo, 90% success rate)
+                // REMOVED: blocking sleep call
                 $final_status = rand(1, 10) <= 9 ? 'verified' : 'failed';
 
                 $sql = "UPDATE property_verifications SET blockchain_status = :status, verification_date = NOW() WHERE id = :id";

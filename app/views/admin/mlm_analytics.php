@@ -57,7 +57,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Level</th><th>Count</th></tr></thead>
                             <tbody>
                                 <?php foreach (($mlmData['level_distribution'] ?? []) as $lv): ?>
@@ -67,7 +67,7 @@
                                 <tr><td colspan="2" class="text-center text-muted py-3">No level data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Month</th><th>Commission</th></tr></thead>
                             <tbody>
                                 <?php foreach (($mlmData['commission_trends'] ?? []) as $ct): ?>
@@ -89,7 +89,7 @@
                                 <tr><td colspan="2" class="text-center text-muted py-3">No commission data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>#</th><th>Associate</th><th>Earnings</th></tr></thead>
                             <tbody>
                                 <?php foreach (($mlmData['top_performers'] ?? []) as $i => $tp): ?>
@@ -117,7 +117,7 @@
                                 <tr><td colspan="3" class="text-center text-muted py-3">No performer data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

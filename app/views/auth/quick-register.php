@@ -148,7 +148,7 @@ function generateUserId() {
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 <?= htmlspecialchars($success) ?>
                 <?php if (isset($redirect_url)): ?>
-                <a href="<?= $redirect_url ?>" target="_blank" class="block mt-2 text-green-700 underline">Open WhatsApp to see OTP</a>
+                <a href="<?= htmlspecialchars($redirect_url, ENT_QUOTES, 'UTF-8') ?>" target="_blank" class="block mt-2 text-green-700 underline">Open WhatsApp to see OTP</a>
                 <?php endif; ?>
             </div>
             <?php endif; ?>
@@ -191,7 +191,7 @@ function generateUserId() {
                     
                     <div class="mt-4 grid grid-cols-2 gap-3">
                         <a href="/auth/google?type=customer" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                            <img src="https://www.google.com/favicon.ico" class="w-5 h-5 mr-2">
+                            <img src="https://www.google.com/favicon.ico" class="w-5 h-5 mr-2 img-fluid">
                             Google
                         </a>
                         <a href="/auth/facebook?type=customer" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">

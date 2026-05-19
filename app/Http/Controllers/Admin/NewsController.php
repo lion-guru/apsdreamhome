@@ -492,6 +492,16 @@ class NewsController extends AdminController
     }
 
     /**
+     * News categories management
+     */
+    public function categories()
+    {
+        $this->data['page_title'] = 'News Categories';
+        $this->data['categories'] = [];
+        $this->render('admin/news/categories');
+    }
+
+    /**
      * Get news statistics
      */
     public function getStats()

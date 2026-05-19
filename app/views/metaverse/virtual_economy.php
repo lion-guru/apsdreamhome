@@ -54,7 +54,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <div class="table-responsive"><table class="table table-hover table-responsive">
                     <thead class="table-light">
                         <tr>
                             <th>Asset Type</th>
@@ -74,7 +74,7 @@
                         <tr><td colspan="3" class="text-center text-muted py-3">No trading data available.</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

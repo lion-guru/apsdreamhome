@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-require_once __DIR__ . '/../layouts/header.php'; ?>
+?>
 
 <div class="container-fluid mt-4">
     <!-- Page Header -->
@@ -15,13 +15,13 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                 </h1>
                 <div class="d-flex">
                     <!-- Search Form -->
-                    <form class="form-inline mr-3" method="GET" action="/farmers/search">
+                    <form class="form-inline mr-3" method="GET" action="<?php echo BASE_URL; ?>/farmers/search">
                         <div class="input-group">
                             <input type="text"
                                    name="q"
                                    class="form-control"
                                    placeholder="किसान खोजें..."
-                                   value="<?= htmlspecialchars(Security::sanitize($_GET['q']) ?? '') ?>">
+                                   value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="submit">
                                     <i class="fas fa-search"></i>
@@ -29,7 +29,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                             </div>
                         </div>
                     </form>
-                    <a href="/farmers/create" class="btn btn-primary">
+                    <a href="<?php echo BASE_URL; ?>/farmers/create" class="btn btn-primary">
                         <i class="fas fa-plus mr-2"></i>नया किसान जोड़ें
                     </a>
                 </div>
@@ -145,13 +145,13 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                             <i class="fas fa-users fa-4x text-muted mb-4"></i>
                             <h4 class="text-muted">कोई किसान नहीं मिला</h4>
                             <p class="text-muted mb-4">अभी तक कोई किसान रजिस्टर्ड नहीं है।</p>
-                            <a href="/farmers/create" class="btn btn-primary btn-lg">
+                            <a href="<?php echo BASE_URL; ?>/farmers/create" class="btn btn-primary btn-lg">
                                 <i class="fas fa-plus mr-2"></i>पहला किसान जोड़ें
                             </a>
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover" id="farmersTable">
+                            <div class="table-responsive"><table class="table table-bordered table-hover table-responsive" id="farmersTable">
                                 <thead class="thead-light">
                                     <tr>
                                         <th>किसान</th>
@@ -241,12 +241,12 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                                             </td>
                                             <td>
                                                 <div class="btn-group-vertical btn-group-sm">
-                                                    <a href="/farmers/<?= $farmer['id'] ?>"
+                                                    <a href="<?php echo BASE_URL; ?>/farmers/<?= $farmer['id'] ?>"
                                                        class="btn btn-outline-info btn-sm"
                                                        title="विवरण देखें">
                                                         <i class="fas fa-eye"></i> देखें
                                                     </a>
-                                                    <a href="/farmers/<?= $farmer['id'] ?>/edit"
+                                                    <a href="<?php echo BASE_URL; ?>/farmers/<?= $farmer['id'] ?>/edit"
                                                        class="btn btn-outline-warning btn-sm"
                                                        title="एडिट करें">
                                                         <i class="fas fa-edit"></i> एडिट
@@ -262,7 +262,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
 
                         <!-- Pagination -->
@@ -313,7 +313,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
 <script>
 function deleteFarmer(id, name) {
     document.getElementById('farmerName').textContent = name;
-    document.getElementById('confirmDeleteBtn').href = '/farmers/' + id + '/delete';
+    document.getElementById('confirmDeleteBtn').href = '<?php echo BASE_URL; ?>/farmers/' + id + '/delete';
     $('#deleteModal').modal('show');
 }
 
@@ -357,4 +357,4 @@ $(document).ready(function(){
 }
 </style>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+

@@ -25,7 +25,7 @@ class PerformanceCacheService
 
     public function __construct()
     {
-        $this->cachePrefix = config('cache.prefix', 'aps_');
+        $this->cachePrefix = 'aps_';
         $this->initializeStats();
     }
 
@@ -247,7 +247,7 @@ class PerformanceCacheService
         return array_merge($this->stats, [
             'total_requests' => $total,
             'hit_rate' => $hitRate,
-            'cache_driver' => config('cache.default'),
+            'cache_driver' => 'file',
             'cache_prefix' => $this->cachePrefix
         ]);
     }
@@ -271,27 +271,13 @@ class PerformanceCacheService
      */
     public function getCacheInfo(): array
     {
-        $driver = config('cache.default');
         $info = [
-            'driver' => $driver,
+            'driver' => 'file',
             'prefix' => $this->cachePrefix,
-            'supports_tags' => method_exists(Cache::store(), 'tags'),
-            'supports_locking' => method_exists(Cache::store(), 'lock'),
-            'supports_many' => method_exists(Cache::store(), 'many')
+            'supports_tags' => false,
+            'supports_locking' => false,
+            'supports_many' => false
         ];
-
-        // Driver-specific information
-        switch ($driver) {
-            case 'redis':
-                $info['redis_info'] = $this->getRedisInfo();
-                break;
-            case 'memcached':
-                $info['memcached_info'] = $this->getMemcachedInfo();
-                break;
-            case 'database':
-                $info['database_info'] = $this->getDatabaseInfo();
-                break;
-        }
 
         return $info;
     }
@@ -448,11 +434,13 @@ class PerformanceCacheService
      */
     private function initializeStats(): void
     {
-        // Load stats from cache if available
-        $cachedStats = Cache::get('performance_cache_stats');
-        if ($cachedStats) {
-            $this->stats = $cachedStats;
-        }
+        $this->stats = [
+            'hits' => 0,
+            'misses' => 0,
+            'sets' => 0,
+            'deletes' => 0,
+            'clears' => 0
+        ];
     }
 
     /**

@@ -33,7 +33,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-sm table-hover align-middle mb-0" id="logTable">
+                <div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0 table-responsive" id="logTable">
                     <thead class="table-light">
                         <tr><th>Level</th><th>Message</th><th>File</th><th>Line</th><th>IP</th><th>Time</th></tr>
                     </thead>
@@ -53,7 +53,7 @@
                             <tr><td colspan="6" class="text-center text-muted py-3">No log entries found.</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

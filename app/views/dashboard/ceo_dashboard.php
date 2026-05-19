@@ -150,7 +150,7 @@ $data = $data ?? [];
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered">
+                                <div class="table-responsive"><table class="table table-bordered table-responsive">
                                     <thead>
                                         <tr>
                                             <th>Metric</th>
@@ -185,7 +185,7 @@ $data = $data ?? [];
                                             <td><span class="badge bg-<?= ($data['employee_productivity'] ?? 0) >= 80 ? 'success' : 'warning' ?>"> <?= ($data['employee_productivity'] ?? 0) >= 80 ? 'High' : 'Average' ?></span></td>
                                         </tr>
                                     </tbody>
-                                </table>
+                                </table></div>
                             </div>
                         </div>
                     </div>

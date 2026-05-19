@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <?php $gitems = ['compliance_status' => 'Status', 'last_audit' => 'Last Audit', 'data_protection_officer' => 'DPO', 'privacy_impact_assessments' => 'PIAs', 'data_breach_notifications' => 'Breach Notifications', 'user_consent_rate' => 'Consent Rate']; ?>
                     <?php foreach ($gitems as $k => $l): ?>
-                        <div class="mb-2 d-flex justify-content-between"><small class="text-muted"><?= $l ?></small><strong><?= htmlspecialchars($gdpr[$k] ?? '-') ?></strong></div>
+                        <div class="mb-2 d-flex justify-content-between"><small class="text-muted"><?= htmlspecialchars($l, ENT_QUOTES, 'UTF-8') ?></small><strong><?= htmlspecialchars($gdpr[$k] ?? '-') ?></strong></div>
                         <?php if ($k === 'data_breach_notifications'): ?><hr><?php endif; ?>
                     <?php endforeach; ?>
                 </div>

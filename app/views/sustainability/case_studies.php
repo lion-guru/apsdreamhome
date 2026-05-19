@@ -30,7 +30,7 @@
                     </div>
                     <div class="mb-3">
                         <small class="text-muted fw-semibold">Results:</small>
-                        <ul class="list-unstyled"><?php foreach (($study['results'] ?? []) as $r): ?><li class="small"><i class="fas fa-check-circle text-success me-1"></i><?= $r ?></li><?php endforeach; ?></ul>
+                        <ul class="list-unstyled"><?php foreach (($study['results'] ?? []) as $r): ?><li class="small"><i class="fas fa-check-circle text-success me-1"></i><?= htmlspecialchars($r, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul>
                     </div>
                     <div class="d-flex justify-content-between small text-muted">
                         <span>Timeline: <?= ($study['implementation_time'] ?? 'N/A') ?></span>

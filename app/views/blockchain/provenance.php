@@ -14,7 +14,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-users me-2"></i>Ownership History</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>From</th><th>To</th><th>Reason</th><th>Date</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($ownership_history)): ?>
@@ -30,7 +30,7 @@
                                     <tr><td colspan="4" class="text-center text-muted py-3">No ownership history available</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Document History</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Document</th><th>Uploaded By</th><th>Date</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($document_history)): ?>
@@ -55,7 +55,7 @@
                                     <tr><td colspan="3" class="text-center text-muted py-3">No document history available</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

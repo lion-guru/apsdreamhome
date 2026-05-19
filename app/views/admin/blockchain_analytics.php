@@ -46,7 +46,7 @@
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-table me-2"></i>Analytics Data</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th>Metric</th><th>Value</th><th>Change</th><th>Period</th></tr>
                     </thead>
@@ -64,7 +64,7 @@
                             <tr><td colspan="4" class="text-center text-muted py-3">No analytics data available</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

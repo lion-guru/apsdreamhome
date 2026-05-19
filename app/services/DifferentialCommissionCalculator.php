@@ -9,37 +9,66 @@ use Exception;
 class DifferentialCommissionCalculator
 {
     protected $db;
-    protected $ranks = [
-        'Associate' => ['percent' => 5, 'team_percent' => 2, 'target' => 1000000],
-        'Sr. Associate' => ['percent' => 7, 'team_percent' => 3, 'target' => 3500000],
-        'BDM' => ['percent' => 10, 'team_percent' => 4, 'target' => 7000000],
-        'Sr. BDM' => ['percent' => 12, 'team_percent' => 5, 'target' => 15000000],
-        'Vice President' => ['percent' => 15, 'team_percent' => 6, 'target' => 30000000],
-        'President' => ['percent' => 18, 'team_percent' => 7, 'target' => 50000000],
-        'Site Manager' => ['percent' => 20, 'team_percent' => 8, 'target' => 100000000],
-    ];
-
     public function __construct()
     {
         $this->db = Database::getInstance()->getPdo();
     }
 
     /**
-     * Calculate and distribute differential commission for a sale
+     * Load commission percentage for a given rank from mlm_levels table
      */
-    public function calculate($saleAmount, $buyerUserId, $propertyId)
+    protected function getRankPercent($level): int
     {
         try {
-            // 1. Get the sponsor (direct agent)
-            $stmt = $this->db->prepare("SELECT sponsor_user_id FROM mlm_profiles WHERE user_id = ?");
-            $stmt->execute([$buyerUserId]);
-            $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->db->prepare("SELECT direct_commission FROM mlm_levels WHERE level_number = ? LIMIT 1");
+            $stmt->execute([$level]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ? (int)$row['direct_commission'] : 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 
-            if (!$profile || !$profile['sponsor_user_id']) {
-                return ['success' => false, 'message' => 'No sponsor found'];
+    /**
+     * Load rank name for a given level
+     */
+    protected function getRankName($level): string
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT level_name FROM mlm_levels WHERE level_number = ? LIMIT 1");
+            $stmt->execute([$level]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ? $row['level_name'] : 'Associate';
+        } catch (\Exception $e) {
+            return 'Associate';
+        }
+    }
+
+    /**
+     * Calculate and distribute differential commission for a sale
+     * @param int $saleAmount Total sale amount
+     * @param int $buyerUserId Customer who made the purchase
+     * @param int $propertyId Property/plot ID being sold
+     * @param int|null $associateId Optional: direct associate for the sale (overrides sponsor lookup)
+     */
+    public function calculate($saleAmount, $buyerUserId, $propertyId, $associateId = null)
+    {
+        try {
+            // 1. Determine the starting agent
+            if ($associateId && $associateId > 0) {
+                // Direct associate assigned to this booking — use them as the starting agent
+                $currentAgentId = (int)$associateId;
+            } else {
+                // Fallback: look up the buyer's sponsor in mlm_profiles
+                $stmt = $this->db->prepare("SELECT sponsor_user_id FROM mlm_profiles WHERE user_id = ?");
+                $stmt->execute([$buyerUserId]);
+                $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$profile || !$profile['sponsor_user_id']) {
+                    return ['success' => false, 'message' => 'No sponsor found'];
+                }
+                $currentAgentId = $profile['sponsor_user_id'];
             }
-
-            $currentAgentId = $profile['sponsor_user_id'];
             $distributedPercent = 0;
             $commissions = [];
 
@@ -49,7 +78,8 @@ class DifferentialCommissionCalculator
                 $agentData = $this->getAgentRankData($currentAgentId);
                 if (!$agentData) break;
 
-                $agentPercent = $this->ranks[$agentData['rank']]['percent'] ?? 0;
+                $agentLevel = (int)($agentData['level'] ?? $agentData['current_level'] ?? 1);
+                $agentPercent = $this->getRankPercent($agentLevel);
 
                 // Only pay if this agent has a higher percentage than what's already been distributed
                 if ($agentPercent > $distributedPercent) {
@@ -60,7 +90,7 @@ class DifferentialCommissionCalculator
                         $this->recordCommission($currentAgentId, $buyerUserId, $propertyId, $amount, $payablePercent, 'differential');
                         $commissions[] = [
                             'user_id' => $currentAgentId,
-                            'rank' => $agentData['rank'],
+                            'rank' => $this->getRankName($agentLevel),
                             'amount' => $amount,
                             'percent' => $payablePercent
                         ];
@@ -92,20 +122,22 @@ class DifferentialCommissionCalculator
 
     protected function getAgentRankData($userId)
     {
-        // For now, mapping rank from mlm_profiles or associate_levels
-        $stmt = $this->db->prepare("SELECT current_level as rank FROM mlm_profiles WHERE user_id = ?");
+        // Get level from mlm_profiles — current_level stores the level_number (1-10)
+        $stmt = $this->db->prepare("SELECT current_level FROM mlm_profiles WHERE user_id = ?");
         $stmt->execute([$userId]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) return null;
+        return ['level' => (int)$row['current_level']];
     }
 
     protected function recordCommission($beneficiaryId, $sourceId, $propertyId, $amount, $percent, $type)
     {
         // 1. Insert into 'commissions' table (Primary for Mobile V2)
         $stmt = $this->db->prepare("
-            INSERT INTO commissions (user_id, source_user_id, property_id, amount, percentage, type, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
+            INSERT INTO commissions (user_id, associate_id, source_user_id, source_associate_id, property_id, amount, percentage, commission_type, type, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
         ");
-        $stmt->execute([$beneficiaryId, $sourceId, $propertyId, $amount, $percent, $type]);
+        $stmt->execute([$beneficiaryId, $beneficiaryId, $sourceId, $sourceId, $propertyId, $amount, $percent, $type, $type]);
 
         // 2. Insert into 'mlm_commission_ledger' table (For Legacy Analytics/Reports)
         $stmt2 = $this->db->prepare("

@@ -48,7 +48,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-microchip me-2"></i>IoT Devices</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Device</th><th>Type</th><th>Location</th><th>Status</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($iot_devices)): ?>
@@ -64,7 +64,7 @@
                                     <tr><td colspan="4" class="text-center text-muted py-3">No IoT devices found</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                     <?php $features = $smart_features ?? []; ?>
                     <?php foreach (['energy_management' => 'Energy Management', 'security_system' => 'Security System', 'climate_control' => 'Climate Control', 'lighting_automation' => 'Lighting Automation', 'appliance_control' => 'Appliance Control', 'water_management' => 'Water Management', 'garden_automation' => 'Garden Automation'] as $key => $label): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span><?= $label ?></span>
+                            <span><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></span>
                             <span class="badge bg-<?= ($features[$key] ?? false) ? 'success' : 'secondary' ?>"><?= ($features[$key] ?? false) ? 'Enabled' : 'Disabled' ?></span>
                         </div>
                     <?php endforeach; ?>

@@ -37,7 +37,7 @@ class ImportExportService
     {
         $sql = "CREATE TABLE IF NOT EXISTS import_jobs (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            job_type ENUM('properties', 'leads', 'customers', 'associates') NOT NULL,
+            job_type ENUM('properties', 'leads', 'customers', 'associates', 'khatabook_sales') NOT NULL,
             file_path VARCHAR(500) NOT NULL,
             file_size INT NOT NULL,
             total_rows INT DEFAULT 0,
@@ -397,6 +397,185 @@ class ImportExportService
     }
     
     /**
+     * Import khatabook sales data from CSV
+     */
+    public function importSales(string $filePath, array $options = []): array
+    {
+        $result = ['total' => 0, 'successful' => 0, 'failed' => 0, 'errors' => []];
+        $batchNo = date('YmdHis') . '_' . uniqid();
+
+        try {
+            $handle = fopen($filePath, 'r');
+            if (!$handle) {
+                throw new \Exception("Cannot open file: {$filePath}");
+            }
+
+            $headers = fgetcsv($handle);
+            if (!$headers) {
+                throw new \Exception("Empty file or invalid CSV");
+            }
+
+            // Normalize headers
+            $headers = array_map('trim', $headers);
+            $headers = array_map('strtolower', $headers);
+            $headers = array_map(function($h) {
+                $h = preg_replace('/[^a-z0-9_]/', '_', $h);
+                $h = trim($h, '_');
+                return $h;
+            }, $headers);
+
+            // Map common khatabook column names
+            $columnMap = [
+                'date' => 'transaction_date',
+                'transaction_date' => 'transaction_date',
+                'entry_date' => 'transaction_date',
+                'customer' => 'customer_name',
+                'customer_name' => 'customer_name',
+                'name' => 'customer_name',
+                'client_name' => 'customer_name',
+                'party_name' => 'customer_name',
+                'phone' => 'customer_phone',
+                'mobile' => 'customer_phone',
+                'contact' => 'customer_phone',
+                'customer_phone' => 'customer_phone',
+                'address' => 'customer_address',
+                'customer_address' => 'customer_address',
+                'item' => 'item_description',
+                'description' => 'item_description',
+                'particulars' => 'item_description',
+                'item_description' => 'item_description',
+                'product' => 'item_description',
+                'qty' => 'quantity',
+                'quantity' => 'quantity',
+                'rate' => 'rate',
+                'unit_price' => 'rate',
+                'price' => 'rate',
+                'amount' => 'amount',
+                'total' => 'amount',
+                'value' => 'amount',
+                'payment_mode' => 'payment_method',
+                'payment_method' => 'payment_method',
+                'mode' => 'payment_method',
+                'reference' => 'reference_no',
+                'ref_no' => 'reference_no',
+                'bill_no' => 'reference_no',
+                'invoice_no' => 'reference_no',
+                'reference_no' => 'reference_no',
+                'remarks' => 'notes',
+                'notes' => 'notes',
+                'note' => 'notes',
+            ];
+
+            $batch = [];
+            $rowNum = 0;
+
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowNum++;
+                $result['total']++;
+
+                if (count($row) !== count($headers)) {
+                    $result['failed']++;
+                    $result['errors'][] = "Row {$rowNum}: Column count mismatch";
+                    continue;
+                }
+
+                $rawData = array_combine($headers, $row);
+
+                // Map columns
+                $data = [];
+                foreach ($rawData as $col => $val) {
+                    $mappedCol = $columnMap[$col] ?? $col;
+                    $data[$mappedCol] = trim($val);
+                }
+
+                // Required: at least customer_name or amount
+                if (empty($data['customer_name']) && empty($data['amount'])) {
+                    $result['failed']++;
+                    $result['errors'][] = "Row {$rowNum}: Missing customer name or amount";
+                    continue;
+                }
+
+                // Parse date
+                if (!empty($data['transaction_date'])) {
+                    $ts = strtotime($data['transaction_date']);
+                    if ($ts === false) {
+                        $data['transaction_date'] = date('Y-m-d');
+                    } else {
+                        $data['transaction_date'] = date('Y-m-d', $ts);
+                    }
+                } else {
+                    $data['transaction_date'] = date('Y-m-d');
+                }
+
+                // Parse amount
+                $data['amount'] = !empty($data['amount']) ? floatval(preg_replace('/[^0-9.]/', '', $data['amount'])) : 0;
+                $data['rate'] = !empty($data['rate']) ? floatval(preg_replace('/[^0-9.]/', '', $data['rate'])) : 0;
+                $data['quantity'] = !empty($data['quantity']) ? floatval(preg_replace('/[^0-9.]/', '', $data['quantity'])) : 1;
+
+                $batch[] = [
+                    'transaction_date' => $data['transaction_date'],
+                    'customer_name' => $data['customer_name'] ?? 'Unknown',
+                    'customer_phone' => $data['customer_phone'] ?? null,
+                    'customer_address' => $data['customer_address'] ?? null,
+                    'item_description' => $data['item_description'] ?? null,
+                    'quantity' => $data['quantity'],
+                    'rate' => $data['rate'],
+                    'amount' => $data['amount'],
+                    'payment_method' => $data['payment_method'] ?? null,
+                    'reference_no' => $data['reference_no'] ?? null,
+                    'notes' => $data['notes'] ?? null,
+                    'import_batch' => $batchNo,
+                ];
+
+                if (count($batch) >= $this->batchSize) {
+                    $this->insertSalesBatch($batch);
+                    $result['successful'] += count($batch);
+                    $batch = [];
+                }
+            }
+
+            if (!empty($batch)) {
+                $this->insertSalesBatch($batch);
+                $result['successful'] += count($batch);
+            }
+
+            fclose($handle);
+
+        } catch (\Exception $e) {
+            $result['errors'][] = $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Insert sales batch
+     */
+    private function insertSalesBatch(array $batch): void
+    {
+        $sql = "INSERT INTO khatabook_sales (transaction_date, customer_name, customer_phone, customer_address,
+                item_description, quantity, rate, amount, payment_method, reference_no, notes, import_batch, imported_by, imported_at) VALUES ";
+
+        $values = [];
+        $params = [];
+
+        foreach ($batch as $row) {
+            $values[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            array_push($params,
+                $row['transaction_date'], $row['customer_name'], $row['customer_phone'],
+                $row['customer_address'], $row['item_description'], $row['quantity'],
+                $row['rate'], $row['amount'], $row['payment_method'], $row['reference_no'],
+                $row['notes'], $row['import_batch'], $_SESSION['admin_id'] ?? null
+            );
+        }
+
+        $sql .= implode(', ', $values);
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($params);
+    }
+
+    /**
      * Get import templates
      */
     public function getImportTemplate(string $type): array
@@ -421,6 +600,19 @@ class ImportExportService
                 'budget' => 'Budget Amount',
                 'property_type' => 'Preferred Property Type',
                 'location' => 'Preferred Location',
+                'notes' => 'Additional Notes'
+            ],
+            'khatabook_sales' => [
+                'date' => 'Transaction Date (YYYY-MM-DD)',
+                'customer_name' => 'Customer/Party Name (Required)',
+                'customer_phone' => 'Phone Number',
+                'customer_address' => 'Address',
+                'item_description' => 'Item/Service Description',
+                'quantity' => 'Quantity (default: 1)',
+                'rate' => 'Rate per unit',
+                'amount' => 'Total Amount (Required)',
+                'payment_method' => 'Payment Mode (cash/online/bank)',
+                'reference_no' => 'Bill/Invoice/Reference Number',
                 'notes' => 'Additional Notes'
             ]
         ];

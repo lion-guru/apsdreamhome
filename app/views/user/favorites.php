@@ -57,7 +57,7 @@ if (!defined('BASE_URL')) {
                         <div class="property-card">
                             <!-- Property Image -->
                             <div class="property-image">
-                                <img src="<?php echo BASE_URL . ($property['main_image'] ?? 'assets/images/no-image.jpg'); ?>"
+                                <img src="<?php echo BASE_URL . ($property['main_image'] ?? 'assets/images/no-image.jpg'); ? class="img-fluid">"
                                      alt="<?php echo htmlspecialchars($property['title']); ?>"
                                      class="img-fluid"
                                      onerror="this.src='<?php echo BASE_URL; ?>assets/images/no-image.jpg'">

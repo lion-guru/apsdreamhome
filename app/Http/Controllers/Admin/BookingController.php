@@ -703,12 +703,29 @@ class BookingController extends AdminController
             if ($success) {
                 $booking_id = $this->db->lastInsertId();
 
+                // Auto-update plot status to booked
+                try {
+                    $this->db->prepare("UPDATE plots SET status='booked', customer_id=?, booking_date=NOW() WHERE id=?")->execute([$customer_id, $property_id]);
+                    // Log inventory action
+                    $this->db->prepare("INSERT INTO inventory_log (plot_id, action, user_id, note, action_date, created_at) VALUES (?, 'booked', ?, ?, NOW(), NOW())")
+                        ->execute([$property_id, $_SESSION['admin_id'] ?? 0, "Booked via booking #{$booking_number}"]);
+
+                    // Sync colony available_plots count
+                    $colonyRow = $this->db->fetchOne("SELECT colony_id FROM plots WHERE id = ?", [$property_id]);
+                    if ($colonyRow && $colonyRow['colony_id']) {
+                        $this->db->prepare("UPDATE colonies c SET c.available_plots = (SELECT COUNT(*) FROM plots WHERE colony_id = ? AND status = 'available') WHERE c.id = ?")
+                            ->execute([$colonyRow['colony_id'], $colonyRow['colony_id']]);
+                    }
+                } catch (\Exception $e) {
+                    error_log("Inventory update error: " . $e->getMessage());
+                }
+
                 // Trigger commission calculation if associate is assigned
                 if ($associate_id > 0) {
                     try {
-                        // Placeholder for commission service
-                        error_log("Commission calculation triggered for booking {$booking_number} with associate {$associate_id}");
-                    } catch (Exception $e) {
+                        $calc = new \App\Services\DifferentialCommissionCalculator();
+                        $calc->calculate($total_amount, $customer_id, $property_id, $associate_id);
+                    } catch (\Exception $e) {
                         error_log("Commission service error for booking {$booking_number}: " . $e->getMessage());
                     }
                 }

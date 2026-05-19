@@ -202,7 +202,7 @@
                 <div class="dashboard-card">
                     <h5><i class="fas fa-users me-2"></i>Direct Referrals</h5>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <div class="table-responsive"><table class="table table-striped table-responsive">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -215,7 +215,7 @@
                             <tbody id="direct-referrals-table">
                                 <!-- Data will be loaded here -->
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

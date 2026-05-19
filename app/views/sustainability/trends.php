@@ -41,7 +41,7 @@
                 <?php foreach ($insights as $key => $val): ?>
                 <div class="col-md-3">
                     <div class="border rounded p-3 text-center h-100">
-                        <strong class="d-block text-<?= $key === 'regulatory_pressure' ? 'danger' : 'success' ?>"><?= $val ?></strong>
+                        <strong class="d-block text-<?= $key === 'regulatory_pressure' ? 'danger' : 'success' ?>"><?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?></strong>
                         <small class="text-muted text-capitalize"><?= str_replace('_', ' ', $key) ?></small>
                     </div>
                 </div>

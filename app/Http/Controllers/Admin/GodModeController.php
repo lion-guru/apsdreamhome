@@ -627,6 +627,9 @@ class GodModeController extends \App\Http\Controllers\BaseController
         foreach ($flash as $key => $value) {
             $_SESSION['flash_' . $key] = $value;
         }
+        if (!empty($url) && strpos($url, 'http') !== 0 && defined('BASE_URL')) {
+            $url = rtrim(BASE_URL, '/') . '/' . ltrim($url, '/');
+        }
         header("Location: $url");
         exit;
     }

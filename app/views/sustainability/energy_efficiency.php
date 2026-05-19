@@ -72,7 +72,7 @@
                         <div class="col-md-4">
                             <h6 class="text-<?= $category === 'immediate_actions' ? 'success' : ($category === 'short_term_goals' ? 'warning' : 'info') ?>"><?= ucfirst(str_replace('_', ' ', $category)) ?></h6>
                             <ul class="list-group list-group-flush">
-                                <?php foreach ($items as $item): ?><li class="list-group-item px-0 small"><?= $item ?></li><?php endforeach; ?>
+                                <?php foreach ($items as $item): ?><li class="list-group-item px-0 small"><?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?>
                                 <?php if (empty($items)): ?><li class="list-group-item px-0 text-muted small">No items.</li><?php endif; ?>
                             </ul>
                         </div>

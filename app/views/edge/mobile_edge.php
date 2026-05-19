@@ -8,14 +8,14 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-network-wired me-2"></i>MEC Nodes</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Type</th><th>Count</th><th>Capacity</th></tr></thead>
                             <tbody>
                                 <?php foreach (($md['mec_nodes'] ?? []) as $k => $v): ?>
                                     <tr><td class="text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></td><td><?= number_format($v['count'] ?? 0) ?></td><td><?= htmlspecialchars($v['capacity'] ?? '-') ?></td></tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -46,11 +46,11 @@
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-hourglass-half me-2"></i>Latency Reduction</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($md['latency_reduction'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50 text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></th><td><?= htmlspecialchars($v) ?></td></tr>
                         <?php endforeach; ?>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

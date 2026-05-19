@@ -756,34 +756,31 @@ class FarmerService
      */
     public function searchFarmers(string $query, array $filters = []): array
     {
-        $searchQuery = DB::table('farmer_profiles as fp')
-            ->leftJoin('associates as a', 'fp.associate_id', '=', 'a.id')
-            ->leftJoin('users as ua', 'a.user_id', '=', 'ua.id')
-            ->select(
-                'fp.*',
-                'ua.name as associate_name'
-            )
-            ->where(function ($q) use ($query) {
-                $q->where('fp.full_name', 'like', '%' . $query . '%')
-                    ->orWhere('fp.farmer_number', 'like', '%' . $query . '%')
-                    ->orWhere('fp.phone', 'like', '%' . $query . '%')
-                    ->orWhere('fp.village', 'like', '%' . $query . '%')
-                    ->orWhere('fp.aadhar_number', 'like', '%' . $query . '%');
-            });
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $sql = "SELECT fp.*, ua.name as associate_name
+                    FROM farmer_profiles fp
+                    LEFT JOIN associates a ON fp.associate_id = a.id
+                    LEFT JOIN users ua ON a.user_id = ua.id
+                    WHERE (fp.full_name LIKE ? OR fp.farmer_number LIKE ? OR fp.phone LIKE ? OR fp.village LIKE ? OR fp.aadhar_number LIKE ?)";
+            $params = array_fill(0, 5, '%' . $query . '%');
 
-        // Apply additional filters
-        if (!empty($filters['status'])) {
-            $searchQuery->where('fp.status', $filters['status']);
+            if (!empty($filters['status'])) {
+                $sql .= " AND fp.status = ?";
+                $params[] = $filters['status'];
+            }
+            if (!empty($filters['district'])) {
+                $sql .= " AND fp.district = ?";
+                $params[] = $filters['district'];
+            }
+
+            $sql .= " ORDER BY fp.full_name LIMIT 50";
+            $rows = $db->fetchAll($sql, $params);
+            return $rows ?: [];
+        } catch (\Exception $e) {
+            error_log('FarmerService::searchFarmers error: ' . $e->getMessage());
+            return [];
         }
-
-        if (!empty($filters['district'])) {
-            $searchQuery->where('fp.district', $filters['district']);
-        }
-
-        return $searchQuery->orderBy('fp.full_name')
-            ->limit(50)
-            ->get()
-            ->toArray();
     }
 
     /**

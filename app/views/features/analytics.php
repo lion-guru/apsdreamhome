@@ -24,7 +24,7 @@
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Detailed Analytics</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead class="table-light">
                                 <tr>
                                     <th>Feature</th>
@@ -60,7 +60,7 @@
                                     <tr><td colspan="6" class="text-center text-muted py-3">No analytics data available.</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

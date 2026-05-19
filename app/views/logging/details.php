@@ -9,7 +9,7 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Log Entry</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm table-borderless">
+                    <div class="table-responsive"><table class="table table-sm table-borderless table-responsive">
                         <tr><td style="width:140px"><strong>Level</strong></td><td><span class="badge bg-<?= ($log['level'] ?? 'info') === 'error' ? 'danger' : (($log['level'] ?? 'info') === 'warning' ? 'warning' : 'info') ?>"><?= htmlspecialchars($log['level'] ?? 'info') ?></span></td></tr>
                         <tr><td><strong>Message</strong></td><td><?= htmlspecialchars($log['message'] ?? '') ?></td></tr>
                         <tr><td><strong>File</strong></td><td><code><?= htmlspecialchars($log['file'] ?? '-') ?></code></td></tr>
@@ -18,7 +18,7 @@
                         <tr><td><strong>IP</strong></td><td><code><?= htmlspecialchars($log['ip'] ?? '-') ?></code></td></tr>
                         <tr><td><strong>User Agent</strong></td><td class="text-truncate" style="max-width:500px"><?= htmlspecialchars($log['user_agent'] ?? '-') ?></td></tr>
                         <tr><td><strong>Timestamp</strong></td><td><?= htmlspecialchars($log['created_at'] ?? '') ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

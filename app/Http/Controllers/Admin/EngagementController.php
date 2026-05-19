@@ -294,6 +294,7 @@ class EngagementController extends AdminController
      */
     public function getStats()
     {
+        $this->requireAdmin();
         try {
             $stats = [];
 

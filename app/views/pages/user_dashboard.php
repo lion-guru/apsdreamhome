@@ -1,38 +1,13 @@
 <?php
-
-/**
- * Customer Dashboard View
- * Content only - layout handled by controller
- */
-
-// Set page variables for layout
 $page_title = $page_title ?? 'My Dashboard';
 $current_page = 'dashboard';
 
-// Dashboard data
-$stats = $stats ?? [
-    'total_properties' => 3,
-    'active_inquiries' => 5,
-    'saved_properties' => 12,
-    'total_views' => 156
-];
-
-$my_properties = $my_properties ?? [
-    ['title' => '2 BHK Apartment', 'location' => 'Suryoday Colony', 'price' => 4500000, 'status' => 'active', 'image' => 'property1.jpg'],
-    ['title' => 'Residential Plot', 'location' => 'Raghunath City', 'price' => 2500000, 'status' => 'pending', 'image' => 'property2.jpg'],
-];
-
-$recent_inquiries = $recent_inquiries ?? [
-    ['property' => '3 BHK Villa - Suryoday Heights', 'type' => 'Buy', 'status' => 'pending', 'date' => '2026-04-10'],
-    ['property' => 'Commercial Shop - City Center', 'type' => 'Rent', 'status' => 'replied', 'date' => '2026-04-08'],
-    ['property' => '2 BHK Flat - Braj Radha Enclave', 'type' => 'Buy', 'status' => 'viewing', 'date' => '2026-04-05'],
-];
-
-$services = $services ?? [
-    ['icon' => 'fa-home', 'title' => 'Buy Property', 'description' => 'Find your dream home', 'url' => '/buy', 'color' => 'primary'],
-    ['icon' => 'fa-building', 'title' => 'Sell Property', 'description' => 'List your property', 'url' => '/sell', 'color' => 'success'],
-    ['icon' => 'fa-chart-line', 'title' => 'Investment', 'description' => 'Grow your wealth', 'url' => '/invest', 'color' => 'info'],
-];
+// Data from controller (with safe fallbacks)
+$stats = $stats ?? ['total_properties' => 0, 'active_inquiries' => 0, 'total_bookings' => 0, 'total_inquiries' => 0];
+$properties = $properties ?? [];
+$inquiries = $inquiries ?? [];
+$bookings = $bookings ?? [];
+$user = $user ?? [];
 ?>
 
 <!-- Welcome Banner -->
@@ -40,8 +15,8 @@ $services = $services ?? [
     <div class="card-body p-4">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h4 class="mb-2">Welcome back, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Customer'); ?>! 👋</h4>
-                <p class="mb-0 opacity-75">Manage your properties, track inquiries, and explore our services all in one place.</p>
+                <h4 class="mb-2">Welcome back, <?php echo htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? 'Customer'); ?>!</h4>
+                <p class="mb-0 opacity-75">Manage your properties, track inquiries and purchases all in one place.</p>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
                 <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-light">
@@ -56,38 +31,30 @@ $services = $services ?? [
 <div class="row g-4 mb-4">
     <div class="col-md-3 col-sm-6">
         <div class="stat-card">
-            <div class="stat-icon blue">
-                <i class="fas fa-building"></i>
-            </div>
+            <div class="stat-icon blue"><i class="fas fa-building"></i></div>
             <div class="stat-value"><?php echo $stats['total_properties']; ?></div>
             <div class="stat-label">My Properties</div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-card">
-            <div class="stat-icon green">
-                <i class="fas fa-envelope"></i>
-            </div>
+            <div class="stat-icon green"><i class="fas fa-envelope"></i></div>
             <div class="stat-value"><?php echo $stats['active_inquiries']; ?></div>
             <div class="stat-label">Active Inquiries</div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-card">
-            <div class="stat-icon orange">
-                <i class="fas fa-heart"></i>
-            </div>
-            <div class="stat-value"><?php echo $stats['saved_properties']; ?></div>
-            <div class="stat-label">Saved Properties</div>
+            <div class="stat-icon orange"><i class="fas fa-file-invoice"></i></div>
+            <div class="stat-value"><?php echo $stats['total_bookings']; ?></div>
+            <div class="stat-label">My Purchases</div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-card">
-            <div class="stat-icon purple">
-                <i class="fas fa-eye"></i>
-            </div>
-            <div class="stat-value"><?php echo $stats['total_views']; ?></div>
-            <div class="stat-label">Total Views</div>
+            <div class="stat-icon purple"><i class="fas fa-chart-bar"></i></div>
+            <div class="stat-value"><?php echo $stats['total_inquiries']; ?></div>
+            <div class="stat-label">Total Inquiries</div>
         </div>
     </div>
 </div>
@@ -95,6 +62,47 @@ $services = $services ?? [
 <div class="row g-4">
     <!-- Left Column -->
     <div class="col-lg-8">
+        <!-- My Purchases (Bookings) -->
+        <?php if (!empty($bookings)): ?>
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="fas fa-file-invoice text-success me-2"></i>My Purchases</h5>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Plot</th>
+                                <th>Colony</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($bookings as $b): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($b['plot_number'] ?? $b['property_id'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($b['colony_name'] ?? 'N/A'); ?></td>
+                                <td>₹<?php echo number_format($b['total_amount'] ?? $b['amount'] ?? 0); ?></td>
+                                <td>
+                                    <span class="badge bg-<?php echo $b['status'] === 'confirmed' || $b['status'] === 'completed' ? 'success' : ($b['status'] === 'cancelled' ? 'danger' : 'warning'); ?>">
+                                        <?php echo ucfirst($b['status'] ?? 'pending'); ?>
+                                    </span>
+                                </td>
+                                <td><?php echo date('M d, Y', strtotime($b['created_at'] ?? $b['booking_date'] ?? 'now')); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- My Properties -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
@@ -104,8 +112,15 @@ $services = $services ?? [
                 </div>
             </div>
             <div class="card-body">
+                <?php if (empty($properties)): ?>
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-building fa-3x mb-3"></i>
+                        <p>No properties listed yet. Post your first property!</p>
+                        <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-primary btn-sm">Post Property</a>
+                    </div>
+                <?php else: ?>
                 <div class="row g-3">
-                    <?php foreach ($my_properties as $property): ?>
+                    <?php foreach (array_slice($properties, 0, 4) as $property): ?>
                         <div class="col-md-6">
                             <div class="property-card border rounded-3 p-3">
                                 <div class="d-flex gap-3">
@@ -113,11 +128,11 @@ $services = $services ?? [
                                         <i class="fas fa-home fa-2x text-muted"></i>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1"><?php echo htmlspecialchars($property['title']); ?></h6>
-                                        <p class="text-muted mb-1 small"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['location']); ?></p>
-                                        <p class="mb-2"><strong>₹<?php echo number_format($property['price']); ?></strong></p>
-                                        <span class="badge bg-<?php echo $property['status'] === 'active' ? 'success' : 'warning'; ?>">
-                                            <?php echo ucfirst($property['status']); ?>
+                                        <h6 class="mb-1"><?php echo htmlspecialchars($property['property_type'] ?? $property['title'] ?? 'Property'); ?></h6>
+                                        <p class="text-muted mb-1 small"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['address'] ?? $property['location'] ?? ''); ?></p>
+                                        <p class="mb-2"><strong>₹<?php echo number_format($property['price'] ?? 0); ?></strong></p>
+                                        <span class="badge bg-<?php echo ($property['status'] ?? '') === 'approved' || ($property['status'] ?? '') === 'active' ? 'success' : 'warning'; ?>">
+                                            <?php echo ucfirst($property['status'] ?? 'pending'); ?>
                                         </span>
                                     </div>
                                 </div>
@@ -125,6 +140,7 @@ $services = $services ?? [
                         </div>
                     <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -137,43 +153,45 @@ $services = $services ?? [
                 </div>
             </div>
             <div class="card-body p-0">
+                <?php if (empty($inquiries)): ?>
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-envelope fa-3x mb-3"></i>
+                        <p>No inquiries yet.</p>
+                    </div>
+                <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>Property</th>
+                                <th>Subject</th>
                                 <th>Type</th>
                                 <th>Status</th>
                                 <th>Date</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($recent_inquiries as $inquiry): ?>
+                            <?php foreach ($inquiries as $inquiry): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($inquiry['property']); ?></td>
-                                    <td><?php echo htmlspecialchars($inquiry['type']); ?></td>
+                                    <td><?php echo htmlspecialchars($inquiry['subject'] ?? $inquiry['message'] ?? 'Inquiry'); ?></td>
+                                    <td><?php echo htmlspecialchars($inquiry['type'] ?? 'General'); ?></td>
                                     <td>
-                                        <span class="badge bg-<?php echo $inquiry['status'] === 'replied' ? 'success' : ($inquiry['status'] === 'pending' ? 'warning' : 'info'); ?>">
-                                            <?php echo ucfirst($inquiry['status']); ?>
+                                        <span class="badge bg-<?php echo ($inquiry['status'] ?? '') === 'replied' ? 'success' : (($inquiry['status'] ?? '') === 'pending' ? 'warning' : 'info'); ?>">
+                                            <?php echo ucfirst($inquiry['status'] ?? 'pending'); ?>
                                         </span>
                                     </td>
-                                    <td><?php echo date('M d', strtotime($inquiry['date'])); ?></td>
-                                    <td>
-                                        <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
-                                    </td>
+                                    <td><?php echo date('M d', strtotime($inquiry['created_at'] ?? 'now')); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <!-- Right Column -->
     <div class="col-lg-4">
-        <!-- Quick Actions -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="card-title mb-0"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h5>
@@ -186,58 +204,74 @@ $services = $services ?? [
                     <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-primary">
                         <i class="fas fa-search me-2"></i>Browse Properties
                     </a>
-                    <a href="<?php echo BASE_URL; ?>/financial-services" class="btn btn-outline-success">
-                        <i class="fas fa-hand-holding-usd me-2"></i>Apply for Loan
+                    <a href="<?php echo BASE_URL; ?>/user/inquiries" class="btn btn-outline-success">
+                        <i class="fas fa-envelope me-2"></i>My Inquiries
+                    </a>
+                    <a href="<?php echo BASE_URL; ?>/user/profile" class="btn btn-outline-info">
+                        <i class="fas fa-user me-2"></i>Edit Profile
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Services -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="card-title mb-0"><i class="fas fa-concierge-bell text-info me-2"></i>Our Services</h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">
-                    <?php foreach ($services as $service): ?>
-                        <div class="col-6">
-                            <a href="<?php echo BASE_URL . $service['url']; ?>" class="text-decoration-none">
-                                <div class="service-card text-center p-3 border rounded-3 h-100">
-                                    <div class="service-icon mb-2 text-<?php echo $service['color']; ?>">
-                                        <i class="fas <?php echo $service['icon']; ?> fa-2x"></i>
-                                    </div>
-                                    <h6 class="mb-1"><?php echo $service['title']; ?></h6>
-                                    <small class="text-muted"><?php echo $service['desc'] ?? ''; ?></small>
-                                </div>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
+                    <div class="col-6">
+                        <a href="<?php echo BASE_URL; ?>/properties" class="text-decoration-none">
+                            <div class="service-card text-center p-3 border rounded-3 h-100">
+                                <div class="service-icon mb-2 text-primary"><i class="fas fa-home fa-2x"></i></div>
+                                <h6 class="mb-1">Buy</h6>
+                                <small class="text-muted">Find your dream property</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?php echo BASE_URL; ?>/list-property" class="text-decoration-none">
+                            <div class="service-card text-center p-3 border rounded-3 h-100">
+                                <div class="service-icon mb-2 text-success"><i class="fas fa-building fa-2x"></i></div>
+                                <h6 class="mb-1">Sell</h6>
+                                <small class="text-muted">List your property</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?php echo BASE_URL; ?>/services" class="text-decoration-none">
+                            <div class="service-card text-center p-3 border rounded-3 h-100">
+                                <div class="service-icon mb-2 text-info"><i class="fas fa-hand-holding-usd fa-2x"></i></div>
+                                <h6 class="mb-1">Services</h6>
+                                <small class="text-muted">Loan, Legal & more</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?php echo BASE_URL; ?>/contact" class="text-decoration-none">
+                            <div class="service-card text-center p-3 border rounded-3 h-100">
+                                <div class="service-icon mb-2 text-warning"><i class="fas fa-headset fa-2x"></i></div>
+                                <h6 class="mb-1">Support</h6>
+                                <small class="text-muted">Get help</small>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Profile Completion -->
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i>Profile Status</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i>Account Info</h5>
             </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Profile Completion</span>
-                    <strong>75%</strong>
-                </div>
-                <div class="progress mb-3" style="height: 8px;">
-                    <div class="progress-bar bg-primary" style="width: 75%"></div>
-                </div>
-                <div class="small text-muted">
-                    <p class="mb-1"><i class="fas fa-check text-success me-1"></i> Basic info added</p>
-                    <p class="mb-1"><i class="fas fa-check text-success me-1"></i> Contact details added</p>
-                    <p class="mb-1"><i class="fas fa-times text-danger me-1"></i> Bank details pending</p>
-                    <p class="mb-0"><i class="fas fa-times text-danger me-1"></i> KYC verification pending</p>
+                <div class="small">
+                    <p class="mb-2"><strong><i class="fas fa-user me-1"></i>Name:</strong> <?php echo htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'N/A'); ?></p>
+                    <p class="mb-2"><strong><i class="fas fa-envelope me-1"></i>Email:</strong> <?php echo htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? 'N/A'); ?></p>
+                    <p class="mb-0"><strong><i class="fas fa-phone me-1"></i>Phone:</strong> <?php echo htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? 'N/A'); ?></p>
                 </div>
                 <a href="<?php echo BASE_URL; ?>/user/profile" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                    Complete Profile
+                    <i class="fas fa-edit me-1"></i>Edit Profile
                 </a>
             </div>
         </div>
@@ -245,72 +279,16 @@ $services = $services ?? [
 </div>
 
 <style>
-    .stat-card {
-        background: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e2e8f0;
-        height: 100%;
-    }
-
-    .stat-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 15px;
-    }
-
-    .stat-icon.blue {
-        background: rgba(59, 130, 246, 0.1);
-        color: #3b82f6;
-    }
-
-    .stat-icon.green {
-        background: rgba(16, 185, 129, 0.1);
-        color: #10b981;
-    }
-
-    .stat-icon.orange {
-        background: rgba(245, 158, 11, 0.1);
-        color: #f59e0b;
-    }
-
-    .stat-icon.purple {
-        background: rgba(139, 92, 246, 0.1);
-        color: #8b5cf6;
-    }
-
-    .stat-value {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 5px;
-    }
-
-    .stat-label {
-        font-size: 0.875rem;
-        color: #64748b;
-    }
-
-    .property-card {
-        transition: all 0.2s ease;
-    }
-
-    .property-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .service-card {
-        transition: all 0.2s ease;
-    }
-
-    .service-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-    }
+.stat-card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.1); border:1px solid #e2e8f0; height:100%; }
+.stat-icon { width:50px; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:15px; }
+.stat-icon.blue { background:rgba(59,130,246,0.1); color:#3b82f6; }
+.stat-icon.green { background:rgba(16,185,129,0.1); color:#10b981; }
+.stat-icon.orange { background:rgba(245,158,11,0.1); color:#f59e0b; }
+.stat-icon.purple { background:rgba(139,92,246,0.1); color:#8b5cf6; }
+.stat-value { font-size:1.75rem; font-weight:700; color:#1e293b; margin-bottom:5px; }
+.stat-label { font-size:0.875rem; color:#64748b; }
+.property-card { transition:all 0.2s ease; }
+.property-card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.service-card { transition:all 0.2s ease; }
+.service-card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.1); transform:translateY(-2px); }
 </style>

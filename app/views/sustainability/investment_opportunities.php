@@ -21,7 +21,7 @@
                 <div class="card-body">
                     <h3 class="text-primary mb-3">₹<?= ($gb['total_issued'] ?? '0') ?></h3>
                     <div class="d-flex justify-content-between mb-2"><span>Returns</span><strong class="text-success"><?= ($gb['investor_returns'] ?? '0%') ?></strong></div>
-                    <div class="mb-2"><small class="text-muted d-block">Maturities:</small><?php foreach (($gb['maturity_periods'] ?? []) as $m): ?><span class="badge bg-secondary me-1"><?= $m ?></span><?php endforeach; ?></div>
+                    <div class="mb-2"><small class="text-muted d-block">Maturities:</small><?php foreach (($gb['maturity_periods'] ?? []) as $m): ?><span class="badge bg-secondary me-1"><?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?></span><?php endforeach; ?></div>
                     <small class="text-muted">Use: <?= implode(', ', $gb['use_of_proceeds'] ?? []) ?></small>
                 </div>
             </div>

@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Core\Database\Database;
 
+#[\AllowDynamicProperties]
 class WalletController extends BaseController
 {
     protected $db;
 
     public function __construct()
     {
-        $this->db = Database::getInstance();
+        parent::__construct();
     }
 
     /**

@@ -71,7 +71,7 @@
                 <div class="card-body">
                     <?php foreach ($mitigation as $category => $items): ?>
                     <h6 class="text-capitalize mt-3"><?= str_replace('_', ' ', $category) ?></h6>
-                    <ul class="list-unstyled"><?php foreach ($items as $item): ?><li class="mb-1 small"><i class="fas fa-check-circle text-success me-1"></i><?= $item ?></li><?php endforeach; ?></ul>
+                    <ul class="list-unstyled"><?php foreach ($items as $item): ?><li class="mb-1 small"><i class="fas fa-check-circle text-success me-1"></i><?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul>
                     <?php endforeach; ?>
                     <?php if (empty($mitigation)): ?><p class="text-muted text-center py-3">No strategies.</p><?php endif; ?>
                 </div>

@@ -44,11 +44,11 @@
                 <div class="card-body">
                     <?php $breakdown = $current_footprint['breakdown'] ?? []; ?>
                     <?php if (!empty($breakdown)): ?>
-                    <div class="table-responsive"><table class="table"><thead class="table-light"><tr><th>Source</th><th>Emissions</th><th>Percentage</th></tr></thead><tbody>
+                    <div class="table-responsive"><div class="table-responsive"><table class="table table-responsive"><thead class="table-light"><tr><th>Source</th><th>Emissions</th><th>Percentage</th></tr></thead><tbody>
                         <?php foreach ($breakdown as $key => $item): ?>
                         <tr><td><?= ucfirst(str_replace('_', ' ', $key)) ?></td><td><?= ($item['emissions'] ?? '') ?></td><td><?= ($item['percentage'] ?? '') ?></td></tr>
                         <?php endforeach; ?>
-                    </tbody></table></div>
+                    </tbody></table></div></div>
                     <?php else: ?><p class="text-muted text-center py-3">No breakdown data available.</p><?php endif; ?>
                 </div>
             </div>

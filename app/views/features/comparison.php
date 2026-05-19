@@ -41,7 +41,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-bordered align-middle mb-0">
+                <div class="table-responsive"><table class="table table-bordered align-middle mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th style="width:25%">Attribute</th><th style="width:37.5%"><?= htmlspecialchars($comparison['a']['name'] ?? 'Property A') ?></th><th style="width:37.5%"><?= htmlspecialchars($comparison['b']['name'] ?? 'Property B') ?></th></tr>
                     </thead>
@@ -49,13 +49,13 @@
                         <?php $attrs = ['price' => 'Price', 'area' => 'Area (sqft)', 'type' => 'Type', 'location' => 'Location', 'bedrooms' => 'Bedrooms', 'bathrooms' => 'Bathrooms', 'status' => 'Status', 'amenities' => 'Amenities']; ?>
                         <?php foreach ($attrs as $key => $label): ?>
                             <tr>
-                                <td><strong><?= $label ?></strong></td>
+                                <td><strong><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></strong></td>
                                 <td><?= htmlspecialchars($comparison['a'][$key] ?? '-') ?></td>
                                 <td><?= htmlspecialchars($comparison['b'][$key] ?? '-') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

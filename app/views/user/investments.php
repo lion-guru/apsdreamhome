@@ -18,7 +18,7 @@
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="bg-light">
                         <tr>
                             <th class="ps-4">Plot Number</th>
@@ -54,7 +54,7 @@
                                         if ($status == 'active' || $status == 'booked') $statusClass = 'bg-success';
                                         elseif ($status == 'pending') $statusClass = 'bg-warning';
                                         ?>
-                                        <span class="badge <?= $statusClass ?> rounded-pill px-3">
+                                        <span class="badge <?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?> rounded-pill px-3">
                                             <?= ucfirst($status) ?>
                                         </span>
                                     </td>
@@ -65,7 +65,7 @@
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

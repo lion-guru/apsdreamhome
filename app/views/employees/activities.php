@@ -242,11 +242,11 @@
                                                 <?= ucfirst($type) ?>
                                             </h6>
                                             <p class="mb-0 text-muted">
-                                                <?= $count ?> activities
+                                                <?= htmlspecialchars($count, ENT_QUOTES, 'UTF-8') ?> activities
                                             </p>
                                         </div>
                                         <div class="activity-count">
-                                            <?= $count ?>
+                                            <?= htmlspecialchars($count, ENT_QUOTES, 'UTF-8') ?>
                                         </div>
                                     </div>
                                     <div class="progress mt-2">

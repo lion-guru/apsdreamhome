@@ -15,7 +15,7 @@
             <?php if (empty($associates)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No associate data available</p></div>
             <?php else: ?>
-            <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>#</th><th>Associate</th><th>Properties Sold</th><th>Total Sales</th><th>Commission</th><th>Rating</th><th>Status</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>#</th><th>Associate</th><th>Properties Sold</th><th>Total Sales</th><th>Commission</th><th>Rating</th><th>Status</th></tr></thead>
                 <tbody><?php $r = 1; foreach ($associates as $a): ?><tr>
                     <td><?= $r++ ?></td><td><?= htmlspecialchars($a['name'] ?? '-') ?></td>
                     <td><?= number_format($a['properties_sold'] ?? 0) ?></td>
@@ -23,7 +23,7 @@
                     <td>₹<?= number_format($a['commission'] ?? 0) ?></td>
                     <td><?= str_repeat('<i class="fas fa-star text-warning"></i>', min(5, $a['rating'] ?? 0)) ?></td>
                     <td><span class="badge bg-<?= ($a['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($a['status'] ?? '-') ?></span></td>
-                </tr><?php endforeach; ?></tbody></table></div>
+                </tr><?php endforeach; ?></tbody></table></div></div>
             <?php endif; ?>
         </div>
     </div>

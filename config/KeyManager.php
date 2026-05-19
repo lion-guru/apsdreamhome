@@ -17,7 +17,7 @@ class KeyManager {
                 // Use default database connection
                 $host = "localhost";
                 $user = "root";
-                $password = "";
+                $password = getenv("DB_PASSWORD") ?: "";
                 $database = "apsdreamhome";
                 $pdo = new PDO("mysql:host=$host;dbname=$database", $user, $password);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

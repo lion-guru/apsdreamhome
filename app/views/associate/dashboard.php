@@ -171,7 +171,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-body">
                         <?php if (!empty($network)): ?>
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <div class="table-responsive"><table class="table table-hover table-responsive">
                                     <thead>
                                         <tr>
                                             <th>Level</th>
@@ -190,7 +190,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
-                                </table>
+                                </table></div>
                             </div>
                         <?php else: ?>
                             <div class="text-center py-4">

@@ -58,7 +58,7 @@
                         <div class="col-md-6">
                             <h5>Recent Email Logs</h5>
                             <div class="table-responsive">
-                                <table class="table table-sm">
+                                <div class="table-responsive"><table class="table table-sm table-responsive">
                                     <thead>
                                         <tr>
                                             <th>Recipient</th>
@@ -81,13 +81,13 @@
                                             <td>1 day ago</td>
                                         </tr>
                                     </tbody>
-                                </table>
+                                </table></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <h5>Recent SMS Logs</h5>
                             <div class="table-responsive">
-                                <table class="table table-sm">
+                                <div class="table-responsive"><table class="table table-sm table-responsive">
                                     <thead>
                                         <tr>
                                             <th>Recipient</th>
@@ -110,7 +110,7 @@
                                             <td>3 hours ago</td>
                                         </tr>
                                     </tbody>
-                                </table>
+                                </table></div>
                             </div>
                         </div>
                     </div>

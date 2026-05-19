@@ -252,4 +252,4 @@ function fillPropertyDetails() {
 }
 </script>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
+<?php  ?>

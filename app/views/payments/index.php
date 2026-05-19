@@ -63,7 +63,7 @@
             <div class="text-center py-5"><i class="fas fa-credit-card fa-3x text-muted mb-3"></i><p class="text-muted">No transactions yet</p><a href="<?= BASE_URL ?>payments/initiate" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Initiate Payment</a></div>
             <?php else: ?>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light"><tr><th>#</th><th>Transaction ID</th><th>Purpose</th><th>Amount</th><th>Gateway</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                     <tbody><?php $i = 1; foreach ($payments as $p): ?>
                         <tr><td><?= $i++ ?></td><td><code><?= htmlspecialchars($p['transaction_id'] ?? '-') ?></code></td><td><?= htmlspecialchars($p['purpose'] ?? '-') ?></td><td>₹<?= number_format($p['amount'] ?? 0) ?></td><td><?= htmlspecialchars($p['gateway'] ?? '-') ?></td>
@@ -71,7 +71,7 @@
                         <td><?= htmlspecialchars($p['created_at'] ?? '-') ?></td>
                         <td><a href="<?= BASE_URL ?>payments/history?txn=<?= urlencode($p['transaction_id'] ?? '') ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td></tr>
                     <?php endforeach; ?></tbody>
-                </table>
+                </table></div>
             </div>
             <?php endif; ?>
         </div>

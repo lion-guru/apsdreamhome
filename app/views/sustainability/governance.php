@@ -23,7 +23,7 @@
                     <div class="d-flex justify-content-between mb-2"><span>Last Updated</span><strong><?= ($policy['last_updated'] ?? '') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Scope</span><small><?= ($policy['scope'] ?? '') ?></small></div>
                     <hr><h6>Key Principles</h6>
-                    <ul class="list-unstyled"><?php foreach (($policy['key_principles'] ?? []) as $p): ?><li class="small"><i class="fas fa-check-circle text-success me-1"></i><?= $p ?></li><?php endforeach; ?></ul>
+                    <ul class="list-unstyled"><?php foreach (($policy['key_principles'] ?? []) as $p): ?><li class="small"><i class="fas fa-check-circle text-success me-1"></i><?= htmlspecialchars($p, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul>
                 </div>
             </div>
         </div>
@@ -32,7 +32,7 @@
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-sitemap me-2 text-info"></i>Governance Structure</h5></div>
                 <div class="card-body">
                     <?php foreach ($structure as $key => $val): ?>
-                    <div class="mb-3"><strong class="small d-block text-capitalize"><?= str_replace('_', ' ', $key) ?></strong><small class="text-muted"><?= $val ?></small></div>
+                    <div class="mb-3"><strong class="small d-block text-capitalize"><?= str_replace('_', ' ', $key) ?></strong><small class="text-muted"><?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?></small></div>
                     <?php endforeach; ?>
                     <?php if (empty($structure)): ?><p class="text-muted text-center py-3">No data.</p><?php endif; ?>
                 </div>
@@ -44,7 +44,7 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <strong class="small d-block">Standards</strong>
-                        <ul class="list-unstyled"><?php foreach (($reporting['standards_followed'] ?? []) as $s): ?><li class="small"><i class="fas fa-check text-success me-1"></i><?= $s ?></li><?php endforeach; ?></ul>
+                        <ul class="list-unstyled"><?php foreach (($reporting['standards_followed'] ?? []) as $s): ?><li class="small"><i class="fas fa-check text-success me-1"></i><?= htmlspecialchars($s, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul>
                     </div>
                     <div class="d-flex justify-content-between mb-2"><span>Frequency</span><strong><?= ($reporting['reporting_frequency'] ?? '') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Assurance</span><small><?= ($reporting['assurance_level'] ?? '') ?></small></div>

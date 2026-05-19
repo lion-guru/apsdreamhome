@@ -205,7 +205,7 @@ $active_page = 'properties';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <div class="table-responsive"><table class="table table-hover table-responsive">
                                 <thead>
                                     <tr>
                                         <th>
@@ -272,7 +272,7 @@ $active_page = 'properties';
                                         </td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 </div>

@@ -1,8 +1,4 @@
-<?php
-$page_title = 'Edit News Article';
-$active_page = 'news';
-include APP_PATH . '/views/admin/layouts/header.php';
-?>
+<?php $page_title = 'Edit News Article'; $active_page = 'news'; ?>
 
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Edit News Article</h1>
@@ -142,4 +138,3 @@ include APP_PATH . '/views/admin/layouts/header.php';
     });
 </script>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

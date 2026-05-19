@@ -89,7 +89,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-body">
                 <?php if (!empty($users)): ?>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <div class="table-responsive"><table class="table table-hover table-responsive">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -123,7 +123,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                     <div class="text-center mt-3">
                         <a href="<?php echo $base; ?>/users" class="btn btn-outline-primary">View All Users</a>

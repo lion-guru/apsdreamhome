@@ -26,7 +26,7 @@
                             <label class="form-label">Loan Tenure (Years)</label>
                             <select name="tenure" class="form-select">
                                 <?php foreach ([5,10,15,20,25,30] as $y): ?>
-                                    <option value="<?= $y ?>" <?= ((int)($input['tenure'] ?? 20) === $y) ? 'selected' : '' ?>><?= $y ?> years</option>
+                                    <option value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>" <?= ((int)($input['tenure'] ?? 20) === $y) ? 'selected' : '' ?>><?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?> years</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -64,7 +64,7 @@
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Amortization Schedule</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive" style="max-height:300px">
-                        <table class="table table-hover table-sm mb-0">
+                        <div class="table-responsive"><table class="table table-hover table-sm mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Year</th><th>Principal Paid</th><th>Interest Paid</th><th>Balance</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($result['schedule'])): ?>
@@ -75,7 +75,7 @@
                                     <tr><td colspan="4" class="text-center text-muted py-3">No data.</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

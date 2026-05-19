@@ -14,7 +14,7 @@ $base = $base ?? BASE_URL;
                 <p class="lead mb-0">Discover our premium residential and commercial developments across Uttar Pradesh</p>
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                <a href="<?= $base ?>/properties" class="btn btn-light">
+                <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-light">
                     <i class="fas fa-building me-1"></i> View Properties
                 </a>
             </div>
@@ -31,7 +31,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100 project-card">
                     <div class="position-relative overflow-hidden" style="height: 220px;">
                         <?php if (!empty($project->image_path ?? $project['image_path'] ?? '')): ?>
-                        <img src="<?= htmlspecialchars($project->image_path ?? $project['image_path']) ?>" class="card-img-top h-100" style="object-fit: cover;" alt="<?= htmlspecialchars($project->name ?? $project['name'] ?? 'Project') ?>">
+                        <img src="<?= htmlspecialchars($project- class="img-fluid">image_path ?? $project['image_path']) ?>" class="card-img-top h-100" style="object-fit: cover;" alt="<?= htmlspecialchars($project->name ?? $project['name'] ?? 'Project') ?>">
                         <?php else: ?>
                         <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center h-100">
                             <i class="fas fa-building fa-4x text-secondary" style="opacity:0.3;"></i>
@@ -57,7 +57,7 @@ $base = $base ?? BASE_URL;
                         </div>
                     </div>
                     <div class="card-footer bg-white border-top-0">
-                        <a href="<?= $base ?>/project/<?= htmlspecialchars($project->id ?? $project['id'] ?? 0) ?>" class="btn btn-outline-primary btn-sm w-100">
+                        <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/project/<?= htmlspecialchars($project->id ?? $project['id'] ?? 0) ?>" class="btn btn-outline-primary btn-sm w-100">
                             <i class="fas fa-info-circle me-1"></i> View Details
                         </a>
                     </div>
@@ -72,7 +72,7 @@ $base = $base ?? BASE_URL;
             </div>
             <h3 class="text-muted">Projects Coming Soon</h3>
             <p class="text-muted mb-4">We're developing exciting new projects. Stay tuned!</p>
-            <a href="<?= $base ?>/properties" class="btn btn-primary btn-lg">
+            <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-primary btn-lg">
                 <i class="fas fa-building me-2"></i> Browse Available Properties
             </a>
         </div>

@@ -56,7 +56,7 @@
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Monthly Performance</h6></div>
                 <div class="card-body">
                     <?php if (!empty($monthlyData)): ?>
-                        <div class="table-responsive"><table class="table table-sm table-hover mb-0">
+                        <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Month</th><th>Properties</th><th>Sales</th><th>Revenue</th><th>Commission</th></tr></thead>
                             <tbody>
                                 <?php foreach ($monthlyData as $m): ?>
@@ -69,7 +69,7 @@
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table></div>
+                        </table></div></div>
                     <?php else: ?>
                         <div class="text-center py-4"><i class="fas fa-chart-bar fa-2x text-muted mb-2"></i><p class="text-muted mb-0">No monthly data available</p></div>
                     <?php endif; ?>

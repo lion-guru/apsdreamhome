@@ -90,8 +90,8 @@
                     <ul class="pagination justify-content-center">
                         <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
                             <li class="page-item <?= $pagination['current_page'] == $i ? 'active' : '' ?>">
-                                <a class="page-link" href="?page=<?= $i ?><?= isset($_GET['category']) ? '&category=' . urlencode(Security::sanitize($_GET['category'])) : '' ?>">
-                                    <?= $i ?>
+                                <a class="page-link" href="?page=<?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?><?= isset($_GET['category']) ? '&category=' . urlencode(Security::sanitize($_GET['category'])) : '' ?>">
+                                    <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>
                                 </a>
                             </li>
                         <?php endfor; ?>

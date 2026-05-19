@@ -16,7 +16,7 @@ $base = $base ?? BASE_URL;
                 <p class="lead mb-0">Ask questions about this property</p>
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                <a href="<?= $base ?>/properties" class="btn btn-light btn-sm">
+                <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-light btn-sm">
                     <i class="fas fa-arrow-left me-1"></i> Back to Properties
                 </a>
             </div>
@@ -69,7 +69,7 @@ $base = $base ?? BASE_URL;
                         <div class="text-center py-4">
                             <i class="fas fa-building fa-3x text-muted mb-3"></i>
                             <p class="text-muted">No property selected. Ask me about our available properties!</p>
-                            <a href="<?= $base ?>/properties" class="btn btn-outline-primary btn-sm">Browse Properties</a>
+                            <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-outline-primary btn-sm">Browse Properties</a>
                         </div>
                         <?php endif; ?>
                         <hr>
@@ -132,7 +132,7 @@ async function sendPropertyMessage() {
     addPropertyMessage('user', message);
     addPropertyTyping();
     try {
-        const res = await fetch('<?= $base ?>/api/ai-chat', {
+        const res = await fetch('<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/api/ai-chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message, role: 'customer', context: propertyContext })

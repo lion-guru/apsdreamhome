@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-namespace App\Models;
+namespace App\Models\Property;
 
 use App\Models\Model;
 

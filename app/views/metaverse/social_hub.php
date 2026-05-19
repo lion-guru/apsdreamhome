@@ -30,7 +30,7 @@
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0">
                                     <?php $icon = ($activity['type'] ?? '') === 'property_view' ? 'fa-eye' : (($activity['type'] ?? '') === 'space_joined' ? 'fa-sign-in-alt' : 'fa-shopping-cart'); ?>
-                                    <i class="fas <?= $icon ?> fa-2x text-info opacity-75 me-3"></i>
+                                    <i class="fas <?= htmlspecialchars($icon, ENT_QUOTES, 'UTF-8') ?> fa-2x text-info opacity-75 me-3"></i>
                                 </div>
                                 <div>
                                     <strong><?= ($activity['user'] ?? 'Someone') ?></strong>

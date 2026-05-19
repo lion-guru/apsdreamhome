@@ -110,7 +110,7 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <div class="table-responsive"><table class="table table-striped table-hover table-responsive">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>Month/Year</th>
@@ -175,7 +175,7 @@
                                                         break;
                                                 }
                                                 ?>
-                                                <span class="badge <?= $badgeClass ?>">
+                                                <span class="badge <?= htmlspecialchars($badgeClass, ENT_QUOTES, 'UTF-8') ?>">
                                                     <?= ucfirst($status) ?>
                                                 </span>
                                             </td>
@@ -192,7 +192,7 @@
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     <?php endif; ?>
                 </div>

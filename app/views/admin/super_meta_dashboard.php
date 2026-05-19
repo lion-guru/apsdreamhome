@@ -275,7 +275,7 @@ $allRoles = [
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <div class="table-responsive"><table class="table table-hover table-responsive">
                         <thead class="table-light">
                             <tr>
                                 <th>Role</th>
@@ -317,7 +317,7 @@ $allRoles = [
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

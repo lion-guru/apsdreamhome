@@ -60,7 +60,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Date</th><th>Inquiries</th><th>Responses</th></tr></thead>
                             <tbody>
                                 <?php foreach (($inquiry_trends ?? $inquiries['inquiry_trends'] ?? []) as $it): ?>
@@ -74,7 +74,7 @@
                                 <tr><td colspan="3" class="text-center text-muted py-3">No trend data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Time Range</th><th>Count</th></tr></thead>
                             <tbody>
                                 <?php foreach (($response_times ?? $inquiries['response_times'] ?? []) as $rt): ?>
@@ -99,7 +99,7 @@
                                 <tr><td colspan="2" class="text-center text-muted py-3">No response time data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Agent</th><th>Assigned</th><th>Responses</th><th>Avg Response Time</th></tr></thead>
                             <tbody>
                                 <?php foreach (($agent_performance ?? $inquiries['agent_performance'] ?? []) as $ap): ?>
@@ -128,7 +128,7 @@
                                 <tr><td colspan="4" class="text-center text-muted py-3">No agent performance data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

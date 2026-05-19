@@ -6,10 +6,10 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-building"></i> View Project: <?php echo htmlspecialchars($project['name'] ?? ''); ?></h2>
                 <div>
-                    <a href="/admin/projects" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Projects
                     </a>
-                    <a href="/admin/projects/edit/<?php echo $$project['id']; ?>" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/admin/projects/edit/<?php echo $project['id']; ?>" class="btn btn-primary">
                         <i class="fas fa-edit"></i> Edit
                     </a>
                 </div>
@@ -29,20 +29,20 @@
                             <p><strong>Phone:</strong> <?php echo htmlspecialchars($project['developer_phone'] ?? ''); ?></p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Status:</strong> <?php echo ucfirst(str_replace('_', ' ', $$project['status'])); ?></p>
-                            <p><strong>Total Plots:</strong> <?php echo $$project['total_plots']; ?></p>
-                            <p><strong>Available:</strong> <?php echo $$project['available_plots']; ?></p>
-                            <p><strong>Sold:</strong> <?php echo $$project['sold_plots']; ?></p>
-                            <p><strong>Booked:</strong> <?php echo $$project['booked_plots']; ?></p>
+                            <p><strong>Status:</strong> <?php echo ucfirst(str_replace('_', ' ', $project['status'] ?? 'unknown')); ?></p>
+                            <p><strong>Total Plots:</strong> <?php echo $project['total_plots'] ?? 0; ?></p>
+                            <p><strong>Available:</strong> <?php echo $project['available_plots'] ?? 0; ?></p>
+                            <p><strong>Sold:</strong> <?php echo $project['sold_plots'] ?? 0; ?></p>
+                            <p><strong>Booked:</strong> <?php echo $project['booked_plots'] ?? 0; ?></p>
                         </div>
                     </div>
                     <hr>
                     <div class="row">
                         <div class="col-md-6">
                             <p><strong>Location:</strong>
-                                <?php if ($$project['colony_name']): ?><?php echo htmlspecialchars($project['colony_name'] ?? ''); ?>,<?php endif; ?>
-                                <?php if ($$project['district_name']): ?><?php echo htmlspecialchars($project['district_name'] ?? ''); ?>,<?php endif; ?>
-                                <?php if ($$project['state_name']): ?><?php echo htmlspecialchars($project['state_name'] ?? ''); ?><?php endif; ?>
+                                <?php if (!empty($project['colony_name'])): ?><?php echo htmlspecialchars($project['colony_name']); ?>,<?php endif; ?>
+                                <?php if (!empty($project['district_name'])): ?><?php echo htmlspecialchars($project['district_name']); ?>,<?php endif; ?>
+                                <?php if (!empty($project['state_name'])): ?><?php echo htmlspecialchars($project['state_name']); ?><?php endif; ?>
                             </p>
                             <p><strong>Address:</strong> <?php echo htmlspecialchars($project['address'] ?? ''); ?></p>
                         </div>
@@ -55,13 +55,13 @@
                     <hr>
                     <div class="row">
                         <div class="col-md-4">
-                            <p><strong>Launch Date:</strong> <?php echo $$project['launch_date']; ?></p>
-                        </div>
-                        <div class="col-md-4">
-                            <p><strong>Completion Date:</strong> <?php echo $$project['completion_date']; ?></p>
-                        </div>
-                        <div class="col-md-4">
-                            <p><strong>Possession Date:</strong> <?php echo $$project['possession_date']; ?></p>
+<p><strong>Launch Date:</strong> <?php echo $project['launch_date'] ?? 'N/A'; ?></p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Completion Date:</strong> <?php echo $project['completion_date'] ?? 'N/A'; ?></p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Possession Date:</strong> <?php echo $project['possession_date'] ?? 'N/A'; ?></p>
                         </div>
                     </div>
                     <hr>
@@ -71,7 +71,7 @@
                             <p><?php echo nl2br(htmlspecialchars($project['description'] ?? '')); ?></p>
                         </div>
                     </div>
-                    <?php if ($$project['marketing_description']): ?>
+                    <?php if (isset($project['marketing_description']) && $project['marketing_description']): ?>
                     <hr>
                     <div class="row">
                         <div class="col-12">
@@ -80,7 +80,7 @@
                         </div>
                     </div>
                     <?php endif; ?>
-                    <?php if ($$project['tags']): ?>
+                    <?php if ($project['tags']): ?>
                     <hr>
                     <div class="row">
                         <div class="col-12">
@@ -91,8 +91,8 @@
                 </div>
             </div>
 
-            <?php if ($$project['amenities']): ?>
-            <?php $amenities = json_decode($$project['amenities'], true); ?>
+            <?php if (!empty($project['amenities'])): ?>
+            <?php $amenities = json_decode($project['amenities'], true); ?>
             <?php if (is_array($amenities) && !empty($amenities)): ?>
             <div class="card mb-4">
                 <div class="card-header">

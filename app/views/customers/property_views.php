@@ -14,7 +14,7 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <div class="card property-card h-100 shadow-sm border-0 position-relative">
                         <div class="property-image-wrapper">
-                            <img src="<?= !empty($view['main_image']) ? $view['main_image'] : '/assets/img/property-placeholder.jpg' ?>" 
+                            <img src="<?= !empty($view['main_image']) ? $view['main_image'] : '/assets/img/property-placeholder.jpg' ? class="img-fluid">" 
                                  class="card-img-top property-thumbnail" style="height: 180px; object-fit: cover;" alt="<?= h($view['title']) ?>">
                             <div class="position-absolute px-2 py-1 bg-dark text-white rounded small" style="bottom: 10px; right: 10px; opacity: 0.8;">
                                 <i class="fas fa-eye mr-1"></i> <?= date('d M, H:i', strtotime($view['viewed_at'])) ?>

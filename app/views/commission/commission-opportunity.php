@@ -96,7 +96,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.php">
-                <img src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="30">
+                <img src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="30" class="img-fluid">
             </a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="index.php"><i class="fas fa-home"></i> Home</a>
@@ -239,7 +239,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
 
             <div class="comparison-table p-4">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <div class="table-responsive"><table class="table table-hover table-responsive">
                         <thead class="table-dark">
                             <tr>
                                 <th>Feature</th>
@@ -298,7 +298,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
                                 <td>Ambitious agents</td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -435,7 +435,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <img src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="40" class="mb-2">
+                    <img src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="40" class="mb-2 img-fluid">
                     <p>Building dreams and creating wealth through innovative commission systems</p>
                 </div>
                 <div class="col-md-6 text-end">

@@ -39,7 +39,7 @@
                                 <label class="form-label fw-semibold">Environment</label>
                                 <select name="environment" class="form-select">
                                     <?php foreach ($space_environments as $key => $env): ?>
-                                    <option value="<?= $key ?>"><?= ($env['name'] ?? $key) ?> (up to <?= ($env['capacity'] ?? 20) ?> people)</option>
+                                    <option value="<?= htmlspecialchars($key, ENT_QUOTES, 'UTF-8') ?>"><?= ($env['name'] ?? $key) ?> (up to <?= ($env['capacity'] ?? 20) ?> people)</option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

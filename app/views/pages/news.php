@@ -156,8 +156,8 @@ $categories = $categories ?? [];
                     <!-- Page Numbers -->
                     <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
                         <li class="page-item <?= $i == $pagination['current_page'] ? 'active' : '' ?>">
-                            <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= $i ?>&category=<?= urlencode($pagination['current_category']) ?>">
-                                <?= $i ?>
+                            <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>&category=<?= urlencode($pagination['current_category']) ?>">
+                                <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>
                             </a>
                         </li>
                     <?php endfor; ?>

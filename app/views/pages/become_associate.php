@@ -206,9 +206,15 @@
     <!-- Referral Code Section -->
     <div class="container" id="referral-code">
         <div class="referral-code-box">
-            <h3 class="text-center mb-4"><i class="fas fa-ticket-alt me-2 text-primary"></i>Your Company Referral Code</h3>
-            <p class="text-center text-muted mb-4">Use this code to join as Associate/Agent. No referral needed!</p>
-            <div class="referral-code-display">APS2025COMP</div>
+            <h3 class="text-center mb-4"><i class="fas fa-ticket-alt me-2 text-primary"></i><?php echo $isLoggedIn ? 'Your Personal Referral Code' : 'Company Referral Code'; ?></h3>
+            <p class="text-center text-muted mb-4">
+                <?php if ($isLoggedIn): ?>
+                    Share this code with your network to earn referral rewards!
+                <?php else: ?>
+                    Use this code to join as Associate/Agent. No referral needed!
+                <?php endif; ?>
+            </p>
+            <div class="referral-code-display"><?php echo htmlspecialchars($isLoggedIn && $loggedInReferralCode ? $loggedInReferralCode : $referral_code); ?></div>
             <button class="copy-btn" onclick="copyReferralCode()">
                 <i class="fas fa-copy me-2"></i>Copy Referral Code
             </button>
@@ -320,12 +326,12 @@
     <div class="cta-section">
         <div class="container">
             <h2 class="mb-4">Ready to Start Earning?</h2>
-            <p class="text-muted mb-5">Join now with company referral code and start your journey</p>
-            <a href="/associate/register?ref=APS2025COMP" class="btn-join">
+            <p class="text-muted mb-5">Join now<?php echo $isLoggedIn ? ' and start referring' : ' with company referral code'; ?> and start your journey</p>
+            <a href="<?php echo BASE_URL; ?>/associate/register?ref=<?php echo urlencode($referral_code); ?>" class="btn-join">
                 <i class="fas fa-user-plus me-2"></i>Join as Associate
             </a>
             <div class="mt-4">
-                <a href="/agent/register?ref=APS2025COMP" class="btn btn-outline-primary btn-lg px-4 py-3 rounded-pill">
+                <a href="<?php echo BASE_URL; ?>/agent/register?ref=<?php echo urlencode($referral_code); ?>" class="btn btn-outline-primary btn-lg px-4 py-3 rounded-pill">
                     <i class="fas fa-briefcase me-2"></i>Join as Agent
                 </a>
             </div>
@@ -341,7 +347,8 @@
 
     <script>
         function copyReferralCode() {
-            const referralCode = 'APS2025COMP';
+            const displayEl = document.querySelector('.referral-code-display');
+            const referralCode = displayEl ? displayEl.textContent.trim() : '<?php echo addslashes($referral_code); ?>';
             navigator.clipboard.writeText(referralCode).then(() => {
                 alert('Referral code copied to clipboard!');
             }).catch(err => {

@@ -11,7 +11,6 @@ $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['success'], $_SESSION['error']);
 
-include APP_PATH . '/views/admin/layouts/header.php';
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -116,4 +115,3 @@ include APP_PATH . '/views/admin/layouts/header.php';
     }
 </script>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

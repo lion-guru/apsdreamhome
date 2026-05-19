@@ -4,19 +4,16 @@
  * Modern Layout Integrated
  */
 
-require_once __DIR__ . '/init.php';
-
-$$page_title = 'Plot Availability | APS Dream Homes';
-$layout = 'modern';
+$page_title = 'Plot Availability | APS Dream Homes';
 
 // Database Interaction
 $plot_categories = [];
 $plots = [];
 
 try {
-    $db = \App\Core\App::database();
+    $db = \App\Core\Database::getInstance();
     // Retrieve plot categories
-    $categories = $db->fetchAll("SELECT DISTINCT category_name FROM plot_categories ORDER BY category_name ASC");
+    $categories = $db->query("SELECT DISTINCT category_name FROM plot_categories ORDER BY category_name ASC")->fetchAll(\PDO::FETCH_ASSOC);
     foreach ($categories as $cat) {
         $plot_categories[] = $cat['category_name'];
     }
@@ -100,7 +97,7 @@ ob_start();
     <!-- Plot Table -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-5" data-aos="fade-up">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" id="plotTable">
+            <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive" id="plotTable">
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-4 py-4 border-0 text-secondary fw-bold text-uppercase small">Plot ID</th>
@@ -133,7 +130,7 @@ ob_start();
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 

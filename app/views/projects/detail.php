@@ -100,7 +100,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Main Image -->
                 <div class="main-image-container">
                     <?php if (!empty($project['gallery_images'])): ?>
-                        <img src="/uploads/projects/<?= htmlspecialchars($project['gallery_images'][0]) ?>"
+                        <img src="/uploads/projects/<?= htmlspecialchars($project['gallery_images'][0]) ? class="img-fluid">"
                              class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name']) ?>"
                              id="mainImage">
                     <?php else: ?>
@@ -129,7 +129,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>Project Details</h5>
-                                <table class="table table-borderless">
+                                <div class="table-responsive"><table class="table table-borderless table-responsive">
                                     <tr>
                                         <td><strong>Project Type:</strong></td>
                                         <td><?= htmlspecialchars(ucfirst($project['project_type'])) ?></td>
@@ -160,11 +160,11 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                             <td><?= htmlspecialchars($project['rera_number']) ?></td>
                                         </tr>
                                     <?php endif; ?>
-                                </table>
+                                </table></div>
                             </div>
                             <div class="col-md-6">
                                 <h5>Developer Information</h5>
-                                <table class="table table-borderless">
+                                <div class="table-responsive"><table class="table table-borderless table-responsive">
                                     <tr>
                                         <td><strong>Developer:</strong></td>
                                         <td><?= htmlspecialchars($project['developer_name']) ?></td>
@@ -185,7 +185,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                         <td><strong>Sales Manager:</strong></td>
                                         <td><?= htmlspecialchars($project['sales_manager']) ?></td>
                                     </tr>
-                                </table>
+                                </table></div>
                             </div>
                         </div>
                     </div>
@@ -256,9 +256,9 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                 <?php foreach ($project['gallery_images'] as $index => $image): ?>
                                     <div class="col-md-4 mb-3">
                                         <div class="gallery-item">
-                                            <img src="/uploads/projects/<?= htmlspecialchars($image) ?>"
+                                            <img src="/uploads/projects/<?= htmlspecialchars($image) ? class="img-fluid">"
                                                  class="img-fluid rounded cursor-pointer"
-                                                 onclick="openGallery(<?= $index ?>)"
+                                                 onclick="openGallery(<?= htmlspecialchars($index, ENT_QUOTES, 'UTF-8') ?>)"
                                                  alt="Gallery Image <?= $index + 1 ?>">
                                         </div>
                                     </div>
@@ -296,7 +296,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             <h4><i class="fas fa-project-diagram me-2"></i>Project Layout</h4>
                         </div>
                         <div class="card-body text-center">
-                            <img src="/uploads/projects/<?= htmlspecialchars($project['layout_map']) ?>"
+                            <img src="/uploads/projects/<?= htmlspecialchars($project['layout_map']) ? class="img-fluid">"
                                  class="img-fluid" alt="Project Layout"
                                  style="max-height: 600px;">
                         </div>
@@ -544,7 +544,7 @@ function openGallery(index) {
     images.forEach((image, i) => {
         const div = document.createElement('div');
         div.className = `carousel-item ${i === index ? 'active' : ''}`;
-        div.innerHTML = `<img src="/uploads/projects/${image}" class="d-block w-100" alt="Gallery Image ${i + 1}">`;
+        div.innerHTML = `<img src="/uploads/projects/${image}" class="d-block w-100 img-fluid" alt="Gallery Image ${i + 1}">`;
         galleryImages.appendChild(div);
     });
 

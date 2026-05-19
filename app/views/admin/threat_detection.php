@@ -8,7 +8,7 @@
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-list me-2"></i>All Threats</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th>ID</th><th>Threat Name</th><th>Category</th><th>Severity</th><th>Source IP</th><th>Status</th><th>Detected At</th></tr>
                     </thead>
@@ -29,7 +29,7 @@
                             <tr><td colspan="7" class="text-center text-muted py-3">No threats found</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

@@ -15,13 +15,13 @@
             <?php if (empty($customers)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No customer data available</p></div>
             <?php else: ?>
-            <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Properties</th><th>Total Spent</th><th>Joined</th><th>Status</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Properties</th><th>Total Spent</th><th>Joined</th><th>Status</th></tr></thead>
                 <tbody><?php foreach ($customers as $c): ?><tr>
                     <td><?= htmlspecialchars($c['name'] ?? '-') ?></td><td><?= htmlspecialchars($c['email'] ?? '-') ?></td><td><?= htmlspecialchars($c['phone'] ?? '-') ?></td>
                     <td><?= number_format($c['properties_count'] ?? 0) ?></td><td>₹<?= number_format($c['total_spent'] ?? 0) ?></td>
                     <td><?= htmlspecialchars($c['created_at'] ?? '-') ?></td>
                     <td><span class="badge bg-<?= ($c['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($c['status'] ?? '-') ?></span></td>
-                </tr><?php endforeach; ?></tbody></table></div>
+                </tr><?php endforeach; ?></tbody></table></div></div>
             <?php endif; ?>
         </div>
     </div>

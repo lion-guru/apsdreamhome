@@ -13,11 +13,11 @@
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-link me-2"></i>Verification Details</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Status</th><td><span class="badge bg-<?= ($verification['blockchain_status'] ?? '') === 'verified' ? 'success' : 'warning' ?>"><?= strtoupper($verification['blockchain_status'] ?? 'UNKNOWN') ?></span></td></tr>
                         <tr><th>Blockchain Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['blockchain_hash'] ?? '-') ?></code></td></tr>
                         <tr><th>Transaction Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['transaction_hash'] ?? '-') ?></code></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

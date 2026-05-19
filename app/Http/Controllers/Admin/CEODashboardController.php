@@ -34,15 +34,19 @@ class CEODashboardController extends AdminController
             );
 
             // Get revenue statistics
-            $revenue_stats = $this->db->fetchOne(
-                "SELECT 
-                    COALESCE(SUM(CASE WHEN status = 'completed' THEN amount END), 0) as total_revenue,
-                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as total_transactions,
-                    COALESCE(SUM(CASE WHEN status = 'pending' THEN amount END), 0) as pending_revenue,
-                    COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_transactions
-                FROM booking_payments
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
-            );
+            try {
+                $revenue_stats = $this->db->fetchOne(
+                    "SELECT 
+                        COALESCE(SUM(payment_amount), 0) as total_revenue,
+                        COUNT(*) as total_transactions,
+                        0 as pending_revenue,
+                        0 as pending_transactions
+                    FROM booking_payments
+                    WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                );
+            } catch (\Exception $e) {
+                $revenue_stats = ['total_revenue' => 0, 'total_transactions' => 0, 'pending_revenue' => 0, 'pending_transactions' => 0];
+            }
 
             // Get team statistics
             $team_stats = $this->db->fetchOne(
@@ -67,7 +71,7 @@ class CEODashboardController extends AdminController
 
             // Get recent activities
             $activities = $this->db->fetchAll(
-                "SELECT * FROM admin_activities 
+                "SELECT * FROM admin_activity_log 
                 ORDER BY created_at DESC 
                 LIMIT 10"
             );

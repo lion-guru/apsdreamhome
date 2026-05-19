@@ -8,7 +8,7 @@
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Fraud Alerts</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th>ID</th><th>Alert Type</th><th>Entity</th><th>Risk Score</th><th>Status</th><th>Detected At</th></tr>
                     </thead>
@@ -35,7 +35,7 @@
                             <tr><td colspan="6" class="text-center text-muted py-3">No fraud alerts</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

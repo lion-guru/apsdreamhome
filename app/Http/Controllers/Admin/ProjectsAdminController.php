@@ -33,20 +33,40 @@ class ProjectsAdminController extends AdminController
 
     public function create()
     {
+        $db = Database::getInstance();
         $this->data['page_title'] = 'Create Project';
+        $this->data['states'] = $db->fetchAll("SELECT * FROM states ORDER BY name");
+        $this->data['districts'] = [];
+        $this->data['colonies'] = [];
         return $this->render('admin/projects/create');
     }
 
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $_POST['name'] ?? '';
-            $status = $_POST['status'] ?? 'planning';
-            
+            $fields = ['name', 'project_type', 'description', 'developer_name', 'developer_phone',
+                'address', 'state_id', 'district_id', 'colony_id',
+                'total_area', 'total_plots', 'available_plots', 'booked_plots', 'sold_plots',
+                'price_range_min', 'price_range_max', 'avg_price_per_sqft', 'status',
+                'launch_date', 'completion_date', 'possession_date',
+                'marketing_description', 'tags', 'is_featured', 'is_hot_deal'];
+
+            $data = [];
+            foreach ($fields as $f) {
+                $v = $_POST[$f] ?? null;
+                if (in_array($f, ['is_featured', 'is_hot_deal'])) $v = $v ? 1 : 0;
+                if ($v === '' || $v === null) $v = null;
+                $data[] = $v;
+            }
+
+            $placeholders = rtrim(str_repeat('?,', count($fields)), ',');
+            $cols = implode(',', $fields);
+
             $db = Database::getInstance();
-            $stmt = $db->prepare("INSERT INTO projects (name, status, created_at) VALUES (?, ?, NOW())");
-            $stmt->execute([$name, $status]);
-            
+            $stmt = $db->prepare("INSERT INTO projects ($cols, created_at) VALUES ($placeholders, NOW())");
+            $stmt->execute($data);
+
+            $this->setFlash('success', 'Project created successfully');
             $this->redirect('/admin/projects');
         }
     }

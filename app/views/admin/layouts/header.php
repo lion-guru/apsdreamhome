@@ -74,8 +74,6 @@
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                <?php include APP_PATH . '/views/admin/layouts/rbac_sidebar.php'; ?>
-            </nav>
+            <?php include APP_PATH . '/views/admin/layouts/rbac_sidebar.php'; ?>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-3">

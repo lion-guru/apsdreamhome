@@ -47,7 +47,7 @@ include __DIR__ . '/../layouts/header.php';
                                 <select class="form-select" id="property_type" name="property_type" required>
                                     <option value="">Select Type</option>
                                     <?php foreach ($property_types as $type): ?>
-                                        <option value="<?= $type ?>"><?= ucfirst($type) ?></option>
+                                        <option value="<?= htmlspecialchars($type, ENT_QUOTES, 'UTF-8') ?>"><?= ucfirst($type) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

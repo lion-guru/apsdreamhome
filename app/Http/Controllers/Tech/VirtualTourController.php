@@ -1,4 +1,5 @@
 <?php
+// TODO: Consider async file operations for better performance
 
 /**
  * Virtual Tour & AR Controller

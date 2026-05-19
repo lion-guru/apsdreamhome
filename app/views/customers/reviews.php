@@ -59,7 +59,7 @@
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-md-2 text-center border-right">
-                                    <img src="<?= $review['main_image'] ?? '/assets/img/property-placeholder.jpg' ?>"
+                                    <img src="<?= $review['main_image'] ?? '/assets/img/property-placeholder.jpg' ? class="img-fluid">"
                                          class="img-fluid rounded mb-2" style="max-height: 100px; object-fit: cover;" alt="Property">
                                     <div class="text-xs font-weight-bold text-uppercase"><?= h($review['property_type']) ?></div>
                                 </div>

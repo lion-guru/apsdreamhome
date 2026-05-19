@@ -19,14 +19,14 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-<?= $year === '2024' ? 'secondary' : ($year === '2025' ? 'success' : 'primary') ?> text-white">
-                    <h4 class="mb-0"><?= $year ?></h4>
+                    <h4 class="mb-0"><?= htmlspecialchars($year, ENT_QUOTES, 'UTF-8') ?></h4>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
                         <?php foreach ($milestones as $quarter => $milestone): ?>
                         <li class="list-group-item px-0">
                             <span class="badge bg-light text-dark me-2"><?= strtoupper($quarter) ?></span>
-                            <small><?= $milestone ?></small>
+                            <small><?= htmlspecialchars($milestone, ENT_QUOTES, 'UTF-8') ?></small>
                         </li>
                         <?php endforeach; ?>
                     </ul>

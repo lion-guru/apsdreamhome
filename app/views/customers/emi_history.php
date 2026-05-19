@@ -22,7 +22,7 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0">
+                            <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                                 <thead class="bg-light">
                                     <tr>
                                         <th>डेट और प्रॉपर्टी</th>
@@ -61,7 +61,7 @@
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     <?php endif; ?>
                 </div>

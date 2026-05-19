@@ -59,7 +59,7 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <div class="table-responsive"><table class="table table-striped table-hover table-responsive">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>Leave Type</th>
@@ -116,8 +116,8 @@
                                                         break;
                                                 }
                                                 ?>
-                                                <span class="badge <?= $badgeClass ?>">
-                                                    <i class="<?= $icon ?> me-1"></i>
+                                                <span class="badge <?= htmlspecialchars($badgeClass, ENT_QUOTES, 'UTF-8') ?>">
+                                                    <i class="<?= htmlspecialchars($icon, ENT_QUOTES, 'UTF-8') ?> me-1"></i>
                                                     <?= ucfirst($status) ?>
                                                 </span>
                                             </td>
@@ -149,7 +149,7 @@
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -174,7 +174,7 @@
                                 <label for="leave_type_id" class="form-label">Leave Type *</label>
                                 <select class="form-select" id="leave_type_id" name="leave_type_id" required>
                                     <option value="">Select Leave Type</option>
-                                    <?php foreach ($leave_types as $type): ?>
+                                    <?php foreach ($leave_types ?? [] as $type): ?>
                                         <option value="<?= $type['leave_type_id'] ?>">
                                             <?= htmlspecialchars($type['leave_type_name']) ?>
                                             (<?= $type['max_days'] ?> days max)

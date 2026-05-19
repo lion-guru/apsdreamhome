@@ -21,7 +21,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Date</th><th>Registrations</th></tr></thead>
                             <tbody>
                                 <?php foreach (($userData['registration_trends'] ?? []) as $row): ?>
@@ -34,7 +34,7 @@
                                 <tr><td colspan="2" class="text-center text-muted py-3">No registration data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>State</th><th>Users</th></tr></thead>
                             <tbody>
                                 <?php foreach (($userData['geographic_distribution'] ?? []) as $geo): ?>
@@ -76,7 +76,7 @@
                                 <tr><td colspan="2" class="text-center text-muted py-3">No geographic data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

@@ -103,14 +103,14 @@ try {
         <div class="col-lg-8">
             <div class="property-gallery">
                 <div class="gallery-main">
-                    <img src="<?php echo htmlspecialchars($property_images[0]['image_path'] ?? 'https://via.placeholder.com/800x600/667eea/ffffff?text=Property+Image'); ?>"
+                    <img src="<?php echo htmlspecialchars($property_images[0]['image_path'] ?? 'https://via.placeholder.com/800x600/667eea/ffffff?text=Property+Image'); ? class="img-fluid">"
                          alt="<?php echo htmlspecialchars($property['title']); ?>"
                          class="gallery-main-img" id="mainImage">
                 </div>
                 <?php if (count($property_images) > 1): ?>
                 <div class="gallery-thumbnails mt-3">
                     <?php foreach ($property_images as $index => $image): ?>
-                    <img src="<?php echo htmlspecialchars($image['image_path']); ?>"
+                    <img src="<?php echo htmlspecialchars($image['image_path']); ? class="img-fluid">"
                          alt="Property view <?php echo $index + 1; ?>"
                          class="gallery-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>"
                          onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path']); ?>')">
@@ -168,7 +168,7 @@ try {
                     <?php if ($property['agent_name']): ?>
                     <div class="agent-card">
                         <div class="agent-avatar">
-                            <img src="<?php echo htmlspecialchars($property['agent_image'] ?? 'https://ui-avatars.com/api/?name=' . urlencode($property['agent_name'])); ?>"
+                            <img src="<?php echo htmlspecialchars($property['agent_image'] ?? 'https://ui-avatars.com/api/?name=' . urlencode($property['agent_name'])); ? class="img-fluid">"
                                  alt="Agent" class="agent-img">
                         </div>
                         <div class="agent-info">
@@ -227,7 +227,7 @@ try {
                             <div class="row mt-4">
                                 <div class="col-md-6">
                                     <h5>Property Details</h5>
-                                    <table class="table table-borderless">
+                                    <div class="table-responsive"><table class="table table-borderless table-responsive">
                                         <tr>
                                             <td><strong>Property Type:</strong></td>
                                             <td><?php echo htmlspecialchars($property['property_type']); ?></td>
@@ -248,11 +248,11 @@ try {
                                             <td><strong>Furnishing:</strong></td>
                                             <td><?php echo ucfirst($property['furnishing_status'] ?? 'Not specified'); ?></td>
                                         </tr>
-                                    </table>
+                                    </table></div>
                                 </div>
                                 <div class="col-md-6">
                                     <h5>Additional Information</h5>
-                                    <table class="table table-borderless">
+                                    <div class="table-responsive"><table class="table table-borderless table-responsive">
                                         <tr>
                                             <td><strong>Listed:</strong></td>
                                             <td><?php echo date('M d, Y', strtotime($property['created_at'])); ?></td>
@@ -269,7 +269,7 @@ try {
                                             <td><strong>Floor:</strong></td>
                                             <td><?php echo $property['floor_number'] ?? 'Ground'; ?> floor</td>
                                         </tr>
-                                    </table>
+                                    </table></div>
                                 </div>
                             </div>
                         </div>
@@ -405,7 +405,7 @@ try {
                 <?php foreach ($related_properties as $related): ?>
                 <div class="col-md-4 mb-4">
                     <div class="card property-card h-100">
-                        <img src="<?php echo htmlspecialchars($related['main_image'] ?? 'https://via.placeholder.com/400x250/667eea/ffffff?text=Property'); ?>"
+                        <img src="<?php echo htmlspecialchars($related['main_image'] ?? 'https://via.placeholder.com/400x250/667eea/ffffff?text=Property'); ? class="img-fluid">"
                              class="card-img-top" alt="<?php echo htmlspecialchars($related['title']); ?>">
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($related['title']); ?></h5>

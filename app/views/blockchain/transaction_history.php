@@ -12,7 +12,7 @@
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Transactions</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light"><tr><th>ID</th><th>Type</th><th>Hash</th><th>Block</th><th>Date</th></tr></thead>
                     <tbody>
                         <?php if (!empty($transactions)): ?>
@@ -29,7 +29,7 @@
                             <tr><td colspan="5" class="text-center text-muted py-3">No transactions found</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

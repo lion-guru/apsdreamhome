@@ -311,7 +311,7 @@ $payout_history = $payout_history ?? [];
                 <div class="card-body p-4">
                     <?php if (!empty($downline_members)): ?>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead>
                                 <tr style="background: rgba(25,135,84,0.05);">
                                     <th class="border-0 fw-semibold text-muted small text-uppercase">#</th>
@@ -350,7 +350,7 @@ $payout_history = $payout_history ?? [];
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                     <?php else: ?>
                     <div class="text-center py-4">
@@ -374,7 +374,7 @@ $payout_history = $payout_history ?? [];
                 <div class="card-body p-4">
                     <?php if (!empty($commission_history)): ?>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead>
                                 <tr style="background: rgba(25,135,84,0.05);">
                                     <th class="border-0 fw-semibold text-muted small text-uppercase">Date</th>
@@ -418,7 +418,7 @@ $payout_history = $payout_history ?? [];
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                     <?php else: ?>
                     <div class="text-center py-4">
@@ -440,7 +440,7 @@ $payout_history = $payout_history ?? [];
                 <div class="card-body p-4">
                     <?php if (!empty($payout_history)): ?>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead>
                                 <tr style="background: rgba(25,135,84,0.05);">
                                     <th class="border-0 fw-semibold text-muted small text-uppercase">Date</th>
@@ -470,7 +470,7 @@ $payout_history = $payout_history ?? [];
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                     <?php else: ?>
                     <div class="text-center py-4">

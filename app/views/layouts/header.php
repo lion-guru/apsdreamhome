@@ -12,12 +12,12 @@ try {
     $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sql = "SELECT p.id, p.name, d.name as district, s.name as state 
-            FROM projects p 
-            LEFT JOIN districts d ON p.district_id = d.id 
-            LEFT JOIN states s ON p.state_id = s.id 
-            WHERE p.status IN ('under_construction', 'completed', 'planning') 
-            ORDER BY d.name, p.name";
+    $sql = "SELECT c.id, c.name, c.slug, d.name as district, s.name as state
+            FROM colonies c
+            LEFT JOIN districts d ON c.district_id = d.id
+            LEFT JOIN states s ON d.state_id = s.id
+            WHERE c.is_active = 1
+            ORDER BY d.name, c.name";
     $stmt = $db->query($sql);
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -38,6 +38,7 @@ try {
         $allProjects[] = [
             'id' => $p['id'],
             'name' => $p['name'],
+            'slug' => $p['slug'],
             'district' => $district
         ];
     }
@@ -47,7 +48,7 @@ try {
 }
 
 $projectsSubmenu = [
-    ['label' => 'All Projects', 'url' => '/company/projects', 'icon' => 'fas fa-th-large']
+    ['label' => 'All Projects', 'url' => '/projects', 'icon' => 'fas fa-th-large']
 ];
 
 if (!empty($projectLocations)) {
@@ -55,7 +56,7 @@ if (!empty($projectLocations)) {
     foreach ($projectLocations as $loc) {
         $projectsSubmenu[] = [
             'label' => $loc['name'],
-            'url' => '/company/projects?location=' . urlencode(strtolower($loc['name'])),
+            'url' => '/projects?location=' . urlencode(strtolower($loc['name'])),
             'icon' => 'fas fa-map-pin',
             'badge' => (string)$loc['count']
         ];
@@ -63,12 +64,12 @@ if (!empty($projectLocations)) {
 }
 
 if (!empty($allProjects)) {
-    $projectsSubmenu[] = ['label' => '── Projects ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true];
+    $projectsSubmenu[] = ['label' => '── Colonies ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true];
     foreach (array_slice($allProjects, 0, 10) as $proj) {
-        $slug = preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
+        $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
         $projectsSubmenu[] = [
             'label' => $proj['name'],
-            'url' => '/projects/' . $slug,
+            'url' => '/colony/' . $slug,
             'icon' => 'fas fa-home'
         ];
     }
@@ -76,24 +77,24 @@ if (!empty($allProjects)) {
 
 if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     $projectsSubmenu = [
-        ['label' => 'All Projects', 'url' => '/company/projects', 'icon' => 'fas fa-th-large'],
+        ['label' => 'All Projects', 'url' => '/projects', 'icon' => 'fas fa-th-large'],
         ['label' => '── By Location ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
-        ['label' => 'Gorakhpur', 'url' => '/company/projects?location=gorakhpur', 'icon' => 'fas fa-map-pin', 'badge' => '3'],
-        ['label' => 'Lucknow', 'url' => '/company/projects?location=lucknow', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
-        ['label' => 'Kushinagar', 'url' => '/company/projects?location=kushinagar', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
-        ['label' => 'Varanasi', 'url' => '/company/projects?location=varanasi', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
-        ['label' => '── Projects ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true],
-        ['label' => 'Suryoday Colony', 'url' => '/projects/suryoday-colony', 'icon' => 'fas fa-home'],
-        ['label' => 'Raghunath Nagri', 'url' => '/projects/raghunath-nagri', 'icon' => 'fas fa-building'],
-        ['label' => 'Braj Radha Nagri', 'url' => '/projects/braj-radha-nagri', 'icon' => 'fas fa-city'],
+        ['label' => 'Gorakhpur', 'url' => '/projects?location=gorakhpur', 'icon' => 'fas fa-map-pin', 'badge' => '3'],
+        ['label' => 'Lucknow', 'url' => '/projects?location=lucknow', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
+        ['label' => 'Kushinagar', 'url' => '/projects?location=kushinagar', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
+        ['label' => 'Varanasi', 'url' => '/projects?location=varanasi', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
+        ['label' => '── Colonies ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true],
+        ['label' => 'Suryoday Colony', 'url' => '/colony/suryoday-colony', 'icon' => 'fas fa-home'],
+        ['label' => 'Raghunath Nagri', 'url' => '/colony/raghunath-nagri', 'icon' => 'fas fa-building'],
+        ['label' => 'Braj Radha Nagri', 'url' => '/colony/braj-radha-nagri', 'icon' => 'fas fa-city'],
     ];
 }
 ?>
 <header class="premium-header fixed-top" id="mainHeader">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
-                <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo">
+            <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>" style="margin-left: -15px;">
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo" style="height: 40px; width: auto; max-width: 130px;">
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,7 +102,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
+                <ul class="navbar-nav align-items-center" style="margin-left: auto;">
                     <?php
                     $current_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
                     $base_path = (string) parse_url(BASE_URL, PHP_URL_PATH);
@@ -385,8 +386,8 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     }
 
     .premium-header .navbar-brand {
-        min-width: 120px;
-        margin-right: 20px;
+        min-width: 100px;
+        margin-right: 10px;
     }
 
     .premium-header .navbar-brand:hover .logo {
@@ -587,6 +588,12 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
             padding: 10px 0;
         }
 
+        .premium-header .navbar-brand {
+            min-width: 110px;
+            margin-right: 5px;
+            margin-left: -10px !important;
+        }
+
         .premium-header .navbar-collapse {
             position: absolute;
             top: 100%;
@@ -653,8 +660,9 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
         }
 
         .premium-header .navbar-brand {
-            min-width: 160px;
-            margin-right: 15px;
+            min-width: 110px;
+            margin-right: 5px;
+            margin-left: -10px !important;
         }
     }
 
@@ -673,8 +681,9 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
         }
 
         .premium-header .navbar-brand {
-            min-width: 140px;
-            margin-right: 10px;
+            min-width: 100px;
+            margin-right: 5px;
+            margin-left: -8px !important;
         }
 
         .premium-header .navbar-collapse {

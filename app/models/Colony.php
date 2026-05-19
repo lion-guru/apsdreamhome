@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Core\UnifiedModel;
+
 /**
  * Colony Model
  * Handles colony-related database operations
  */
 class Colony extends UnifiedModel
 {
-    protected $table = 'colonies';
+    protected static $table = 'colonies';
     
     protected $fillable = [
         'district_id',

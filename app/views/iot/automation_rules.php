@@ -8,7 +8,7 @@
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-rules me-2"></i>Automation Rules</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light"><tr><th>Rule Name</th><th>Trigger</th><th>Action</th><th>Status</th><th>Created</th></tr></thead>
                     <tbody>
                         <?php if (!empty($automation_rules)): ?>
@@ -25,7 +25,7 @@
                             <tr><td colspan="5" class="text-center text-muted py-3">No automation rules defined yet</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

@@ -15,8 +15,8 @@
             <?php if (empty($propertiesData)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No property data available</p></div>
             <?php else: ?>
-            <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Property Name</th><th>Type</th><th>Location</th><th>Price</th><th>Status</th><th>Listed</th></tr></thead>
-                <tbody><?php foreach ($propertiesData as $p): ?><tr><td><?= htmlspecialchars($p['name'] ?? $p['title'] ?? '-') ?></td><td><?= htmlspecialchars(ucfirst($p['type'] ?? '-')) ?></td><td><?= htmlspecialchars($p['location'] ?? $p['city'] ?? '-') ?></td><td>₹<?= number_format($p['price'] ?? 0) ?></td><td><span class="badge bg-<?= ($p['status'] ?? '') === 'available' ? 'success' : (($p['status'] ?? '') === 'sold' ? 'danger' : 'warning') ?>"><?= ucfirst($p['status'] ?? '-') ?></span></td><td><?= htmlspecialchars($p['created_at'] ?? '-') ?></td></tr><?php endforeach; ?></tbody></table></div>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>Property Name</th><th>Type</th><th>Location</th><th>Price</th><th>Status</th><th>Listed</th></tr></thead>
+                <tbody><?php foreach ($propertiesData as $p): ?><tr><td><?= htmlspecialchars($p['name'] ?? $p['title'] ?? '-') ?></td><td><?= htmlspecialchars(ucfirst($p['type'] ?? '-')) ?></td><td><?= htmlspecialchars($p['location'] ?? $p['city'] ?? '-') ?></td><td>₹<?= number_format($p['price'] ?? 0) ?></td><td><span class="badge bg-<?= ($p['status'] ?? '') === 'available' ? 'success' : (($p['status'] ?? '') === 'sold' ? 'danger' : 'warning') ?>"><?= ucfirst($p['status'] ?? '-') ?></span></td><td><?= htmlspecialchars($p['created_at'] ?? '-') ?></td></tr><?php endforeach; ?></tbody></table></div></div>
             <?php endif; ?>
         </div>
     </div>

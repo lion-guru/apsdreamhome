@@ -1,5 +1,4 @@
-<?php include APP_PATH . '/views/admin/layouts/header.php'; 
-
+<?php
 // Initialize default values if not set
 $tiers = $tiers ?? [
     'bronze' => ['min_points' => 0, 'discount' => 5, 'multiplier' => 1, 'benefits' => []],
@@ -183,4 +182,4 @@ $stats = $stats ?? [
     </div>
 </div>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
+

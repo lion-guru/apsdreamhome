@@ -9,7 +9,7 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light"><tr><th>Report Name</th><th>Type</th><th>Frequency</th><th>Next Run</th><th>Last Run</th><th>Recipients</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody><?php foreach ($scheduledReports as $sr): ?>
                         <tr><td><?= htmlspecialchars($sr['title'] ?? $sr['name'] ?? '-') ?></td><td><?= htmlspecialchars(ucfirst($sr['type'] ?? '-')) ?></td><td><?= htmlspecialchars(ucfirst($sr['frequency'] ?? '-')) ?></td><td><?= htmlspecialchars($sr['next_run'] ?? '-') ?></td><td><?= htmlspecialchars($sr['last_run'] ?? '-') ?></td><td><?= htmlspecialchars($sr['recipients'] ?? '-') ?></td>
@@ -19,7 +19,7 @@
                             <button class="btn btn-sm btn-outline-danger" onclick="if(confirm('Unscheduled this report?'))location.href='<?= BASE_URL ?>reports/unschedule/<?= $sr['id'] ?? 0 ?>'"><i class="fas fa-ban"></i></button>
                         </td></tr>
                     <?php endforeach; ?></tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

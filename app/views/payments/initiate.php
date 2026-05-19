@@ -49,9 +49,9 @@
                                 <?php foreach ($gateways as $key => $label): ?>
                                 <div class="col-md-3 col-6">
                                     <div class="form-check gateway-option">
-                                        <input class="form-check-input" type="radio" name="gateway" id="gw_<?= $key ?>" value="<?= $key ?>" <?= $key === 'razorpay' ? 'checked' : '' ?>>
-                                        <label class="form-check-label btn btn-outline-secondary w-100 text-center py-3 rounded" for="gw_<?= $key ?>">
-                                            <i class="fas fa-<?= $key === 'razorpay' ? 'bolt' : ($key === 'paypal' ? 'paypal' : ($key === 'stripe' ? 'credit-card' : 'mobile-alt')) ?> fa-lg d-block mb-1"></i><?= $label ?>
+                                        <input class="form-check-input" type="radio" name="gateway" id="gw_<?= htmlspecialchars($key, ENT_QUOTES, 'UTF-8') ?>" value="<?= htmlspecialchars($key, ENT_QUOTES, 'UTF-8') ?>" <?= $key === 'razorpay' ? 'checked' : '' ?>>
+                                        <label class="form-check-label btn btn-outline-secondary w-100 text-center py-3 rounded" for="gw_<?= htmlspecialchars($key, ENT_QUOTES, 'UTF-8') ?>">
+                                            <i class="fas fa-<?= $key === 'razorpay' ? 'bolt' : ($key === 'paypal' ? 'paypal' : ($key === 'stripe' ? 'credit-card' : 'mobile-alt')) ?> fa-lg d-block mb-1"></i><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?>
                                         </label>
                                     </div>
                                 </div>

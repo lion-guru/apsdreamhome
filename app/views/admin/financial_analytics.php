@@ -21,7 +21,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Month</th><th>Revenue</th></tr></thead>
                             <tbody>
                                 <?php foreach (($finData['revenue_trends'] ?? []) as $row): ?>
@@ -34,7 +34,7 @@
                                 <tr><td colspan="2" class="text-center text-muted py-3">No revenue data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Method</th><th>Count</th><th>Amount</th></tr></thead>
                             <tbody>
                                 <?php foreach (($finData['payment_methods'] ?? []) as $pm): ?>
@@ -76,7 +76,7 @@
                                 <tr><td colspan="3" class="text-center text-muted py-3">No payment data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

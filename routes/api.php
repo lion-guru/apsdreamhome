@@ -122,3 +122,11 @@ $router->get('/api/v1/mobile/properties/{id}', 'Api\MobileApiController@property
 $router->get('/api/v1/mobile/leads', 'Api\MobileApiController@leads');
 $router->post('/api/v1/mobile/leads', 'Api\MobileApiController@submitLead');
 $router->get('/api/v1/mobile/user/profile', 'Api\MobileApiController@userProfile');
+
+// Advanced Search API Routes
+$router->get('/api/search/properties', 'Api\SearchController@searchProperties');
+$router->get('/api/search/suggestions', 'Api\SearchController@getSuggestions');
+$router->get('/api/search/facets', 'Api\SearchController@getFacets');
+$router->get('/api/search/recent', 'Api\SearchController@getRecentSearches');
+$router->get('/api/search/popular', 'Api\SearchController@getPopularSearches');
+$router->post('/api/search/clear-cache', 'Api\SearchController@clearCache');

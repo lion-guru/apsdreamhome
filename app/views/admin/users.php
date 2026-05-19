@@ -132,7 +132,7 @@ $active_page = 'users';
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <div class="table-responsive"><table class="table table-hover table-responsive">
                             <thead>
                                 <tr>
                                     <th>
@@ -152,7 +152,7 @@ $active_page = 'users';
                                     <td><input type="checkbox" class="form-check-input"></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" class="rounded-circle me-3" width="40" height="40">
+                                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" class="rounded-circle me-3 img-fluid" width="40" height="40">
                                             <div>
                                                 <div class="fw-bold">John Doe</div>
                                                 <small class="text-muted">john.doe@email.com</small>
@@ -180,7 +180,7 @@ $active_page = 'users';
                                     <td><input type="checkbox" class="form-check-input"></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=random" class="rounded-circle me-3" width="40" height="40">
+                                            <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=random" class="rounded-circle me-3 img-fluid" width="40" height="40">
                                             <div>
                                                 <div class="fw-bold">Jane Smith</div>
                                                 <small class="text-muted">jane.smith@email.com</small>
@@ -208,7 +208,7 @@ $active_page = 'users';
                                     <td><input type="checkbox" class="form-check-input"></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="https://ui-avatars.com/api/?name=Bob+Wilson&background=random" class="rounded-circle me-3" width="40" height="40">
+                                            <img src="https://ui-avatars.com/api/?name=Bob+Wilson&background=random" class="rounded-circle me-3 img-fluid" width="40" height="40">
                                             <div>
                                                 <div class="fw-bold">Bob Wilson</div>
                                                 <small class="text-muted">bob.wilson@email.com</small>
@@ -233,7 +233,7 @@ $active_page = 'users';
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -296,7 +296,7 @@ $active_page = 'users';
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <div class="table-responsive"><table class="table table-hover table-responsive">
                 <thead class="table-light">
                     <tr>
                         <th>User</th>
@@ -386,7 +386,7 @@ $active_page = 'users';
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
 
         <!-- Pagination -->

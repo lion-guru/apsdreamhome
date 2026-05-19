@@ -79,29 +79,57 @@ class AssociateController extends BaseController
         $this->layout = 'layouts/associate';
 
         $userId = $_SESSION['user_id'] ?? 0;
-        $associateName = $_SESSION['associate_name'] ?? 'Associate';
+        $associateName = $_SESSION['user_name'] ?? 'Associate';
+        $referralCode = $_SESSION['referral_code'] ?? '';
 
         // Fetch real DB data
-        $totalLeads = 0;
-        $propertiesSold = 0;
-        $totalCommission = 0;
-        $networkSize = 0;
-        $recentLeads = [];
-        $recentCommissions = [];
-        $activities = [];
+        $totalLeads = 0; $propertiesSold = 0; $totalCommission = 0; $pendingCommission = 0; $commissionThisMonth = 0;
+        $networkSize = 0; $directReferrals = 0; $level2Count = 0; $level3Count = 0;
+        $mlmLevel = 'Associate'; $teamSales = 0;
+        $recentLeads = []; $recentCommissions = []; $activities = [];
 
+        try { $totalLeads = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate'", [$userId]); } catch (\Exception $e) {}
+        try { $propertiesSold = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties WHERE user_id = ? AND status = 'approved'", [$userId]); } catch (\Exception $e) {}
+
+        // Commission stats from commissions table
+        try { $totalCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?)", [$userId, $userId]); } catch (\Exception $e) {}
+        try { $pendingCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'pending'", [$userId, $userId]); } catch (\Exception $e) {}
+        try { $commissionThisMonth = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'paid' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [$userId, $userId]); } catch (\Exception $e) {}
+
+        // MLM profile data
         try {
-            $totalLeads = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate'", [$userId]);
+            $profile = $this->db->fetchOne("SELECT current_level, total_team_size, direct_referrals, lifetime_sales FROM mlm_profiles WHERE user_id = ?", [$userId]);
+            if ($profile) {
+                $mlmLevel = $profile['current_level'] ?? 'Associate';
+                $networkSize = (int)($profile['total_team_size'] ?? 0);
+                $directReferrals = (int)($profile['direct_referrals'] ?? 0);
+                $teamSales = (float)($profile['lifetime_sales'] ?? 0);
+            }
         } catch (\Exception $e) {}
+
+        // Network tree level breakdown
         try {
-            $propertiesSold = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties WHERE user_id = ? AND status = 'approved'", [$userId]);
+            $myTree = $this->db->fetchOne("SELECT id FROM network_tree WHERE associate_id = ?", [$userId]);
+            if ($myTree) {
+                $levelCounts = $this->db->fetchAll(
+                    "SELECT level, COUNT(*) as cnt FROM network_tree WHERE associate_id IN (SELECT associate_id FROM network_tree WHERE parent_id = ?) AND level <= 3 GROUP BY level ORDER BY level",
+                    [$userId]
+                );
+                foreach ($levelCounts as $row) {
+                    if ((int)$row['level'] == 1) $directReferrals = max($directReferrals, (int)$row['cnt']);
+                    elseif ((int)$row['level'] == 2) $level2Count = (int)$row['cnt'];
+                    elseif ((int)$row['level'] == 3) $level3Count = (int)$row['cnt'];
+                }
+            }
         } catch (\Exception $e) {}
-        try {
-            $totalCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE associate_id = ?", [$userId]);
-        } catch (\Exception $e) {}
-        try {
-            $networkSize = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]);
-        } catch (\Exception $e) {}
+
+        // Also count direct referrals from users table
+        if ($directReferrals == 0) {
+            try { $directReferrals = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) {}
+        }
+        if ($networkSize == 0) {
+            try { $networkSize = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) {}
+        }
 
         // Recent leads
         try {
@@ -113,8 +141,8 @@ class AssociateController extends BaseController
         // Recent commissions
         try {
             $recentCommissions = $this->db->fetchAll(
-                "SELECT c.id, p.title as property, c.amount, c.status, DATE(c.created_at) as date FROM commissions c LEFT JOIN user_properties p ON c.property_id = p.id WHERE c.associate_id = ? ORDER BY c.created_at DESC LIMIT 5",
-                [$userId]
+                "SELECT c.id, c.commission_type as property, c.amount, c.status, DATE(c.created_at) as date FROM commissions c WHERE (c.user_id = ? OR c.associate_id = ?) ORDER BY c.created_at DESC LIMIT 5",
+                [$userId, $userId]
             );
         } catch (\Exception $e) {}
         // Recent activities
@@ -124,16 +152,11 @@ class AssociateController extends BaseController
                 [$userId]
             );
             foreach ($rawActivities as $a) {
-                $activities[] = [
-                    'icon' => 'fa-clock',
-                    'text' => $a['action'],
-                    'time' => $this->timeAgo($a['created_at']),
-                    'color' => 'blue'
-                ];
+                $activities[] = ['icon' => 'fa-clock', 'text' => $a['action'], 'time' => $this->timeAgo($a['created_at']), 'color' => 'blue'];
             }
         } catch (\Exception $e) {}
 
-        // Fallback if no db data
+        // Fallbacks
         if (empty($recentLeads)) {
             $recentLeads = [
                 ['name' => 'Rajesh Kumar', 'phone' => '98765xxxxx', 'type' => 'Residential Plot', 'status' => 'hot', 'date' => date('Y-m-d', strtotime('-1 day'))],
@@ -142,14 +165,14 @@ class AssociateController extends BaseController
         }
         if (empty($recentCommissions)) {
             $recentCommissions = [
-                ['property' => 'Suryoday Heights - Plot 45', 'amount' => 25000, 'status' => 'paid', 'date' => date('Y-m-d', strtotime('-5 days'))],
-                ['property' => 'Raghunath City - Shop 12', 'amount' => 18000, 'status' => 'pending', 'date' => date('Y-m-d', strtotime('-10 days'))],
+                ['property' => 'Direct Referral Bonus', 'amount' => 25000, 'status' => 'paid', 'date' => date('Y-m-d', strtotime('-5 days'))],
+                ['property' => 'Level Bonus', 'amount' => 18000, 'status' => 'pending', 'date' => date('Y-m-d', strtotime('-10 days'))],
             ];
         }
         if (empty($activities)) {
             $activities = [
                 ['icon' => 'fa-user-plus', 'text' => 'Welcome to associate dashboard', 'time' => 'Just now', 'color' => 'blue'],
-                ['icon' => 'fa-building', 'text' => 'Start adding your first property', 'time' => '-', 'color' => 'orange'],
+                ['icon' => 'fa-building', 'text' => 'Share your referral code to grow your network', 'time' => '-', 'color' => 'orange'],
             ];
         }
 
@@ -158,8 +181,15 @@ class AssociateController extends BaseController
             'active_leads' => 0,
             'properties_sold' => $propertiesSold,
             'total_commission' => $totalCommission,
-            'pending_commission' => 0,
-            'network_size' => max($networkSize, 1),
+            'pending_commission' => $pendingCommission,
+            'commission_this_month' => $commissionThisMonth,
+            'network_size' => max($networkSize, 0),
+            'direct_referrals' => $directReferrals,
+            'level2_count' => $level2Count,
+            'level3_count' => $level3Count,
+            'mlm_level' => $mlmLevel,
+            'team_sales' => $teamSales,
+            'referral_code' => $referralCode,
             'conversion_rate' => 0,
             'monthly_growth' => 0
         ];
@@ -170,7 +200,9 @@ class AssociateController extends BaseController
             'stats' => $stats,
             'recent_leads' => $recentLeads,
             'recent_commissions' => $recentCommissions,
-            'activities' => $activities
+            'activities' => $activities,
+            'referral_code' => $referralCode,
+            'associate_name' => $associateName
         ], 'layouts/associate');
     }
 
@@ -245,19 +277,57 @@ class AssociateController extends BaseController
         $this->layout = 'layouts/associate';
         $userId = $_SESSION['user_id'] ?? 0;
 
+        // Filters
+        $statusFilter = $_GET['status'] ?? '';
+        $typeFilter = $_GET['type'] ?? '';
+        $dateFrom = $_GET['date_from'] ?? '';
+        $dateTo = $_GET['date_to'] ?? '';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
+        $where = "WHERE c.associate_id = ?";
+        $params = [$userId];
+
+        if ($statusFilter !== '' && in_array($statusFilter, ['pending', 'paid', 'cancelled'])) {
+            $where .= " AND c.status = ?";
+            $params[] = $statusFilter;
+        }
+        if ($typeFilter !== '' && in_array($typeFilter, ['direct', 'team', 'referral', 'bonus'])) {
+            $where .= " AND c.commission_type = ?";
+            $params[] = $typeFilter;
+        }
+        if ($dateFrom !== '') {
+            $where .= " AND DATE(c.created_at) >= ?";
+            $params[] = $dateFrom;
+        }
+        if ($dateTo !== '') {
+            $where .= " AND DATE(c.created_at) <= ?";
+            $params[] = $dateTo;
+        }
+
         $commissions = [];
         $totalEarned = 0;
         $totalPending = 0;
+        $totalCount = 0;
+
         try {
-            $commissions = $this->db->fetchAll(
-                "SELECT c.id, COALESCE(p.title, p.name, 'Property #' || c.property_id) as property, 
-                 c.amount, c.status, c.description, DATE(c.created_at) as date
-                 FROM commissions c 
-                 LEFT JOIN user_properties p ON c.property_id = p.id 
-                 WHERE c.associate_id = ? 
-                 ORDER BY c.created_at DESC LIMIT 20",
-                [$userId]
+            $totalCount = (int)$this->db->fetchColumn(
+                "SELECT COUNT(*) FROM commissions c $where",
+                $params
             );
+
+            $commissions = $this->db->fetchAll(
+                "SELECT c.id, c.commission_type,
+                 COALESCE(p.title, p.name, CONCAT('Property #', c.property_id)) as property,
+                 c.amount, c.percentage, c.status, c.description, DATE(c.created_at) as date
+                 FROM commissions c
+                 LEFT JOIN user_properties p ON c.property_id = p.id
+                 $where
+                 ORDER BY c.created_at DESC LIMIT $perPage OFFSET $offset",
+                $params
+            );
+
             $totalEarned = (float)$this->db->fetchColumn(
                 "SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE associate_id = ? AND status = 'paid'",
                 [$userId]
@@ -268,13 +338,28 @@ class AssociateController extends BaseController
             );
         } catch (\Exception $e) {}
 
+        $totalPages = max(1, ceil($totalCount / $perPage));
+
+        // Preserve query string for pagination (without page param)
+        $queryParams = $_GET;
+        unset($queryParams['page']);
+        $baseQuery = http_build_query($queryParams);
+        $paginationUrl = BASE_URL . '/associate/commissions' . ($baseQuery ? '?' . $baseQuery . '&' : '?');
+
         $this->render('associate/commissions', [
             'page_title' => 'My Commissions - APS Dream Home',
             'page_description' => 'View your commission earnings',
             'commissions' => $commissions,
             'total_earned' => $totalEarned,
             'total_pending' => $totalPending,
-            'current_page' => 'commissions'
+            'current_page' => 'commissions',
+            'status_filter' => $statusFilter,
+            'type_filter' => $typeFilter,
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'current_page_no' => $page,
+            'total_pages' => $totalPages,
+            'pagination_url' => $paginationUrl,
         ], 'layouts/associate');
     }
 
@@ -394,7 +479,7 @@ class AssociateController extends BaseController
         $securityUrl = null;
         $canEdit = true;
 
-        include __DIR__ . '/../../../views/shared/profile.php';
+        include __DIR__ . '/../../views/shared/profile.php';
     }
 
     /**
@@ -407,10 +492,10 @@ class AssociateController extends BaseController
         @session_start();
 
         // Get associate info
-        $associateId = $_SESSION['associate_id'] ?? null;
-        $associateName = $_SESSION['associate_name'] ?? '';
-        $associateEmail = $_SESSION['associate_email'] ?? '';
-        $associatePhone = $_SESSION['associate_phone'] ?? '';
+        $associateId = $_SESSION['user_id'] ?? null;
+        $associateName = $_SESSION['user_name'] ?? '';
+        $associateEmail = $_SESSION['user_email'] ?? '';
+        $associatePhone = $_SESSION['user_phone'] ?? '';
 
         // Get notification preferences (if table exists)
         $notifications = [
@@ -463,10 +548,10 @@ class AssociateController extends BaseController
         @session_start();
 
         // Get associate info
-        $associateId = $_SESSION['associate_id'] ?? null;
-        $associateName = $_SESSION['associate_name'] ?? '';
-        $associatePhone = $_SESSION['associate_phone'] ?? '';
-        $associateEmail = $_SESSION['associate_email'] ?? '';
+        $associateId = $_SESSION['user_id'] ?? null;
+        $associateName = $_SESSION['user_name'] ?? '';
+        $associatePhone = $_SESSION['user_phone'] ?? '';
+        $associateEmail = $_SESSION['user_email'] ?? '';
 
         // Load states for dropdown
         $db = \App\Core\Database\Database::getInstance();
@@ -504,9 +589,9 @@ class AssociateController extends BaseController
 
         @session_start();
 
-        $associateId = $_SESSION['associate_id'] ?? null;
-        $associateName = $_SESSION['associate_name'] ?? '';
-        $associatePhone = $_SESSION['associate_phone'] ?? '';
+        $associateId = $_SESSION['user_id'] ?? null;
+        $associateName = $_SESSION['user_name'] ?? '';
+        $associatePhone = $_SESSION['user_phone'] ?? '';
 
         // Get form data
         $name = trim($_POST['name'] ?? $associateName);
@@ -596,5 +681,83 @@ class AssociateController extends BaseController
         }
 
         $this->redirect('/associate/properties');
+    }
+
+    /**
+     * Associate Team Management
+     */
+    public function team()
+    {
+        $this->requireAuth();
+        @session_start();
+        $associateId = $_SESSION['user_id'] ?? null;
+        $associateName = $_SESSION['user_name'] ?? '';
+
+        $db = \App\Core\Database\Database::getInstance();
+        $teamMembers = [];
+        try {
+            $teamMembers = $db->fetchAll(
+                "SELECT id, name, email, phone, status, created_at FROM users WHERE referred_by = ? AND role = 'associate' ORDER BY created_at DESC",
+                [$associateId]
+            );
+        } catch (\Exception $e) {
+            $teamMembers = [];
+        }
+
+        $this->render('associate/team', [
+            'page_title' => 'My Team - Associate Dashboard',
+            'page_description' => 'Manage your team members',
+            'associate_name' => $associateName,
+            'team' => $teamMembers,
+            'team_count' => count($teamMembers)
+        ], 'layouts/associate');
+    }
+
+    /**
+     * MLM Plan & Commission Structure
+     */
+    public function mlmPlan()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $levels = [];
+        $currentPlan = null;
+        $currentRank = 'Associate';
+        $nextRank = null;
+        $userProfile = null;
+
+        try {
+            $currentPlan = $this->db->fetchOne("SELECT * FROM mlm_plans WHERE status = 'active' LIMIT 1");
+        } catch (\Exception $e) {}
+        try {
+            $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_order");
+        } catch (\Exception $e) {}
+        try {
+            $userProfile = $this->db->fetchOne("SELECT current_level, total_team_size, direct_referrals, lifetime_sales FROM mlm_profiles WHERE user_id = ?", [$userId]);
+        } catch (\Exception $e) {}
+
+        if ($userProfile) {
+            $currentRank = $userProfile['current_level'] ?? 'Associate';
+        }
+        if (!empty($levels)) {
+            $found = false;
+            foreach ($levels as $l) {
+                if ($found) { $nextRank = $l; break; }
+                if ($l['level_name'] === $currentRank) $found = true;
+            }
+        }
+
+        $this->render('associate/mlm_plan', [
+            'page_title' => 'MLM Plan & Commission Structure',
+            'page_description' => 'Understand your earning potential',
+            'levels' => $levels,
+            'current_plan' => $currentPlan,
+            'current_rank' => $currentRank,
+            'next_rank' => $nextRank,
+            'user_profile' => $userProfile,
+            'current_page' => 'mlm-plan'
+        ], 'layouts/associate');
     }
 }

@@ -27,7 +27,7 @@
             </div>
             <?php else: ?>
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <div class="table-responsive"><table class="table table-hover align-middle table-responsive">
                     <thead class="table-light">
                         <tr>
                             <th>Property</th>
@@ -51,7 +51,7 @@
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
             <?php endif; ?>
         </div>

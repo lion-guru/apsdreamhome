@@ -23,13 +23,13 @@
             <?php if (empty($transactions)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No financial transactions found</p></div>
             <?php else: ?>
-            <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Date</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>Date</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
                 <tbody><?php foreach ($transactions as $t): ?><tr>
                     <td><?= htmlspecialchars($t['date'] ?? '-') ?></td><td><?= htmlspecialchars($t['description'] ?? '-') ?></td><td><?= htmlspecialchars(ucfirst($t['category'] ?? '-')) ?></td>
                     <td><span class="badge bg-<?= ($t['type'] ?? '') === 'income' ? 'success' : 'danger' ?>"><?= ucfirst($t['type'] ?? '-') ?></span></td>
                     <td class="<?= ($t['type'] ?? '') === 'income' ? 'text-success' : 'text-danger' ?>">₹<?= number_format($t['amount'] ?? 0) ?></td>
                     <td><span class="badge bg-<?= ($t['status'] ?? '') === 'completed' ? 'success' : 'warning' ?>"><?= ucfirst($t['status'] ?? '-') ?></span></td>
-                </tr><?php endforeach; ?></tbody></table></div>
+                </tr><?php endforeach; ?></tbody></table></div></div>
             <?php endif; ?>
         </div>
     </div>

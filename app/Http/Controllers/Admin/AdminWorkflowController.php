@@ -394,6 +394,7 @@ class AdminWorkflowController extends AdminController
             $result = match($type) {
                 'properties' => $this->importExportService->importProperties($file, $_POST),
                 'leads' => $this->importExportService->importLeads($file, $_POST),
+                'khatabook_sales' => $this->importExportService->importSales($file, $_POST),
                 default => ['success' => false, 'error' => 'Invalid import type']
             };
             

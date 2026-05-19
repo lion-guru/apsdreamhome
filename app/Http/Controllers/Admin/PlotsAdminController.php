@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-class PlotsAdminController
+class PlotsAdminController extends \App\Http\Controllers\BaseController
 {
-    private $db;
-
     public function __construct()
     {
-        $this->db = new \PDO('mysql:host=localhost;port=3307;dbname=apsdreamhome;charset=utf8mb4', 'root', '');
-        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        parent::__construct();
     }
 
     // Check if user is logged in and has admin access
     private function checkAuth()
     {
-        @session_start();
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
             header('Location: /admin/login');
             exit();
