@@ -776,6 +776,25 @@ class PlotManagementController extends AdminController
         $stmt = $this->db->prepare("SELECT p.*, c.name as colony_name, d.name as district_name, s.name as state_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id LEFT JOIN districts d ON c.district_id = d.id LEFT JOIN states s ON d.state_id = s.id WHERE p.id = ?");
         $stmt->execute([$id]);
         $this->data['plot'] = $stmt->fetch() ?: [];
+
+        // Price history
+        $phStmt = $this->db->prepare("SELECT ph.*, u.name as changed_by_name FROM price_history ph LEFT JOIN users u ON ph.changed_by = u.id WHERE ph.plot_id = ? ORDER BY ph.created_at DESC");
+        $phStmt->execute([$id]);
+        $this->data['priceHistory'] = $phStmt->fetchAll() ?: [];
+
+        // Related bookings
+        $bkStmt = $this->db->prepare("SELECT b.*, u.name as customer_name FROM bookings b LEFT JOIN users u ON b.customer_id = u.id WHERE b.plot_id = ? ORDER BY b.created_at DESC");
+        $bkStmt->execute([$id]);
+        $this->data['bookings'] = $bkStmt->fetchAll() ?: [];
+
+        // Status history from plot_status_log
+        try {
+            $histStmt = $this->db->prepare("SELECT * FROM plot_status_log WHERE plot_id = ? ORDER BY created_at DESC");
+            $histStmt->execute([$id]);
+            $this->data['history'] = $histStmt->fetchAll() ?: [];
+        } catch (\Exception $e) {
+            $this->data['history'] = [];
+        }
         $this->render('admin/plots/show');
     }
 
@@ -786,32 +805,210 @@ class PlotManagementController extends AdminController
         $stmt = $this->db->prepare("SELECT p.*, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.id = ?");
         $stmt->execute([$id]);
         $this->data['plot'] = $stmt->fetch() ?: [];
+
+        // Price history for edit view
+        $phStmt = $this->db->prepare("SELECT * FROM price_history WHERE plot_id = ? ORDER BY created_at DESC LIMIT 10");
+        $phStmt->execute([$id]);
+        $this->data['priceHistory'] = $phStmt->fetchAll() ?: [];
+
         $this->render('admin/plots/edit');
     }
 
     public function update($id)
     {
-        $this->setFlash('info', 'Update via this interface not yet available');
-        $this->redirect('/admin/plots');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $data = $_POST;
+
+            // Get old values for price change detection
+            $old = $this->db->fetchRow("SELECT total_price, price_per_sqft, negotiated_price, status FROM plots WHERE id = ?", [$id]);
+            if (!$old) {
+                $this->setFlash('error', 'Plot not found');
+                return $this->redirect('/admin/plots');
+            }
+
+            // Calculate dimension if width and length provided
+            $width = floatval($data['width_ft'] ?? 0);
+            $length = floatval($data['length_ft'] ?? 0);
+            $dimLabel = $data['dimension_label'] ?? '';
+            if ($width > 0 && $length > 0 && empty($dimLabel)) {
+                $dimLabel = $width . 'x' . $length;
+            }
+            $areaSqft = floatval($data['area_sqft'] ?? ($width * $length));
+            $pricePerSqft = floatval($data['price_per_sqft'] ?? $old['price_per_sqft']);
+            $totalPrice = floatval($data['total_price'] ?? ($areaSqft * $pricePerSqft));
+
+            $this->db->execute("UPDATE plots SET 
+                plot_number = ?, block = ?, sector = ?, plot_type = ?, 
+                area_sqft = ?, area_sqm = ?, width_ft = ?, length_ft = ?, dimension_label = ?,
+                frontage_ft = ?, depth_ft = ?, road_width_ft = ?,
+                base_price_per_sqft = ?, price_per_sqft = ?, total_price = ?,
+                negotiated_price = ?, price_override_reason = ?, status = ?,
+                facing = ?, corner_plot = ?, park_facing = ?,
+                booking_amount = ?, total_paid = ?, payment_status = ?,
+                description = ?
+                WHERE id = ?", [
+                $data['plot_number'], $data['block'] ?? '', $data['sector'] ?? '', $data['plot_type'] ?? 'residential',
+                $areaSqft, floatval($data['area_sqm'] ?? 0), $width, $length, $dimLabel,
+                floatval($data['frontage_ft'] ?? 0), floatval($data['depth_ft'] ?? 0), floatval($data['road_width_ft'] ?? 0),
+                floatval($data['base_price_per_sqft'] ?? $pricePerSqft), $pricePerSqft, $totalPrice,
+                !empty($data['negotiated_price']) ? floatval($data['negotiated_price']) : null,
+                $data['price_override_reason'] ?? '', $data['status'] ?? 'available',
+                $data['facing'] ?? '', !empty($data['corner_plot']) ? 1 : 0, !empty($data['park_facing']) ? 1 : 0,
+                floatval($data['booking_amount'] ?? 0), floatval($data['total_paid'] ?? 0), $data['payment_status'] ?? 'pending',
+                $data['description'] ?? '', $id
+            ]);
+
+            // Log price change to price_history
+            $newTotal = $totalPrice;
+            if (floatval($old['total_price']) != $newTotal) {
+                $changeType = (!empty($data['negotiated_price']) && floatval($data['negotiated_price']) > 0) ? 'negotiated' : 'override';
+                $this->db->insert('price_history', [
+                    'plot_id' => $id,
+                    'old_price' => $old['total_price'],
+                    'new_price' => $newTotal,
+                    'old_price_per_sqft' => $old['price_per_sqft'],
+                    'new_price_per_sqft' => $pricePerSqft,
+                    'change_type' => $changeType,
+                    'reason' => $data['price_override_reason'] ?? 'Price updated by admin',
+                    'changed_by' => $_SESSION['user_id'] ?? 1,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+
+            // Log status change
+            if ($old['status'] != $data['status']) {
+                try {
+                    $this->db->insert('plot_status_log', [
+                        'plot_id' => $id,
+                        'old_status' => $old['status'],
+                        'new_status' => $data['status'],
+                        'changed_by' => $_SESSION['user_id'] ?? 1,
+                        'created_at' => date('Y-m-d H:i:s'),
+                    ]);
+                } catch (\Exception $e) {
+                    // status log table may not exist, skip
+                }
+            }
+
+            $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_updated', [
+                'plot_id' => $id,
+                'price_changed' => floatval($old['total_price']) != $newTotal
+            ]);
+
+            $this->setFlash('success', 'Plot updated successfully');
+            return $this->redirect('/admin/plots/show/' . $id);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Plot Update error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to update plot: ' . $e->getMessage());
+            return $this->redirect('/admin/plots/edit/' . $id);
+        }
     }
 
     public function destroy($id)
     {
-        $this->setFlash('info', 'Delete via this interface not yet available');
+        try {
+            $this->db->execute("UPDATE plots SET is_active = 0 WHERE id = ?", [$id]);
+            $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_deactivated', ['plot_id' => $id]);
+            $this->setFlash('success', 'Plot deactivated successfully');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to deactivate plot: ' . $e->getMessage());
+        }
         $this->redirect('/admin/plots');
     }
 
     public function checkAvailability()
     {
         header('Content-Type: application/json');
-        echo json_encode(['available' => true]);
+        $plotId = $_GET['id'] ?? 0;
+        if ($plotId) {
+            $plot = $this->db->fetchRow("SELECT id, status FROM plots WHERE id = ? AND is_active = 1", [$plotId]);
+            echo json_encode(['available' => $plot && $plot['status'] === 'available', 'status' => $plot['status'] ?? 'not_found']);
+        } else {
+            echo json_encode(['available' => false, 'error' => 'No plot ID provided']);
+        }
         exit;
     }
 
     public function updateStatus($id)
     {
         header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Not implemented']);
+        $status = $_POST['status'] ?? '';
+        if (!in_array($status, ['available', 'booked', 'sold', 'hold', 'reserved'])) {
+            echo json_encode(['success' => false, 'message' => 'Invalid status']);
+            exit;
+        }
+        try {
+            $old = $this->db->fetchOne("SELECT status FROM plots WHERE id = ?", [$id]);
+            $this->db->execute("UPDATE plots SET status = ? WHERE id = ?", [$status, $id]);
+            try {
+                $this->db->insert('plot_status_log', [
+                    'plot_id' => $id, 'old_status' => $old, 'new_status' => $status,
+                    'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Exception $e) {}
+            echo json_encode(['success' => true, 'message' => 'Status updated to ' . $status]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Bulk price update for a colony/block
+     */
+    public function bulkPriceUpdate()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid method', 400);
+        }
+        try {
+            $colonyId = intval($_POST['colony_id'] ?? 0);
+            $block = $_POST['block'] ?? '';
+            $newPps = floatval($_POST['new_price_per_sqft'] ?? 0);
+            $reason = $_POST['reason'] ?? 'Bulk price update';
+
+            if (!$colonyId || $newPps <= 0) {
+                return $this->jsonError('Colony and valid price required', 400);
+            }
+
+            $where = "colony_id = ? AND is_active = 1";
+            $params = [$colonyId];
+            if ($block) { $where .= " AND block = ?"; $params[] = $block; }
+
+            $plots = $this->db->fetchAll("SELECT id, total_price, price_per_sqft, area_sqft FROM plots WHERE $where", $params);
+            $count = 0;
+            foreach ($plots as $p) {
+                $oldTotal = $p['total_price'];
+                $newTotal = $p['area_sqft'] * $newPps;
+                $this->db->execute("UPDATE plots SET price_per_sqft = ?, total_price = ?, base_price_per_sqft = COALESCE(base_price_per_sqft, price_per_sqft) WHERE id = ?", [$newPps, $newTotal, $p['id']]);
+                $this->db->insert('price_history', [
+                    'plot_id' => $p['id'], 'old_price' => $oldTotal, 'new_price' => $newTotal,
+                    'old_price_per_sqft' => $p['price_per_sqft'], 'new_price_per_sqft' => $newPps,
+                    'change_type' => 'bulk_update', 'reason' => $reason,
+                    'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
+                ]);
+                $count++;
+            }
+
+            echo json_encode(['success' => true, 'message' => "$count plots updated", 'count' => $count]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * API: Price history for a plot (JSON)
+     */
+    public function apiPriceHistory($plotId)
+    {
+        header('Content-Type: application/json');
+        $history = $this->db->fetchAll("SELECT * FROM price_history WHERE plot_id = ? ORDER BY created_at DESC", [$plotId]);
+        echo json_encode(['success' => true, 'data' => $history]);
         exit;
     }
 }

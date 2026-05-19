@@ -218,7 +218,10 @@ $router->get('/projects/budha-city', 'Front\\PageController@budhaCity');
 
 // Dynamic Colony Pages (single-template, DB-driven)
 $router->get('/colony/{slug}', 'Front\\PageController@colonyDetail');
-$router->get('/colony/{slug}/plots', 'Front\\PageController@colonyPlots');
+$router->get('/plots', 'Front\\PlotController@index');
+$router->get('/plot/{id}', 'Front\\PlotController@show');
+$router->get('/colony/{slug}/plots', 'Front\\PlotController@colonyPlots');
+$router->get('/api/plots/by-colony/{colonyId}', 'Front\\PlotController@apiByColony');
 $router->get('/navigation', 'Front\\PageController@navigation');
 $router->get('/downloads', 'Front\\PageController@downloads');
 $router->get('/under-construction', 'Front\\PageController@underConstruction');
@@ -614,6 +617,8 @@ $router->post('/admin/plots/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotMa
 $router->post('/admin/plots/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PlotManagementController@destroy');
 $router->get('/admin/plots/check-availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@checkAvailability');
 $router->post('/admin/plots/{id}/update-status', 'App\\Http\\Controllers\\Admin\\PlotManagementController@updateStatus');
+$router->post('/admin/plots/bulk-price-update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@bulkPriceUpdate');
+$router->get('/admin/plots/api/price-history/{plotId}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@apiPriceHistory');
 
 // Admin Testimonials
 $router->get('/admin/testimonials', 'App\Http\Controllers\Admin\TestimonialsAdminController@index');
