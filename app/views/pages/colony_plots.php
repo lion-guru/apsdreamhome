@@ -1,80 +1,249 @@
-<?php $colony = $colony ?? []; $plots = $plots ?? []; $totalPlots = $totalPlots ?? 0; $current_page = $current_page ?? 1; $total_pages = $total_pages ?? 1; ?>
+<?php $colony = $colony ?? []; $plots = $plots ?? []; $dimensions = $dimensions ?? []; $blocks = $blocks ?? []; $stats = $stats ?? []; ?>
 <style>
-.plot-card { border:1px solid #e2e8f0; border-radius:12px; padding:20px; background:#fff; transition:all .2s; height:100%; }
-.plot-card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.1); transform:translateY(-2px); }
-.plot-card .plot-no { font-size:1.1rem; font-weight:700; color:#1e293b; }
-.plot-card .price { font-size:1.3rem; font-weight:700; color:#2563eb; }
-.plot-card .detail { color:#64748b; font-size:.9rem; }
-.plot-badge { position:absolute; top:12px; right:12px; }
+.plot-card { transition: all 0.3s ease; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
+.plot-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+.plot-card .plot-number { font-size: 1.1rem; font-weight: 700; color: #1a237e; }
+.plot-card .plot-price { font-size: 1.3rem; font-weight: 700; color: #2e7d32; }
+.plot-card .plot-detail { font-size: 0.9rem; color: #555; }
+.plot-card .status-badge { position: absolute; top: 12px; right: 12px; }
+.plot-card .amenity-tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78rem; background: #e8eaf6; color: #283593; margin: 2px; }
+.dimension-btn { padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; border: 1px solid #c5cae9; cursor: pointer; transition: all 0.2s; background: white; color: #333; }
+.dimension-btn:hover, .dimension-btn.active { background: #1a237e; color: white; border-color: #1a237e; }
+.filter-section { background: #f5f7ff; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.stat-card { padding: 16px; border-radius: 10px; text-align: center; }
+.stat-card h3 { font-size: 1.8rem; font-weight: 800; margin: 0; }
+.stat-card p { font-size: 0.85rem; margin: 4px 0 0; opacity: 0.85; }
 </style>
 
-<div class="bg-light py-4">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
-                <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/projects">Projects</a></li>
-                <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/colony/<?php echo htmlspecialchars($colony['slug'] ?? ''); ?>"><?php echo htmlspecialchars($colony['name'] ?? ''); ?></a></li>
-                <li class="breadcrumb-item active">Available Plots</li>
-            </ol>
-        </nav>
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/plots">Plots</a></li>
+            <li class="breadcrumb-item active"><?= htmlspecialchars($colony['name'] ?? '') ?></li>
+        </ol>
+    </nav>
+
+    <!-- Colony Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2 fw-bold"><?= htmlspecialchars($colony['name'] ?? '') ?></h1>
+            <p class="text-muted mb-2">
+                <i class="fas fa-map-marker-alt text-danger"></i> 
+                <?= htmlspecialchars(($colony['state_name'] ?? '') . ($colony['district_name'] ? ', ' . $colony['district_name'] : '')) ?>
+            </p>
+            <p><?= htmlspecialchars($colony['description'] ?? '') ?></p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="<?= $colony['map_link'] ?? '#' ?>" target="_blank" class="btn btn-outline-primary me-2">
+                <i class="fas fa-map"></i> View on Map
+            </a>
+            <a href="<?= BASE_URL ?>/contact" class="btn btn-primary">
+                <i class="fas fa-phone"></i> Enquire Now
+            </a>
+        </div>
     </div>
-</div>
 
-<section class="py-5">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h3 class="mb-1"><i class="fas fa-map-marked-alt text-primary me-2"></i>Available Plots</h3>
-                <p class="text-muted mb-0"><?php echo htmlspecialchars($colony['name'] ?? ''); ?> &bull; <?php echo $totalPlots; ?> plot(s) available</p>
+    <!-- Stats Cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-4 col-md-2">
+            <div class="stat-card bg-primary text-white">
+                <h3><?= intval($stats['total'] ?? 0) ?></h3>
+                <p>Total Plots</p>
             </div>
-            <a href="<?php echo BASE_URL; ?>/colony/<?php echo htmlspecialchars($colony['slug'] ?? ''); ?>" class="btn btn-outline-primary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Project</a>
         </div>
+        <div class="col-4 col-md-2">
+            <div class="stat-card bg-success text-white">
+                <h3><?= intval($stats['available'] ?? 0) ?></h3>
+                <p>Available</p>
+            </div>
+        </div>
+        <div class="col-4 col-md-2">
+            <div class="stat-card bg-warning text-white">
+                <h3><?= intval($stats['booked'] ?? 0) ?></h3>
+                <p>Booked</p>
+            </div>
+        </div>
+        <div class="col-4 col-md-2">
+            <div class="stat-card bg-danger text-white">
+                <h3><?= intval($stats['sold'] ?? 0) ?></h3>
+                <p>Sold</p>
+            </div>
+        </div>
+        <div class="col-4 col-md-2">
+            <div class="stat-card bg-info text-white">
+                <h3>₹<?= number_format(intval($stats['min_price'] ?? 0)) ?></h3>
+                <p>Min Price</p>
+            </div>
+        </div>
+        <div class="col-4 col-md-2">
+            <div class="stat-card bg-secondary text-white">
+                <h3>₹<?= number_format(intval($stats['max_price'] ?? 0)) ?></h3>
+                <p>Max Price</p>
+            </div>
+        </div>
+    </div>
 
-        <?php if (empty($plots)): ?>
-        <div class="text-center py-5">
-            <i class="fas fa-map-marked-alt fa-4x text-muted mb-3"></i>
-            <h5>No Plots Currently Available</h5>
-            <p class="text-muted">All plots in this colony may be sold or booked. Contact us for upcoming releases.</p>
-            <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-primary">Contact Us</a>
-        </div>
-        <?php else: ?>
-        <div class="row g-4">
-            <?php foreach ($plots as $p): ?>
-            <div class="col-md-4 col-sm-6">
-                <div class="plot-card position-relative">
-                    <span class="plot-badge badge bg-success">Available</span>
-                    <div class="plot-no mb-1">Plot <?php echo htmlspecialchars($p['plot_number'] ?? 'N/A'); ?></div>
-                    <div class="detail mb-2">
-                        <?php if ($p['block'] ?? ''): ?><span class="me-3"><i class="fas fa-layer-group me-1"></i><?php echo htmlspecialchars($p['block']); ?></span><?php endif; ?>
-                        <span><i class="fas fa-vector-square me-1"></i><?php echo $p['area_sqft'] ?? 0; ?> sqft</span>
-                    </div>
-                    <?php if ($p['area_sqm'] ?? 0): ?><div class="detail"><?php echo $p['area_sqm']; ?> sqm</div><?php endif; ?>
-                    <div class="price mt-2">₹<?php echo number_format($p['total_price'] ?? 0); ?></div>
-                    <div class="detail mt-1">₹<?php echo number_format($p['price_per_sqft'] ?? 0); ?>/sqft</div>
-                    <a href="<?php echo BASE_URL; ?>/contact?subject=Enquiry%20for%20Plot%20<?php echo urlencode($p['plot_number'] ?? ''); ?>%20-%20<?php echo urlencode($colony['name'] ?? ''); ?>" class="btn btn-sm btn-primary w-100 mt-3"><i class="fas fa-phone me-1"></i>Enquire</a>
+    <!-- Filters -->
+    <div class="filter-section">
+        <form method="GET" class="row g-3 align-items-end" id="filterForm">
+            <!-- Dimension Filter -->
+            <div class="col-12">
+                <label class="fw-semibold mb-2">Plot Size (width x length)</label>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="dimension-btn <?= empty($current_dimension) ? 'active' : '' ?>" onclick="setFilter('dimension', '')">All Sizes</button>
+                    <?php foreach ($dimensions as $d): ?>
+                        <?php $dim = $d['dimension_label'] ?? ''; ?>
+                        <?php if ($dim): ?>
+                        <button type="button" class="dimension-btn <?= $current_dimension === $dim ? 'active' : '' ?>" onclick="setFilter('dimension', '<?= htmlspecialchars($dim) ?>')">
+                            <?= htmlspecialchars($dim) ?> sqft
+                        </button>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
+
+            <!-- Block Filter -->
+            <div class="col-md-3">
+                <label class="form-label">Block</label>
+                <select name="block" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Blocks</option>
+                    <?php foreach ($blocks as $b): ?>
+                        <?php $blk = $b['block'] ?? ''; ?>
+                        <option value="<?= htmlspecialchars($blk) ?>" <?= $current_block === $blk ? 'selected' : '' ?>>
+                            Block <?= htmlspecialchars($blk) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select" onchange="this.form.submit()">
+                    <option value="available" <?= $current_status === 'available' ? 'selected' : '' ?>>Available</option>
+                    <option value="booked" <?= $current_status === 'booked' ? 'selected' : '' ?>>Booked</option>
+                    <option value="sold" <?= $current_status === 'sold' ? 'selected' : '' ?>>Sold</option>
+                    <option value="hold" <?= $current_status === 'hold' ? 'selected' : '' ?>>Hold</option>
+                </select>
+            </div>
+
+            <!-- Price Range -->
+            <div class="col-md-3">
+                <label class="form-label">Price Range</label>
+                <div class="input-group">
+                    <input type="number" name="min_price" class="form-control" placeholder="Min ₹" value="<?= $current_min_price > 0 ? $current_min_price : '' ?>">
+                    <input type="number" name="max_price" class="form-control" placeholder="Max ₹" value="<?= $current_max_price > 0 ? $current_max_price : '' ?>">
+                </div>
+            </div>
+
+            <!-- Sort -->
+            <div class="col-md-2">
+                <label class="form-label">Sort By</label>
+                <select name="sort" class="form-select" onchange="this.form.submit()">
+                    <option value="plot_number" <?= $current_sort === 'plot_number' ? 'selected' : '' ?>>Plot No.</option>
+                    <option value="price_asc" <?= $current_sort === 'price_asc' ? 'selected' : '' ?>>Price: Low</option>
+                    <option value="price_desc" <?= $current_sort === 'price_desc' ? 'selected' : '' ?>>Price: High</option>
+                    <option value="area_asc" <?= $current_sort === 'area_asc' ? 'selected' : '' ?>>Area: Small</option>
+                    <option value="area_desc" <?= $current_sort === 'area_desc' ? 'selected' : '' ?>>Area: Large</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($colony['slug'] ?? '') ?>/plots" class="btn btn-outline-secondary w-100">Reset Filters</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Plots Grid -->
+    <?php if (empty($plots)): ?>
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h4>No Plots Found</h4>
+            <p class="text-muted">Try adjusting your filters or check back later for new listings.</p>
+        </div>
+    <?php else: ?>
+        <div class="row g-3">
+            <?php foreach ($plots as $plot): ?>
+                <?php 
+                    $statusColor = match($plot['status'] ?? 'available') {
+                        'available' => 'success',
+                        'booked' => 'warning',
+                        'sold' => 'danger',
+                        'hold' => 'secondary',
+                        'reserved' => 'info',
+                        default => 'secondary'
+                    };
+                    $statusLabel = match($plot['status'] ?? 'available') {
+                        'available' => 'Available',
+                        'booked' => 'Booked',
+                        'sold' => 'Sold',
+                        'hold' => 'On Hold',
+                        'reserved' => 'Reserved',
+                        default => ucfirst($plot['status'] ?? 'available')
+                    };
+                ?>
+                <div class="col-md-6 col-lg-4">
+                    <div class="plot-card position-relative">
+                        <span class="badge bg-<?= $statusColor ?> status-badge px-3 py-2"><?= $statusLabel ?></span>
+                        <div class="p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <span class="plot-number"><?= htmlspecialchars($plot['plot_number'] ?? '') ?></span>
+                                    <?php if (!empty($plot['block'])): ?>
+                                        <span class="badge bg-light text-dark ms-1">Block <?= htmlspecialchars($plot['block']) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <span class="plot-price">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></span>
+                            </div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-6 plot-detail">
+                                    <i class="fas fa-vector-square text-primary"></i> 
+                                    <?= number_format(floatval($plot['area_sqft'] ?? 0)) ?> sqft
+                                </div>
+                                <div class="col-6 plot-detail">
+                                    <i class="fas fa-arrows-alt text-primary"></i> 
+                                    <?= htmlspecialchars($plot['dimension_label'] ?? '') ?>
+                                </div>
+                                <div class="col-6 plot-detail">
+                                    <i class="fas fa-rupee-sign text-primary"></i> 
+                                    ₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?>/sqft
+                                </div>
+                                <div class="col-6 plot-detail">
+                                    <?php if ($plot['corner_plot'] ?? false): ?>
+                                        <span class="amenity-tag">Corner</span>
+                                    <?php endif; ?>
+                                    <?php if ($plot['park_facing'] ?? false): ?>
+                                        <span class="amenity-tag">Park Facing</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <?php if (($plot['status'] ?? '') === 'available'): ?>
+                                <a href="<?= BASE_URL ?>/plot/<?= $plot['id'] ?>" class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="fas fa-info-circle"></i> View Details
+                                </a>
+                            <?php else: ?>
+                                <button class="btn btn-sm btn-outline-secondary w-100" disabled>
+                                    <i class="fas fa-lock"></i> Not Available
+                                </button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
             <?php endforeach; ?>
         </div>
+    <?php endif; ?>
+</div>
 
-        <?php if ($total_pages > 1): ?>
-        <div class="d-flex justify-content-center mt-4">
-            <nav><ul class="pagination">
-                <li class="page-item <?php echo $current_page <= 1 ? 'disabled' : ''; ?>">
-                    <a class="page-link" href="?page=<?php echo $current_page - 1; ?>">Previous</a>
-                </li>
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <li class="page-item <?php echo $i === $current_page ? 'active' : ''; ?>">
-                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                </li>
-                <?php endfor; ?>
-                <li class="page-item <?php echo $current_page >= $total_pages ? 'disabled' : ''; ?>">
-                    <a class="page-link" href="?page=<?php echo $current_page + 1; ?>">Next</a>
-                </li>
-            </ul></nav>
-        </div>
-        <?php endif; ?>
-        <?php endif; ?>
-    </div>
-</section>
+<script>
+function setFilter(name, value) {
+    const form = document.getElementById('filterForm');
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+    form.submit();
+}
+</script>
