@@ -1,0 +1,16 @@
+Date,Customer,Phone,Item,Quantity,Rate,Amount,Payment Mode,Reference
+2026-05-01,Rahul Sharma,9876543210,Cement 50kg Bags,50,350,17500,UPI,REF001
+2026-05-02,Priya Singh,9876543211,Bricks (1000 pcs),2,5500,11000,Cash,REF002
+2026-05-03,Amit Verma,9876543212,Paint (20L),5,1200,6000,Card,REF003
+2026-05-04,Sneha Patel,9876543213,Steel Rods (10mm),10,750,7500,UPI,REF004
+2026-05-05,Vijay Kumar,9876543214,Floor Tiles (sqft),200,45,9000,Cash,REF005
+2026-05-06,Anjali Gupta,9876543215,Electrical Wires (roll),15,850,12750,Credit,REF006
+2026-05-07,Deepak Yadav,9876543216,Plumbing Pipes (pcs),30,320,9600,UPI,REF007
+2026-05-08,Neha Tiwari,9876543217,Wooden Doors (unit),4,4500,18000,Card,REF008
+2026-05-09,Sandeep Mishra,9876543218,Glass Panels (sqft),25,280,7000,Cash,REF009
+2026-05-10,Pooja Pandey,9876543219,Sanitaryware Set,3,8500,25500,UPI,REF010
+2026-05-11,Ravi Shukla,9876543220,TMT Bars (kg),500,82,41000,Cheque,REF011
+2026-05-12,Kavita Joshi,9876543221,Marble Slabs (sqft),150,180,27000,Card,REF012
+2026-05-13,Manoj Dubey,9876543222,Windows (unit),6,3200,19200,UPI,REF013
+2026-05-14,Sunita Agarwal,9876543223,Kitchen Chimney,1,15000,15000,Cash,REF014
+2026-05-15,Arun Kumar,9876543224,Water Heater,2,8000,16000,Card,REF015

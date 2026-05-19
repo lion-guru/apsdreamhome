@@ -78,6 +78,44 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
     </div>
+
+    <!-- Khatabook & Ad Performance Widgets -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #6f42c1 !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Khatabook Sales</p>
+                            <h3 class="mb-0"><?= number_format($dashboard_stats['khatabook_sales'] ?? 0) ?></h3>
+                            <small class="text-muted">₹<?= number_format($dashboard_stats['khatabook_amount'] ?? 0, 0) ?> total</small>
+                        </div>
+                        <div class="p-2 rounded" style="background:rgba(111,66,193,0.1);">
+                            <i class="fas fa-book text-purple" style="color:#6f42c1;"></i>
+                        </div>
+                    </div>
+                    <a href="<?= BASE_URL ?>/admin/khatabook-sales" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #fd7e14 !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1">Ad Slots Active</p>
+                            <h3 class="mb-0"><?= number_format($dashboard_stats['ad_slots'] ?? 0) ?></h3>
+                            <small class="text-muted"><?= number_format($dashboard_stats['ad_views'] ?? 0) ?> views</small>
+                        </div>
+                        <div class="p-2 rounded" style="background:rgba(253,126,20,0.1);">
+                            <i class="fas fa-ad text-orange" style="color:#fd7e14;"></i>
+                        </div>
+                    </div>
+                    <a href="<?= BASE_URL ?>/admin/ads" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <div class="row mb-4">
         <div class="col-12">

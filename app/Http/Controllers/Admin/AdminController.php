@@ -114,6 +114,29 @@ class AdminController extends BaseController
                 'system_health' => $this->getSystemHealth()
             ];
 
+            // Get Khatabook sales stats
+            try {
+                $khatabookStats = $this->db->fetch("SELECT COUNT(*) as total_sales, COALESCE(SUM(amount), 0) as total_amount FROM khatabook_sales");
+                $khatabookStats['recent_sales'] = $this->db->fetchAll("SELECT * FROM khatabook_sales ORDER BY transaction_date DESC LIMIT 5") ?? [];
+            } catch (\Exception $e) {
+                $khatabookStats = ['total_sales' => 0, 'total_amount' => 0, 'recent_sales' => []];
+            }
+
+            // Get Ad slot stats
+            try {
+                $adStats = $this->db->fetch("SELECT COUNT(*) as total_slots, COALESCE(SUM(views), 0) as total_views, COALESCE(SUM(clicks), 0) as total_clicks FROM ad_slots WHERE status = 'active'");
+            } catch (\Exception $e) {
+                $adStats = ['total_slots' => 0, 'total_views' => 0, 'total_clicks' => 0];
+            }
+
+            $dashboard_stats = array_merge($stats, [
+                'khatabook_sales' => $khatabookStats['total_sales'] ?? 0,
+                'khatabook_amount' => $khatabookStats['total_amount'] ?? 0,
+                'ad_slots' => $adStats['total_slots'] ?? 0,
+                'ad_views' => $adStats['total_views'] ?? 0,
+                'ad_clicks' => $adStats['total_clicks'] ?? 0,
+            ]);
+
             // Get recent activities
             $recentActivities = $this->getRecentActivities();
 
@@ -122,6 +145,9 @@ class AdminController extends BaseController
 
             $this->data = array_merge($this->data, [
                 'stats' => $stats,
+                'dashboard_stats' => $dashboard_stats,
+                'khatabookStats' => $khatabookStats,
+                'adStats' => $adStats,
                 'recent_activities' => $recentActivities,
                 'charts_data' => $chartsData,
                 'page_title' => 'Admin Dashboard - ' . $this->getConfig('app_name'),

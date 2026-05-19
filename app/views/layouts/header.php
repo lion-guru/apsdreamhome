@@ -360,6 +360,13 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     </nav>
 </header>
 
+<!-- Ad Banner -->
+<?php
+$adService = new \App\Services\AdManagerService();
+echo $adService->renderSlot('header_banner');
+unset($adService);
+?>
+
 <style>
     /* Ensure header stays above content and provides stable layering across breakpoints */
     .premium-header {

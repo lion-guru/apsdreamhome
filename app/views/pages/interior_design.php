@@ -121,8 +121,122 @@
             <div class="col-md-4"><a href="<?= BASE_URL ?>/plot-size-converter" class="text-decoration-none"><div class="tool-card"><i class="fas fa-ruler-combined fa-3x text-success mb-3"></i><h5>Room Size Planner</h5><p class="text-muted small mb-0">Convert and plan room dimensions</p></div></a></div>
             <div class="col-md-4"><a href="<?= BASE_URL ?>/home-loan-eligibility" class="text-decoration-none"><div class="tool-card"><i class="fas fa-home fa-3x text-warning mb-3"></i><h5>Budget Planner</h5><p class="text-muted small mb-0">Plan your interior design budget</p></div></a></div>
         </div>
+        <div class="row g-4 mt-2">
+            <div class="col-md-6">
+                <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                    <i class="fas fa-palette fa-2x text-purple mb-2" style="color:#6a1b9a;"></i>
+                    <h5>Room Color Palette Generator</h5>
+                    <p class="text-muted small mb-2">Generate harmonious color schemes for any room</p>
+                    <div class="collapse">
+                        <div class="card card-body border-0 bg-light text-start mt-2">
+                            <div class="row g-2 mb-3">
+                                <div class="col-6"><label class="small text-muted">Room Type</label><select class="form-select form-select-sm" id="roomType"><option>Living Room</option><option>Bedroom</option><option>Kitchen</option><option>Bathroom</option><option>Home Office</option><option>Kids Room</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Style</label><select class="form-select form-select-sm" id="styleType"><option>Modern</option><option>Traditional</option><option>Minimalist</option><option>Bohemian</option><option>Industrial</option><option>Scandinavian</option></select></div>
+                            </div>
+                            <button class="btn btn-sm btn-primary mb-3" onclick="generatePalette()"><i class="fas fa-magic me-1"></i>Generate Palette</button>
+                            <div id="paletteResult" class="d-none">
+                                <label class="small text-muted">Suggested Color Palette:</label>
+                                <div class="d-flex gap-2 mt-1" id="paletteColors"></div>
+                                <p class="small text-muted mt-2 mb-0" id="paletteDesc"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                    <i class="fas fa-couch fa-2x text-success mb-2"></i>
+                    <h5>Furniture Layout Planner</h5>
+                    <p class="text-muted small mb-2">Plan furniture placement in any room size</p>
+                    <div class="collapse">
+                        <div class="card card-body border-0 bg-light text-start mt-2">
+                            <div class="row g-2 mb-3">
+                                <div class="col-4"><label class="small text-muted">Room Width (ft)</label><input type="number" class="form-control form-control-sm" id="roomW" value="12" min="6" max="30"></div>
+                                <div class="col-4"><label class="small text-muted">Room Length (ft)</label><input type="number" class="form-control form-control-sm" id="roomL" value="14" min="6" max="40"></div>
+                                <div class="col-4"><label class="small text-muted">Room Type</label><select class="form-select form-select-sm" id="furnitureType"><option>Living Room</option><option>Bedroom</option><option selected>Dining Room</option><option>Home Office</option></select></div>
+                            </div>
+                            <button class="btn btn-sm btn-success mb-3" onclick="planFurniture()"><i class="fas fa-arrows-alt me-1"></i>Plan Layout</button>
+                            <div id="furnitureResult" class="d-none">
+                                <div class="bg-white p-3 rounded-2 border" id="furnitureLayout" style="min-height:120px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+
+<script>
+function generatePalette() {
+    const room = document.getElementById('roomType').value;
+    const style = document.getElementById('styleType').value;
+    const palettes = {
+        'Living Room': {
+            'Modern': { colors: ['#2C3E50','#E74C3C','#ECF0F1','#3498DB','#95A5A6'], desc: 'Bold contrast with deep navy, accent red, and clean whites for a contemporary living space.' },
+            'Traditional': { colors: ['#8B4513','#D2691E','#F5DEB3','#2F4F4F','#DEB887'], desc: 'Warm earth tones with rich browns and cream for a timeless traditional feel.' },
+            'Minimalist': { colors: ['#F5F5F5','#333333','#FFFFFF','#BDBDBD','#757575'], desc: 'Clean monochrome palette with subtle gray transitions for a clutter-free look.' },
+            'Bohemian': { colors: ['#8E44AD','#E67E22','#1ABC9C','#F1C40F','#E74C3C'], desc: 'Vibrant, eclectic mix of purple, orange, teal, and gold for a free-spirited vibe.' },
+            'Industrial': { colors: ['#4A4A4A','#D35400','#BDC3C7','#2C3E50','#E67E22'], desc: 'Raw urban feel with concrete grays, rust orange, and dark charcoal accents.' },
+            'Scandinavian': { colors: ['#FFFFFF','#F0F0F0','#B8B8B8','#52958B','#D4A373'], desc: 'Light, airy whites and soft grays with sage green and warm beige touches.' }
+        },
+        'Bedroom': {
+            'Modern': { colors: ['#4A235A','#AED6F1','#FDFEFE','#D4AC0D','#7FB3D8'], desc: 'Calming purple-blue scheme with gold accents for a luxurious bedroom retreat.' },
+            'Minimalist': { colors: ['#F8F9FA','#DEE2E6','#495057','#CED4DA','#6C757D'], desc: 'Soft neutrals and gentle grays creating a serene, uncluttered sleeping space.' },
+            'Scandinavian': { colors: ['#F7F7F7','#E8E8E4','#C1D5C1','#8BA78B','#D4C4A8'], desc: 'Peaceful greens and natural beige tones inspired by Nordic simplicity.' }
+        },
+        'Kitchen': {
+            'Modern': { colors: ['#1A1A2E','#E94560','#FFFFFF','#16213E','#0F3460'], desc: 'Sleek dark navy with striking crimson accents for a gourmet kitchen.' },
+            'Minimalist': { colors: ['#FFFFFF','#F0F0F0','#A0A0A0','#D0D0D0','#606060'], desc: 'Crisp white-on-white with subtle gray depth for an ultra-clean kitchen.' }
+        }
+    };
+    const p = (palettes[room] && palettes[room][style]) || { colors: ['#6a1b9a','#ff6f00','#00c853','#2979ff','#ff1744'], desc: 'Default vibrant palette. Customize for your space.' };
+    const cont = document.getElementById('paletteColors');
+    cont.innerHTML = p.colors.map(c => `<div style="width:50px;height:50px;border-radius:8px;background:${c};border:2px solid #ddd;cursor:pointer" title="${c}" onclick="navigator.clipboard.writeText('${c}')"></div>`).join('');
+    document.getElementById('paletteDesc').textContent = p.desc;
+    document.getElementById('paletteResult').classList.remove('d-none');
+}
+function planFurniture() {
+    const w = parseInt(document.getElementById('roomW').value) || 12;
+    const l = parseInt(document.getElementById('roomL').value) || 14;
+    const type = document.getElementById('furnitureType').value;
+    const layouts = {
+        'Living Room': [
+            { name: '3-Seater Sofa', w: 3, l: 7 }, { name: '2-Seater Sofa', w: 3, l: 5 },
+            { name: 'Coffee Table', w: 2.5, l: 4 }, { name: 'TV Unit', w: 1.5, l: 5 },
+            { name: 'Side Table', w: 1.5, l: 1.5 }, { name: 'Floor Lamp', w: 1, l: 1 }
+        ],
+        'Bedroom': [
+            { name: 'Queen Bed', w: 5, l: 6.5 }, { name: 'Wardrobe', w: 2, l: 5 },
+            { name: 'Nightstand', w: 1.5, l: 1.5 }, { name: 'Dresser', w: 2, l: 4 }
+        ],
+        'Dining Room': [
+            { name: '6-Seater Table', w: 3.5, l: 6 }, { name: 'Sideboard', w: 2, l: 4 },
+            { name: 'Display Cabinet', w: 1.5, l: 3 }
+        ],
+        'Home Office': [
+            { name: 'Desk', w: 2.5, l: 5 }, { name: 'Chair Area', w: 2, l: 2 },
+            { name: 'Bookshelf', w: 1.5, l: 3 }, { name: 'File Cabinet', w: 1.5, l: 1.5 }
+        ]
+    };
+    const items = layouts[type] || layouts['Living Room'];
+    const scale = 12; const rw = w * scale; const rl = l * scale;
+    let html = `<div style="position:relative;width:${rw}px;height:${rl}px;background:#f8f9fa;border:2px dashed #aaa;margin:0 auto;border-radius:4px;">`;
+    let xp = 5, yp = 5;
+    html += `<div style="position:absolute;top:2px;left:4px;font-size:10px;color:#999;">${w}ft x ${l}ft</div>`;
+    items.forEach((item, i) => {
+        const iw = item.w * scale; const il = item.l * scale;
+        if (xp + iw + 5 > rw && yp > 5) { xp = 5; yp += Math.max(...items.map(it => it.l * scale)) + 5; }
+        const colors = ['#6a1b9a','#3498db','#27ae60','#e74c3c','#f39c12','#8e44ad','#1abc9c','#e67e22'];
+        html += `<div style="position:absolute;left:${xp}px;top:${yp}px;width:${iw}px;height:${il}px;background:${colors[i%colors.length]};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,0.3);">${item.name}</div>`;
+        xp += iw + 5;
+    });
+    html += '</div>';
+    html += `<p class="small text-muted mt-2 mb-0 text-center">Recommended layout for a ${w}ft x ${l}ft ${type}</p>`;
+    document.getElementById('furnitureLayout').innerHTML = html;
+    document.getElementById('furnitureResult').classList.remove('d-none');
+}
+</script>
 
 <?php if (!empty($portfolio)): ?>
 <section class="py-5 bg-light">
