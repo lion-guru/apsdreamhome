@@ -1,3 +1,10 @@
+<!-- Footer Ad Banner -->
+<?php
+$adService = new \App\Services\AdManagerService();
+echo $adService->renderSlot('footer_banner');
+unset($adService);
+?>
+
 <footer class="mt-5 bg-dark text-white py-5">
     <div class="container">
         <!-- Newsletter Signup -->
