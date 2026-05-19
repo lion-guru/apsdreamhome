@@ -191,6 +191,16 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                     }
                     ?>
 
+                    <!-- Language Switcher -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button">
+                            <i class="fas fa-globe me-1"></i> <?= strtoupper($_SESSION['user_language'] ?? 'en') ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item <?= ($_SESSION['user_language'] ?? 'en') === 'en' ? 'active' : '' ?>" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">🇬🇧</span> English</a></li>
+                            <li><a class="dropdown-item <?= ($_SESSION['user_language'] ?? 'en') === 'hi' ? 'active' : '' ?>" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">🇮🇳</span> हिंदी</a></li>
+                        </ul>
+                    </li>
                     <?php
                     // Check which user type is logged in
                     $isCustomer = isset($_SESSION['user_id']) && $_SESSION['user_id'];

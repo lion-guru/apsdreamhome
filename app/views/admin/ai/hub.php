@@ -3,7 +3,8 @@ $mlSupport = $mlSupport ?? new class { public function translate($s) { return $s
 $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'; } };
 ?>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.css">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.css" media="print" onload="this.media='all'">
 <style>
     #workflowCanvas {
         background-color: #f0f2f5;
@@ -337,46 +338,66 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script async src="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Initialize Drawflow
-    var id = document.getElementById("workflowCanvas");
-    const editor = new Drawflow(id);
-    editor.reroute = true;
-    editor.start();
-
-    // Initialize Chart.js
-    const ctx = document.getElementById('aiPerformanceChart').getContext('2d');
-    const aiChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: <?= json_encode($chart_labels ?? []) ?>,
-            datasets: [{
-                label: 'Successful Executions',
-                data: <?= json_encode($chart_success ?? []) ?>,
-                borderColor: '#28a745',
-                tension: 0.4
-            }, {
-                label: 'Failed Executions',
-                data: <?= json_encode($chart_failed ?? []) ?>,
-                borderColor: '#dc3545',
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
+    function initLibraries() {
+        // Initialize Drawflow
+        if (typeof Drawflow !== 'undefined') {
+            var canvas = document.getElementById("workflowCanvas");
+            if (canvas) {
+                const editor = new Drawflow(canvas);
+                editor.reroute = true;
+                editor.start();
+            }
         }
-    });
+        // Initialize Chart.js
+        if (typeof Chart !== 'undefined') {
+            const canvas = document.getElementById('aiPerformanceChart');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                const aiChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: <?= json_encode($chart_labels ?? []) ?>,
+                        datasets: [{
+                            label: 'Successful Executions',
+                            data: <?= json_encode($chart_success ?? []) ?>,
+                            borderColor: '#28a745',
+                            tension: 0.4
+                        }, {
+                            label: 'Failed Executions',
+                            data: <?= json_encode($chart_failed ?? []) ?>,
+                            borderColor: '#dc3545',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+        }
+    }
+    // Retry until libraries load
+    var initRetries = 0;
+    function tryInit() {
+        if (typeof Drawflow !== 'undefined' || typeof Chart !== 'undefined' || initRetries > 20) {
+            initLibraries();
+        } else {
+            initRetries++;
+            setTimeout(tryInit, 500);
+        }
+    }
+    tryInit();
 
     function toggleAIMode() {
-        // Implement AJAX to toggle mode
         alert('Mode toggle implementation pending');
     }
 
     function toggleNotifications() {
         const panel = document.getElementById('notificationPanel');
-        panel.classList.toggle('d-none');
+        if (panel) panel.classList.toggle('d-none');
     }
 </script>

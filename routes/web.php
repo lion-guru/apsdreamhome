@@ -140,6 +140,17 @@ $router->get('/auth/google/callback', 'Auth\\GoogleAuthController@callback');
 $router->get('/auth/google/role-selection', 'Auth\\GoogleAuthController@roleSelection');
 $router->post('/auth/google/complete-registration', 'Auth\\GoogleAuthController@completeRegistration');
 
+// Facebook Auth
+$router->get('/auth/facebook', 'Auth\FacebookAuthController@redirect');
+$router->get('/auth/facebook/callback', 'Auth\FacebookAuthController@callback');
+
+// LinkedIn Auth
+$router->get('/auth/linkedin', function() {
+    $_SESSION['error'] = 'LinkedIn login coming soon. Use Google or Facebook.';
+    header('Location: ' . BASE_URL . '/login');
+    exit;
+});
+
 // Quick Auth (for casual visitors, booking, etc.)
 $router->post('/auth/quick-register', 'Auth\\QuickAuthController@quickRegister');
 $router->post('/auth/request-referral-code', 'Auth\\QuickAuthController@requestReferralCode');
@@ -1786,5 +1797,42 @@ $router->get('/user/payments', function() {
 // Lead source analytics
 $router->get('/admin/leads/sources', 'Admin\\LeadController@sources');
 
+// Advanced Reports
+$router->get('/admin/reports/funnel', 'Admin\AdvancedReportController@funnel');
+$router->get('/admin/reports/agent-performance', 'Admin\AdvancedReportController@agentPerformance');
+$router->get('/admin/reports/conversion', 'Admin\AdvancedReportController@conversion');
+
+// MLM Real Estate Enterprise
+$router->get('/admin/mlm-realestate', 'Admin\MLMRealEstateController@dashboard');
+$router->get('/admin/mlm-realestate/packages', 'Admin\MLMRealEstateController@packages');
+$router->post('/admin/mlm-realestate/packages/save', 'Admin\MLMRealEstateController@savePackage');
+$router->get('/admin/mlm-realestate/networkers', 'Admin\MLMRealEstateController@networkers');
+$router->post('/admin/mlm-realestate/networkers/register', 'Admin\MLMRealEstateController@registerNetworker');
+$router->get('/admin/mlm-realestate/free-consultants', 'Admin\MLMRealEstateController@freeConsultants');
+$router->post('/admin/mlm-realestate/free-consultants/register', 'Admin\MLMRealEstateController@registerConsultant');
+$router->get('/admin/mlm-realestate/rera', 'Admin\MLMRealEstateController@reraRequests');
+$router->post('/admin/mlm-realestate/rera/approve', 'Admin\MLMRealEstateController@approveRERA');
+$router->get('/admin/mlm-realestate/plots', 'Admin\MLMRealEstateController@plotsInventory');
+$router->get('/admin/mlm-realestate/bookings', 'Admin\MLMRealEstateController@bookings');
+$router->get('/admin/mlm-realestate/bookings/{id}', 'Admin\MLMRealEstateController@bookingDetail');
+$router->post('/admin/mlm-realestate/bookings/payment', 'Admin\MLMRealEstateController@recordPayment');
+$router->post('/admin/mlm-realestate/bookings/commission', 'Admin\MLMRealEstateController@processCommission');
+$router->get('/admin/mlm-realestate/bookings/create', 'Admin\MLMRealEstateController@createBooking');
+$router->post('/admin/mlm-realestate/bookings/store', 'Admin\MLMRealEstateController@storeBooking');
+$router->get('/admin/mlm-realestate/salary', 'Admin\MLMRealEstateController@salaryTracker');
+$router->get('/admin/mlm-realestate/salary/evaluate', 'Admin\MLMRealEstateController@evaluateSalary');
+$router->get('/admin/mlm-realestate/cron', 'Admin\MLMRealEstateController@runCron');
+
+// Language switcher
+$router->get('/language/set/{lang}', function($lang) {
+    $allowed = ['en', 'hi'];
+    if (in_array($lang, $allowed)) {
+        $_SESSION['user_language'] = $lang;
+        setcookie('user_language', $lang, time() + 86400 * 30, '/');
+    }
+    $referer = $_SERVER['HTTP_REFERER'] ?? BASE_URL;
+    header('Location: ' . $referer);
+    exit;
+});
 
 
