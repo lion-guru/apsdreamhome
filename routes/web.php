@@ -1661,6 +1661,7 @@ $router->post('/admin/email-templates/save', 'App\\Http\\Controllers\\Admin\\Cam
 $router->get('/admin/email-logs', 'App\\Http\\Controllers\\Admin\\CampaignController@logs');
 $router->get('/admin/sms-campaigns', 'App\\Http\\Controllers\\Admin\\CampaignController@smsCampaigns');
 $router->get('/admin/whatsapp-broadcast', 'App\\Http\\Controllers\\Admin\\CampaignController@whatsappBroadcast');
+$router->post('/admin/whatsapp-broadcast', 'App\\Http\\Controllers\\Admin\\CampaignController@whatsappBroadcast');
 $router->get('/admin/referrals', 'App\\Http\\Controllers\\Admin\\ReferralController@index');
 $router->get('/admin/social-media', 'App\\Http\\Controllers\\Admin\\SocialMediaController@index');
 
@@ -1769,5 +1770,21 @@ $router->get('/admin/hrm/settings', 'App\\Http\\Controllers\\Admin\\HRMControlle
 // CRM Remaining
 $router->get('/admin/crm/feedback', 'App\\Http\\Controllers\\Admin\\CRMController@feedback');
 $router->get('/admin/crm/support', 'App\\Http\\Controllers\\Admin\\CRMController@support');
+
+// Customer Portal v2
+$router->get('/user/book-site-visit', 'Front\\UserController@bookSiteVisit');
+$router->post('/user/book-site-visit', 'Front\\UserController@bookSiteVisit');
+$router->get('/user/notifications', function() {
+    $c = new \App\Http\Controllers\NotificationController();
+    $c->index();
+});
+$router->get('/user/payments', function() {
+    header('Location: ' . BASE_URL . '/payment/history');
+    exit;
+});
+
+// Lead source analytics
+$router->get('/admin/leads/sources', 'Admin\\LeadController@sources');
+
 
 

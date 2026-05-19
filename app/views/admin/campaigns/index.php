@@ -20,9 +20,14 @@ function getCampaignStatusColor($status) {
         <h1 class="h3 mb-0">Campaign Management</h1>
         <p class="text-muted mb-0">Manage marketing campaigns and offers</p>
     </div>
-    <a href="<?= BASE_URL ?>/admin/campaigns/create" class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Create Campaign
-    </a>
+    <div class="d-flex gap-2">
+        <a href="<?= BASE_URL ?>/admin/campaigns/create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Create Campaign
+        </a>
+        <a href="<?= BASE_URL ?>/admin/whatsapp-broadcast" class="btn btn-success">
+            <i class="fab fa-whatsapp me-1"></i> WhatsApp Broadcast
+        </a>
+    </div>
 </div>
 
 <?php if (!empty($success)): ?>

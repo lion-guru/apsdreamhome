@@ -316,6 +316,9 @@
                             Enquire About Our Services
                         </h3>
                         <form id="serviceInterestForm">
+                            <input type="hidden" name="utm_source" value="<?= htmlspecialchars($_GET['utm_source'] ?? $_SESSION['utm_source'] ?? '') ?>">
+                            <input type="hidden" name="utm_medium" value="<?= htmlspecialchars($_GET['utm_medium'] ?? $_SESSION['utm_medium'] ?? '') ?>">
+                            <input type="hidden" name="utm_campaign" value="<?= htmlspecialchars($_GET['utm_campaign'] ?? $_SESSION['utm_campaign'] ?? '') ?>">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="name" class="form-label">Your Name *</label>
@@ -400,6 +403,19 @@ document.getElementById('serviceInterestForm')?.addEventListener('submit', funct
         submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Inquiry';
     });
 });
+</script>
+
+<script>
+(function() {
+    const params = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+    params.forEach(p => {
+        const val = new URLSearchParams(window.location.search).get(p);
+        if (val) {
+            document.querySelectorAll(`input[name="${p}"]`).forEach(el => el.value = val);
+            try { sessionStorage.setItem(p, val); } catch(e) {}
+        }
+    });
+})();
 </script>
 
 <!-- Call to Action Section -->

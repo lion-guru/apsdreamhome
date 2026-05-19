@@ -396,9 +396,10 @@
                 </nav>
             </div>
             <div class="header-actions">
-                <button class="btn-icon" title="Notifications">
+                <a href="<?= BASE_URL ?>/user/notifications" class="btn btn-sm btn-outline-primary position-relative me-2">
                     <i class="fas fa-bell"></i>
-                </button>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="font-size:9px;">0</span>
+                </a>
                 <button class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
                 </button>
@@ -419,6 +420,16 @@
 
     <!-- Sidebar Toggle Script -->
     <script>
+function checkNotifications() {
+    fetch('<?= BASE_URL ?>/api/notifications/unread-count')
+        .then(r => r.json())
+        .then(d => { const b = document.getElementById('notifBadge'); if(b) { b.textContent = d.count || 0; b.style.display = (d.count > 0) ? 'inline' : 'none'; } })
+        .catch(() => {});
+}
+document.addEventListener('DOMContentLoaded', checkNotifications);
+setInterval(checkNotifications, 30000);
+</script>
+<script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.sidebar-overlay');

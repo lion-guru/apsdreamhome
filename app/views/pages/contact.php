@@ -17,78 +17,22 @@
                     <a href="https://wa.me/919277121112" class="btn btn-success btn-lg" target="_blank">
                         <i class="fab fa-whatsapp me-2"></i>WhatsApp
                     </a>
-                </div>
-                <div class="mt-4 animate-fade-in-delay-2">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-map-marker-alt me-2"></i>
-                        <span>1st floor, Singhariya Chauraha, Gorakhpur</span>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-envelope me-2"></i>
-                        <span>info@apsdreamhome.com</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-clock me-2"></i>
-                        <span>Mon - Sat: 9:00 AM - 7:00 PM</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card shadow-lg border-0 animate-fade-in">
-                    <div class="card-header bg-white border-0 pt-4 px-4">
-                        <h3 class="card-title mb-0"><i class="fas fa-paper-plane text-primary me-2"></i>Send Message</h3>
-                        <p class="text-muted small mb-0">Fill out the form below and we'll get back to you shortly.</p>
-                    </div>
-                    <div class="card-body p-4">
-                        <form method="POST" action="<?php echo BASE_URL; ?>/contact" class="needs-validation">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label">Full Name *</label>
-                                    <input type="text" id="name" name="name" class="form-control" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label">Email Address *</label>
-                                    <input type="email" id="email" name="email" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="phone" class="form-label">Phone Number *</label>
-                                    <input type="tel" id="phone" name="phone" class="form-control" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="subject" class="form-label">Subject *</label>
-                                    <select id="subject" name="subject" class="form-control" required>
-                                        <option value="">Select Subject</option>
-                                        <option value="Property Inquiry">Property Inquiry</option>
-                                        <option value="Schedule Visit">Schedule Visit</option>
-                                        <option value="General Query">General Query</option>
-                                        <option value="Complaint">Complaint</option>
-                                        <option value="Feedback">Feedback</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12 mb-3">
-                                    <label for="message" class="form-label">Message *</label>
-                                    <textarea id="message" name="message" class="form-control" rows="5" required></textarea>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-paper-plane me-2"></i>Send Message
-                                </button>
-                                <p class="small text-muted mt-2">
-                                    <i class="fas fa-shield-alt me-1"></i>Your information is secure and will never be shared.
-                                </p>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </section>
+
+<script>
+(function() {
+    const params = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+    params.forEach(p => {
+        const val = new URLSearchParams(window.location.search).get(p);
+        if (val) {
+            document.querySelectorAll(`input[name="${p}"]`).forEach(el => el.value = val);
+            try { sessionStorage.setItem(p, val); } catch(e) {}
+        }
+    });
+})();
+</script>
+
 
 <?php if (!empty($pageContent)): ?>
 <section class="py-5 bg-white">

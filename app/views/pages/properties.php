@@ -140,6 +140,9 @@
                                 <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-primary btn-sm">
                                     <i class="fas fa-phone"></i> Enquire
                                 </a>
+                                <button class="btn btn-sm btn-outline-info add-to-compare" data-id="<?= $property['id'] ?? '' ?>" onclick="addToCompare(this)">
+                                    <i class="fas fa-balance-scale me-1"></i> Compare
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -208,4 +211,25 @@
     padding: 0;
 }
 </style>
+<script>
+function addToCompare(btn) {
+    const id = btn.dataset.id;
+    if (!id) return;
+    let compare = JSON.parse(localStorage.getItem('property_compare') || '[]');
+    if (compare.includes(id)) { alert('Already in comparison'); return; }
+    if (compare.length >= 4) { alert('Maximum 4 properties can be compared'); return; }
+    compare.push(id);
+    localStorage.setItem('property_compare', JSON.stringify(compare));
+    btn.innerHTML = '<i class="fas fa-check me-1"></i> Added';
+    btn.classList.remove('btn-outline-info');
+    btn.classList.add('btn-info');
+    updateCompareBadge();
+}
+function updateCompareBadge() {
+    const compare = JSON.parse(localStorage.getItem('property_compare') || '[]');
+    const badge = document.getElementById('compareBadge');
+    if (badge) { badge.textContent = compare.length; badge.style.display = compare.length > 0 ? 'inline' : 'none'; }
+}
+document.addEventListener('DOMContentLoaded', updateCompareBadge);
+</script>
 

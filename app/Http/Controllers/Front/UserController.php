@@ -67,6 +67,16 @@ class UserController extends BaseController
             ORDER BY b.created_at DESC
         ", [$user['id']]);
 
+        // Recent payments
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT * FROM payment_transactions WHERE user_id = ? AND user_type = 'customer' ORDER BY created_at DESC LIMIT 5");
+            $stmt->execute([$_SESSION['user_id'] ?? 0]);
+            $recentPayments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $recentPayments = [];
+        }
+
         $data = [
             'page_title' => 'My Dashboard - APS Dream Home',
             'page_description' => 'Manage your properties and inquiries',
@@ -80,6 +90,7 @@ class UserController extends BaseController
                 'total_bookings' => count($bookings),
                 'total_inquiries' => count($inquiries),
             ],
+            'recentPayments' => $recentPayments,
             'registered' => isset($_GET['registered']),
             'loginSuccess' => isset($_GET['login']),
         ];
@@ -264,6 +275,51 @@ class UserController extends BaseController
         $_SESSION['flash_success'] = 'Bank details saved successfully!';
         header('Location: ' . BASE_URL . '/user/bank-details');
         exit;
+    }
+
+    public function bookSiteVisit()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+        
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $stmt = $db->prepare("INSERT INTO site_visit_requests (user_id, user_name, user_email, user_phone, property_id, preferred_date, preferred_time, notes, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+                $stmt->execute([
+                    $_SESSION['user_id'],
+                    $_SESSION['user_name'] ?? '',
+                    $_SESSION['user_email'] ?? '',
+                    $_POST['phone'] ?? $_SESSION['user_phone'] ?? '',
+                    (int)($_POST['property_id'] ?? 0),
+                    $_POST['visit_date'] ?? '',
+                    $_POST['visit_time'] ?? '',
+                    $_POST['notes'] ?? '',
+                ]);
+                $message = 'Your site visit request has been submitted. Our team will contact you within 24 hours.';
+                $message_type = 'success';
+            }
+            
+            // Get user's properties for dropdown
+            $props = $db->prepare("SELECT id, CONCAT(property_type, ' - ', address) as name FROM user_properties WHERE user_id = ? ORDER BY created_at DESC LIMIT 10");
+            $props->execute([$_SESSION['user_id']]);
+            $properties = $props->fetchAll(\PDO::FETCH_ASSOC);
+            
+        } catch (\Exception $e) {
+            $message = $message ?? 'An error occurred. Please try again.';
+            $message_type = $message_type ?? 'danger';
+            $properties = $properties ?? [];
+        }
+        
+        $this->render('pages/user_book_site_visit', [
+            'page_title' => 'Book Site Visit',
+            'message' => $message ?? '',
+            'message_type' => $message_type ?? '',
+            'properties' => $properties ?? [],
+        ]);
     }
 
     public function updateProfile()
