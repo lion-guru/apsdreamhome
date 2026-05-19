@@ -51,12 +51,12 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-sm table-bordered">
+                        <div class="table-responsive"><table class="table table-sm table-bordered table-responsive">
                             <thead class="table-light"><tr><th>Year</th><th>Principal Paid</th><th>Interest Paid</th><th>Balance</th></tr></thead>
                             <tbody><?php foreach (($result['schedule'] ?? []) as $row): ?>
                                 <tr><td><?= $row['year'] ?></td><td>₹<?= number_format($row['principal_paid']) ?></td><td>₹<?= number_format($row['interest_paid']) ?></td><td>₹<?= number_format($row['balance']) ?></td></tr>
                             <?php endforeach; ?></tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

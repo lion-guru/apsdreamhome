@@ -1,464 +1,230 @@
 <?php
 
-namespace App\Core;
-
 /**
- * Comprehensive Caching System
- * Supports multiple caching backends (File, Redis, Memcached)
+ * Simple File-Based Caching System for APS Dream Home
+ * Provides caching for frequently accessed data without external dependencies
  */
+
 class Cache
 {
-    private static $instance = null;
-    private $driver = null;
-    private $config = [];
-    private $defaultTtl = 3600; // 1 hour
-
-    private function __construct()
-    {
-        $this->config = [
-            'driver' => config('cache.driver', 'file'),
-            'ttl' => config('cache.ttl', 3600),
-            'path' => config('cache.path', __DIR__ . '/../cache/'),
-            'redis' => [
-                'host' => config('cache.redis.host', '127.0.0.1'),
-                'port' => config('cache.redis.port', 6379),
-                'database' => config('cache.redis.database', 0)
-            ],
-            'memcached' => [
-                'host' => config('cache.memcached.host', '127.0.0.1'),
-                'port' => config('cache.memcached.port', 11211)
-            ]
-        ];
-
-        $this->initializeDriver();
-    }
-
-    public static function getInstance(): self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
+    private static $cacheDir;
+    private static $defaultTTL = 3600; // 1 hour default
 
     /**
-     * Initialize the cache driver
+     * Initialize cache system
      */
-    private function initializeDriver(): void
+    public static function init($cacheDir = null)
     {
-        switch ($this->config['driver']) {
-            case 'redis':
-                $this->initRedis();
-                break;
-            case 'memcached':
-                $this->initMemcached();
-                break;
-            case 'file':
-            default:
-                $this->initFile();
-                break;
+        if ($cacheDir === null) {
+            $cacheDir = __DIR__ . '/../../storage/cache';
+        }
+
+        self::$cacheDir = $cacheDir;
+
+        // Create cache directory if it doesn't exist
+        if (!is_dir(self::$cacheDir)) {
+            mkdir(self::$cacheDir, 0755, true);
         }
     }
 
     /**
-     * Initialize file-based caching
+     * Get cached data
      */
-    private function initFile(): void
+    public static function get($key, $default = null)
     {
-        if (!is_dir($this->config['path'])) {
-            mkdir($this->config['path'], 0755, true);
-        }
-        $this->driver = 'file';
-    }
+        self::init();
 
-    /**
-     * Initialize Redis caching
-     */
-    private function initRedis(): void
-    {
-        if (extension_loaded('redis')) {
-            try {
-                $redis = new \Redis();
-                $redis->connect(
-                    $this->config['redis']['host'],
-                    $this->config['redis']['port']
-                );
+        $filename = self::getFilename($key);
 
-                if ($this->config['redis']['password']) {
-                    $redis->auth($this->config['redis']['password']);
-                }
-
-                $redis->select($this->config['redis']['database']);
-                $this->driver = $redis;
-            } catch (\Exception $e) {
-                // Fallback to file caching
-                $this->initFile();
-            }
-        } else {
-            $this->initFile();
-        }
-    }
-
-    /**
-     * Initialize Memcached caching
-     */
-    private function initMemcached(): void
-    {
-        if (extension_loaded('memcached')) {
-            try {
-                $memcached = new \Memcached();
-                $memcached->addServer(
-                    $this->config['memcached']['host'],
-                    $this->config['memcached']['port']
-                );
-                $this->driver = $memcached;
-            } catch (\Exception $e) {
-                $this->initFile();
-            }
-        } else {
-            $this->initFile();
-        }
-    }
-
-    /**
-     * Store data in cache
-     */
-    public function set(string $key, $value, int $ttl = null): bool
-    {
-        $ttl = $ttl ?: $this->config['ttl'];
-        $expiresAt = time() + $ttl;
-
-        $data = [
-            'value' => $value,
-            'expires_at' => $expiresAt,
-            'created_at' => time()
-        ];
-
-        switch ($this->driver) {
-            case 'file':
-                return $this->setFile($key, $data, $ttl);
-            default:
-                return $this->setMemory($key, $data, $ttl);
-        }
-    }
-
-    /**
-     * Retrieve data from cache
-     */
-    public function get(string $key)
-    {
-        switch ($this->driver) {
-            case 'file':
-                return $this->getFile($key);
-            default:
-                return $this->getMemory($key);
-        }
-    }
-
-    /**
-     * Check if key exists in cache
-     */
-    public function has(string $key): bool
-    {
-        switch ($this->driver) {
-            case 'file':
-                return $this->hasFile($key);
-            default:
-                return $this->hasMemory($key);
-        }
-    }
-
-    /**
-     * Delete key from cache
-     */
-    public function delete(string $key): bool
-    {
-        switch ($this->driver) {
-            case 'file':
-                return $this->deleteFile($key);
-            default:
-                return $this->deleteMemory($key);
-        }
-    }
-
-    /**
-     * Clear all cache
-     */
-    public function clear(): bool
-    {
-        switch ($this->driver) {
-            case 'file':
-                return $this->clearFile();
-            default:
-                return $this->clearMemory();
-        }
-    }
-
-    // File-based cache methods
-    private function setFile(string $key, array $data, int $ttl): bool
-    {
-        $filePath = $this->config['path'] . md5($key) . '.cache';
-        $data['ttl'] = $ttl;
-
-        return file_put_contents($filePath, serialize($data)) !== false;
-    }
-
-    private function getFile(string $key)
-    {
-        $filePath = $this->config['path'] . md5($key) . '.cache';
-
-        if (!file_exists($filePath)) {
-            return null;
+        if (!file_exists($filename)) {
+            return $default;
         }
 
-        $data = unserialize(file_get_contents($filePath));
+        $content = file_get_contents($filename);
+        $data = json_decode($content, true);
 
-        if ($data['expires_at'] < time()) {
-            unlink($filePath);
-            return null;
+        // Check if cache has expired
+        if ($data['expires'] < time()) {
+            self::delete($key);
+            return $default;
         }
 
         return $data['value'];
     }
 
-    private function hasFile(string $key): bool
+    /**
+     * Set cached data
+     */
+    public static function set($key, $value, $ttl = null)
     {
-        $filePath = $this->config['path'] . md5($key) . '.cache';
+        self::init();
 
-        if (!file_exists($filePath)) {
-            return false;
+        if ($ttl === null) {
+            $ttl = self::$defaultTTL;
         }
 
-        $data = unserialize(file_get_contents($filePath));
+        $filename = self::getFilename($key);
 
-        if ($data['expires_at'] < time()) {
-            unlink($filePath);
-            return false;
+        $data = [
+            'value' => $value,
+            'expires' => time() + $ttl,
+            'created' => time()
+        ];
+
+        return file_put_contents($filename, json_encode($data)) !== false;
+    }
+
+    /**
+     * Delete cached data
+     */
+    public static function delete($key)
+    {
+        self::init();
+
+        $filename = self::getFilename($key);
+
+        if (file_exists($filename)) {
+            return unlink($filename);
         }
 
         return true;
     }
 
-    private function deleteFile(string $key): bool
+    /**
+     * Clear all cached data
+     */
+    public static function clear()
     {
-        $filePath = $this->config['path'] . md5($key) . '.cache';
-        return file_exists($filePath) && unlink($filePath);
-    }
+        self::init();
 
-    private function clearFile(): bool
-    {
-        $files = glob($this->config['path'] . '*.cache');
-        $deleted = 0;
+        $files = glob(self::$cacheDir . '/*.cache');
 
         foreach ($files as $file) {
-            if (unlink($file)) {
-                $deleted++;
+            unlink($file);
+        }
+
+        return true;
+    }
+
+    /**
+     * Clear expired cache entries
+     */
+    public static function clearExpired()
+    {
+        self::init();
+
+        $files = glob(self::$cacheDir . '/*.cache');
+        $cleared = 0;
+
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            $data = json_decode($content, true);
+
+            if ($data['expires'] < time()) {
+                unlink($file);
+                $cleared++;
             }
         }
 
-        return $deleted > 0;
-    }
-
-    // Memory-based cache methods (Redis/Memcached)
-    private function setMemory(string $key, array $data, int $ttl)
-    {
-        if ($this->driver instanceof \Redis) {
-            return $this->driver->setEx($key, $ttl, serialize($data));
-        } elseif ($this->driver instanceof \Memcached) {
-            return $this->driver->set($key, serialize($data), $ttl);
-        }
-        return false;
-    }
-
-    private function getMemory(string $key)
-    {
-        $data = null;
-
-        if ($this->driver instanceof \Redis) {
-            $data = $this->driver->get($key);
-        } elseif ($this->driver instanceof \Memcached) {
-            $data = $this->driver->get($key);
-        }
-
-        if ($data === false || $data === null) {
-            return null;
-        }
-
-        $data = unserialize($data);
-
-        if ($data['expires_at'] < time()) {
-            $this->deleteMemory($key);
-            return null;
-        }
-
-        return $data['value'];
-    }
-
-    private function hasMemory(string $key): bool
-    {
-        if ($this->driver instanceof \Redis) {
-            return $this->driver->exists($key);
-        } elseif ($this->driver instanceof \Memcached) {
-            return $this->driver->get($key) !== false;
-        }
-        return false;
-    }
-
-    private function deleteMemory(string $key): bool
-    {
-        if ($this->driver instanceof \Redis) {
-            return $this->driver->del($key) > 0;
-        } elseif ($this->driver instanceof \Memcached) {
-            return $this->driver->delete($key);
-        }
-        return false;
-    }
-
-    private function clearMemory(): bool
-    {
-        if ($this->driver instanceof \Redis) {
-            return $this->driver->flushDB();
-        } elseif ($this->driver instanceof \Memcached) {
-            return $this->driver->flush();
-        }
-        return false;
+        return $cleared;
     }
 
     /**
-     * Cache with tags for better organization
+     * Remember pattern - get from cache or execute callback
      */
-    public function tag(string $tag): CacheTag
+    public static function remember($key, $callback, $ttl = null)
     {
-        return new CacheTag($this, $tag);
-    }
+        $value = self::get($key);
 
-    /**
-     * Remember - cache result of callback
-     */
-    public function remember(string $key, int $ttl, callable $callback)
-    {
-        if ($this->has($key)) {
-            return $this->get($key);
+        if ($value !== null) {
+            return $value;
         }
 
         $value = $callback();
-        $this->set($key, $value, $ttl);
+        self::set($key, $value, $ttl);
 
         return $value;
     }
 
     /**
+     * Get cache filename for key
+     */
+    private static function getFilename($key)
+    {
+        $safeKey = md5($key);
+        return self::$cacheDir . '/' . $safeKey . '.cache';
+    }
+
+    /**
      * Get cache statistics
      */
-    public function getStats(): array
+    public static function getStats()
     {
+        self::init();
+
+        $files = glob(self::$cacheDir . '/*.cache');
+        $totalSize = 0;
+        $expiredCount = 0;
+
+        foreach ($files as $file) {
+            $totalSize += filesize($file);
+
+            $content = file_get_contents($file);
+            $data = json_decode($content, true);
+
+            if ($data['expires'] < time()) {
+                $expiredCount++;
+            }
+        }
+
         return [
-            'driver' => $this->config['driver'],
-            'enabled' => config('cache.enabled', false),
-            'ttl' => $this->config['ttl']
+            'total_files' => count($files),
+            'total_size' => self::formatBytes($totalSize),
+            'expired_files' => $expiredCount,
+            'active_files' => count($files) - $expiredCount
         ];
     }
-}
 
-/**
- * Cache Tag Helper Class
- */
-class CacheTag
-{
-    private $cache;
-    private $tag;
-
-    public function __construct(Cache $cache, string $tag)
+    /**
+     * Format bytes for display
+     */
+    private static function formatBytes($bytes)
     {
-        $this->cache = $cache;
-        $this->tag = $tag;
-    }
-
-    public function set(string $key, $value, int $ttl = null): bool
-    {
-        $taggedKey = $this->tag . ':' . $key;
-        return $this->cache->set($taggedKey, $value, $ttl);
-    }
-
-    public function get(string $key)
-    {
-        $taggedKey = $this->tag . ':' . $key;
-        return $this->cache->get($taggedKey);
-    }
-
-    public function has(string $key): bool
-    {
-        $taggedKey = $this->tag . ':' . $key;
-        return $this->cache->has($taggedKey);
-    }
-
-    public function delete(string $key): bool
-    {
-        $taggedKey = $this->tag . ':' . $key;
-        return $this->cache->delete($taggedKey);
-    }
-
-    public function flush(): bool
-    {
-        // For file-based cache, we'd need to implement tag-based flushing
-        // For memory-based cache, we can use keys with tag prefix
-        return $this->cache->clear();
-    }
-}
-
-/**
- * Global cache helper functions
- */
-function cache(string $key = null)
-{
-    $cache = Cache::getInstance();
-
-    if ($key === null) {
-        return $cache;
-    }
-
-    return $cache;
-}
-
-function cache_remember(string $key, int $ttl, callable $callback)
-{
-    return Cache::getInstance()->remember($key, $ttl, $callback);
-}
-
-function cache_forget(string $key): bool
-{
-    return Cache::getInstance()->delete($key);
-}
-
-?>
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Cache.php
-
-function __clone() {}
-function __wakeup() {
-        throw new Exception('Cannot unserialize singleton');
-    }
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\Cache.php
-
-function __call($name, $arguments) {
-        if (method_exists($this->cache, $name)) {
-            return call_user_func_array([$this->cache, $name], $arguments);
+        if ($bytes >= 1073741824) {
+            return number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            return number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            return number_format($bytes / 1024, 2) . ' KB';
+        } else {
+            return $bytes . ' bytes';
         }
-function __callStatic($name, $arguments) {
-        return call_user_func_array([ModernCache::class, $name], $arguments);
     }
-class calls to the modern Core Cache.
- */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+    /**
+     * Cache database query results
+     */
+    public static function rememberQuery($key, $query, $params = [], $ttl = null)
+    {
+        return self::remember($key, function () use ($query, $params) {
+            try {
+                // Use the database connection to execute query
+                $db = Database::getInstance();
 
-use App\Core\Cache as ModernCache;
-
-class Cache {
-    private $cache;
-
-    public function __construct() {
-        $this->cache = new ModernCache();
+                if (!empty($params)) {
+                    $stmt = $db->prepare($query);
+                    $stmt->execute($params);
+                    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                } else {
+                    return $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
+                }
+            } catch (Exception $e) {
+                error_log("Cache query error: " . $e->getMessage());
+                return [];
+            }
+        }, $ttl);
     }
+}
+
+// Auto-initialize cache on include
+Cache::init();

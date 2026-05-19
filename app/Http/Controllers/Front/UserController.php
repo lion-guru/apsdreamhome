@@ -56,12 +56,30 @@ class UserController extends BaseController
         $stmt->execute([$user['email']]);
         $inquiries = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+        // Fetch bookings (purchased plots/properties)
+        $bookings = $this->db->fetchAll("
+            SELECT b.*, p.plot_number, p.block, p.area_sqft, p.total_price, p.status as plot_status,
+                   c.name as colony_name
+            FROM bookings b
+            LEFT JOIN plots p ON b.property_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE b.customer_id = ?
+            ORDER BY b.created_at DESC
+        ", [$user['id']]);
+
         $data = [
             'page_title' => 'My Dashboard - APS Dream Home',
             'page_description' => 'Manage your properties and inquiries',
             'user' => $user,
             'properties' => $properties,
             'inquiries' => $inquiries,
+            'bookings' => $bookings,
+            'stats' => [
+                'total_properties' => count($properties),
+                'active_inquiries' => count(array_filter($inquiries, fn($i) => ($i['status'] ?? '') !== 'closed')),
+                'total_bookings' => count($bookings),
+                'total_inquiries' => count($inquiries),
+            ],
             'registered' => isset($_GET['registered']),
             'loginSuccess' => isset($_GET['login']),
         ];
@@ -162,8 +180,15 @@ class UserController extends BaseController
         $securityUrl = null; // Front users don't have security page yet
         $canEdit = true;
 
-        // Use unified shared profile view
-        include __DIR__ . '/../../../views/shared/profile.php';
+        // Use customer profile view with customer layout
+        $this->layout = 'layouts/customer';
+        
+        $this->render('pages/user_profile', [
+            'user' => $user,
+            'error' => $error,
+            'success' => $success,
+            'current_page' => 'profile'
+        ]);
     }
 
     /**

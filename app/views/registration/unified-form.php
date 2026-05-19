@@ -4,9 +4,9 @@
         <div class="col-lg-6">
             <div class="card"><div class="card-body p-4">
                 <h4 class="mb-4"><i class="fas fa-user-plus me-2"></i>Create Account</h4>
-                <form method="post" action="<?= $base ?>register">
+                <form method="post" action="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>register">
                     <?php foreach ($fields as $f): ?>
-                    <div class="mb-3"><label class="form-label"><?= ucfirst($f) ?></label><input type="<?= $f === "password" ? "password" : "text" ?>" class="form-control" name="<?= $f ?>" required></div>
+                    <div class="mb-3"><label class="form-label"><?= ucfirst($f) ?></label><input type="<?= $f === "password" ? "password" : "text" ?>" class="form-control" name="<?= htmlspecialchars($f, ENT_QUOTES, 'UTF-8') ?>" required></div>
                     <?php endforeach; ?>
                     <button type="submit" class="btn btn-primary w-100">Register</button>
                 </form>

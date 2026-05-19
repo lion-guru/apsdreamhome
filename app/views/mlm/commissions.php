@@ -34,7 +34,7 @@
         <div class="card-body p-0">
             <?php if (!empty($commissions)): ?>
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th>#</th><th>From</th><th>Level</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr>
                     </thead>
@@ -51,7 +51,7 @@
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
             <?php else: ?>
             <div class="text-center py-5">

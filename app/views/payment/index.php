@@ -54,7 +54,7 @@
                     </div>
                     
                     <div class="table-responsive mt-4">
-                        <table class="table table-striped table-hover">
+                        <div class="table-responsive"><table class="table table-striped table-hover table-responsive">
                             <thead>
                                 <tr>
                                     <th>Payment ID</th>
@@ -98,7 +98,7 @@
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

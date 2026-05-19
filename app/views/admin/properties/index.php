@@ -1,7 +1,7 @@
+<?php $layout = "admin/layouts/unified"; $active_page = "index"; ?>
 <?php
 $page_title = 'Property Management';
 $active_page = 'properties';
-include APP_PATH . '/views/admin/layouts/header.php';
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -196,4 +196,3 @@ include APP_PATH . '/views/admin/layouts/header.php';
     </div>
 </div>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

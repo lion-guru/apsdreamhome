@@ -84,7 +84,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <h5 class="mb-3"><i class="fas fa-file-contract me-2 text-primary"></i>My Bookings</h5>
                     <?php if (!empty($bookings)): ?>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <div class="table-responsive"><table class="table table-hover table-responsive">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Property</th>
@@ -105,7 +105,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     <?php else: ?>
                         <p class="text-muted">No bookings found.</p>
@@ -119,7 +119,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <h5 class="mb-3"><i class="fas fa-calendar-alt me-2 text-primary"></i>EMI Schedule</h5>
                     <?php if (!empty($emi_schedule)): ?>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <div class="table-responsive"><table class="table table-hover table-responsive">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Due Date</th>
@@ -140,7 +140,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     <?php else: ?>
                         <p class="text-muted">No EMI schedule found.</p>
@@ -154,7 +154,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <h5 class="mb-3"><i class="fas fa-credit-card me-2 text-primary"></i>Payment History</h5>
             <?php if (!empty($payment_history)): ?>
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <div class="table-responsive"><table class="table table-hover table-responsive">
                         <thead class="table-light">
                             <tr>
                                 <th>Date</th>
@@ -177,7 +177,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             <?php else: ?>
                 <p class="text-muted">No payment history found.</p>

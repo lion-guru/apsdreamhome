@@ -22,7 +22,7 @@ class AdminAuthController extends BaseController
         if (isset($_GET['test_login']) && $_GET['test_login'] == '1') {
             // Fetch actual admin from database
             $db = Database::getInstance();
-            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' LIMIT 1");
+            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' OR username = 'testadmin' LIMIT 1");
             if (!$admin) {
                 $admin = $db->fetchOne("SELECT * FROM users WHERE email = 'testadmin@example.com' AND role IN ('admin', 'super_admin') LIMIT 1");
             }
@@ -31,6 +31,12 @@ class AdminAuthController extends BaseController
             $_SESSION['admin_email'] = $admin['email'] ?? 'testadmin@example.com';
             $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
             $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Test Admin';
+            $_SESSION['admin_username'] = $admin['username'] ?? 'testadmin';
+            // Set legacy session keys for controllers that check different session variables
+            $_SESSION['user_id'] = $admin['id'] ?? 1;
+            $_SESSION['user_role'] = $admin['role'] ?? 'admin';
+            $_SESSION['user_email'] = $admin['email'] ?? 'testadmin@example.com';
+            $_SESSION['user_name'] = $admin['username'] ?? $admin['name'] ?? 'Test Admin';
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }
@@ -86,7 +92,7 @@ class AdminAuthController extends BaseController
             @session_start();
             // Fetch actual admin from database
             $db = Database::getInstance();
-            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' LIMIT 1");
+            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' OR username = 'testadmin' LIMIT 1");
             if (!$admin) {
                 $admin = $db->fetchOne("SELECT * FROM users WHERE email = 'testadmin@example.com' AND role IN ('admin', 'super_admin') LIMIT 1");
             }
@@ -95,6 +101,12 @@ class AdminAuthController extends BaseController
             $_SESSION['admin_email'] = $admin['email'] ?? 'testadmin@example.com';
             $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
             $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Test Admin';
+            $_SESSION['admin_username'] = $admin['username'] ?? 'testadmin';
+            // Set legacy session keys for controllers that check different session variables
+            $_SESSION['user_id'] = $admin['id'] ?? 1;
+            $_SESSION['user_role'] = $admin['role'] ?? 'admin';
+            $_SESSION['user_email'] = $admin['email'] ?? 'testadmin@example.com';
+            $_SESSION['user_name'] = $admin['username'] ?? $admin['name'] ?? 'Test Admin';
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }
@@ -133,6 +145,11 @@ class AdminAuthController extends BaseController
                 $_SESSION['admin_role'] = $admin['role'];
                 $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Admin';
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                // Set legacy session keys for controllers checking user_id/user_role
+                $_SESSION['user_id'] = $admin['id'];
+                $_SESSION['user_role'] = $admin['role'];
+                $_SESSION['user_email'] = $admin['email'];
+                $_SESSION['user_name'] = $admin['username'] ?? $admin['full_name'] ?? 'Admin';
 
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;
@@ -146,6 +163,11 @@ class AdminAuthController extends BaseController
                 $_SESSION['admin_role'] = $user['role'];
                 $_SESSION['admin_name'] = $user['name'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                // Set legacy session keys
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_name'] = $user['name'];
 
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;

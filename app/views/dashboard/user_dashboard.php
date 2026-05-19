@@ -108,7 +108,7 @@ ob_start();
                 <div class="card-body p-0">
                     <?php if (count($properties) > 0): ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
+                            <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                                 <thead class="bg-light text-muted small text-uppercase">
                                     <tr>
                                         <th class="ps-4">Property</th>
@@ -124,7 +124,7 @@ ob_start();
                                         <tr>
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
-                                                    <img src="<?= !empty($property['pimage']) ? BASE_URL . 'public/uploads/property/' . $property['pimage'] : BASE_URL . '/assets/images/property-placeholder.jpg' ?>"
+                                                    <img src="<?= !empty($property['pimage']) ? BASE_URL . 'public/uploads/property/' . $property['pimage'] : BASE_URL . '/assets/images/property-placeholder.jpg' ? class="img-fluid">"
                                                         alt="Property" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                                     <div>
                                                         <h6 class="mb-0 fw-bold"><?= h($property['title']) ?></h6>
@@ -141,7 +141,7 @@ ob_start();
                                                 if ($property['status'] == 'pending') $status_class = 'bg-warning';
                                                 if ($property['status'] == 'rejected') $status_class = 'bg-danger';
                                                 ?>
-                                                <span class="badge <?= $status_class ?> rounded-pill px-3"><?= ucfirst(h($property['status'])) ?></span>
+                                                <span class="badge <?= htmlspecialchars($status_class, ENT_QUOTES, 'UTF-8') ?> rounded-pill px-3"><?= ucfirst(h($property['status'])) ?></span>
                                             </td>
                                             <td class="text-end pe-4">
                                                 <div class="dropdown">
@@ -161,11 +161,11 @@ ob_start();
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     <?php else: ?>
                         <div class="text-center py-5">
-                            <img src="/assets/images/no-data.svg" alt="No Properties" class="mb-3" style="width: 150px; opacity: 0.5;">
+                            <img src="/assets/images/no-data.svg" alt="No Properties" class="mb-3 img-fluid" style="width: 150px; opacity: 0.5;">
                             <h5 class="text-muted">You haven't listed any properties yet.</h5>
                             <a href="submit-property.php" class="btn btn-primary rounded-pill mt-3 px-4">Start Listing</a>
                         </div>
@@ -212,7 +212,7 @@ ob_start();
                 <h5 class="fw-bold mb-4">Profile Summary</h5>
                 <div class="text-center mb-4">
                     <div class="position-relative d-inline-block">
-                        <img src="<?= !empty($user_data['uimage']) ? '/admin/user/' . $user_data['uimage'] : '/assets/images/user-placeholder.jpg' ?>"
+                        <img src="<?= !empty($user_data['uimage']) ? '/admin/user/' . $user_data['uimage'] : '/assets/images/user-placeholder.jpg' ? class="img-fluid">"
                             alt="Profile" class="rounded-circle shadow-sm border border-4 border-light" style="width: 100px; height: 100px; object-fit: cover;">
                         <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
                     </div>

@@ -55,7 +55,7 @@
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-file-invoice-dollar me-2"></i>Recent Transactions</h6></div>
                 <div class="card-body">
                     <?php if (!empty($recentTransactions)): ?>
-                        <div class="table-responsive"><table class="table table-sm table-hover mb-0">
+                        <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Date</th><th>Description</th><th class="text-end">Amount</th><th>Status</th></tr></thead>
                             <tbody>
                                 <?php foreach ($recentTransactions as $txn): ?>
@@ -67,7 +67,7 @@
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table></div>
+                        </table></div></div>
                     <?php else: ?>
                         <div class="text-center py-4"><i class="fas fa-inbox fa-2x text-muted mb-2"></i><p class="text-muted mb-0">No transactions yet</p></div>
                     <?php endif; ?>

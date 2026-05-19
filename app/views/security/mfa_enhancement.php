@@ -9,7 +9,7 @@
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-list me-2"></i>Current MFA Methods</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Method</th><th>Security Level</th><th>Adoption</th><th>Vulnerabilities</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($methods)): foreach ($methods as $m): ?>
@@ -17,7 +17,7 @@
                                 <?php endforeach; else: ?><tr><td colspan="4" class="text-center text-muted py-3">No data available</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -27,13 +27,13 @@
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-fingerprint me-2"></i>Advanced Authentication</h5></div>
                 <div class="card-body">
                     <h6 class="fw-bold text-secondary">Biometric Authentication</h6>
-                    <?php $ba = $advanced['biometric_authentication'] ?? []; foreach ($ba as $k => $v): ?><div class="mb-1 d-flex justify-content-between"><span><i class="fas fa-<?= $k === 'fingerprint' ? 'fingerprint' : ($k === 'facial_recognition' ? 'face-smile' : ($k === 'voice_recognition' ? 'microphone' : 'eye')) ?> me-2"></i><?= ucwords(str_replace('_', ' ', $k)) ?></span><span class="badge bg-<?= $v === 'Implemented' ? 'success' : ($v === 'In development' ? 'warning' : 'secondary') ?>"><?= $v ?></span></div><?php endforeach; ?>
+                    <?php $ba = $advanced['biometric_authentication'] ?? []; foreach ($ba as $k => $v): ?><div class="mb-1 d-flex justify-content-between"><span><i class="fas fa-<?= $k === 'fingerprint' ? 'fingerprint' : ($k === 'facial_recognition' ? 'face-smile' : ($k === 'voice_recognition' ? 'microphone' : 'eye')) ?> me-2"></i><?= ucwords(str_replace('_', ' ', $k)) ?></span><span class="badge bg-<?= $v === 'Implemented' ? 'success' : ($v === 'In development' ? 'warning' : 'secondary') ?>"><?= htmlspecialchars($v, ENT_QUOTES, 'UTF-8') ?></span></div><?php endforeach; ?>
                     <hr>
                     <h6 class="fw-bold text-secondary">Behavioral Biometrics</h6>
-                    <?php $bb = $advanced['behavioral_biometrics'] ?? []; foreach ($bb as $k => $v): ?><div class="mb-1 d-flex justify-content-between"><span><i class="fas fa-chart-line me-2"></i><?= ucwords(str_replace('_', ' ', $k)) ?></span><span class="badge bg-<?= $v === 'Active' ? 'success' : 'secondary' ?>"><?= $v ?></span></div><?php endforeach; ?>
+                    <?php $bb = $advanced['behavioral_biometrics'] ?? []; foreach ($bb as $k => $v): ?><div class="mb-1 d-flex justify-content-between"><span><i class="fas fa-chart-line me-2"></i><?= ucwords(str_replace('_', ' ', $k)) ?></span><span class="badge bg-<?= $v === 'Active' ? 'success' : 'secondary' ?>"><?= htmlspecialchars($v, ENT_QUOTES, 'UTF-8') ?></span></div><?php endforeach; ?>
                     <hr>
                     <h6 class="fw-bold text-secondary">Contextual Authentication</h6>
-                    <?php $ca = $advanced['contextual_authentication'] ?? []; foreach ($ca as $k => $v): ?><div class="mb-1 d-flex justify-content-between"><span><i class="fas fa-location-dot me-2"></i><?= ucwords(str_replace('_', ' ', $k)) ?></span><span class="badge bg-success"><?= $v ?></span></div><?php endforeach; ?>
+                    <?php $ca = $advanced['contextual_authentication'] ?? []; foreach ($ca as $k => $v): ?><div class="mb-1 d-flex justify-content-between"><span><i class="fas fa-location-dot me-2"></i><?= ucwords(str_replace('_', ' ', $k)) ?></span><span class="badge bg-success"><?= htmlspecialchars($v, ENT_QUOTES, 'UTF-8') ?></span></div><?php endforeach; ?>
                 </div>
             </div>
         </div>

@@ -129,7 +129,7 @@
                                     <?= htmlspecialchars($prop->status ?? 'Available') ?>
                                 </span>
 
-                                <img src="<?= !empty($prop->image) ? get_asset_url($prop->image) : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80' ?>" class="card-img-top resell-card-img" alt="<?= htmlspecialchars($prop->title) ?>">
+                                <img src="<?= !empty($prop- class="img-fluid">image) ? get_asset_url($prop->image) : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80' ?>" class="card-img-top resell-card-img" alt="<?= htmlspecialchars($prop->title) ?>">
 
                                 <div class="price-badge position-absolute bottom-0 start-0 bg-dark text-white px-3 py-2 rounded-end-3 mb-3">
                                     ₹<?= number_format($prop->price) ?>
@@ -185,8 +185,8 @@
                     <ul class="pagination justify-content-center">
                         <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
                             <li class="page-item <?= $pagination['current_page'] == $i ? 'active' : '' ?>">
-                                <a class="page-link" href="?page=<?= $i ?>&<?= http_build_query(array_diff_key($filters, ['page' => ''])) ?>">
-                                    <?= $i ?>
+                                <a class="page-link" href="?page=<?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>&<?= http_build_query(array_diff_key($filters, ['page' => ''])) ?>">
+                                    <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>
                                 </a>
                             </li>
                         <?php endfor; ?>

@@ -65,6 +65,7 @@ class ServiceController extends AdminController
             'registry' => 'Registry',
             'mutation' => 'Mutation',
             'interior' => 'Interior Design',
+            'construction' => 'Construction / Contracting',
             'home_insurance' => 'Home Insurance',
             'property_tax' => 'Property Tax',
             'rental_agreement' => 'Rental Agreement',
@@ -89,7 +90,7 @@ class ServiceController extends AdminController
     private function getServiceCounts()
     {
         $counts = [];
-        $types = ['home_loan', 'legal', 'registry', 'mutation', 'interior', 'home_insurance', 'property_tax', 'rental_agreement', 'Tenant_verification'];
+        $types = ['home_loan', 'legal', 'registry', 'mutation', 'interior', 'construction', 'home_insurance', 'property_tax', 'rental_agreement', 'Tenant_verification'];
         
         foreach ($types as $type) {
             try {

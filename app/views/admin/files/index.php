@@ -1,5 +1,3 @@
-<?php include APP_PATH . '/views/admin/layouts/header.php'; ?>
-
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">📁 File Manager</h1>
@@ -218,4 +216,4 @@ function formatBytes($bytes) {
 }
 ?>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
+

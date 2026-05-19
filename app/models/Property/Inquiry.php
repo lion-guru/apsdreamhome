@@ -18,7 +18,7 @@ class PropertyInquiry extends Model {
      */
     public function createInquiry($data) {
         try {
-            $sql = "INSERT INTO {$this->table} (
+            $sql = "INSERT INTO {static::$table} (
                 property_id, user_id, guest_name, guest_email, guest_phone,
                 message, inquiry_type, status, created_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
@@ -49,7 +49,7 @@ class PropertyInquiry extends Model {
     public function getByProperty($property_id, $limit = 10) {
         try {
             $db = Database::getInstance();
-            $sql = "SELECT * FROM {$this->table}
+            $sql = "SELECT * FROM {static::$table}
                     WHERE property_id = ?
                     ORDER BY created_at DESC LIMIT ?";
 
@@ -70,7 +70,7 @@ class PropertyInquiry extends Model {
         try {
             $db = Database::getInstance();
             $sql = "SELECT i.*, p.title as property_title, p.city, p.state
-                    FROM {$this->table} i
+                    FROM {static::$table} i
                     LEFT JOIN properties p ON i.property_id = p.id
                     WHERE i.user_id = ?";
 
@@ -90,7 +90,7 @@ class PropertyInquiry extends Model {
     public function updateStatus($inquiry_id, $status) {
         try {
             $db = Database::getInstance();
-            $sql = "UPDATE {$this->table} SET status = ?, updated_at = NOW() WHERE id = ?";
+            $sql = "UPDATE {static::$table} SET status = ?, updated_at = NOW() WHERE id = ?";
             $stmt = $db->query($sql, [$status, $inquiry_id]);
             return true;
 
@@ -109,16 +109,16 @@ class PropertyInquiry extends Model {
             $stats = [];
 
             // Total inquiries
-            $stmt = $db->query("SELECT COUNT(*) as total FROM {$this->table}");
+            $stmt = $db->query("SELECT COUNT(*) as total FROM {static::$table}");
             $stats['total'] = (int)$stmt->fetch()['total'];
 
             // New inquiries (last 30 days)
-            $stmt = $db->query("SELECT COUNT(*) as new FROM {$this->table}
+            $stmt = $db->query("SELECT COUNT(*) as new FROM {static::$table}
                                      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             $stats['new'] = (int)$stmt->fetch()['new'];
 
             // Status breakdown
-            $stmt = $db->query("SELECT status, COUNT(*) as count FROM {$this->table}
+            $stmt = $db->query("SELECT status, COUNT(*) as count FROM {static::$table}
                                      GROUP BY status");
             $stats['status_breakdown'] = $stmt->fetchAll();
 
@@ -137,12 +137,12 @@ class PropertyInquiry extends Model {
         try {
             $sql = "SELECT i.*, p.title as property_title, p.city, p.state,
                            u.name as user_name, u.email as user_email
-                    FROM {$this->table} i
+                    FROM {static::$table} i
                     LEFT JOIN properties p ON i.property_id = p.id
                     LEFT JOIN users u ON i.user_id = u.id
                     ORDER BY i.created_at DESC LIMIT ?";
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = static::getDb()->prepare($sql);
             $stmt->execute([$limit]);
 
             return $stmt->fetchAll();
@@ -160,7 +160,7 @@ class PropertyInquiry extends Model {
         try {
             $sql = "SELECT i.*, p.title as property_title, p.city, p.state,
                            u.name as user_name, u.email as user_email
-                    FROM {$this->table} i
+                    FROM {static::$table} i
                     LEFT JOIN properties p ON i.property_id = p.id
                     LEFT JOIN users u ON i.user_id = u.id
                     WHERE i.guest_name LIKE ?
@@ -170,7 +170,7 @@ class PropertyInquiry extends Model {
                     ORDER BY i.created_at DESC LIMIT ?";
 
             $search_pattern = "%{$search_term}%";
-            $stmt = $this->db->prepare($sql);
+            $stmt = static::getDb()->prepare($sql);
             $stmt->execute([$search_pattern, $search_pattern, $search_pattern, $search_pattern, $limit]);
 
             return $stmt->fetchAll();
@@ -186,8 +186,8 @@ class PropertyInquiry extends Model {
      */
     public function deleteById($inquiry_id) {
         try {
-            $sql = "DELETE FROM {$this->table} WHERE id = ?";
-            $stmt = $this->db->prepare($sql);
+            $sql = "DELETE FROM {static::$table} WHERE id = ?";
+            $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$inquiry_id]);
 
         } catch (\Exception $e) {
@@ -203,12 +203,12 @@ class PropertyInquiry extends Model {
         try {
             $sql = "SELECT i.*, p.title as property_title, p.city, p.state, p.price,
                            u.name as user_name, u.email as user_email, u.phone as user_phone
-                    FROM {$this->table} i
+                    FROM {static::$table} i
                     LEFT JOIN properties p ON i.property_id = p.id
                     LEFT JOIN users u ON i.user_id = u.id
                     WHERE i.id = ?";
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = static::getDb()->prepare($sql);
             $stmt->execute([$inquiry_id]);
 
             return $stmt->fetch();
@@ -226,13 +226,13 @@ class PropertyInquiry extends Model {
         try {
             $sql = "SELECT i.*, p.title as property_title, p.city, p.state,
                            u.name as user_name, u.email as user_email
-                    FROM {$this->table} i
+                    FROM {static::$table} i
                     LEFT JOIN properties p ON i.property_id = p.id
                     LEFT JOIN users u ON i.user_id = u.id
                     WHERE i.status = ?
                     ORDER BY i.created_at DESC LIMIT ?";
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = static::getDb()->prepare($sql);
             $stmt->execute([$status, $limit]);
 
             return $stmt->fetchAll();
@@ -263,12 +263,12 @@ class PropertyInquiry extends Model {
     public function getTrends($days = 30) {
         try {
             $sql = "SELECT DATE(created_at) as date, COUNT(*) as count
-                    FROM {$this->table}
+                    FROM {static::$table}
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
                     GROUP BY DATE(created_at)
                     ORDER BY date";
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = static::getDb()->prepare($sql);
             $stmt->execute([$days]);
 
             return $stmt->fetchAll();
@@ -286,7 +286,7 @@ class PropertyInquiry extends Model {
         try {
             $sql = "SELECT i.*, p.title as property_title, p.city, p.state,
                            u.name as user_name, u.email as user_email
-                    FROM {$this->table} i
+                    FROM {static::$table} i
                     LEFT JOIN properties p ON i.property_id = p.id
                     LEFT JOIN users u ON i.user_id = u.id";
 
@@ -300,10 +300,10 @@ class PropertyInquiry extends Model {
                 }
 
                 $sql .= " WHERE " . implode(' AND ', $where_parts);
-                $stmt = $this->db->prepare($sql);
+                $stmt = static::getDb()->prepare($sql);
                 $stmt->execute($params);
             } else {
-                $stmt = $this->db->query($sql);
+                $stmt = static::getDb()->query($sql);
             }
 
             $data = $stmt->fetchAll();
@@ -343,12 +343,12 @@ class PropertyInquiry extends Model {
             }
 
             $placeholders = str_repeat('?,', count($inquiry_ids) - 1) . '?';
-            $sql = "UPDATE {$this->table}
+            $sql = "UPDATE {static::$table}
                     SET status = ?, updated_at = NOW()
                     WHERE id IN ({$placeholders})";
 
             $params = array_merge([$status], $inquiry_ids);
-            $stmt = $this->db->prepare($sql);
+            $stmt = static::getDb()->prepare($sql);
             return $stmt->execute($params);
 
         } catch (\Exception $e) {
@@ -367,11 +367,11 @@ class PropertyInquiry extends Model {
                         COUNT(CASE WHEN status = 'responded' THEN 1 END) as responded,
                         COUNT(CASE WHEN status = 'closed' THEN 1 END) as closed,
                         AVG(TIMESTAMPDIFF(HOUR, created_at, updated_at)) as avg_response_time
-                    FROM {$this->table}
+                    FROM {static::$table}
                     WHERE user_id = ?
                       AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)";
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = static::getDb()->prepare($sql);
             $stmt->execute([$agent_id, $period]);
 
             return $stmt->fetch();

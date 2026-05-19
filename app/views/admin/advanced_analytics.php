@@ -56,7 +56,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Month</th><th>Properties</th><th>Users</th><th>Revenue</th></tr></thead>
                             <tbody>
                                 <?php foreach (($analyticsData['growth_trends'] ?? []) as $trend): ?>
@@ -71,7 +71,7 @@
                                 <tr><td colspan="4" class="text-center text-muted py-3">No growth trend data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>City</th><th>State</th><th>Properties</th><th>Avg Price</th></tr></thead>
                             <tbody>
                                 <?php foreach (($analyticsData['top_locations'] ?? []) as $loc): ?>
@@ -98,7 +98,7 @@
                                 <tr><td colspan="4" class="text-center text-muted py-3">No location data</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

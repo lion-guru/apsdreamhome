@@ -349,4 +349,34 @@ class CampaignController extends AdminController
             return [];
         }
     }
+
+    /**
+     * Email templates management
+     */
+    public function emailTemplates()
+    {
+        $this->data['page_title'] = 'Email Templates';
+        $this->data['templates'] = [];
+        $this->render('admin/campaigns/email-templates');
+    }
+
+    /**
+     * SMS campaigns management
+     */
+    public function smsCampaigns()
+    {
+        $this->data['page_title'] = 'SMS Campaigns';
+        $this->data['campaigns'] = [];
+        $this->render('admin/campaigns/sms-campaigns');
+    }
+
+    /**
+     * WhatsApp broadcast management
+     */
+    public function whatsappBroadcast()
+    {
+        $this->data['page_title'] = 'WhatsApp Broadcast';
+        $this->data['broadcasts'] = [];
+        $this->render('admin/campaigns/whatsapp-broadcast');
+    }
 }

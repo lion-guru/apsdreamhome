@@ -46,14 +46,14 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Coverage Areas</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Area</th><th>Coverage</th><th>Speed</th><th>Latency</th></tr></thead>
                             <tbody>
                                 <?php foreach (($fd['coverage_areas'] ?? []) as $area => $data): ?>
                                     <tr><td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $area))) ?></td><td><?= htmlspecialchars($data['coverage'] ?? '-') ?></td><td><?= htmlspecialchars($data['speed'] ?? '-') ?></td><td><?= htmlspecialchars($data['latency'] ?? '-') ?></td></tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -62,21 +62,21 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Performance Metrics</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($fd['performance_metrics'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $k))) ?></th><td><?= htmlspecialchars($v) ?></td></tr>
                         <?php endforeach; ?>
-                    </table>
+                    </table></div>
                 </div>
             </div>
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Application Optimization</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($fd['application_optimization'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $k))) ?></th><td><?= htmlspecialchars($v['improvement'] ?? '-') ?></td></tr>
                         <?php endforeach; ?>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

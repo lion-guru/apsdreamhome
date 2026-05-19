@@ -34,7 +34,7 @@ class Employee extends Model
             WHERE e.id = :id
         ";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -54,7 +54,7 @@ class Employee extends Model
             WHERE e.user_id = :user_id
         ";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -72,7 +72,7 @@ class Employee extends Model
             WHERE e.email = :email
         ";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute(['email' => $email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -105,7 +105,7 @@ class Employee extends Model
 
         $sql .= " ORDER BY e.created_at DESC";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -116,7 +116,7 @@ class Employee extends Model
     public function createEmployee($data)
     {
         // Start transaction
-        $this->db->beginTransaction();
+        static::getDb()->beginTransaction();
 
         try {
             // Create user account first
@@ -125,7 +125,7 @@ class Employee extends Model
                 VALUES (:name, :email, :phone, :password, 'employee', 'active', NOW(), NOW())
             ";
 
-            $userStmt = $this->db->prepare($userSql);
+            $userStmt = static::getDb()->prepare($userSql);
             $userStmt->execute([
                 'name' => $data['name'],
                 'email' => $data['email'],
@@ -133,7 +133,7 @@ class Employee extends Model
                 'password' => password_hash($data['password'], PASSWORD_DEFAULT)
             ]);
 
-            $userId = $this->db->lastInsertId();
+            $userId = static::getDb()->lastInsertId();
 
             // Insert employee record
             $employeeSql = "
@@ -148,7 +148,7 @@ class Employee extends Model
                 )
             ";
 
-            $employeeStmt = $this->db->prepare($employeeSql);
+            $employeeStmt = static::getDb()->prepare($employeeSql);
             $employeeStmt->execute([
                 'user_id' => $userId,
                 'role_id' => $data['role_id'],
@@ -164,7 +164,7 @@ class Employee extends Model
                 'phone' => $data['phone']
             ]);
 
-            $employeeId = $this->db->lastInsertId();
+            $employeeId = static::getDb()->lastInsertId();
 
             // Log activity
             try {
@@ -172,7 +172,7 @@ class Employee extends Model
                 INSERT INTO employee_activities (employee_id, activity_type, description, created_at)
                 VALUES (:employee_id, 'joined_company', 'Employee joined the company', NOW())
                 ";
-                $activityStmt = $this->db->prepare($activitySql);
+                $activityStmt = static::getDb()->prepare($activitySql);
                 $activityStmt->execute(['employee_id' => $employeeId]);
             } catch (Exception $e) {
                 // Ignore activity log error if table missing
@@ -182,7 +182,7 @@ class Employee extends Model
             if (!empty($data['role_id'])) {
                 // Manually insert into user_roles to avoid redundant update in assignRole
                 try {
-                    $stmtRole = $this->db->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
+                    $stmtRole = static::getDb()->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
                     $stmtRole->execute(['user_id' => $userId, 'role_id' => $data['role_id']]);
                 } catch (Exception $e) {
                     // Ignore if user_roles table issue
@@ -190,12 +190,12 @@ class Employee extends Model
             }
 
             // Commit transaction
-            $this->db->commit();
+            static::getDb()->commit();
 
             return $employeeId;
         } catch (Exception $e) {
             // Rollback transaction
-            $this->db->rollBack();
+            static::getDb()->rollBack();
             throw $e;
         }
     }
@@ -205,7 +205,7 @@ class Employee extends Model
      */
     public function getRoles()
     {
-        $stmt = $this->db->query("SELECT * FROM roles ORDER BY name");
+        $stmt = static::getDb()->query("SELECT * FROM roles ORDER BY name");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -214,7 +214,7 @@ class Employee extends Model
      */
     public function getDepartments()
     {
-        $stmt = $this->db->query("SELECT * FROM departments ORDER BY name");
+        $stmt = static::getDb()->query("SELECT * FROM departments ORDER BY name");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -224,7 +224,7 @@ class Employee extends Model
     public function updateEmployee($id, $data)
     {
         // Start transaction
-        $this->db->beginTransaction();
+        static::getDb()->beginTransaction();
 
         try {
             // 1. Update employees table (Primary for phone, role_id, department_id, etc.)
@@ -257,13 +257,13 @@ class Employee extends Model
 
             if (!empty($employeeUpdates)) {
                 $sql = "UPDATE " . static::$table . " SET " . implode(', ', $employeeUpdates) . ", updated_at = NOW() WHERE id = :id";
-                $stmt = $this->db->prepare($sql);
+                $stmt = static::getDb()->prepare($sql);
                 $stmt->execute($employeeParams);
             }
 
             // 2. Update users table (Primary for authentication: name, email, password, role)
             // Get user_id associated with employee
-            $stmtUser = $this->db->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
+            $stmtUser = static::getDb()->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
             $stmtUser->execute(['id' => $id]);
             $employee = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
@@ -293,29 +293,29 @@ class Employee extends Model
 
                 if (!empty($userUpdates)) {
                     $userSql = "UPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :id";
-                    $userStmt = $this->db->prepare($userSql);
+                    $userStmt = static::getDb()->prepare($userSql);
                     $userStmt->execute($userParams);
                 }
 
                 // Update user_roles if role_id changed
                 if (isset($data['role_id'])) {
                     // Check if exists, update or insert
-                    $stmtCheck = $this->db->prepare("SELECT * FROM user_roles WHERE user_id = :user_id");
+                    $stmtCheck = static::getDb()->prepare("SELECT * FROM user_roles WHERE user_id = :user_id");
                     $stmtCheck->execute(['user_id' => $employee['user_id']]);
                     if ($stmtCheck->fetch()) {
-                        $stmtRole = $this->db->prepare("UPDATE user_roles SET role_id = :role_id WHERE user_id = :user_id");
+                        $stmtRole = static::getDb()->prepare("UPDATE user_roles SET role_id = :role_id WHERE user_id = :user_id");
                         $stmtRole->execute(['user_id' => $employee['user_id'], 'role_id' => $data['role_id']]);
                     } else {
-                        $stmtRole = $this->db->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
+                        $stmtRole = static::getDb()->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
                         $stmtRole->execute(['user_id' => $employee['user_id'], 'role_id' => $data['role_id']]);
                     }
                 }
             }
 
-            $this->db->commit();
+            static::getDb()->commit();
             return true;
         } catch (Exception $e) {
-            $this->db->rollBack();
+            static::getDb()->rollBack();
             // Log error or rethrow
             return false;
         }
@@ -327,21 +327,21 @@ class Employee extends Model
     public function assignRole($employeeId, $roleId)
     {
         // Update employees table
-        $stmt = $this->db->prepare("UPDATE " . static::$table . " SET role_id = :role_id WHERE id = :id");
+        $stmt = static::getDb()->prepare("UPDATE " . static::$table . " SET role_id = :role_id WHERE id = :id");
         $stmt->execute(['role_id' => $roleId, 'id' => $employeeId]);
 
         // Get user_id
-        $stmtUser = $this->db->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
+        $stmtUser = static::getDb()->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
         $stmtUser->execute(['id' => $employeeId]);
         $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
         if ($user && $user['user_id']) {
             // Delete existing roles
-            $stmtDel = $this->db->prepare("DELETE FROM user_roles WHERE user_id = :user_id");
+            $stmtDel = static::getDb()->prepare("DELETE FROM user_roles WHERE user_id = :user_id");
             $stmtDel->execute(['user_id' => $user['user_id']]);
 
             // Insert new role
-            $stmtIns = $this->db->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
+            $stmtIns = static::getDb()->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
             $stmtIns->execute(['user_id' => $user['user_id'], 'role_id' => $roleId]);
         }
     }
@@ -352,7 +352,7 @@ class Employee extends Model
     public function deleteEmployee($id)
     {
         $sql = "UPDATE " . static::$table . " SET status = 'deleted', updated_at = NOW() WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         return $stmt->execute(['id' => $id]);
     }
 
@@ -361,31 +361,31 @@ class Employee extends Model
      */
     public function offboardEmployee($id)
     {
-        $this->db->beginTransaction();
+        static::getDb()->beginTransaction();
         try {
             // Deactivate employee
-            $stmt = $this->db->prepare("UPDATE " . static::$table . " SET status = 'inactive', updated_at = NOW() WHERE id = :id");
+            $stmt = static::getDb()->prepare("UPDATE " . static::$table . " SET status = 'inactive', updated_at = NOW() WHERE id = :id");
             $stmt->execute(['id' => $id]);
 
             // Get user_id
-            $stmtUser = $this->db->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
+            $stmtUser = static::getDb()->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
             $stmtUser->execute(['id' => $id]);
             $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
             if ($user && $user['user_id']) {
                 // Deactivate user
-                $stmtUserUpd = $this->db->prepare("UPDATE users SET status = 'inactive', updated_at = NOW() WHERE id = :id");
+                $stmtUserUpd = static::getDb()->prepare("UPDATE users SET status = 'inactive', updated_at = NOW() WHERE id = :id");
                 $stmtUserUpd->execute(['id' => $user['user_id']]);
 
                 // Remove roles
-                $stmtRoles = $this->db->prepare("DELETE FROM user_roles WHERE user_id = :user_id");
+                $stmtRoles = static::getDb()->prepare("DELETE FROM user_roles WHERE user_id = :user_id");
                 $stmtRoles->execute(['user_id' => $user['user_id']]);
             }
 
-            $this->db->commit();
+            static::getDb()->commit();
             return true;
         } catch (Exception $e) {
-            $this->db->rollBack();
+            static::getDb()->rollBack();
             throw $e;
         }
     }

@@ -149,7 +149,7 @@ $recentActivity = $db->fetchAll(
                             </div>
                         <?php else: ?>
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <div class="table-responsive"><table class="table table-hover table-responsive">
                                     <thead>
                                         <tr>
                                             <th>Name</th>
@@ -187,7 +187,7 @@ $recentActivity = $db->fetchAll(
                                         </tr>
                                         <?php endforeach; ?>
                                     </tbody>
-                                </table>
+                                </table></div>
                             </div>
                         <?php endif; ?>
                     </div>

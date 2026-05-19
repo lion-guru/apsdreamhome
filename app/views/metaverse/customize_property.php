@@ -26,8 +26,8 @@
                             <?php foreach ($options as $option): ?>
                             <div class="col-md-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="colors[<?= $category ?>]" value="<?= $option ?>" id="color_<?= $category ?>_<?= $option ?>">
-                                    <label class="form-check-label" for="color_<?= $category ?>_<?= $option ?>"><?= $option ?></label>
+                                    <input class="form-check-input" type="radio" name="colors[<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>" id="color_<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>_<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>">
+                                    <label class="form-check-label" for="color_<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>_<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?></label>
                                 </div>
                             </div>
                             <?php endforeach; ?>
@@ -46,8 +46,8 @@
                             <?php foreach ($items as $item): ?>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="furniture[<?= $room ?>][]" value="<?= $item ?>" id="furn_<?= $room ?>_<?= $item ?>">
-                                    <label class="form-check-label" for="furn_<?= $room ?>_<?= $item ?>"><?= $item ?></label>
+                                    <input class="form-check-input" type="checkbox" name="furniture[<?= htmlspecialchars($room, ENT_QUOTES, 'UTF-8') ?>][]" value="<?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?>" id="furn_<?= htmlspecialchars($room, ENT_QUOTES, 'UTF-8') ?>_<?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?>">
+                                    <label class="form-check-label" for="furn_<?= htmlspecialchars($room, ENT_QUOTES, 'UTF-8') ?>_<?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?></label>
                                 </div>
                             </div>
                             <?php endforeach; ?>
@@ -66,8 +66,8 @@
                             <?php foreach ($options as $option): ?>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="lighting[<?= $type ?>]" value="<?= $option ?>" id="lt_<?= $type ?>_<?= $option ?>">
-                                    <label class="form-check-label" for="lt_<?= $type ?>_<?= $option ?>"><?= $option ?></label>
+                                    <input class="form-check-input" type="radio" name="lighting[<?= htmlspecialchars($type, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>" id="lt_<?= htmlspecialchars($type, ENT_QUOTES, 'UTF-8') ?>_<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>">
+                                    <label class="form-check-label" for="lt_<?= htmlspecialchars($type, ENT_QUOTES, 'UTF-8') ?>_<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?></label>
                                 </div>
                             </div>
                             <?php endforeach; ?>
@@ -86,8 +86,8 @@
                             <?php foreach ($options as $option): ?>
                             <div class="col-md-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="decor[<?= $category ?>][]" value="<?= $option ?>" id="decor_<?= $category ?>_<?= $option ?>">
-                                    <label class="form-check-label" for="decor_<?= $category ?>_<?= $option ?>"><?= $option ?></label>
+                                    <input class="form-check-input" type="checkbox" name="decor[<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>][]" value="<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>" id="decor_<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>_<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>">
+                                    <label class="form-check-label" for="decor_<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>_<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8') ?></label>
                                 </div>
                             </div>
                             <?php endforeach; ?>

@@ -44,7 +44,8 @@ class CommunicationController extends BaseApiController
             if (!$message) return $this->jsonError('Invalid message format or too long', 400);
 
             // Check for suspicious patterns
-            if ($this->hasSuspiciousPatterns(\json_encode($this->request()->all()))) {
+            if ($this->hasSuspiciousPatterns(\json_encode($this->request()// TODO: Consider using paginate() for large datasets instead of all()
+                        ->all()))) {
                 $this->logSecurityEvent('Suspicious Input Pattern Detected in Email API', [
                     'ip_address' => $this->request()->getClientIp()
                 ]);
@@ -86,7 +87,8 @@ class CommunicationController extends BaseApiController
             if (!$message) return $this->jsonError('Invalid message format or too long', 400);
 
             // Check for suspicious patterns
-            if ($this->hasSuspiciousPatterns(\json_encode($this->request()->all()))) {
+            if ($this->hasSuspiciousPatterns(\json_encode($this->request()// TODO: Consider using paginate() for large datasets instead of all()
+                        ->all()))) {
                 $this->logSecurityEvent('Suspicious Input Pattern Detected in WhatsApp API', [
                     'ip_address' => $this->request()->getClientIp()
                 ]);
@@ -198,7 +200,8 @@ class CommunicationController extends BaseApiController
         // Handle incoming messages (POST)
         if ($method === 'POST') {
             try {
-                $data = $this->request()->all();
+                $data = $this->request()// TODO: Consider using paginate() for large datasets instead of all()
+                        ->all();
 
                 if (!$data) {
                     return $this->jsonError('Invalid JSON data', 400);

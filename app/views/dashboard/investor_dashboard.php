@@ -59,7 +59,7 @@ ob_start();
     <div class="row mb-4 animate-fade-up">
         <div class="col-md-8 d-flex align-items-center">
             <div class="position-relative me-4">
-                <img src="<?= !empty($investor['uimage']) ? h($investor['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($investor['uname']) . '&size=100&background=1e3a8a&color=fff' ?>"
+                <img src="<?= !empty($investor['uimage']) ? h($investor['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($investor['uname']) . '&size=100&background=1e3a8a&color=fff' ? class="img-fluid">"
                     alt="Profile" class="rounded-circle shadow-sm border border-3 border-white" style="width:100px; height:100px; object-fit:cover;">
                 <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
             </div>
@@ -151,7 +151,7 @@ ob_start();
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead class="bg-light text-muted small text-uppercase">
                                 <tr>
                                     <th class="ps-4">Project</th>
@@ -184,7 +184,7 @@ ob_start();
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

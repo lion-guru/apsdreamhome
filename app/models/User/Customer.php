@@ -110,7 +110,7 @@ class Customer extends Model
                    COUNT(DISTINCT pr.id) as total_reviews_given,
                    (SELECT COUNT(*) FROM customer_favorites cf WHERE cf.customer_id = u.id) as total_favorites,
                    (SELECT COUNT(*) FROM customer_alerts ca WHERE ca.customer_id = u.id AND ca.status = 'active') as active_alerts
-            FROM {$this->table} u
+            FROM {static::$table} u
             LEFT JOIN customer_profiles c ON u.id = c.user_id
             LEFT JOIN property_views pv ON u.id = pv.customer_id
             LEFT JOIN properties p ON pv.property_id = p.id
@@ -226,7 +226,7 @@ class Customer extends Model
     {
         $sql = "
             SELECT u.*, c.phone, c.address, c.city, c.state, c.pincode
-            FROM {$this->table} u
+            FROM {static::$table} u
             LEFT JOIN customer_profiles c ON u.id = c.user_id
             WHERE u.email = :email AND u.role = 'customer' AND u.status = 'active'
         ";
@@ -347,7 +347,7 @@ class Customer extends Model
             }
 
             if (!empty($userData)) {
-                $userSql = "UPDATE {$this->table} SET " . implode(', ', $userData) . ", updated_at = NOW() WHERE id = :id";
+                $userSql = "UPDATE {static::$table} SET " . implode(', ', $userData) . ", updated_at = NOW() WHERE id = :id";
                 $userStmt = $this->db->prepare($userSql);
                 $userStmt->execute($userParams);
             }
@@ -1216,7 +1216,7 @@ class Customer extends Model
                    COALESCE(SUM(CASE WHEN pay.status = 'completed' THEN pay.amount ELSE 0 END), 0) as total_spent,
                    COUNT(DISTINCT pr.id) as total_reviews,
                    u.created_at as registration_date
-            FROM {$this->table} u
+            FROM {static::$table} u
             LEFT JOIN customer_profiles c ON u.id = c.user_id
             LEFT JOIN property_views pv ON u.id = pv.customer_id
             LEFT JOIN customer_favorites cf ON u.id = cf.customer_id
@@ -1286,7 +1286,7 @@ class Customer extends Model
             $stmt->execute($associateData);
 
             // Update customer role to associate
-            $updateSql = "UPDATE {$this->table} SET role = 'associate' WHERE id = :customer_id";
+            $updateSql = "UPDATE {static::$table} SET role = 'associate' WHERE id = :customer_id";
             $updateStmt = $this->db->prepare($updateSql);
             $updateStmt->execute(['customer_id' => $customerId]);
 
@@ -1438,7 +1438,7 @@ class Customer extends Model
                    COALESCE((SELECT COUNT(*) FROM customer_favorites WHERE customer_id = u.id), 0) as total_favorites,
                    COALESCE((SELECT COUNT(*) FROM property_views WHERE customer_id = u.id), 0) as total_views,
                    u.created_at as registration_date
-            FROM {$this->table} u
+            FROM {static::$table} u
             LEFT JOIN customer_profiles c ON u.id = c.user_id
             {$whereClause}
             ORDER BY total_spent DESC, total_bookings DESC

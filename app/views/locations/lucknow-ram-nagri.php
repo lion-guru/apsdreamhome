@@ -78,8 +78,8 @@ ob_start();
                     <?php for($i=1; $i<=7; $i++): ?>
                         <div class="col-md-3 col-6">
                             <div class="card border-0 shadow-sm rounded-4 p-3 hover-lift">
-                                <img src="<?= get_asset_url("amenities/$i.jpg", 'images') ?>" class="img-fluid rounded-3 mb-3" alt="Amenity <?= $i ?>">
-                                <p class="mb-0 fw-bold">Amenity <?= $i ?></p>
+                                <img src="<?= get_asset_url("amenities/$i.jpg", 'images') ?>" class="img-fluid rounded-3 mb-3" alt="Amenity <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>">
+                                <p class="mb-0 fw-bold">Amenity <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?></p>
                             </div>
                         </div>
                     <?php endfor; ?>

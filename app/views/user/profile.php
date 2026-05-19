@@ -35,7 +35,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="container text-center">
-                <img src="<?php echo $user['image'] ?? '/assets/images/default-avatar.jpg'; ?>" alt="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" class="profile-img mb-3">
+                <img src="<?php echo $user['image'] ?? '/assets/images/default-avatar.jpg'; ? class="img-fluid">" alt="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" class="profile-img mb-3">
                 <h2 class="mb-1"><?php echo htmlspecialchars($user['name'] ?? ''); ?></h2>
                 <p class="mb-0"><?php echo htmlspecialchars($user['email'] ?? ''); ?></p>
                 <span class="badge bg-light text-dark mt-2"><?php echo ucfirst($user['role'] ?? 'user'); ?></span>

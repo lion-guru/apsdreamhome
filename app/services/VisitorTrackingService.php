@@ -144,7 +144,7 @@ class VisitorTrackingService
                         name = COALESCE(?, name),
                         email = COALESCE(?, email),
                         phone = COALESCE(?, phone),
-                        message = CONCAT(COALESCE(message, ''), ?, ' '),
+                        last_message = CONCAT(COALESCE(last_message, ''), ?, ' '),
                         status = 'new',
                         updated_at = NOW()
                     WHERE id = ?",
@@ -162,7 +162,7 @@ class VisitorTrackingService
                     'name' => $name,
                     'email' => $email,
                     'phone' => $phone,
-                    'message' => "[Incomplete Registration - Step {$stepCompleted}/{$totalSteps}]",
+                    'last_message' => "[Incomplete Registration - Step {$stepCompleted}/{$totalSteps}]",
                     'status' => 'new',
                     'source' => 'incomplete_registration',
                     'priority' => 'medium',

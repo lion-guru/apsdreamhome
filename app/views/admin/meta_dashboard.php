@@ -498,7 +498,7 @@ $roleDashboards = [
                             <div class="card-body">
                                 <?php if (count($mostAsked) > 0): ?>
                                     <div class="table-responsive">
-                                        <table class="table table-hover">
+                                        <div class="table-responsive"><table class="table table-hover table-responsive">
                                             <thead>
                                                 <tr>
                                                     <th>Question Pattern</th>
@@ -525,7 +525,7 @@ $roleDashboards = [
                                                     </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
-                                        </table>
+                                        </table></div>
                                     </div>
                                 <?php else: ?>
                                     <div class="text-center py-4 text-muted">

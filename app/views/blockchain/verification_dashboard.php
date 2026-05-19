@@ -49,7 +49,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-home me-2"></i>Your Properties</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Property</th><th>City</th><th>Status</th><th>Action</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($user_properties)): ?>
@@ -65,7 +65,7 @@
                                     <tr><td colspan="4" class="text-center text-muted py-3">No properties found</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-hourglass-half me-2"></i>Verification Requests</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Property</th><th>Requested By</th><th>Date</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($verification_requests)): ?>
@@ -90,7 +90,7 @@
                                     <tr><td colspan="3" class="text-center text-muted py-3">No pending requests</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

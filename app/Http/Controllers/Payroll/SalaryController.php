@@ -22,7 +22,8 @@ class SalaryController
     public function createSalaryStructure()
     {
         try {
-            $data = request()->all();
+            $data = request()// TODO: Consider using paginate() for large datasets instead of all()
+                        ->all();
 
             // Validate required fields
             $required = ['employee_id', 'basic_salary', 'gross_salary', 'net_salary', 'effective_from', 'created_by'];
@@ -66,7 +67,8 @@ class SalaryController
     {
         try {
             $structureId = request()->input('structure_id');
-            $data = request()->all();
+            $data = request()// TODO: Consider using paginate() for large datasets instead of all()
+                        ->all();
 
             if (!$structureId) {
                 return response()->json([

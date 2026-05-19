@@ -1,5 +1,3 @@
-<?php include APP_PATH . '/views/admin/layouts/header.php'; ?>
-
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
@@ -140,8 +138,8 @@
         // Revenue Chart
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
         const revenueData = <?php echo json_encode(array_map(function ($item) {
-                                return ['date' => $item['date'], 'revenue' => $item['daily_revenue']];
-                            }, array_fill(0, 30, ['date' => date('Y-m-d'), 'revenue' => 0]))); ?>;
+                                return ['date' => $item['date'], 'revenue' => $item['daily_revenue'] ?? 0];
+                            }, array_fill(0, 30, ['date' => date('Y-m-d'), 'daily_revenue' => 0]))); ?>;
 
         new Chart(revenueCtx, {
             type: 'line',
@@ -207,4 +205,4 @@
     });
 </script>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
+<?php  ?>

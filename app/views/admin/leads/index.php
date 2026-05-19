@@ -1,110 +1,98 @@
-<!-- Leads Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">Lead Management</h1>
-        <p class="text-muted mb-0">Manage and track all leads</p>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-bullseye"></i> Lead Management</h2>
+        <div>
+            <a href="<?= BASE_URL ?>/admin/leads/create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Lead
+            </a>
+            <a href="<?= BASE_URL ?>/admin/leads/import" class="btn btn-success">
+                <i class="fas fa-upload"></i> Import
+            </a>
+        </div>
     </div>
-    <a href="<?php echo BASE_URL; ?>/admin/leads/create" class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Add Lead
-    </a>
-</div>
-
-<?php if (isset($success) && $success): ?>
-    <div class="alert alert-success alert-dismissible fade show">
-        <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<?php endif; ?>
-
-<!-- Search and Export -->
-<?php require __DIR__ . '/../partials/search_bar.php'; ?>
-<?php require __DIR__ . '/../partials/export_buttons.php'; ?>
-<?php require __DIR__ . '/../partials/mobile_optimization.php'; ?>
-<?php require __DIR__ . '/../partials/realtime_updates.php'; ?>
-
-<!-- Stats Row -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center">
-                <div class="h3 text-primary mb-0"><?php echo count($leads ?? []); ?></div>
-                <small class="text-muted">Total Leads</small>
+    
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Total Leads</h5>
+                    <h3><?= count($leads ?? []) ?></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Converted</h5>
+                    <h3>0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5>Follow-up</h5>
+                    <h3>0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5>Lost</h5>
+                    <h3>0</h3>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center">
-                <div class="h3 text-success mb-0">0</div>
-                <small class="text-muted">Converted</small>
-            </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">All Leads</h5>
         </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center">
-                <div class="h3 text-warning mb-0">0</div>
-                <small class="text-muted">In Progress</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center">
-                <div class="h3 text-info mb-0">0</div>
-                <small class="text-muted">New Today</small>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Leads Table -->
-<div class="card border-0 shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="border-0 ps-4">Lead</th>
-                        <th class="border-0">Contact</th>
-                        <th class="border-0">Property</th>
-                        <th class="border-0">Status</th>
-                        <th class="border-0">Date</th>
-                        <th class="border-0 text-end pe-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($leads)): ?>
-                        <?php foreach ($leads as $lead): ?>
+        <div class="card-body">
+            <?php if (empty($leads)): ?>
+                <div class="text-center py-5">
+                    <i class="fas fa-bullseye fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No leads found!</p>
+                    <a href="<?= BASE_URL ?>/admin/leads/create" class="btn btn-primary">Add Lead</a>
+                </div>
+            <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
-                                <td class="ps-4">
-                                    <div class="fw-semibold"><?php echo htmlspecialchars($lead['name'] ?? 'Unknown'); ?></div>
-                                </td>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Source</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($leads as $lead): ?>
+                            <tr>
+                                <td><strong><?= htmlspecialchars($lead['name'] ?? 'N/A') ?></strong></td>
+                                <td><?= htmlspecialchars($lead['phone'] ?? '-') ?></td>
+                                <td><?= htmlspecialchars($lead['email'] ?? '-') ?></td>
+                                <td><?= htmlspecialchars($lead['source'] ?? 'Direct') ?></td>
                                 <td>
-                                    <div><i class="fas fa-envelope text-muted me-1"></i> <?php echo htmlspecialchars($lead['email'] ?? ''); ?></div>
-                                    <small><i class="fas fa-phone text-muted me-1"></i> <?php echo htmlspecialchars($lead['phone'] ?? 'N/A'); ?></small>
-                                </td>
-                                <td><?php echo htmlspecialchars($lead['property_name'] ?? 'General Inquiry'); ?></td>
-                                <td>
-                                    <span class="badge bg-<?php echo ($lead['status'] ?? 'new') === 'converted' ? 'success' : (($lead['status'] ?? 'new') === 'contacted' ? 'warning' : 'info'); ?>">
-                                        <?php echo ucfirst($lead['status'] ?? 'new'); ?>
+                                    <span class="badge bg-<?= ($lead['status'] ?? '') === 'new' ? 'primary' : (($lead['status'] ?? '') === 'converted' ? 'success' : 'secondary') ?>">
+                                        <?= ucfirst($lead['status'] ?? 'new') ?>
                                     </span>
                                 </td>
-                                <td><?php echo date('M d, Y', strtotime($lead['created_at'] ?? 'now')); ?></td>
-                                <td class="text-end pe-4">
-                                    <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
-                                    <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                    <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>/destroy" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this lead?');"><i class="fas fa-trash"></i></a>
+                                <td><?= date('d M Y', strtotime($lead['created_at'] ?? 'now')) ?></td>
+                                <td>
+                                    <a href="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>" class="btn btn-sm btn-info">View</a>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">No leads found</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

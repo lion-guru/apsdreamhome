@@ -59,11 +59,11 @@
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Account Info</h6></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Member Since</th><td><?= htmlspecialchars($user['created_at'] ?? 'N/A') ?></td></tr>
                         <tr><th>Account Status</th><td><span class="badge bg-success"><?= htmlspecialchars(ucfirst($user['status'] ?? 'Active')) ?></span></td></tr>
                         <tr><th>Last Login</th><td><?= htmlspecialchars($user['last_login'] ?? 'N/A') ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

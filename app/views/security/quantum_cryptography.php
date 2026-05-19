@@ -9,7 +9,7 @@
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Current Vulnerable Algorithms</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Algorithm</th><th>Key Size</th><th>Quantum Vulnerable</th><th>Estimated Break Time</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($algorithms)): ?>
@@ -19,7 +19,7 @@
                                 <?php else: ?><tr><td colspan="4" class="text-center text-muted py-3">No data available</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -29,7 +29,7 @@
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-shield text-success me-2"></i>Quantum-Resistant Solutions</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Algorithm</th><th>Type</th><th>Security Level</th><th>Status</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($solutions)): ?>
@@ -39,7 +39,7 @@
                                 <?php else: ?><tr><td colspan="4" class="text-center text-muted py-3">No data available</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -74,8 +74,8 @@
                     <?php foreach ($progress_items as $key => $label): ?>
                         <?php $val = $impl_status[$key] ?? '0%'; $pct = (int) $val; ?>
                         <div class="mb-3">
-                            <div class="d-flex justify-content-between"><small><?= $label ?></small><small class="text-muted"><?= htmlspecialchars($val) ?></small></div>
-                            <div class="progress" style="height:8px"><div class="progress-bar bg-<?= $pct >= 90 ? 'success' : ($pct >= 50 ? 'warning' : 'danger') ?>" style="width:<?= $pct ?>%"></div></div>
+                            <div class="d-flex justify-content-between"><small><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></small><small class="text-muted"><?= htmlspecialchars($val) ?></small></div>
+                            <div class="progress" style="height:8px"><div class="progress-bar bg-<?= $pct >= 90 ? 'success' : ($pct >= 50 ? 'warning' : 'danger') ?>" style="width:<?= htmlspecialchars($pct, ENT_QUOTES, 'UTF-8') ?>%"></div></div>
                         </div>
                     <?php endforeach; ?>
                     <div class="mt-3 p-3 bg-light rounded">

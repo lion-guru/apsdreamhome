@@ -38,7 +38,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-layer-group me-2"></i>Available Models</h5></div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light">
                                 <tr><th>Model</th><th>Version</th><th>Status</th></tr>
                             </thead>
@@ -55,7 +55,7 @@
                                     <tr><td colspan="3" class="text-center text-muted py-3">No models configured</td></tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

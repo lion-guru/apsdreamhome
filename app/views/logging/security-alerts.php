@@ -26,7 +26,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th>Severity</th><th>Alert</th><th>Source</th><th>Count</th><th>First Seen</th><th>Last Seen</th><th>Status</th><th>Actions</th></tr>
                     </thead>
@@ -59,7 +59,7 @@
                             <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-shield-alt fa-2x d-block mb-2 text-success"></i>No security alerts. All clear!</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

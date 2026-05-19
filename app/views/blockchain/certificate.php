@@ -9,14 +9,14 @@
             <hr class="w-50 mx-auto">
             <div class="row justify-content-center">
                 <div class="col-md-6 text-start">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Property</th><td><?= htmlspecialchars($property['title'] ?? '-') ?></td></tr>
                         <tr><th>City</th><td><?= htmlspecialchars($property['city'] ?? '-') ?></td></tr>
                         <tr><th>Status</th><td><span class="badge bg-success">VERIFIED</span></td></tr>
                         <tr><th>Verified On</th><td><?= htmlspecialchars($verification['verification_date'] ?? '-') ?></td></tr>
                         <tr><th>Blockchain Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['blockchain_hash'] ?? '-') ?></code></td></tr>
                         <tr><th>Transaction Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['transaction_hash'] ?? '-') ?></code></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
             <a href="<?= ($base ?? BASE_URL) ?>blockchain/explorer/<?= $property['id'] ?? 0 ?>" class="btn btn-outline-primary mt-3"><i class="fas fa-external-link-alt me-1"></i>View on Explorer</a>

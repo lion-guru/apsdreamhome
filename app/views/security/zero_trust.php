@@ -85,7 +85,7 @@
                             <div class="col-md-4 col-lg">
                                 <div class="text-center p-3 bg-light rounded">
                                     <div class="fs-3 fw-bold text-<?= $p >= 90 ? 'success' : ($p >= 50 ? 'warning' : 'danger') ?>"><?= htmlspecialchars($v) ?></div>
-                                    <small class="text-muted"><?= $l ?></small>
+                                    <small class="text-muted"><?= htmlspecialchars($l, ENT_QUOTES, 'UTF-8') ?></small>
                                 </div>
                             </div>
                         <?php endforeach; ?>

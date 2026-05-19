@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Farmer;
 use App\Models\FarmerLandHolding;
 use App\Models\LandPurchase;
-use App\Core\Database;
-use PDO;
+use App\Core\Security;
 
 /**
  * Farmer Controller
  * Handles all farmer management operations
  */
-class FarmerController extends Controller
+class FarmerController extends BaseController
 {
     private $farmerModel;
     private $landHoldingModel;
@@ -25,7 +24,6 @@ class FarmerController extends Controller
         $this->farmerModel = new Farmer();
         $this->landHoldingModel = new FarmerLandHolding();
         $this->purchaseModel = new LandPurchase();
-        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
@@ -46,7 +44,8 @@ class FarmerController extends Controller
             ];
 
             $this->view('farmers/dashboard', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            error_log("FarmerController::index() error: " . $e->getMessage());
             $this->handleError($e->getMessage());
         }
     }
@@ -67,7 +66,8 @@ class FarmerController extends Controller
             ];
 
             $this->view('farmers/list', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            error_log("FarmerController::list() error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             $this->handleError($e->getMessage());
         }
     }
@@ -89,7 +89,8 @@ class FarmerController extends Controller
             ];
 
             $this->view('farmers/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            error_log("FarmerController::create() error: " . $e->getMessage());
             $this->handleError($e->getMessage());
         }
     }
@@ -124,13 +125,14 @@ class FarmerController extends Controller
             $farmerId = $this->farmerModel->createFarmer($data);
 
             if ($farmerId) {
-                $this->setFlashMessage('success', 'Farmer created successfully!');
-                $this->redirect('/farmers');
+                $this->setFlash('success', 'Farmer created successfully!');
+                $this->redirect('/farmers/list');
             } else {
                 throw new \Exception('Failed to create farmer');
             }
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            error_log("FarmerController::store() error: " . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
             $this->redirect('/farmers/create');
         }
     }
@@ -155,14 +157,15 @@ class FarmerController extends Controller
             ];
 
             $this->view('farmers/show', $data);
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', $e->getMessage());
-            $this->redirect('/farmers');
+        } catch (\Throwable $e) {
+            error_log("FarmerController::show() error: " . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
+            $this->redirect('/farmers/list');
         }
     }
 
     /**
-     * Show edit farmer form
+     * Show farmer details
      */
     public function edit($id)
     {
@@ -183,9 +186,10 @@ class FarmerController extends Controller
             ];
 
             $this->view('farmers/edit', $data);
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', $e->getMessage());
-            $this->redirect('/farmers');
+        } catch (\Throwable $e) {
+            error_log("FarmerController::edit() error: " . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
+            $this->redirect('/farmers/list');
         }
     }
 
@@ -218,13 +222,14 @@ class FarmerController extends Controller
             $result = $this->farmerModel->updateFarmer($id, $data);
 
             if ($result) {
-                $this->setFlashMessage('success', 'Farmer updated successfully!');
-                $this->redirect('/farmers');
+                $this->setFlash('success', 'Farmer updated successfully!');
+                $this->redirect('/farmers/list');
             } else {
                 throw new \Exception('Failed to update farmer');
             }
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            error_log("FarmerController::update() error: " . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
             $this->redirect("/farmers/{$id}/edit");
         }
     }
@@ -238,15 +243,16 @@ class FarmerController extends Controller
             $result = $this->farmerModel->deleteFarmer($id);
 
             if ($result) {
-                $this->setFlashMessage('success', 'Farmer deleted successfully!');
+                $this->setFlash('success', 'Farmer deleted successfully!');
             } else {
                 throw new \Exception('Failed to delete farmer');
             }
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            error_log("FarmerController::delete() error: " . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
         }
 
-        $this->redirect('/farmers');
+        $this->redirect('/farmers/list');
     }
 
     /**
@@ -265,7 +271,8 @@ class FarmerController extends Controller
             ];
 
             $this->view('farmers/search', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            error_log("FarmerController::search() error: " . $e->getMessage());
             $this->handleError($e->getMessage());
         }
     }
@@ -326,7 +333,7 @@ class FarmerController extends Controller
     {
         $stmt = $this->db->prepare("SELECT * FROM states ORDER BY name");
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -336,7 +343,7 @@ class FarmerController extends Controller
     {
         $stmt = $this->db->prepare("SELECT * FROM districts ORDER BY name");
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -344,7 +351,9 @@ class FarmerController extends Controller
      */
     private function handleError($message)
     {
-        $this->setFlashMessage('error', $message);
-        $this->redirect('/farmers');
+        $this->setFlash('error', $message);
+        // Don't redirect to same page if that's what caused the error
+        $redirectUrl = ($_SERVER['REQUEST_URI'] ?? '') === '/apsdreamhome/farmers/list' ? '/farmers' : '/farmers/list';
+        $this->redirect($redirectUrl);
     }
 }

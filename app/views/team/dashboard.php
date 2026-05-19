@@ -840,7 +840,7 @@
 
             node.innerHTML = `
                 <img src="${member.avatar || '/assets/images/user/default-avatar.jpg'}"
-                     alt="${member.name}" class="node-avatar">
+                     alt="${member.name}" class="node-avatar img-fluid">
                 <div class="node-name">${member.name}</div>
                 <div class="node-type">${member.type || 'Member'}
                     <span class="node-status ${member.status || 'active'}"></span>

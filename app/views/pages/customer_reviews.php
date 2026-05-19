@@ -97,7 +97,7 @@ $reviews = [
                                 <label class="form-label">Rating</label>
                                 <div>
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <i class="fas fa-star fs-4 text-muted rating-star" data-rating="<?= $i ?>" style="cursor:pointer"></i>
+                                        <i class="fas fa-star fs-4 text-muted rating-star" data-rating="<?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>" style="cursor:pointer"></i>
                                     <?php endfor; ?>
                                 </div>
                             </div>

@@ -28,7 +28,7 @@
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-list me-2"></i>All Devices</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Type</th><th>Property</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody>
                         <?php if (!empty($devices)): ?>
@@ -47,7 +47,7 @@
                             <tr><td colspan="7" class="text-center text-muted py-3">No devices registered</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

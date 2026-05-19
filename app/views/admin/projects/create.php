@@ -6,7 +6,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-building"></i> Create New Project</h2>
                 <div>
-                    <a href="/admin/projects" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Projects
                     </a>
                 </div>
@@ -14,7 +14,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="/admin/projects/store">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/projects/store">
                         <h5 class="mb-3">Basic Information</h5>
                         <div class="row">
                             <div class="col-md-6">
@@ -219,7 +219,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="/admin/projects" class="btn btn-secondary">
+                            <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

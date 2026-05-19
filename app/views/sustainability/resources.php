@@ -25,7 +25,7 @@
                         <i class="fas fa-arrow-right text-success me-3"></i>
                         <div>
                             <strong class="small d-block"><?= ucfirst(str_replace('_', ' ', $name)) ?></strong>
-                            <small class="text-muted"><?= $desc ?></small>
+                            <small class="text-muted"><?= htmlspecialchars($desc, ENT_QUOTES, 'UTF-8') ?></small>
                         </div>
                     </div>
                 </div>

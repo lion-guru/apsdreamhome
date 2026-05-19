@@ -5,14 +5,14 @@
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-chart-bar me-2"></i>Project Analytics</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/projects">Projects</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/projects/show/<?= $project['id'] ?? 0 ?>"><?= $project['name'] ?? 'Project' ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/projects">Projects</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/projects/show/<?= $project['id'] ?? 0 ?>"><?= $project['name'] ?? 'Project' ?></a></li>
                     <li class="breadcrumb-item active">Analytics</li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/projects" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
             </div>
         </div>
     </div>

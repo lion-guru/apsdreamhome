@@ -13,7 +13,7 @@ $properties = $properties ?? [];
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                         <thead class="bg-light">
                             <tr>
                                 <th>Title</th>
@@ -36,7 +36,7 @@ $properties = $properties ?? [];
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             <?php endif; ?>
         </div>

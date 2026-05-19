@@ -58,8 +58,10 @@ $sectionNames = [
             <?php foreach ($items as $item): ?>
                 <?php
                 $hasChildren = !empty($item['children']);
-                $isActive = ($currentPage === ltrim($item['url'], '/')) || 
-                          (strpos($_SERVER['REQUEST_URI'] ?? '', $item['url']) !== false);
+                $itemFullUrl = rtrim($base . $item['url'], '/');
+                $reqUri = $_SERVER['REQUEST_URI'] ?? '';
+                $reqPath = rtrim(parse_url($reqUri, PHP_URL_PATH), '/');
+                $isActive = ($reqPath === $itemFullUrl) || (strpos($reqPath, $itemFullUrl . '/') === 0);
                 ?>
                 <li class="sidebar-item">
                     <a href="<?php echo $base . htmlspecialchars($item['url']); ?>" 
@@ -128,6 +130,40 @@ $sectionNames = [
             </li>
         </ul>
         
+        <div class="sidebar-sec">Content</div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/erp/inventory" class="sidebar-link <?php echo $currentPage == 'erp-inventory' ? 'active' : ''; ?>">
+                    <i class="fas fa-cubes"></i> Plot Inventory
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/erp/plot-profit" class="sidebar-link <?php echo $currentPage == 'erp-profit' ? 'active' : ''; ?>">
+                    <i class="fas fa-chart-pie"></i> Plot P&L
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/erp/land-mapping" class="sidebar-link <?php echo $currentPage == 'erp-land' ? 'active' : ''; ?>">
+                    <i class="fas fa-map-marked-alt"></i> Land Mapping
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/colonies" class="sidebar-link <?php echo $currentPage == 'colonies' ? 'active' : ''; ?>">
+                    <i class="fas fa-city"></i> Colonies
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/team" class="sidebar-link <?php echo $currentPage == 'team' ? 'active' : ''; ?>">
+                    <i class="fas fa-user-tie"></i> Team
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/pages" class="sidebar-link <?php echo $currentPage == 'pages' ? 'active' : ''; ?>">
+                    <i class="fas fa-file-alt"></i> CMS Pages
+                </a>
+            </li>
+        </ul>
+        
         <div class="sidebar-sec">Properties</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item">
@@ -148,6 +184,11 @@ $sectionNames = [
             <li class="sidebar-item">
                 <a href="<?php echo $base; ?>/admin/sites" class="sidebar-link <?php echo $currentPage == 'sites' ? 'active' : ''; ?>">
                     <i class="fas fa-map-marker-alt"></i> Sites
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/inventory" class="sidebar-link <?php echo $currentPage == 'inventory' ? 'active' : ''; ?>">
+                    <i class="fas fa-warehouse"></i> Plot Inventory
                 </a>
             </li>
         </ul>

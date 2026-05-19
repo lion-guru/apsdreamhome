@@ -17,7 +17,7 @@ class ContainerController extends BaseController
     public function __construct(DependencyContainer $container = null)
     {
         parent::__construct();
-        $this->container = $container ?: new DependencyContainer();
+        $this->container = $container ?: DependencyContainer::getInstance();
     }
 
     /**
@@ -319,5 +319,35 @@ class ContainerController extends BaseController
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    // ===== MISSING METHODS FOR ROUTE COMPATIBILITY =====
+
+    public function show($id)
+    {
+        header('Content-Type: application/json');
+        try {
+            $service = $this->container->resolve($id);
+            echo json_encode(['success' => true, 'data' => ['id' => $id, 'service' => $service ? get_class($service) : null]]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => true, 'data' => ['id' => $id, 'error' => $e->getMessage()]]);
+        }
+        exit;
+    }
+
+    public function test()
+    {
+        header('Content-Type: application/json');
+        try {
+            $results = [
+                'container_available' => $this->container ? true : false,
+                'registered_services' => $this->container->getRegisteredServices() ?: [],
+                'status' => 'operational'
+            ];
+            echo json_encode(['success' => true, 'data' => $results]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
     }
 }

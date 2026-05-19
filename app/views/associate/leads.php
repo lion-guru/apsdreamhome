@@ -17,7 +17,7 @@ $leads = $leads ?? [];
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                         <thead class="bg-light">
                             <tr>
                                 <th>Name</th>
@@ -40,7 +40,7 @@ $leads = $leads ?? [];
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             <?php endif; ?>
         </div>

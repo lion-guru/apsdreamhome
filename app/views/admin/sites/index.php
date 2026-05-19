@@ -1,7 +1,6 @@
 <?php
 $page_title = 'Site Management';
 $active_page = 'sites';
-include APP_PATH . '/views/admin/layouts/header.php';
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -77,15 +76,15 @@ include APP_PATH . '/views/admin/layouts/header.php';
                         <?php foreach ($sites as $site): ?>
                             <tr>
                                 <td>
-                                    <strong><?= htmlspecialchars(site['site_name'] ?? '') ?></strong>
+                                    <strong><?= htmlspecialchars($site['site_name'] ?? '') ?></strong>
                                     <?php if (!empty($site['description'])): ?>
                                         <br><small class="text-muted"><?= htmlspecialchars(substr($site['description'], 0, 100)) ?>...</small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?= htmlspecialchars(site['location'] ?? '') ?>
+                                    <?= htmlspecialchars($site['location'] ?? '') ?>
                                     <?php if (!empty($site['city'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars(site['city'] ?? '') ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($site['city'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -108,7 +107,7 @@ include APP_PATH . '/views/admin/layouts/header.php';
                                         <?= htmlspecialchars(ucfirst(str_replace('_', ' ', $site['status']))) ?>
                                     </span>
                                 </td>
-                                <td><?= number_format(floatval(site['total_area'] ?? 0), 2) ?></td>
+                                <td><?= number_format(floatval($site['total_area'] ?? 0), 2) ?></td>
                                 <td>
                                     <span class="badge bg-primary"><?= $site['total_plots'] ?></span>
                                     <br><small class="text-muted">
@@ -116,7 +115,7 @@ include APP_PATH . '/views/admin/layouts/header.php';
                                     </small>
                                 </td>
                                 <td>
-                                    <span class="badge bg-info"><?= $site['total_properties'] ?></span>
+                                    <span class="badge bg-info"><?= $site['total_properties'] ?? 0 ?></span>
                                 </td>
                                 <td><?= date('M j, Y', strtotime($site['created_at'])) ?></td>
                                 <td>
@@ -144,7 +143,7 @@ include APP_PATH . '/views/admin/layouts/header.php';
             <nav aria-label="Site pagination">
                 <ul class="pagination justify-content-center">
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <li class="page-item <?= $i === $current_page ? 'active' : '' ?>">
+                        <li class="page-item <?= $i === $page ? 'active' : '' ?>">
                             <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($filters['search'] ?? '') ?>&status=<?= urlencode($filters['status'] ?? '') ?>&type=<?= urlencode($filters['type'] ?? '') ?>">
                                 <?= $i ?>
                             </a>
@@ -189,4 +188,3 @@ include APP_PATH . '/views/admin/layouts/header.php';
     }
 </script>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

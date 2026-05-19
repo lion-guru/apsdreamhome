@@ -4,9 +4,7 @@
  * Migrated from resources/views/Views/plots-availability.php
  */
 
-require_once __DIR__ . '/init.php';
-
-$$page_title = 'Plots Availability | APS Dream Homes';
+$page_title = 'Plots Availability | APS Dream Homes';
 $page_description = 'Explore live availability across APS Dream Homes colonies. Check which plots are available, booked, or sold in real time.';
 
 // Sample plot data (to be replaced with dynamic source in future)
@@ -110,7 +108,7 @@ ob_start();
 
                         <h6 class="fw-bold mb-3">Detailed Plot Status</h6>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle plot-status-table">
+                            <div class="table-responsive"><table class="table table-hover align-middle plot-status-table table-responsive">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Plot No.</th>
@@ -129,13 +127,13 @@ ob_start();
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <h5 class="fw-bold mb-3">Colony Layout Map</h5>
                         <div class="text-center">
-                            <img src="/assets/img/suryoday-colony-map-sample.jpg" alt="Suryoday Colony Map" class="plot-map-img mb-3 border">
+                            <img src="/assets/img/suryoday-colony-map-sample.jpg" alt="Suryoday Colony Map" class="plot-map-img mb-3 border img-fluid">
                             <div class="alert alert-info py-2 small">
                                 <i class="fas fa-info-circle me-2"></i>Map numbering matches the table. For an interactive experience, contact our sales team.
                             </div>

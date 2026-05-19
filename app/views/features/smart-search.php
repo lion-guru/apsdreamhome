@@ -39,7 +39,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th>Type</th><th>Title / Name</th><th>Location</th><th>Match</th><th>Actions</th></tr>
                     </thead>
@@ -65,7 +65,7 @@
                             <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-search fa-2x d-block mb-2"></i>No results found for your query.</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

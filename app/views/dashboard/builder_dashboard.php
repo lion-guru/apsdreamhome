@@ -120,7 +120,7 @@ $stats = [
         <div class="dashboard-card">
             <h4><i class="fa-solid fa-building"></i> My Projects</h4>
             <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="projectsTable">
+                <div class="table-responsive"><table class="table table-bordered table-hover table-responsive" id="projectsTable">
                     <thead class="table-light">
                         <tr>
                             <th>Project Name</th>
@@ -151,7 +151,7 @@ $stats = [
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
             <a href="add_project.php" class="btn btn-primary mt-3"><i class="fa fa-plus"></i> Add New Project</a>
         </div>

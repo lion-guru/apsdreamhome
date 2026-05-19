@@ -24,7 +24,7 @@
                         <div class="col-md-3">
                             <div class="border rounded p-3 text-center h-100">
                                 <h6 class="text-primary"><?= ucfirst(str_replace('_', ' ', $key)) ?></h6>
-                                <small><?= $goal ?></small>
+                                <small><?= htmlspecialchars($goal, ENT_QUOTES, 'UTF-8') ?></small>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -43,7 +43,7 @@
                     <?php foreach ($innovations as $key => $innovation): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ucfirst(str_replace('_', ' ', $key)) ?></h6>
-                        <small class="text-muted"><?= $innovation ?></small>
+                        <small class="text-muted"><?= htmlspecialchars($innovation, ENT_QUOTES, 'UTF-8') ?></small>
                     </div>
                     <?php endforeach; ?>
                     <?php if (empty($innovations)): ?><p class="text-muted text-center py-3">No data.</p><?php endif; ?>
@@ -57,7 +57,7 @@
                     <?php foreach ($transform as $key => $item): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ucfirst(str_replace('_', ' ', $key)) ?></h6>
-                        <small class="text-muted"><?= $item ?></small>
+                        <small class="text-muted"><?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?></small>
                     </div>
                     <?php endforeach; ?>
                     <?php if (empty($transform)): ?><p class="text-muted text-center py-3">No data.</p><?php endif; ?>

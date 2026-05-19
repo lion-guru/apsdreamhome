@@ -147,7 +147,7 @@ $notifications = $notifications ?? [];
                 <div class="card-body">
                     <?php if (!empty($recent_activities)): ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <div class="table-responsive"><table class="table table-hover align-middle table-responsive">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Date</th>
@@ -168,7 +168,7 @@ $notifications = $notifications ?? [];
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     <?php else: ?>
                         <div class="text-center py-4">

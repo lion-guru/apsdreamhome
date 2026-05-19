@@ -26,7 +26,7 @@
                         <p class="small text-muted mb-2"><?= ($partner['collaboration'] ?? '') ?></p>
                         <?php if (!empty($partner['joint_projects'] ?? [])): ?>
                         <div><small><strong>Joint Projects:</strong></small></div>
-                        <ul class="list-unstyled mb-0"><?php foreach ($partner['joint_projects'] as $project): ?><li class="small"><i class="fas fa-check-circle text-success me-1"></i><?= $project ?></li><?php endforeach; ?></ul>
+                        <ul class="list-unstyled mb-0"><?php foreach ($partner['joint_projects'] as $project): ?><li class="small"><i class="fas fa-check-circle text-success me-1"></i><?= htmlspecialchars($project, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul>
                         <?php endif; ?>
                     </div>
                 </div>

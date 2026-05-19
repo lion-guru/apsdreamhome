@@ -30,9 +30,9 @@
     <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <!-- Extra head content from views -->
     <?php if (!empty($extraHead)) echo $extraHead; ?>
@@ -378,7 +378,7 @@
     ?>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- AI Chatbot (Left Side) -->
     <div id="ai-chatbot" class="ai-chatbot-container">
@@ -386,7 +386,7 @@
         <div class="ai-chat-popup" id="chatPopup">
             <div class="ai-chat-header">
                 <div class="ai-avatar">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Assistant" onerror="this.style.display='none'">
+                    <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="APS Assistant" onerror="this.style.display='none'">
                     <span class="online-indicator"></span>
                 </div>
                 <div class="ai-header-info">

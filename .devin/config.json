@@ -1,0 +1,109 @@
+{
+  "version": "1.0",
+  "project": "apsdreamhome",
+  "description": "APS Dream Home - Real Estate Management System",
+  "permissions": {
+    "auto_approve": true,
+    "require_confirmation": false,
+    "allowed_operations": [
+      "read",
+      "write",
+      "edit",
+      "delete",
+      "exec",
+      "file_operations",
+      "database_operations",
+      "shell_commands"
+    ],
+    "scope": {
+      "type": "full_project",
+      "path": "c:\\xampp\\htdocs\\apsdreamhome",
+      "allow_recursive": true
+    }
+  },
+  "environment": {
+    "database": {
+      "host": "127.0.0.1",
+      "port": "3307",
+      "name": "apsdreamhome",
+      "user": "root",
+      "password": ""
+    },
+    "server": {
+      "host": "localhost",
+      "port": "80",
+      "protocol": "http",
+      "base_url": "/apsdreamhome"
+    },
+    "php": {
+      "version": "8.0+",
+      "memory_limit": "256M",
+      "max_execution_time": "300"
+    },
+    "development": {
+      "debug_mode": true,
+      "error_reporting": "E_ALL",
+      "log_errors": true,
+      "display_errors": true
+    }
+  },
+  "tools": {
+    "playwright": {
+      "enabled": true,
+      "headless": true,
+      "timeout": 60000
+    },
+    "database": {
+      "enabled": true,
+      "type": "mysql"
+    },
+    "file_operations": {
+      "enabled": true,
+      "allowed_directories": [
+        "app",
+        "public",
+        "assets",
+        "tools",
+        "testing",
+        ".devin"
+      ]
+    }
+  },
+  "skills": {
+    "enabled": true,
+    "auto_discover": true,
+    "search_paths": [
+      ".devin/skills",
+      "agents"
+    ]
+  },
+  "hooks": {
+    "pre_operation": [],
+    "post_operation": [],
+    "on_error": [
+      "log_error",
+      "show_detailed_message"
+    ]
+  },
+  "ui": {
+    "show_progress": true,
+    "auto_confirm": true,
+    "verbose_output": true
+  },
+  "testing": {
+    "auto_run_tests": false,
+    "test_timeout": 30000,
+    "screenshot_on_failure": true
+  },
+  "security": {
+    "validate_inputs": true,
+    "sanitize_outputs": true,
+    "prevent_destructive": true
+  },
+  "preferences": {
+    "default_editor": "code",
+    "save_history": true,
+    "auto_save": true,
+    "max_history_entries": 100
+  }
+}

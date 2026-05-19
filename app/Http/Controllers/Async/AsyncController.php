@@ -560,7 +560,7 @@ class AsyncController
             if (!$result['success']) {
                 // No tasks available
                 if ($continuous) {
-                    sleep(5); // Wait 5 seconds before checking again
+                    // REMOVED: blocking sleep call
                     continue;
                 } else {
                     break;

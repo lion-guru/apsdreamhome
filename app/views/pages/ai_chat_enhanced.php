@@ -159,7 +159,7 @@ async function sendEnhancedPrompt(message) {
     addEnhancedMessage('user', message);
     addEnhancedTyping();
     try {
-        const res = await fetch('<?= $base ?>/api/ai-chat', {
+        const res = await fetch('<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/api/ai-chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message, role: enhancedRole, context: 'enhanced_chat' })

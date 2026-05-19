@@ -55,7 +55,7 @@
                             <div class="col-md-4 col-6">
                                 <div class="border rounded p-3 text-center h-100">
                                     <h3 class="mb-0"><?= (int)($infrastructure[$key]['count'] ?? 0) ?></h3>
-                                    <small class="text-muted"><?= $label ?></small>
+                                    <small class="text-muted"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></small>
                                 </div>
                             </div>
                         <?php endforeach; ?>

@@ -7,11 +7,11 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Contract Details</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Name</th><td><?= htmlspecialchars($ci['name'] ?? '-') ?></td></tr>
                         <tr><th>Address</th><td style="word-break:break-all"><code><?= htmlspecialchars($ci['address'] ?? '-') ?></code></td></tr>
                         <tr><th>Network</th><td><span class="badge bg-info"><?= htmlspecialchars($ci['network'] ?? '-') ?></span></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -20,14 +20,14 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-list me-2"></i>Contract Functions</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <div class="table-responsive"><table class="table table-hover table-responsive">
                             <thead><tr><th>Function</th><th>Description</th></tr></thead>
                             <tbody>
                                 <?php foreach (($ci['functions'] ?? []) as $func => $desc): ?>
                                     <tr><td><code><?= htmlspecialchars($func) ?></code></td><td><?= htmlspecialchars($desc) ?></td></tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

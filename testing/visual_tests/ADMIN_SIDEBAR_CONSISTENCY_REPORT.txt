@@ -1,0 +1,109 @@
+[21:18:24] Main Dashboard:
+[21:18:24]   Title: Dashboard
+[21:18:24]   Has sidebar: YES
+[21:18:24]   Has RBAC sidebar (#sidebarMenu): YES
+[21:18:24]   Has menu items: YES
+[21:18:24]   Has sidebar sections: YES
+[21:18:24]   Section count: 12
+[21:18:24]   Sections: Main, CRM & Sales, Marketing, Bookings_plots, AI & Technology, Users & Team, MLM Network, Financial, Operations, Settings, Hrm, Locations
+[21:18:24]   Menu items: 150
+[21:18:24]   ⚠️  Using FALLBACK MENU (RBAC system not working)
+[21:18:24]   Uses unified layout: NO
+[21:18:24]   Has top navigation: YES
+[21:18:24]   Has page content area: YES
+[21:18:24]   ✅ Page loaded successfully
+[21:18:24] 
+[21:18:26] Customers:
+[21:18:26]   Title: Customers - APS Dream Home
+[21:18:26]   Has sidebar: YES
+[21:18:26]   Has RBAC sidebar (#sidebarMenu): NO
+[21:18:26]   Has menu items: YES
+[21:18:26]   Has sidebar sections: NO
+[21:18:26]   Menu items: 51
+[21:18:26]   ⚠️  Using FALLBACK MENU (RBAC system not working)
+[21:18:26]   Uses unified layout: NO
+[21:18:26]   Has top navigation: YES
+[21:18:26]   Has page content area: YES
+[21:18:26]   ✅ Page loaded successfully
+[21:18:26] 
+[21:18:27] Leads:
+[21:18:27]   Title: Leads - APS Dream Home
+[21:18:27]   Has sidebar: YES
+[21:18:27]   Has RBAC sidebar (#sidebarMenu): NO
+[21:18:27]   Has menu items: YES
+[21:18:27]   Has sidebar sections: NO
+[21:18:27]   Menu items: 51
+[21:18:27]   ⚠️  Using FALLBACK MENU (RBAC system not working)
+[21:18:27]   Uses unified layout: NO
+[21:18:27]   Has top navigation: YES
+[21:18:27]   Has page content area: YES
+[21:18:27]   ✅ Page loaded successfully
+[21:18:27] 
+[21:18:28] Properties:
+[21:18:28]   Title: Property Management
+[21:18:28]   Has sidebar: YES
+[21:18:28]   Has RBAC sidebar (#sidebarMenu): NO
+[21:18:28]   Has menu items: YES
+[21:18:28]   Has sidebar sections: NO
+[21:18:28]   Menu items: 51
+[21:18:28]   ⚠️  Using FALLBACK MENU (RBAC system not working)
+[21:18:28]   Uses unified layout: NO
+[21:18:28]   Has top navigation: YES
+[21:18:28]   Has page content area: YES
+[21:18:28]   ✅ Page loaded successfully
+[21:18:28] 
+[21:18:29] Projects:
+[21:18:29]   Title: Projects
+[21:18:29]   Has sidebar: YES
+[21:18:29]   Has RBAC sidebar (#sidebarMenu): NO
+[21:18:29]   Has menu items: YES
+[21:18:29]   Has sidebar sections: NO
+[21:18:29]   Menu items: 51
+[21:18:29]   ⚠️  Using FALLBACK MENU (RBAC system not working)
+[21:18:29]   Uses unified layout: NO
+[21:18:29]   Has top navigation: YES
+[21:18:29]   Has page content area: YES
+[21:18:29]   ✅ Page loaded successfully
+[21:18:30] 
+[21:18:31] Settings:
+[21:18:31]   Title: Site Settings - APS Dream Home
+[21:18:31]   Has sidebar: YES
+[21:18:31]   Has RBAC sidebar (#sidebarMenu): NO
+[21:18:31]   Has menu items: YES
+[21:18:31]   Has sidebar sections: NO
+[21:18:31]   Menu items: 51
+[21:18:31]   ⚠️  Using FALLBACK MENU (RBAC system not working)
+[21:18:31]   Uses unified layout: NO
+[21:18:31]   Has top navigation: YES
+[21:18:31]   Has page content area: YES
+[21:18:31]   ✅ Page loaded successfully
+[21:18:31] 
+[21:18:32] Users:
+[21:18:32]   Title: User Management - APS Dream Home
+[21:18:32]   Has sidebar: YES
+[21:18:32]   Has RBAC sidebar (#sidebarMenu): NO
+[21:18:32]   Has menu items: YES
+[21:18:32]   Has sidebar sections: NO
+[21:18:32]   Menu items: 51
+[21:18:32]   ⚠️  Using FALLBACK MENU (RBAC system not working)
+[21:18:32]   Uses unified layout: NO
+[21:18:32]   Has top navigation: YES
+[21:18:32]   Has page content area: YES
+[21:18:32]   ✅ Page loaded successfully
+[21:18:32] 
+[21:18:33] Reports:
+[21:18:33]   Title: APS Dream Home - Admin
+[21:18:33]   Has sidebar: YES
+[21:18:33]   Has RBAC sidebar (#sidebarMenu): NO
+[21:18:33]   Has menu items: YES
+[21:18:33]   Has sidebar sections: NO
+[21:18:33]   Menu items: 51
+[21:18:33]   ⚠️  Using FALLBACK MENU (RBAC system not working)
+[21:18:33]   Uses unified layout: NO
+[21:18:33]   Has top navigation: YES
+[21:18:33]   Has page content area: YES
+[21:18:33]   ✅ Page loaded successfully
+[21:18:33] 
+[21:18:33] === SUMMARY ===
+[21:18:33] Screenshots saved: 8
+[21:18:33] Report saved to: testing/visual_tests/ADMIN_SIDEBAR_CONSISTENCY_REPORT.txt

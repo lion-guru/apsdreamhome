@@ -207,7 +207,7 @@ async function submitAddMember() {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
     try {
-        const res = await fetch('<?= $base ?>/team/add-member', {
+        const res = await fetch('<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/team/add-member', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)

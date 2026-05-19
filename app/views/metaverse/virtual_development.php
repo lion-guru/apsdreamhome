@@ -57,7 +57,7 @@
                                 <select name="template" class="form-select">
                                     <option value="">Select template...</option>
                                     <?php foreach ($templates as $key => $template): ?>
-                                    <option value="<?= $key ?>"><?= ($template['name'] ?? $key) ?></option>
+                                    <option value="<?= htmlspecialchars($key, ENT_QUOTES, 'UTF-8') ?>"><?= ($template['name'] ?? $key) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -66,7 +66,7 @@
                                 <select name="environment" class="form-select" required>
                                     <option value="">Select environment...</option>
                                     <?php foreach ($environments as $key => $env): ?>
-                                    <option value="<?= $key ?>"><?= ($env['name'] ?? $key) ?></option>
+                                    <option value="<?= htmlspecialchars($key, ENT_QUOTES, 'UTF-8') ?>"><?= ($env['name'] ?? $key) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

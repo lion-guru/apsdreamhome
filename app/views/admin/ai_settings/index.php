@@ -1,5 +1,4 @@
 <?php
-include APP_PATH . '/views/admin/layouts/header.php';
 
 // Variables passed from controller via admin layout
 $page_title = $page_title ?? 'AI Settings';
@@ -377,5 +376,4 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 </script>
 
 <?php
-include APP_PATH . '/views/admin/layouts/footer.php';
 ?>

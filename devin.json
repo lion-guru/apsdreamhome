@@ -1,0 +1,73 @@
+{
+  "project_name": "APS Dream Home",
+  "project_type": "php_web_application",
+  "description": "Real Estate Management System with Admin Panel",
+  "permissions": {
+    "auto_approve": true,
+    "require_confirmation": false,
+    "scope": "full_project"
+  },
+  "database": {
+    "type": "mysql",
+    "host": "127.0.0.1",
+    "port": 3307,
+    "name": "apsdreamhome",
+    "user": "root",
+    "password": ""
+  },
+  "server": {
+    "type": "xampp_apache",
+    "host": "localhost",
+    "port": 80,
+    "document_root": "c:\\xampp\\htdocs\\apsdreamhome",
+    "url": "http://localhost/apsdreamhome"
+  },
+  "testing": {
+    "framework": "playwright",
+    "test_directory": "testing/visual_tests",
+    "auto_run_on_save": false,
+    "screenshot_on_failure": true,
+    "timeout": 30000
+  },
+  "development": {
+    "auto_reload": true,
+    "error_reporting": "E_ALL",
+    "debug_mode": true,
+    "log_errors": true
+  },
+  "allowed_operations": [
+    "file_read_write",
+    "database_operations",
+    "shell_commands",
+    "git_operations",
+    "package_management",
+    "testing",
+    "configuration"
+  ],
+  "safe_paths": [
+    "app",
+    "assets",
+    "tools",
+    "testing",
+    "routes",
+    ".devin"
+  ],
+  "restricted_paths": [
+    "vendor",
+    "node_modules",
+    ".git"
+  ],
+  "auto_fix": {
+    "php_syntax": true,
+    "code_style": true,
+    "lint_errors": true,
+    "database_schema": true
+  },
+  "skills": {
+    "enabled": true,
+    "auto_discover": true,
+    "custom_skills": [
+      "aps-dream-home"
+    ]
+  }
+}

@@ -90,6 +90,18 @@
     </div>
 </section>
 
+<?php if (!empty($pageContent)): ?>
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="cms-content p-4"><?php echo $pageContent; ?></div>
+            </div>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <section class="py-5 bg-light">
     <div class="container">
         <div class="row">

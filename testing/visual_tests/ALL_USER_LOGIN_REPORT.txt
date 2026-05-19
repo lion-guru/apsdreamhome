@@ -1,0 +1,39 @@
+[20:44:43] === TESTING CUSTOMER LOGIN ===
+[20:44:44] Customer Login Page: Page loaded (Title: Customer Login - APS Dream Home)
+[20:44:45] Customer Login Form - Identity field: YES
+[20:44:45] Customer Login Form - Email field: NO
+[20:44:45] Customer Login Form - Password field: YES
+[20:44:45] Customer Login Form - Submit button: YES
+[20:44:48] Customer Login: SUCCESS - Redirected to dashboard
+[20:44:48] === TESTING AGENT LOGIN ===
+[20:44:49] Agent Login Page: Page loaded (Title: Agent Login - APS Dream Home)
+[20:44:49] Agent Login Form - Email field: YES
+[20:44:49] Agent Login Form - Password field: YES
+[20:44:49] Agent Login Form - Submit button: YES
+[20:44:49] === TESTING ASSOCIATE LOGIN ===
+[20:44:50] Associate Login Page: Page loaded (Title: Associate Login | APS Dream Home)
+[20:44:50] Associate Login Form - Email field: YES
+[20:44:50] Associate Login Form - Password field: YES
+[20:44:50] Associate Login Form - Submit button: YES
+[20:44:50] === TESTING EMPLOYEE LOGIN ===
+[20:44:51] Employee Login Page: Page loaded (Title: )
+[20:44:51] Employee Login Form - Email field: YES
+[20:44:51] Employee Login Form - Password field: YES
+[20:44:51] Employee Login Form - Submit button: YES
+[20:44:51] === TESTING ADMIN LOGIN ===
+[20:44:52] Admin Login Page: Page loaded (Title: Admin Login - APS Dream Home)
+[20:44:52] Admin Login Form - Email field: NO
+[20:44:52] Admin Login Form - Password field: YES
+[20:44:52] Admin Login Form - Submit button: YES
+[20:44:52] ISSUE: Admin login form missing email field
+[20:44:53] Admin test-login bypass: SUCCESS
+[20:44:53] === TESTING DASHBOARD ACCESS ===
+[20:44:54] Customer Dashboard: Requires authentication (redirected to login)
+[20:44:54] Agent Dashboard: Requires authentication (redirected to login)
+[20:44:55] Associate Dashboard: Requires authentication (redirected to login)
+[20:44:55] Employee Dashboard: Requires authentication (redirected to login)
+[20:44:55] Admin Dashboard: Requires authentication (redirected to login)
+[20:44:56] =====================================
+[20:44:56] TEST COMPLETED
+[20:44:56] Screenshots saved: 12
+[20:44:56] Report saved to: testing/visual_tests/ALL_USER_LOGIN_REPORT.txt

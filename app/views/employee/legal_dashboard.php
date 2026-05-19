@@ -54,7 +54,7 @@
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Document Review Queue</h6></div>
                 <div class="card-body">
                     <?php if (!empty($documents)): ?>
-                        <div class="table-responsive"><table class="table table-sm table-hover mb-0">
+                        <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Document</th><th>Submitted By</th><th>Date</th><th>Priority</th><th>Action</th></tr></thead>
                             <tbody>
                                 <?php foreach ($documents as $doc): ?>
@@ -67,7 +67,7 @@
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table></div>
+                        </table></div></div>
                     <?php else: ?>
                         <div class="text-center py-4"><i class="fas fa-check-circle fa-2x text-success mb-2"></i><p class="text-muted mb-0">No documents pending review</p></div>
                     <?php endif; ?>

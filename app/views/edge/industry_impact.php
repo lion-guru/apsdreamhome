@@ -20,11 +20,11 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Technology Adoption</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($id['technology_adoption'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50 text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></th><td><?= htmlspecialchars($v) ?></td></tr>
                         <?php endforeach; ?>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -32,11 +32,11 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Economic Impact</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($id['economic_impact'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50 text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></th><td><?= htmlspecialchars($v) ?></td></tr>
                         <?php endforeach; ?>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

@@ -13,7 +13,7 @@
                             <select class="form-select" name="type" required>
                                 <option value="">Select report type...</option>
                                 <?php foreach ($reportTypes as $k => $v): ?>
-                                <option value="<?= $k ?>"><?= $v ?></option>
+                                <option value="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($v, ENT_QUOTES, 'UTF-8') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

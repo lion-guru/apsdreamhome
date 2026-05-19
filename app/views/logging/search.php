@@ -41,7 +41,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive" style="max-height:500px">
-                <table class="table table-hover table-sm mb-0">
+                <div class="table-responsive"><table class="table table-hover table-sm mb-0 table-responsive">
                     <thead class="table-light position-sticky top-0">
                         <tr><th>Level</th><th>Message</th><th>File</th><th>Line</th><th>Time</th></tr>
                     </thead>
@@ -60,7 +60,7 @@
                             <tr><td colspan="5" class="text-center text-muted py-3">No results found.</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

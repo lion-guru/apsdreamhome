@@ -18,7 +18,7 @@ $colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-m
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="h3 mb-2">Property Comparison</h1>
-                    <p class="text-muted">Comparing <?= $propertiesCount ?> properties side-by-side</p>
+                    <p class="text-muted">Comparing <?= htmlspecialchars($propertiesCount, ENT_QUOTES, 'UTF-8') ?> properties side-by-side</p>
                 </div>
                 <div class="btn-group">
                     <a href="/compare" class="btn btn-outline-secondary">
@@ -115,14 +115,14 @@ $colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-m
     <!-- Property Comparison Cards -->
     <div class="row mb-4">
         <?php foreach ($properties as $property): ?>
-        <div class="<?= $colClass ?> mb-4">
+        <div class="<?= htmlspecialchars($colClass, ENT_QUOTES, 'UTF-8') ?> mb-4">
             <div class="card h-100 <?= $property['id'] == $comparison['best_value'] ? 'border-info' : '' ?> 
                         <?= $property['id'] == $comparison['largest_area'] ? 'border-warning' : '' ?>">
                 
                 <!-- Property Image -->
                 <div class="position-relative">
                     <?php if ($property['primary_image']): ?>
-                    <img src="/<?= htmlspecialchars($property['primary_image']) ?>" 
+                    <img src="/<?= htmlspecialchars($property['primary_image']) ? class="img-fluid">" 
                          class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
                          style="height: 200px; object-fit: cover;">
                     <?php else: ?>
@@ -218,7 +218,7 @@ $colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-m
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-bordered mb-0">
+                        <div class="table-responsive"><table class="table table-bordered mb-0 table-responsive">
                             <thead class="table-light">
                                 <tr>
                                     <th style="width: 20%;">Feature</th>
@@ -311,7 +311,7 @@ $colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-m
                                     <?php endforeach; ?>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -344,7 +344,7 @@ $colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-m
 
 <script>
 function shareComparison() {
-    const shareUrl = '<?= $share_url ?>';
+    const shareUrl = '<?= htmlspecialchars($share_url, ENT_QUOTES, 'UTF-8') ?>';
     
     if (navigator.share) {
         navigator.share({

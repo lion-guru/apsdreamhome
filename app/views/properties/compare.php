@@ -13,7 +13,7 @@ include __DIR__ . '/../layouts/header.php';
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="h3 mb-2">Compare Properties</h1>
-            <p class="text-muted">Select 2 to <?= $max_compare ?> properties to compare side-by-side</p>
+            <p class="text-muted">Select 2 to <?= htmlspecialchars($max_compare, ENT_QUOTES, 'UTF-8') ?> properties to compare side-by-side</p>
         </div>
     </div>
 
@@ -24,7 +24,7 @@ include __DIR__ . '/../layouts/header.php';
                 <span>
                     <i class="fas fa-info-circle me-2"></i>
                     <strong id="selected-count">0</strong> properties selected
-                    <span class="text-muted">(minimum <?= $min_compare ?> required)</span>
+                    <span class="text-muted">(minimum <?= htmlspecialchars($min_compare, ENT_QUOTES, 'UTF-8') ?> required)</span>
                 </span>
                 <button type="button" class="btn btn-primary" id="btn-compare" disabled onclick="compareProperties()">
                     <i class="fas fa-exchange-alt me-2"></i>Compare Now
@@ -43,7 +43,7 @@ include __DIR__ . '/../layouts/header.php';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-sm">
+                            <div class="table-responsive"><table class="table table-sm table-responsive">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -69,7 +69,7 @@ include __DIR__ . '/../layouts/header.php';
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 </div>
@@ -109,7 +109,7 @@ include __DIR__ . '/../layouts/header.php';
                                     <!-- Property Image -->
                                     <div class="property-image-wrapper" style="height: 200px; overflow: hidden;">
                                         <?php if ($property['primary_image']): ?>
-                                            <img src="/<?= htmlspecialchars($property['primary_image']) ?>"
+                                            <img src="/<?= htmlspecialchars($property['primary_image']) ? class="img-fluid">"
                                                 class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         <?php else: ?>
@@ -192,8 +192,8 @@ include __DIR__ . '/../layouts/header.php';
 
 <script>
     let selectedProperties = [];
-    const maxCompare = <?= $max_compare ?>;
-    const minCompare = <?= $min_compare ?>;
+    const maxCompare = <?= htmlspecialchars($max_compare, ENT_QUOTES, 'UTF-8') ?>;
+    const minCompare = <?= htmlspecialchars($min_compare, ENT_QUOTES, 'UTF-8') ?>;
 
     function toggleProperty(propertyId) {
         const card = document.getElementById('property-' + propertyId);

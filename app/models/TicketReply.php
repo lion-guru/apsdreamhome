@@ -24,7 +24,7 @@ class TicketReply extends Model
                 JOIN users u ON r.user_id = u.id 
                 WHERE r.ticket_id = :ticket_id 
                 ORDER BY r.created_at ASC";
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute(['ticket_id' => $ticketId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

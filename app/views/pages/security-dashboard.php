@@ -86,7 +86,7 @@ $base = $base ?? BASE_URL;
                     <div class="card-body p-0">
                         <?php if (!empty($recent_events)): ?>
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0">
+                            <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Action</th>
@@ -111,7 +111,7 @@ $base = $base ?? BASE_URL;
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                         <?php else: ?>
                         <div class="text-center py-5">

@@ -104,7 +104,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-body">
                             <?php if (!empty($market_trends)): ?>
                                 <div class="table-responsive">
-                                    <table class="table table-sm">
+                                    <div class="table-responsive"><table class="table table-sm table-responsive">
                                         <thead><tr><th>Period</th><th>Trend</th><th>Change</th></tr></thead>
                                         <tbody>
                                             <?php foreach ($market_trends as $trend): ?>
@@ -117,7 +117,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>
-                                    </table>
+                                    </table></div>
                                 </div>
                             <?php else: ?>
                                 <p class="text-muted">No market trend data available</p>

@@ -18,7 +18,7 @@
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="bg-light">
                         <tr>
                             <th class="ps-4">Date</th>
@@ -59,7 +59,7 @@
                                         elseif ($inquiry['status'] == 'responded') $statusClass = 'bg-success';
                                         elseif ($inquiry['status'] == 'closed') $statusClass = 'bg-dark';
                                         ?>
-                                        <span class="badge <?= $statusClass ?> rounded-pill px-3">
+                                        <span class="badge <?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?> rounded-pill px-3">
                                             <?= ucfirst($inquiry['status']) ?>
                                         </span>
                                     </td>
@@ -67,7 +67,7 @@
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

@@ -54,7 +54,7 @@
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Site Visits Scheduled</h6></div>
                 <div class="card-body">
                     <?php if (!empty($siteVisits)): ?>
-                        <div class="table-responsive"><table class="table table-sm table-hover mb-0">
+                        <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Plot</th><th>Customer</th><th>Date</th><th>Status</th></tr></thead>
                             <tbody>
                                 <?php foreach ($siteVisits as $visit): ?>
@@ -66,7 +66,7 @@
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table></div>
+                        </table></div></div>
                     <?php else: ?>
                         <div class="text-center py-4"><i class="fas fa-calendar fa-2x text-muted mb-2"></i><p class="text-muted mb-0">No site visits scheduled</p></div>
                     <?php endif; ?>

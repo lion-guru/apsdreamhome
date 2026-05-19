@@ -14,7 +14,7 @@
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Energy Consumption</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light"><tr><th>Timestamp</th><th>Consumption (kWh)</th><th>Cost (₹)</th><th>Lighting</th><th>HVAC</th><th>Appliances</th><th>Other</th></tr></thead>
                     <tbody>
                         <?php if (!empty($energy_data)): ?>
@@ -33,7 +33,7 @@
                             <tr><td colspan="7" class="text-center text-muted py-3">No energy data available</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

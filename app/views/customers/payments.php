@@ -66,7 +66,7 @@
             <div class="card shadow mb-4">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                        <div class="table-responsive"><table class="table table-bordered table-hover table-responsive" width="100%" cellspacing="0">
                             <thead class="bg-light">
                                 <tr>
                                     <th>ट्रांजेक्शन ID</th>
@@ -102,7 +102,7 @@
                                                     case 'refunded': $statusClass = 'warning'; $statusText = 'रिफंडेड'; break;
                                                 }
                                                 ?>
-                                                <span class="badge badge-<?= $statusClass ?>"><?= $statusText ?></span>
+                                                <span class="badge badge-<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8') ?></span>
                                             </td>
                                             <td class="text-center">
                                                 <?php if ($payment['status'] == 'success'): ?>
@@ -121,7 +121,7 @@
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

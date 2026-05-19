@@ -16,7 +16,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-file me-2"></i>Documents</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <div class="table-responsive"><table class="table table-hover table-responsive">
                             <thead><tr><th>Document Type</th><th>Hash</th><th>Status</th></tr></thead>
                             <tbody>
                                 <?php foreach (($documents ?? []) as $type => $hash): ?>
@@ -27,7 +27,7 @@
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

@@ -112,7 +112,7 @@ $current_year = date('Y');
                         <select class="form-control" name="established_year" required>
                             <option value="">Select Year</option>
                             <?php for ($y = $current_year; $y >= 1950; $y--): ?>
-                                <option value="<?= $y ?>"><?= $y ?></option>
+                                <option value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?></option>
                             <?php endfor; ?>
                         </select>
                     </div>
@@ -139,7 +139,7 @@ $current_year = date('Y');
                         <select class="form-control" name="state" required>
                             <option value="">Select State</option>
                             <?php foreach ($indian_states as $st): ?>
-                                <option value="<?= $st ?>"><?= $st ?></option>
+                                <option value="<?= htmlspecialchars($st, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($st, ENT_QUOTES, 'UTF-8') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

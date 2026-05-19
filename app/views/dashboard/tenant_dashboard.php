@@ -59,7 +59,7 @@ ob_start();
     <div class="row mb-4 animate-fade-up">
         <div class="col-md-8 d-flex align-items-center">
             <div class="position-relative me-4">
-                <img src="<?= !empty($tenant['uimage']) ? h($tenant['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($tenant['uname']) . '&size=100&background=1e3a8a&color=fff' ?>"
+                <img src="<?= !empty($tenant['uimage']) ? h($tenant['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($tenant['uname']) . '&size=100&background=1e3a8a&color=fff' ? class="img-fluid">"
                     alt="Profile" class="rounded-circle shadow-sm border border-3 border-white" style="width:100px; height:100px; object-fit:cover;">
                 <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
             </div>

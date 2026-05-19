@@ -8,8 +8,18 @@ class LocationAdminController
 
     public function __construct()
     {
-        $this->db = new \PDO('mysql:host=localhost;port=3307;dbname=apsdreamhome;charset=utf8mb4', 'root', '');
-        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        @session_start();
+        $this->db = \App\Core\Database\Database::getInstance();
+        $authenticated = isset($_SESSION['admin_id']) || (isset($_SESSION['user_id']) && isset($_SESSION['user_role']));
+        if (!$authenticated) {
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
+        $role = $_SESSION['user_role'] ?? $_SESSION['admin_role'] ?? '';
+        if (!in_array($role, ['admin', 'employee', 'super_admin'])) {
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
     }
 
     // Check if user is logged in and has admin access
@@ -42,7 +52,7 @@ class LocationAdminController
         $stmt = $this->db->query($sql);
         $states = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        include __DIR__ . '/../../views/admin/locations/states/index.php';
+        include __DIR__ . '/../../../views/admin/locations/states/index.php';
     }
 
     public function createState()
@@ -73,7 +83,7 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../views/admin/locations/states/create.php';
+        include __DIR__ . '/../../../views/admin/locations/states/create.php';
     }
 
     public function editState($id)
@@ -115,7 +125,7 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../views/admin/locations/states/edit.php';
+        include __DIR__ . '/../../../views/admin/locations/states/edit.php';
     }
 
     public function deleteState($id)
@@ -168,7 +178,7 @@ class LocationAdminController
         // Get all states for filter using models
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
 
-        include __DIR__ . '/../../views/admin/locations/districts/index.php';
+        include __DIR__ . '/../../../views/admin/locations/districts/index.php';
     }
 
     public function createDistrict()
@@ -202,7 +212,7 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../views/admin/locations/districts/create.php';
+        include __DIR__ . '/../../../views/admin/locations/districts/create.php';
     }
 
     public function editDistrict($id)
@@ -247,7 +257,7 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../views/admin/locations/districts/edit.php';
+        include __DIR__ . '/../../../views/admin/locations/districts/edit.php';
     }
 
     public function deleteDistrict($id)
@@ -309,7 +319,7 @@ class LocationAdminController
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
         $districts = \App\Models\District::getWithStateName(['id', 'name', 'state_id'], true);
 
-        include __DIR__ . '/../../views/admin/locations/colonies/index.php';
+        include __DIR__ . '/../../../views/admin/locations/colonies/index.php';
     }
 
     public function createColony()
@@ -352,7 +362,7 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../views/admin/locations/colonies/create.php';
+        include __DIR__ . '/../../../views/admin/locations/colonies/create.php';
     }
 
     public function editColony($id)
@@ -406,7 +416,7 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../views/admin/locations/colonies/edit.php';
+        include __DIR__ . '/../../../views/admin/locations/colonies/edit.php';
     }
 
     public function deleteColony($id)

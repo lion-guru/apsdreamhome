@@ -8,7 +8,7 @@
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-history me-2"></i>Audit Logs</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
                         <tr><th>ID</th><th>Action</th><th>User</th><th>Resource</th><th>Status</th><th>Timestamp</th></tr>
                     </thead>
@@ -28,7 +28,7 @@
                             <tr><td colspan="6" class="text-center text-muted py-3">No audit logs available</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

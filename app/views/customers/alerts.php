@@ -37,7 +37,7 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <div class="table-responsive"><table class="table table-hover table-responsive">
                                 <thead class="bg-light">
                                     <tr>
                                         <th>अलर्ट डिटेल्स</th>
@@ -78,7 +78,7 @@
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     <?php endif; ?>
                 </div>

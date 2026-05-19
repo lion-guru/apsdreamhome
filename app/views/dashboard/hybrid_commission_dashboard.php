@@ -491,7 +491,7 @@ function getPropertyStatistics()
                                 <div class="stats-card">
                                     <h5>Recent Sales</h5>
                                     <div class="table-responsive">
-                                        <table class="table table-hover">
+                                        <div class="table-responsive"><table class="table table-hover table-responsive">
                                             <thead>
                                                 <tr>
                                                     <th>Property</th>
@@ -524,7 +524,7 @@ function getPropertyStatistics()
                                                     </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
-                                        </table>
+                                        </table></div>
                                     </div>
                                 </div>
                             </div>

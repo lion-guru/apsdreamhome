@@ -1,3 +1,4 @@
+<?php $layout = "admin/layouts/unified"; $active_page = "index"; ?>
 <?php
 $page_title = $page_title ?? 'Customers';
 $customers = $customers ?? [];

@@ -1,5 +1,4 @@
-<?php include APP_PATH . '/views/admin/layouts/header.php'; 
-
+<?php
 // Initialize default values if not set
 $health = $health ?? [
     'healthy' => true,
@@ -179,4 +178,4 @@ $(document).ready(function() {
 });
 </script>
 
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
+

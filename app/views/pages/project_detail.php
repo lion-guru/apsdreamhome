@@ -196,7 +196,7 @@ if ($project) {
                         <h5 class="mb-0"><i class="fas fa-building me-2"></i>Project Details</h5>
                     </div>
                     <div class="card-body">
-                        <table class="table table-borderless table-sm">
+                        <div class="table-responsive"><table class="table table-borderless table-sm table-responsive">
                             <tr>
                                 <td><strong>Project Name:</strong></td>
                                 <td><?php echo htmlspecialchars($project->site_name); ?></td>
@@ -233,7 +233,7 @@ if ($project) {
                                 <td><strong>Status:</strong></td>
                                 <td><span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'info'; ?>"><?php echo $project->status === 'active' ? 'Available' : ucfirst($project->status ?? 'Active'); ?></span></td>
                             </tr>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -345,7 +345,7 @@ if ($project) {
                 ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="<?php echo $baseUrl . $relImg; ?>" class="card-img-top" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?php echo $baseUrl; ?>/assets/images/placeholder/property.svg'">
+                        <img src="<?php echo $baseUrl . $relImg; ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?php echo $baseUrl; ?>/assets/images/placeholder/property.svg'">
                         <div class="card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>

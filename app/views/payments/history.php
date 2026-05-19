@@ -56,7 +56,7 @@
             <div class="text-center py-5"><i class="fas fa-history fa-3x text-muted mb-3"></i><p class="text-muted">No transactions found</p><a href="<?= BASE_URL ?>payments/initiate" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Initiate Payment</a></div>
             <?php else: ?>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light"><tr><th>#</th><th>Transaction ID</th><th>Customer</th><th>Purpose</th><th>Amount</th><th>Gateway</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                     <tbody><?php $i = 1; foreach ($transactions as $t): ?>
                         <tr><td><?= $i++ ?></td><td><code><?= htmlspecialchars($t['transaction_id'] ?? '-') ?></code></td><td><?= htmlspecialchars($t['customer_name'] ?? $t['email'] ?? '-') ?></td><td><?= htmlspecialchars($t['purpose'] ?? '-') ?></td><td>₹<?= number_format($t['amount'] ?? 0) ?></td><td><?= htmlspecialchars($t['gateway'] ?? '-') ?></td>
@@ -64,7 +64,7 @@
                         <td><?= htmlspecialchars($t['created_at'] ?? '-') ?></td>
                         <td><a href="<?= BASE_URL ?>payments/refund?txn=<?= urlencode($t['transaction_id'] ?? '') ?>" class="btn btn-sm btn-outline-warning" title="Refund"><i class="fas fa-undo"></i></a></td></tr>
                     <?php endforeach; ?></tbody>
-                </table>
+                </table></div>
             </div>
             <?php endif; ?>
         </div>

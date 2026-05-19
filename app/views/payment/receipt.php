@@ -12,7 +12,7 @@
                         <h5>APS Dream Home</h5>
                         <p class="text-muted small">Payment Confirmation</p>
                     </div>
-                    <table class="table table-bordered">
+                    <div class="table-responsive"><table class="table table-bordered table-responsive">
                         <tr><th class="bg-light" style="width:180px">Order ID</th><td>#<?= h($receipt['order_id'] ?? 'N/A') ?></td></tr>
                         <tr><th class="bg-light">Customer</th><td><?= h($receipt['customer_name'] ?? 'N/A') ?></td></tr>
                         <tr><th class="bg-light">Property</th><td><?= h($receipt['property_title'] ?? 'N/A') ?></td></tr>
@@ -20,7 +20,7 @@
                         <tr><th class="bg-light">Payment Date</th><td><?= h($receipt['payment_date'] ?? date('Y-m-d H:i:s')) ?></td></tr>
                         <tr><th class="bg-light">Transaction ID</th><td><code><?= h($receipt['transaction_id'] ?? 'N/A') ?></code></td></tr>
                         <tr><th class="bg-light">Payment Method</th><td><?= h(ucfirst($receipt['payment_method'] ?? 'N/A')) ?></td></tr>
-                    </table>
+                    </table></div>
                     <div class="text-center mt-4">
                         <a href="<?= BASE_URL ?>payment/history" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to History</a>
                     </div>

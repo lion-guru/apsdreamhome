@@ -22,41 +22,37 @@ class FarmerLandHolding extends Model
      */
     public function getAllLandHoldings()
     {
+        $table = static::$table;
         $sql = "SELECT fh.*, f.name as farmer_name, f.phone as farmer_phone,
-                       lp.id as purchase_id, lp.purchase_date, lp.price as purchase_price,
-                       lp.status as purchase_status
-                FROM {$this->table} fh
+                        lp.id as purchase_id, lp.purchase_date, lp.amount as purchase_price
+                FROM {$table} fh
                 JOIN farmers f ON fh.farmer_id = f.id
                 LEFT JOIN land_purchases lp ON fh.id = lp.land_holding_id
                 ORDER BY fh.created_at DESC";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Get land holdings by farmer ID
-     */
     public function getLandHoldingsByFarmer($farmerId)
     {
-        $sql = "SELECT fh.*, lp.purchase_date, lp.price as purchase_price, lp.status as purchase_status
-                FROM {$this->table} fh
+        $table = static::$table;
+        $sql = "SELECT fh.*, lp.purchase_date, lp.amount as purchase_price
+                FROM {$table} fh
                 LEFT JOIN land_purchases lp ON fh.id = lp.land_holding_id
                 WHERE fh.farmer_id = :farmer_id
                 ORDER BY fh.created_at DESC";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute(['farmer_id' => $farmerId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Create new land holding
-     */
     public function createLandHolding($data)
     {
-        $sql = "INSERT INTO {$this->table} (
+        $table = static::$table;
+        $sql = "INSERT INTO {$table} (
                     farmer_id, survey_number, area, area_unit, land_type,
                     location_address, latitude, longitude, market_value,
                     document_number, status, created_at, updated_at
@@ -66,14 +62,11 @@ class FarmerLandHolding extends Model
                     :document_number, :status, NOW(), NOW()
                 )";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute($data);
-        return $this->db->lastInsertId();
+        return static::getDb()->lastInsertId();
     }
 
-    /**
-     * Update land holding
-     */
     public function updateLandHolding($id, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
@@ -91,34 +84,31 @@ class FarmerLandHolding extends Model
             return false;
         }
 
-        $sql = "UPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE id = :id";
+        $table = static::$table;
+        $sql = "UPDATE {$table} SET " . implode(', ', $setParts) . " WHERE id = :id";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         return $stmt->execute($params);
     }
 
-    /**
-     * Get available land holdings for purchase
-     */
     public function getAvailableForPurchase()
     {
+        $table = static::$table;
         $sql = "SELECT fh.*, f.name as farmer_name, f.phone as farmer_phone, f.email as farmer_email
-                FROM {$this->table} fh
+                FROM {$table} fh
                 JOIN farmers f ON fh.farmer_id = f.id
                 LEFT JOIN land_purchases lp ON fh.id = lp.land_holding_id
-                WHERE lp.id IS NULL OR lp.status != 'completed'
+                WHERE lp.id IS NULL
                 ORDER BY fh.created_at DESC";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Get land holding statistics
-     */
     public function getLandHoldingStatistics()
     {
+        $table = static::$table;
         $sql = "SELECT
                     COUNT(*) as total_holdings,
                     SUM(area) as total_area,
@@ -126,16 +116,13 @@ class FarmerLandHolding extends Model
                     COUNT(CASE WHEN land_type = 'residential' THEN 1 END) as residential_count,
                     COUNT(CASE WHEN land_type = 'commercial' THEN 1 END) as commercial_count,
                     AVG(market_value) as avg_market_value
-                FROM {$this->table}";
+                FROM {$table}";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Search land holdings
-     */
     public function searchLandHoldings($searchTerm, $filters = [])
     {
         $conditions = ["(fh.survey_number LIKE :search OR f.name LIKE :search OR fh.location_address LIKE :search)"];
@@ -158,17 +145,20 @@ class FarmerLandHolding extends Model
 
         $whereClause = implode(' AND ', $conditions);
 
+        $table = static::$table;
         $sql = "SELECT fh.*, f.name as farmer_name, f.phone as farmer_phone, f.email as farmer_email,
                        s.name as state_name, d.name as district_name
-                FROM {$this->table} fh
+                FROM {$table} fh
                 JOIN farmers f ON fh.farmer_id = f.id
                 LEFT JOIN states s ON f.state_id = s.id
                 LEFT JOIN districts d ON f.district_id = d.id
                 WHERE {$whereClause}
                 ORDER BY fh.created_at DESC";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = static::getDb()->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
 }

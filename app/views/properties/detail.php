@@ -23,7 +23,7 @@ $related = $data['related_properties'] ?? [];
                             foreach ($images as $i => $img):
                             ?>
                                 <div class="carousel-item <?php echo $i === 0 ? 'active' : ''; ?>">
-                                    <img src="<?php echo htmlspecialchars($img['image_path'] ?? $property['image_url'] ?? 'https://via.placeholder.com/800x400'); ?>"
+                                    <img src="<?php echo htmlspecialchars($img['image_path'] ?? $property['image_url'] ?? 'https://via.placeholder.com/800x400'); ?>" class="img-fluid"
                                         class="d-block w-100" style="height: 400px; object-fit: cover;"
                                         alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>">
                                 </div>
@@ -188,7 +188,7 @@ $related = $data['related_properties'] ?? [];
                                 <li class="list-group-item">
                                     <a href="/properties/<?php echo $rel['id']; ?>" class="text-decoration-none">
                                         <div class="d-flex">
-                                            <img src="<?php echo htmlspecialchars($rel['image_url'] ?? 'https://via.placeholder.com/60'); ?>"
+                                            <img src="<?php echo htmlspecialchars($rel['image_url'] ?? 'https://via.placeholder.com/60'); ?>" class="img-fluid"
                                                 class="rounded me-2" style="width: 60px; height: 45px; object-fit: cover;">
                                             <div>
                                                 <small class="fw-bold"><?php echo htmlspecialchars($rel['title'] ?? $rel['name'] ?? 'Property'); ?></small>

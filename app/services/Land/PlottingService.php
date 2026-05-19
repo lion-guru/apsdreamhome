@@ -78,7 +78,7 @@ class PlottingService
                 corner_plot BOOLEAN DEFAULT FALSE,
                 park_facing BOOLEAN DEFAULT FALSE,
                 road_facing BOOLEAN DEFAULT FALSE,
-                plot_status ENUM('available','booked','sold','blocked','cancelled') DEFAULT 'available',
+                status ENUM('available','booked','sold','blocked','cancelled') DEFAULT 'available',
                 current_price DECIMAL(15,2),
                 base_price DECIMAL(15,2),
                 plc_amount DECIMAL(15,2) DEFAULT 0,
@@ -368,7 +368,7 @@ class PlottingService
             $params = [];
 
             if (!empty($filters['plot_status'])) {
-                $sql .= " AND p.plot_status = ?";
+                $sql .= " AND p.status = ?";
                 $params[] = $filters['plot_status'];
             }
 
@@ -418,7 +418,7 @@ class PlottingService
         try {
             // Check if plot is available
             $plot = $this->database->selectOne(
-                "SELECT * FROM plots WHERE id = ? AND plot_status = 'available'",
+                "SELECT * FROM plots WHERE id = ? AND status = 'available'",
                 [$data['plot_id']]
             );
 
@@ -618,8 +618,8 @@ class PlottingService
             // Total plots
             $stats['plots'] = $this->database->selectOne(
                 "SELECT COUNT(*) as total_plots,
-                        SUM(CASE WHEN plot_status = 'available' THEN 1 ELSE 0 END) as available_plots,
-                        SUM(CASE WHEN plot_status = 'sold' THEN 1 ELSE 0 END) as sold_plots,
+                        SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available_plots,
+                        SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) as sold_plots,
                         SUM(current_price) as total_value FROM plots"
             );
 
@@ -738,7 +738,7 @@ class PlottingService
     public function updatePlotStatus($plotId, $status)
     {
         $this->database->query(
-            "UPDATE plots SET plot_status = ?, updated_at = NOW() WHERE id = ?",
+            "UPDATE plots SET status = ?, updated_at = NOW() WHERE id = ?",
             [$status, $plotId]
         );
 
@@ -773,7 +773,7 @@ class PlottingService
     {
         $sql = "INSERT INTO plots (
             land_acquisition_id, plot_number, plot_area, plot_area_unit,
-            location, price_per_unit, total_price, plot_status,
+            location, price_per_unit, total_price, status,
             created_by, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
@@ -874,7 +874,7 @@ class PlottingService
         $sql = "SELECT p.*, la.project_name, la.location 
                  FROM plots p 
                  LEFT JOIN land_acquisitions la ON p.land_acquisition_id = la.id 
-                 WHERE p.plot_status = 'available'";
+                 WHERE p.status = 'available'";
 
         $params = [];
 

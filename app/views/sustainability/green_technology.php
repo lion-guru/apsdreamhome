@@ -19,10 +19,10 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-check-circle me-2 text-success"></i>Adopted Technologies</h5></div>
                 <div class="card-body">
-                    <div class="table-responsive"><table class="table"><thead class="table-light"><tr><th>Technology</th><th>Adoption Date</th><th>Energy Savings</th><th>Cost Savings</th></tr></thead><tbody>
+                    <div class="table-responsive"><div class="table-responsive"><table class="table table-responsive"><thead class="table-light"><tr><th>Technology</th><th>Adoption Date</th><th>Energy Savings</th><th>Cost Savings</th></tr></thead><tbody>
                         <?php foreach ($adopted as $ad): ?><tr><td><?= ($ad['technology'] ?? '') ?></td><td><?= ($ad['adoption_date'] ?? '') ?></td><td class="text-success"><?= ($ad['energy_savings'] ?? '') ?></td><td><?= ($ad['cost_savings'] ?? '') ?></td></tr><?php endforeach; ?>
                         <?php if (empty($adopted)): ?><tr><td colspan="4" class="text-center text-muted py-3">No adopted technologies.</td></tr><?php endif; ?>
-                    </tbody></table></div>
+                    </tbody></table></div></div>
                 </div>
             </div>
 
@@ -35,7 +35,7 @@
                             <h6 class="text-uppercase small"><?= str_replace('_', ' ', $quarter) ?></h6>
                             <ul class="list-unstyled">
                                 <?php foreach ($items as $status => $item): ?>
-                                <li class="mb-2"><span class="badge bg-<?= $status === 'completed' ? 'success' : ($status === 'in_progress' ? 'warning' : 'secondary') ?> me-1"><?= $status ?></span><small><?= $item ?></small></li>
+                                <li class="mb-2"><span class="badge bg-<?= $status === 'completed' ? 'success' : ($status === 'in_progress' ? 'warning' : 'secondary') ?> me-1"><?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8') ?></span><small><?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?></small></li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
@@ -56,7 +56,7 @@
                     <div class="d-flex justify-content-between mb-2"><span>5-Year ROI</span><strong class="text-success"><?= ($cba['roi_over_5_years'] ?? 'N/A') ?></strong></div>
                     <hr>
                     <h6>Breakdown</h6>
-                    <?php foreach (($cba['breakdown'] ?? []) as $key => $val): ?><div class="d-flex justify-content-between small mb-1"><span><?= ucfirst(str_replace('_', ' ', $key)) ?></span><span><?= $val ?></span></div><?php endforeach; ?>
+                    <?php foreach (($cba['breakdown'] ?? []) as $key => $val): ?><div class="d-flex justify-content-between small mb-1"><span><?= ucfirst(str_replace('_', ' ', $key)) ?></span><span><?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?></span></div><?php endforeach; ?>
                 </div>
             </div>
 

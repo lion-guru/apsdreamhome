@@ -24,7 +24,7 @@
                     <p class="small text-muted"><?= ($story['story'] ?? '') ?></p>
                     <hr>
                     <small class="fw-semibold d-block mb-2">Key Achievements</small>
-                    <ul class="list-unstyled"><?php foreach (($story['key_achievements'] ?? []) as $ach): ?><li class="small"><i class="fas fa-check-circle text-success me-1"></i><?= $ach ?></li><?php endforeach; ?></ul>
+                    <ul class="list-unstyled"><?php foreach (($story['key_achievements'] ?? []) as $ach): ?><li class="small"><i class="fas fa-check-circle text-success me-1"></i><?= htmlspecialchars($ach, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul>
                     <hr>
                     <small class="fw-semibold d-block">Impact: <?= ($story['impact'] ?? '') ?></small>
                     <small class="text-muted d-block mt-2">Lesson: <?= ($story['lessons_learned'] ?? '') ?></small>

@@ -62,7 +62,7 @@ class EventService
             'id' => $subscriptionId,
             'handler' => $handler,
             'priority' => $priority,
-            'created_at' => now()->toISOString()
+            'created_at' => date('c')
         ];
 
         // Sort subscriptions by priority (highest first)
@@ -89,7 +89,7 @@ class EventService
             'id' => $subscriptionId,
             'pattern' => $pattern,
             'handler' => $handler,
-            'created_at' => now()->toISOString()
+            'created_at' => date('c')
         ];
 
         $this->logEventOperation('subscribe_wildcard', $pattern, [
@@ -160,11 +160,11 @@ class EventService
             'payload' => $payload,
             'metadata' => array_merge([
                 'type' => self::TYPE_USER,
-                'timestamp' => now()->timestamp,
+                'timestamp' => time(),
                 'priority' => self::PRIORITY_NORMAL,
                 'processing_mode' => $this->processingMode
             ], $metadata),
-            'published_at' => now()->toISOString()
+            'published_at' => date('c')
         ];
 
         // Apply event transformers
@@ -209,7 +209,7 @@ class EventService
         $this->eventTransformers[] = [
             'id' => $transformerId,
             'transformer' => $transformer,
-            'created_at' => now()->toISOString()
+            'created_at' => date('c')
         ];
 
         $this->logEventOperation('add_transformer', '', [
@@ -229,7 +229,7 @@ class EventService
         $this->eventMiddleware[] = [
             'id' => $middlewareId,
             'middleware' => $middleware,
-            'created_at' => now()->toISOString()
+            'created_at' => date('c')
         ];
 
         $this->logEventOperation('add_middleware', '', [
@@ -320,7 +320,7 @@ class EventService
     public function generateReport(): array
     {
         return [
-            'timestamp' => now()->toISOString(),
+            'timestamp' => date('c'),
             'processing_mode' => $this->processingMode,
             'subscriptions' => [
                 'total_direct_subscriptions' => array_reduce(
@@ -425,11 +425,7 @@ class EventService
         try {
             $handler($payload, $metadata);
         } catch (\Exception $e) {
-            Log::error('Event handler failed', [
-                'event_name' => $eventName,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            error_log("Event handler failed for '{$eventName}': " . $e->getMessage());
         }
     }
 
@@ -442,10 +438,7 @@ class EventService
             try {
                 $event = $transformer['transformer']($event);
             } catch (\Exception $e) {
-                Log::warning('Event transformer failed', [
-                    'transformer_id' => $transformer['id'],
-                    'error' => $e->getMessage()
-                ]);
+                error_log("Event transformer {$transformer['id']} failed: " . $e->getMessage());
             }
         }
 
@@ -464,10 +457,7 @@ class EventService
                     return false; // Middleware stopped propagation
                 }
             } catch (\Exception $e) {
-                Log::warning('Event middleware failed', [
-                    'middleware_id' => $middleware['id'],
-                    'error' => $e->getMessage()
-                ]);
+                error_log("Event middleware {$middleware['id']} failed: " . $e->getMessage());
             }
         }
 
@@ -488,7 +478,7 @@ class EventService
      */
     private function pruneEventHistory(): void
     {
-        $retentionTimestamp = now()->subDays($this->eventRetentionDays)->timestamp;
+        $retentionTimestamp = time() - ($this->eventRetentionDays * 86400);
         
         $this->eventHistory = array_filter(
             $this->eventHistory,
@@ -573,9 +563,9 @@ class EventService
             return ['events_per_hour' => 0, 'events_per_day' => 0];
         }
 
-        $now = now();
-        $oneHourAgo = $now->copy()->subHour()->timestamp;
-        $oneDayAgo = $now->copy()->subDay()->timestamp;
+        $now = time();
+        $oneHourAgo = $now - 3600;
+        $oneDayAgo = $now - 86400;
 
         $eventsLastHour = array_filter(
             $this->eventHistory,
@@ -625,9 +615,9 @@ class EventService
      */
     private function loadConfiguration(): void
     {
-        $this->maxEventQueueSize = config('events.max_queue_size', 1000);
-        $this->eventRetentionDays = config('events.retention_days', 7);
-        $this->processingMode = config('events.processing_mode', $this->processingMode);
+        $this->maxEventQueueSize = 1000;
+        $this->eventRetentionDays = 7;
+        $this->processingMode = $this->processingMode;
     }
 
     /**
@@ -636,16 +626,12 @@ class EventService
     private function initializeEventSystem(): void
     {
         // Load event history from cache if available
-        $cachedHistory = Cache::get('event_history', []);
+        $cachedHistory = isset($GLOBALS['event_history']) ? $GLOBALS['event_history'] : [];
         if (!empty($cachedHistory)) {
             $this->eventHistory = $cachedHistory;
         }
 
-        Log::info('Event system initialized', [
-            'processing_mode' => $this->processingMode,
-            'max_queue_size' => $this->maxEventQueueSize,
-            'retention_days' => $this->eventRetentionDays
-        ]);
+        error_log('Event system initialized - mode: ' . $this->processingMode);
     }
 
     /**
@@ -653,14 +639,12 @@ class EventService
      */
     private function logEventOperation(string $operation, string $eventName, array $context = []): void
     {
-        Log::debug("Event operation: {$operation}", array_merge([
-            'event_name' => $eventName,
-            'processing_mode' => $this->processingMode
-        ], $context));
+        error_log("Event operation: {$operation} - {$eventName}");
 
         // Persist event history to cache periodically
         if (count($this->eventHistory) % 10 === 0) {
-            Cache::put('event_history', $this->eventHistory, 3600);
+            // Store in global for basic persistence
+            $GLOBALS['event_history'] = $this->eventHistory;
         }
     }
 
@@ -693,6 +677,6 @@ class EventService
      */
     private function generateEventId(): string
     {
-        return 'event_' . now()->timestamp . '_' . bin2hex(random_bytes(8));
+        return 'event_' . time() . '_' . bin2hex(random_bytes(8));
     }
 }

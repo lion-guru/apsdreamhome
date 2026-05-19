@@ -9,24 +9,24 @@
     <div class="row g-4">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Info</h6></div>
-                <div class="card-body"><table class="table table-sm"><tbody>
+                <div class="card-body"><div class="table-responsive"><table class="table table-sm table-responsive"><tbody>
                     <tr><th>Type</th><td><?= htmlspecialchars(ucfirst($property['type'] ?? '-')) ?></td></tr>
                     <tr><th>Price</th><td>₹<?= number_format($property['price'] ?? 0) ?></td></tr>
                     <tr><th>Area</th><td><?= htmlspecialchars($property['area'] ?? '-') ?> sq.ft.</td></tr>
                     <tr><th>Location</th><td><?= htmlspecialchars($property['location'] ?? $property['city'] ?? '-') ?></td></tr>
                     <tr><th>Status</th><td><span class="badge bg-<?= ($property['status'] ?? '') === 'available' ? 'success' : 'danger' ?>"><?= ucfirst($property['status'] ?? '-') ?></span></td></tr>
                     <tr><th>Listed On</th><td><?= htmlspecialchars($property['created_at'] ?? '-') ?></td></tr>
-                </tbody></table></div>
+                </tbody></table></div></div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-simple me-2"></i>Performance</h6></div>
-                <div class="card-body"><table class="table table-sm"><tbody>
+                <div class="card-body"><div class="table-responsive"><table class="table table-sm table-responsive"><tbody>
                     <tr><th>Total Views</th><td><?= number_format($property['views'] ?? 0) ?></td></tr>
                     <tr><th>Inquiries</th><td><?= number_format($property['inquiries'] ?? 0) ?></td></tr>
                     <tr><th>Lead Score</th><td><?= $property['lead_score'] ?? 'N/A' ?></td></tr>
                     <tr><th>Days on Market</th><td><?= $property['days_on_market'] ?? 'N/A' ?></td></tr>
-                </tbody></table></div>
+                </tbody></table></div></div>
             </div>
         </div>
     </div>

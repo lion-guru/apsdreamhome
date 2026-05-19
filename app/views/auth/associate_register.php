@@ -403,13 +403,13 @@ $base = BASE_URL;
                 </div>
 
                 <div class="mb-3">
-                    <label for="sponsor_code" class="form-label">Sponsor / Referral Code <span class="required-label">*</span></label>
+                    <label for="sponsor_code" class="form-label">Sponsor / Referral Code <span class="optional-label">(optional if you have a referrer link)</span></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-users"></i></span>
-                        <input type="text" class="form-control" id="sponsor_code" name="sponsor_code" placeholder="Enter sponsor code" required value="<?php echo htmlspecialchars($old['sponsor_code'] ?? ''); ?>">
+                        <input type="text" class="form-control" id="sponsor_code" name="sponsor_code" placeholder="Enter sponsor code or use referral link" value="<?php echo htmlspecialchars($old['sponsor_code'] ?? $_GET['ref'] ?? ''); ?>">
                     </div>
                     <div class="referral-note">
-                        <i class="fas fa-exclamation-circle"></i> Sponsor code is required to join the network.
+                        <i class="fas fa-info-circle"></i> If you were referred by an associate, enter their sponsor code here.
                     </div>
                 </div>
 

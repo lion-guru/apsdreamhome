@@ -199,7 +199,7 @@ include __DIR__ . '/../layouts/base.php';
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <div class="table-responsive"><table class="table table-striped table-responsive">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -229,7 +229,7 @@ include __DIR__ . '/../layouts/base.php';
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

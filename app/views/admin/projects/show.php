@@ -5,15 +5,15 @@
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-folder-open me-2"></i>Project Details</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/projects">Projects</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/projects">Projects</a></li>
                     <li class="breadcrumb-item active"><?= $project['name'] ?? 'Project' ?></li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/projects/edit/<?= $project['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
-                <a href="/admin/projects/analytics/<?= $project['id'] ?? 0 ?>" class="btn btn-info btn-sm"><i class="fas fa-chart-bar me-1"></i>Analytics</a>
-                <a href="/admin/projects" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                <a href="<?= BASE_URL ?>/admin/projects/edit/<?= $project['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+                <a href="<?= BASE_URL ?>/admin/projects/analytics/<?= $project['id'] ?? 0 ?>" class="btn btn-info btn-sm"><i class="fas fa-chart-bar me-1"></i>Analytics</a>
+                <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
             </div>
         </div>
     </div>

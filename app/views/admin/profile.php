@@ -12,7 +12,6 @@ $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['success'], $_SESSION['error']);
 
-include APP_PATH . '/views/admin/layouts/header.php';
 ?>
 
 <div class="page-content">
@@ -113,4 +112,4 @@ include APP_PATH . '/views/admin/layouts/header.php';
             </div>
         </div>
 
-        <?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
+        <?php /* footer included via layouts/admin.php */ ?>

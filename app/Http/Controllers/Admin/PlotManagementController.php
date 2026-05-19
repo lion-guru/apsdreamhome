@@ -145,7 +145,7 @@ class PlotManagementController extends AdminController
             $countSql = str_replace('0 as developed_area', '1', $countSql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = ($countStmt->fetch()['total'] ?? 0);
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";
@@ -261,7 +261,7 @@ class PlotManagementController extends AdminController
             $countSql = str_replace("SELECT pa.*, p.plot_number, p.total_area, p.status as plot_status, u.name as requested_by_name, u.email as requested_by_email, s.site_name", "SELECT COUNT(DISTINCT pa.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = ($countStmt->fetch()['total'] ?? 0);
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";
@@ -422,7 +422,7 @@ class PlotManagementController extends AdminController
             $countSql = str_replace("SELECT pd.*, p.plot_number, p.total_area, p.status as plot_status, s.site_name, u.name as developer_name", "SELECT COUNT(DISTINCT pd.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = ($countStmt->fetch()['total'] ?? 0);
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";

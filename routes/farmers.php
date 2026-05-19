@@ -4,6 +4,11 @@
  * Farmer Management Routes
  */
 
+// STATIC routes MUST come before parameterized {id} routes
+$router->get('/api/farmers/stats', 'FarmerController@stats');
+$router->get('/api/farmers/summary', 'FarmerController@summary');
+$router->get('/api/farmers/search', 'FarmerController@search');
+
 // Farmer CRUD routes
 $router->get('/api/farmers', 'FarmerController@index');
 $router->post('/api/farmers', 'FarmerController@store');
@@ -28,8 +33,3 @@ $router->post('/api/farmers/{id}/support-requests', 'FarmerController@createSupp
 
 // Farmer dashboard and analytics
 $router->get('/api/farmers/{id}/dashboard', 'FarmerController@dashboard');
-$router->get('/api/farmers/stats', 'FarmerController@stats');
-$router->get('/api/farmers/summary', 'FarmerController@summary');
-
-// Search route
-$router->get('/api/farmers/search', 'FarmerController@search');

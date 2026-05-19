@@ -27,6 +27,18 @@
     </div>
 </div>
 
+<?php if (!empty($pageContent)): ?>
+<section class="py-4 bg-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="cms-content p-4"><?php echo $pageContent; ?></div>
+            </div>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <section class="section-padding py-5">
     <div class="container">
         <div class="row justify-content-center">

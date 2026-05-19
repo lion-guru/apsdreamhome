@@ -79,11 +79,11 @@
                                         <h2 class="accordion-header">
                                             <button class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse"
-                                                data-bs-target="#faq-<?= $faqId ?>">
+                                                data-bs-target="#faq-<?= htmlspecialchars($faqId, ENT_QUOTES, 'UTF-8') ?>">
                                                 <?= htmlspecialchars($question) ?>
                                             </button>
                                         </h2>
-                                        <div id="faq-<?= $faqId ?>" class="accordion-collapse collapse"
+                                        <div id="faq-<?= htmlspecialchars($faqId, ENT_QUOTES, 'UTF-8') ?>" class="accordion-collapse collapse"
                                             data-bs-parent="#faqAccordion">
                                             <div class="accordion-body">
                                                 <?= nl2br(htmlspecialchars($answer)) ?>

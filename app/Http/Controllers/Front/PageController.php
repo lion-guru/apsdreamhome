@@ -3,12 +3,28 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
+use PDO;
 
 class PageController extends BaseController
 {
     protected function skipCsrfProtection(): bool
     {
         return true;
+    }
+
+    private function loadPageContent(string $slug): array
+    {
+        $pageTitle = '';
+        $pageContent = '';
+        try {
+            $stmt = $this->db->query("SELECT title, content FROM pages WHERE slug = '" . addslashes($slug) . "' AND status = 'published' LIMIT 1");
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $pageTitle = $row['title'];
+                $pageContent = $row['content'];
+            }
+        } catch (\Exception $e) {}
+        return [$pageTitle, $pageContent];
     }
 
     // Home Page
@@ -100,11 +116,13 @@ class PageController extends BaseController
             }
         }
 
+        [$cmsTitle, $pageContent] = $this->loadPageContent('contact');
         $data = [
-            'page_title' => 'Contact Us - APS Dream Home',
+            'page_title' => ($cmsTitle ?: 'Contact Us') . ' - APS Dream Home',
             'page_description' => 'Get in touch with APS Dream Home',
             'contact_success' => $success,
-            'contact_error' => $error
+            'contact_error' => $error,
+            'pageContent' => $pageContent
         ];
         $this->render('pages/contact', $data);
     }
@@ -202,9 +220,11 @@ class PageController extends BaseController
     // About Us Page
     public function about()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('about');
         $data = [
-            'page_title' => 'About Us - APS Dream Home',
-            'page_description' => 'Learn more about APS Dream Home'
+            'page_title' => ($cmsTitle ?: 'About Us') . ' - APS Dream Home',
+            'page_description' => 'Learn more about APS Dream Home',
+            'pageContent' => $pageContent
         ];
         $this->render('pages/about', $data);
     }
@@ -506,19 +526,31 @@ class PageController extends BaseController
     // Team
     public function team()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('team');
+        $team_members = [];
+        $expertise_groups = [];
         try {
             $stmt = $this->db->prepare("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC");
             $stmt->execute();
-            $team_members = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            foreach ($rows as $r) {
+                $obj = (object)$r;
+                $team_members[] = $obj;
+                $cat = $r['expertise'] ? explode(',', $r['expertise'])[0] : 'Other';
+                $cat = trim($cat);
+                if (!isset($expertise_groups[$cat])) $expertise_groups[$cat] = [];
+                $expertise_groups[$cat][] = $obj;
+            }
         } catch (\Exception $e) {
-            $team_members = [];
             error_log("Team error: " . $e->getMessage());
         }
 
         $data = [
-            'page_title' => 'Our Team - APS Dream Home',
+            'page_title' => ($cmsTitle ?: 'Our Team') . ' - APS Dream Home',
             'page_description' => 'Meet the team behind APS Dream Home',
-            'team_members' => $team_members
+            'team_members' => $team_members,
+            'expertise_groups' => $expertise_groups,
+            'pageContent' => $pageContent
         ];
         $this->render('pages/team', $data);
     }
@@ -527,7 +559,7 @@ class PageController extends BaseController
     public function careers()
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM careers WHERE status = 'active' ORDER BY created_at DESC");
+            $stmt = $this->db->prepare("SELECT * FROM careers WHERE status = 'open' ORDER BY created_at DESC");
             $stmt->execute();
             $careers = $stmt->fetchAll(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
@@ -546,9 +578,11 @@ class PageController extends BaseController
     // Services
     public function services()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('services');
         $data = [
-            'page_title' => 'Our Services - APS Dream Home',
-            'page_description' => 'Services offered by APS Dream Home'
+            'page_title' => ($cmsTitle ?: 'Our Services') . ' - APS Dream Home',
+            'page_description' => 'Services offered by APS Dream Home',
+            'pageContent' => $pageContent
         ];
         $this->render('pages/services', $data);
     }
@@ -605,9 +639,11 @@ class PageController extends BaseController
     // Privacy Policy
     public function privacy()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('privacy');
         $data = [
-            'page_title' => 'Privacy Policy - APS Dream Home',
-            'page_description' => 'Our privacy policy'
+            'page_title' => ($cmsTitle ?: 'Privacy Policy') . ' - APS Dream Home',
+            'page_description' => 'Our privacy policy',
+            'pageContent' => $pageContent
         ];
         $this->render('pages/privacy', $data);
     }
@@ -768,9 +804,11 @@ class PageController extends BaseController
     // FAQs
     public function faqs()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('faqs');
         $data = [
-            'page_title' => 'FAQs - APS Dream Home',
-            'page_description' => 'Frequently asked questions about APS Dream Home'
+            'page_title' => ($cmsTitle ?: 'FAQs') . ' - APS Dream Home',
+            'page_description' => 'Frequently asked questions about APS Dream Home',
+            'pageContent' => $pageContent
         ];
         $this->render('pages/faqs', $data);
     }
@@ -816,11 +854,133 @@ class PageController extends BaseController
     // Interior Design
     public function interiorDesign()
     {
-        $data = [
-            'page_title' => 'Interior Design - APS Dream Home',
-            'page_description' => 'Professional interior design services'
+        $services = [];
+        $portfolio = [];
+        $team_members = [];
+        $testimonials = [];
+        $faqs = [];
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM interior_services WHERE status = 'active' ORDER BY sort_order ASC LIMIT 6");
+            $services = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $services = [
+                ['id' => 1, 'title' => 'Residential Design', 'description' => 'Complete home interior design from concept to completion, including furniture, lighting, and decor selection.', 'icon' => 'fas fa-home', 'features' => json_encode(['Space Planning', 'Furniture Selection', 'Lighting Design', 'Color Consultation'])],
+                ['id' => 2, 'title' => 'Commercial Design', 'description' => 'Professional office and commercial space design that enhances productivity and brand identity.', 'icon' => 'fas fa-building', 'features' => json_encode(['Office Layout', 'Brand Integration', 'Ergonomic Design', 'Reception Design'])],
+                ['id' => 3, 'title' => 'Kitchen & Bath', 'description' => 'Custom kitchen and bathroom design with modern fixtures and optimal space utilization.', 'icon' => 'fas fa-utensils', 'features' => json_encode(['Cabinet Design', 'Countertop Selection', 'Fixture Installation', 'Storage Solutions'])],
+                ['id' => 4, 'title' => 'Modular Furniture', 'description' => 'Custom modular furniture solutions including wardrobes, TV units, and storage systems.', 'icon' => 'fas fa-couch', 'features' => json_encode(['Wardrobe Design', 'TV Units', 'Bookshelves', 'Storage Systems'])],
+                ['id' => 5, 'title' => 'False Ceiling', 'description' => 'Designer false ceiling solutions with modern lighting integration for aesthetic ceilings.', 'icon' => 'fas fa-lightbulb', 'features' => json_encode(['POP Design', 'LED Integration', 'Cove Lighting', 'Sound Proofing'])],
+                ['id' => 6, 'title' => 'Turnkey Interiors', 'description' => 'Complete end-to-end interior solutions for new homes and offices under one roof.', 'icon' => 'fas fa-key', 'features' => json_encode(['End-to-End Service', 'Budget Planning', 'Project Management', 'Handover Guarantee'])],
+            ];
+        }
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM interior_portfolio WHERE status = 'active' ORDER BY sort_order ASC LIMIT 6");
+            $portfolio = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $portfolio = [];
+        }
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM interior_team WHERE status = 'active' ORDER BY sort_order ASC LIMIT 4");
+            $team_members = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $team_members = [];
+        }
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM testimonials WHERE type = 'interior' AND status = 'active' ORDER BY sort_order ASC LIMIT 3");
+            $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $testimonials = [];
+        }
+
+        $faqs = [
+            ['question' => 'What is the typical timeline for an interior design project?', 'answer' => 'Timelines vary based on scope. A single room typically takes 2-3 weeks, while a full home interior can take 6-12 weeks depending on customization and material availability.'],
+            ['question' => 'Do you provide free consultation?', 'answer' => 'Yes, we offer a free initial consultation where we discuss your requirements, take measurements, and provide a ballpark estimate. There is no obligation to proceed.'],
+            ['question' => 'What areas do you serve?', 'answer' => 'We primarily serve Gorakhpur, Lucknow, Varanasi, Kushinagar, and surrounding areas in Uttar Pradesh. For large projects, we can travel to other locations.'],
+            ['question' => 'Can I see a 3D design before work starts?', 'answer' => 'Absolutely. We provide detailed 3D visualizations and walkthroughs for every project before any work begins, so you know exactly what to expect.'],
+            ['question' => 'What payment terms do you offer?', 'answer' => 'We work on milestone-based payments. Typically 30% advance, 40% after design approval, 20% during execution, and 10% on completion and handover.'],
         ];
-        $this->render('pages/interior_design', $data);
+
+        $this->render('pages/interior_design', [
+            'page_title' => 'Interior Design - APS Dream Home',
+            'page_description' => 'Professional interior design services in Gorakhpur, Lucknow, Varanasi',
+            'services' => $services,
+            'portfolio' => $portfolio,
+            'team_members' => $team_members,
+            'testimonials' => $testimonials,
+            'faqs' => $faqs,
+        ]);
+    }
+
+    // Construction Services
+    public function constructionServices()
+    {
+        $projects = [];
+        $testimonials = [];
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM construction_projects WHERE status IN ('completed', 'in_progress') ORDER BY created_at DESC LIMIT 6");
+            $projects = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $projects = [];
+        }
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM testimonials WHERE type = 'construction' AND status = 'active' LIMIT 3");
+            $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $testimonials = [];
+        }
+
+        $this->render('pages/construction_services', [
+            'page_title' => 'Construction & Contracting - APS Dream Home',
+            'page_description' => 'Professional construction and project contracting services',
+            'projects' => $projects,
+            'testimonials' => $testimonials,
+        ]);
+    }
+
+    // Construction Inquiry Form
+    public function constructionInquiry()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/construction-services');
+            exit;
+        }
+
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $project_type = trim($_POST['project_type'] ?? '');
+        $budget = floatval($_POST['budget'] ?? 0);
+        $location = trim($_POST['location'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        if (empty($name) || empty($phone)) {
+            $_SESSION['flash_error'] = 'Name and phone are required';
+            header('Location: ' . BASE_URL . '/construction-services#contact-form');
+            exit;
+        }
+
+        try {
+            $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'project', 'pending', 'medium', NOW())");
+            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ₹{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
+
+            // Also save to service_interests if table exists
+            try {
+                $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
+                $sStmt->execute([$this->db->lastInsertId(), "Budget: ₹{$budget}, Location: {$location}, Type: {$project_type}"]);
+            } catch (\Exception $e) {}
+
+            $_SESSION['flash_success'] = 'Thank you! We will contact you shortly regarding your construction project.';
+        } catch (\Exception $e) {
+            $_SESSION['flash_error'] = 'Something went wrong. Please try again.';
+        }
+
+        header('Location: ' . BASE_URL . '/construction-services#contact-form');
+        exit;
     }
 
     // Email System
@@ -836,9 +996,11 @@ class PageController extends BaseController
     // Legal Terms Conditions
     public function legalTermsConditions()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('terms-conditions');
         $data = [
-            'page_title' => 'Terms & Conditions - APS Dream Home',
-            'page_description' => 'Detailed terms and conditions of APS Dream Home'
+            'page_title' => ($cmsTitle ?: 'Terms & Conditions') . ' - APS Dream Home',
+            'page_description' => 'Detailed terms and conditions of APS Dream Home',
+            'pageContent' => $pageContent
         ];
         $this->render('pages/legal/terms_conditions', $data);
     }
@@ -1069,9 +1231,11 @@ class PageController extends BaseController
     // Gallery
     public function gallery()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('gallery');
         $data = [
-            'page_title' => 'Gallery - APS Dream Home',
-            'page_description' => 'Photo and video gallery of our projects'
+            'page_title' => ($cmsTitle ?: 'Gallery') . ' - APS Dream Home',
+            'page_description' => 'Photo and video gallery of our projects',
+            'pageContent' => $pageContent
         ];
         $this->render('pages/gallery', $data);
     }
@@ -1323,6 +1487,46 @@ class PageController extends BaseController
             'page_description' => 'Update your profile information'
         ];
         $this->render('pages/user/edit_profile', $data);
+    }
+
+    // Stamp Duty Calculator
+    public function stampDutyCalculator()
+    {
+        $data = [
+            'page_title' => 'Stamp Duty & Registration Calculator - APS Dream Home',
+            'page_description' => 'Calculate stamp duty, registration fees and total cost for property purchase'
+        ];
+        $this->render('pages/tools/stamp_duty', $data);
+    }
+
+    // Plot Size Converter
+    public function plotSizeConverter()
+    {
+        $data = [
+            'page_title' => 'Plot Size Converter - APS Dream Home',
+            'page_description' => 'Convert between square feet, square meters, acres, bigha, gaj and more'
+        ];
+        $this->render('pages/tools/plot_converter', $data);
+    }
+
+    // Home Loan Eligibility
+    public function homeLoanEligibility()
+    {
+        $data = [
+            'page_title' => 'Home Loan Eligibility Calculator - APS Dream Home',
+            'page_description' => 'Check your home loan eligibility based on income and existing obligations'
+        ];
+        $this->render('pages/tools/loan_eligibility', $data);
+    }
+
+    // Property Valuation
+    public function propertyValuation()
+    {
+        $data = [
+            'page_title' => 'Property Valuation - APS Dream Home',
+            'page_description' => 'Get approximate market value of your property'
+        ];
+        $this->render('pages/tools/property_valuation', $data);
     }
 
     // Under Construction
@@ -1841,9 +2045,11 @@ class PageController extends BaseController
     // Legal Terms of Service
     public function legalTermsPage()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('terms');
         $data = [
-            'page_title' => 'Terms of Service - APS Dream Home',
+            'page_title' => ($cmsTitle ?: 'Terms of Service') . ' - APS Dream Home',
             'page_description' => 'Please read our terms carefully before using our services',
+            'pageContent' => $pageContent,
             'breadcrumbs' => [
                 ['title' => 'Home', 'url' => BASE_URL],
                 ['title' => 'Terms of Service', 'url' => '']
@@ -1874,6 +2080,41 @@ class PageController extends BaseController
             'page_description' => 'Premium residential plots in Gorakhpur with modern infrastructure'
         ];
         $this->render('pages/suyoday_colony', $data);
+    }
+
+    public function toolsHub()
+    {
+        $pageTitle = 'Tools Hub';
+        $metaDescription = 'All property calculators in one place - EMI, Stamp Duty, Plot Converter, Loan Eligibility, Valuation and more';
+        return $this->render('pages/tools/hub', compact('pageTitle', 'metaDescription'));
+    }
+
+    public function rentVsBuy()
+    {
+        $pageTitle = 'Rent vs Buy Calculator';
+        $metaDescription = 'Compare renting vs buying property over 20 years with comprehensive financial analysis';
+        return $this->render('pages/tools/rent_vs_buy', compact('pageTitle', 'metaDescription'));
+    }
+
+    public function sipVsRealestate()
+    {
+        $pageTitle = 'SIP vs Real Estate Calculator';
+        $metaDescription = 'Compare SIP mutual fund investments vs real estate property investments over 20 years';
+        return $this->render('pages/tools/sip_vs_realestate', compact('pageTitle', 'metaDescription'));
+    }
+
+    public function capitalGains()
+    {
+        $pageTitle = 'Capital Gains Calculator';
+        $metaDescription = 'Calculate LTCG and STCG tax on property sales with CII indexation for Indian real estate';
+        return $this->render('pages/tools/capital_gains', compact('pageTitle', 'metaDescription'));
+    }
+
+    public function gstCalculator()
+    {
+        $pageTitle = 'GST Calculator for Property';
+        $metaDescription = 'Calculate GST on under-construction and ready-to-move properties in India';
+        return $this->render('pages/tools/gst_calculator', compact('pageTitle', 'metaDescription'));
     }
 
     private function createUserPropertiesTable()
@@ -1908,5 +2149,57 @@ class PageController extends BaseController
             INDEX idx_listing_type (listing_type)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         $this->db->exec($sql);
+    }
+
+    /**
+     * Dynamic colony/project detail page
+     */
+    public function colonyDetail($slug = null)
+    {
+        if (!$slug) {
+            $this->redirect('/projects');
+            return;
+        }
+        $colony = $this->db->fetch("SELECT c.*, d.name as district_name, s.name as state_name FROM colonies c LEFT JOIN districts d ON c.district_id = d.id LEFT JOIN states s ON d.state_id = s.id WHERE c.slug = ? AND c.is_active = 1", [$slug]);
+        if (!$colony) {
+            $this->notFound();
+            return;
+        }
+        $availablePlots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? AND status = 'available' ORDER BY plot_number LIMIT 20", [$colony['id']]);
+        $this->render('pages/colony_detail', [
+            'page_title' => $colony['meta_title'] ?: $colony['name'] . ' - APS Dream Home',
+            'page_description' => $colony['meta_description'] ?: $colony['name'] . ' - Premium residential plots',
+            'colony' => $colony,
+            'availablePlots' => $availablePlots,
+        ]);
+    }
+
+    /**
+     * Public plot listing for a colony
+     */
+    public function colonyPlots($slug = null)
+    {
+        if (!$slug) {
+            $this->redirect('/projects');
+            return;
+        }
+        $colony = $this->db->fetch("SELECT * FROM colonies WHERE slug = ? AND is_active = 1", [$slug]);
+        if (!$colony) {
+            $this->notFound();
+            return;
+        }
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 24;
+        $offset = ($page - 1) * $perPage;
+        $totalPlots = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM plots WHERE colony_id = ? AND status = 'available'", [$colony['id']]);
+        $plots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? AND status = 'available' ORDER BY plot_number LIMIT $perPage OFFSET $offset", [$colony['id']]);
+        $this->render('pages/colony_plots', [
+            'page_title' => 'Available Plots - ' . $colony['name'],
+            'colony' => $colony,
+            'plots' => $plots,
+            'totalPlots' => $totalPlots,
+            'current_page' => $page,
+            'total_pages' => max(1, ceil($totalPlots / $perPage)),
+        ]);
     }
 }

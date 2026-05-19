@@ -89,7 +89,7 @@ ob_start();
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
+                        <div class="table-responsive"><table class="table table-hover align-middle table-responsive">
                             <thead class="table-light">
                                 <tr>
                                     <th class="py-3 ps-4 border-0 rounded-start">Description</th>
@@ -103,11 +103,11 @@ ob_start();
                                 </tr>
                                 <tr>
                                     <td class="py-3 ps-4 text-secondary">Loan Duration</td>
-                                    <td class="py-3 text-end pe-4 fw-bold"><?= $mon ?> Months</td>
+                                    <td class="py-3 text-end pe-4 fw-bold"><?= htmlspecialchars($mon, ENT_QUOTES, 'UTF-8') ?> Months</td>
                                 </tr>
                                 <tr>
                                     <td class="py-3 ps-4 text-secondary">Interest Rate</td>
-                                    <td class="py-3 text-end pe-4 fw-bold"><?= $int ?>%</td>
+                                    <td class="py-3 text-end pe-4 fw-bold"><?= htmlspecialchars($int, ENT_QUOTES, 'UTF-8') ?>%</td>
                                 </tr>
                                 <tr>
                                     <td class="py-3 ps-4 text-secondary">Total Interest Payable</td>
@@ -118,7 +118,7 @@ ob_start();
                                     <td class="py-3 text-end pe-4 fw-bold">₹<?= number_format($pay, 2) ?></td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
 
                     <div class="alert alert-info border-0 rounded-4 p-4 mt-4 mb-0">

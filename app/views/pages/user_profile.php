@@ -1,12 +1,13 @@
 <?php
+$page_title = 'My Profile - APS Dream Home';
 $extraHead = '<style>
     .profile-card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
 </style>';
 ?>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+<div class="content-area p-4">
+    <div class="row">
+        <div class="col-lg-9">
             <div class="card profile-card">
                 <div class="card-header bg-white">
                     <h4 class="mb-0"><i class="fas fa-user-cog me-2 text-primary"></i>My Profile</h4>

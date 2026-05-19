@@ -14,7 +14,7 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
@@ -44,7 +44,7 @@
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

@@ -20,7 +20,7 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light"><tr><th>Plan ID</th><th>Customer</th><th>Total Amount</th><th>Paid</th><th>Balance</th><th>Installments</th><th>Next Due</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody><?php foreach ($plans as $pl): $paid = $pl['paid'] ?? 0; $total = $pl['total_amount'] ?? 0; ?>
                         <tr>
@@ -35,7 +35,7 @@
                             <td><a href="<?= BASE_URL ?>payments/initiate?plan_id=<?= $pl['id'] ?? 0 ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-credit-card"></i> Pay</a></td>
                         </tr>
                     <?php endforeach; ?></tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

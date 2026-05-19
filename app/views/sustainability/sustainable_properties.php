@@ -39,7 +39,7 @@
                     <?php foreach ($standards as $key => $std): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ($std['standard'] ?? $key) ?></h6>
-                        <div class="mb-2"><?php foreach (($std['certification_levels'] ?? []) as $level): ?><span class="badge bg-secondary me-1"><?= $level ?></span><?php endforeach; ?></div>
+                        <div class="mb-2"><?php foreach (($std['certification_levels'] ?? []) as $level): ?><span class="badge bg-secondary me-1"><?= htmlspecialchars($level, ENT_QUOTES, 'UTF-8') ?></span><?php endforeach; ?></div>
                         <small class="text-muted">Focus: <?= implode(', ', $std['focus_areas'] ?? []) ?></small>
                     </div>
                     <?php endforeach; ?>
@@ -54,7 +54,7 @@
                     <?php foreach ($ratings as $key => $rating): ?>
                     <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
                         <span><?= ucfirst(str_replace('_', ' ', $key)) ?></span>
-                        <strong class="text-success"><?= $rating ?></strong>
+                        <strong class="text-success"><?= htmlspecialchars($rating, ENT_QUOTES, 'UTF-8') ?></strong>
                     </div>
                     <?php endforeach; ?>
                     <?php if (empty($ratings)): ?><p class="text-muted text-center py-3">No ratings data.</p><?php endif; ?>
@@ -71,7 +71,7 @@
                             <h6 class="text-capitalize"><?= str_replace('_', ' ', $category) ?></h6>
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($features as $feature => $desc): ?>
-                                <li class="list-group-item px-0"><strong><?= $feature ?></strong><br><small class="text-muted"><?= $desc ?></small></li>
+                                <li class="list-group-item px-0"><strong><?= htmlspecialchars($feature, ENT_QUOTES, 'UTF-8') ?></strong><br><small class="text-muted"><?= htmlspecialchars($desc, ENT_QUOTES, 'UTF-8') ?></small></li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>

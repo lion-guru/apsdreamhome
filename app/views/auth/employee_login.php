@@ -1,6 +1,6 @@
 <?php
 $layout = 'layouts/base';
-$page_title = $page_title ?? 'Login - APS Dream Home';
+$page_title = $page_title ?? 'Employee Login - APS Dream Home';
 $page_description = $page_description ?? 'Login to your APS Dream Home account';
 ?>
 

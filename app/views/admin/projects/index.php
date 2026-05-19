@@ -1,3 +1,4 @@
+<?php $layout = "admin/layouts/unified"; $active_page = "index"; ?>
 <?php
 $page_title = $page_title ?? 'Projects';
 $projects = $projects ?? [];
@@ -9,7 +10,7 @@ $stats = $stats ?? ['total' => 0, 'under_construction' => 0, 'completed' => 0, '
         <h1 class="h3 mb-1">Projects</h1>
         <p class="text-muted mb-0">Manage all projects</p>
     </div>
-    <a href="/admin/projects/create" class="btn btn-primary">
+    <a href="<?= BASE_URL ?>/admin/projects/create" class="btn btn-primary">
         <i class="fas fa-plus me-2"></i>New Project
     </a>
 </div>
@@ -78,8 +79,8 @@ $stats = $stats ?? ['total' => 0, 'under_construction' => 0, 'completed' => 0, '
                                 <td><?= date('M d, Y', strtotime($p['created_at'] ?? 'now')) ?></td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="/admin/projects/view/<?= $p['id'] ?>" class="btn btn-outline-primary"><i class="fas fa-eye"></i></a>
-                                        <a href="/admin/projects/edit/<?= $p['id'] ?>" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/projects/view/<?= $p['id'] ?>" class="btn btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/projects/edit/<?= $p['id'] ?>" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -92,7 +93,7 @@ $stats = $stats ?? ['total' => 0, 'under_construction' => 0, 'completed' => 0, '
                 <i class="fas fa-building fa-3x text-muted mb-3"></i>
                 <h5>No projects found</h5>
                 <p class="text-muted">Create your first project</p>
-                <a href="/admin/projects/create" class="btn btn-primary">Create Project</a>
+                <a href="<?= BASE_URL ?>/admin/projects/create" class="btn btn-primary">Create Project</a>
             </div>
         <?php endif; ?>
     </div>
