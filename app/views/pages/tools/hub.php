@@ -104,6 +104,39 @@
                     </div>
                 </a>
             </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="/apsdreamhome/construction-cost-estimator" class="text-decoration-none">
+                    <div class="card border-0 shadow h-100" style="border-radius: 16px; background: linear-gradient(135deg, #f7971e, #ffd200);">
+                        <div class="card-body text-dark text-center p-4">
+                            <i class="fas fa-hard-hat fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Construction Cost Estimator</h5>
+                            <p class="small mb-0 text-dark-50">Ghar banwane ka estimated cost calculate karein plot area aur quality ke hisaab se</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="/apsdreamhome/rental-yield-calculator" class="text-decoration-none">
+                    <div class="card border-0 shadow h-100" style="border-radius: 16px; background: linear-gradient(135deg, #11998e, #38ef7d);">
+                        <div class="card-body text-white text-center p-4">
+                            <i class="fas fa-chart-pie fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Rental Yield Calculator</h5>
+                            <p class="small mb-0 text-white-50">Property ki rental income aur ROI calculate karein</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="/apsdreamhome/property-tax-calculator" class="text-decoration-none">
+                    <div class="card border-0 shadow h-100" style="border-radius: 16px; background: linear-gradient(135deg, #fc5c7d, #6a82fb);">
+                        <div class="card-body text-white text-center p-4">
+                            <i class="fas fa-file-invoice-dollar fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Property Tax Calculator</h5>
+                            <p class="small mb-0 text-white-50">Apni property ka annual tax aur breakdown estimate karein</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 </section>

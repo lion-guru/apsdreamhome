@@ -1,7 +1,10 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0"><i class="fas fa-ad me-2"></i>Ad Manager</h1>
-        <a href="<?= BASE_URL ?>/admin/ads/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>New Ad Slot</a>
+        <div>
+            <a href="<?= BASE_URL ?>/admin/ads/settings" class="btn btn-outline-info me-2"><i class="fab fa-google me-1"></i>AdSense Settings</a>
+            <a href="<?= BASE_URL ?>/admin/ads/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>New Ad Slot</a>
+        </div>
     </div>
 
     <?php if (isset($_SESSION['flash_message'])): ?>

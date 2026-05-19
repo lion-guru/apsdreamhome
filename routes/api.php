@@ -1,6 +1,11 @@
 <?php
 
 /** @var Router $router */
+
+if (class_exists('\App\Middleware\RateLimiter')) {
+    \App\Middleware\RateLimiter::checkApi();
+}
+
 // API Routes
 $router->post('/api/v2/mobile/auth/login', 'Api\MobileApiController@login');
 $router->post('/api/v2/mobile/auth/logout', 'Api\MobileApiController@logout');

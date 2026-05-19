@@ -13,6 +13,9 @@
             <div class="col-auto"><a href="/apsdreamhome/sip-vs-realestate" class="btn btn-outline-light btn-sm rounded-pill">SIP vs RE</a></div>
             <div class="col-auto"><a href="/apsdreamhome/capital-gains-calculator" class="btn btn-outline-light btn-sm rounded-pill">Capital Gains</a></div>
             <div class="col-auto"><a href="/apsdreamhome/gst-calculator" class="btn btn-outline-light btn-sm rounded-pill">GST Calculator</a></div>
+            <div class="col-auto"><a href="/apsdreamhome/construction-cost-estimator" class="btn btn-outline-light btn-sm rounded-pill">Construction Cost</a></div>
+            <div class="col-auto"><a href="/apsdreamhome/rental-yield-calculator" class="btn btn-outline-light btn-sm rounded-pill">Rental Yield</a></div>
+            <div class="col-auto"><a href="/apsdreamhome/property-tax-calculator" class="btn btn-outline-light btn-sm rounded-pill">Property Tax</a></div>
             <div class="col-auto"><a href="/apsdreamhome/tools-hub" class="btn btn-primary btn-sm rounded-pill"><i class="fas fa-th me-1"></i>All Tools</a></div>
         </div>
     </div>
