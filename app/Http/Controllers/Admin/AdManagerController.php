@@ -87,4 +87,59 @@ class AdManagerController extends AdminController
         header('Location: ' . BASE_URL . '/admin/ads');
         exit;
     }
+
+    public function settings()
+    {
+        $this->requireAdmin();
+
+        $adsensePublisherId = '';
+        $autoAdCode = '';
+
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT setting_value FROM app_settings WHERE setting_key = ?");
+            $stmt->execute(['adsense_publisher_id']);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($row) {
+                $adsensePublisherId = $row['setting_value'];
+            }
+            $stmt2 = $db->prepare("SELECT setting_value FROM app_settings WHERE setting_key = ?");
+            $stmt2->execute(['adsense_auto_ad_code']);
+            $row2 = $stmt2->fetch(\PDO::FETCH_ASSOC);
+            if ($row2) {
+                $autoAdCode = $row2['setting_value'];
+            }
+        } catch (\Exception $e) {}
+
+        $this->render('admin/ads/settings', [
+            'page_title' => 'AdSense Settings',
+            'adsense_publisher_id' => $adsensePublisherId,
+            'auto_ad_code' => $autoAdCode,
+        ]);
+    }
+
+    public function saveSettings()
+    {
+        $this->requireAdmin();
+
+        $publisherId = $_POST['adsense_publisher_id'] ?? '';
+        $autoAdCode = $_POST['auto_ad_code'] ?? '';
+
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $stmt = $db->prepare("INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+            $stmt->execute(['adsense_publisher_id', $publisherId, $publisherId]);
+
+            $stmt2 = $db->prepare("INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+            $stmt2->execute(['adsense_auto_ad_code', $autoAdCode, $autoAdCode]);
+
+            $this->flashMessage('AdSense settings saved', 'success');
+        } catch (\Exception $e) {
+            $this->flashMessage('Error saving settings: ' . $e->getMessage(), 'error');
+        }
+
+        header('Location: ' . BASE_URL . '/admin/ads/settings');
+        exit;
+    }
 }

@@ -101,6 +101,29 @@ class Router
             $uri = '/' . $uri;
         }
 
+        // Step 5b: Global CSRF validation for POST/PUT/DELETE
+        if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE'])) {
+            $excludedPaths = ['/subscribe', '/api/', '/ad-click/'];
+            $skip = false;
+            foreach ($excludedPaths as $path) {
+                if (strpos($uri, $path) === 0) { $skip = true; break; }
+            }
+            if (!$skip && class_exists('\App\Helpers\SecurityHelper')) {
+                $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+                if (!\App\Helpers\SecurityHelper::validateCsrfToken($token)) {
+                    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+                        exit;
+                    }
+                    $_SESSION['error'] = 'Security token expired. Please try again.';
+                    $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+                    header('Location: ' . $referer);
+                    exit;
+                }
+            }
+        }
+
         // Step 6: Route lookup
         $routeData = null;
         $params = [];

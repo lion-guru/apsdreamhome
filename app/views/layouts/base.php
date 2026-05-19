@@ -1,3 +1,8 @@
+<?php
+if (class_exists('\App\Helpers\SecurityHelper')) {
+    \App\Helpers\SecurityHelper::setSecurityHeaders();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,6 +10,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title ?? 'APS Dream Home - Premium Real Estate in Uttar Pradesh'; ?></title>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "RealEstateAgent",
+        "name": "APS Dream Home",
+        "image": "<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/logo/apslogonew.jpg",
+        "url": "<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>",
+        "telephone": "+91-9277121112",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "1st floor, Singhariya Chauraha, Kunraghat",
+            "addressLocality": "Gorakhpur",
+            "addressRegion": "Uttar Pradesh",
+            "postalCode": "273008",
+            "addressCountry": "IN"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "200"
+        },
+        "openingHoursSpecification": [
+            {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "09:00", "closes": "19:00"}
+        ],
+        "sameAs": [
+            "https://www.facebook.com/apsdreamhomes/",
+            "https://www.instagram.com/apsdreamhomes/",
+            "https://www.youtube.com/@apsdreamhomes",
+            "https://www.linkedin.com/company/apsdreamhomes"
+        ]
+    }
+    </script>
+
     <meta name="description" content="<?php echo $page_description ?? 'Discover premium residential and commercial properties in Gorakhpur, Lucknow, Kushinagar, and across Uttar Pradesh with APS Dream Home. Premium plots, modern amenities, and trusted service.'; ?>">
     <meta name="keywords" content="real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Varanasi, Uttar Pradesh, property, residential, commercial">
     <meta name="author" content="APS Dream Home">

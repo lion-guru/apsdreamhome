@@ -2,6 +2,7 @@
 $property = $data['property'] ?? null;
 $property_images = $data['property_images'] ?? [];
 $related = $data['related_properties'] ?? [];
+$reviews = $data['reviews'] ?? [];
 ?>
 <div class="container-fluid py-4">
     <nav aria-label="breadcrumb" class="mb-4">
@@ -210,4 +211,69 @@ $related = $data['related_properties'] ?? [];
             <a href="/properties" class="btn btn-primary">Browse Properties</a>
         </div>
     <?php endif; ?>
+
+    <!-- Customer Reviews Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-star me-2"></i>Customer Reviews</h5>
+                </div>
+                <div class="card-body">
+                    <?php if (!empty($reviews)): ?>
+                        <?php foreach ($reviews as $review): ?>
+                            <div class="mb-4 pb-3 border-bottom">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong><?php echo htmlspecialchars($review['user_name'] ?? $review['name'] ?? 'Anonymous'); ?></strong>
+                                    <small class="text-muted"><?php echo date('d M Y', strtotime($review['created_at'])); ?></small>
+                                </div>
+                                <div class="mb-2">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <i class="fa<?php echo $i <= $review['rating'] ? 's' : 'r'; ?> fa-star text-warning"></i>
+                                    <?php endfor; ?>
+                                </div>
+                                <p class="mb-0"><?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-muted mb-4"><i class="fas fa-info-circle me-2"></i>Be the first to review this property</p>
+                    <?php endif; ?>
+
+                    <hr>
+                    <h6 class="mb-3">Write a Review</h6>
+                    <form action="/property/review" method="POST">
+                        <input type="hidden" name="property_id" value="<?php echo $property['id'] ?? 0; ?>">
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label">Your Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rating <span class="text-danger">*</span></label>
+                            <select name="rating" class="form-select" required>
+                                <option value="">Select Rating</option>
+                                <option value="5">5 - Excellent</option>
+                                <option value="4">4 - Good</option>
+                                <option value="3">3 - Average</option>
+                                <option value="2">2 - Poor</option>
+                                <option value="1">1 - Terrible</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Your Review <span class="text-danger">*</span></label>
+                            <textarea name="review_text" class="form-control" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Review
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

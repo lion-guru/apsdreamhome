@@ -21,6 +21,85 @@ class EmailSettingsController extends BaseController
     }
     
     /**
+     * Show SMTP settings page (dedicated)
+     */
+    public function smtpSettings()
+    {
+        @session_start();
+
+        if (!isset($_SESSION['admin_id'])) {
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
+
+        $smtp = $this->getSmtpFromDb();
+        $base = BASE_URL;
+        include __DIR__ . '/../../../views/admin/email/smtp-settings.php';
+    }
+
+    /**
+     * Save SMTP settings to app_settings table
+     */
+    public function saveSmtp()
+    {
+        @session_start();
+
+        if (!isset($_SESSION['admin_id'])) {
+            $_SESSION['error'] = 'Unauthorized';
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
+
+        $settings = [
+            'smtp_host' => $_POST['smtp_host'] ?? '',
+            'smtp_port' => $_POST['smtp_port'] ?? '587',
+            'smtp_username' => $_POST['smtp_username'] ?? '',
+            'smtp_password' => $_POST['smtp_password'] ?? '',
+            'smtp_encryption' => $_POST['smtp_encryption'] ?? 'tls',
+            'smtp_from_email' => $_POST['smtp_from_email'] ?? '',
+            'smtp_from_name' => $_POST['smtp_from_name'] ?? 'APS Dream Home',
+        ];
+
+        // Validate CSRF
+        $token = $_POST['csrf_token'] ?? '';
+        if (!\App\Helpers\SecurityHelper::validateCsrfToken($token)) {
+            $_SESSION['error'] = 'Security token expired. Please try again.';
+            header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? BASE_URL . '/admin/settings/smtp'));
+            exit;
+        }
+
+        $db = $this->db;
+        foreach ($settings as $key => $value) {
+            $stmt = $db->prepare(
+                "INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?"
+            );
+            $stmt->execute([$key, $value, $value]);
+        }
+
+        $_SESSION['success'] = 'SMTP settings saved successfully!';
+        header('Location: ' . BASE_URL . '/admin/settings/smtp');
+        exit;
+    }
+
+    /**
+     * Fetch SMTP settings from app_settings table
+     */
+    private function getSmtpFromDb()
+    {
+        $db = $this->db;
+        try {
+            $rows = $db->fetchAll("SELECT setting_key, setting_value FROM app_settings WHERE setting_key LIKE 'smtp_%'");
+            $settings = [];
+            foreach ($rows as $row) {
+                $settings[$row['setting_key']] = $row['setting_value'];
+            }
+            return $settings;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
      * Show email settings page
      */
     public function index()

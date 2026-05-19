@@ -361,6 +361,118 @@ class CampaignController extends AdminController
     }
 
     /**
+     * Email template editor
+     */
+    public function templateEditor()
+    {
+        $this->middleware('admin.auth');
+        $this->data['page_title'] = 'Email Template Editor';
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM email_templates ORDER BY template_name ASC");
+            $templates = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $this->data['templates'] = $templates ?: [];
+        } catch (\Exception $e) {
+            error_log("Template editor error: " . $e->getMessage());
+            $this->data['templates'] = [];
+        }
+
+        $this->render('admin/emails/template-editor');
+    }
+
+    /**
+     * Save email template
+     */
+    public function saveTemplate()
+    {
+        $this->middleware('admin.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/email-templates/editor');
+        }
+
+        $templateCode = trim($_POST['template_code'] ?? '');
+        $templateName = trim($_POST['template_name'] ?? '');
+        $subject = trim($_POST['subject'] ?? '');
+        $bodyHtml = $_POST['body_html'] ?? '';
+
+        if (empty($templateCode) || empty($subject)) {
+            $this->data['error'] = 'Template code and subject are required.';
+            return $this->templateEditor();
+        }
+
+        try {
+            // Check if template exists
+            $check = $this->db->prepare("SELECT id FROM email_templates WHERE template_code = ?");
+            $check->execute([$templateCode]);
+            $existing = $check->fetch(\PDO::FETCH_ASSOC);
+
+            if ($existing) {
+                $stmt = $this->db->prepare("UPDATE email_templates SET template_name = ?, subject = ?, body_html = ?, updated_at = NOW() WHERE template_code = ?");
+                $stmt->execute([$templateName, $subject, $bodyHtml, $templateCode]);
+                $this->data['success'] = 'Template updated successfully!';
+            } else {
+                $stmt = $this->db->prepare("INSERT INTO email_templates (template_code, template_name, subject, body_html, html_content, template_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'general', NOW(), NOW())");
+                $stmt->execute([$templateCode, $templateName, $subject, $bodyHtml, $bodyHtml]);
+                $this->data['success'] = 'Template created successfully!';
+            }
+        } catch (\Exception $e) {
+            error_log("Save template error: " . $e->getMessage());
+            $this->data['error'] = 'Failed to save template.';
+        }
+
+        $this->templateEditor();
+    }
+
+    /**
+     * Email logs viewer
+     */
+    public function logs()
+    {
+        $this->middleware('admin.auth');
+        $this->data['page_title'] = 'Email Logs';
+
+        $statusFilter = $_GET['status'] ?? '';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 50;
+        $offset = ($page - 1) * $perPage;
+
+        try {
+            $where = '';
+            $params = [];
+            if ($statusFilter && in_array($statusFilter, ['sent', 'failed', 'pending', 'processing', 'cancelled'])) {
+                $where = "WHERE status = ?";
+                $params[] = $statusFilter;
+            }
+
+            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM email_queue $where");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetch(\PDO::FETCH_ASSOC)['total'];
+
+            $stmt = $this->db->prepare("SELECT * FROM email_queue $where ORDER BY created_at DESC LIMIT $perPage OFFSET $offset");
+            $stmt->execute($params);
+            $logs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $this->data['logs'] = $logs ?: [];
+            $this->data['total'] = $total;
+            $this->data['page'] = $page;
+            $this->data['perPage'] = $perPage;
+            $this->data['totalPages'] = ceil($total / $perPage);
+            $this->data['statusFilter'] = $statusFilter;
+        } catch (\Exception $e) {
+            error_log("Email logs error: " . $e->getMessage());
+            $this->data['logs'] = [];
+            $this->data['total'] = 0;
+            $this->data['page'] = 1;
+            $this->data['perPage'] = 50;
+            $this->data['totalPages'] = 1;
+            $this->data['statusFilter'] = '';
+        }
+
+        $this->render('admin/emails/logs');
+    }
+
+    /**
      * SMS campaigns management
      */
     public function smsCampaigns()

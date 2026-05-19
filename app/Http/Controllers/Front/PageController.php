@@ -1087,6 +1087,7 @@ class PageController extends BaseController
         $property = null;
         $property_images = [];
         $related_properties = [];
+        $reviews = [];
 
         if ($id) {
             try {
@@ -1102,6 +1103,11 @@ class PageController extends BaseController
                     $relStmt = $this->db->prepare("SELECT * FROM properties WHERE id != ? AND status = 'available' ORDER BY RAND() LIMIT 3");
                     $relStmt->execute([$id]);
                     $related_properties = $relStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+                    // Fetch approved reviews
+                    $revStmt = $this->db->prepare("SELECT r.*, COALESCE(u.name, 'Anonymous') as user_name FROM property_reviews r LEFT JOIN users u ON r.customer_id = u.id WHERE r.property_id = ? AND r.status = 'approved' ORDER BY r.created_at DESC");
+                    $revStmt->execute([$id]);
+                    $reviews = $revStmt->fetchAll(\PDO::FETCH_ASSOC);
                 }
             } catch (\Exception $e) {
                 error_log("Property fetch error: " . $e->getMessage());
@@ -1113,9 +1119,63 @@ class PageController extends BaseController
             'page_description' => 'View property details',
             'property' => $property,
             'property_images' => $property_images,
-            'related_properties' => $related_properties
+            'related_properties' => $related_properties,
+            'reviews' => $reviews
         ];
         $this->render('properties/detail', $data);
+    }
+
+    // Submit Property Review
+    public function reviewSubmit()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /properties');
+            exit;
+        }
+
+        $propertyId = (int)($_POST['property_id'] ?? 0);
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $rating = (int)($_POST['rating'] ?? 0);
+        $reviewText = trim($_POST['review_text'] ?? '');
+
+        if (!$propertyId || !$name || !$email || !$rating || !$reviewText) {
+            $_SESSION['flash_error'] = 'All fields are required.';
+            header('Location: /properties/' . $propertyId);
+            exit;
+        }
+
+        if ($rating < 1 || $rating > 5) {
+            $_SESSION['flash_error'] = 'Rating must be between 1 and 5.';
+            header('Location: /properties/' . $propertyId);
+            exit;
+        }
+
+        try {
+            // Find or create a user record for this reviewer
+            $customerId = null;
+            $userStmt = $this->db->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+            $userStmt->execute([$email]);
+            $existingUser = $userStmt->fetch(\PDO::FETCH_ASSOC);
+            if ($existingUser) {
+                $customerId = $existingUser['id'];
+            } else {
+                $createStmt = $this->db->prepare("INSERT INTO users (name, email, role, created_at) VALUES (?, ?, 'customer', NOW())");
+                $createStmt->execute([$name, $email]);
+                $customerId = $this->db->lastInsertId();
+            }
+
+            $stmt = $this->db->prepare("INSERT INTO property_reviews (customer_id, property_id, rating, review_text, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())");
+            $stmt->execute([$customerId, $propertyId, $rating, $reviewText]);
+
+            $_SESSION['flash_success'] = 'Thank you! Your review has been submitted and is pending approval.';
+        } catch (\Exception $e) {
+            error_log("Review submit error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Something went wrong. Please try again.';
+        }
+
+        header('Location: /properties/' . $propertyId);
+        exit;
     }
 
     // Projects List
@@ -2115,6 +2175,27 @@ class PageController extends BaseController
         $pageTitle = 'GST Calculator for Property';
         $metaDescription = 'Calculate GST on under-construction and ready-to-move properties in India';
         return $this->render('pages/tools/gst_calculator', compact('pageTitle', 'metaDescription'));
+    }
+
+    public function constructionCostEstimator()
+    {
+        $pageTitle = 'Construction Cost Estimator';
+        $metaDescription = 'Estimate building construction cost based on plot area, floors, and quality';
+        return $this->render('pages/tools/construction_cost', compact('pageTitle', 'metaDescription'));
+    }
+
+    public function rentalYieldCalculator()
+    {
+        $pageTitle = 'Rental Yield Calculator';
+        $metaDescription = 'Calculate rental income, yield, and payback period for investment property';
+        return $this->render('pages/tools/rental_yield', compact('pageTitle', 'metaDescription'));
+    }
+
+    public function propertyTaxCalculator()
+    {
+        $pageTitle = 'Property Tax Calculator';
+        $metaDescription = 'Estimate annual property tax with breakdown by type, city, and occupancy';
+        return $this->render('pages/tools/property_tax', compact('pageTitle', 'metaDescription'));
     }
 
     private function createUserPropertiesTable()

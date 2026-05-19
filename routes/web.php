@@ -79,12 +79,8 @@ $router->get('/faq', 'Front\\PageController@faq');
 $router->get('/faqs', 'Front\\PageController@faqs');
 $router->get('/home', 'Front\\PageController@home');
 $router->get('/sitemap.xml', function () {
-    $file = __DIR__ . '/../sitemap.xml';
-    if (file_exists($file)) {
-        header('Content-Type: application/xml');
-        readfile($file);
-        exit;
-    }
+    $controller = new \App\Http\Controllers\Api\SitemapController();
+    $controller->generate();
 });
 $router->get('/robots.txt', function () {
     $file = __DIR__ . '/../robots.txt';
@@ -173,6 +169,9 @@ $router->get('/rent-vs-buy', 'Front\\PageController@rentVsBuy');
 $router->get('/sip-vs-realestate', 'Front\\PageController@sipVsRealestate');
 $router->get('/capital-gains-calculator', 'Front\\PageController@capitalGains');
 $router->get('/gst-calculator', 'Front\\PageController@gstCalculator');
+$router->get('/construction-cost-estimator', 'Front\\PageController@constructionCostEstimator');
+$router->get('/rental-yield-calculator', 'Front\\PageController@rentalYieldCalculator');
+$router->get('/property-tax-calculator', 'Front\\PageController@propertyTaxCalculator');
 
 // MLM & AI Dashboard Routes
 $router->get('/mlm-dashboard', 'MLM\MLMDashboardController@dashboard');
@@ -285,6 +284,7 @@ $router->get('/user/network', function () {
 });
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
+$router->post('/property/review', 'Front\\PageController@reviewSubmit');
 $router->get('/dashboard', 'DashboardController@index');
 $router->get('/dashboard/profile', 'DashboardController@profile');
 $router->post('/dashboard/profile', 'DashboardController@updateProfile');
@@ -1156,6 +1156,10 @@ $router->get('/admin/settings/email-config', 'App\\Http\\Controllers\\Admin\\Ema
 $router->post('/admin/settings/email-config/save', 'App\\Http\\Controllers\\Admin\\EmailSettingsController@save');
 $router->post('/admin/settings/email-config/test', 'App\\Http\\Controllers\\Admin\\EmailSettingsController@test');
 
+// SMTP Settings (dedicated page)
+$router->get('/admin/settings/smtp', 'App\\Http\\Controllers\\Admin\\EmailSettingsController@smtpSettings');
+$router->post('/admin/settings/smtp-save', 'App\\Http\\Controllers\\Admin\\EmailSettingsController@saveSmtp');
+
 // SMS
 $router->get('/admin/sms/send', 'App\\Http\\Controllers\\Communication\\SmsController@send');
 $router->post('/admin/sms/send', 'App\\Http\\Controllers\\Communication\\SmsController@send');
@@ -1652,6 +1656,9 @@ $router->get('/admin/ai_settings', 'App\\Http\\Controllers\\Admin\\AISettingsCon
 
 // Marketing
 $router->get('/admin/email-templates', 'App\\Http\\Controllers\\Admin\\CampaignController@emailTemplates');
+$router->get('/admin/email-templates/editor', 'App\\Http\\Controllers\\Admin\\CampaignController@templateEditor');
+$router->post('/admin/email-templates/save', 'App\\Http\\Controllers\\Admin\\CampaignController@saveTemplate');
+$router->get('/admin/email-logs', 'App\\Http\\Controllers\\Admin\\CampaignController@logs');
 $router->get('/admin/sms-campaigns', 'App\\Http\\Controllers\\Admin\\CampaignController@smsCampaigns');
 $router->get('/admin/whatsapp-broadcast', 'App\\Http\\Controllers\\Admin\\CampaignController@whatsappBroadcast');
 $router->get('/admin/referrals', 'App\\Http\\Controllers\\Admin\\ReferralController@index');
@@ -1699,23 +1706,20 @@ $router->get('/admin/ads/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerCo
 $router->post('/admin/ads/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@edit');
 $router->get('/admin/ads/delete/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@delete');
 
-// Ad click tracker
+// Ad click tracking
 $router->get('/ad-click/{id}', function($id) {
     try {
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
-        $stmt = $db->prepare("UPDATE ad_slots SET clicks = clicks + 1 WHERE id = ?");
-        $stmt->execute([$id]);
-        $stmt2 = $db->prepare("SELECT link_url FROM ad_slots WHERE id = ?");
-        $stmt2->execute([$id]);
-        $ad = $stmt2->fetch(\PDO::FETCH_ASSOC);
-        if ($ad && !empty($ad['link_url'])) {
-            header('Location: ' . $ad['link_url']);
-            exit;
-        }
+        $svc = new \App\Services\AdManagerService();
+        $svc->incrementClicks((int)$id);
     } catch (\Exception $e) {}
-    header('Location: ' . BASE_URL);
+    $ref = $_SERVER['HTTP_REFERER'] ?? '/';
+    header('Location: ' . $ref);
     exit;
 });
+
+// Ad settings
+$router->get('/admin/ads/settings', 'App\\Http\\Controllers\\Admin\\AdManagerController@settings');
+$router->post('/admin/ads/save-settings', 'App\\Http\\Controllers\\Admin\\AdManagerController@saveSettings');
 
 // Jobs & Applicants
 $router->get('/admin/jobs', 'App\\Http\\Controllers\\Admin\\CareerController@index');
