@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Core\Database;
 use App\Services\Accounting\AccountingIntegrationService;
+use App\Services\Booking\BookingComplianceService;
 
 class PlotController extends Controller
 {
@@ -333,9 +334,9 @@ class PlotController extends Controller
             ]);
 
             // 4. Set flash and redirect
-            $this->setFlash('success', 'Booking request submitted successfully! Booking #' . $bookingId . '. Please complete the 25% token payment within 15 days.');
+            $this->setFlash('success', 'Booking request submitted! Pay the 25% token amount (₹' . number_format($tokenAmount, 2) . ') to confirm your booking.');
             $this->db->commit();
-            return $this->redirect('/user/dashboard?booking=' . $bookingId);
+            return $this->redirect('/booking/' . $bookingId . '/pay');
         } catch (\Exception $e) {
             $this->db->rollback();
             $this->setFlash('error', 'Booking failed: ' . $e->getMessage());
@@ -374,5 +375,107 @@ class PlotController extends Controller
             'emis' => $emis,
             'user' => $user,
         ]);
+    }
+
+    /**
+     * Show payment form for booking token amount
+     */
+    public function payBooking($bookingId)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $booking = $this->db->fetchRow("
+            SELECT b.*, p.plot_number, p.block, p.area_sqft, p.dimension_label, p.total_price as plot_price,
+                   c.name as colony_name
+            FROM bookings b
+            LEFT JOIN plots p ON b.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE b.id = ? AND b.customer_id = ?
+        ", [$bookingId, $user['id']]);
+
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/user/dashboard');
+        }
+
+        $requiredToken = (float)$booking['total_amount'] * 0.25;
+        $paidSoFar = (float)$booking['amount'];
+        $tokenDue = max(0, $requiredToken - $paidSoFar);
+        $tokenPercent = $requiredToken > 0 ? min(100, round(($paidSoFar / $requiredToken) * 100)) : 0;
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/booking_pay', [
+            'page_title' => 'Pay Token - Booking #' . $bookingId,
+            'booking' => $booking,
+            'requiredToken' => $requiredToken,
+            'tokenDue' => $tokenDue,
+            'tokenPercent' => $tokenPercent,
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Process token payment from customer
+     */
+    public function processPayment($bookingId)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->redirect('/booking/' . $bookingId . '/pay');
+        }
+
+        $booking = $this->db->fetchRow("SELECT * FROM bookings WHERE id = ? AND customer_id = ?", [$bookingId, $user['id']]);
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/user/dashboard');
+        }
+
+        $amount = (float)($_POST['amount'] ?? 0);
+        $mode = $_POST['mode'] ?? 'online';
+        $reference = $_POST['reference'] ?? '';
+
+        if ($amount <= 0) {
+            $this->setFlash('error', 'Invalid payment amount');
+            return $this->redirect('/booking/' . $bookingId . '/pay');
+        }
+
+        $requiredToken = (float)$booking['total_amount'] * 0.25;
+        $paidSoFar = (float)$booking['amount'];
+        if (($paidSoFar + $amount) > $requiredToken) {
+            $this->setFlash('error', 'Amount exceeds required token. Maximum: ₹' . number_format($requiredToken - $paidSoFar, 2));
+            return $this->redirect('/booking/' . $bookingId . '/pay');
+        }
+
+        $this->db->beginTransaction();
+        try {
+            $newPaid = $paidSoFar + $amount;
+            $paymentStatus = ($newPaid >= $requiredToken) ? 'partial' : 'pending';
+
+            $this->db->execute("UPDATE bookings SET amount = ?, payment_status = ? WHERE id = ?", [$newPaid, $paymentStatus, $bookingId]);
+
+            $this->db->insert('booking_emis', [
+                'booking_id' => $bookingId,
+                'installment_no' => 0,
+                'due_date' => date('Y-m-d'),
+                'amount' => $amount,
+                'paid_amount' => $amount,
+                'paid_date' => date('Y-m-d'),
+                'payment_mode' => $mode,
+                'transaction_ref' => $reference,
+                'status' => 'paid',
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->db->commit();
+            $this->setFlash('success', 'Payment of ₹' . number_format($amount, 2) . ' received successfully!');
+            return $this->redirect('/booking/' . $bookingId . '/confirmation');
+        } catch (\Exception $e) {
+            $this->db->rollback();
+            $this->setFlash('error', 'Payment failed: ' . $e->getMessage());
+            return $this->redirect('/booking/' . $bookingId . '/pay');
+        }
     }
 }

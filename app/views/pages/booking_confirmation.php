@@ -101,7 +101,7 @@ foreach ($statusSteps as $i => $step) {
                 <div class="alert alert-info mt-2">
                     <i class="fas fa-info-circle"></i> <strong>Note:</strong> First installment (25% token) of <strong>₹<?= number_format(intval($emis[0]['amount'] ?? 0)) ?></strong> is due within 15 days.
                     <?php if ($currentStatus === 'pending'): ?>
-                    Please complete the payment after admin confirmation.
+                    Please complete the token payment to confirm your booking.
                     <?php endif; ?>
                 </div>
             </div>
@@ -118,6 +118,9 @@ foreach ($statusSteps as $i => $step) {
                     </a>
                     <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($booking['colony_slug'] ?? '') ?>/plots" class="btn btn-outline-secondary">
                         <i class="fas fa-th"></i> Browse More Plots
+                    </a>
+                    <a href="<?= BASE_URL ?>/booking/<?= $booking['id'] ?>/pay" class="btn btn-success">
+                        <i class="fas fa-credit-card"></i> Pay Token Amount
                     </a>
                     <a href="<?= BASE_URL ?>/contact" class="btn btn-outline-info">
                         <i class="fas fa-phone"></i> Contact Support

@@ -23,6 +23,10 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $stats['pending_rera'] = $db->query("SELECT COUNT(*) as c FROM rera_requests WHERE status = 'pending'")->fetch()['c'] ?? 0;
             $stats['active_salaries'] = $db->query("SELECT COUNT(*) as c FROM salary_tracker WHERE status = 'active'")->fetch()['c'] ?? 0;
             $stats['total_bookings'] = $db->query("SELECT COUNT(*) as c FROM bookings WHERE status NOT IN ('cancelled')")->fetch()['c'] ?? 0;
+            $stats['pending_bookings'] = $db->query("SELECT COUNT(*) as c FROM bookings WHERE status = 'pending'")->fetch()['c'] ?? 0;
+            $stats['booked_plots'] = $db->query("SELECT COUNT(*) as c FROM plots WHERE status IN ('booked','hold')")->fetch()['c'] ?? 0;
+            $stats['total_commission_paid'] = $db->query("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE status = 'paid'")->fetch()['c'] ?? 0;
+            $stats['total_revenue'] = $db->query("SELECT COALESCE(SUM(amount),0) as c FROM bookings WHERE status IN ('confirmed','completed')")->fetch()['c'] ?? 0;
             
             $recentBookings = $db->query("SELECT b.*, u.name as agent_name FROM bookings b LEFT JOIN users u ON u.id = b.associate_id ORDER BY b.created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
             
@@ -387,6 +391,101 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             ]);
             $_SESSION['flash_message'] = $result['message'] ?? ($result['error'] ?? 'Booking created');
             $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+        }
+        header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
+        exit;
+    }
+
+    public function approveBooking(int $id)
+    {
+        $this->requireAdmin();
+        try {
+            $db = Database::getInstance()->getConnection();
+            $bookingStmt = $db->prepare("SELECT b.*, p.colony_id, p.total_price as plot_price FROM bookings b LEFT JOIN plots p ON b.plot_id = p.id WHERE b.id = ?");
+            $bookingStmt->execute([$id]);
+            $booking = $bookingStmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$booking || $booking['status'] !== 'pending') {
+                $_SESSION['flash_message'] = 'Booking not found or already processed';
+                $_SESSION['flash_type'] = 'danger';
+                header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
+                exit;
+            }
+
+            $db->beginTransaction();
+
+            $stmt = $db->prepare("UPDATE bookings SET status = 'confirmed', confirmed_at = NOW(), confirmed_by = ? WHERE id = ?");
+            $stmt->execute([$_SESSION['admin_id'] ?? 0, $id]);
+
+            if (!empty($booking['plot_id'])) {
+                $stmt = $db->prepare("UPDATE plots SET status = 'booked' WHERE id = ?");
+                $stmt->execute([$booking['plot_id']]);
+                $stmt = $db->prepare("UPDATE inventory_plots SET status = 'Booked' WHERE id = ?");
+                $stmt->execute([$booking['plot_id']]);
+            }
+
+            $commissionResult = [];
+            if (!empty($booking['associate_id'])) {
+                $saleAmount = (float)($booking['negotiated_price'] ?: $booking['total_amount'] ?: 0);
+                if ($saleAmount > 0) {
+                    $reraService = new RERAComplianceService();
+                    $commissionResult = $reraService->processCommissionWithRERA((int)$booking['associate_id'], $id, $saleAmount);
+                    $accountingService = new \App\Services\Accounting\AccountingIntegrationService();
+                    $accountingService->recordBookingPayment($booking['plot_id'] ?? $id, $saleAmount * 0.25, 'commission_approval', [
+                        'booking_id' => $id, 'commission_processed' => true, 'commission_result' => $commissionResult,
+                    ]);
+                }
+            }
+
+            $db->commit();
+            $msg = "Booking #{$id} approved! Plot booked.";
+            if (!empty($commissionResult['success'])) $msg .= " Commission processed.";
+            $_SESSION['flash_message'] = $msg;
+            $_SESSION['flash_type'] = 'success';
+        } catch (\Exception $e) {
+            if (isset($db) && $db->inTransaction()) $db->rollBack();
+            $_SESSION['flash_message'] = 'Approval failed: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
+        }
+        header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
+        exit;
+    }
+
+    public function rejectBooking(int $id)
+    {
+        $this->requireAdmin();
+        try {
+            $db = Database::getInstance()->getConnection();
+            $bookingStmt = $db->prepare("SELECT b.*, p.colony_id FROM bookings b LEFT JOIN plots p ON b.plot_id = p.id WHERE b.id = ?");
+            $bookingStmt->execute([$id]);
+            $booking = $bookingStmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$booking || $booking['status'] !== 'pending') {
+                $_SESSION['flash_message'] = 'Booking not found or already processed';
+                $_SESSION['flash_type'] = 'danger';
+                header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
+                exit;
+            }
+
+            $db->beginTransaction();
+            $reason = $_POST['reason'] ?? 'Rejected by admin';
+            $stmt = $db->prepare("UPDATE bookings SET status = 'cancelled', cancelled_at = NOW(), cancelled_by = ?, cancellation_reason = ? WHERE id = ?");
+            $stmt->execute([$_SESSION['admin_id'] ?? 0, $reason, $id]);
+
+            if (!empty($booking['plot_id'])) {
+                $stmt = $db->prepare("UPDATE plots SET status = 'available' WHERE id = ?");
+                $stmt->execute([$booking['plot_id']]);
+                $stmt = $db->prepare("UPDATE inventory_plots SET status = 'Available' WHERE id = ?");
+                $stmt->execute([$booking['plot_id']]);
+            }
+
+            $db->commit();
+            $_SESSION['flash_message'] = "Booking #{$id} rejected. Plot returned to available.";
+            $_SESSION['flash_type'] = 'warning';
+        } catch (\Exception $e) {
+            if (isset($db) && $db->inTransaction()) $db->rollBack();
+            $_SESSION['flash_message'] = 'Rejection failed: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
         exit;
