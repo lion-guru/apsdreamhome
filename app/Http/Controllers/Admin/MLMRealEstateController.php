@@ -6,6 +6,7 @@ use App\Services\MLM\RERAComplianceService;
 use App\Services\MLM\DailyCappingService;
 use App\Services\MLM\LeadershipSalaryService;
 use App\Services\Booking\BookingComplianceService;
+use App\Services\Notification\BookingNotificationService;
 
 class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminController
 {
@@ -438,8 +439,16 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             }
 
             $db->commit();
+
+            $notificationService = new BookingNotificationService();
+            $notificationService->ensureNotificationsTable();
+            $notificationService->notifyBookingApproved($id, $booking);
+
             $msg = "Booking #{$id} approved! Plot booked.";
-            if (!empty($commissionResult['success'])) $msg .= " Commission processed.";
+            if (!empty($commissionResult['success'])) {
+                $msg .= " Commission processed.";
+                $notificationService->notifyCommissionProcessed($id, (int)$booking['associate_id'], $saleAmount);
+            }
             $_SESSION['flash_message'] = $msg;
             $_SESSION['flash_type'] = 'success';
         } catch (\Exception $e) {
@@ -480,6 +489,11 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             }
 
             $db->commit();
+
+            $notificationService = new BookingNotificationService();
+            $notificationService->ensureNotificationsTable();
+            $notificationService->notifyBookingRejected($id, $booking, $reason);
+
             $_SESSION['flash_message'] = "Booking #{$id} rejected. Plot returned to available.";
             $_SESSION['flash_type'] = 'warning';
         } catch (\Exception $e) {

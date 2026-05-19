@@ -1,14 +1,15 @@
 <?php
 namespace App\Http\Controllers\Front;
 
-use App\Http\Controllers\Controller;
-use App\Core\Database;
+use App\Core\Controller;
+use App\Core\Database\Database;
 use App\Services\Accounting\AccountingIntegrationService;
 use App\Services\Booking\BookingComplianceService;
+use App\Services\Notification\BookingNotificationService;
 
 class PlotController extends Controller
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {
@@ -334,8 +335,13 @@ class PlotController extends Controller
             ]);
 
             // 4. Set flash and redirect
-            $this->setFlash('success', 'Booking request submitted! Pay the 25% token amount (₹' . number_format($tokenAmount, 2) . ') to confirm your booking.');
             $this->db->commit();
+
+            $notifService = new BookingNotificationService();
+            $notifService->ensureNotificationsTable();
+            $notifService->notifyBookingCreated($bookingId, ['id' => $bookingId], $user);
+
+            $this->setFlash('success', 'Booking request submitted! Pay the 25% token amount (₹' . number_format($tokenAmount, 2) . ') to confirm your booking.');
             return $this->redirect('/booking/' . $bookingId . '/pay');
         } catch (\Exception $e) {
             $this->db->rollback();
@@ -354,10 +360,13 @@ class PlotController extends Controller
 
         $booking = $this->db->fetchRow("
             SELECT b.*, p.plot_number, p.block, p.area_sqft, p.dimension_label, p.total_price as plot_price,
-                   p.corner_plot, p.park_facing, c.name as colony_name
+                   p.corner_plot, p.park_facing, c.name as colony_name,
+                   d.name as district_name, s.name as state_name
             FROM bookings b
             LEFT JOIN plots p ON b.plot_id = p.id
             LEFT JOIN colonies c ON p.colony_id = c.id
+            LEFT JOIN districts d ON c.district_id = d.id
+            LEFT JOIN states s ON d.state_id = s.id
             WHERE b.id = ? AND b.customer_id = ?
         ", [$bookingId, $user['id']]);
 
@@ -375,6 +384,60 @@ class PlotController extends Controller
             'emis' => $emis,
             'user' => $user,
         ]);
+    }
+
+    /**
+     * Printable booking receipt
+     */
+    public function receipt($bookingId)
+    {
+        try {
+            @session_start();
+            if (!isset($_SESSION['user_id'])) {
+                header('Location: ' . BASE_URL . '/login');
+                exit;
+            }
+
+            $stmt = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ?");
+            $stmt->execute([$_SESSION['user_id']]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$user) {
+                header('Location: ' . BASE_URL . '/user/logout');
+                exit;
+            }
+
+            $booking = $this->db->fetchRow("
+                SELECT b.*, p.plot_number, p.block, p.area_sqft, p.dimension_label, p.total_price as plot_price,
+                       p.corner_plot, p.park_facing, c.name as colony_name,
+                       d.name as district_name, s.name as state_name
+                FROM bookings b
+                LEFT JOIN plots p ON b.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN states s ON d.state_id = s.id
+                WHERE b.id = ? AND b.customer_id = ?
+            ", [$bookingId, $user['id']]);
+
+            if (!$booking) {
+                echo '<h2>Booking not found</h2><a href="' . BASE_URL . '/user/dashboard">Back to Dashboard</a>';
+                exit;
+            }
+
+            $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
+            $currentStatus = $booking['status'] ?? 'pending';
+
+            $viewFile = __DIR__ . '/../../views/pages/booking_receipt.php';
+            if (file_exists($viewFile)) {
+                require $viewFile;
+            } else {
+                echo '<h2>View file not found</h2>';
+            }
+        } catch (\Throwable $e) {
+            echo '<h2>Error: ' . htmlspecialchars($e->getMessage()) . '</h2>';
+            echo '<p>File: ' . $e->getFile() . ':' . $e->getLine() . '</p>';
+            echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
+        }
+        exit;
     }
 
     /**
@@ -470,6 +533,11 @@ class PlotController extends Controller
             ]);
 
             $this->db->commit();
+
+            $notifService = new BookingNotificationService();
+            $notifService->ensureNotificationsTable();
+            $notifService->notifyPaymentReceived($bookingId, $booking, $amount, $mode);
+
             $this->setFlash('success', 'Payment of ₹' . number_format($amount, 2) . ' received successfully!');
             return $this->redirect('/booking/' . $bookingId . '/confirmation');
         } catch (\Exception $e) {

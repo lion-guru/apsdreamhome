@@ -261,6 +261,7 @@ class Router
     private function show500($error = '')
     {
         http_response_code(500);
+        error_log("show500: " . $error);
         $errorView = __DIR__ . '/../app/views/errors/500.php';
         if (file_exists($errorView)) {
             include $errorView;

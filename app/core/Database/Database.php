@@ -121,6 +121,11 @@ class Database
         return $this->fetch($sql, $params);
     }
 
+    public function fetchRow($sql, $params = [])
+    {
+        return $this->fetch($sql, $params);
+    }
+
     public function fetchAll($sql, $params = [])
     {
         return $this->query($sql, $params)->fetchAll();

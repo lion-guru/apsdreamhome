@@ -68,6 +68,7 @@ $user = $user ?? [];
             <div class="card-header bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0"><i class="fas fa-file-invoice text-success me-2"></i>My Purchases</h5>
+                    <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -78,22 +79,52 @@ $user = $user ?? [];
                                 <th>Plot</th>
                                 <th>Colony</th>
                                 <th>Amount</th>
+                                <th>Token Paid</th>
                                 <th>Status</th>
                                 <th>Date</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($bookings as $b): ?>
+                            <?php
+                            $bStatus = $b['status'] ?? 'pending';
+                            $badgeClass = match($bStatus) {
+                                'confirmed','completed' => 'success',
+                                'cancelled' => 'danger',
+                                'pending' => 'warning',
+                                default => 'secondary'
+                            };
+                            $tokenPaid = (float)($b['amount'] ?? 0);
+                            $totalAmt = (float)($b['total_amount'] ?? 0);
+                            $tokenRequired = $totalAmt * 0.25;
+                            ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($b['plot_number'] ?? $b['property_id'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($b['colony_name'] ?? 'N/A'); ?></td>
-                                <td>₹<?php echo number_format($b['total_amount'] ?? $b['amount'] ?? 0); ?></td>
+                                <td><strong>#<?= htmlspecialchars($b['plot_number'] ?? $b['property_id'] ?? 'N/A') ?></strong></td>
+                                <td><?= htmlspecialchars($b['colony_name'] ?? 'N/A') ?></td>
+                                <td>₹<?= number_format($totalAmt) ?></td>
                                 <td>
-                                    <span class="badge bg-<?php echo $b['status'] === 'confirmed' || $b['status'] === 'completed' ? 'success' : ($b['status'] === 'cancelled' ? 'danger' : 'warning'); ?>">
-                                        <?php echo ucfirst($b['status'] ?? 'pending'); ?>
-                                    </span>
+                                    ₹<?= number_format($tokenPaid) ?>
+                                    <?php if ($tokenPaid > 0 && $tokenRequired > 0): ?>
+                                        <br><small class="text-muted"><?= round(($tokenPaid / $tokenRequired) * 100) ?>% of token</small>
+                                    <?php endif; ?>
                                 </td>
-                                <td><?php echo date('M d, Y', strtotime($b['created_at'] ?? $b['booking_date'] ?? 'now')); ?></td>
+                                <td>
+                                    <span class="badge bg-<?= $badgeClass ?>"><?= ucfirst($bStatus) ?></span>
+                                    <?php if ($bStatus === 'pending'): ?>
+                                        <br><small class="text-warning">Awaiting approval</small>
+                                    <?php elseif ($bStatus === 'confirmed'): ?>
+                                        <br><small class="text-success">Approved</small>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= date('M d, Y', strtotime($b['created_at'] ?? $b['booking_date'] ?? 'now')) ?></td>
+                                <td>
+                                    <?php if ($bStatus === 'pending' && $tokenRequired > $tokenPaid): ?>
+                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/pay" class="btn btn-success btn-sm"><i class="fas fa-credit-card me-1"></i>Pay Token</a>
+                                    <?php endif; ?>
+                                    <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/confirmation" class="btn btn-outline-info btn-sm"><i class="fas fa-eye"></i></a>
+                                    <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/receipt" class="btn btn-outline-secondary btn-sm"><i class="fas fa-print"></i></a>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -231,6 +262,9 @@ $user = $user ?? [];
                     </a>
                     <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-primary">
                         <i class="fas fa-search me-2"></i>Browse Properties
+                    </a>
+                    <a href="<?php echo BASE_URL; ?>/plots" class="btn btn-outline-success">
+                        <i class="fas fa-vector-square me-2"></i>Browse Plots
                     </a>
                     <a href="<?php echo BASE_URL; ?>/user/inquiries" class="btn btn-outline-success">
                         <i class="fas fa-envelope me-2"></i>My Inquiries
