@@ -223,6 +223,8 @@ $router->get('/plot/{id}', 'Front\\PlotController@show');
 $router->get('/plot/{id}/book', 'Front\\PlotController@bookPlot');
 $router->post('/plot/book', 'Front\\PlotController@storeBooking');
 $router->get('/booking/{id}/confirmation', 'Front\\PlotController@bookingConfirmation');
+$router->get('/booking/{id}/pay', 'Front\\PlotController@payBooking');
+$router->post('/booking/{id}/pay', 'Front\\PlotController@processPayment');
 $router->get('/colony/{slug}/plots', 'Front\\PlotController@colonyPlots');
 $router->get('/api/plots/by-colony/{colonyId}', 'Front\\PlotController@apiByColony');
 $router->get('/navigation', 'Front\\PageController@navigation');
@@ -1823,6 +1825,8 @@ $router->post('/admin/mlm-realestate/rera/approve', 'Admin\MLMRealEstateControll
 $router->get('/admin/mlm-realestate/plots', 'Admin\MLMRealEstateController@plotsInventory');
 $router->get('/admin/mlm-realestate/bookings', 'Admin\MLMRealEstateController@bookings');
 $router->get('/admin/mlm-realestate/bookings/{id}', 'Admin\MLMRealEstateController@bookingDetail');
+$router->get('/admin/mlm-realestate/bookings/{id}/approve', 'Admin\MLMRealEstateController@approveBooking');
+$router->post('/admin/mlm-realestate/bookings/{id}/reject', 'Admin\MLMRealEstateController@rejectBooking');
 $router->post('/admin/mlm-realestate/bookings/payment', 'Admin\MLMRealEstateController@recordPayment');
 $router->post('/admin/mlm-realestate/bookings/commission', 'Admin\MLMRealEstateController@processCommission');
 $router->get('/admin/mlm-realestate/bookings/create', 'Admin\MLMRealEstateController@createBooking');

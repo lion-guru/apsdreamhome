@@ -35,9 +35,47 @@
         <div class="col-md-3">
             <div class="card bg-warning text-dark shadow-sm border-0">
                 <div class="card-body text-center py-3">
-                    <h6>Pending RERA</h6>
-                    <h2 class="mb-0 fw-bold"><?= (int)($stats['pending_rera'] ?? 0) ?></h2>
-                    <small><?= (int)($stats['active_salaries'] ?? 0) ?> active salaries</small>
+                    <h6>Pending Approvals</h6>
+                    <h2 class="mb-0 fw-bold"><?= (int)($stats['pending_bookings'] ?? 0) ?></h2>
+                    <small><?= (int)($stats['pending_rera'] ?? 0) ?> RERA · <?= (int)($stats['active_salaries'] ?? 0) ?> salaries</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-danger text-white shadow-sm border-0">
+                <div class="card-body text-center py-3">
+                    <h6>Total Revenue</h6>
+                    <h2 class="mb-0 fw-bold">₹<?= number_format((float)($stats['total_revenue'] ?? 0)) ?></h2>
+                    <small>From confirmed/completed bookings</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-secondary text-white shadow-sm border-0">
+                <div class="card-body text-center py-3">
+                    <h6>Commission Paid</h6>
+                    <h2 class="mb-0 fw-bold">₹<?= number_format((float)($stats['total_commission_paid'] ?? 0)) ?></h2>
+                    <small>Total commission released</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow-sm border-0">
+                <div class="card-body text-center py-3">
+                    <h6>Booked Plots</h6>
+                    <h2 class="mb-0 fw-bold"><?= (int)($stats['booked_plots'] ?? 0) ?></h2>
+                    <small>Currently booked/sold</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white shadow-sm border-0">
+                <div class="card-body text-center py-3">
+                    <h6>Total Bookings</h6>
+                    <h2 class="mb-0 fw-bold"><?= (int)($stats['total_bookings'] ?? 0) ?></h2>
+                    <small>Active bookings</small>
                 </div>
             </div>
         </div>
