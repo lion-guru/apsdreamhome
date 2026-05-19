@@ -190,6 +190,34 @@ $user = $user ?? [];
         </div>
     </div>
 
+        <!-- Recent Payments -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Recent Payments</h5>
+                <a href="<?= BASE_URL ?>/user/payments" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light"><tr><th>Date</th><th>Transaction</th><th>Amount</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <?php if (!empty($recentPayments)): foreach ($recentPayments as $pmt): ?>
+                                <tr>
+                                    <td><?= date('d M Y', strtotime($pmt['created_at'] ?? '')) ?></td>
+                                    <td><small><?= htmlspecialchars(substr($pmt['transaction_id'] ?? $pmt['receipt'] ?? '', 0, 20)) ?></small></td>
+                                    <td><strong>₹<?= number_format($pmt['amount'] ?? 0, 2) ?></strong></td>
+                                    <td><span class="badge bg-<?= ($pmt['status'] ?? '') === 'completed' ? 'success' : (($pmt['status'] ?? '') === 'pending' ? 'warning' : 'secondary') ?>"><?= htmlspecialchars($pmt['status'] ?? 'N/A') ?></span></td>
+                                </tr>
+                            <?php endforeach; else: ?>
+                                <tr><td colspan="4" class="text-center text-muted py-3">No payments yet</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Right Column -->
     <div class="col-lg-4">
         <div class="card border-0 shadow-sm mb-4">
@@ -207,8 +235,14 @@ $user = $user ?? [];
                     <a href="<?php echo BASE_URL; ?>/user/inquiries" class="btn btn-outline-success">
                         <i class="fas fa-envelope me-2"></i>My Inquiries
                     </a>
+                    <a href="<?php echo BASE_URL; ?>/payment/history" class="btn btn-outline-success">
+                        <i class="fas fa-credit-card me-1"></i> Payment History
+                    </a>
                     <a href="<?php echo BASE_URL; ?>/user/profile" class="btn btn-outline-info">
                         <i class="fas fa-user me-2"></i>Edit Profile
+                    </a>
+                    <a href="<?= BASE_URL ?>/user/book-site-visit" class="btn btn-outline-info">
+                        <i class="fas fa-calendar-check me-1"></i> Book Site Visit
                     </a>
                 </div>
             </div>

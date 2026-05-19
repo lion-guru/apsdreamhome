@@ -487,8 +487,71 @@ class CampaignController extends AdminController
      */
     public function whatsappBroadcast()
     {
+        $this->requireAdmin();
+
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $templates = $db->query("SELECT template_name, language FROM whatsapp_templates WHERE status = 'approved' ORDER BY template_name")->fetchAll(\PDO::FETCH_ASSOC);
+
+            $stats['customers'] = $db->query("SELECT COUNT(*) as cnt FROM users WHERE phone IS NOT NULL AND phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
+            $stats['leads'] = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE phone IS NOT NULL AND phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
+            $stats['associates'] = $db->query("SELECT COUNT(*) as cnt FROM mlm_associates ma JOIN users u ON ma.user_id = u.id WHERE u.phone IS NOT NULL AND u.phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $audience = $_POST['audience'] ?? '';
+                $templateName = $_POST['template_name'] ?? '';
+                $message = $_POST['message'] ?? '';
+                $customPhones = $_POST['custom_phones'] ?? '';
+
+                $phones = [];
+                if ($audience === 'custom') {
+                    $phones = array_filter(array_map('trim', explode("\n", $customPhones)));
+                } elseif ($audience === 'all_customers') {
+                    $rows = $db->query("SELECT phone FROM users WHERE phone IS NOT NULL AND phone != ''")->fetchAll(\PDO::FETCH_ASSOC);
+                    $phones = array_column($rows, 'phone');
+                } elseif ($audience === 'all_leads') {
+                    $rows = $db->query("SELECT phone FROM leads WHERE phone IS NOT NULL AND phone != ''")->fetchAll(\PDO::FETCH_ASSOC);
+                    $phones = array_column($rows, 'phone');
+                } elseif ($audience === 'all_associates') {
+                    $rows = $db->query("SELECT u.phone FROM mlm_associates ma JOIN users u ON ma.user_id = u.id WHERE u.phone IS NOT NULL AND u.phone != ''")->fetchAll(\PDO::FETCH_ASSOC);
+                    $phones = array_column($rows, 'phone');
+                } elseif ($audience === 'recent_inquiries') {
+                    $rows = $db->query("SELECT DISTINCT phone FROM inquiries WHERE phone IS NOT NULL AND phone != '' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")->fetchAll(\PDO::FETCH_ASSOC);
+                    $phones = array_column($rows, 'phone');
+                }
+
+                $sent = 0; $failed = 0;
+                foreach ($phones as $phone) {
+                    try {
+                        $wa = new \App\Services\Communication\WhatsAppService();
+                        if (!empty($templateName)) {
+                            $wa->sendTemplate($phone, $templateName, ['message' => $message]);
+                        } else {
+                            $wa->sendMessage($phone, $message);
+                        }
+                        $sent++;
+                    } catch (\Exception $e) {
+                        $failed++;
+                    }
+                }
+
+                $message_text = "Broadcast sent: {$sent} successful, {$failed} failed.";
+                $message_type = $failed > 0 ? 'warning' : 'success';
+            }
+        } catch (\Exception $e) {
+            $templates = $templates ?? [];
+            $stats = $stats ?? ['customers' => 0, 'leads' => 0, 'associates' => 0];
+            $message_text = $message_text ?? ($_SERVER['REQUEST_METHOD'] === 'POST' ? 'Broadcast failed: ' . $e->getMessage() : '');
+            $message_type = $message_type ?? 'danger';
+        }
+
         $this->data['page_title'] = 'WhatsApp Broadcast';
-        $this->data['broadcasts'] = [];
-        $this->render('admin/campaigns/whatsapp-broadcast');
+        $this->data['templates'] = $templates ?? [];
+        $this->data['stats'] = $stats ?? [];
+        $this->data['message'] = $message_text ?? '';
+        $this->data['message_type'] = $message_type ?? '';
+
+        $this->render('admin/whatsapp/broadcast');
     }
 }

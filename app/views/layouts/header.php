@@ -346,6 +346,12 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             <span class="d-none d-lg-inline">+91 92771 21112</span>
                         </a>
                     </li>
+                    <li class="nav-item ms-2">
+                        <a href="<?php echo BASE_URL; ?>/compare" class="btn btn-outline-info btn-sm position-relative">
+                            <i class="fas fa-balance-scale"></i> Compare
+                            <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;font-size:10px;">0</span>
+                        </a>
+                    </li>
                     <?php if (!$isLoggedIn): ?>
                         <li class="nav-item ms-2">
                             <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm">

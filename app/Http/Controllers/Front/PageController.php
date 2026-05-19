@@ -109,6 +109,17 @@ class PageController extends BaseController
                     } catch (\Exception $e2) {
                         error_log("Inquiry save error: " . $e2->getMessage());
                     }
+
+                    // Trigger WhatsApp notification for new inquiry
+                    try {
+                        $waService = new \App\Services\Communication\WhatsAppService();
+                        $waService->sendTemplate($phone, 'inquiry_received', [
+                            'customer_name' => $name ?: 'Valued Customer',
+                            'property_type' => 'property',
+                        ]);
+                    } catch (\Exception $e) {
+                        // WhatsApp notification is best-effort
+                    }
                 } catch (\Exception $e) {
                     $error = 'Failed to submit. Please try again or call us directly.';
                     error_log("Contact form error: " . $e->getMessage());

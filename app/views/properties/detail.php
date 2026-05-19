@@ -172,6 +172,11 @@ $reviews = $data['reviews'] ?? [];
                         </form>
                         <hr>
                         <div class="d-grid gap-2">
+                            <?php if (isset($property) && !empty($property['price'])): ?>
+                                <a href="<?= BASE_URL ?>/payment/initiate?property_id=<?= $property['id'] ?? 0 ?>&amount=<?= $property['price'] ?? 0 ?>" class="btn btn-success btn-lg w-100 mb-2">
+                                    <i class="fas fa-credit-card me-2"></i>Buy Now - ₹<?= number_format($property['price'] ?? 0) ?>
+                                </a>
+                            <?php endif; ?>
                             <a href="tel:+919277121112" class="btn btn-success">
                                 <i class="fas fa-phone me-2"></i>Call Now
                             </a>

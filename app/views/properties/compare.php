@@ -1,18 +1,7 @@
-<?php
-
-/**
- * Property Comparison Page
- * Select properties to compare
- */
-
-$page_title = 'Compare Properties - APS Dream Home';
-include __DIR__ . '/../layouts/header.php';
-?>
-
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="h3 mb-2">Compare Properties</h1>
+            <h1 class="h3 mb-2"><?= htmlspecialchars($page_title ?? 'Compare Properties') ?></h1>
             <p class="text-muted">Select 2 to <?= htmlspecialchars($max_compare, ENT_QUOTES, 'UTF-8') ?> properties to compare side-by-side</p>
         </div>
     </div>
@@ -43,7 +32,7 @@ include __DIR__ . '/../layouts/header.php';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <div class="table-responsive"><table class="table table-sm table-responsive">
+                            <table class="table table-sm">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -69,7 +58,7 @@ include __DIR__ . '/../layouts/header.php';
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                            </table></div>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -109,7 +98,7 @@ include __DIR__ . '/../layouts/header.php';
                                     <!-- Property Image -->
                                     <div class="property-image-wrapper" style="height: 200px; overflow: hidden;">
                                         <?php if ($property['primary_image']): ?>
-                                            <img src="/<?= htmlspecialchars($property['primary_image']) ? class="img-fluid">"
+                                            <img src="/<?= htmlspecialchars($property['primary_image']) ?>"
                                                 class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         <?php else: ?>
@@ -166,140 +155,3 @@ include __DIR__ . '/../layouts/header.php';
         </div>
     </div>
 </div>
-
-<style>
-    .property-select-card {
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-    }
-
-    .property-select-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .property-select-card.selected {
-        border-color: #007bff;
-        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-    }
-
-    .property-select-card .property-checkbox {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-    }
-</style>
-
-<script>
-    let selectedProperties = [];
-    const maxCompare = <?= htmlspecialchars($max_compare, ENT_QUOTES, 'UTF-8') ?>;
-    const minCompare = <?= htmlspecialchars($min_compare, ENT_QUOTES, 'UTF-8') ?>;
-
-    function toggleProperty(propertyId) {
-        const card = document.getElementById('property-' + propertyId);
-        const checkbox = document.getElementById('checkbox-' + propertyId);
-
-        if (selectedProperties.includes(propertyId)) {
-            // Remove from selection
-            selectedProperties = selectedProperties.filter(id => id !== propertyId);
-            card.classList.remove('selected');
-            checkbox.checked = false;
-        } else {
-            // Add to selection (if under max)
-            if (selectedProperties.length >= maxCompare) {
-                alert('You can compare maximum ' + maxCompare + ' properties');
-                return;
-            }
-            selectedProperties.push(propertyId);
-            card.classList.add('selected');
-            checkbox.checked = true;
-        }
-
-        updateSelectionCounter();
-    }
-
-    function updateSelectionCounter() {
-        const counter = document.getElementById('selected-count');
-        const btnCompare = document.getElementById('btn-compare');
-
-        counter.textContent = selectedProperties.length;
-
-        if (selectedProperties.length >= minCompare) {
-            btnCompare.disabled = false;
-            counter.parentElement.classList.remove('alert-info');
-            counter.parentElement.classList.add('alert-success');
-        } else {
-            btnCompare.disabled = true;
-            counter.parentElement.classList.remove('alert-success');
-            counter.parentElement.classList.add('alert-info');
-        }
-    }
-
-    function compareProperties() {
-        if (selectedProperties.length < minCompare) {
-            alert('Please select at least ' + minCompare + ' properties');
-            return;
-        }
-
-        const params = new URLSearchParams();
-        selectedProperties.forEach(id => params.append('properties[]', id));
-
-        window.location.href = '/compare/results?' + params.toString();
-    }
-
-    function searchProperties() {
-        const searchTerm = document.getElementById('search-properties').value.toLowerCase();
-        const cards = document.querySelectorAll('.property-card');
-
-        cards.forEach(card => {
-            const name = card.getAttribute('data-name');
-            const location = card.getAttribute('data-location');
-
-            if (name.includes(searchTerm) || location.includes(searchTerm)) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
-
-    function deleteSession(sessionId) {
-        if (!confirm('Are you sure you want to delete this saved comparison?')) {
-            return;
-        }
-
-        fetch('/compare/delete/' + sessionId, {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Failed to delete: ' + data.message);
-                }
-            })
-            .catch(error => {
-                alert('Error deleting comparison');
-            });
-    }
-
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if properties were pre-selected from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const preselected = urlParams.getAll('properties[]');
-
-        preselected.forEach(id => {
-            const propertyId = parseInt(id);
-            if (document.getElementById('property-' + propertyId)) {
-                toggleProperty(propertyId);
-            }
-        });
-    });
-</script>
-
-<?php include __DIR__ . '/../layouts/footer.php'; ?>

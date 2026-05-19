@@ -54,7 +54,58 @@ class LeadController extends BaseController
     public function sources()
     {
         $this->requireAdmin();
-        return $this->render('admin/leads/sources', []);
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            
+            // Source distribution
+            $stmt = $db->query("SELECT source, COUNT(*) as count FROM leads GROUP BY source ORDER BY count DESC");
+            $sourceRows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // For each source, get monthly and conversion
+            $sourceData = [];
+            foreach ($sourceRows as $row) {
+                $src = $row['source'];
+                $mStmt = $db->prepare("SELECT COUNT(*) as cnt FROM leads WHERE source = ? AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
+                $mStmt->execute([$src]);
+                $monthly = (int)$mStmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
+                
+                $cStmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status IN ('converted','closed') THEN 1 ELSE 0 END) as converted FROM leads WHERE source = ?");
+                $cStmt->execute([$src]);
+                $cData = $cStmt->fetch(\PDO::FETCH_ASSOC);
+                $convPct = $cData['total'] > 0 ? round(($cData['converted'] / $cData['total']) * 100, 1) : 0;
+                
+                $sourceData[] = [
+                    'source' => $src,
+                    'count' => (int)$row['count'],
+                    'monthly' => $monthly,
+                    'conversion_pct' => $convPct,
+                ];
+            }
+            
+            // Monthly trend (last 6 months)
+            $trendStmt = $db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM leads WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) GROUP BY month ORDER BY month ASC");
+            $monthlyTrend = $trendStmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            $totalStmt = $db->query("SELECT COUNT(*) as total FROM leads");
+            $totalLeads = (int)$totalStmt->fetch(\PDO::FETCH_ASSOC)['total'];
+            
+            $monthTotalStmt = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
+            $monthlyLeads = (int)$monthTotalStmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
+            
+        } catch (\Exception $e) {
+            $sourceData = [];
+            $monthlyTrend = [];
+            $totalLeads = 0;
+            $monthlyLeads = 0;
+        }
+        
+        $this->render('admin/leads/sources', [
+            'page_title' => 'Lead Source Analytics',
+            'sourceData' => $sourceData,
+            'monthlyTrend' => $monthlyTrend,
+            'totalLeads' => $totalLeads,
+            'monthlyLeads' => $monthlyLeads,
+        ]);
     }
     
     /**

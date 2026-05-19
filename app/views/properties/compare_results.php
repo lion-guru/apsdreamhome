@@ -1,23 +1,10 @@
-<?php
-/**
- * Property Comparison Results Page
- * Side-by-side comparison of selected properties
- */
-
-$page_title = 'Property Comparison Results - APS Dream Home';
-include __DIR__ . '/../layouts/header.php';
-
-$propertiesCount = count($properties);
-$colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-md-4' : 'col-md-3');
-?>
-
 <div class="container-fluid py-4">
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h3 mb-2">Property Comparison</h1>
+                    <h1 class="h3 mb-2"><?= htmlspecialchars($page_title ?? 'Property Comparison') ?></h1>
                     <p class="text-muted">Comparing <?= htmlspecialchars($propertiesCount, ENT_QUOTES, 'UTF-8') ?> properties side-by-side</p>
                 </div>
                 <div class="btn-group">
@@ -122,7 +109,7 @@ $colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-m
                 <!-- Property Image -->
                 <div class="position-relative">
                     <?php if ($property['primary_image']): ?>
-                    <img src="/<?= htmlspecialchars($property['primary_image']) ? class="img-fluid">" 
+                    <img src="/<?= htmlspecialchars($property['primary_image']) ?>"
                          class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
                          style="height: 200px; object-fit: cover;">
                     <?php else: ?>
@@ -218,7 +205,7 @@ $colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-m
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <div class="table-responsive"><table class="table table-bordered mb-0 table-responsive">
+                        <table class="table table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th style="width: 20%;">Feature</th>
@@ -311,7 +298,7 @@ $colClass = $propertiesCount == 2 ? 'col-md-6' : ($propertiesCount == 3 ? 'col-m
                                     <?php endforeach; ?>
                                 </tr>
                             </tbody>
-                        </table></div>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -352,7 +339,6 @@ function shareComparison() {
             url: shareUrl
         });
     } else {
-        // Copy to clipboard
         navigator.clipboard.writeText(shareUrl).then(() => {
             alert('Comparison link copied to clipboard!');
         }).catch(() => {
@@ -395,5 +381,3 @@ function confirmSave() {
     });
 }
 </script>
-
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
