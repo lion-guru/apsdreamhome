@@ -1,4 +1,3 @@
-// TODO: Consider async file operations for better performance
 <?php
 
 namespace App\Http\Controllers\Api;
