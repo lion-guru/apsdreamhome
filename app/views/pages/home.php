@@ -966,33 +966,4 @@ calcGrowth();
     </div>
 </section>
 
-<!-- WhatsApp Float -->
-<a href="https://wa.me/919277121112" target="_blank" class="whatsapp-float">
-    <i class="fab fa-whatsapp"></i>
-</a>
-
-<style>
-.whatsapp-float {
-    position: fixed;
-    width: 60px;
-    height: 60px;
-    bottom: 20px;
-    right: 20px;
-    background: #25D366;
-    color: white;
-    border-radius: 50%;
-    font-size: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-    z-index: 999;
-    text-decoration: none;
-    transition: all 0.3s;
-}
-.whatsapp-float:hover {
-    background: #128C7E;
-    transform: scale(1.1);
-    color: white;
-}
-</style>
+<!-- WhatsApp float moved to base.php layout -->

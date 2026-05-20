@@ -127,7 +127,7 @@ class _VoiceLeadDialogState extends State<VoiceLeadDialog> {
 
   void _listen() async {
     if (!_isListening) {
-      bool available = await _speech.initialize(
+      final bool available = await _speech.initialize(
         onStatus: (val) => print('onStatus: $val'), // ignore: avoid_print
         onError: (val) => print('onError: $val'), // ignore: avoid_print
       );

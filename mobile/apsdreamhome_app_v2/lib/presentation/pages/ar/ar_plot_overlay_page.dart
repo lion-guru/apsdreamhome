@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../widgets/common_widgets.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/status_badge.dart';
 

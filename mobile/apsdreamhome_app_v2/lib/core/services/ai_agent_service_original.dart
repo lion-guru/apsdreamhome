@@ -535,8 +535,6 @@ class AIAgentService {
 
   /// Search memory for similar conversations
   Future<List<AIMemoryEntry>> _searchMemory(String query) async {
-    if (_memoryBox == null) return [];
-
     final entries = <AIMemoryEntry>[];
     final keywords = query.toLowerCase().split(' ');
 
@@ -569,8 +567,6 @@ class AIAgentService {
   /// Check learning patterns
   Future<String?> _checkLearningPatterns(
       String message, Map<String, dynamic>? context) async {
-    if (_learningBox == null) return null;
-
     final patterns = <AILearningData>[];
 
     for (var key in _learningBox.keys) {
@@ -830,9 +826,6 @@ class AIAgentService {
     String response,
     Map<String, dynamic>? context,
   ) async {
-    if (_learningBox == null) return;
-
-    // Extract pattern from message
     final pattern = _extractPattern(message);
 
     // Check if similar pattern exists
@@ -877,8 +870,6 @@ class AIAgentService {
     Map<String, dynamic> data,
     _ParsedDecision decision,
   ) async {
-    if (_decisionsBox == null) return;
-
     _decisionsBox[DateTime.now().millisecondsSinceEpoch.toString()] = {
       'decisionType': decisionType,
       'data': data,
@@ -944,8 +935,6 @@ class AIAgentService {
     required double satisfaction,
   }) async {
     // Update learning data with feedback
-    if (_learningBox == null) return;
-
     final pattern = _extractPattern(message);
     final key = 'feedback_${DateTime.now().millisecondsSinceEpoch}';
 
@@ -982,9 +971,9 @@ class AIAgentService {
   /// Get agent statistics
   Future<Map<String, dynamic>> getAgentStats() async {
     return {
-      'memory_entries': _memoryBox?.length ?? 0,
-      'learned_patterns': _learningBox?.length ?? 0,
-      'decisions_made': _decisionsBox?.length ?? 0,
+      'memory_entries': _memoryBox.length ?? 0,
+      'learned_patterns': _learningBox.length ?? 0,
+      'decisions_made': _decisionsBox.length ?? 0,
       'current_agent': _currentAgent?.name ?? 'None',
       'role': _currentAgent?.role.name ?? 'None',
       'can_make_decisions': _currentAgent?.canMakeDecisions ?? false,

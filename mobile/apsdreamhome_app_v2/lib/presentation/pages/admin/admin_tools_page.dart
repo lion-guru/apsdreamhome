@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/connectivity_provider.dart';
 import '../../providers/property_providers.dart';
 import '../../widgets/glass_card.dart';

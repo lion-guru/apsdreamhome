@@ -798,7 +798,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
               ),
             )
           else
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Column(
                 children: [
@@ -913,7 +913,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                     ),
             )
           else
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Column(
                 children: [
@@ -1058,7 +1058,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
               ),
             )
           else
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Column(
                 children: [

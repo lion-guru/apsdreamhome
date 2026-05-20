@@ -24,7 +24,7 @@ void main() async {
 
   // Load environment variables
   try {
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: '.env');
     AppLogger.info('Environment variables loaded');
   } catch (e) {
     AppLogger.warning(
@@ -57,7 +57,7 @@ void main() async {
     await apiService.initialize();
 
     // Run app with Riverpod and repository overrides
-    final secureStorage = const FlutterSecureStorage();
+    const secureStorage = FlutterSecureStorage();
     runApp(
       ProviderScope(
         overrides: [

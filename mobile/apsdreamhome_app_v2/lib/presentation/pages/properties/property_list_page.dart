@@ -204,7 +204,7 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
   }
 
   List<PropertyModel> _filterProperties(List<PropertyModel> properties) {
-    var filtered = properties.where((property) {
+    final filtered = properties.where((property) {
       // Search filter
       final searchQuery = _searchController.text.toLowerCase();
       final matchesSearch = searchQuery.isEmpty ||
@@ -345,6 +345,6 @@ class _PropertyListPageState extends ConsumerState<PropertyListPage> {
 
 extension StringExtension on String {
   String capitalize() {
-    return "${this[0].toUpperCase()}${substring(1)}";
+    return '${this[0].toUpperCase()}${substring(1)}';
   }
 }

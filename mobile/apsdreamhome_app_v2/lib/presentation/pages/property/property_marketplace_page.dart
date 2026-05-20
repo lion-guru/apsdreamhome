@@ -19,7 +19,7 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
   String _selectedLocation = 'all';
   double _minPrice = 0;
   double _maxPrice = 5000000;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   final List<Map<String, dynamic>> _sampleProperties = [
     {

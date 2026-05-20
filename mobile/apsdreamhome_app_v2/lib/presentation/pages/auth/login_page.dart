@@ -44,7 +44,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         _passwordController.text,
       );
 
-      if (user != null && mounted) {
+      if (mounted) {
         AppWidgets.showSuccessSnackBar(context, 'Login successful');
         
         // Navigate based on user role
@@ -149,7 +149,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         const SizedBox(height: 16),
         
         // Title
-        Text(
+        const Text(
           'APS Dream Home',
           style: TextStyle(
             fontSize: 28,
@@ -524,7 +524,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () => context.push('/forgot-password'),
-        child: Text(
+        child: const Text(
           'Forgot Password?',
           style: TextStyle(
             color: AppTheme.primaryColor,
@@ -552,7 +552,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: Text(
+          child: const Text(
             'Register Now',
             style: TextStyle(
               color: AppTheme.primaryColor,

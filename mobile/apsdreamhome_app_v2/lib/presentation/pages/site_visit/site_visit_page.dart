@@ -54,7 +54,7 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
       _statusMessage = 'Requesting GPS permission...';
     });
 
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       setState(() {
         _statusMessage = '⚠️ Location services are disabled. Please enable them.';

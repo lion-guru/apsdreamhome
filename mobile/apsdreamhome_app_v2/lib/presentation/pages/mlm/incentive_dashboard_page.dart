@@ -39,7 +39,7 @@ class IncentiveDashboardPage extends ConsumerWidget {
               );
             }
 
-            final Incentive currentIncentive = incentives.first as Incentive;
+            final Incentive currentIncentive = incentives.first;
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(AppConstants.defaultPadding),
