@@ -172,7 +172,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
     final isPending = _kycStatus!.status.name.toLowerCase().contains('pending');
     final isRejected = _kycStatus!.status.name.toLowerCase().contains('reject');
 
-    Color cardColor = isCompleted
+    final Color cardColor = isCompleted
         ? Colors.green[50]!
         : isRejected
             ? Colors.red[50]!
@@ -180,7 +180,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                 ? Colors.orange[50]!
                 : Colors.blue[50]!;
 
-    Color iconColor = isCompleted
+    final Color iconColor = isCompleted
         ? Colors.green
         : isRejected
             ? Colors.red
@@ -188,7 +188,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                 ? Colors.orange
                 : Colors.blue;
 
-    IconData statusIcon = isCompleted
+    final IconData statusIcon = isCompleted
         ? Icons.verified
         : isRejected
             ? Icons.cancel
@@ -196,7 +196,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                 ? Icons.pending
                 : Icons.hourglass_empty;
 
-    String statusText = isCompleted
+    final String statusText = isCompleted
         ? 'KYC Completed'
         : isRejected
             ? 'KYC Rejected'
@@ -537,7 +537,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
     required String type,
     required bool isLast,
   }) {
-    Color eventColor = type == 'success'
+    final Color eventColor = type == 'success'
         ? Colors.green
         : type == 'error'
             ? Colors.red

@@ -60,7 +60,7 @@ class AIAgentService {
 
   // In-memory storage for demo purposes
   final List<Map<String, dynamic>> _feedbackHistory = [];
-  int _interactionCount = 0;
+  final int _interactionCount = 0;
 
   /// Initialize the AI Agent Service
   Future<void> initialize() async {

@@ -1,4 +1,5 @@
 /// KYC Models - Complete KYC verification data structures
+library;
 
 /// KYC Verification Result - API response wrapper
 class KYCVerificationResult {

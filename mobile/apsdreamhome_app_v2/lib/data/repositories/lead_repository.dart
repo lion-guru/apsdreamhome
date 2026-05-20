@@ -25,7 +25,7 @@ class LeadRepository {
       followUpDate: followUpDate,
     );
     final localLeads = localLeadsData
-        .map((e) => LeadModel.fromJson(e as Map<String, dynamic>))
+        .map((e) => LeadModel.fromJson(e))
         .toList();
 
     // If online, fetch from API
@@ -64,7 +64,7 @@ class LeadRepository {
     // Try local first
     final localData = await _dbHelper.getLeadById(leadId);
     final local = localData != null
-        ? LeadModel.fromJson(localData as Map<String, dynamic>)
+        ? LeadModel.fromJson(localData)
         : null;
 
     // If online, fetch fresh
