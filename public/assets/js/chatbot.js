@@ -3,22 +3,23 @@
 
     let chatOpen = false;
 
-    const ChatbotUserContext = {
-        role: 'guest',
-        userId: '',
-        userName: '',
-        isLoggedIn: false
+    var uc = window.chatbotUserContext || {};
+    var ChatbotUserContext = {
+        role: uc.role || 'guest',
+        userId: uc.userId || '',
+        userName: uc.userName || '',
+        isLoggedIn: uc.isLoggedIn || false
     };
 
     let chatLanguage = localStorage.getItem('chatLanguage') || 'hinglish';
 
-    function toggleChatLanguage() {
+    window.toggleChatLanguage = function () {
         chatLanguage = chatLanguage === 'hinglish' ? 'english' : 'hinglish';
         localStorage.setItem('chatLanguage', chatLanguage);
         updateLanguageButton();
         const langName = chatLanguage === 'hinglish' ? 'Hinglish' : 'English';
         addMessage('Switched to ' + langName + '! 🌐', false, { animate: true });
-    }
+    };
 
     function updateLanguageButton() {
         var btn = document.getElementById('langToggle');
