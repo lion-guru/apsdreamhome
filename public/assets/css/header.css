@@ -4,6 +4,8 @@
 .premium-header .navbar-brand { min-width: 100px; margin-right: 10px; }
 .premium-header .navbar-brand:hover .logo { transform: scale(1.05); }
 .premium-header .brand-text { font-size: 1.2rem; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.premium-header .navbar-nav { display: flex; flex-direction: row; align-items: center; }
+.premium-header .navbar-nav .nav-item { display: flex; align-items: center; }
 .premium-header .nav-link { color: #4a5568 !important; font-weight: 500; font-size: 0.85rem; padding: 8px 12px; border-radius: 6px; transition: all 0.25s ease; white-space: nowrap; }
 .premium-header .nav-link i { color: #667eea; margin-right: 4px; font-size: 0.75rem; }
 .premium-header .nav-link:hover { color: #667eea !important; background: rgba(102, 126, 234, 0.08); }
