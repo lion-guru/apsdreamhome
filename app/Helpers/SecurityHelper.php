@@ -88,12 +88,12 @@ class SecurityHelper
         header("Referrer-Policy: strict-origin-when-cross-origin");
 
         $csp = "default-src 'self'; ";
-        $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval'; ";
-        $csp .= "style-src 'self' 'unsafe-inline'; ";
-        $csp .= "img-src 'self' data: blob:; ";
-        $csp .= "font-src 'self'; ";
-        $csp .= "frame-src 'self'; ";
-        $csp .= "connect-src 'self';";
+        $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com; ";
+        $csp .= "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; ";
+        $csp .= "img-src 'self' data: blob: https:; ";
+        $csp .= "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; ";
+        $csp .= "frame-src 'self' https://www.google.com; ";
+        $csp .= "connect-src 'self' https:;";
 
         header("Content-Security-Policy: " . $csp);
 

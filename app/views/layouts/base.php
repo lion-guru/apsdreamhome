@@ -82,8 +82,6 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-    <!-- Frontend CSS -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
     <!-- Header CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
 
@@ -102,8 +100,10 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
         })();
     </script>
 
-    <!-- Custom CSS -->
+    <!-- style.css must load BEFORE frontend.css to match original cascade order -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
+    <!-- Frontend CSS (extracted inline styles, highest priority like original) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
     <!-- Chatbot CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet">
 
