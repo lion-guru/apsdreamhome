@@ -110,7 +110,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
 <header class="premium-header fixed-top" id="mainHeader">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>" style="margin-left: -15px;">
+            <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo" style="height: 40px; width: auto; max-width: 130px;">
             </a>
 
