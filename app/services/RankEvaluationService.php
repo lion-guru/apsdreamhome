@@ -33,16 +33,15 @@ class RankEvaluationService
         $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_number ASC");
 
         $teamSize = (int)$this->db->fetchColumn(
-            "SELECT COUNT(*) FROM network_tree WHERE sponsor_id = ? AND depth <= 3",
+            "SELECT COUNT(*) FROM network_tree WHERE associate_id = ? AND `level` <= 3",
             [$userId]
         );
 
         $directReferrals = (int)$profile['direct_referrals'];
 
         $monthlySales = (float)$this->db->fetchColumn(
-            "SELECT COALESCE(SUM(b.total_amount), 0) FROM bookings b
-             JOIN network_tree nt ON b.customer_id = nt.user_id
-             WHERE nt.sponsor_id = ? AND b.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
+            "SELECT COALESCE(SUM(total_amount), 0) FROM bookings
+             WHERE customer_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
             [$userId]
         );
 
@@ -88,14 +87,13 @@ class RankEvaluationService
         $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_number ASC");
 
         $teamSize = (int)$this->db->fetchColumn(
-            "SELECT COUNT(*) FROM network_tree WHERE sponsor_id = ? AND depth <= 3",
+            "SELECT COUNT(*) FROM network_tree WHERE associate_id = ? AND `level` <= 3",
             [$userId]
         );
         $directReferrals = (int)$profile['direct_referrals'];
         $monthlySales = (float)$this->db->fetchColumn(
-            "SELECT COALESCE(SUM(b.total_amount), 0) FROM bookings b
-             JOIN network_tree nt ON b.customer_id = nt.user_id
-             WHERE nt.sponsor_id = ? AND b.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
+            "SELECT COALESCE(SUM(total_amount), 0) FROM bookings
+             WHERE customer_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
             [$userId]
         );
 

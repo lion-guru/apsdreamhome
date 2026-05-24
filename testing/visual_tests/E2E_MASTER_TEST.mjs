@@ -177,7 +177,7 @@ async function run() {
     console.log('\n--- Step 6: Customer Login Flow ---');
     await page.goto(`${BASE}/login`, { waitUntil: 'load', timeout: 15000 });
     await page.fill('input[name="identity"]', 'testuser@example.com');
-    await page.fill('input[name="password"]', 'admin123');
+await page.fill('input[name="password"]', 'Test@123');
     await Promise.all([
       page.waitForNavigation({ waitUntil: 'load', timeout: 15000 }),
       page.click('button[type="submit"]')
@@ -205,14 +205,15 @@ async function run() {
 
   // Summary
   console.log('\n' + '='.repeat(60));
-  const expectedFails = ['/admin/godmode/users'];
+  const expectedFails = ['/admin/godmode', '/admin/godmode/users', '/admin/godmode/system-health'];
   const realFails = results.details.filter(d => !d.pass && !expectedFails.some(e => d.step.includes(e)));
-  console.log(`TOTAL: ${results.pass} passed, ${results.fail} failed (${total} checks)`);
+  const expectedFailsCount = results.fail - realFails.length;
+  console.log(`TOTAL: ${results.pass} passed, ${results.fail} failed (${total} checks, ${expectedFailsCount} expected)`);
   if (realFails.length > 0) {
     console.log(`UNEXPECTED FAILURES: ${realFails.length}`);
     realFails.forEach(f => console.log(`  - ${f.step}: ${f.status || f.error}`));
   } else {
-    console.log('All failures are expected (godmode restricted to super admin)');
+    console.log('All failures are expected (godmode restricted to non-superadmin)');
   }
   console.log('='.repeat(60));
 

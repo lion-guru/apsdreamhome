@@ -39,7 +39,7 @@ include __DIR__ . '/../layouts/base.php';
         <div class="col-md-6 col-lg-4 col-xl-3">
             <div class="glass-card h-100 property-card overflow-hidden">
                 <div class="position-relative">
-                    <img src="<?php echo $property['image']; ? class="img-fluid">" class="w-100" style="height: 240px; object-fit: cover;" alt="<?php echo $property['title']; ?>">
+                    <img src="<?php echo $property['image']; ?> class="img-fluid">" class="w-100" style="height: 240px; object-fit: cover;" alt="<?php echo $property['title']; ?>">
                     <div class="position-absolute top-0 start-0 p-3">
                         <span class="badge bg-primary glass-blur px-3 py-2">
                             <?php echo $property['featured'] ? 'Featured' : 'Premium'; ?>

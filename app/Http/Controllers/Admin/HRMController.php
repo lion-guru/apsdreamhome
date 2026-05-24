@@ -77,4 +77,16 @@ class HRMController extends BaseController
         $this->requireAdmin();
         return $this->render('admin/hrm/settings', []);
     }
+
+    public function applicants()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/hrm/applicants', []);
+    }
+
+    public function documents()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/hrm/documents', []);
+    }
 }

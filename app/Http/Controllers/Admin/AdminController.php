@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Cache;
 use App\Models\Admin;
 use App\Models\About;
 use App\Models\Property;
@@ -165,84 +166,98 @@ class AdminController extends BaseController
     }
 
     /**
-     * Get total users count
+     * Get total users count (cached 5 min)
      */
     private function getTotalUsers()
     {
         try {
-            return $this->db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
+            return Cache::remember('admin_dash_total_users', function () {
+                return $this->db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
+            }, 300);
         } catch (Exception $e) {
             return 0;
         }
     }
 
     /**
-     * Get total properties count
+     * Get total properties count (cached 5 min)
      */
     private function getTotalProperties()
     {
         try {
-            return $this->db->fetch("SELECT COUNT(*) as count FROM properties")['count'] ?? 0;
+            return Cache::remember('admin_dash_total_properties', function () {
+                return $this->db->fetch("SELECT COUNT(*) as count FROM properties")['count'] ?? 0;
+            }, 300);
         } catch (Exception $e) {
             return 0;
         }
     }
 
     /**
-     * Get total inquiries count
+     * Get total inquiries count (cached 5 min)
      */
     private function getTotalInquiries()
     {
         try {
-            return $this->db->fetch("SELECT COUNT(*) as count FROM inquiries")['count'] ?? 0;
+            return Cache::remember('admin_dash_total_inquiries', function () {
+                return $this->db->fetch("SELECT COUNT(*) as count FROM inquiries")['count'] ?? 0;
+            }, 300);
         } catch (Exception $e) {
             return 0;
         }
     }
 
     /**
-     * Get total revenue
+     * Get total revenue (cached 5 min)
      */
     private function getTotalRevenue()
     {
         try {
-            return $this->db->fetch("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'completed'")['total'] ?? 0;
+            return Cache::remember('admin_dash_total_revenue', function () {
+                return $this->db->fetch("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'completed'")['total'] ?? 0;
+            }, 300);
         } catch (Exception $e) {
             return 0;
         }
     }
 
     /**
-     * Get active properties count
+     * Get active properties count (cached 5 min)
      */
     private function getActiveProperties()
     {
         try {
-            return $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'active'")['count'] ?? 0;
+            return Cache::remember('admin_dash_active_properties', function () {
+                return $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'active'")['count'] ?? 0;
+            }, 300);
         } catch (Exception $e) {
             return 0;
         }
     }
 
     /**
-     * Get new users today
+     * Get new users today (cached 2 min - changes more frequently)
      */
     private function getNewUsersToday()
     {
         try {
-            return $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE()")['count'] ?? 0;
+            return Cache::remember('admin_dash_new_users_today', function () {
+                return $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE()")['count'] ?? 0;
+            }, 120);
         } catch (Exception $e) {
             return 0;
         }
     }
 
     /**
-     * Get pending approvals
+     * Get pending approvals (cached 3 min)
      */
     private function getPendingApprovals()
     {
         try {
-            return $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'pending'")['count'] ?? 0;
+            return Cache::remember('admin_dash_pending_approvals', function () {
+                return $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'pending'")['count'] ?? 0;
+            }, 180);
         } catch (Exception $e) {
             return 0;
         }
@@ -287,10 +302,18 @@ class AdminController extends BaseController
         header('Content-Type: application/json');
         try {
             $stats = [
-                'total_users' => $this->db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0,
-                'total_properties' => $this->db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0,
-                'total_leads' => $this->db->fetch("SELECT COUNT(*) as c FROM leads")['c'] ?? 0,
-                'pending_bookings' => $this->db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0,
+                'total_users' => Cache::remember('admin_api_total_users', function () {
+                    return $this->db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0;
+                }, 300),
+                'total_properties' => Cache::remember('admin_api_total_properties', function () {
+                    return $this->db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0;
+                }, 300),
+                'total_leads' => Cache::remember('admin_api_total_leads', function () {
+                    return $this->db->fetch("SELECT COUNT(*) as c FROM leads")['c'] ?? 0;
+                }, 300),
+                'pending_bookings' => Cache::remember('admin_api_pending_bookings', function () {
+                    return $this->db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
+                }, 180),
             ];
             echo json_encode(['success' => true, 'data' => $stats]);
         } catch (Exception $e) {
@@ -304,19 +327,75 @@ class AdminController extends BaseController
      */
     private function getChartsData()
     {
+        // User registrations per month (last 6 months)
+        try {
+            $userData = $this->db->fetchAll("
+                SELECT DATE_FORMAT(created_at, '%b') as label, COUNT(*) as count
+                FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY MIN(created_at)
+            ");
+        } catch (\Exception $e) {
+            $userData = [];
+        }
+        $userLabels = [];
+        $userCounts = [];
+        foreach ($userData as $row) {
+            $userLabels[] = $row['label'];
+            $userCounts[] = (int)$row['count'];
+        }
+        if (empty($userLabels)) {
+            $userLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            $userCounts = [0, 0, 0, 0, 0, 0];
+        }
+
+        // Bookings per month (last 6 months)
+        try {
+            $bookingData = $this->db->fetchAll("
+                SELECT DATE_FORMAT(created_at, '%b') as label, COUNT(*) as count
+                FROM bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY MIN(created_at)
+            ");
+        } catch (\Exception $e) {
+            $bookingData = [];
+        }
+        $bookingLabels = [];
+        $bookingCounts = [];
+        foreach ($bookingData as $row) {
+            $bookingLabels[] = $row['label'];
+            $bookingCounts[] = (int)$row['count'];
+        }
+        if (empty($bookingLabels)) {
+            $bookingLabels = $userLabels;
+            $bookingCounts = array_fill(0, count($userLabels), 0);
+        }
+
+        // Revenue per month from bookings (last 6 months)
+        try {
+            $revenueData = $this->db->fetchAll("
+                SELECT DATE_FORMAT(b.created_at, '%b') as label, COALESCE(SUM(bp.amount), 0) as total
+                FROM bookings b
+                LEFT JOIN booking_payments bp ON bp.booking_id = b.id
+                WHERE b.created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                GROUP BY DATE_FORMAT(b.created_at, '%Y-%m') ORDER BY MIN(b.created_at)
+            ");
+        } catch (\Exception $e) {
+            $revenueData = [];
+        }
+        $revenueLabels = [];
+        $revenueTotals = [];
+        foreach ($revenueData as $row) {
+            $revenueLabels[] = $row['label'];
+            $revenueTotals[] = (float)$row['total'];
+        }
+        if (empty($revenueLabels)) {
+            $revenueLabels = $userLabels;
+            $revenueTotals = array_fill(0, count($userLabels), 0);
+        }
+
         return [
-            'user_registrations' => [
-                'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                'data' => [12, 19, 15, 25, 22, 30]
-            ],
-            'property_views' => [
-                'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                'data' => [150, 230, 180, 290, 310, 280]
-            ],
-            'revenue' => [
-                'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                'data' => [450000, 520000, 480000, 610000, 590000, 670000]
-            ]
+            'user_registrations' => ['labels' => $userLabels, 'data' => $userCounts],
+            'property_views' => ['labels' => $bookingLabels, 'data' => $bookingCounts],
+            'revenue' => ['labels' => $revenueLabels, 'data' => $revenueTotals]
         ];
     }
 

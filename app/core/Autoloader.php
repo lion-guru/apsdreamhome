@@ -178,6 +178,7 @@ $autoloader->addClassMap('ConsolidatedProperty', APP_ROOT . '/app/Models/Consoli
 $autoloader->addClassMap('UnifiedModel', APP_ROOT . '/app/Core/UnifiedModel.php');
 
 // Register legacy managers for backward compatibility
+$autoloader->addClassMap('Cache', APP_ROOT . '/app/Core/Cache.php');
 $autoloader->addClassMap('UserManager', APP_ROOT . '/includes/managers.php');
 $autoloader->addClassMap('PropertyManager', APP_ROOT . '/includes/managers.php');
 $autoloader->addClassMap('ContactManager', APP_ROOT . '/includes/managers.php');

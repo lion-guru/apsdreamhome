@@ -5,46 +5,62 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
 }
 
+$cacheFile = defined('APP_ROOT') ? APP_ROOT . '/storage/cache/header_projects.cache' : null;
+$cacheTtl = 300; // 5 minutes
 $projectLocations = [];
 $allProjects = [];
 
-try {
-    $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Try loading from cache
+if ($cacheFile && file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTtl) {
+    $cached = @unserialize(file_get_contents($cacheFile));
+    if ($cached && isset($cached['locations'], $cached['projects'])) {
+        $projectLocations = $cached['locations'];
+        $allProjects = $cached['projects'];
+    }
+}
 
-    $sql = "SELECT c.id, c.name, c.slug, d.name as district, s.name as state
-            FROM colonies c
-            LEFT JOIN districts d ON c.district_id = d.id
-            LEFT JOIN states s ON d.state_id = s.id
-            WHERE c.is_active = 1
-            ORDER BY d.name, c.name";
-    $stmt = $db->query($sql);
-    $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+if (empty($allProjects)) {
+    try {
+        $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    foreach ($projects as $p) {
-        $district = ucfirst(strtolower($p['district'] ?? 'Other'));
-        $state = ucfirst(strtolower($p['state'] ?? ''));
+        $sql = "SELECT c.id, c.name, c.slug, d.name as district, s.name as state
+                FROM colonies c
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN states s ON d.state_id = s.id
+                WHERE c.is_active = 1
+                ORDER BY d.name, c.name";
+        $projects = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
-        $locKey = strtolower($district);
-        if (!isset($projectLocations[$locKey])) {
-            $projectLocations[$locKey] = [
-                'name' => $district,
-                'count' => 0,
-                'state' => $state
+        foreach ($projects as $p) {
+            $district = ucfirst(strtolower($p['district'] ?? 'Other'));
+            $state = ucfirst(strtolower($p['state'] ?? ''));
+
+            $locKey = strtolower($district);
+            if (!isset($projectLocations[$locKey])) {
+                $projectLocations[$locKey] = [
+                    'name' => $district,
+                    'count' => 0,
+                    'state' => $state
+                ];
+            }
+            $projectLocations[$locKey]['count']++;
+
+            $allProjects[] = [
+                'id' => $p['id'],
+                'name' => $p['name'],
+                'slug' => $p['slug'],
+                'district' => $district
             ];
         }
-        $projectLocations[$locKey]['count']++;
-
-        $allProjects[] = [
-            'id' => $p['id'],
-            'name' => $p['name'],
-            'slug' => $p['slug'],
-            'district' => $district
-        ];
+        // Save to cache
+        if ($cacheFile) {
+            @file_put_contents($cacheFile, serialize(['locations' => $projectLocations, 'projects' => $allProjects]));
+        }
+    } catch (PDOException $e) {
+        $projectLocations = [];
+        $allProjects = [];
     }
-} catch (PDOException $e) {
-    $projectLocations = [];
-    $allProjects = [];
 }
 
 $projectsSubmenu = [
@@ -121,7 +137,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav align-items-center" style="margin-left: auto;">
                     <?php
-                    $current_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+                    $current_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                     $base_path = (string) parse_url(BASE_URL, PHP_URL_PATH);
                     $current_path = str_replace($base_path, '', $current_path);
                     $current_path = $current_path ?: '/';
@@ -305,6 +321,8 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             $dashboardUrl = '/user/dashboard';
                             $menuItems = [
                                 ['label' => 'Dashboard', 'url' => '/user/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => 'My Bookings', 'url' => '/user/bookings', 'icon' => 'fa-file-contract'],
+                                ['label' => 'My Favorites', 'url' => '/dashboard/favorites', 'icon' => 'fa-heart'],
                                 ['label' => 'Post Property', 'url' => '/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
                                 ['label' => 'My Properties', 'url' => '/user/properties', 'icon' => 'fa-building'],
                                 ['label' => 'My Inquiries', 'url' => '/user/inquiries', 'icon' => 'fa-envelope'],
@@ -386,14 +404,14 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             <span class="d-none d-lg-inline">+91 92771 21112</span>
                         </a>
                     </li>
-                    <li class="nav-item ms-2">
+                    <li class="nav-item ms-2 btn-compare">
                         <a href="<?php echo BASE_URL; ?>/compare" class="btn btn-outline-info btn-sm position-relative">
                             <i class="fas fa-balance-scale"></i> Compare
                             <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;font-size:10px;">0</span>
                         </a>
                     </li>
                     <?php if (!$isLoggedIn): ?>
-                        <li class="nav-item ms-2">
+                        <li class="nav-item ms-2 btn-admin">
                             <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm">
                                 <i class="fas fa-user-lock me-1"></i>
                                 <span class="d-none d-lg-inline">Admin</span>
@@ -408,50 +426,127 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
 
 <!-- Ad Banner -->
 <?php
-$adService = new \App\Services\AdManagerService();
-echo $adService->renderSlot('header_banner');
-unset($adService);
+try {
+    $adService = new \App\Services\AdManagerService();
+    echo $adService->renderSlot('header_banner');
+    unset($adService);
+} catch (\Exception $e) {
+    // Ad service unavailable
+}
 ?>
 
 <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/header.css" rel="stylesheet">
+<style>
+    /* Mobile menu enhancements */
+    .navbar-toggler { border: none; padding: 8px; transition: transform .3s; }
+    .navbar-toggler[aria-expanded="true"] { transform: rotate(90deg); }
+    .navbar-toggler-icon { background-image: none; display: flex; align-items: center; justify-content: center; }
+    .navbar-toggler-icon::before { content: '\f0c9'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 1.3rem; color: #4f46e5; }
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before { content: '\f00d'; }
+    
+    /* Mobile backdrop overlay */
+    .nav-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 9997; opacity: 0; transition: opacity .3s; }
+    .nav-backdrop.show { display: block; opacity: 1; }
+    
+    @media (max-width: 991.98px) {
+        .premium-header .navbar-collapse {
+            position: fixed; top: 0; left: 0; width: 85%; max-width: 320px; height: 100vh;
+            background: #fff; z-index: 9998; padding: 20px; overflow-y: auto;
+            transform: translateX(-100%); transition: transform .3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,.15);
+            display: block !important;
+        }
+        .premium-header .navbar-collapse.show {
+            transform: translateX(0);
+        }
+        .premium-header .navbar-nav { margin-left: 0 !important; flex-direction: column; width: 100%; }
+        .premium-header .navbar-nav .nav-item { width: 100%; }
+        .premium-header .navbar-nav .nav-link { padding: 12px 10px; border-radius: 8px; }
+        .premium-header .navbar-nav .nav-link:hover { background: #f1f5f9; }
+        .premium-header .navbar-nav .dropdown-menu {
+            position: static !important; border: none; box-shadow: none;
+            padding-left: 15px; background: #f8fafc; border-radius: 8px;
+            margin: 4px 0; display: block !important; max-height: 0; overflow: hidden;
+            transition: max-height .3s ease; padding-top: 0; padding-bottom: 0;
+        }
+        .premium-header .navbar-nav .dropdown-menu.show-mobile { max-height: 2000px; padding-top: 8px; padding-bottom: 8px; }
+        .premium-header .navbar-nav .dropdown-menu .dropdown-item { padding: 10px 12px; border-radius: 6px; }
+        .premium-header .navbar-nav .dropdown-menu .dropdown-item:hover { background: #e2e8f0; }
+        .premium-header .ms-2 { margin-left: 0 !important; margin-top: 8px; }
+        #compareBadge, .btn-compare, .btn-admin { display: none !important; }
+    }
+</style>
+
 <script>
-    // Improve accessibility: keep aria-expanded in sync with UI state
+    window.BASE_URL = '<?php echo BASE_URL; ?>';
+
     document.addEventListener('DOMContentLoaded', function() {
-        var toggler = document.querySelector('.navbar-toggler');
-        if (toggler) {
+        var header = document.getElementById('mainHeader');
+        var toggler = header.querySelector('.navbar-toggler');
+        var navCollapse = header.querySelector('.navbar-collapse');
+        
+        // Create backdrop overlay for mobile menu
+        var backdrop = document.createElement('div');
+        backdrop.className = 'nav-backdrop';
+        document.body.appendChild(backdrop);
+
+        // Toggle mobile menu
+        if (toggler && navCollapse) {
             toggler.addEventListener('click', function() {
-                var expanded = this.getAttribute('aria-expanded') === 'true';
-                this.setAttribute('aria-expanded', String(!expanded));
+                var isOpen = navCollapse.classList.contains('show');
+                navCollapse.classList.toggle('show');
+                backdrop.classList.toggle('show');
+                toggler.setAttribute('aria-expanded', String(!isOpen));
+                document.body.style.overflow = isOpen ? '' : 'hidden';
+            });
+
+            // Close on backdrop click
+            backdrop.addEventListener('click', function() {
+                navCollapse.classList.remove('show');
+                backdrop.classList.remove('show');
+                toggler.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+
+            // Convert dropdowns to click-to-expand on mobile
+            navCollapse.querySelectorAll('.dropdown-toggle').forEach(function(dt) {
+                dt.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 991.98) {
+                        e.preventDefault();
+                        var menu = this.nextElementSibling;
+                        if (menu && menu.classList.contains('dropdown-menu')) {
+                            menu.classList.toggle('show-mobile');
+                        }
+                    }
+                });
             });
         }
-        // Update aria-expanded for Bootstrap dropdowns
-        var dropdownToggles = document.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]');
-        dropdownToggles.forEach(function(dt) {
-            dt.addEventListener('shown.bs.dropdown', function() {
-                dt.setAttribute('aria-expanded', 'true');
-            });
-            dt.addEventListener('hidden.bs.dropdown', function() {
-                dt.setAttribute('aria-expanded', 'false');
-            });
+
+        // Scroll effect
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
+            }
+        });
+
+        // Sync aria-expanded for Bootstrap dropdowns
+        header.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(function(dt) {
+            dt.addEventListener('shown.bs.dropdown', function() { dt.setAttribute('aria-expanded', 'true'); });
+            dt.addEventListener('hidden.bs.dropdown', function() { dt.setAttribute('aria-expanded', 'false'); });
+        });
+
+        // Close mobile menu on window resize above breakpoint
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 991.98 && navCollapse.classList.contains('show')) {
+                navCollapse.classList.remove('show');
+                backdrop.classList.remove('show');
+                toggler.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
         });
     });
 </script>
 
-<script>
-    // Set BASE_URL for JavaScript
-    window.BASE_URL = '<?php echo BASE_URL; ?>';
-</script>
-
-<script src="<?php echo BASE_URL; ?>/js/visitor-tracking.js"></script>
-
-<script>
-    // Header scroll effect
-    window.addEventListener('scroll', function() {
-        const header = document.getElementById('mainHeader');
-        if (window.scrollY > 50) {
-            header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
-        } else {
-            header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
-        }
-    });
-</script>
+<script src="<?php echo BASE_URL; ?>/js/visitor-tracking.js" defer></script>

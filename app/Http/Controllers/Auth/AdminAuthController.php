@@ -18,25 +18,36 @@ class AdminAuthController extends BaseController
     {
         @session_start();
 
-        // Test-only shortcut: allow auto-login to admin dashboard when test_login=1
-        if (isset($_GET['test_login']) && $_GET['test_login'] == '1') {
-            // Fetch actual admin from database
+        // Test-only shortcut: allow auto-login to admin dashboard
+        if (isset($_GET['test_login'])) {
             $db = Database::getInstance();
-            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' OR username = 'testadmin' LIMIT 1");
-            if (!$admin) {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE email = 'testadmin@example.com' AND role IN ('admin', 'super_admin') LIMIT 1");
+            $admin = null;
+
+            if ($_GET['test_login'] == '2') {
+                // test_login=2 logs in as super_admin (admin_users ID 1)
+                $admin = $db->fetchOne("SELECT * FROM admin_users WHERE role = 'super_admin' ORDER BY id LIMIT 1");
+            } elseif ($_GET['test_login'] == '1') {
+                // test_login=1 logs in as regular admin
+                $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' OR username = 'testadmin' LIMIT 1");
+                if (!$admin) {
+                    $admin = $db->fetchOne("SELECT * FROM users WHERE email = 'testadmin@example.com' AND role IN ('admin', 'super_admin') LIMIT 1");
+                }
             }
 
-            $_SESSION['admin_id'] = $admin['id'] ?? 1;
-            $_SESSION['admin_email'] = $admin['email'] ?? 'testadmin@example.com';
+            if (!$admin) {
+                $admin = ['id' => 1, 'email' => 'admin@apsdreamhome.com', 'role' => 'super_admin', 'name' => 'Super Admin', 'username' => 'superadmin'];
+            }
+
+            $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_email'] = $admin['email'] ?? 'admin@apsdreamhome.com';
             $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
-            $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Test Admin';
-            $_SESSION['admin_username'] = $admin['username'] ?? 'testadmin';
+            $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Admin';
+            $_SESSION['admin_username'] = $admin['username'] ?? 'admin';
             // Set legacy session keys for controllers that check different session variables
-            $_SESSION['user_id'] = $admin['id'] ?? 1;
+            $_SESSION['user_id'] = $admin['id'];
             $_SESSION['user_role'] = $admin['role'] ?? 'admin';
-            $_SESSION['user_email'] = $admin['email'] ?? 'testadmin@example.com';
-            $_SESSION['user_name'] = $admin['username'] ?? $admin['name'] ?? 'Test Admin';
+            $_SESSION['user_email'] = $admin['email'] ?? 'admin@apsdreamhome.com';
+            $_SESSION['user_name'] = $admin['username'] ?? $admin['name'] ?? 'Admin';
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }

@@ -63,7 +63,7 @@
                     <h6>Description</h6>
                     <p><?php echo nl2br(htmlspecialchars($property['description'] ?? 'No description provided.')); ?></p>
 
-                    <?php if ($property['verified_at']): ?>
+                    <?php if (!empty($property['verified_at'])): ?>
                         <hr>
                         <p class="text-muted small mb-0">
                             <i class="fas fa-user-check me-1"></i>

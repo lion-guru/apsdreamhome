@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 /**
  * Simple File-Based Caching System for APS Dream Home
  * Provides caching for frequently accessed data without external dependencies
@@ -209,7 +211,7 @@ class Cache
         return self::remember($key, function () use ($query, $params) {
             try {
                 // Use the database connection to execute query
-                $db = Database::getInstance();
+                $db = \App\Core\Database\Database::getInstance();
 
                 if (!empty($params)) {
                     $stmt = $db->prepare($query);
@@ -218,7 +220,7 @@ class Cache
                 } else {
                     return $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 error_log("Cache query error: " . $e->getMessage());
                 return [];
             }
@@ -227,4 +229,4 @@ class Cache
 }
 
 // Auto-initialize cache on include
-Cache::init();
+\App\Core\Cache::init();

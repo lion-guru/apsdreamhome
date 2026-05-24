@@ -76,6 +76,7 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                     </div>
                     <div class="card-body p-4">
                         <form action="<?php echo BASE_URL; ?>/list-property/submit" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                             <!-- Property Type -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold">What is the purpose of listing? *</label>

@@ -763,7 +763,7 @@
         }
 
         function useGitHubAPI() {
-            currentAPITemplate = `<?php
+            currentAPITemplate = `<<?php ?>?php
                                     // GitHub API Integration
                                     $token = 'your_github_token_here';
                                     $username = 'your_username';
@@ -787,12 +787,12 @@
                                     }
 
                                     curl_close($ch);
-                                    ?>`;
+                                    ?<?php ?>>`;
             updateAPITemplate('GitHub API - Repository listing');
         }
 
         function useOpenAIAPI() {
-            currentAPITemplate = `<?php
+            currentAPITemplate = `<<?php ?>?php
                                     // OpenAI API Integration
                                     $apiKey = 'your_openai_api_key';
                                     $prompt = 'Explain the benefits of APS Dream Home platform';
@@ -820,12 +820,12 @@
 
                                     echo "AI Response: " . $result['choices'][0]['message']['content'];
                                     curl_close($ch);
-                                    ?>`;
+                                    ?<?php ?>>`;
             updateAPITemplate('OpenAI API - AI Chat completion');
         }
 
         function useWeatherAPI() {
-            currentAPITemplate = `<?php
+            currentAPITemplate = `<<?php ?>?php
                                     // Weather API Integration
                                     $apiKey = 'your_weather_api_key';
                                     $city = 'Mumbai';
@@ -839,12 +839,12 @@
                                     echo "Humidity: " . $weather['main']['humidity'] . "%\\n";
                                     echo "Description: " . $weather['weather'][0]['description'] . "\\n";
                                     echo "Wind Speed: " . $weather['wind']['speed'] . " m/s\\n";
-                                    ?>`;
+                                    ?<?php ?>>`;
             updateAPITemplate('Weather API - Current weather data');
         }
 
         function useDatabaseAPI() {
-            currentAPITemplate = `<?php
+            currentAPITemplate = `<<?php ?>?php
                                     // Database API Integration (APS Dream Home)
                                     // Simple database connection
                                     $host = 'localhost';
@@ -876,12 +876,12 @@
                                     } catch (PDOException $e) {
                                         echo "Database Error: " . $e->getMessage();
                                     }
-                                    ?>`;
+                                    ?<?php ?>>`;
             updateAPITemplate('Database API - APS Dream Home leads');
         }
 
         function useFileSystemAPI() {
-            currentAPITemplate = `<?php
+            currentAPITemplate = `<<?php ?>?php
                                     // File System API Integration
                                     $directory = __DIR__ . '/../../user_code/';
 
@@ -907,12 +907,12 @@
                                     $newFile = $directory . 'api_test_' . date('Y-m-d_H-i-s') . '.txt';
                                     file_put_contents($newFile, "Created via API at " . date('Y-m-d H:i:s'));
                                     echo "\\nNew file created: " . $newFile;
-                                    ?>`;
+                                    ?<?php ?>>`;
             updateAPITemplate('File System API - Directory operations');
         }
 
         function useEmailAPI() {
-            currentAPITemplate = `<?php
+            currentAPITemplate = `<<?php ?>?php
                                     // Email API Integration (Basic PHP mail)
                                     $to = 'recipient@example.com';
                                     $subject = 'Welcome to APS Dream Home';
@@ -925,12 +925,12 @@
                                     } else {
                                         echo "Email failed to send";
                                     }
-                                    ?>`;
+                                    ?<?php ?>>`;
             updateAPITemplate('Email API - Basic PHP mail');
         }
 
         function usePaymentAPI() {
-            currentAPITemplate = `<?php
+            currentAPITemplate = `<<?php ?>?php
                                     // Payment API Integration (Basic simulation)
                                     // Simulate payment processing
                                     $paymentData = [
@@ -949,12 +949,12 @@
                                     echo "Status: " . $paymentData['status'] . "\\n";
                                     echo "Property ID: " . $paymentData['property_id'] . "\\n";
                                     echo "Customer: " . $paymentData['customer_name'];
-                                    ?>`;
+                                    ?<?php ?>>`;
             updateAPITemplate('Payment API - Basic payment simulation');
         }
 
         function useMapsAPI() {
-            currentAPITemplate = `<?php
+            currentAPITemplate = `<<?php ?>?php
                                     // Google Maps API Integration
                                     $apiKey = 'your_google_maps_api_key';
                                     $address = 'Mumbai, Maharashtra, India';
@@ -985,7 +985,7 @@
                                     } else {
                                         echo "Geocoding failed: " . $geocodeData['error_message'];
                                     }
-                                    ?>`;
+                                    ?<?php ?>>`;
             updateAPITemplate('Maps API - Google Maps geocoding & places');
         }
 

@@ -62,9 +62,10 @@ class State extends Model
      * @param array $columns Columns to select (default: *)
      * @return array
      */
-    public static function getAll($columns = ['*'])
+    public static function getAll($conditions = [], $orderBy = null, $page = 1, $perPage = 20)
     {
         try {
+            $columns = !empty($conditions) && is_array($conditions) ? $conditions : ['*'];
             $columnList = implode(', ', $columns);
             $sql = "SELECT {$columnList} FROM states ORDER BY name ASC";
 

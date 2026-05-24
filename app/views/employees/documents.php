@@ -212,7 +212,7 @@
                                 <label for="document_type" class="form-label">Document Type *</label>
                                 <select class="form-select" id="document_type" name="document_type" required>
                                     <option value="">Select Document Type</option>
-                                    <?php foreach ($document_types as $type): ?>
+                                    <?php foreach (($document_types ?? []) as $type): ?>
                                         <option value="<?= $type['document_type_id'] ?>">
                                             <?= htmlspecialchars($type['document_type_name']) ?>
                                         </option>

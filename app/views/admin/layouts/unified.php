@@ -43,6 +43,8 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
         .sidebar-link.active{background:#4f46e5;color:#fff}
         .sidebar-link i{width:22px;margin-right:10px;font-size:1rem;color:#a5b4fc;text-align:center}
         .sidebar-link.active i,.sidebar-link:hover i{color:#fff}
+        .sidebar-sec-arrow{font-size:.6rem;transition:transform .25s;color:rgba(255,255,255,.3)}
+        .sidebar-sec-arrow.collapsed{transform:rotate(-90deg)}
         .main-content{margin-left:280px;min-height:100vh;transition:margin-left .3s}
         .top-nav{background:#fff;height:60px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100}
         .nav-left{display:flex;align-items:center;gap:15px}

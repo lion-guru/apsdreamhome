@@ -24,6 +24,10 @@
         <div class="card-body">
             <form method="GET" action="<?php echo BASE_URL; ?>/properties" class="row g-3">
                 <div class="col-md-3">
+                    <label for="q" class="form-label"><i class="fas fa-search"></i> Search</label>
+                    <input type="text" class="form-control" id="q" name="q" placeholder="Keyword, location..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                </div>
+                <div class="col-md-3">
                     <label for="type" class="form-label">Property Type</label>
                     <select class="form-select" id="type" name="type">
                         <option value="">All Types</option>
@@ -104,7 +108,10 @@
                                  alt="<?php echo htmlspecialchars($property['name']); ?>"
                                  style="height: 200px; object-fit: cover;"
                                  onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
-                            <div class="position-absolute top-0 end-0 p-2">
+                            <div class="position-absolute top-0 end-0 p-2 d-flex gap-1">
+                                <button class="btn btn-sm btn-light favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="Add to Favorites" onclick="toggleFavorite(this)">
+                                    <i class="far fa-heart text-danger"></i>
+                                </button>
                                 <span class="badge bg-<?php echo ($property['listing_type'] ?? 'sell') === 'rent' ? 'info' : 'success'; ?>">
                                     <?php echo ucfirst($property['listing_type'] ?? 'Sell'); ?>
                                 </span>
@@ -212,6 +219,30 @@
 }
 </style>
 <script>
+function toggleFavorite(btn) {
+    const id = btn.dataset.id;
+    if (!id) return;
+    const icon = btn.querySelector('i');
+    const isFav = icon.classList.contains('fas');
+    const url = isFav ? BASE_URL + '/dashboard/favorites/remove' : BASE_URL + '/dashboard/favorites/add';
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'property_id=' + id
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            if (isFav) {
+                icon.className = 'far fa-heart text-danger';
+                btn.title = 'Add to Favorites';
+            } else {
+                icon.className = 'fas fa-heart text-danger';
+                btn.title = 'Remove from Favorites';
+            }
+        } else if (d.message.includes('login')) {
+            window.location.href = BASE_URL + '/login';
+        }
+    }).catch(() => {});
+}
 function addToCompare(btn) {
     const id = btn.dataset.id;
     if (!id) return;

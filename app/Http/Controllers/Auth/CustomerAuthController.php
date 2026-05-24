@@ -25,7 +25,7 @@ class CustomerAuthController extends BaseController
 
         // Redirect if already logged in
         if (isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'customer') {
-            header('Location: ' . BASE_URL . '/customer/dashboard');
+            header('Location: ' . BASE_URL . '/user/dashboard');
             exit;
         }
 
@@ -301,7 +301,7 @@ class CustomerAuthController extends BaseController
                 return '/employee/dashboard';
             case 'customer':
             default:
-                return '/customer/dashboard';
+                return '/user/dashboard';
         }
     }
 }

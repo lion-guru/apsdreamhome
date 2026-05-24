@@ -2,22 +2,17 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Don't redirect testing directory to public
-    RewriteCond %{REQUEST_URI} ^/testing/
-    RewriteRule ^testing/(.*)$ testing/$1 [L]
-
-    # Route /admin through the PHP router (avoid mod_dir directory redirect)
+    # Route /admin through the PHP router
     RewriteRule ^admin/?$ public/index.php [L]
     RewriteRule ^admin/(.*)$ public/index.php [L]
 
-    # Alias routes for alternative URL patterns (route through PHP to get correct base path)
-    RewriteRule ^our-team$ public/index.php [L]
-    RewriteRule ^career_apply$ public/index.php [L]
-    RewriteRule ^become_associate$ public/index.php [L]
-
     # Redirect all other requests to public/ directory
-    RewriteCond %{REQUEST_URI} !^/public/
-    RewriteCond %{REQUEST_URI} !^/testing/
+    # For existing files at root (like assets/), serve directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteCond %{REQUEST_URI} !/testing/
     RewriteRule ^(.*)$ public/$1 [L]
     
     # Handle requests in public/ directory

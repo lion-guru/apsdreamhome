@@ -231,12 +231,24 @@ class DashboardController extends BaseController
      */
     public function favorites()
     {
-        $userId = $_SESSION['user_id'];
+        $userId = $_SESSION['user_id'] ?? 0;
+        $favorites = [];
 
-        $favorites = [
-            ['id' => 1, 'title' => 'Suyoday Colony', 'location' => 'Gorakhpur', 'price' => '₹7.5 Lakhs', 'favorited_at' => '2024-03-01'],
-            ['id' => 2, 'title' => 'Raghunat Nagri', 'location' => 'Gorakhpur', 'price' => '₹8.5 Lakhs', 'favorited_at' => '2024-02-28']
-        ];
+        if ($userId) {
+            try {
+                $favorites = $this->db->fetchAll("
+                    SELECT p.id, p.title, p.price, p.location, p.city, p.state, p.bedrooms, p.bathrooms,
+                           p.area_sqft, p.status, p.type, f.created_at as favorited_at,
+                           (SELECT pi.image_path FROM property_images pi WHERE pi.property_id = p.id AND pi.is_primary = 1 AND pi.is_active = 1 LIMIT 1) as main_image
+                    FROM favorites f
+                    JOIN properties p ON p.id = f.property_id
+                    WHERE f.user_id = ?
+                    ORDER BY f.created_at DESC
+                ", [$userId]);
+            } catch (\Exception $e) {
+                error_log("Favorites fetch error: " . $e->getMessage());
+            }
+        }
 
         $this->render('user/favorites', [
             'page_title' => 'My Favorites - APS Dream Home',
@@ -276,15 +288,29 @@ class DashboardController extends BaseController
                 exit;
             }
 
-            $userId = $_SESSION['user_id'];
-            $propertyId = $this->sanitizeInput($_POST['property_id'] ?? '');
+            $userId = $_SESSION['user_id'] ?? 0;
+            $propertyId = (int)($_POST['property_id'] ?? 0);
 
-            if (empty($propertyId)) {
+            if (!$userId) {
+                echo json_encode(['success' => false, 'message' => 'Please login to save favorites']);
+                exit;
+            }
+
+            if (!$propertyId) {
                 echo json_encode(['success' => false, 'message' => 'Property ID is required']);
                 exit;
             }
 
-            // Add to favorites (simplified for demo)
+            // Check if already favorited
+            $existing = $this->db->fetchRow("SELECT id FROM favorites WHERE user_id = ? AND property_id = ?", [$userId, $propertyId]);
+            if ($existing) {
+                echo json_encode(['success' => false, 'message' => 'Property already in favorites']);
+                exit;
+            }
+
+            // Insert into favorites
+            $this->db->execute("INSERT INTO favorites (user_id, property_id, created_at) VALUES (?, ?, NOW())", [$userId, $propertyId]);
+
             echo json_encode(['success' => true, 'message' => 'Property added to favorites']);
             exit;
         } catch (Exception $e) {
@@ -304,15 +330,22 @@ class DashboardController extends BaseController
                 exit;
             }
 
-            $userId = $_SESSION['user_id'];
-            $propertyId = $this->sanitizeInput($_POST['property_id'] ?? '');
+            $userId = $_SESSION['user_id'] ?? 0;
+            $propertyId = (int)($_POST['property_id'] ?? 0);
 
-            if (empty($propertyId)) {
+            if (!$userId) {
+                echo json_encode(['success' => false, 'message' => 'Please login first']);
+                exit;
+            }
+
+            if (!$propertyId) {
                 echo json_encode(['success' => false, 'message' => 'Property ID is required']);
                 exit;
             }
 
-            // Remove from favorites (simplified for demo)
+            // Remove from favorites
+            $this->db->execute("DELETE FROM favorites WHERE user_id = ? AND property_id = ?", [$userId, $propertyId]);
+
             echo json_encode(['success' => true, 'message' => 'Property removed from favorites']);
             exit;
         } catch (Exception $e) {

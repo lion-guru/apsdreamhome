@@ -1,0 +1,77 @@
+<?php
+$config = $config ?? [];
+$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">Chatbot Settings</h2>
+                <p class="text-muted mb-0">Configure chatbot behavior and appearance</p>
+            </div>
+            <a href="<?php echo $base; ?>/admin/chatbot" class="btn btn-outline-secondary">Back</a>
+        </div>
+
+        <form method="post" action="<?php echo $base; ?>/admin/chatbot/settings">
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white"><h5 class="mb-0">General Settings</h5></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Bot Name</label>
+                                <input type="text" name="bot_name" class="form-control" value="<?php echo htmlspecialchars($config['bot_name'] ?? 'APS Assistant'); ?>">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Welcome Message</label>
+                                <textarea name="welcome_message" class="form-control" rows="3"><?php echo htmlspecialchars($config['welcome_message'] ?? 'Welcome to APS Dream Home! How can I help you today?'); ?></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Fallback Message</label>
+                                <textarea name="fallback_message" class="form-control" rows="2"><?php echo htmlspecialchars($config['fallback_message'] ?? "Sorry, I didn't understand that. Please contact our team."); ?></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Default Language</label>
+                                <select name="language" class="form-select">
+                                    <option value="en" <?php echo ($config['language'] ?? 'en') === 'en' ? 'selected' : ''; ?>>English</option>
+                                    <option value="hi" <?php echo ($config['language'] ?? '') === 'hi' ? 'selected' : ''; ?>>Hindi</option>
+                                </select>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input type="checkbox" name="is_active" class="form-check-input" value="1" id="activeCheck" <?php echo !isset($config['is_active']) || $config['is_active'] ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="activeCheck">Enable Chatbot</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white"><h5 class="mb-0">API Configuration</h5></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Provider</label>
+                                <input type="text" class="form-control" value="<?php echo htmlspecialchars($config['provider'] ?? 'N/A'); ?>" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Webhook URL</label>
+                                <input type="text" class="form-control" value="<?php echo htmlspecialchars($config['webhook_url'] ?? 'Not configured'); ?>" readonly>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-2"></i>Save Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

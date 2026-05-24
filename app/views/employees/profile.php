@@ -200,7 +200,7 @@ include 'layouts/app.php';
             <div class="card shadow mb-4">
                 <div class="card-body text-center">
                     <div class="mb-3">
-                        <img src="<?php echo $user- class="img-fluid">avatar ?? '/assets/images/user/default-avatar.jpg'; ?>"
+                        <img src="<?php echo $user->avatar ?? '/assets/images/user/default-avatar.jpg'; ?>"
                              alt="Profile Picture" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
                     </div>
                     <h5 class="mb-1"><?php echo htmlspecialchars($user->name ?? 'Employee'); ?></h5>

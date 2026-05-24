@@ -30,25 +30,32 @@ if (file_exists(__DIR__ . '/../app/Http/Controllers/Admin/GodModeController.php'
 
 // Agent System Routes
 $router->get('/auto_orchestrator', function () {
-    include __DIR__ . '/../auto_orchestrator.php';
+    $file = __DIR__ . '/../auto_orchestrator.php';
+    if (file_exists($file)) { include $file; }
 });
 $router->get('/orchestrator', function () {
-    include __DIR__ . '/../auto_orchestrator.php';
+    $file = __DIR__ . '/../auto_orchestrator.php';
+    if (file_exists($file)) { include $file; }
 });
 $router->get('/agent_dashboard', function () {
-    include __DIR__ . '/../agent_dashboard.php';
+    $file = __DIR__ . '/../agent_dashboard.php';
+    if (file_exists($file)) { include $file; }
 });
 $router->get('/agents', function () {
-    include __DIR__ . '/../agent_dashboard.php';
+    $file = __DIR__ . '/../agent_dashboard.php';
+    if (file_exists($file)) { include $file; }
 });
 $router->get('/project_health_check', function () {
-    include __DIR__ . '/../project_health_check.php';
+    $file = __DIR__ . '/../project_health_check.php';
+    if (file_exists($file)) { include $file; }
 });
 $router->get('/project_health', function () {
-    include __DIR__ . '/../project_health_check.php';
+    $file = __DIR__ . '/../project_health_check.php';
+    if (file_exists($file)) { include $file; }
 });
 $router->get('/health', function () {
-    include __DIR__ . '/../project_health_check.php';
+    $file = __DIR__ . '/../project_health_check.php';
+    if (file_exists($file)) { include $file; }
 });
 
 // Home
@@ -141,7 +148,7 @@ $router->get('/auth/google/role-selection', 'Auth\\GoogleAuthController@roleSele
 $router->post('/auth/google/complete-registration', 'Auth\\GoogleAuthController@completeRegistration');
 
 // Facebook Auth
-$router->get('/auth/facebook', 'Auth\FacebookAuthController@redirect');
+$router->get('/auth/facebook', 'Auth\FacebookAuthController@redirectToProvider');
 $router->get('/auth/facebook/callback', 'Auth\FacebookAuthController@callback');
 
 // LinkedIn Auth
@@ -183,6 +190,7 @@ $router->get('/gst-calculator', 'Front\\PageController@gstCalculator');
 $router->get('/construction-cost-estimator', 'Front\\PageController@constructionCostEstimator');
 $router->get('/rental-yield-calculator', 'Front\\PageController@rentalYieldCalculator');
 $router->get('/property-tax-calculator', 'Front\\PageController@propertyTaxCalculator');
+$router->get('/rera-lookup', 'Front\\PageController@reraLookup');
 
 // MLM & AI Dashboard Routes
 $router->get('/mlm-dashboard', 'MLM\MLMDashboardController@dashboard');
@@ -844,9 +852,9 @@ $router->get('/admin/commission/reports', 'App\Http\Controllers\Admin\Commission
 
 // Authentication Routes (Note: /login, /register, /logout already defined earlier)
 $router->get('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
-$router->post('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
-$router->get('/reset-password', 'App\Http\Controllers\AuthController@resetPassword');
-$router->post('/reset-password', 'App\Http\Controllers\AuthController@resetPassword');
+$router->post('/forgot-password', 'App\Http\Controllers\Auth\AuthenticationController@forgotPassword');
+$router->get('/reset-password', 'App\Http\Controllers\Auth\AuthenticationController@showResetPassword');
+$router->post('/reset-password', 'App\Http\Controllers\Auth\AuthenticationController@resetPassword');
 $router->get('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
 $router->post('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
 
@@ -901,11 +909,6 @@ $router->post('/inquiry', function () {
     exit;
 });
 
-
-// Standalone Pages
-$router->get('/plots', function () {
-    include __DIR__ . '/../app/views/pages/plots.php';
-});
 
 // Admin Analytics
 $router->get('/admin/analytics', 'App\\Http\\Controllers\\Admin\\AnalyticsController@index');
@@ -1027,11 +1030,6 @@ $router->get('/admin/media', function () {
     require __DIR__ . '/../app/views/admin/media/index.php';
 });
 
-// Admin Engagement
-$router->get('/admin/engagement', function () {
-    require __DIR__ . '/../app/views/admin/engagement/index.php';
-});
-
 // Admin Careers
 $router->get('/admin/careers', 'App\\Http\\Controllers\\Admin\\CareerController@index');
 $router->get('/admin/careers/create', 'App\\Http\\Controllers\\Admin\\CareerController@create');
@@ -1060,21 +1058,9 @@ require_once __DIR__ . '/admin_routes.php';
 // MISSING ADMIN ROUTES (FIXED)
 // ============================================================
 
-// CRM Dashboard
-$router->get('/admin/crm', function () {
-    require __DIR__ . '/../app/views/admin/crm/index.php';
-});
-
-// Colonies Management
-$router->get('/admin/colonies', 'App\\Http\\Controllers\\Admin\\ColonyController@index');
-$router->get('/admin/colonies/create', 'App\\Http\\Controllers\\Admin\\ColonyController@create');
-$router->post('/admin/colonies/store', 'App\\Http\\Controllers\\Admin\\ColonyController@store');
-$router->get('/admin/colonies/{id}', 'App\\Http\\Controllers\\Admin\\ColonyController@show');
-$router->get('/admin/colonies/{id}/edit', 'App\\Http\\Controllers\\Admin\\ColonyController@edit');
+// Colonies Management (unique update/destroy patterns)
 $router->post('/admin/colonies/{id}/update', 'App\\Http\\Controllers\\Admin\\ColonyController@update');
 $router->post('/admin/colonies/{id}/destroy', 'App\\Http\\Controllers\\Admin\\ColonyController@destroy');
-$router->get('/admin/colonies/{id}/plots', 'App\\Http\\Controllers\\Admin\\ColonyController@plots');
-$router->get('/admin/colonies/{id}/financials', 'App\\Http\\Controllers\\Admin\\ColonyController@financials');
 
 // Employees Management
 $router->get('/admin/employees', function () {
@@ -1699,6 +1685,13 @@ $router->get('/admin/documents', 'App\\Http\\Controllers\\Admin\\DocumentControl
 // AI Chatbot
 $router->get('/admin/chatbot', 'App\\Http\\Controllers\\Admin\\AIChatbotController@index');
 $router->get('/admin/ai-chatbot', 'App\\Http\\Controllers\\Admin\\AIChatbotController@index');
+$router->get('/admin/chatbot/settings', 'App\\Http\\Controllers\\Admin\\AIChatbotController@settings');
+$router->post('/admin/chatbot/settings', 'App\\Http\\Controllers\\Admin\\AIChatbotController@saveSettings');
+$router->get('/admin/chatbot/analytics', 'App\\Http\\Controllers\\Admin\\AIChatbotController@analytics');
+$router->get('/admin/chatbot/train', 'App\\Http\\Controllers\\Admin\\AIChatbotController@train');
+$router->post('/admin/chatbot/train/store', 'App\\Http\\Controllers\\Admin\\AIChatbotController@storeTraining');
+$router->get('/admin/chatbot/train/toggle/{id}', 'App\\Http\\Controllers\\Admin\\AIChatbotController@toggleTraining');
+$router->get('/admin/chatbot/train/delete/{id}', 'App\\Http\\Controllers\\Admin\\AIChatbotController@deleteTraining');
 $router->get('/admin/ai-analytics', 'App\\Http\\Controllers\\Admin\\AIAnalyticsController@index');
 
 // AI Calling
@@ -1848,5 +1841,12 @@ $router->get('/language/set/{lang}', function($lang) {
     header('Location: ' . $referer);
     exit;
 });
+
+// ============================================================
+// PWA (Progressive Web App)
+// ============================================================
+$router->get('/pwa/service-worker', 'Tech\\PWAController@serviceWorker');
+$router->get('/pwa/manifest', 'Tech\\PWAController@manifest');
+$router->get('/pwa/offline', 'Tech\\PWAController@offline');
 
 

@@ -24,6 +24,7 @@ $messageVal = $_POST['message'] ?? '';
                     <?php endif; ?>
 
                     <form action="<?= BASE_URL ?>support" method="post">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                         <div class="mb-3">
                             <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-lg" id="subject" name="subject" required

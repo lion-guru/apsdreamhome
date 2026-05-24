@@ -1,0 +1,116 @@
+PASS: Homepage status | HTTP 200
+FAIL: Homepage console errors | A bad HTTP response code (404) was received when fetching the script.
+PASS: Homepage viewport
+PASS: Homepage broken images
+FAIL: Homepage empty hrefs | 8 empty links
+PASS: Homepage overflow/offscreen | 2 elements offscreen
+PASS: Properties status | HTTP 200
+FAIL: Properties console errors | Failed to load resource: the server responded with a status of 404 (Not Found); A bad HTTP response code (404) was received when fetching the script.
+PASS: Properties viewport
+PASS: Properties broken images
+FAIL: Properties empty hrefs | 8 empty links
+PASS: Properties overflow/offscreen | 2 elements offscreen
+PASS: Plots status | HTTP 200
+PASS: Plots console errors
+PASS: Plots viewport
+PASS: Plots broken images
+PASS: Plots empty hrefs | 0 empty links
+PASS: Plots overflow/offscreen | 0 elements offscreen
+PASS: Services status | HTTP 200
+FAIL: Services console errors | A bad HTTP response code (404) was received when fetching the script.
+PASS: Services viewport
+PASS: Services broken images
+FAIL: Services empty hrefs | 8 empty links
+PASS: Services overflow/offscreen | 2 elements offscreen
+PASS: Contact status | HTTP 200
+FAIL: Contact console errors | A bad HTTP response code (404) was received when fetching the script.
+PASS: Contact viewport
+PASS: Contact broken images
+FAIL: Contact empty hrefs | 8 empty links
+PASS: Contact overflow/offscreen | 2 elements offscreen
+PASS: ListProperty status | HTTP 200
+FAIL: ListProperty console errors | A bad HTTP response code (404) was received when fetching the script.
+PASS: ListProperty viewport
+PASS: ListProperty broken images
+FAIL: ListProperty empty hrefs | 8 empty links
+PASS: ListProperty overflow/offscreen | 2 elements offscreen
+PASS: Login status | HTTP 200
+PASS: Login console errors
+PASS: Login viewport
+PASS: Login broken images
+PASS: Login empty hrefs | 0 empty links
+PASS: Login overflow/offscreen | 0 elements offscreen
+PASS: Register status | HTTP 200
+PASS: Register console errors
+PASS: Register viewport
+PASS: Register broken images
+PASS: Register empty hrefs | 0 empty links
+PASS: Register overflow/offscreen | 0 elements offscreen
+PASS: Login flow | Redirected to: http://localhost/apsdreamhome/customer/dashboard
+PASS: User_Dashboard status | HTTP 200
+PASS: User_Dashboard console errors
+PASS: User_Dashboard viewport
+PASS: User_Dashboard broken images
+PASS: User_Dashboard empty hrefs | 0 empty links
+PASS: User_Dashboard overflow/offscreen | 0 elements offscreen
+PASS: User_Properties status | HTTP 200
+PASS: User_Properties console errors
+PASS: User_Properties viewport
+PASS: User_Properties broken images
+PASS: User_Properties empty hrefs | 0 empty links
+PASS: User_Properties overflow/offscreen | 0 elements offscreen
+PASS: User_Inquiries status | HTTP 200
+PASS: User_Inquiries console errors
+PASS: User_Inquiries viewport
+PASS: User_Inquiries broken images
+PASS: User_Inquiries empty hrefs | 0 empty links
+PASS: User_Inquiries overflow/offscreen | 0 elements offscreen
+PASS: User_Profile status | HTTP 200
+PASS: User_Profile console errors
+PASS: User_Profile viewport
+PASS: User_Profile broken images
+PASS: User_Profile empty hrefs | 0 empty links
+PASS: User_Profile overflow/offscreen | 0 elements offscreen
+PASS: User_Bookings status | HTTP 200
+PASS: User_Bookings console errors
+PASS: User_Bookings viewport
+PASS: User_Bookings broken images
+PASS: User_Bookings empty hrefs | 0 empty links
+PASS: User_Bookings overflow/offscreen | 0 elements offscreen
+PASS: Admin login bypass | http://localhost/apsdreamhome/admin/dashboard
+PASS: Admin_Dashboard status | HTTP 200
+PASS: Admin_Dashboard console errors
+PASS: Admin_Dashboard viewport
+PASS: Admin_Dashboard broken images
+FAIL: Admin_Dashboard empty hrefs | 4 empty links
+PASS: Admin_Dashboard overflow/offscreen | 0 elements offscreen
+PASS: Admin_MLM status | HTTP 200
+PASS: Admin_MLM console errors
+PASS: Admin_MLM viewport
+PASS: Admin_MLM broken images
+PASS: Admin_MLM empty hrefs | 0 empty links
+PASS: Admin_MLM overflow/offscreen | 0 elements offscreen
+PASS: Admin_Bookings status | HTTP 200
+PASS: Admin_Bookings console errors
+PASS: Admin_Bookings viewport
+PASS: Admin_Bookings broken images
+PASS: Admin_Bookings empty hrefs | 0 empty links
+PASS: Admin_Bookings overflow/offscreen | 0 elements offscreen
+PASS: Admin_Plots status | HTTP 200
+PASS: Admin_Plots console errors
+PASS: Admin_Plots viewport
+PASS: Admin_Plots broken images
+PASS: Admin_Plots empty hrefs | 0 empty links
+PASS: Admin_Plots overflow/offscreen | 0 elements offscreen
+FAIL: Admin_Colonies status | HTTP 500
+FAIL: Admin_Colonies console errors | Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+PASS: Admin_Colonies viewport
+PASS: Admin_Colonies broken images
+PASS: Admin_Colonies empty hrefs | 0 empty links
+PASS: Admin_Colonies overflow/offscreen | 0 elements offscreen
+PASS: Admin_Users status | HTTP 200
+PASS: Admin_Users console errors
+PASS: Admin_Users viewport
+PASS: Admin_Users broken images
+PASS: Admin_Users empty hrefs | 0 empty links
+PASS: Admin_Users overflow/offscreen | 0 elements offscreen

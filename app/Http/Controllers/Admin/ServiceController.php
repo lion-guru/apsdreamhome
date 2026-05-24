@@ -155,6 +155,58 @@ class ServiceController extends AdminController
         return $this->show($id);
     }
 
+    public function homeLoan()
+    {
+        $this->requireAdmin();
+        try {
+            $this->data['page_title'] = 'Home Loan Services - APS Dream Home';
+            $this->data['service_type'] = 'home_loan';
+            $this->render('admin/services/home-loan', $this->data);
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to load home loan page');
+            $this->redirect('/admin/services');
+        }
+    }
+
+    public function legal()
+    {
+        $this->requireAdmin();
+        try {
+            $this->data['page_title'] = 'Legal Services - APS Dream Home';
+            $this->data['service_type'] = 'legal';
+            $this->render('admin/services/legal', $this->data);
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to load legal page');
+            $this->redirect('/admin/services');
+        }
+    }
+
+    public function interior()
+    {
+        $this->requireAdmin();
+        try {
+            $this->data['page_title'] = 'Interior Design Services - APS Dream Home';
+            $this->data['service_type'] = 'interior';
+            $this->render('admin/services/interior', $this->data);
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to load interior page');
+            $this->redirect('/admin/services');
+        }
+    }
+
+    public function propertyTax()
+    {
+        $this->requireAdmin();
+        try {
+            $this->data['page_title'] = 'Property Tax Services - APS Dream Home';
+            $this->data['service_type'] = 'property_tax';
+            $this->render('admin/services/tax', $this->data);
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to load property tax page');
+            $this->redirect('/admin/services');
+        }
+    }
+
     public function updateStatus()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
