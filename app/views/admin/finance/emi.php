@@ -1,7 +1,7 @@
 ﻿<?php
 $page_title = $page_title ?? 'EMI Calculator - APS Dream Home';
 $page_heading = $page_heading ?? 'EMI Calculator';
-ob_start();
+
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -17,6 +17,6 @@ ob_start();
 </div>
 ?>
 <?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/admin.php';
+
+
 ?>

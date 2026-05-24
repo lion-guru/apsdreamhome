@@ -14,7 +14,7 @@ $page_title = 'CRM Dashboard';
 $page_description = 'Customer Relationship Management';
 
 // Start output buffering
-ob_start();
+
 ?>
 
 <div class="container-fluid py-4">
@@ -189,6 +189,6 @@ ob_start();
 </div>
 
 <?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../../layouts/admin.php';
+
+
 ?>

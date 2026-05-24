@@ -13,7 +13,7 @@ if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['user_role']) || $_SESSIO
 $page_title = 'Employees Management';
 $page_description = 'Manage employees and team members';
 
-ob_start();
+
 ?>
 
 <div class="container-fluid py-4">
@@ -136,6 +136,6 @@ ob_start();
 </div>
 
 <?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../../layouts/admin.php';
+
+
 ?>
