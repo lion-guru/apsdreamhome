@@ -1,9 +1,4 @@
-﻿<?php
-$page_title = $page_title ?? 'Lead Status - APS Dream Home';
-$page_heading = $page_heading ?? 'Lead Status';
-ob_start();
-?>
-<div class="container-fluid py-4">
+﻿<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'Lead Status') ?></h2>
     </div>
@@ -15,8 +10,3 @@ ob_start();
         </div>
     </div>
 </div>
-?>
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/admin.php';
-?>

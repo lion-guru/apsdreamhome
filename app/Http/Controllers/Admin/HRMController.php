@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
-class HRMController extends BaseController
+class HRMController extends AdminController
 {
     public function index()
     {
         $this->requireAdmin();
         return $this->render('admin/hrm/index', []);
+    }
+
+    public function employees()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/hrm/employees/index', []);
     }
     
     public function createEmployee()
