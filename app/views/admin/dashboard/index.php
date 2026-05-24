@@ -79,43 +79,77 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </div>
     </div>
 
-    <!-- Khatabook & Ad Performance Widgets -->
+    <!-- Chart.js Charts Row -->
     <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #6f42c1 !important;">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-users me-2 text-primary"></i>User Registrations</h6>
+                </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Khatabook Sales</p>
-                            <h3 class="mb-0"><?= number_format($dashboard_stats['khatabook_sales'] ?? 0) ?></h3>
-                            <small class="text-muted">₹<?= number_format($dashboard_stats['khatabook_amount'] ?? 0, 0) ?> total</small>
-                        </div>
-                        <div class="p-2 rounded" style="background:rgba(111,66,193,0.1);">
-                            <i class="fas fa-book text-purple" style="color:#6f42c1;"></i>
-                        </div>
-                    </div>
-                    <a href="<?= BASE_URL ?>/admin/khatabook-sales" class="stretched-link"></a>
+                    <canvas id="userChart" height="200"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #fd7e14 !important;">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-calendar-check me-2 text-success"></i>Monthly Bookings</h6>
+                </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-1">Ad Slots Active</p>
-                            <h3 class="mb-0"><?= number_format($dashboard_stats['ad_slots'] ?? 0) ?></h3>
-                            <small class="text-muted"><?= number_format($dashboard_stats['ad_views'] ?? 0) ?> views</small>
-                        </div>
-                        <div class="p-2 rounded" style="background:rgba(253,126,20,0.1);">
-                            <i class="fas fa-ad text-orange" style="color:#fd7e14;"></i>
-                        </div>
-                    </div>
-                    <a href="<?= BASE_URL ?>/admin/ads" class="stretched-link"></a>
+                    <canvas id="bookingChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-rupee-sign me-2 text-warning"></i>Revenue (₹)</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" height="200"></canvas>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Chart.js Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function createChart(id, type, labels, data, label, color) {
+            var ctx = document.getElementById(id);
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: color + '33',
+                        borderColor: color,
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: function(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; } } }
+                    }
+                }
+            });
+        }
+        var charts = <?php echo json_encode($charts_data ?? []); ?>;
+        if (charts.user_registrations) createChart('userChart', 'line', charts.user_registrations.labels, charts.user_registrations.data, 'Users', '#0d6efd');
+        if (charts.property_views) createChart('bookingChart', 'bar', charts.property_views.labels, charts.property_views.data, 'Bookings', '#198754');
+        if (charts.revenue) createChart('revenueChart', 'line', charts.revenue.labels, charts.revenue.data, 'Revenue', '#ffc107');
+    });
+    </script>
     
     <div class="row mb-4">
         <div class="col-12">

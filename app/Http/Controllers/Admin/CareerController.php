@@ -468,6 +468,82 @@ class CareerController extends AdminController
         }
     }
 
+    public function applicants()
+    {
+        try {
+            $search = $_GET['search'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $careerId = (int)($_GET['career_id'] ?? 0);
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
+            $offset = ($page - 1) * $perPage;
+
+            $sql = "SELECT ca.*, c.title as career_title, u.name as applicant_name, u.email as applicant_email, u.phone as applicant_phone
+                    FROM career_applications ca
+                    LEFT JOIN careers c ON ca.career_id = c.id
+                    LEFT JOIN users u ON ca.applicant_id = u.id
+                    WHERE 1=1";
+            $params = [];
+
+            if (!empty($search)) {
+                $sql .= " AND (u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
+                $s = '%' . $search . '%';
+                $params[] = $s;
+                $params[] = $s;
+                $params[] = $s;
+            }
+
+            if (!empty($status)) {
+                $sql .= " AND ca.status = ?";
+                $params[] = $status;
+            }
+
+            if ($careerId > 0) {
+                $sql .= " AND ca.career_id = ?";
+                $params[] = $careerId;
+            }
+
+            $sql .= " ORDER BY ca.created_at DESC";
+
+            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM career_applications ca WHERE 1=1" . (!empty($status) ? " AND ca.status = ?" : "") . ($careerId > 0 ? " AND ca.career_id = ?" : ""));
+            $countParams = [];
+            if (!empty($status)) $countParams[] = $status;
+            if ($careerId > 0) $countParams[] = $careerId;
+            $countStmt->execute($countParams);
+            $total = $countStmt->fetch()['total'] ?? 0;
+
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $applicants = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get all careers for filter dropdown
+            $careersStmt = $this->db->query("SELECT id, title FROM careers WHERE status = 'active' ORDER BY title");
+            $careers = $careersStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $data = [
+                'page_title' => 'Applicants - APS Dream Home',
+                'active_page' => 'applicants',
+                'applicants' => $applicants,
+                'careers' => $careers,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => ['search' => $search, 'status' => $status, 'career_id' => $careerId]
+            ];
+
+            return $this->render('admin/careers/applicants', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Applicants error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load applicants');
+            return $this->redirect('admin/careers');
+        }
+    }
+
     /**
      * Get career statistics
      */

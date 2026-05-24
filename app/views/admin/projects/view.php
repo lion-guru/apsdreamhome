@@ -9,7 +9,7 @@
                     <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Projects
                     </a>
-                    <a href="<?= BASE_URL ?>/admin/projects/edit/<?php echo $project['id']; ?>" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/admin/projects/edit/<?php echo $project['id'] ?? ''; ?>" class="btn btn-primary">
                         <i class="fas fa-edit"></i> Edit
                     </a>
                 </div>
@@ -80,7 +80,7 @@
                         </div>
                     </div>
                     <?php endif; ?>
-                    <?php if ($project['tags']): ?>
+                    <?php if (!empty($project['tags'])): ?>
                     <hr>
                     <div class="row">
                         <div class="col-12">

@@ -165,7 +165,11 @@ class Router
 
         // Step 10: Execute handler
         if (is_callable($handler)) {
-            call_user_func($handler);
+            if (!empty($params)) {
+                call_user_func_array($handler, $params);
+            } else {
+                call_user_func($handler);
+            }
         } elseif (is_string($handler)) {
             if (strpos($handler, '@') !== false) {
                 list($controller, $handlerMethod) = explode('@', $handler);

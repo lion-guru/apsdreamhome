@@ -57,25 +57,25 @@
                 <?php foreach ($downloads as $download): ?>
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="card h-100 download-card p-4 text-center position-relative shadow-sm border-0">
-                            <?php if (!empty($download->category)): ?>
-                                <span class="download-category-badge"><?= htmlspecialchars($download->category) ?></span>
+                            <?php if (!empty($download['category'])): ?>
+                                <span class="download-category-badge"><?= htmlspecialchars($download['category']) ?></span>
                             <?php endif; ?>
 
                             <div class="download-icon text-primary mb-3">
                                 <i class="fas fa-file-pdf fa-3x"></i>
                             </div>
 
-                            <h5 class="card-title mb-2"><?= htmlspecialchars($download->title) ?></h5>
-                            <p class="card-text text-muted small mb-4"><?= htmlspecialchars($download->description ?? '') ?></p>
+                            <h5 class="card-title mb-2"><?= htmlspecialchars($download['title'] ?? '') ?></h5>
+                            <p class="card-text text-muted small mb-4"><?= htmlspecialchars($download['description'] ?? '') ?></p>
 
                             <div class="mt-auto">
-                                <a href="<?= !empty($download->file_path) ? get_asset_url($download->file_path) : '#' ?>" class="btn btn-primary download-btn rounded-pill px-4" download>
+                                <a href="<?= !empty($download['file_path']) ? get_asset_url($download['file_path']) : '#' ?>" class="btn btn-primary download-btn rounded-pill px-4" download>
                                     <i class="fas fa-download me-2"></i> Download
                                 </a>
                                 <div class="download-meta mt-3 small text-muted">
-                                    <span><i class="fas fa-calendar-alt me-1"></i> <?= date('M d, Y', strtotime($download->created_at ?? 'now')) ?></span>
-                                    <?php if (!empty($download->file_size)): ?>
-                                        <span class="ms-2 border-start ps-2"><i class="fas fa-weight-hanging me-1"></i> <?= $download->file_size ?></span>
+                                    <span><i class="fas fa-calendar-alt me-1"></i> <?= date('M d, Y', strtotime($download['created_at'] ?? 'now')) ?></span>
+                                    <?php if (!empty($download['file_size'])): ?>
+                                        <span class="ms-2 border-start ps-2"><i class="fas fa-weight-hanging me-1"></i> <?= $download['file_size'] ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>

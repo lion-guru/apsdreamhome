@@ -424,6 +424,21 @@ class EMIController extends AdminController
         }
     }
 
+    public function calculator()
+    {
+        try {
+            $data = [
+                'page_title' => 'EMI Calculator - APS Dream Home',
+                'active_page' => 'emi-calculator',
+            ];
+            return $this->render('admin/emi/calculator', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("EMI Calculator error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load EMI calculator');
+            return $this->redirect('admin/dashboard');
+        }
+    }
+
     /**
      * Get EMI statistics
      */

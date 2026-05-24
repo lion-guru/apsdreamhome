@@ -1,13 +1,13 @@
 <?php
 namespace App\Http\Controllers\Front;
 
-use App\Core\Controller;
 use App\Core\Database\Database;
+use App\Http\Controllers\BaseController;
 use App\Services\Accounting\AccountingIntegrationService;
 use App\Services\Booking\BookingComplianceService;
 use App\Services\Notification\BookingNotificationService;
 
-class PlotController extends Controller
+class PlotController extends BaseController
 {
     protected $db;
 

@@ -2294,4 +2294,24 @@ class PageController extends BaseController
             'total_pages' => max(1, ceil($totalPlots / $perPage)),
         ]);
     }
+
+    public function reraLookup()
+    {
+        $reraNumber = $_GET['rera_number'] ?? '';
+        $data = ['page_title' => 'RERA Compliance Lookup - APS Dream Home', 'result' => null];
+        if ($reraNumber) {
+            try {
+                $user = $this->db->fetch("SELECT id, name, email, phone, rera_number, is_rera_approved, rera_deduction_wallet FROM users WHERE rera_number = ?", [$reraNumber]);
+                if ($user) {
+                    $requests = $this->db->fetchAll("SELECT * FROM rera_requests WHERE user_id = ? ORDER BY created_at DESC", [$user['id']]);
+                    $data['result'] = ['found' => true, 'user' => $user, 'requests' => $requests];
+                } else {
+                    $data['result'] = ['found' => false, 'message' => 'No record found for RERA number: ' . htmlspecialchars($reraNumber)];
+                }
+            } catch (\Exception $e) {
+                $data['result'] = ['found' => false, 'message' => 'Lookup failed. Please try again.'];
+            }
+        }
+        $this->render('pages/rera_lookup', $data);
+    }
 }

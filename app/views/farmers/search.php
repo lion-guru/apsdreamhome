@@ -126,7 +126,7 @@
                                                     <span class="badge badge-success">
                                                         <?= $farmer['total_holdings'] ?? 0 ?> होल्डिंग्स
                                                     </span>
-                                                    <?php if ($farmer['total_area']): ?>
+                                                    <?php if (!empty($farmer['total_area'])): ?>
                                                         <small class="text-muted ml-2">
                                                             <?= number_format($farmer['total_area'], 2) ?> एकड़
                                                         </small>

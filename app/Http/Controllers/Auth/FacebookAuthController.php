@@ -13,13 +13,18 @@ class FacebookAuthController extends \App\Http\Controllers\BaseController
         $this->socialService = new SocialLoginService();
     }
     
-    public function redirect()
+    public function redirectToProvider()
     {
-        $facebookUrl = $this->socialService->getProviderRedirectUrl('facebook');
-        if ($facebookUrl) {
-            header('Location: ' . $facebookUrl);
-        } else {
-            $_SESSION['error'] = 'Facebook login is not configured. Please contact admin.';
+        try {
+            $facebookUrl = $this->socialService->getAuthUrl('facebook');
+            if ($facebookUrl) {
+                header('Location: ' . $facebookUrl);
+            } else {
+                $_SESSION['error'] = 'Facebook login is not configured. Please contact admin.';
+                header('Location: ' . BASE_URL . '/login');
+            }
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Facebook login configuration error: ' . $e->getMessage();
             header('Location: ' . BASE_URL . '/login');
         }
         exit;
@@ -34,78 +39,26 @@ class FacebookAuthController extends \App\Http\Controllers\BaseController
             exit;
         }
         
-        $user = $this->socialService->handleProviderCallback('facebook', $code);
-        if ($user && isset($user['email'])) {
-            $this->loginOrRegister($user);
-        } else {
-            $_SESSION['error'] = 'Facebook login failed. Please try again.';
-            header('Location: ' . BASE_URL . '/login');
-        }
-        exit;
-    }
-    
-    private function loginOrRegister($socialUser)
-    {
         try {
-            $db = Database::getInstance()->getConnection();
-            
-            // Check if social account exists
-            $stmt = $db->prepare("SELECT user_id FROM social_accounts WHERE provider = 'facebook' AND provider_id = ?");
-            $stmt->execute([$socialUser['id']]);
-            $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
-            
-            if ($existing) {
-                $stmt = $db->prepare("SELECT * FROM users WHERE id = ? AND status = 'active'");
-                $stmt->execute([$existing['user_id']]);
-                $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $tokenData = $this->socialService->exchangeCodeForToken('facebook', $code);
+            $accessToken = $tokenData['access_token'] ?? '';
+            $userData = $this->socialService->getUserInfo('facebook', $accessToken);
+            if ($userData && isset($userData['email'])) {
+                $user = $this->socialService->authenticateSocialUser('facebook', $userData, $accessToken);
                 if ($user) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user_name'] = $user['name'];
                     $_SESSION['user_email'] = $user['email'];
-                    $_SESSION['user_role'] = 'customer';
+                    $_SESSION['user_role'] = $user['role'] ?? 'customer';
                     header('Location: ' . BASE_URL . '/user/dashboard');
                     exit;
                 }
             }
-            
-            // Check if email already registered
-            if (!empty($socialUser['email'])) {
-                $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-                $stmt->execute([$socialUser['email']]);
-                $user = $stmt->fetch(\PDO::FETCH_ASSOC);
-                if ($user) {
-                    // Link social account
-                    $stmt = $db->prepare("INSERT INTO social_accounts (user_id, provider, provider_id, email, name, created_at) VALUES (?, 'facebook', ?, ?, ?, NOW())");
-                    $stmt->execute([$user['id'], $socialUser['id'], $socialUser['email'], $socialUser['name'] ?? '']);
-                    
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['user_name'] = $user['name'];
-                    $_SESSION['user_email'] = $user['email'];
-                    $_SESSION['user_role'] = 'customer';
-                    header('Location: ' . BASE_URL . '/user/dashboard');
-                    exit;
-                }
-            }
-            
-            // New user - register
-            $password = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
-            $stmt = $db->prepare("INSERT INTO users (name, email, password, status, created_at) VALUES (?, ?, ?, 'active', NOW())");
-            $stmt->execute([$socialUser['name'] ?? 'Facebook User', $socialUser['email'] ?? ('fb_' . $socialUser['id'] . '@facebook.com'), $password]);
-            $userId = $db->lastInsertId();
-            
-            $stmt = $db->prepare("INSERT INTO social_accounts (user_id, provider, provider_id, email, name, created_at) VALUES (?, 'facebook', ?, ?, ?, NOW())");
-            $stmt->execute([$userId, $socialUser['id'], $socialUser['email'] ?? '', $socialUser['name'] ?? '']);
-            
-            $_SESSION['user_id'] = $userId;
-            $_SESSION['user_name'] = $socialUser['name'] ?? 'Facebook User';
-            $_SESSION['user_email'] = $socialUser['email'] ?? '';
-            $_SESSION['user_role'] = 'customer';
-            header('Location: ' . BASE_URL . '/user/dashboard');
-            
+            $_SESSION['error'] = 'Facebook login failed. Could not retrieve user info.';
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Registration failed: ' . $e->getMessage();
-            header('Location: ' . BASE_URL . '/login');
+            $_SESSION['error'] = 'Facebook login failed: ' . $e->getMessage();
         }
+        header('Location: ' . BASE_URL . '/login');
         exit;
     }
 }

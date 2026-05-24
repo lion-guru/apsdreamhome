@@ -152,6 +152,16 @@ class Database
         return $this->query($sql, $params)->fetchColumn($column);
     }
 
+    public function fetchCached($sql, $params = [], $ttl = 300)
+    {
+        return \App\Core\Cache::rememberQuery(md5($sql . serialize($params)), $sql, $params, $ttl);
+    }
+
+    public function fetchAllCached($sql, $params = [], $ttl = 300)
+    {
+        return \App\Core\Cache::rememberQuery(md5($sql . serialize($params)), $sql, $params, $ttl);
+    }
+
     public function lastInsertId()
     {
         return $this->pdo->lastInsertId();
@@ -170,14 +180,36 @@ class Database
     public function update($table, $data, $where, $whereParams = [])
     {
         $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
-        $sql = "UPDATE {$table} SET {$set} WHERE {$where}";
 
-        $params = array_merge($data, $whereParams);
+        if (is_array($where)) {
+            $conditions = [];
+            $bindings = [];
+            foreach ($where as $col => $val) {
+                $conditions[] = "$col = :_where_$col";
+                $bindings["_where_$col"] = $val;
+            }
+            $sql = "UPDATE {$table} SET {$set} WHERE " . implode(' AND ', $conditions);
+            $params = array_merge($data, $bindings);
+        } else {
+            $sql = "UPDATE {$table} SET {$set} WHERE {$where}";
+            $params = array_merge($data, $whereParams);
+        }
+
         return $this->execute($sql, $params)->rowCount();
     }
 
     public function delete($table, $where, $params = [])
     {
+        if (is_array($where)) {
+            $conditions = [];
+            $bindings = [];
+            foreach ($where as $col => $val) {
+                $conditions[] = "$col = ?";
+                $bindings[] = $val;
+            }
+            $sql = "DELETE FROM {$table} WHERE " . implode(' AND ', $conditions);
+            return $this->execute($sql, $bindings)->rowCount();
+        }
         $sql = "DELETE FROM {$table} WHERE {$where}";
         return $this->execute($sql, $params)->rowCount();
     }

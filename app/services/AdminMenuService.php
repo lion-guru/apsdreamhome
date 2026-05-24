@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Cache;
 use App\Http\Middleware\RBACManager;
 
 /**
@@ -59,7 +60,9 @@ class AdminMenuService
     private function getAllMenuItems(): array
     {
         $query = "SELECT * FROM admin_menu_items WHERE is_active = 1 ORDER BY order_index ASC";
-        return $this->db->fetchAll($query);
+        return Cache::remember('admin_sidebar_all', function () use ($query) {
+            return $this->db->fetchAll($query);
+        }, 3600);
     }
 
     /**
@@ -75,7 +78,10 @@ class AdminMenuService
             AND (rp.can_view = 1 OR rp.role IS NULL)
             ORDER BY mi.order_index ASC
         ";
-        return $this->db->fetchAll($query, [$role]);
+        $cacheKey = 'admin_sidebar_role_' . md5($role);
+        return Cache::remember($cacheKey, function () use ($query, $role) {
+            return $this->db->fetchAll($query, [$role]);
+        }, 3600);
     }
 
     /**
@@ -220,6 +226,7 @@ class AdminMenuService
                 $permissions['can_delete'] ?? 0,
                 $this->currentUserId
             ]);
+            $this->clearMenuCache();
             return true;
         } catch (\Exception $e) {
             error_log("AdminMenuService::grantUserPermission error: " . $e->getMessage());
@@ -236,6 +243,7 @@ class AdminMenuService
 
         try {
             $this->db->query($query, [$userId, $menuItemId]);
+            $this->clearMenuCache();
             return true;
         } catch (\Exception $e) {
             error_log("AdminMenuService::revokeUserPermission error: " . $e->getMessage());
@@ -268,10 +276,25 @@ class AdminMenuService
                 $permissions['can_edit'] ?? 0,
                 $permissions['can_delete'] ?? 0
             ]);
+            $this->clearMenuCache();
             return true;
         } catch (\Exception $e) {
             error_log("AdminMenuService::grantRolePermission error: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Clear all cached sidebar menu data
+     * Called automatically when permissions are modified
+     */
+    public function clearMenuCache(): void
+    {
+        Cache::delete('admin_sidebar_all');
+        // Clear role-specific caches for all known roles
+        $roles = ['super_admin', 'admin', 'manager', 'employee', 'associate', 'agent', 'customer'];
+        foreach ($roles as $role) {
+            Cache::delete('admin_sidebar_role_' . md5($role));
         }
     }
 

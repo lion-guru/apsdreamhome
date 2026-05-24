@@ -57,7 +57,7 @@ if (!defined('BASE_URL')) {
                         <div class="property-card">
                             <!-- Property Image -->
                             <div class="property-image">
-                                <img src="<?php echo BASE_URL . ($property['main_image'] ?? 'assets/images/no-image.jpg'); ? class="img-fluid">"
+                                <img src="<?php echo BASE_URL . ($property['main_image'] ?? 'assets/images/no-image.jpg'); ?> class="img-fluid">"
                                      alt="<?php echo htmlspecialchars($property['title']); ?>"
                                      class="img-fluid"
                                      onerror="this.src='<?php echo BASE_URL; ?>assets/images/no-image.jpg'">
@@ -68,7 +68,7 @@ if (!defined('BASE_URL')) {
                                                 title="Remove from favorites">
                                             <i class="fas fa-heart-broken"></i>
                                         </button>
-                                        <a href="<?php echo BASE_URL; ?>property/<?php echo $property['id']; ?>"
+                                        <a href="<?php echo BASE_URL; ?>/property/<?php echo $property['id']; ?>"
                                            class="btn btn-primary btn-sm">
                                             <i class="fas fa-eye"></i> View Details
                                         </a>
@@ -85,7 +85,7 @@ if (!defined('BASE_URL')) {
                             <div class="property-info">
                                 <div class="property-header">
                                     <h5 class="property-title">
-                                        <a href="<?php echo BASE_URL; ?>property/<?php echo $property['id']; ?>">
+                                        <a href="<?php echo BASE_URL; ?>/property/<?php echo $property['id']; ?>">
                                             <?php echo htmlspecialchars($property['title']); ?>
                                         </a>
                                     </h5>
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                 button.disabled = true;
 
-                fetch('<?php echo BASE_URL; ?>favorites/remove', {
+                fetch('<?php echo BASE_URL; ?>/dashboard/favorites/remove', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',

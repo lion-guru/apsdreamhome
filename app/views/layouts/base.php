@@ -50,11 +50,20 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <meta name="author" content="APS Dream Home">
     <meta name="robots" content="index, follow">
 
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-UP">
+    <meta name="geo.placename" content="Gorakhpur">
+    <meta name="geo.position" content="26.7606;83.3732">
+    <meta name="ICBM" content="26.7606, 83.3732">
+
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_IN">
     <meta property="og:title" content="<?php echo $page_title ?? 'APS Dream Home - Premium Real Estate'; ?>">
     <meta property="og:description" content="<?php echo $page_description ?? 'Discover premium residential and commercial properties in Gorakhpur and across Uttar Pradesh.'; ?>">
     <meta property="og:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:url" content="<?php echo BASE_URL . ($_SERVER['REQUEST_URI'] ?? '/'); ?>">
     <meta property="og:site_name" content="APS Dream Home">
 
@@ -62,6 +71,7 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?php echo $page_title ?? 'APS Dream Home'; ?>">
     <meta name="twitter:description" content="<?php echo $page_description ?? 'Premium Real Estate in Uttar Pradesh'; ?>">
+    <meta name="twitter:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="<?php echo BASE_URL . ($_SERVER['REQUEST_URI'] ?? '/'); ?>">
@@ -74,15 +84,24 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="APS Dream Home">
-    <link rel="manifest" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/manifest.json">
+    <link rel="manifest" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/pwa/manifest">
     <link rel="apple-touch-icon" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/icons/icon-192x192.png">
 
+    <!-- Preconnect to CDN origins for faster resource loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Google Fonts (preloaded) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-    <!-- Header CSS -->
+    <!-- Local CSS (header first, then core styles) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
 
     <!-- Extra head content from views -->
@@ -100,15 +119,14 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
         })();
     </script>
 
-    <!-- style.css must load BEFORE frontend.css to match original cascade order -->
+    <!-- Core styles (cascade order matters: style.css before frontend.css) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
-    <!-- Frontend CSS (extracted inline styles, highest priority like original) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
-    <!-- Chatbot CSS -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet">
+    <!-- Chatbot CSS (deferred, non-critical) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet"></noscript>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/images/apple-touch-icon.png">
+
 </head>
 
 <body>
@@ -142,6 +160,16 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // Lazy load images that are below the fold
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('img:not([loading])').forEach(function(img) {
+            var rect = img.getBoundingClientRect();
+            if (rect.top > 600) img.setAttribute('loading', 'lazy');
+        });
+    });
+    </script>
 
     <!-- AI Chatbot (Left Side) -->
     <div id="ai-chatbot" class="ai-chatbot-container">
@@ -219,15 +247,17 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
             isLoggedIn: <?php echo (isset($_SESSION['user_id']) || isset($_SESSION['admin_id'])) ? 'true' : 'false'; ?>
         };
     </script>
-    <script src="<?php echo BASE_URL; ?>/assets/js/chatbot.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/chatbot.js"></script>
 
     <!-- Custom JS -->
-    <script src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
-    <script src="<?php echo BASE_URL; ?>/assets/js/premium-header.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/premium-header.js"></script>
 
     <!-- Utility JS -->
     <script>
         document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            if (anchor.hasAttribute('data-bs-toggle')) return;
+            if (anchor.getAttribute('role') === 'tab') return;
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 var target = document.querySelector(this.getAttribute('href'));

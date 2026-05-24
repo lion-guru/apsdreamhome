@@ -123,9 +123,10 @@ class District extends Model
      * @param array $columns Columns to select (default: *)
      * @return array
      */
-    public static function getAll($columns = ['*'])
+    public static function getAll($conditions = [], $orderBy = null, $page = 1, $perPage = 20)
     {
         try {
+            $columns = !empty($conditions) && is_array($conditions) ? $conditions : ['*'];
             $columnList = implode(', ', array_map(fn($col) => "d.$col", $columns));
             $sql = "SELECT {$columnList} FROM districts d ORDER BY d.name ASC";
 

@@ -100,7 +100,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Main Image -->
                 <div class="main-image-container">
                     <?php if (!empty($project['gallery_images'])): ?>
-                        <img src="/uploads/projects/<?= htmlspecialchars($project['gallery_images'][0]) ? class="img-fluid">"
+                        <img src="/uploads/projects/<?= htmlspecialchars($project['gallery_images'][0]) ?> class="img-fluid">"
                              class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name']) ?>"
                              id="mainImage">
                     <?php else: ?>
@@ -256,7 +256,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                 <?php foreach ($project['gallery_images'] as $index => $image): ?>
                                     <div class="col-md-4 mb-3">
                                         <div class="gallery-item">
-                                            <img src="/uploads/projects/<?= htmlspecialchars($image) ? class="img-fluid">"
+                                            <img src="/uploads/projects/<?= htmlspecialchars($image) ?> class="img-fluid">"
                                                  class="img-fluid rounded cursor-pointer"
                                                  onclick="openGallery(<?= htmlspecialchars($index, ENT_QUOTES, 'UTF-8') ?>)"
                                                  alt="Gallery Image <?= $index + 1 ?>">
@@ -296,7 +296,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             <h4><i class="fas fa-project-diagram me-2"></i>Project Layout</h4>
                         </div>
                         <div class="card-body text-center">
-                            <img src="/uploads/projects/<?= htmlspecialchars($project['layout_map']) ? class="img-fluid">"
+                            <img src="/uploads/projects/<?= htmlspecialchars($project['layout_map']) ?> class="img-fluid">"
                                  class="img-fluid" alt="Project Layout"
                                  style="max-height: 600px;">
                         </div>

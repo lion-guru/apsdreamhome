@@ -92,7 +92,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 </div>
                                 <p class="text-muted mb-4" style="font-style: italic;">"<?php echo htmlspecialchars($testimonial['content'] ?? ''); ?>"</p>
                                 <div class="d-flex align-items-center">
-                                    <img src="<?php echo $testimonial['image'] ?? '/assets/images/default-avatar.jpg'; ? class="img-fluid">" alt="<?php echo htmlspecialchars($testimonial['name'] ?? ''); ?>" class="testimonial-img me-3">
+                                    <img src="<?php echo $testimonial['image'] ?? '/assets/images/default-avatar.jpg'; ?> class="img-fluid">" alt="<?php echo htmlspecialchars($testimonial['name'] ?? ''); ?>" class="testimonial-img me-3">
                                     <div>
                                         <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($testimonial['name'] ?? ''); ?></h6>
                                         <small class="text-muted"><?php echo htmlspecialchars($testimonial['property'] ?? ''); ?></small>

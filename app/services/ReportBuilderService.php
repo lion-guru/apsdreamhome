@@ -214,11 +214,11 @@ class ReportBuilderService
         // Commission summary
         $sql = "SELECT 
             a.name as associate_name,
-            a.associate_code,
+            a.email as associate_code,
             COUNT(c.id) as total_commissions,
             SUM(c.amount) as total_amount,
-            SUM(c.paid_amount) as paid_amount,
-            SUM(c.amount - c.paid_amount) as pending_amount
+            COALESCE(SUM(CASE WHEN c.status = 'paid' THEN c.amount ELSE 0 END), 0) as paid_amount,
+            COALESCE(SUM(CASE WHEN c.status != 'paid' THEN c.amount ELSE 0 END), 0) as pending_amount
             FROM commissions c
             JOIN associates a ON c.associate_id = a.id
             WHERE {$where}

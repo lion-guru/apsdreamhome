@@ -319,7 +319,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
      */
     private function isSuperAdmin()
     {
-        return isset($_SESSION['admin_role']) && $_SESSION['admin_role'] === 'superadmin';
+        return isset($_SESSION['admin_role']) && in_array($_SESSION['admin_role'], ['superadmin', 'super_admin']);
     }
 
     /**

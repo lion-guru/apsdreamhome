@@ -1,1 +1,0 @@
-<?php echo 'METHOD=' . $_SERVER['REQUEST_METHOD'] . ' SCRIPT=' . $_SERVER['SCRIPT_NAME'] . ' URI=' . $_SERVER['REQUEST_URI']; ?>

@@ -126,7 +126,7 @@ class VisitorTrackingService
         try {
             $email = $data['email'] ?? null;
             $phone = $data['phone'] ?? null;
-            $name = $data['name'] ?? null;
+            $name = $data['name'] ?? 'Guest';
             $registrationType = $data['registration_type'] ?? 'standard';
             $stepCompleted = $data['step_completed'] ?? 1;
             $totalSteps = $data['total_steps'] ?? 1;

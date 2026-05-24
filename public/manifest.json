@@ -1,20 +1,23 @@
 {
   "name": "APS Dream Home",
   "short_name": "APSHomes",
-  "start_url": "/",
+  "start_url": "/apsdreamhome/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#3B82F6",
+  "theme_color": "#4f46e5",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/apsdreamhome/assets/images/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/apsdreamhome/assets/images/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "categories": ["real estate", "property"],
+  "lang": "en-IN",
+  "description": "Premium Real Estate in Uttar Pradesh"
 }

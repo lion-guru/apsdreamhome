@@ -88,6 +88,11 @@
     <!-- Filters -->
     <div class="filter-section">
         <form method="GET" class="row g-3 align-items-end" id="filterForm">
+            <!-- Search -->
+            <div class="col-md-4">
+                <label class="form-label"><i class="fas fa-search"></i> Search Plot</label>
+                <input type="text" name="q" class="form-control" placeholder="Plot number, area, or features..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+            </div>
             <!-- Dimension Filter -->
             <div class="col-12">
                 <label class="fw-semibold mb-2">Plot Size (width x length)</label>
@@ -219,15 +224,20 @@
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <?php if (($plot['status'] ?? '') === 'available'): ?>
-                                <a href="<?= BASE_URL ?>/plot/<?= $plot['id'] ?>" class="btn btn-sm btn-outline-primary w-100">
-                                    <i class="fas fa-info-circle"></i> View Details
-                                </a>
-                            <?php else: ?>
-                                <button class="btn btn-sm btn-outline-secondary w-100" disabled>
-                                    <i class="fas fa-lock"></i> Not Available
-                                </button>
-                            <?php endif; ?>
+                            <div class="d-flex gap-1">
+                                <?php if (($plot['status'] ?? '') === 'available'): ?>
+                                    <a href="<?= BASE_URL ?>/plot/<?= $plot['id'] ?>" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                        <i class="fas fa-info-circle"></i> View Details
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger" data-id="<?= $plot['id'] ?>" title="Favourite" onclick="togglePlotFav(this)">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                <?php else: ?>
+                                    <button class="btn btn-sm btn-outline-secondary w-100" disabled>
+                                        <i class="fas fa-lock"></i> Not Available
+                                    </button>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -245,5 +255,24 @@ function setFilter(name, value) {
     input.value = value;
     form.appendChild(input);
     form.submit();
+}
+function togglePlotFav(btn) {
+    const id = btn.dataset.id;
+    if (!id) return;
+    const icon = btn.querySelector('i');
+    const isFav = icon.classList.contains('fas');
+    fetch(<?= json_encode(BASE_URL . '/dashboard/favorites/' . (isset($_SESSION['user_id']) ? 'add' : 'add')) ?>, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'property_id=' + id
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            icon.className = isFav ? 'far fa-heart' : 'fas fa-heart';
+        } else if (d.message.includes('login')) {
+            window.location.href = <?= json_encode(BASE_URL . '/login') ?>;
+        } else {
+            icon.className = 'far fa-heart';
+        }
+    }).catch(() => {});
 }
 </script>

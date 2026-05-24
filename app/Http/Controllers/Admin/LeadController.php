@@ -161,4 +161,20 @@ class LeadController extends BaseController
         $this->requireAdmin();
         return $this->render('admin/leads/analysis', []);
     }
+
+    public function getDocuments($id)
+    {
+        $this->requireAdmin();
+        return $this->render('admin/leads/documents', ['lead_id' => $id]);
+    }
+
+    public function edit($id)
+    {
+        $this->requireAdmin();
+        $lead = \App\Models\Lead::find($id);
+        if (!$lead) {
+            return $this->render('admin/leads/edit', ['error' => 'Lead not found', 'lead' => null]);
+        }
+        return $this->render('admin/leads/edit', ['lead' => $lead]);
+    }
 }

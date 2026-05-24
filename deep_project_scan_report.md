@@ -1,17 +1,17 @@
 # APS Dream Home - Maximum Level Deep Project Scan Report
 
-**Scan Date:** 2026-05-17 16:40:48
+**Scan Date:** 2026-05-23 17:44:50
 **Project Path:** C:\xampp\htdocs\apsdreamhome\tools/..
 
 ## Executive Summary
 
-- **Total Files Scanned:** 45143
-- **PHP Files:** 88
-- **Database Tables:** 805
-- **Critical Issues:** 6
-- **High Priority Issues:** 139
+- **Total Files Scanned:** 46605
+- **PHP Files:** 128
+- **Database Tables:** 819
+- **Critical Issues:** 12
+- **High Priority Issues:** 91
 - **Medium Priority Issues:** 12
-- **Low Priority Issues:** 78
+- **Low Priority Issues:** 92
 
 ## Php Deprecated Usage
 
@@ -37,21 +37,45 @@
 
 ## Php Security Issues
 
-### [CRITICAL] config/KeyManager.php
-
-**Issue:** Potential hardcoded password detected
-
 ### [HIGH] config/import_mcp_config_handler.php
 
 **Issue:** Direct use of $_GET/$_POST without sanitization
 
-### [CRITICAL] scripts/save_mcp_to_database.php
-
-**Issue:** Potential hardcoded password detected
-
 ### [CRITICAL] scripts/user_consolidation.php
 
 **Issue:** Potential SQL injection vulnerability
+
+### [CRITICAL] tools/check_all_gallery_tables.php
+
+**Issue:** Potential hardcoded password detected
+
+### [CRITICAL] tools/check_associate_users.php
+
+**Issue:** Potential hardcoded password detected
+
+### [CRITICAL] tools/check_associates.php
+
+**Issue:** Potential hardcoded password detected
+
+### [CRITICAL] tools/check_associates_structure.php
+
+**Issue:** Potential hardcoded password detected
+
+### [CRITICAL] tools/check_bookings_tables.php
+
+**Issue:** Potential hardcoded password detected
+
+### [CRITICAL] tools/check_existing_associates.php
+
+**Issue:** Potential hardcoded password detected
+
+### [CRITICAL] tools/check_gallery_images.php
+
+**Issue:** Potential hardcoded password detected
+
+### [CRITICAL] tools/check_users_table.php
+
+**Issue:** Potential hardcoded password detected
 
 ### [CRITICAL] tools/deep_project_scanner.php
 
@@ -77,6 +101,18 @@
 
 **Issue:** Unconventional parent class: AdminController
 
+### [LOW] app/Http/Controllers/Admin/AIAnalyticsController.php
+
+**Issue:** Unconventional parent class: AdminController
+
+### [LOW] app/Http/Controllers/Admin/AICallingController.php
+
+**Issue:** Unconventional parent class: AdminController
+
+### [LOW] app/Http/Controllers/Admin/AIChatbotController.php
+
+**Issue:** Unconventional parent class: AdminController
+
 ### [LOW] app/Http/Controllers/Admin/AISettingsController.php
 
 **Issue:** Unconventional parent class: AdminController
@@ -86,6 +122,10 @@
 **Issue:** Unconventional parent class: AdminController
 
 ### [LOW] app/Http/Controllers/Admin/ActivityLogController.php
+
+**Issue:** Unconventional parent class: AdminController
+
+### [LOW] app/Http/Controllers/Admin/AdManagerController.php
 
 **Issue:** Unconventional parent class: AdminController
 
@@ -133,6 +173,10 @@
 
 **Issue:** Unconventional parent class: AdminController
 
+### [LOW] app/Http/Controllers/Admin/BackupController.php
+
+**Issue:** Unconventional parent class: AdminController
+
 ### [LOW] app/Http/Controllers/Admin/BlogController.php
 
 **Issue:** Unconventional parent class: AdminController
@@ -161,6 +205,10 @@
 
 **Issue:** Unconventional parent class: AdminController
 
+### [LOW] app/Http/Controllers/Admin/ColonyController.php
+
+**Issue:** Unconventional parent class: AdminController
+
 ### [LOW] app/Http/Controllers/Admin/CommissionAdminController.php
 
 **Issue:** Unconventional parent class: AdminController
@@ -177,11 +225,19 @@
 
 **Issue:** Unconventional parent class: AdminController
 
+### [LOW] app/Http/Controllers/Admin/DocumentController.php
+
+**Issue:** Unconventional parent class: AdminController
+
 ### [LOW] app/Http/Controllers/Admin/EMIController.php
 
 **Issue:** Unconventional parent class: AdminController
 
 ### [LOW] app/Http/Controllers/Admin/EngagementController.php
+
+**Issue:** Unconventional parent class: AdminController
+
+### [LOW] app/Http/Controllers/Admin/ErpDashboardController.php
 
 **Issue:** Unconventional parent class: AdminController
 
@@ -201,11 +257,11 @@
 
 **Issue:** Unconventional parent class: AdminController
 
-### [LOW] app/Http/Controllers/Admin/LandController.php
+### [LOW] app/Http/Controllers/Admin/KhatabookSalesController.php
 
 **Issue:** Unconventional parent class: AdminController
 
-### [LOW] app/Http/Controllers/Admin/LeadController.php
+### [LOW] app/Http/Controllers/Admin/LandController.php
 
 **Issue:** Unconventional parent class: AdminController
 
@@ -221,11 +277,23 @@
 
 **Issue:** Unconventional parent class: AdminController
 
+### [LOW] app/Http/Controllers/Admin/LoanController.php
+
+**Issue:** Unconventional parent class: AdminController
+
 ### [LOW] app/Http/Controllers/Admin/MLMController.php
 
 **Issue:** Unconventional parent class: AdminController
 
+### [LOW] app/Http/Controllers/Admin/MLMSettingsController.php
+
+**Issue:** Unconventional parent class: AdminController
+
 ### [LOW] app/Http/Controllers/Admin/MediaController.php
+
+**Issue:** Unconventional parent class: AdminController
+
+### [LOW] app/Http/Controllers/Admin/MeetingController.php
 
 **Issue:** Unconventional parent class: AdminController
 
@@ -253,10 +321,6 @@
 
 **Issue:** Unconventional parent class: AdminController
 
-### [LOW] app/Http/Controllers/Admin/PlotController.php
-
-**Issue:** Unconventional parent class: AdminController
-
 ### [LOW] app/Http/Controllers/Admin/PlotCostController.php
 
 **Issue:** Unconventional parent class: AdminController
@@ -281,6 +345,10 @@
 
 **Issue:** Unconventional parent class: AdminController
 
+### [LOW] app/Http/Controllers/Admin/ReferralController.php
+
+**Issue:** Unconventional parent class: AdminController
+
 ### [LOW] app/Http/Controllers/Admin/ReportController.php
 
 **Issue:** Unconventional parent class: AdminBaseController
@@ -301,11 +369,23 @@
 
 **Issue:** Unconventional parent class: AdminController
 
+### [LOW] app/Http/Controllers/Admin/SocialMediaController.php
+
+**Issue:** Unconventional parent class: AdminController
+
 ### [LOW] app/Http/Controllers/Admin/SupportTicketController.php
 
 **Issue:** Unconventional parent class: AdminController
 
 ### [LOW] app/Http/Controllers/Admin/TaskController.php
+
+**Issue:** Unconventional parent class: AdminController
+
+### [LOW] app/Http/Controllers/Admin/TeamController.php
+
+**Issue:** Unconventional parent class: AdminController
+
+### [LOW] app/Http/Controllers/Admin/TestimonialController.php
 
 **Issue:** Unconventional parent class: AdminController
 
@@ -423,123 +503,19 @@
 
 **Recommendation:** Ensure proper .htaccess or web server configuration
 
-### [HIGH] app/views/admin/sustainability_reporting.php
+### [HIGH] app/views/pages/booking_confirmation.php
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
-### [HIGH] app/views/auth/quick-register.php
+### [HIGH] app/views/pages/booking_pay.php
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
-### [HIGH] app/views/customers/bookings.php
+### [HIGH] app/views/pages/colony_plots.php
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
-### [HIGH] app/views/customers/payments.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/dashboard/user_dashboard.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/employee/telecalling_dashboard.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/employees/activities.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/employees/attendance.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/employees/leaves.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/employees/salary_history.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/events/dashboard.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/features/comparison.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/features/investment-calculator.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/features/neighborhood.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/home/faq.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/iot/market_insights.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/iot/smart_home_dashboard.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/layouts/employee.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/locations/lucknow-ram-nagri.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/marketing/settings.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/metaverse/create_space.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/metaverse/customize_property.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/metaverse/social_hub.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/metaverse/virtual_development.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/pages/ai-valuation.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/pages/ai_chat_enhanced.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/pages/builder_registration.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/pages/calc.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/pages/customer_reviews.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/pages/downloads.php
+### [HIGH] app/views/pages/interior_design.php
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
@@ -547,139 +523,19 @@
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
-### [HIGH] app/views/pages/projects.php
+### [HIGH] app/views/pages/plot_detail.php
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
-### [HIGH] app/views/pages/property_ai_chat.php
+### [HIGH] app/views/pages/rera_lookup.php
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
-### [HIGH] app/views/pages/resell.php
+### [HIGH] app/views/pages/user_bookings.php
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
-### [HIGH] app/views/pages/team-management.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/partials/ai_chat_popup.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/payments/initiate.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/projects/detail.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/properties/compare.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/properties/compare_results.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/registration/unified-form.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/reports/generate.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/reports/schedule.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/security/data_privacy.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/security/mfa_enhancement.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/security/quantum_cryptography.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/security/security_roadmap.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/security/zero_trust.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/social/share_property.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/case_studies.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/challenges.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/energy_efficiency.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/environmental_impact.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/future_vision.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/governance.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/green_technology.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/investment_opportunities.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/partnerships.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/resources.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/roadmap.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/success_stories.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/sustainable_properties.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/sustainability/trends.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/user/enquiries.php
-
-**Issue:** Potential XSS vulnerability - unescaped variable output
-
-### [HIGH] app/views/user/investments.php
+### [HIGH] app/views/pages/user_dashboard.php
 
 **Issue:** Potential XSS vulnerability - unescaped variable output
 
@@ -691,7 +547,15 @@
 
 **Issue:** POST method without CSRF protection
 
+### [HIGH] app/Http/Controllers/Admin/AIChatbotController.php
+
+**Issue:** POST method without CSRF protection
+
 ### [HIGH] app/Http/Controllers/Admin/AISettingsController.php
+
+**Issue:** POST method without CSRF protection
+
+### [HIGH] app/Http/Controllers/Admin/AdManagerController.php
 
 **Issue:** POST method without CSRF protection
 
@@ -735,6 +599,10 @@
 
 **Issue:** POST method without CSRF protection
 
+### [HIGH] app/Http/Controllers/Admin/ColonyController.php
+
+**Issue:** POST method without CSRF protection
+
 ### [HIGH] app/Http/Controllers/Admin/CommissionController.php
 
 **Issue:** POST method without CSRF protection
@@ -743,7 +611,7 @@
 
 **Issue:** POST method without CSRF protection
 
-### [HIGH] app/Http/Controllers/Admin/EmailSettingsController.php
+### [HIGH] app/Http/Controllers/Admin/DocumentController.php
 
 **Issue:** POST method without CSRF protection
 
@@ -779,6 +647,18 @@
 
 **Issue:** POST method without CSRF protection
 
+### [HIGH] app/Http/Controllers/Admin/MLMRealEstateController.php
+
+**Issue:** POST method without CSRF protection
+
+### [HIGH] app/Http/Controllers/Admin/MLMSettingsController.php
+
+**Issue:** POST method without CSRF protection
+
+### [HIGH] app/Http/Controllers/Admin/PagesController.php
+
+**Issue:** POST method without CSRF protection
+
 ### [HIGH] app/Http/Controllers/Admin/PlotCostController.php
 
 **Issue:** POST method without CSRF protection
@@ -796,6 +676,10 @@
 **Issue:** POST method without CSRF protection
 
 ### [HIGH] app/Http/Controllers/Admin/ServiceController.php
+
+**Issue:** POST method without CSRF protection
+
+### [HIGH] app/Http/Controllers/Admin/TeamController.php
 
 **Issue:** POST method without CSRF protection
 
@@ -876,6 +760,10 @@
 **Issue:** POST method without CSRF protection
 
 ### [HIGH] app/Http/Controllers/Front/PageController.php
+
+**Issue:** POST method without CSRF protection
+
+### [HIGH] app/Http/Controllers/Front/PlotController.php
 
 **Issue:** POST method without CSRF protection
 

@@ -74,12 +74,12 @@ $categories = $categories ?? [];
         <div class="row mb-4">
             <div class="col-12">
                 <div class="news-filter text-center">
-                    <a href="<?= BASE_URL ?>/news" class="btn <?= $pagination['current_category'] === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                    <a href="<?= BASE_URL ?>/news" class="btn <?= ($pagination['current_category'] ?? 'all') === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                         All News
                     </a>
                     <?php foreach ($categories as $cat): ?>
                         <a href="<?= BASE_URL ?>/news?category=<?= urlencode($cat) ?>"
-                            class="btn <?= $pagination['current_category'] === $cat ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                            class="btn <?= ($pagination['current_category'] ?? 'all') === $cat ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                             <?= htmlspecialchars(ucwords($cat)) ?>
                         </a>
                     <?php endforeach; ?>
@@ -95,7 +95,7 @@ $categories = $categories ?? [];
                         <i class="far fa-newspaper fa-3x text-muted mb-3"></i>
                         <h3>No news found</h3>
                         <p class="text-muted">There are no news items to display at this time.</p>
-                        <?php if ($pagination['current_category'] !== 'all'): ?>
+                        <?php if (($pagination['current_category'] ?? 'all') !== 'all'): ?>
                             <a href="<?= BASE_URL ?>/news" class="btn btn-primary mt-3">View All News</a>
                         <?php endif; ?>
                     </div>
@@ -143,12 +143,12 @@ $categories = $categories ?? [];
         </div>
 
         <!-- Pagination -->
-        <?php if ($pagination['total_pages'] > 1): ?>
+        <?php if (($pagination['total_pages'] ?? 1) > 1): ?>
             <nav class="mt-5">
                 <ul class="pagination justify-content-center">
                     <!-- Previous Page -->
-                    <li class="page-item <?= $pagination['current_page'] <= 1 ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= $pagination['current_page'] - 1 ?>&category=<?= urlencode($pagination['current_category']) ?>" aria-label="Previous">
+                    <li class="page-item <?= ($pagination['current_page'] ?? 1) <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= ($pagination['current_page'] ?? 1) - 1 ?>&category=<?= urlencode($pagination['current_category'] ?? 'all') ?>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>

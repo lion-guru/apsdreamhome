@@ -3,6 +3,7 @@ $property = $data['property'] ?? null;
 $property_images = $data['property_images'] ?? [];
 $related = $data['related_properties'] ?? [];
 $reviews = $data['reviews'] ?? [];
+$images = !empty($property_images) ? $property_images : [['image_path' => 'https://via.placeholder.com/800x400?text=No+Image']];
 ?>
 <div class="container-fluid py-4">
     <nav aria-label="breadcrumb" class="mb-4">
@@ -18,15 +19,14 @@ $reviews = $data['reviews'] ?? [];
             <div class="col-lg-8">
                 <div class="card mb-4">
                     <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <?php
-                            $images = !empty($property_images) ? $property_images : [['image_path' => 'https://via.placeholder.com/800x400?text=No+Image']];
-                            foreach ($images as $i => $img):
+                        <div class="carousel-inner rounded-top">
+                            <?php foreach ($images as $i => $img):
                             ?>
                                 <div class="carousel-item <?php echo $i === 0 ? 'active' : ''; ?>">
-                                    <img src="<?php echo htmlspecialchars($img['image_path'] ?? $property['image_url'] ?? 'https://via.placeholder.com/800x400'); ?>" class="img-fluid"
-                                        class="d-block w-100" style="height: 400px; object-fit: cover;"
-                                        alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>">
+                                    <img src="<?php echo htmlspecialchars($img['image_path'] ?? $property['image_url'] ?? 'https://via.placeholder.com/800x400'); ?>"
+                                        class="d-block w-100 gallery-trigger" style="height: 400px; object-fit: cover; cursor: pointer;"
+                                        alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>"
+                                        onclick="openLightbox(<?php echo $i; ?>)">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -38,6 +38,28 @@ $reviews = $data['reviews'] ?? [];
                                 <span class="carousel-control-next-icon"></span>
                             </button>
                         <?php endif; ?>
+                    </div>
+                    <!-- Thumbnail Gallery -->
+                    <?php if (count($images) > 1): ?>
+                    <div class="d-flex gap-1 mt-1 overflow-auto">
+                        <?php foreach ($images as $i => $img): ?>
+                        <img src="<?php echo htmlspecialchars($img['image_path']); ?>"
+                            class="rounded" style="height: 60px; width: 80px; object-fit: cover; cursor: pointer; border: 2px solid <?php echo $i === 0 ? '#0d6efd' : 'transparent'; ?>;"
+                            onclick="$('#propertyCarousel').carousel(<?php echo $i; ?>); openLightbox(<?php echo $i; ?>);"
+                            alt="Thumbnail">
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Lightbox -->
+                    <div id="propertyLightbox" class="lightbox-overlay" style="display:none;" onclick="closeLightbox(event)">
+                        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+                        <span class="lightbox-prev" onclick="changeLightbox(-1)">&#10094;</span>
+                        <span class="lightbox-next" onclick="changeLightbox(1)">&#10095;</span>
+                        <div class="lightbox-content">
+                            <img id="lightboxImage" src="" alt="Full size image">
+                            <div id="lightboxCounter" class="lightbox-counter"></div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
@@ -282,3 +304,45 @@ $reviews = $data['reviews'] ?? [];
         </div>
     </div>
 </div>
+
+<style>
+.lightbox-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.92); z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+}
+.lightbox-content { position: relative; max-width: 90vw; max-height: 90vh; }
+.lightbox-content img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 8px; }
+.lightbox-close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; cursor: pointer; z-index: 10; }
+.lightbox-prev, .lightbox-next { position: absolute; top: 50%; transform: translateY(-50%); color: #fff; font-size: 50px; cursor: pointer; padding: 20px; z-index: 10; user-select: none; }
+.lightbox-prev:hover, .lightbox-next:hover { color: #0d6efd; }
+.lightbox-prev { left: 20px; }
+.lightbox-next { right: 20px; }
+.lightbox-counter { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); color: #aaa; font-size: 14px; }
+</style>
+<?php if (!empty($property_images)): ?>
+<script>
+var lightboxImages = <?php echo json_encode(array_map(function($img) { return $img['image_path']; }, $images)); ?>;
+var currentLightbox = 0;
+function openLightbox(index) {
+    currentLightbox = index;
+    document.getElementById('lightboxImage').src = lightboxImages[index];
+    document.getElementById('propertyLightbox').style.display = 'flex';
+    document.getElementById('lightboxCounter').textContent = (index + 1) + ' / ' + lightboxImages.length;
+    document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) { if (e && e.target !== e.currentTarget) return;
+    document.getElementById('propertyLightbox').style.display = 'none';
+    document.body.style.overflow = ''; }
+function changeLightbox(dir) {
+    currentLightbox = (currentLightbox + dir + lightboxImages.length) % lightboxImages.length;
+    openLightbox(currentLightbox);
+}
+document.addEventListener('keydown', function(e) {
+    if (document.getElementById('propertyLightbox').style.display !== 'flex') return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') changeLightbox(-1);
+    if (e.key === 'ArrowRight') changeLightbox(1);
+});
+</script>
+<?php endif; ?>

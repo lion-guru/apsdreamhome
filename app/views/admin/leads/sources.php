@@ -25,7 +25,7 @@
                     <h6 class="text-muted">Top Source</h6>
                     <h2 class="mb-0 text-truncate">
                         <?php 
-                        $topSource = !empty($sourceData) ? max($sourceData, function($a, $b) { return $a['count'] <=> $b['count']; }) : ['source' => 'N/A'];
+                        $topSource = !empty($sourceData) ? array_reduce($sourceData, function($carry, $item) { return ($carry === null || $item['count'] > $carry['count']) ? $item : $carry; }) : ['source' => 'N/A'];
                         echo htmlspecialchars(ucfirst($topSource['source'] ?? 'N/A')); 
                         ?>
                     </h2>

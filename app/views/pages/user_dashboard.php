@@ -275,6 +275,9 @@ $user = $user ?? [];
                     <a href="<?php echo BASE_URL; ?>/user/profile" class="btn btn-outline-info">
                         <i class="fas fa-user me-2"></i>Edit Profile
                     </a>
+                    <a href="<?= BASE_URL ?>/dashboard/favorites" class="btn btn-outline-danger">
+                        <i class="fas fa-heart me-2"></i>My Favorites
+                    </a>
                     <a href="<?= BASE_URL ?>/user/book-site-visit" class="btn btn-outline-info">
                         <i class="fas fa-calendar-check me-1"></i> Book Site Visit
                     </a>

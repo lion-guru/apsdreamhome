@@ -1,13 +1,11 @@
 <?php
-
-
 $page_title = $page_title ?? '';
-// Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
     @session_start();
 }
-
-// Set page variables
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 $page_title = $page_title ?? 'Forgot Password - APS Dream Home';
 $page_description = 'Reset your password with email or mobile number';
 
@@ -65,7 +63,8 @@ ob_start();
                     <div class="tab-content forgot-tab-content">
                         <!-- Email Reset Tab -->
                         <div class="tab-pane fade show active" id="email-reset-tab" role="tabpanel">
-                            <form action="<?= BASE_URL ?>auth/forgot-password" method="POST" class="forgot-form">
+                            <form action="<?= BASE_URL ?>/forgot-password" method="POST" class="forgot-form">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                 <input type="hidden" name="reset_type" value="email">
 
                                 <div class="mb-4">
@@ -93,7 +92,8 @@ ob_start();
 
                         <!-- Mobile Reset Tab -->
                         <div class="tab-pane fade" id="mobile-reset-tab" role="tabpanel">
-                            <form action="<?= BASE_URL ?>auth/forgot-password" method="POST" class="forgot-form">
+                            <form action="<?= BASE_URL ?>/forgot-password" method="POST" class="forgot-form">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                 <input type="hidden" name="reset_type" value="mobile">
 
                                 <div class="mb-4">

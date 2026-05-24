@@ -29,13 +29,16 @@ foreach ($menuItems as $item) {
 
 // Section display names
 $sectionNames = [
-    'main' => 'Main',
+    'dashboards' => 'Dashboards',
     'crm' => 'CRM & Sales',
     'properties' => 'Properties',
     'mlm' => 'MLM Network',
-    'operations' => 'Operations',
+    'financial' => 'Financial',
+    'bookings' => 'Bookings',
+    'cms' => 'Content',
     'marketing' => 'Marketing',
-    'ai' => 'AI & Technology',
+    'reports' => 'Reports',
+    'operations' => 'Operations',
     'users' => 'Users & Team',
     'locations' => 'Locations',
     'settings' => 'Settings'
@@ -51,22 +54,45 @@ $sectionNames = [
         <div class="sidebar-sub">Super Admin Panel</div>
     </div>
     
+    <?php
+    $reqUri = $_SERVER['REQUEST_URI'] ?? '';
+    $reqPath = rtrim(parse_url($reqUri, PHP_URL_PATH), '/');
+    
+    // Determine which section has the active item (to auto-expand it)
+    $sectionHasActive = [];
+    foreach ($groupedItems as $section => $items) {
+        foreach ($items as $item) {
+            $itemFullUrl = rtrim($base . $item['url'], '/');
+            if ($reqPath === $itemFullUrl || ($itemFullUrl !== $base && strpos($reqPath, $itemFullUrl . '/') === 0)) {
+                $sectionHasActive[$section] = true;
+                break;
+            }
+        }
+    }
+    
+    $sectionKeys = array_keys($groupedItems);
+    ?>
+    
     <?php foreach ($groupedItems as $section => $items): ?>
-        <?php if (!empty($items)): ?>
-        <div class="sidebar-sec"><?php echo htmlspecialchars($sectionNames[$section] ?? ucfirst($section)); ?></div>
-        <ul class="sidebar-menu">
+        <?php if (!empty($items)): 
+            $secId = 'sec-' . preg_replace('/[^a-z0-9]/', '', $section);
+            $isExpanded = !empty($sectionHasActive[$section]) || count($items) <= 2;
+        ?>
+        <div class="sidebar-sec" onclick="toggleSidebarSection('<?php echo $secId; ?>')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+            <span><?php echo htmlspecialchars($sectionNames[$section] ?? ucfirst($section)); ?></span>
+            <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $isExpanded ? '' : 'collapsed'; ?>" id="arrow-<?php echo $secId; ?>"></i>
+        </div>
+        <ul class="sidebar-menu" id="<?php echo $secId; ?>" style="<?php echo $isExpanded ? '' : 'display:none;'; ?>">
             <?php foreach ($items as $item): ?>
                 <?php
-                $hasChildren = !empty($item['children']);
                 $itemFullUrl = rtrim($base . $item['url'], '/');
-                $reqUri = $_SERVER['REQUEST_URI'] ?? '';
-                $reqPath = rtrim(parse_url($reqUri, PHP_URL_PATH), '/');
-                $isActive = ($reqPath === $itemFullUrl) || (strpos($reqPath, $itemFullUrl . '/') === 0);
+                // Active state: exact match or child path match
+                $isActive = ($reqPath === $itemFullUrl) || ($itemFullUrl !== $base && strpos($reqPath, $itemFullUrl . '/') === 0);
                 ?>
                 <li class="sidebar-item">
                     <a href="<?php echo $base . htmlspecialchars($item['url']); ?>" 
                        class="sidebar-link <?php echo $isActive ? 'active' : ''; ?>">
-                        <i class="fas <?php echo htmlspecialchars($item['icon']); ?>"></i>
+                        <i class="<?php echo htmlspecialchars($item['icon']); ?>"></i>
                         <?php echo htmlspecialchars($item['name']); ?>
                     </a>
                 </li>
@@ -74,6 +100,30 @@ $sectionNames = [
         </ul>
         <?php endif; ?>
     <?php endforeach; ?>
+    
+    <script>
+    function toggleSidebarSection(id) {
+        const ul = document.getElementById(id);
+        if (!ul) return;
+        const isHidden = ul.style.display === 'none';
+        ul.style.display = isHidden ? '' : 'none';
+        const arrow = document.getElementById('arrow-' + id);
+        if (arrow) arrow.classList.toggle('collapsed', !isHidden);
+        try { localStorage.setItem('sidebar_' + id, isHidden ? 'open' : 'closed'); } catch(e) {}
+    }
+    // Restore saved section states on load
+    (function() {
+        document.querySelectorAll('.sidebar-menu[id]').forEach(function(el) {
+            var saved = null;
+            try { saved = localStorage.getItem('sidebar_' + el.id); } catch(e) {}
+            if (saved === 'closed') {
+                el.style.display = 'none';
+                var arrow = document.getElementById('arrow-' + el.id);
+                if (arrow) arrow.classList.add('collapsed');
+            }
+        });
+    })();
+    </script>
     
     <?php if (empty($menuItems)): ?>
         <!-- Fallback menu if no items from database -->

@@ -48,6 +48,8 @@ unset($_SESSION['success'], $_SESSION['error']);
         .sidebar-link.active{background:#4f46e5;color:#fff}
         .sidebar-link i{width:22px;margin-right:10px;font-size:1rem;color:#a5b4fc;text-align:center}
         .sidebar-link.active i,.sidebar-link:hover i{color:#fff}
+        .sidebar-sec-arrow{font-size:.6rem;transition:transform .25s;color:rgba(255,255,255,.3)}
+        .sidebar-sec-arrow.collapsed{transform:rotate(-90deg)}
         .main-content{margin-left:280px;min-height:100vh;transition:margin-left .3s}
         .top-nav{background:#fff;height:60px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100}
         .nav-left{display:flex;align-items:center;gap:15px}
@@ -106,13 +108,21 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </nav>
             </div>
             <div class="nav-right">
+                <?php
+                $notifCount = 0;
+                try {
+                    $ndb = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4', 'root', '');
+                    $ndb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $notifCount = (int)$ndb->query("SELECT COUNT(*) FROM inquiries WHERE status = 'new'")->fetchColumn();
+                } catch (Exception $e) {}
+                ?>
                 <button class="nav-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
-                    <span class="badge">3</span>
+                    <?php if ($notifCount > 0): ?><span class="badge"><?php echo $notifCount; ?></span><?php endif; ?>
                 </button>
                 <button class="nav-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
-                    <span class="badge">5</span>
+                    <?php if ($notifCount > 0): ?><span class="badge"><?php echo min($notifCount, 9); ?></span><?php endif; ?>
                 </button>
                 <div class="dropdown">
                     <div class="user-box" data-bs-toggle="dropdown">

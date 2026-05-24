@@ -8,36 +8,37 @@ use Exception;
 class SocialLoginService
 {
     private $db;
-    private $providers = [
-        'google' => [
-            'client_id' => 'your-google-client-id',
-            'client_secret' => 'your-google-client-secret',
-            'redirect_uri' => 'http://localhost/apsdreamhome/auth/google/callback',
-            'auth_url' => 'https://accounts.google.com/o/oauth2/v2/auth',
-            'token_url' => 'https://oauth2.googleapis.com/token',
-            'user_info_url' => 'https://www.googleapis.com/oauth2/v2/userinfo'
-        ],
-        'facebook' => [
-            'client_id' => 'your-facebook-app-id',
-            'client_secret' => 'your-facebook-app-secret',
-            'redirect_uri' => 'http://localhost/apsdreamhome/auth/facebook/callback',
-            'auth_url' => 'https://www.facebook.com/v18.0/dialog/oauth',
-            'token_url' => 'https://graph.facebook.com/v18.0/oauth/access_token',
-            'user_info_url' => 'https://graph.facebook.com/v18.0/me'
-        ],
-        'linkedin' => [
-            'client_id' => 'your-linkedin-client-id',
-            'client_secret' => 'your-linkedin-client-secret',
-            'redirect_uri' => 'http://localhost/apsdreamhome/auth/linkedin/callback',
-            'auth_url' => 'https://www.linkedin.com/oauth/v2/authorization',
-            'token_url' => 'https://www.linkedin.com/oauth/v2/accessToken',
-            'user_info_url' => 'https://api.linkedin.com/v2/people/~'
-        ]
-    ];
+    private $providers = [];
 
     public function __construct()
     {
         $this->db = Database::getInstance();
+        $this->providers = [
+            'google' => [
+                'client_id' => getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? 'your-google-client-id'),
+                'client_secret' => getenv('GOOGLE_CLIENT_SECRET') ?: ($_ENV['GOOGLE_CLIENT_SECRET'] ?? 'your-google-client-secret'),
+                'redirect_uri' => 'http://localhost/apsdreamhome/auth/google/callback',
+                'auth_url' => 'https://accounts.google.com/o/oauth2/v2/auth',
+                'token_url' => 'https://oauth2.googleapis.com/token',
+                'user_info_url' => 'https://www.googleapis.com/oauth2/v2/userinfo'
+            ],
+            'facebook' => [
+                'client_id' => getenv('FACEBOOK_APP_ID') ?: ($_ENV['FACEBOOK_APP_ID'] ?? 'your-facebook-app-id'),
+                'client_secret' => getenv('FACEBOOK_APP_SECRET') ?: ($_ENV['FACEBOOK_APP_SECRET'] ?? 'your-facebook-app-secret'),
+                'redirect_uri' => 'http://localhost/apsdreamhome/auth/facebook/callback',
+                'auth_url' => 'https://www.facebook.com/v18.0/dialog/oauth',
+                'token_url' => 'https://graph.facebook.com/v18.0/oauth/access_token',
+                'user_info_url' => 'https://graph.facebook.com/v18.0/me'
+            ],
+            'linkedin' => [
+                'client_id' => getenv('LINKEDIN_CLIENT_ID') ?: ($_ENV['LINKEDIN_CLIENT_ID'] ?? 'your-linkedin-client-id'),
+                'client_secret' => getenv('LINKEDIN_CLIENT_SECRET') ?: ($_ENV['LINKEDIN_CLIENT_SECRET'] ?? 'your-linkedin-client-secret'),
+                'redirect_uri' => 'http://localhost/apsdreamhome/auth/linkedin/callback',
+                'auth_url' => 'https://www.linkedin.com/oauth/v2/authorization',
+                'token_url' => 'https://www.linkedin.com/oauth/v2/accessToken',
+                'user_info_url' => 'https://api.linkedin.com/v2/people/~'
+            ]
+        ];
     }
 
     /**
@@ -122,7 +123,7 @@ class SocialLoginService
     /**
      * Authenticate or register user with social account
      */
-    public function authenticateSocialUser($provider, $userData, $accessToken = null, $refreshToken = null)
+    public function authenticateSocialUser($provider, $userData, $accessToken = null, $refreshToken = null, $expiresIn = null)
     {
         try {
             // Check if social account already exists
@@ -130,7 +131,7 @@ class SocialLoginService
 
             if ($socialAccount) {
                 // Update tokens and return existing user
-                $this->updateSocialAccount($socialAccount['id'], $accessToken, $refreshToken);
+                $this->updateSocialAccount($socialAccount['id'], $accessToken, $refreshToken, $expiresIn);
                 return $this->getUserById($socialAccount['user_id']);
             }
 
@@ -139,14 +140,14 @@ class SocialLoginService
                 $existingUser = $this->getUserByEmail($userData['email']);
                 if ($existingUser) {
                     // Link social account to existing user
-                    $this->createSocialAccount($existingUser['id'], $provider, $userData, $accessToken, $refreshToken);
+                    $this->createSocialAccount($existingUser['id'], $provider, $userData, $accessToken, $refreshToken, $expiresIn);
                     return $existingUser;
                 }
             }
 
             // Create new user and social account
             $userId = $this->createUserFromSocialData($userData);
-            $this->createSocialAccount($userId, $provider, $userData, $accessToken, $refreshToken);
+            $this->createSocialAccount($userId, $provider, $userData, $accessToken, $refreshToken, $expiresIn);
 
             return $this->getUserById($userId);
 
@@ -168,11 +169,11 @@ class SocialLoginService
     /**
      * Update social account tokens
      */
-    private function updateSocialAccount($socialAccountId, $accessToken, $refreshToken)
+    private function updateSocialAccount($socialAccountId, $accessToken, $refreshToken, $expiresIn = null)
     {
         $expiresAt = null;
-        if ($accessToken && isset($tokenData['expires_in'])) {
-            $expiresAt = date('Y-m-d H:i:s', time() + $tokenData['expires_in']);
+        if ($expiresIn) {
+            $expiresAt = date('Y-m-d H:i:s', time() + $expiresIn);
         }
 
         $query = "UPDATE social_accounts SET access_token = ?, refresh_token = ?, expires_at = ? WHERE id = ?";
@@ -182,11 +183,11 @@ class SocialLoginService
     /**
      * Create social account
      */
-    private function createSocialAccount($userId, $provider, $userData, $accessToken, $refreshToken)
+    private function createSocialAccount($userId, $provider, $userData, $accessToken, $refreshToken, $expiresIn = null)
     {
         $expiresAt = null;
-        if ($accessToken && isset($tokenData['expires_in'])) {
-            $expiresAt = date('Y-m-d H:i:s', time() + $tokenData['expires_in']);
+        if ($expiresIn) {
+            $expiresAt = date('Y-m-d H:i:s', time() + $expiresIn);
         }
 
         $query = "INSERT INTO social_accounts (user_id, provider, provider_id, provider_email, provider_name, provider_avatar, access_token, refresh_token, expires_at) 

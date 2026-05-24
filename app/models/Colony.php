@@ -108,9 +108,10 @@ class Colony extends UnifiedModel
     /**
      * Get all colonies
      */
-    public static function getAll($columns = ['*'])
+    public static function getAll($conditions = [], $orderBy = null, $page = 1, $perPage = 20)
     {
         $db = \App\Core\Database::getInstance();
+        $columns = !empty($conditions) && is_array($conditions) ? $conditions : ['*'];
         $colList = is_array($columns) ? implode(', ', $columns) : $columns;
         
         $sql = "SELECT {$colList} FROM colonies ORDER BY name";

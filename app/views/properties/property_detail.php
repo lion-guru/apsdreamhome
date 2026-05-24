@@ -19,7 +19,7 @@ include __DIR__ . '/../layouts/base.php';
             <!-- Hero Image Section -->
             <div class="glass-card p-2 mb-4 overflow-hidden">
                 <div class="position-relative">
-                    <img src="<?php echo $property_images[0]['image_path'] ?? $property['image'] ?? 'https://via.placeholder.com/1200x600'; ? class="img-fluid">"
+                    <img src="<?php echo $property_images[0]['image_path'] ?? $property['image'] ?? 'https://via.placeholder.com/1200x600'; ?> class="img-fluid">"
                         alt="<?php echo htmlspecialchars($property['title']); ?>"
                         class="w-100 rounded-lg shadow-2xl" id="main-gallery-image"
                         style="height: 500px; object-fit: cover; border-radius: 12px;">
@@ -35,7 +35,7 @@ include __DIR__ . '/../layouts/base.php';
                 <?php if (!empty($property_images) && count($property_images) > 1): ?>
                     <div class="d-flex gap-2 mt-2 px-1 overflow-auto pb-2 scrollbar-hidden">
                         <?php foreach ($property_images as $img): ?>
-                            <img src="<?php echo $img['image_path']; ? class="img-fluid">"
+                            <img src="<?php echo $img['image_path']; ?> class="img-fluid">"
                                 class="rounded cursor-pointer thumbnail-hover"
                                 style="width: 100px; height: 70px; object-fit: cover;"
                                 onclick="document.getElementById('main-gallery-image').src = this.src">
@@ -140,7 +140,7 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="glass-card p-4">
                     <h5 class="text-white h6 mb-3">Contact Property <?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Owner' : 'Specialist'; ?></h5>
                     <div class="d-flex align-items-center gap-3 mb-4">
-                        <img src="https://via.placeholder.com/60/4f46e5/ffffff?text=<?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'OW' : 'AS'; ? class="img-fluid">" class="rounded-circle shadow">
+                        <img src="https://via.placeholder.com/60/4f46e5/ffffff?text=<?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'OW' : 'AS'; ?> class="img-fluid">" class="rounded-circle shadow">
                         <div class="w-100">
                             <h6 class="text-white mb-0"><?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Verified Owner' : 'APS Sales Team'; ?></h6>
 
