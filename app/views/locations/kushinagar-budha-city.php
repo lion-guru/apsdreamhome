@@ -39,7 +39,7 @@ ob_start();
 <div class="row">
     <div class="col-lg-12">
         <!-- Hero Banner -->
-        <div class="page-banner mb-5" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<?= get_asset_url('breadcromb.jpg', 'images') ?>') center/cover; padding: 120px 0; color: #fff; border-radius: 0 0 50px 50px;">
+        <div class="page-banner mb-5" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<?= get_asset_url('breadcrumb.jpg', 'images') ?>') center/cover; padding: 120px 0; color: #fff; border-radius: 0 0 50px 50px;">
             <div class="container text-center">
                 <h1 class="display-3 fw-bold mb-3 animate-fade-up">Budha City</h1>
                 <p class="lead animate-fade-up">Integrated Township at Premwaliya, Kushinagar Highway</p>

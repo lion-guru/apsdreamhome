@@ -20,7 +20,7 @@ $baseUrl = BASE_URL ?? '/apsdreamhome';
 $settings = $settings ?? [];
 
 // Start output buffering for layout
-ob_start();
+
 $page_title = 'Site Settings';
 ?>
 
@@ -162,6 +162,6 @@ $page_title = 'Site Settings';
 </div>
 
 <?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../../../layouts/admin.php';
+
+
 ?>
