@@ -26,6 +26,17 @@ class PlotManagementController extends AdminController
     }
 
     /**
+     * Plot categories/types management
+     */
+    public function categories()
+    {
+        $this->requireAdmin();
+        $this->render('admin/plots/categories', [
+            'page_title' => 'Plot Categories'
+        ]);
+    }
+
+    /**
      * Show create plot form
      */
     public function create()

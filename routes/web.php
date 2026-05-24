@@ -573,6 +573,10 @@ $router->post('/admin/users/{id}/destroy', 'App\\Http\\Controllers\\Admin\\UserC
 $router->get('/admin/leads', 'App\\Http\\Controllers\\Admin\\LeadController@index');
 $router->get('/admin/leads/create', 'App\\Http\\Controllers\\Admin\\LeadController@create');
 $router->post('/admin/leads', 'App\\Http\\Controllers\\Admin\\LeadController@store');
+$router->get('/admin/leads/status', 'App\\Http\\Controllers\\Admin\\LeadController@status');
+$router->get('/admin/leads/followups', 'App\\Http\\Controllers\\Admin\\LeadController@followups');
+$router->get('/admin/leads/import', 'App\\Http\\Controllers\\Admin\\LeadController@import');
+$router->get('/admin/leads/analysis', 'App\\Http\\Controllers\\Admin\\LeadController@analysis');
 $router->get('/admin/leads/{id}', 'App\\Http\\Controllers\\Admin\\LeadController@show');
 $router->get('/admin/leads/{id}/edit', 'App\\Http\\Controllers\\Admin\\LeadController@edit');
 $router->post('/admin/leads/{id}/update', 'App\\Http\\Controllers\\Admin\\LeadController@update');
@@ -1116,9 +1120,7 @@ $router->get('/admin/associates/create', function () {
     header('Location: ' . BASE_URL . '/admin/mlm/associates/create');
     exit;
 });
-$router->get('/admin/hrm/employees', function () {
-    require __DIR__ . '/../app/views/admin/employees/index.php';
-});
+$router->get('/admin/hrm/employees', 'App\\Http\\Controllers\\Admin\\HRMController@employees');
 
 // ============================================================
 // NEWLY ROUTED ADMIN CONTROLLERS
@@ -1143,6 +1145,7 @@ $router->get('/admin/jobs/manage/applications/view/{id}', 'App\\Http\\Controller
 $router->post('/admin/jobs/manage/applications/{id}/status', 'App\\Http\\Controllers\\Admin\\JobsAdminController@updateApplicationStatus');
 
 // Plot Admin (alternative plot management)
+$router->get('/admin/plots/categories', 'App\\Http\\Controllers\\Admin\\PlotManagementController@categories');
 $router->get('/admin/plots/manage', 'App\\Http\\Controllers\\Admin\\PlotsAdminController@index');
 $router->get('/admin/plots/manage/create', 'App\\Http\\Controllers\\Admin\\PlotsAdminController@create');
 $router->get('/admin/plots/manage/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotsAdminController@edit');

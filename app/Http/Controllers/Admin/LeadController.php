@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
-class LeadController extends BaseController
+class LeadController extends AdminController
 {
     /**
      * All leads list
