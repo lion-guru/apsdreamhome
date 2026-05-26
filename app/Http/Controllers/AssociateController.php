@@ -459,7 +459,7 @@ class AssociateController extends BaseController
 
         if ($userId) {
             try {
-                $user = $this->db->fetch(
+                $user = $this->db->fetchOne(
                     "SELECT * FROM users WHERE id = ? AND status = 'active'",
                     [$userId]
                 );
@@ -488,6 +488,7 @@ class AssociateController extends BaseController
     public function settings()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
 
         @session_start();
 
@@ -544,6 +545,7 @@ class AssociateController extends BaseController
     public function listProperty()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
 
         @session_start();
 
@@ -555,7 +557,7 @@ class AssociateController extends BaseController
 
         // Load states for dropdown
         $db = \App\Core\Database\Database::getInstance();
-        $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER BY name LIMIT 50");
+        $states = $db->fetchAll("SELECT id, name FROM states ORDER BY name LIMIT 50");
 
         $success = $_SESSION['flash_success'] ?? null;
         $error = $_SESSION['flash_error'] ?? null;
@@ -697,7 +699,7 @@ class AssociateController extends BaseController
         $teamMembers = [];
         try {
             $teamMembers = $db->fetchAll(
-                "SELECT id, name, email, phone, status, created_at FROM users WHERE referred_by = ? AND role = 'associate' ORDER BY created_at DESC",
+                "SELECT id, name, email, phone, status, created_at FROM users WHERE referred_by = ? AND (user_type = 'associate' OR role = 'associate') ORDER BY created_at DESC",
                 [$associateId]
             );
         } catch (\Exception $e) {

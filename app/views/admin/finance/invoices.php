@@ -22,12 +22,12 @@
         $totalAmount = $db->query("SELECT COALESCE(SUM(total_amount), 0) as t FROM invoices WHERE status NOT IN ('cancelled','draft')")->fetch();
         $totalOutstanding = $db->query("SELECT COALESCE(SUM(total_amount), 0) as t FROM invoices WHERE status IN ('sent','viewed','overdue')")->fetch();
     } catch (\Exception $e) {
-        $invoices = []; $counts = []; $totalAmount = ['t' => 0]; $totalOutstanding = ['t' => 0];
+        $invoices = []; $counts = []; $totalAmount = ['t' => 0]; $totalOutstanding = ['t' => 0]; $totalSent = 0;
     }
     ?>
 
     <div class="row mb-4">
-        <div class="col-md-3"><div class="card bg-primary text-white"><div class="card-body"><h6>Total</h6><h3 class="mb-0"><?= $counts['draft'] ?? 0 + $counts['sent'] ?? 0 + $counts['viewed'] ?? 0 + $counts['paid'] ?? 0 + $counts['overdue'] ?? 0 ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-primary text-white"><div class="card-body"><h6>Total</h6><h3 class="mb-0"><?= ($counts['draft'] ?? 0) + ($counts['sent'] ?? 0) + ($counts['viewed'] ?? 0) + ($counts['paid'] ?? 0) + ($counts['overdue'] ?? 0) ?></h3></div></div></div>
         <div class="col-md-3"><div class="card bg-success text-white"><div class="card-body"><h6>Total Amount</h6><h3 class="mb-0">₹<?= number_format($totalAmount['t'] ?? 0, 2) ?></h3></div></div></div>
         <div class="col-md-3"><div class="card bg-warning text-dark"><div class="card-body"><h6>Outstanding</h6><h3 class="mb-0">₹<?= number_format($totalOutstanding['t'] ?? 0, 2) ?></h3></div></div></div>
         <div class="col-md-3"><div class="card bg-info text-white"><div class="card-body"><h6>Paid</h6><h3 class="mb-0"><?= $counts['paid'] ?? 0 ?></h3></div></div></div>

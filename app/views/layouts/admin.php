@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title ?? 'APS Dream Home - Admin'; ?></title>
-    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/app/views/admin/assets/img/favicon.png">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/favicon.png">
     <meta name="description" content="<?php echo $page_description ?? 'Admin Panel'; ?>">
 
     <!-- Bootstrap CSS -->
@@ -14,7 +14,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <!-- Admin CSS -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/admin.css" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
 </head>
 
 <body>

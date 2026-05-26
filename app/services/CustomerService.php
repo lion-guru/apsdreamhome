@@ -1,95 +1,50 @@
-<?php
+            $customerStmt->execute([
+                ":user_id" => $userId,
+                ":customer_code" => $customerCode,
+                ":first_name" => $data["first_name"],
+                ":last_name" => $data["last_name"],
+                ":email" => $data["email"],
+                ":phone" => $data["phone"],
+                ":date_of_birth" => $data["date_of_birth"] ?? null,
+                ":gender" => $data["gender"] ?? null,
+                ":marital_status" => $data["marital_status"] ?? null,
+                ":occupation" => $data["occupation"] ?? null,
+                ":annual_income" => $data["annual_income"] ?? null,
+                ":permanent_address" => $data["permanent_address"] ?? null,
+                ":current_address" => $data["current_address"] ?? null,
+                ":city" => $data["city"] ?? null,
+                ":state" => $data["state"] ?? null,
+                ":pincode" => $data["pincode"] ?? null,
+                ":country" => $data["country"] ?? "India",
+                ":preferred_property_type" => $data["preferred_property_type"] ?? null,
+                ":preferred_location" => $data["preferred_location"] ?? null,
+                ":budget_range_min" => $data["budget_range_min"] ?? null,
+                ":budget_range_max" => $data["budget_range_max"] ?? null,
+                ":preferred_area_min" => $data["preferred_area_min"] ?? null,
+                ":preferred_area_max" => $data["preferred_area_max"] ?? null,
+                ":account_type" => $data["account_type"] ?? "individual",
+                ":company_name" => $data["company_name"] ?? null,
+                ":gst_number" => $data["gst_number"] ?? null,
+                ":status" => "pending",
+                ":email_verified" => 0,
+                ":phone_verified" => 0,
+                ":aadhar_verified" => 0,
+                ":kyc_completed" => 0,
+                ":verification_documents" => null,
+                ":profile_image" => null,
+                ":bio" => null,
+                ":created_by" => $userId,
+                ":updated_by" => $userId
+            ]);
 
-namespace App\Services;
+            $this->db->commit();
 
-class CustomerService
-{
-    private $db;
-
-    public function __construct()
-    {
-        $this->db = new \PDO("mysql:host=localhost;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
-        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    }
-
-    public function authenticate($email, $password)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM customers WHERE email = :email AND status = 'active'");
-        $stmt->execute([":email" => $email]);
-        $customer = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        if ($customer && password_verify($password, $customer["password"])) {
-            // Update last login
-            $updateStmt = $this->db->prepare("UPDATE customers SET last_login = NOW(), login_count = login_count + 1 WHERE id = :id");
-            $updateStmt->execute([":id" => $customer["id"]]);
-
-            return $customer;
+            return ["success" => true, "customer_code" => $customerCode, "user_id" => $userId];
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            error_log("Customer registration failed: " . $e->getMessage());
+            return ["success" => false, "message" => "Registration failed"];
         }
-
-        return false;
-    }
-
-    public function register($data)
-    {
-        // Check if email already exists
-        $stmt = $this->db->prepare("SELECT id FROM customers WHERE email = :email");
-        $stmt->execute([":email" => $data["email"]]);
-
-        if ($stmt->fetch()) {
-            return ["success" => false, "message" => "Email already exists"];
-        }
-
-        // Generate customer code
-        $customerCode = "CUS" . str_pad(mt_rand(1, 999999), 6, "0", STR_PAD_LEFT);
-
-        // Insert customer
-        $stmt = $this->db->prepare("INSERT INTO customers (
-            customer_code, first_name, last_name, email, phone, password,
-            date_of_birth, gender, marital_status, occupation, annual_income,
-            permanent_address, current_address, city, state, pincode, country,
-            preferred_property_type, preferred_location, budget_range_min, budget_range_max,
-            preferred_area_min, preferred_area_max, account_type, company_name, gst_number,
-            status, created_at
-        ) VALUES (
-            :customer_code, :first_name, :last_name, :email, :phone, :password,
-            :date_of_birth, :gender, :marital_status, :occupation, :annual_income,
-            :permanent_address, :current_address, :city, :state, :pincode, :country,
-            :preferred_property_type, :preferred_location, :budget_range_min, :budget_range_max,
-            :preferred_area_min, :preferred_area_max, :account_type, :company_name, :gst_number,
-            :status, NOW()
-        )");
-
-        $stmt->execute([
-            ":customer_code" => $customerCode,
-            ":first_name" => $data["first_name"],
-            ":last_name" => $data["last_name"],
-            ":email" => $data["email"],
-            ":phone" => $data["phone"],
-            ":password" => password_hash($data["password"], PASSWORD_DEFAULT),
-            ":date_of_birth" => $data["date_of_birth"] ?? null,
-            ":gender" => $data["gender"] ?? null,
-            ":marital_status" => $data["marital_status"] ?? null,
-            ":occupation" => $data["occupation"] ?? null,
-            ":annual_income" => $data["annual_income"] ?? null,
-            ":status" => "pending",
-            ":permanent_address" => $data["permanent_address"] ?? null,
-            ":current_address" => $data["current_address"] ?? null,
-            ":city" => $data["city"] ?? null,
-            ":state" => $data["state"] ?? null,
-            ":pincode" => $data["pincode"] ?? null,
-            ":country" => $data["country"] ?? "India",
-            ":preferred_property_type" => $data["preferred_property_type"] ?? null,
-            ":preferred_location" => $data["preferred_location"] ?? null,
-            ":budget_range_min" => $data["budget_range_min"] ?? null,
-            ":budget_range_max" => $data["budget_range_max"] ?? null,
-            ":preferred_area_min" => $data["preferred_area_min"] ?? null,
-            ":preferred_area_max" => $data["preferred_area_max"] ?? null,
-            ":account_type" => $data["account_type"] ?? "individual",
-            ":company_name" => $data["company_name"] ?? null,
-            ":gst_number" => $data["gst_number"] ?? null
-        ]);
-
-        return ["success" => true, "customer_code" => $customerCode];
     }
 
     public function getCustomer($id)
@@ -103,6 +58,13 @@ class CustomerService
     {
         $stmt = $this->db->prepare("SELECT * FROM customers WHERE email = :email");
         $stmt->execute([":email" => $email]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function getCustomerByUserId($userId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM customers WHERE user_id = :userId");
+        $stmt->execute([":userId" => $userId]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 

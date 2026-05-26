@@ -52,4 +52,10 @@ class CommissionAdminController extends AdminController
         $this->data['page_title'] = 'Commission Payouts';
         return $this->render('admin/commission/payouts');
     }
+
+    public function commissionsList()
+    {
+        $this->data['page_title'] = 'Commissions';
+        return $this->render('admin/commissions/index');
+    }
 }

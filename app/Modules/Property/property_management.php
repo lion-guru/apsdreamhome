@@ -196,7 +196,7 @@ $associates_result = $conn->query($associates_query);
 $associates = $associates_result->fetch_all(MYSQLI_ASSOC);
 
 // Get customers for dropdown
-$customers_query = "SELECT id, name FROM customers LIMIT 100";
+$customers_query = "SELECT id, name FROM users WHERE role = 'customer' OR user_type = 'customer' LIMIT 100";
 $customers_result = $conn->query($customers_query);
 $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
 ?>

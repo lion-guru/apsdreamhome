@@ -4,35 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - Page Not Found | APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-        .card{background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-        .icon{width:80px;height:80px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem;color:#ef4444}
-        h1{font-size:3.5rem;font-weight:700;color:#1e293b;line-height:1}
-        h2{font-size:1.1rem;color:#64748b;font-weight:400;margin:8px 0 16px}
-        p{color:#94a3b8;font-size:.9rem;margin-bottom:24px;line-height:1.6}
-        .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#4f46e5;color:#fff;text-decoration:none;border-radius:8px;font-weight:500;font-size:.9rem;transition:all .2s;margin:4px}
-        .btn:hover{background:#4338ca;transform:translateY(-1px)}
-        .btn-outline{background:transparent;color:#64748b;border:1px solid #e2e8f0}
-        .btn-outline:hover{background:#f8fafc;color:#1e293b}
-        .logo-text{font-size:.8rem;color:#c7d2fe;margin-top:24px}
-        .logo-text a{color:#a5b4fc;text-decoration:none}
+        body { background: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Inter', sans-serif; margin: 0; }
+        .error-card { text-align: center; padding: 60px 40px; max-width: 500px; }
+        .error-code { font-size: 120px; font-weight: 800; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 10px; }
+        .error-title { font-size: 24px; font-weight: 600; color: #1e293b; margin-bottom: 12px; }
+        .error-desc { color: #64748b; margin-bottom: 30px; font-size: 15px; line-height: 1.6; }
+        .error-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-radius: 8px; text-decoration: none; font-weight: 500; transition: all 0.3s; }
+        .error-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(102,126,234,0.4); color: #fff; }
+        .error-icon { font-size: 48px; color: #94a3b8; margin-bottom: 20px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon"><i class="fas fa-map-signs"></i></div>
-        <h1>404</h1>
-        <h2>Page Not Found</h2>
-        <p>The page you're looking for doesn't exist or has been moved. Let us help you find your way home.</p>
-        <div>
-            <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>" class="btn"><i class="fas fa-home"></i> Homepage</a>
-            <a href="<?php echo defined('BASE_URL') ? BASE_URL . '/properties' : '/properties'; ?>" class="btn btn-outline"><i class="fas fa-building"></i> Properties</a>
-        </div>
-        <div class="logo-text">APS Dream Home &mdash; <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>"><?php echo defined('BASE_URL') ? str_replace(['http://','https://'],'',BASE_URL) : 'Home'; ?></a></div>
+    <div class="error-card">
+        <div class="error-icon"><i class="fas fa-map-signs"></i></div>
+        <div class="error-code">404</div>
+        <div class="error-title">Page Not Found</div>
+        <div class="error-desc">The page you're looking for doesn't exist or has been moved. Let us help you find your dream property!</div>
+        <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>" class="error-btn">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
     </div>
 </body>
 </html>

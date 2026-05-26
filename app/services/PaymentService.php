@@ -217,7 +217,7 @@ class PaymentService
     }
     
     private function createNotification($paymentId, $type, $title, $message, $customerId = null) {
-        $stmt = $this->db->prepare("SELECT customer_email, customer_phone FROM customers WHERE id = ?");
+        $stmt = $this->db->prepare("SELECT u.email as customer_email, u.phone as customer_phone FROM customers c JOIN users u ON c.user_id = u.id WHERE c.id = ?");
         $stmt->execute([$customerId]);
         $customer = $stmt->fetch(PDO::FETCH_ASSOC);
         

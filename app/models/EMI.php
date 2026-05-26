@@ -191,10 +191,11 @@ class EMI extends Model
     public function getPlanDetails($id)
     {
         $db = self::getConnection();
-        $sql = "SELECT ep.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
+        $sql = "SELECT ep.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
                        p.title as property_title, p.location as property_location
                 FROM emi_plans ep
                 LEFT JOIN customers c ON ep.customer_id = c.id
+                LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN properties p ON ep.property_id = p.id
                 WHERE ep.id = ?";
 
@@ -330,16 +331,17 @@ class EMI extends Model
         $orderDir = $params['orderDir'] ?? 'DESC';
 
         // Base query
-        $sql = "SELECT ep.*, c.name as customer_name, p.title as property_title
+        $sql = "SELECT ep.*, u.name as customer_name, p.title as property_title
                 FROM emi_plans ep
                 LEFT JOIN customers c ON ep.customer_id = c.id
+                LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN properties p ON ep.property_id = p.id";
 
         $where = [];
         $bindings = [];
 
         if (!empty($search)) {
-            $where[] = "(c.name LIKE ? OR p.title LIKE ? OR ep.total_amount LIKE ? OR ep.status LIKE ?)";
+            $where[] = "(u.name LIKE ? OR p.title LIKE ? OR ep.total_amount LIKE ? OR ep.status LIKE ?)";
             $searchParam = "%$search%";
             $bindings = array_fill(0, 4, $searchParam);
         }
@@ -684,7 +686,7 @@ class EMI extends Model
         try {
             $sql = "SELECT 
                         fl.emi_plan_id,
-                        c.name as customer_name,
+                        u.name as customer_name,
                         p.title as property_title,
                         fl.status as foreclosure_status,
                         fl.foreclosure_amount,
@@ -693,12 +695,13 @@ class EMI extends Model
                         fl.waiver_amount,
                         fl.notes,
                         fl.attempted_at,
-                        u.auser as admin_name
+                        ad.auser as admin_name
                     FROM foreclosure_logs fl
                     JOIN emi_plans ep ON fl.emi_plan_id = ep.id
                     LEFT JOIN customers c ON ep.customer_id = c.id
+                    LEFT JOIN users u ON c.user_id = u.id
                     LEFT JOIN properties p ON ep.property_id = p.id
-                    LEFT JOIN admin u ON fl.attempted_by = u.id
+                    LEFT JOIN admin ad ON fl.attempted_by = ad.id
                     WHERE 1=1";
 
             $params = [];
@@ -730,18 +733,19 @@ class EMI extends Model
         $sql = "SELECT 
                     ep.id as emi_plan_id,
                     ep.customer_id,
-                    c.name as customer_name,
+                    u.name as customer_name,
                     p.title as property_title,
                     'success' as foreclosure_status,
                     ep.foreclosure_amount,
                     ep.foreclosure_date as attempted_at,
                     pay.created_by as foreclosed_by_id,
-                    u.auser as admin_name
+                    ad.auser as admin_name
                 FROM emi_plans ep
                 LEFT JOIN customers c ON ep.customer_id = c.id
+                LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN properties p ON ep.property_id = p.id
                 LEFT JOIN payments pay ON ep.foreclosure_payment_id = pay.id
-                LEFT JOIN admin u ON pay.created_by = u.aid
+                LEFT JOIN admin ad ON pay.created_by = ad.aid
                 WHERE ep.status = 'completed' AND ep.foreclosure_date IS NOT NULL";
 
         $params = [];
@@ -774,13 +778,14 @@ class EMI extends Model
     public function getInstallmentReceiptDetails($installmentId)
     {
         $db = self::getConnection();
-        $query = "SELECT ei.*, ep.*, c.name as customer_name, c.phone as customer_phone,
-                         c.email as customer_email, p.title as property_title,
+        $query = "SELECT ei.*, ep.*, u.name as customer_name, u.phone as customer_phone,
+                         u.email as customer_email, p.title as property_title,
                          p.address as property_address, p.location as property_location, py.transaction_id,
                          py.payment_method, py.description as payment_description
                   FROM emi_installments ei
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
                   JOIN customers c ON ep.customer_id = c.id
+                  JOIN users u ON c.user_id = u.id
                   JOIN properties p ON ep.property_id = p.id
                   LEFT JOIN payments py ON ei.payment_id = py.id
                   WHERE ei.id = ?";

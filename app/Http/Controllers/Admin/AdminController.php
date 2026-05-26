@@ -535,4 +535,10 @@ class AdminController extends BaseController
             $this->redirect('/admin/login');
         }
     }
+
+    public function devTools()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/dev-tools/index', ['page_title' => 'Developer Tools']);
+    }
 }

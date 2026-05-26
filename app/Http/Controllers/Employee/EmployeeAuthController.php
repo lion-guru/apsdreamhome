@@ -69,8 +69,8 @@ class EmployeeAuthController extends BaseController
                 throw new \Exception('Please fill in all fields');
             }
 
-            // Authenticate against database
-            $query = "SELECT * FROM employees WHERE email = ? AND status = 'active' LIMIT 1";
+            // Authenticate against unified users table
+            $query = "SELECT * FROM users WHERE email = ? AND role IN ('employee','manager') AND status = 'active' LIMIT 1";
             $employee = $this->db->fetchOne($query, [$email]);
 
             if ($employee && password_verify($password, $employee['password'])) {
@@ -79,7 +79,7 @@ class EmployeeAuthController extends BaseController
                 $_SESSION['employee_email'] = $employee['email'];
                 $_SESSION['employee_role'] = $employee['role'];
                 $_SESSION['employee_name'] = $employee['name'];
-                $_SESSION['employee_department'] = $employee['department'];
+                $_SESSION['employee_department'] = $employee['department'] ?? '';
                 $_SESSION['login_time'] = time();
                 $_SESSION['csrf_token'] = $this->getCsrfToken();
 
@@ -238,7 +238,7 @@ class EmployeeAuthController extends BaseController
         }
 
         $query = "SELECT id, name, email, role, department, profile_image 
-                 FROM employees 
+                 FROM users 
                  WHERE id = ? LIMIT 1";
         
         return $this->db->fetchOne($query, [$_SESSION['employee_id']]);
@@ -254,7 +254,7 @@ class EmployeeAuthController extends BaseController
                 throw new \Exception('Not logged in');
             }
 
-            $query = "UPDATE employees 
+            $query = "UPDATE users 
                       SET name = ?, phone = ?, address = ?, updated_at = NOW()
                       WHERE id = ?";
             
@@ -291,7 +291,7 @@ class EmployeeAuthController extends BaseController
             }
 
             // Get current employee
-            $query = "SELECT password FROM employees WHERE id = ? LIMIT 1";
+            $query = "SELECT password FROM users WHERE id = ? LIMIT 1";
             $employee = $this->db->fetchOne($query, [$_SESSION['employee_id']]);
 
             if (!$employee || !password_verify($currentPassword, $employee['password'])) {
@@ -300,7 +300,7 @@ class EmployeeAuthController extends BaseController
 
             // Update password
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $updateQuery = "UPDATE employees SET password = ?, updated_at = NOW() WHERE id = ?";
+            $updateQuery = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
             $this->db->execute($updateQuery, [$hashedPassword, $_SESSION['employee_id']]);
 
             return [

@@ -35,14 +35,15 @@ class ReportService
                         p.title as property_title,
                         p.location,
                         a.name as associate_name,
-                        c.name as customer_name,
-                        c.email as customer_email,
+                        u.name as customer_name,
+                        u.email as customer_email,
                         s.commission_amount,
                         s.status
                     FROM sales s
                     LEFT JOIN properties p ON s.property_id = p.id
                     LEFT JOIN associates a ON s.associate_id = a.id
                     LEFT JOIN customers c ON s.customer_id = c.id
+                    LEFT JOIN users u ON c.user_id = u.id
                     WHERE s.sale_date BETWEEN :start_date AND :end_date
                     ORDER BY s.sale_date DESC";
             
@@ -209,8 +210,9 @@ class ReportService
                         AVG(s.sale_amount) as average_purchase,
                         MAX(s.sale_date) as last_purchase_date,
                         c.created_at as registration_date
-                    FROM customers c
-                    LEFT JOIN sales s ON c.id = s.customer_id 
+                    FROM users c
+                    LEFT JOIN sales s ON c.id = s.customer_id
+                    WHERE c.role = 'customer' 
                         AND s.sale_date BETWEEN :start_date AND :end_date
                     GROUP BY c.id
                     ORDER BY total_spent DESC";
@@ -288,8 +290,8 @@ class ReportService
             // Customer data
             $customerSql = "SELECT 
                               COUNT(*) as new_customers
-                          FROM customers 
-                          WHERE created_at BETWEEN :start_date AND :end_date";
+                          FROM users 
+                          WHERE role = 'customer' AND created_at BETWEEN :start_date AND :end_date";
             
             $stmt = $this->database->prepare($customerSql);
             $stmt->bindParam(':start_date', $startDate);

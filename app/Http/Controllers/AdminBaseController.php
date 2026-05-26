@@ -86,17 +86,9 @@ class AdminBaseController extends BaseController
             );
             
             if (!$user) {
-                // Try admin_users table
+                // Unified users table covers all roles
                 $user = $this->db->fetch(
-                    "SELECT * FROM admin_users WHERE id = ? AND status = 'active'",
-                    [$userId]
-                );
-            }
-            
-            if (!$user) {
-                // Try employees table
-                $user = $this->db->fetch(
-                    "SELECT * FROM employees WHERE id = ? AND status = 'active'",
+                    "SELECT * FROM users WHERE id = ? AND status = 'active'",
                     [$userId]
                 );
             }

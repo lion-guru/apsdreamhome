@@ -33,14 +33,15 @@ function getPropertyById($conn, $id) {
 }
 
 function getCustomerById($conn, $id) {
-    $sql = "SELECT * FROM customers WHERE id = ?";
+    $sql = "SELECT * FROM users WHERE id = ?";
     return $conn->fetchOne($sql, [$id]);
 }
 
 function getBookingById($conn, $id) {
-    $sql = "SELECT b.*, c.name as customer_name, p.title as property_title
+    $sql = "SELECT b.*, u.name as customer_name, p.title as property_title
             FROM bookings b
             LEFT JOIN customers c ON b.customer_id = c.id
+            LEFT JOIN users u ON c.user_id = u.id
             LEFT JOIN properties p ON b.property_id = p.id
             WHERE b.id = ?";
     return $conn->fetchOne($sql, [$id]);

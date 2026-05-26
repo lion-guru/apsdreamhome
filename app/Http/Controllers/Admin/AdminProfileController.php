@@ -39,13 +39,6 @@ class AdminProfileController extends AdminController
                     "SELECT * FROM users WHERE id = ? AND status = 'active'",
                     [$userId]
                 );
-
-                if (!$user) {
-                    $user = $this->db->fetch(
-                        "SELECT * FROM admin_users WHERE id = ? AND status = 'active'",
-                        [$userId]
-                    );
-                }
             } catch (\Exception $e) {
                 error_log("Error getting user: " . $e->getMessage());
             }
@@ -181,26 +174,14 @@ class AdminProfileController extends AdminController
 
             $user = $db->fetch("SELECT password FROM users WHERE id = ?", [$userId]);
 
-            if (!$user) {
-                $user = $db->fetch("SELECT password_hash FROM admin_users WHERE id = ?", [$userId]);
-                $passwordField = 'password_hash';
-            } else {
-                $passwordField = 'password';
-            }
-
-            if ($user && !empty($user[$passwordField]) && !password_verify($currentPassword, $user[$passwordField])) {
+            if ($user && !empty($user['password']) && !password_verify($currentPassword, $user['password'])) {
                 $_SESSION['error'] = 'Current password is incorrect.';
                 header('Location: ' . BASE_URL . '/admin/profile/security');
                 exit;
             }
 
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-
-            if ($passwordField === 'password_hash') {
-                $db->update("UPDATE admin_users SET password_hash = ?, updated_at = NOW() WHERE id = ?", [$hashedPassword, $userId]);
-            } else {
-                $db->update("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?", [$hashedPassword, $userId]);
-            }
+            $db->update("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?", [$hashedPassword, $userId]);
 
             $_SESSION['success'] = 'Password changed successfully.';
             header('Location: ' . BASE_URL . '/admin/profile/security');

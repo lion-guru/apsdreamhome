@@ -34,9 +34,10 @@ class Visit extends Model
      */
     public function getUpcoming($limit = 10)
     {
-        $sql = "SELECT v.*, c.name as customer_name, p.title as property_title 
+        $sql = "SELECT v.*, u.name as customer_name, p.title as property_title 
                 FROM property_visits v
                 JOIN customers c ON v.customer_id = c.id
+                JOIN users u ON c.user_id = u.id
                 JOIN properties p ON v.property_id = p.id
                 WHERE v.visit_date >= NOW() AND v.status != 'cancelled'
                 ORDER BY v.visit_date ASC LIMIT ?";

@@ -70,10 +70,11 @@ class EMIAutomationService
         $stmt->execute();
 
         // Get overdue installments for notification
-        $query = "SELECT ei.*, ep.customer_id, c.name as customer_name, c.email as customer_email, p.title as property_title
+        $query = "SELECT ei.*, ep.customer_id, u.name as customer_name, u.email as customer_email, p.title as property_title
                   FROM emi_installments ei
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
                   JOIN customers c ON ep.customer_id = c.id
+                  JOIN users u ON c.user_id = u.id
                   JOIN properties p ON ep.property_id = p.id
                   WHERE ei.payment_status = 'overdue'
                   AND (ei.last_reminder_date IS NULL 
@@ -124,11 +125,12 @@ class EMIAutomationService
     public function sendUpcomingPaymentReminders()
     {
         // Get installments due in next 3 days
-        $query = "SELECT ei.*, ep.customer_id, c.name as customer_name, 
-                         c.email as customer_email, p.title as property_title
+        $query = "SELECT ei.*, ep.customer_id, u.name as customer_name, 
+                         u.email as customer_email, p.title as property_title
                   FROM emi_installments ei
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
                   JOIN customers c ON ep.customer_id = c.id
+                  JOIN users u ON c.user_id = u.id
                   JOIN properties p ON ep.property_id = p.id
                   WHERE ei.payment_status = 'pending'
                   AND ei.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
@@ -181,12 +183,13 @@ class EMIAutomationService
         // Get plans with 3 or more consecutive overdue installments
         $query = "SELECT ep.*, 
                          COUNT(ei.id) as overdue_count,
-                         c.name as customer_name,
-                         c.email as customer_email,
+                         u.name as customer_name,
+                         u.email as customer_email,
                          p.title as property_title
                   FROM emi_plans ep
                   JOIN emi_installments ei ON ep.id = ei.emi_plan_id
                   JOIN customers c ON ep.customer_id = c.id
+                  JOIN users u ON c.user_id = u.id
                   JOIN properties p ON ep.property_id = p.id
                   WHERE ep.status = 'active'
                   AND ei.payment_status = 'overdue'

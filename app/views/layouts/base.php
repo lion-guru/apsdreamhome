@@ -131,6 +131,9 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
 <body>
     <?php
+    // Mark document as started so header.php doesn't emit duplicate DOCTYPE/head/body
+    $GLOBALS['_html_doc_started'] = true;
+
     // Admin pages skip public header entirely
     $isAdminPage = isset($admin_layout) && $admin_layout === true;
     $isPremiumPage = isset($premium_layout) && $premium_layout === true;
@@ -150,6 +153,8 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
     <?php
     if (!$isAdminPage) {
+        // Tell footer.php NOT to close the document — base.php handles it
+        $GLOBALS['_layout_handles_close'] = true;
         if ($isPremiumPage) {
             include __DIR__ . '/active/footer_new.php';
         } else {

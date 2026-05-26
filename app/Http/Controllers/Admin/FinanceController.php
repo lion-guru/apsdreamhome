@@ -6,9 +6,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
-
-class FinanceController extends BaseController
+class FinanceController extends AdminController
 {
     /**
      * Dashboard
@@ -161,5 +159,11 @@ class FinanceController extends BaseController
     {
         $this->requireAdmin();
         return $this->render('admin/finance/reports', []);
+    }
+
+    public function adminAccounts()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/accounts/index', ['page_title' => 'Accounts']);
     }
 }

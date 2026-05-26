@@ -2,46 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-class LocationAdminController
+class LocationAdminController extends AdminController
 {
-    private $db;
-
-    public function __construct()
-    {
-        @session_start();
-        $this->db = \App\Core\Database\Database::getInstance();
-        $authenticated = isset($_SESSION['admin_id']) || (isset($_SESSION['user_id']) && isset($_SESSION['user_role']));
-        if (!$authenticated) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-        $role = $_SESSION['user_role'] ?? $_SESSION['admin_role'] ?? '';
-        if (!in_array($role, ['admin', 'employee', 'super_admin'])) {
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-    }
-
-    // Check if user is logged in and has admin access
-    private function checkAuth()
-    {
-        @session_start();
-        if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
-            header('Location: /admin/login');
-            exit();
-        }
-
-        if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'employee') {
-            header('Location: /admin/login');
-            exit();
-        }
-    }
 
     // States Management
     public function index()
     {
-        $this->checkAuth();
-
         // Get all states with district count
         $sql = "SELECT s.*, COUNT(d.id) as district_count 
                 FROM states s 
@@ -52,12 +18,12 @@ class LocationAdminController
         $stmt = $this->db->query($sql);
         $states = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        include __DIR__ . '/../../../views/admin/locations/states/index.php';
+        $this->render('admin/locations/states/index', ['states' => $states]);
     }
 
     public function createState()
     {
-        $this->checkAuth();
+        
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name = trim($_POST['name']);
@@ -83,12 +49,12 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../../views/admin/locations/states/create.php';
+        $this->render('admin/locations/states/create', []);
     }
 
     public function editState($id)
     {
-        $this->checkAuth();
+        
 
         $stmt = $this->db->prepare("SELECT * FROM states WHERE id = ?");
         $stmt->execute([$id]);
@@ -125,12 +91,12 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../../views/admin/locations/states/edit.php';
+        $this->render('admin/locations/states/edit', ['state' => $state ?? null]);
     }
 
     public function deleteState($id)
     {
-        $this->checkAuth();
+        
 
         try {
             $stmt = $this->db->prepare("DELETE FROM states WHERE id = ?");
@@ -148,7 +114,7 @@ class LocationAdminController
     // Districts Management
     public function districts()
     {
-        $this->checkAuth();
+        
 
         $state_id = $_GET['state_id'] ?? null;
 
@@ -178,12 +144,12 @@ class LocationAdminController
         // Get all states for filter using models
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
 
-        include __DIR__ . '/../../../views/admin/locations/districts/index.php';
+        $this->render('admin/locations/districts/index', ['districts' => $districts, 'states' => $states]);
     }
 
     public function createDistrict()
     {
-        $this->checkAuth();
+        
 
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
 
@@ -212,12 +178,12 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../../views/admin/locations/districts/create.php';
+        $this->render('admin/locations/districts/create', ['states' => $states]);
     }
 
     public function editDistrict($id)
     {
-        $this->checkAuth();
+        
 
         $stmt = $this->db->prepare("SELECT d.*, s.name as state_name FROM districts d LEFT JOIN states s ON d.state_id = s.id WHERE d.id = ?");
         $stmt->execute([$id]);
@@ -257,12 +223,12 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../../views/admin/locations/districts/edit.php';
+        $this->render('admin/locations/districts/edit', ['district' => $district ?? null, 'states' => $states]);
     }
 
     public function deleteDistrict($id)
     {
-        $this->checkAuth();
+        
 
         try {
             $stmt = $this->db->prepare("DELETE FROM districts WHERE id = ?");
@@ -280,7 +246,7 @@ class LocationAdminController
     // Colonies Management
     public function colonies()
     {
-        $this->checkAuth();
+        
 
         $district_id = $_GET['district_id'] ?? null;
         $state_id = $_GET['state_id'] ?? null;
@@ -319,12 +285,12 @@ class LocationAdminController
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
         $districts = \App\Models\District::getWithStateName(['id', 'name', 'state_id'], true);
 
-        include __DIR__ . '/../../../views/admin/locations/colonies/index.php';
+        $this->render('admin/locations/colonies/index', ['colonies' => $colonies, 'districts' => $districts, 'states' => $states]);
     }
 
     public function createColony()
     {
-        $this->checkAuth();
+        
 
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
         $districts = \App\Models\District::getWithStateName(['id', 'name', 'state_id'], true);
@@ -362,12 +328,12 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../../views/admin/locations/colonies/create.php';
+        $this->render('admin/locations/colonies/create', ['districts' => $districts, 'states' => $states]);
     }
 
     public function editColony($id)
     {
-        $this->checkAuth();
+        
 
         $stmt = $this->db->prepare("SELECT c.*, d.name as district_name, s.name as state_name FROM colonies c LEFT JOIN districts d ON c.district_id = d.id LEFT JOIN states s ON d.state_id = s.id WHERE c.id = ?");
         $stmt->execute([$id]);
@@ -416,12 +382,12 @@ class LocationAdminController
             }
         }
 
-        include __DIR__ . '/../../../views/admin/locations/colonies/edit.php';
+        $this->render('admin/locations/colonies/edit', ['colony' => $colony ?? null, 'districts' => $districts]);
     }
 
     public function deleteColony($id)
     {
-        $this->checkAuth();
+        
 
         try {
             $stmt = $this->db->prepare("DELETE FROM colonies WHERE id = ?");
@@ -439,7 +405,7 @@ class LocationAdminController
     // API endpoints for AJAX calls
     public function getDistrictsByState($state_id)
     {
-        $this->checkAuth();
+        
 
         header('Content-Type: application/json');
 
@@ -451,7 +417,7 @@ class LocationAdminController
 
     public function getColoniesByDistrict($district_id)
     {
-        $this->checkAuth();
+        
 
         header('Content-Type: application/json');
 
