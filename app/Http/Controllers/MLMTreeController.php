@@ -10,12 +10,23 @@ namespace App\Http\Controllers;
 require_once __DIR__ . '/BaseController.php';
 
 use App\Core\Database\Database;
+use App\Http\Controllers\Admin\AdminController;
 
-class MLMTreeController extends BaseController
+class MLMTreeController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
+        $isAdmin = isset($_SESSION['admin_id']);
+        $isAssociate = isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'associate';
+        $isCustomer = isset($_SESSION['user_id']);
+        if (!$isAdmin && !$isAssociate && !$isCustomer) {
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/associate/login');
+            exit;
+        }
         $this->db = Database::getInstance();
     }
 
@@ -24,14 +35,7 @@ class MLMTreeController extends BaseController
      */
     public function tree()
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
-        $viewPath = __DIR__ . '/../views/admin/mlm/tree.php';
-        if (file_exists($viewPath)) {
-            include $viewPath;
-        } else {
-            echo "<h2>MLM Tree</h2><p>Tree view not available. Please ensure the view file exists.</p>";
-            echo "<a href='" . $base . "/admin/dashboard' class='btn btn-primary'>Back to Dashboard</a>";
-        }
+        return $this->render('admin/mlm/tree', ['page_title' => 'MLM Tree']);
     }
 
     /**

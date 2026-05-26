@@ -39,7 +39,7 @@
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">Net Profit</h6>
                     <h3>₹<?php echo number_format(floatval($profit_analysis['net_profit'] ?? 0) ?? 0); ?></h3>
-                    <p class="text-success mb-0"><i class="fas fa-chart-line me-1"></i>Profit Margin: <?php echo $profit_analysis['gross_revenue'] > 0 ? number_format(($profit_analysis['net_profit'] / $profit_analysis['gross_revenue']) * 100, 1) : 0; ?>%</p>
+                    <p class="text-success mb-0"><i class="fas fa-chart-line me-1"></i>Profit Margin: <?php echo ($profit_analysis['gross_revenue'] ?? 0) > 0 ? number_format((($profit_analysis['net_profit'] ?? 0) / ($profit_analysis['gross_revenue'] ?? 1)) * 100, 1) : 0; ?>%</p>
                 </div>
             </div>
         </div>
@@ -147,7 +147,7 @@
         // Revenue Chart
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
         const revenueData = <?php echo json_encode(array_map(function ($item) {
-                                return ['date' => $item['date'], 'revenue' => $item['daily_revenue']];
+                                return ['date' => $item['date'] ?? date('Y-m-d'), 'revenue' => $item['daily_revenue'] ?? ($item['revenue'] ?? 0)];
                             }, array_fill(0, 30, ['date' => date('Y-m-d'), 'revenue' => 0]))); ?>;
 
         new Chart(revenueCtx, {

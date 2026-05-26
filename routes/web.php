@@ -1000,17 +1000,13 @@ $router->get('/api/fraud/dashboard', 'MLController@fraudDashboard');
 // Admin Network MLM
 $router->get('/admin/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
 $router->get('/admin/network/genealogy', 'App\\Http\\Controllers\\Admin\\NetworkController@genealogy');
-$router->get('/admin/network/ranks', function () {
-    require __DIR__ . '/../app/views/admin/network/ranks.php';
-});
+$router->get('/admin/network/ranks', 'App\\Http\\Controllers\\Admin\\NetworkController@ranks');
 
 // Admin Payouts
 $router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@payouts');
 
 // Admin Payments
-$router->get('/admin/payments', function () {
-    require __DIR__ . '/../app/views/admin/payments/index.php';
-});
+$router->get('/admin/payments', 'App\\Http\\Controllers\\Admin\\PaymentController@index');
 
 // Admin EMI
 $router->get('/admin/emi', 'App\\Http\\Controllers\\Admin\\EMIController@index');
@@ -1030,9 +1026,7 @@ $router->get('/admin/tasks', 'App\\Http\\Controllers\\Admin\\TaskController@inde
 $router->get('/admin/support_tickets', 'App\\Http\\Controllers\\Admin\\SupportTicketController@index');
 
 // Admin Media
-$router->get('/admin/media', function () {
-    require __DIR__ . '/../app/views/admin/media/index.php';
-});
+$router->get('/admin/media', 'App\\Http\\Controllers\\Admin\\MediaController@index');
 
 // Admin Careers
 $router->get('/admin/careers', 'App\\Http\\Controllers\\Admin\\CareerController@index');
@@ -1045,15 +1039,17 @@ $router->post('/admin/careers/{id}/destroy', 'App\\Http\\Controllers\\Admin\\Car
 $router->get('/admin/careers/stats', 'App\\Http\\Controllers\\Admin\\CareerController@getStats');
 
 // Admin AI
-$router->get('/admin/ai', function () {
-    require __DIR__ . '/../app/views/admin/ai/hub.php';
-});
-$router->get('/admin/ai/analytics', function () {
-    require __DIR__ . '/../app/views/admin/ai/analytics.php';
-});
+$router->get('/admin/ai', 'App\\Http\\Controllers\\Admin\\AiController@hub');
+$router->get('/admin/ai/analytics', 'App\\Http\\Controllers\\Admin\\AiController@analytics');
 
 // Admin Resell Properties
 $router->get('/admin/resell-properties', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@index');
+$router->get('/admin/resell-properties/create', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@create');
+$router->get('/admin/resell-properties/edit/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@edit');
+$router->get('/admin/resell-properties/view/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@details');
+$router->get('/admin/resell-properties/images/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@images');
+$router->get('/admin/resell-properties/status/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@status');
+$router->get('/admin/resell-properties/commission/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@commission');
 
 // Include additional admin routes
 require_once __DIR__ . '/admin_routes.php';
@@ -1067,24 +1063,16 @@ $router->post('/admin/colonies/{id}/update', 'App\\Http\\Controllers\\Admin\\Col
 $router->post('/admin/colonies/{id}/destroy', 'App\\Http\\Controllers\\Admin\\ColonyController@destroy');
 
 // Employees Management
-$router->get('/admin/employees', function () {
-    require __DIR__ . '/../app/views/admin/employees/index.php';
-});
+$router->get('/admin/employees', 'App\\Http\\Controllers\\Admin\\HRMController@employeeList');
 
 // Commissions Management
-$router->get('/admin/commissions', function () {
-    require __DIR__ . '/../app/views/admin/commissions/index.php';
-});
+$router->get('/admin/commissions', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@commissionsList');
 
 // Accounts/Financial Management
-$router->get('/admin/accounts', function () {
-    require __DIR__ . '/../app/views/admin/accounts/index.php';
-});
+$router->get('/admin/accounts', 'App\\Http\\Controllers\\Admin\\FinanceController@adminAccounts');
 
 // Developer Tools
-$router->get('/admin/dev-tools', function () {
-    require __DIR__ . '/../app/views/admin/dev-tools/index.php';
-});
+$router->get('/admin/dev-tools', 'App\\Http\\Controllers\\Admin\\AdminController@devTools');
 
 // Missing sidebar menu items - Route stubs for DB-driven menu
 $router->get('/admin/finance', 'App\\Http\\Controllers\\Admin\\FinanceController@index');
@@ -1095,9 +1083,7 @@ $router->get('/admin/finance/create-expense', 'App\\Http\\Controllers\\Admin\\Fi
 $router->get('/admin/finance/payments', 'App\\Http\\Controllers\\Admin\\FinanceController@payments');
 $router->get('/admin/finance/calculator', 'App\\Http\\Controllers\\Admin\\FinanceController@calculator');
 $router->get('/admin/finance/reports', 'App\\Http\\Controllers\\Admin\\FinanceController@reports');
-$router->get('/admin/invoices', function () {
-    require __DIR__ . '/../app/views/admin/invoices/index.php';
-});
+$router->get('/admin/invoices', 'App\\Http\\Controllers\\Admin\\FinanceController@invoices');
 $router->get('/admin/invoices/view/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@viewInvoice');
 $router->get('/admin/invoices/download/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@downloadInvoice');
 $router->post('/admin/invoices/delete/{id}', function($id) {

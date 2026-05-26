@@ -254,10 +254,62 @@ class LeadService
                 return false;
             }
 
+            // Generate temporary password and hash it
+            $tempPassword = 'temp_' . rand(100000, 999999);
+            $hashedPassword = password_hash($tempPassword, PASSWORD_DEFAULT);
+            
+            // Generate customer ID and referral code
+            $customerId = 'CUS' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $referralCode = strtoupper(substr($lead['name'], 0, 3)) . date('ymd') . rand(100, 999);
+            
+            // Insert into users table first
+            $this->db->query(
+                "INSERT INTO users (
+                    name, email, phone, password, customer_id, referral_code,
+                    user_type, role, status, kyc_status, mlm_position,
+                    login_attempts, is_newsletter_subscribed, is_promotional_subscribed,
+                    rera_deduction_wallet, cumulative_sales, associate_payout_slab,
+                    mlm_points, wallet_balance, mlm_rank, commission_rate,
+                    mlm_target, experience_years, country, created_at, updated_at
+                ) VALUES (
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()
+                )",
+                [
+                    $lead['name'],
+                    $lead['email'],
+                    $lead['phone'],
+                    $hashedPassword,
+                    $customerId,
+                    $referralCode,
+                    'customer',  // user_type
+                    'user',      // role
+                    'active',    // status
+                    'pending',   // kyc_status
+                    'none',      // mlm_position
+                    0,           // login_attempts
+                    1,           // is_newsletter_subscribed
+                    1,           // is_promotional_subscribed
+                    0.00,        // rera_deduction_wallet
+                    0.00,        // cumulative_sales
+                    '5%',        // associate_payout_slab
+                    0,           // mlm_points
+                    0.00,        // wallet_balance
+                    'Associate', // mlm_rank
+                    6.00,        // commission_rate
+                    1000000.00,  // mlm_target
+                    0,           // experience_years
+                    'India'      // country
+                ]
+            );
+            
+            // Get the newly inserted user ID
+            $userId = $this->db->lastInsertId();
+            
+            // Insert into customers table with user_id link
             $stmt = $this->db->query(
-                "INSERT INTO customers (name, email, phone, created_at)
-                 VALUES (?, ?, ?, NOW())",
-                [$lead['name'], $lead['email'], $lead['phone']]
+                "INSERT INTO customers (user_id, name, email, phone, created_at)
+                  VALUES (?, ?, ?, ?, NOW())",
+                [$userId, $lead['name'], $lead['email'], $lead['phone']]
             );
 
             $customerId = $this->db->lastInsertId();

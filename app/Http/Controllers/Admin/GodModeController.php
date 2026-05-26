@@ -327,11 +327,11 @@ class GodModeController extends \App\Http\Controllers\BaseController
      */
     private function getCurrentAdmin()
     {
-        $adminId = $_SESSION['admin_user_id'] ?? null;
+        $adminId = $_SESSION['admin_id'] ?? $_SESSION['admin_user_id'] ?? null;
         if (!$adminId) return null;
 
         return $this->db->fetch(
-            "SELECT id, name, email, role FROM admin_users WHERE id = ? LIMIT 1",
+            "SELECT id, name, email, role FROM users WHERE id = ? LIMIT 1",
             [$adminId]
         );
     }

@@ -1,47 +1,47 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-class ResellPropertiesAdminController 
+class ResellPropertiesAdminController extends AdminController
 {
     public function index() 
     {
-        // Resell Properties Dashboard
-        include __DIR__ . "/../../../views/admin/resell_properties/index.php";
+        $this->requireAdmin();
+        return $this->render('admin/resell_properties/index', ['page_title' => 'Resell Properties']);
     }
     
     public function create() 
     {
-        // Create New Resell Property
-        include __DIR__ . "/../../../views/admin/resell_properties/create.php";
+        $this->requireAdmin();
+        return $this->render('admin/resell_properties/create', ['page_title' => 'Add Resell Property']);
     }
     
     public function edit($id) 
     {
-        // Edit Resell Property
-        include __DIR__ . "/../../../views/admin/resell_properties/edit.php";
+        $this->requireAdmin();
+        return $this->render('admin/resell_properties/edit', ['page_title' => 'Edit Resell Property', 'id' => $id]);
     }
     
-    public function view($id) 
+    public function details($id) 
     {
-        // View Resell Property Details
-        include __DIR__ . "/../../../views/admin/resell_properties/view.php";
+        $this->requireAdmin();
+        return $this->render('admin/resell_properties/view', ['page_title' => 'Resell Property Details', 'id' => $id]);
     }
     
     public function images($id) 
     {
-        // Manage Property Images
-        include __DIR__ . "/../../../views/admin/resell_properties/images.php";
+        $this->requireAdmin();
+        return $this->render('admin/resell_properties/images', ['page_title' => 'Property Images', 'id' => $id]);
     }
     
     public function status($id) 
     {
-        // Update Property Status
-        include __DIR__ . "/../../../views/admin/resell_properties/status.php";
+        $this->requireAdmin();
+        return $this->render('admin/resell_properties/status', ['page_title' => 'Update Status', 'id' => $id]);
     }
     
     public function commission($id) 
     {
-        // Manage Commission
-        include __DIR__ . "/../../../views/admin/resell_properties/commission.php";
+        $this->requireAdmin();
+        return $this->render('admin/resell_properties/commission', ['page_title' => 'Manage Commission', 'id' => $id]);
     }
 }

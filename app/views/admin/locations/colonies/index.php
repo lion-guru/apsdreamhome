@@ -94,8 +94,8 @@
                                     </td>
                                     <td>
                                         <small>
-                                            <?php echo htmlspecialchars($colony['state_name']); ?><br>
-                                            <?php echo htmlspecialchars($colony['district_name']); ?>
+                                            <?php echo htmlspecialchars($colony['state_name'] ?? ''); ?><br>
+                                            <?php echo htmlspecialchars($colony['district_name'] ?? ''); ?>
                                         </small>
                                     </td>
                                     <td>

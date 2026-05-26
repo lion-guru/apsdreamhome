@@ -40,12 +40,12 @@ class PropertyVisit extends Model {
         return static::query()
             ->select([
                 'v.*', 'p.title as property_name', 'p.location',
-                'u.uname as name', 'u.uemail as email'
+                'u.name as name', 'u.email as email'
             ])
             ->from(static::$table . ' as v')
             ->join('properties as p', 'v.property_id', '=', 'p.id')
             ->join('customers as c', 'v.customer_id', '=', 'c.id')
-            ->join('user as u', 'c.user_id', '=', 'u.uid')
+            ->join('users as u', 'c.user_id', '=', 'u.id')
             ->where('DATE(v.visit_date)', '=', \date('Y-m-d', \strtotime('+1 day')))
             ->where('v.status', 'confirmed')
             ->where('v.reminder_sent', 0)
@@ -60,12 +60,12 @@ class PropertyVisit extends Model {
         return static::query()
             ->select([
                 'v.*', 'p.title as property_name',
-                'u.uname as name', 'u.uemail as email'
+                'u.name as name', 'u.email as email'
             ])
             ->from(static::$table . ' as v')
             ->join('properties as p', 'v.property_id', '=', 'p.id')
             ->join('customers as c', 'v.customer_id', '=', 'c.id')
-            ->join('user as u', 'c.user_id', '=', 'u.uid')
+            ->join('users as u', 'c.user_id', '=', 'u.id')
             ->where('DATE(v.visit_date)', '=', \date('Y-m-d', \strtotime('-1 day')))
             ->where('v.status', 'completed')
             ->where('v.feedback_requested', 0)

@@ -25,13 +25,10 @@ class AdminAuthController extends BaseController
 
             if ($_GET['test_login'] == '2') {
                 // test_login=2 logs in as super_admin (admin_users ID 1)
-                $admin = $db->fetchOne("SELECT * FROM admin_users WHERE role = 'super_admin' ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'super_admin' ORDER BY id LIMIT 1");
             } elseif ($_GET['test_login'] == '1') {
                 // test_login=1 logs in as regular admin
-                $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' OR username = 'testadmin' LIMIT 1");
-                if (!$admin) {
-                    $admin = $db->fetchOne("SELECT * FROM users WHERE email = 'testadmin@example.com' AND role IN ('admin', 'super_admin') LIMIT 1");
-                }
+                $admin = $db->fetchOne("SELECT * FROM users WHERE (email = 'testadmin@example.com' OR name = 'testadmin') AND role IN ('admin','super_admin') LIMIT 1");
             }
 
             if (!$admin) {
@@ -103,10 +100,7 @@ class AdminAuthController extends BaseController
             @session_start();
             // Fetch actual admin from database
             $db = Database::getInstance();
-            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE email = 'testadmin@example.com' OR username = 'testadmin' LIMIT 1");
-            if (!$admin) {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE email = 'testadmin@example.com' AND role IN ('admin', 'super_admin') LIMIT 1");
-            }
+            $admin = $db->fetchOne("SELECT * FROM users WHERE (email = 'testadmin@example.com' OR name = 'testadmin') AND role IN ('admin','super_admin') LIMIT 1");
 
             $_SESSION['admin_id'] = $admin['id'] ?? 1;
             $_SESSION['admin_email'] = $admin['email'] ?? 'testadmin@example.com';
@@ -148,26 +142,8 @@ class AdminAuthController extends BaseController
             // Check database
             $db = Database::getInstance();
 
-            // Try admin_users table first
-            $admin = $db->fetchOne("SELECT * FROM admin_users WHERE username = ? OR email = ? LIMIT 1", [$email, $email]);
-            if ($admin && password_verify($password, $admin['password_hash'])) {
-                $_SESSION['admin_id'] = $admin['id'];
-                $_SESSION['admin_email'] = $admin['email'];
-                $_SESSION['admin_role'] = $admin['role'];
-                $_SESSION['admin_name'] = $admin['username'] ?? $admin['name'] ?? 'Admin';
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                // Set legacy session keys for controllers checking user_id/user_role
-                $_SESSION['user_id'] = $admin['id'];
-                $_SESSION['user_role'] = $admin['role'];
-                $_SESSION['user_email'] = $admin['email'];
-                $_SESSION['user_name'] = $admin['username'] ?? $admin['full_name'] ?? 'Admin';
-
-                header('Location: ' . BASE_URL . '/admin/dashboard');
-                exit;
-            }
-
-            // Try users table for admin/super_admin roles
-            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('admin', 'super_admin') LIMIT 1", [$email, $email]);
+            // Query users table for admin/super_admin roles
+            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('admin', 'super_admin', 'manager') LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['admin_id'] = $user['id'];
                 $_SESSION['admin_email'] = $user['email'];

@@ -70,7 +70,7 @@
                                     </td>
                                     <td>
                                         <a href="/admin/locations/districts?state_id=<?php echo $district['state_id']; ?>" class="btn btn-sm btn-outline-info">
-                                            <?php echo htmlspecialchars($district['state_name']); ?>
+                                            <?php echo htmlspecialchars($district['state_name'] ?? ''); ?>
                                         </a>
                                     </td>
                                     <td>

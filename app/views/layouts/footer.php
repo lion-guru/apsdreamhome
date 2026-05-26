@@ -75,7 +75,7 @@ unset($adService);
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none">Property Sales</a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/financial-services" class="text-light text-decoration-none">Home Loan Assistance</a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/interior-design" class="text-light text-decoration-none">Interior Design</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/legal-services" class="text-light text-decoration-none">Legal Services</a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/legal/services" class="text-light text-decoration-none">Legal Services</a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/resell" class="text-light text-decoration-none">Resell Properties</a></li>
                 </ul>
             </div>
@@ -155,3 +155,7 @@ document.getElementById('newsletterForm')?.addEventListener('submit', function(e
     });
 });
 </script>
+<?php if (isset($GLOBALS['_html_doc_started']) && !isset($GLOBALS['_layout_handles_close'])): ?>
+</body>
+</html>
+<?php endif; ?>

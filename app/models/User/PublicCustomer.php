@@ -12,7 +12,7 @@ use Exception;
 
 class PublicCustomer extends Model
 {
-    public static $table = 'customers';
+    public static $table = 'users';
     public $id;
     protected array $fillable = [
         'name',

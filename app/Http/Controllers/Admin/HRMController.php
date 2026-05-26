@@ -95,4 +95,10 @@ class HRMController extends AdminController
         $this->requireAdmin();
         return $this->render('admin/hrm/documents', []);
     }
+
+    public function employeeList()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/employees/index', ['page_title' => 'Employees']);
+    }
 }

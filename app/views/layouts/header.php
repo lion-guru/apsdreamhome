@@ -1,4 +1,18 @@
 <?php
+// Ensure proper HTML document structure (gated to prevent double output)
+if (!isset($GLOBALS['_html_doc_started'])) {
+    $GLOBALS['_html_doc_started'] = true;
+    $page_title = $page_title ?? 'APS Dream Home';
+    ?><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= htmlspecialchars($page_title) ?></title>
+</head>
+<body>
+<?php
+}
 if (!defined('BASE_URL')) {
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -437,6 +451,19 @@ try {
 
 <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/header.css" rel="stylesheet">
 <style>
+    /* Header background - not transparent */
+    .premium-header {
+        background: #ffffff;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    /* Slight transparency on scroll for modern look */
+    .premium-header.header-scrolled {
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
     /* Mobile menu enhancements */
     .navbar-toggler { border: none; padding: 8px; transition: transform .3s; }
     .navbar-toggler[aria-expanded="true"] { transform: rotate(90deg); }
@@ -525,8 +552,10 @@ try {
         // Scroll effect
         window.addEventListener('scroll', function() {
             if (window.scrollY > 50) {
+                header.classList.add('header-scrolled');
                 header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
             } else {
+                header.classList.remove('header-scrolled');
                 header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
             }
         });
