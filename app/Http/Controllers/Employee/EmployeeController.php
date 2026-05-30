@@ -493,6 +493,114 @@ class EmployeeController extends BaseController
         $this->render('employees/reporting_structure', $data);
     }
 
+    public function userProperties()
+    {
+        $this->middleware('employee.auth');
+
+        $status = $_GET['status'] ?? '';
+        $search = trim($_GET['search'] ?? '');
+        $page = (int)($_GET['page'] ?? 1);
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
+        $where = "WHERE 1=1";
+        $params = [];
+
+        if ($status) {
+            $where .= " AND up.status = ?";
+            $params[] = $status;
+        }
+
+        if ($search) {
+            $where .= " AND (up.name LIKE ? OR up.phone LIKE ? OR up.email LIKE ? OR up.address LIKE ?)";
+            $s = '%' . $search . '%';
+            $params[] = $s; $params[] = $s; $params[] = $s; $params[] = $s;
+        }
+
+        try {
+            $countSql = "SELECT COUNT(*) as total FROM user_properties up $where";
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0;
+        } catch (\Exception $e) {
+            $total = 0;
+        }
+        $totalPages = max(1, ceil($total / $perPage));
+
+        try {
+            $sql = "SELECT up.*, s.name as state_name, d.name as district_name FROM user_properties up LEFT JOIN states s ON up.state_id = s.id LEFT JOIN districts d ON up.district_id = d.id $where ORDER BY up.created_at DESC LIMIT $perPage OFFSET $offset";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $properties = [];
+        }
+
+        $data = [
+            'page_title' => 'User Properties - Employee',
+            'page_description' => 'Manage user-submitted properties',
+            'properties' => $properties,
+            'status' => $status,
+            'search' => $search,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total
+        ];
+        $this->render('employees/user_properties', $data);
+    }
+
+    public function updatePropertyStatus()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/employee/user-properties');
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        $action = $_POST['action'] ?? '';
+        $adminNotes = trim($_POST['admin_notes'] ?? '');
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+
+        if (!$id || !in_array($action, ['verify', 'approve', 'reject', 'mark_sold'])) {
+            $_SESSION['flash_error'] = 'Invalid request';
+            $this->redirect('/employee/user-properties');
+        }
+
+        $statusMap = ['verify' => 'verified', 'approve' => 'approved', 'reject' => 'rejected', 'mark_sold' => 'sold'];
+        $status = $statusMap[$action] ?? 'verified';
+
+        try {
+            if ($action === 'mark_sold') {
+                $this->db->execute("UPDATE user_properties SET status = ?, verified_by = ?, verified_at = NOW(), sold_at = NOW(), admin_notes = ?, updated_at = NOW() WHERE id = ?", [$status, $employeeId, $adminNotes, $id]);
+            } else {
+                $this->db->execute("UPDATE user_properties SET status = ?, verified_by = ?, verified_at = NOW(), admin_notes = ?, updated_at = NOW() WHERE id = ?", [$status, $employeeId, $adminNotes, $id]);
+            }
+
+            // Notify property owner
+            try {
+                $prop = $this->db->fetchOne("SELECT * FROM user_properties WHERE id = ?", [$id]);
+                if ($prop && !empty($prop['email'])) {
+                    $subjects = ['approved' => 'Your property has been approved!', 'rejected' => 'Your property listing has been rejected', 'verified' => 'Your property has been verified'];
+                    $msgs = ['approved' => "Congratulations! Your property '{$prop['name']}' has been approved and is now visible to buyers.", 'rejected' => "Your property '{$prop['name']}' has been rejected. Reason: $adminNotes", 'verified' => "Your property '{$prop['name']}' has been verified by our team."];
+                    $to = $prop['email'];
+                    $subject = $subjects[$action] ?? 'Property Status Update';
+                    $message = ($msgs[$action] ?? 'Your property status has been updated.') . "\n\nContact: +91 92771 21112 | info@apsdreamhome.com";
+                    @mail($to, $subject, $message, "From: info@apsdreamhome.com\r\nReply-To: info@apsdreamhome.com");
+                }
+            } catch (\Exception $e2) {
+                error_log("Employee property notification error: " . $e2->getMessage());
+            }
+
+            $_SESSION['flash_success'] = "Property #$id status updated to: $status";
+        } catch (\Exception $e) {
+            error_log("Employee property action error: " . $e->getMessage());
+            $_SESSION['flash_error'] = "Failed to update property status";
+        }
+
+        $this->redirect('/employee/user-properties');
+    }
+
     public function getTasks()
     {
         header('Content-Type: application/json');
