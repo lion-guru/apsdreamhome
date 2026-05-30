@@ -464,6 +464,8 @@ $router->get('/employee/documents', 'Employee\\EmployeeController@documents');
 $router->get('/employee/leaves', 'Employee\\EmployeeController@leaves');
 $router->get('/employee/reporting', 'Employee\\EmployeeController@reporting');
 $router->get('/employee/settings', 'Employee\\EmployeeController@dashboard');
+$router->get('/employee/user-properties', 'Employee\\EmployeeController@userProperties');
+$router->post('/employee/user-properties/action', 'Employee\\EmployeeController@updatePropertyStatus');
 
 // Employee Role-specific Dashboards
 $router->get('/employee/ca-dashboard', 'Employee\\CAController@dashboard');

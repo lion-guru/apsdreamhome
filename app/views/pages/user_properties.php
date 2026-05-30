@@ -93,9 +93,19 @@ $extraHead = '<style>
                                 <?php elseif ($p['status'] === 'approved'): ?>
                                     <a href="<?php echo BASE_URL; ?>/listing/<?php echo $p['id']; ?>" class="btn btn-sm btn-outline-primary" target="_blank">View Listing <i class="fas fa-external-link-alt ms-1"></i></a>
                                 <?php elseif ($p['status'] === 'rejected'): ?>
-                                    <span class="badge bg-danger">Rejected - Contact Us</span>
+                                    <span class="badge bg-danger">Rejected</span>
+                                <?php elseif ($p['status'] === 'verified'): ?>
+                                    <span class="badge bg-info">Verified</span>
+                                <?php elseif ($p['status'] === 'sold'): ?>
+                                    <span class="badge bg-dark">Sold</span>
                                 <?php endif; ?>
                             </div>
+                            <?php if (!empty($p['admin_notes'])): ?>
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <small class="text-muted d-block mb-1"><i class="fas fa-sticky-note me-1"></i>Admin Note:</small>
+                                <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($p['admin_notes'])); ?></p>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
