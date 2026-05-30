@@ -269,7 +269,7 @@ class AutomationTriggerService
     {
         // Get managers
         $managers = $this->db->fetchAll(
-            "SELECT id FROM users WHERE user_type IN ('admin', 'super_admin') AND status = 'active'"
+            "SELECT id FROM users WHERE role IN ('admin', 'super_admin') AND status = 'active'"
         );
         
         foreach ($managers as $manager) {
@@ -413,7 +413,7 @@ class AutomationTriggerService
     private function notifySalesTeam($leadId, $message)
     {
         $team = $this->db->fetchAll(
-            "SELECT id FROM users WHERE user_type IN ('admin', 'agent') AND status = 'active'"
+            "SELECT id FROM users WHERE role IN ('admin', 'agent') AND status = 'active'"
         );
         
         foreach ($team as $member) {

@@ -161,15 +161,15 @@ class EmployeeController extends BaseController
     private function getEmployeeAttendance($employeeId, $filters = [])
     {
         try {
-            $query = "SELECT * FROM attendance WHERE employee_id = ?";
+            $query = "SELECT * FROM employee_attendance WHERE employee_id = ?";
             $params = [$employeeId];
 
             if (!empty($filters['month'])) {
-                $query .= " AND MONTH(check_in) = ?";
+                $query .= " AND MONTH(attendance_date) = ?";
                 $params[] = $filters['month'];
             }
 
-            $query .= " ORDER BY check_in DESC LIMIT 30";
+            $query .= " ORDER BY attendance_date DESC, check_in DESC LIMIT 30";
 
             return $this->db->fetchAll($query, $params);
         } catch (Exception $e) {
@@ -204,7 +204,7 @@ class EmployeeController extends BaseController
             $checkInTime = date('Y-m-d H:i:s');
 
             // Check if already checked in today
-            $checkQuery = "SELECT id FROM attendance WHERE employee_id = ? AND DATE(check_in) = CURDATE()";
+            $checkQuery = "SELECT id FROM employee_attendance WHERE employee_id = ? AND attendance_date = CURDATE()";
             $existing = $this->db->fetchOne($checkQuery, [$employeeId]);
 
             if ($existing) {
@@ -212,7 +212,7 @@ class EmployeeController extends BaseController
             }
 
             // Insert attendance record
-            $query = "INSERT INTO attendance (employee_id, check_in, status) VALUES (?, ?, 'present')";
+            $query = "INSERT INTO employee_attendance (employee_id, attendance_date, check_in, attendance_status) VALUES (?, CURDATE(), ?, 'present')";
             $this->db->execute($query, [$employeeId, $checkInTime]);
 
             $this->jsonResponse([
@@ -239,14 +239,14 @@ class EmployeeController extends BaseController
             $checkOutTime = date('Y-m-d H:i:s');
 
             // Update today's attendance record
-            $query = "SELECT id FROM attendance WHERE employee_id = ? AND DATE(check_in) = CURDATE()";
+            $query = "SELECT id FROM employee_attendance WHERE employee_id = ? AND attendance_date = CURDATE()";
             $attendance = $this->db->fetchOne($query, [$employeeId]);
 
             if (!$attendance) {
                 throw new Exception('No check-in record found for today');
             }
 
-            $updateQuery = "UPDATE attendance SET check_out = ? WHERE id = ?";
+            $updateQuery = "UPDATE employee_attendance SET check_out = ? WHERE id = ?";
             $this->db->execute($updateQuery, [$checkOutTime, $attendance['id']]);
 
             $this->jsonResponse([

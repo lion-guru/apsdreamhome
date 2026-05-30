@@ -13,7 +13,7 @@ use DateTime;
  */
 class Leave extends Model
 {
-    protected $table = 'leave_requests';
+    protected $table = 'employee_leaves';
     protected $fillable = [
         'employee_id',
         'leave_type_id',
@@ -94,13 +94,13 @@ class Leave extends Model
      */
     public function getEmployeeRequests(int $employeeId, int $limit = 50, int $offset = 0): array
     {
-        $sql = "SELECT lr.*, lt.name as leave_type_name, lt.code as leave_type_code, lt.color as leave_type_color,
+        $sql = "SELECT el.*, lt.name as leave_type_name, lt.code as leave_type_code, lt.color as leave_type_color,
                        a.auser as approved_by_name
-                FROM leave_requests lr
-                LEFT JOIN leave_types lt ON lr.leave_type_id = lt.id
-                LEFT JOIN admin a ON lr.approved_by = a.aid
-                WHERE lr.employee_id = ?
-                ORDER BY lr.created_at DESC
+                FROM employee_leaves el
+                LEFT JOIN leave_types lt ON el.leave_type_id = lt.id
+                LEFT JOIN admin a ON el.approved_by = a.aid
+                WHERE el.employee_id = ?
+                ORDER BY el.created_at DESC
                 LIMIT ? OFFSET ?";
 
         $db = Database::getInstance();
@@ -115,15 +115,15 @@ class Leave extends Model
      */
     public function getPendingRequests(int $limit = 50, int $offset = 0): array
     {
-        $sql = "SELECT lr.*, lt.name as leave_type_name, lt.code as leave_type_code,
+        $sql = "SELECT el.*, lt.name as leave_type_name, lt.code as leave_type_code,
                        e.name as employee_name, e.employee_code,
                        d.name as department_name
-                FROM leave_requests lr
-                LEFT JOIN leave_types lt ON lr.leave_type_id = lt.id
-                LEFT JOIN employees e ON lr.employee_id = e.id
+                FROM employee_leaves el
+                LEFT JOIN leave_types lt ON el.leave_type_id = lt.id
+                LEFT JOIN employees e ON el.employee_id = e.id
                 LEFT JOIN departments d ON e.department_id = d.id
-                WHERE lr.status = 'pending'
-                ORDER BY lr.created_at ASC
+                WHERE el.status = 'pending'
+                ORDER BY el.created_at ASC
                 LIMIT ? OFFSET ?";
 
         $db = Database::getInstance();
@@ -290,7 +290,7 @@ class Leave extends Model
     private function hasConflictingRequests(int $employeeId, string $startDate, string $endDate): bool
     {
         $conflicts = $this->query(
-            "SELECT id FROM leave_requests
+            "SELECT id FROM employee_leaves
              WHERE employee_id = ? AND status IN ('pending', 'approved')
              AND ((start_date BETWEEN ? AND ?) OR (end_date BETWEEN ? AND ?) OR (start_date <= ? AND end_date >= ?))",
             [$employeeId, $startDate, $endDate, $startDate, $endDate, $startDate, $endDate]
@@ -322,10 +322,10 @@ class Leave extends Model
 
         $leaves = $this->query(
             "SELECT start_date, end_date, status, lt.name as leave_type, lt.color
-             FROM leave_requests lr
-             LEFT JOIN leave_types lt ON lr.leave_type_id = lt.id
-             WHERE lr.employee_id = ? AND lr.status = 'approved'
-             AND ((lr.start_date BETWEEN ? AND ?) OR (lr.end_date BETWEEN ? AND ?) OR (lr.start_date <= ? AND lr.end_date >= ?))",
+             FROM employee_leaves el
+             LEFT JOIN leave_types lt ON el.leave_type_id = lt.id
+             WHERE el.employee_id = ? AND el.status = 'approved'
+             AND ((el.start_date BETWEEN ? AND ?) OR (el.end_date BETWEEN ? AND ?) OR (el.start_date <= ? AND el.end_date >= ?))",
             [$employeeId, $startDate, $endDate, $startDate, $endDate, $startDate, $endDate]
         )->fetchAll();
 

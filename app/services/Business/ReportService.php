@@ -93,9 +93,9 @@ class ReportService
                 MAX(al.created_at) as last_activity
                 FROM users u
                 LEFT JOIN property_views pv ON u.id = pv.user_id
-                LEFT JOIN enquiries e ON u.id = e.user_id
+                LEFT JOIN inquiries e ON u.id = e.user_id
                 LEFT JOIN favorites f ON u.id = f.user_id
-                LEFT JOIN activity_log al ON u.id = al.user_id
+                LEFT JOIN activity_logs al ON u.id = al.user_id
                 WHERE 1=1";
             
             $params = [];
@@ -247,7 +247,7 @@ class ReportService
                 COUNT(CASE WHEN e.status = 'closed' THEN 1 END) as closed_enquiries,
                 ROUND(COUNT(CASE WHEN e.status = 'converted' THEN 1 END) * 100.0 / COUNT(*), 2) as conversion_rate,
                 COALESCE(AVG(CASE WHEN e.status = 'converted' THEN DATEDIFF(e.converted_date, e.created_at) END), 0) as avg_conversion_days
-                FROM enquiries e
+                FROM inquiries e
                 WHERE 1=1";
             
             $params = [];
@@ -426,7 +426,7 @@ class ReportService
                     COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_enquiries,
                     COUNT(CASE WHEN status = 'converted' THEN 1 END) as converted_enquiries,
                     COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as enquiries_this_month
-                FROM enquiries
+                FROM inquiries
             ");
 
             return [
@@ -449,7 +449,7 @@ class ReportService
     private function logActivity($action, $details = '')
     {
         try {
-            $sql = "INSERT INTO activity_log (user_id, action, details, ip_address, user_agent, created_at) 
+            $sql = "INSERT INTO activity_logs (user_id, action, details, ip_address, user_agent, created_at) 
                      VALUES (?, ?, ?, ?, ?, NOW())";
             
             $params = [

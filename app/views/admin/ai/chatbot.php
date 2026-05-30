@@ -1,23 +1,10 @@
 <?php
-/**
- * AI Chatbot Management View
- */
 $chatbot_stats = $chatbot_stats ?? [];
 $conversations = $conversations ?? [];
 $page_title = $page_title ?? 'AI Chatbot Management';
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title); ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container-fluid py-4">
+<div class="container-fluid py-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -78,7 +65,3 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

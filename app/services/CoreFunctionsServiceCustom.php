@@ -253,7 +253,7 @@ class CoreFunctionsServiceCustom
      */
     public static function getUserRole(): ?string
     {
-        return $_SESSION['user_role'] ?? null;
+        return $_SESSION['role'] ?? null;
     }
 
     /**

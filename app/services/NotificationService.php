@@ -4,11 +4,13 @@ namespace App\Services;
 
 use PDO;
 use Exception;
+use Twilio\Rest\Client;
 
 class NotificationService
 {
     private $db;
     private $settings;
+    private $twilioClient;
 
     public function __construct()
     {
@@ -225,13 +227,37 @@ class NotificationService
 
     private function sendSMSWithTwilio($to, $message)
     {
-        // This would integrate with Twilio library
-        // For now, simulate SMS sending
-        return [
-            "success" => true,
-            "message_id" => "sms_" . time() . "_" . mt_rand(1000, 9999),
-            "message" => "SMS sent successfully"
-        ];
+        try {
+            $accountSid = $this->settings['twilio_account_sid'] ?? getenv('TWILIO_ACCOUNT_SID');
+            $authToken = $this->settings['twilio_auth_token'] ?? getenv('TWILIO_AUTH_TOKEN');
+            $fromNumber = $this->settings['twilio_from_number'] ?? getenv('TWILIO_FROM_NUMBER');
+
+            if (!$accountSid || !$authToken || !$fromNumber) {
+                throw new Exception('Twilio not configured');
+            }
+
+            if (!$this->twilioClient) {
+                $this->twilioClient = new Client($accountSid, $authToken);
+            }
+
+            $sms = $this->twilioClient->messages->create($to['phone'], [
+                'from' => $fromNumber,
+                'body' => $message
+            ]);
+
+            return [
+                "success" => true,
+                "message_id" => $sms->sid,
+                "message" => "SMS sent successfully"
+            ];
+        } catch (Exception $e) {
+            error_log("Twilio SMS error: " . $e->getMessage());
+            return [
+                "success" => false,
+                "error" => $e->getMessage(),
+                "message" => "SMS sending failed: " . $e->getMessage()
+            ];
+        }
     }
 
     public function getNotificationStats()

@@ -242,6 +242,7 @@ class CampaignDeliveryService
      */
     private function generateEmailContent($campaign, $user)
     {
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         $template = "
         <html>
         <body style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;'>
@@ -256,7 +257,7 @@ class CampaignDeliveryService
         
         $template .= "
                 <div style='text-align: center; margin-top: 30px;'>
-                    <a href='http://localhost/apsdreamhome/campaigns/{$campaign['campaign_id']}' 
+                    <a href='{$baseUrl}/campaigns/{$campaign['campaign_id']}' 
                        style='background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;'>
                         Learn More
                     </a>

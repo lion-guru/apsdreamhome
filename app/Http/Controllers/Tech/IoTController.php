@@ -53,7 +53,7 @@ class IoTController extends BaseController
      */
     public function manageDevices()
     {
-        if (!$this->isLoggedIn() || (!$this->isAdmin() && !isset($_SESSION['user_role']))) {
+        if (!$this->isLoggedIn() || (!$this->isAdmin() && !isset($_SESSION['role']))) {
             $this->redirect(BASE_URL . 'login');
             return;
         }

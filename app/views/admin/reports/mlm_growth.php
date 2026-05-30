@@ -1,5 +1,4 @@
-<?php include APP_PATH . '/views/admin/layouts/header.php'; 
-
+<?php
 $report = $report ?? [
     'network_growth' => [],
     'top_performers' => [],

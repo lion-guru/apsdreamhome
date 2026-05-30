@@ -1402,7 +1402,7 @@ class RBACManager
             }
         }
 
-        return $_SESSION['admin_role'] ?? $_SESSION['user_role'] ?? null;
+        return $_SESSION['admin_role'] ?? $_SESSION['role'] ?? null;
     }
 
     /**
@@ -1411,7 +1411,7 @@ class RBACManager
     public static function setUserRole(string $role, ?string $userId = null): void
     {
         $_SESSION['admin_role'] = $role;
-        $_SESSION['user_role'] = $role;
+        $_SESSION['role'] = $role;
 
         if ($userId) {
             try {

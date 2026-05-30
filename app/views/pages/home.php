@@ -224,7 +224,33 @@ calcEMI();
             <p class="text-muted">Explore our premium projects across Uttar Pradesh</p>
         </div>
         <div class="row">
-            <?php if (!empty($featured_properties)): ?>
+            <?php
+            $hasProjects = !empty($featured_properties);
+            if (!$hasProjects):
+                // Fallback projects from database
+                $fallbackProjects = [
+                    ['title' => 'Suryoday Heights Phase 1', 'city' => 'Gorakhpur', 'price' => 'Starting ₹5.5 Lakhs', 'slug' => 'suryoday-colony', 'status' => 'Available', 'img' => 'gorakhpur/suryoday.jpg'],
+                    ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => 'Starting ₹7.5 Lakhs', 'slug' => 'raghunath-nagri', 'status' => 'Available', 'img' => 'gorakhpur/raghunath nagri motiram.JPG'],
+                    ['title' => 'Braj Radha Enclave', 'city' => 'Lucknow', 'price' => 'Starting ₹12 Lakhs', 'slug' => 'braj-radha-nagri', 'status' => 'Available', 'img' => 'gorakhpur/suryoday1.jpeg'],
+                    ['title' => 'Budh Bihar Colony', 'city' => 'Kushinagar', 'price' => 'Starting ₹3.5 Lakhs', 'slug' => 'budh-bihar-colony', 'status' => 'Available', 'img' => 'kushinagar/budh-bihar.jpg'],
+                ];
+                foreach ($fallbackProjects as $project):
+            ?>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="position-relative" style="height: 180px; overflow: hidden;">
+                            <img src="<?php echo BASE_URL; ?>/assets/images/projects/<?= $project['img'] ?>" class="w-100 h-100" style="object-fit: cover;" alt="<?= $project['title'] ?>" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                            <span class="badge bg-success position-absolute top-0 end-0 m-2"><?= $project['status'] ?></span>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold"><?= $project['title'] ?></h5>
+                            <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?= $project['city'] ?></p>
+                            <p class="h5 text-primary mb-3"><?= $project['price'] ?></p>
+                            <a href="<?php echo BASE_URL; ?>/colony/<?= $project['slug'] ?>" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; else: ?>
                 <?php foreach (array_slice($featured_properties, 0, 4) as $project): 
                     $slug = $project['slug'] ?? strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project['title']));
                     $imgPath = '/assets/images/projects/';
@@ -242,15 +268,15 @@ calcEMI();
                 ?>
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="card h-100 border-0 shadow-sm">
-                        <div class="position-relative" style="height: 180px;">
-                            <img src="<?php echo BASE_URL . $imgPath; ?>" class="img-fluid" class="w-100 h-100" style="object-fit: cover;" alt="<?php echo htmlspecialchars($project['title']); ?>" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                        <div class="position-relative" style="height: 180px; overflow: hidden;">
+                            <img src="<?php echo BASE_URL . $imgPath; ?>" class="w-100 h-100" style="object-fit: cover;" alt="<?php echo htmlspecialchars($project['title']); ?>" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <span class="badge bg-success position-absolute top-0 end-0 m-2"><?php echo $project['status']; ?></span>
                         </div>
                         <div class="card-body text-center">
                             <h5 class="card-title fw-bold"><?php echo htmlspecialchars($project['title']); ?></h5>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($project['city']); ?></p>
                             <p class="h5 text-primary mb-3"><?php echo $project['price']; ?></p>
-                            <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-outline-primary btn-sm">View Details</a>
+                            <a href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>" class="btn btn-outline-primary btn-sm">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -264,46 +290,242 @@ calcEMI();
 </section>
 
 <!-- Services -->
-<section class="py-5">
+<section class="py-5" style="background: #f8fafc;">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">Our Services</h2>
-            <p class="text-muted">Complete real estate solutions under one roof</p>
+            <span class="badge bg-primary px-3 py-2 mb-3">Our Expertise</span>
+            <h2 class="display-6 fw-bold">Complete Real Estate Services</h2>
+            <p class="text-muted lead">Ek hi roof ke neeche — har property solution!</p>
         </div>
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4">
-                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <i class="fas fa-hand-holding-usd fa-2x text-success"></i>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('loan')">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-wrapper mx-auto" style="background: rgba(16,185,129,0.1);">
+                            <i class="fas fa-hand-holding-usd fa-2x" style="color:#10b981;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Home Loan</h5>
+                        <p class="text-muted small">SBI, HDFC, ICICI, PNB, Axis — best rates, easy processing, doorstep service.</p>
+                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Starting 8.5% p.a.</span>
                     </div>
-                    <h5>Home Loan</h5>
-                    <p class="text-muted">SBI, HDFC, ICICI - Best rates & easy processing</p>
-                    <a href="<?php echo BASE_URL; ?>/financial-services" class="btn btn-outline-success btn-sm">Learn More</a>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4">
-                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <i class="fas fa-gavel fa-2x text-primary"></i>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('legal')">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-wrapper mx-auto" style="background: rgba(99,102,241,0.1);">
+                            <i class="fas fa-gavel fa-2x" style="color:#6366f1;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Legal Services</h5>
+                        <p class="text-muted small">Registry, Mutation, Sale Deed, Agreement — complete property documentation legally verified.</p>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">100% Legal</span>
                     </div>
-                    <h5>Legal Services</h5>
-                    <p class="text-muted">Registry, Mutation, Agreement - Complete documentation</p>
-                    <a href="<?php echo BASE_URL; ?>/legal-services" class="btn btn-outline-primary btn-sm">Learn More</a>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4">
-                    <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <i class="fas fa-couch fa-2x text-warning"></i>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('interior')">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-wrapper mx-auto" style="background: rgba(245,158,11,0.1);">
+                            <i class="fas fa-couch fa-2x" style="color:#f59e0b;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Interior Design</h5>
+                        <p class="text-muted small">Modular kitchen, wardrobe, false ceiling, flooring — complete home interiors.</p>
+                        <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">₹249/sqft</span>
                     </div>
-                    <h5>Interior Design</h5>
-                    <p class="text-muted">Modular kitchen, wardrobe, complete furnishing</p>
-                    <a href="<?php echo BASE_URL; ?>/interior-design" class="btn btn-outline-warning btn-sm">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('registry')">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-wrapper mx-auto" style="background: rgba(239,68,68,0.1);">
+                            <i class="fas fa-file-signature fa-2x" style="color:#ef4444;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Property Registry</h5>
+                        <p class="text-muted small">Complete property registration with sub-registrar. Mutation, certified copies, transfer.</p>
+                        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">Fast Track</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('rental')">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-wrapper mx-auto" style="background: rgba(139,92,246,0.1);">
+                            <i class="fas fa-file-contract fa-2x" style="color:#8b5cf6;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Rental Agreement</h5>
+                        <p class="text-muted small">11-month rental agreement, e-stamping, notarization. Landlord aur tenant dono ke liye.</p>
+                        <span class="badge bg-purple bg-opacity-10 text-purple px-3 py-2 rounded-pill">e-Stamped</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('tax')">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-wrapper mx-auto" style="background: rgba(6,182,212,0.1);">
+                            <i class="fas fa-file-invoice-dollar fa-2x" style="color:#06b6d4;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Property Tax</h5>
+                        <p class="text-muted small">Property tax calculation, payment, exemption. Municipal corporation ke saath complete support.</p>
+                        <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill">Online Pay</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Service Modal -->
+<div class="modal fade" id="serviceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+            <div class="modal-header border-0 p-4" id="serviceModalHeader" style="background: linear-gradient(135deg, #10b981, #059669);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-hand-holding-usd text-white fa-xl" id="serviceModalIcon"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title text-white fw-bold mb-1" id="serviceModalTitle">Service</h5>
+                        <p class="text-white-50 small mb-0" id="serviceModalSubtitle">Complete real estate services</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="serviceModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openServiceModal(service) {
+    var header = document.getElementById('serviceModalHeader');
+    var icon = document.getElementById('serviceModalIcon');
+    var title = document.getElementById('serviceModalTitle');
+    var subtitle = document.getElementById('serviceModalSubtitle');
+    var body = document.getElementById('serviceModalBody');
+
+    var services = {
+        loan: {
+            color: 'linear-gradient(135deg, #10b981, #059669)',
+            icon: 'fa-hand-holding-usd',
+            title: 'Home Loan Assistance',
+            subtitle: 'Best rates from all major banks — SBI, HDFC, ICICI, PNB, Axis, Kotak',
+            html: '<div class="row g-4">' +
+                '<div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-success me-2"></i>Why Choose Us?</h6>' +
+                '<ul class="list-unstyled"><li class="mb-2"><i class="fas fa-check text-success me-2"></i>Free loan consultation & eligibility check</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Compare rates from 12+ banks</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Documentation & processing support</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Doorstep service — aapke ghar aayenge</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Loan pre-approval in 24 hours</li></ul>' +
+                '<div class="bg-light rounded p-3 mt-3"><h6 class="fw-bold mb-2">Current Interest Rates</h6>' +
+                '<div class="d-flex justify-content-between mb-1"><span>SBI</span><span class="fw-bold text-success">8.50%</span></div>' +
+                '<div class="d-flex justify-content-between mb-1"><span>HDFC</span><span class="fw-bold text-success">8.55%</span></div>' +
+                '<div class="d-flex justify-content-between mb-1"><span>ICICI</span><span class="fw-bold text-success">8.55%</span></div>' +
+                '<div class="d-flex justify-content-between"><span>PNB</span><span class="fw-bold text-success">8.50%</span></div></div></div>' +
+                '<div class="col-md-5"><div class="bg-success bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">' +
+                '<i class="fas fa-calculator fa-3x text-success mb-3"></i><h5 class="fw-bold">Calculate EMI</h5>' +
+                '<p class="text-muted small">Use our free EMI calculator</p>' +
+                '<a href="#" class="btn btn-success" onclick="openToolModal(\'emi\');return false;"><i class="fas fa-calculator me-2"></i>Calculate Now</a>' +
+                '<hr class="my-3"><p class="small text-muted mb-1">📞 Call: +91 92771 21112</p>' +
+                '<p class="small text-muted mb-0">💬 <a href="https://wa.me/919277121112" target="_blank">WhatsApp</a></p></div></div></div>'
+        },
+        legal: {
+            color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            icon: 'fa-gavel',
+            title: 'Legal Services',
+            subtitle: 'Complete legal support for all property transactions',
+            html: '<div class="row g-4">' +
+                '<div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-primary me-2"></i>What We Offer</h6>' +
+                '<ul class="list-unstyled"><li class="mb-2"><i class="fas fa-check text-primary me-2"></i>Sale Deed drafting & registration</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-primary me-2"></i>Property title verification & due diligence</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-primary me-2"></i>Mutation of property records</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-primary me-2"></i>Rental / Lease agreement lawyer review</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-primary me-2"></i>Legal notice & dispute resolution</li></ul></div>' +
+                '<div class="col-md-5"><div class="bg-primary bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">' +
+                '<i class="fas fa-shield-halved fa-3x text-primary mb-3"></i><h5 class="fw-bold">100% Legal Protection</h5>' +
+                '<p class="text-muted small mb-1">Verified advocates & property experts</p>' +
+                '<hr><p class="small text-muted mb-0">📞 Call: +91 92771 21112</p></div></div></div>'
+        },
+        interior: {
+            color: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            icon: 'fa-couch',
+            title: 'Interior Design',
+            subtitle: 'Turnkey interiors — modern, modular, affordable',
+            html: '<div class="row g-4">' +
+                '<div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-warning me-2"></i>Services Include</h6>' +
+                '<ul class="list-unstyled"><li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Modular kitchen design & installation</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Wardrobe, cupboards & storage solutions</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-warning me-2"></i>False ceiling, lighting & flooring</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Wall painting, wallpaper & textures</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Complete home furnishing</li></ul>' +
+                '<div class="bg-light rounded p-3 mt-3"><h6 class="fw-bold mb-2">Starting Prices</h6>' +
+                '<div class="d-flex justify-content-between mb-1"><span>Basic</span><span class="fw-bold text-warning">₹249/sqft</span></div>' +
+                '<div class="d-flex justify-content-between mb-1"><span>Standard</span><span class="fw-bold text-warning">₹399/sqft</span></div>' +
+                '<div class="d-flex justify-content-between"><span>Premium</span><span class="fw-bold text-warning">₹599/sqft</span></div></div></div>' +
+                '<div class="col-md-5"><div class="bg-warning bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">' +
+                '<i class="fas fa-paint-roller fa-3x text-warning mb-3"></i><h5 class="fw-bold">Free Estimate</h5>' +
+                '<p class="text-muted small">Get a free interior design estimate</p></div></div></div>'
+        },
+        registry: {
+            color: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            icon: 'fa-file-signature',
+            title: 'Property Registry',
+            subtitle: 'Fast, legal & transparent property registration',
+            html: '<div class="row g-4">' +
+                '<div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-danger me-2"></i>We Handle</h6>' +
+                '<ul class="list-unstyled"><li class="mb-2"><i class="fas fa-check text-danger me-2"></i>Sale deed registration at sub-registrar office</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-danger me-2"></i>Mutation of land records & khatauni</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-danger me-2"></i>Certified copies of property documents</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-danger me-2"></i>Property tax receipt & records</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-danger me-2"></i>Transfer of property title</li></ul></div>' +
+                '<div class="col-md-5"><div class="bg-danger bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">' +
+                '<i class="fas fa-clock fa-3x text-danger mb-3"></i><h5 class="fw-bold">Fast Track</h5>' +
+                '<p class="text-muted small">Registry complete in 7-10 days</p></div></div></div>'
+        },
+        rental: {
+            color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+            icon: 'fa-file-contract',
+            title: 'Rental Agreement',
+            subtitle: 'Legal rental agreements with e-stamping',
+            html: '<div class="row g-4">' +
+                '<div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-purple me-2"></i>Rental Services</h6>' +
+                '<ul class="list-unstyled"><li class="mb-2"><i class="fas fa-check text-purple me-2"></i>11-month rental agreement drafting</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-purple me-2"></i>E-stamping & notarization</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-purple me-2"></i>Landlord & tenant both covered</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-purple me-2"></i>Agreement renewal & termination</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-purple me-2"></i>Online & offline delivery</li></ul></div>' +
+                '<div class="col-md-5"><div class="bg-purple bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center" style="background: rgba(139,92,246,0.1);">' +
+                '<i class="fas fa-stamp fa-3x text-purple mb-3" style="color:#8b5cf6;"></i><h5 class="fw-bold">e-Stamped</h5>' +
+                '<p class="text-muted small">Legally valid across India</p></div></div></div>'
+        },
+        tax: {
+            color: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+            icon: 'fa-file-invoice-dollar',
+            title: 'Property Tax',
+            subtitle: 'Property tax calculation, payment & exemption support',
+            html: '<div class="row g-4">' +
+                '<div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-info me-2"></i>Tax Services</h6>' +
+                '<ul class="list-unstyled"><li class="mb-2"><i class="fas fa-check text-info me-2"></i>Property tax calculation & verification</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-info me-2"></i>Online payment assistance</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-info me-2"></i>Tax exemption & rebate filing</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-info me-2"></i>Municipal corporation coordination</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-info me-2"></i>Outstanding tax clearance certificate</li></ul></div>' +
+                '<div class="col-md-5"><div class="bg-info bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">' +
+                '<i class="fas fa-building-columns fa-3x text-info mb-3"></i><h5 class="fw-bold">Online Pay</h5>' +
+                '<p class="text-muted small">Pay property tax online</p></div></div></div>'
+        }
+    };
+
+    var svc = services[service] || services.loan;
+    header.style.background = svc.color;
+    icon.className = 'fas ' + svc.icon + ' text-white fa-xl';
+    title.textContent = svc.title;
+    subtitle.textContent = svc.subtitle;
+    body.innerHTML = svc.html;
+
+    new bootstrap.Modal(document.getElementById('serviceModal')).show();
+}
+</script>
 
 <!-- Why Choose Us -->
 <section class="py-5 bg-light">
@@ -629,92 +851,382 @@ calcGrowth();
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <a href="<?php echo BASE_URL; ?>/calc" class="text-decoration-none">
-                    <div class="card border-0 shadow-sm h-100 tool-card">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-calculator fa-2x text-primary"></i>
-                            </div>
-                            <h5 class="fw-bold">EMI Calculator</h5>
-                            <p class="text-muted small mb-0">Home loan, car loan — kisi bhi loan ka monthly EMI nikaalein. Principal, interest aur total payment dekhein.</p>
+                <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('emi')">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="fas fa-calculator fa-2x text-primary"></i>
                         </div>
+                        <h5 class="fw-bold">EMI Calculator</h5>
+                        <p class="text-muted small mb-0">Home loan, car loan — kisi bhi loan ka monthly EMI nikaalein. Principal, interest aur total payment dekhein.</p>
                     </div>
-                </a>
+                </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <a href="<?php echo BASE_URL; ?>/calc" class="text-decoration-none">
-                    <div class="card border-0 shadow-sm h-100 tool-card">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-arrow-trend-up fa-2x text-success"></i>
-                            </div>
-                            <h5 class="fw-bold">Investment Calculator</h5>
-                            <p class="text-muted small mb-0">Real Estate vs FD vs Gold — kaunsa investment better hai? 5, 10, 15 saal ka growth compare karein.</p>
+                <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('investment')">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="fas fa-arrow-trend-up fa-2x text-success"></i>
                         </div>
+                        <h5 class="fw-bold">Investment Calculator</h5>
+                        <p class="text-muted small mb-0">Real Estate vs FD vs Gold — kaunsa investment better hai? 5, 10, 15 saal ka growth compare karein.</p>
                     </div>
-                </a>
+                </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <a href="<?php echo BASE_URL; ?>/stamp-duty-calculator" class="text-decoration-none">
-                    <div class="card border-0 shadow-sm h-100 tool-card">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-file-contract fa-2x text-warning"></i>
-                            </div>
-                            <h5 class="fw-bold">Stamp Duty Calculator</h5>
-                            <p class="text-muted small mb-0">Property price ke hisaab se stamp duty, registration fee aur total cost nikaalein. State-wise rates ke saath.</p>
+                <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('stamp')">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="fas fa-file-contract fa-2x text-warning"></i>
                         </div>
+                        <h5 class="fw-bold">Stamp Duty Calculator</h5>
+                        <p class="text-muted small mb-0">Property price ke hisaab se stamp duty, registration fee aur total cost nikaalein. State-wise rates ke saath.</p>
                     </div>
-                </a>
+                </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <a href="<?php echo BASE_URL; ?>/plot-size-converter" class="text-decoration-none">
-                    <div class="card border-0 shadow-sm h-100 tool-card">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-vector-square fa-2x text-info"></i>
-                            </div>
-                            <h5 class="fw-bold">Plot Size Converter</h5>
-                            <p class="text-muted small mb-0">Square feet, square meter, acre, hectare, bigha, gaj — sabhi units mein plot size convert karein.</p>
+                <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('converter')">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="fas fa-vector-square fa-2x text-info"></i>
                         </div>
+                        <h5 class="fw-bold">Plot Size Converter</h5>
+                        <p class="text-muted small mb-0">Square feet, square meter, acre, hectare, bigha, gaj — sabhi units mein plot size convert karein.</p>
                     </div>
-                </a>
+                </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <a href="<?php echo BASE_URL; ?>/home-loan-eligibility" class="text-decoration-none">
-                    <div class="card border-0 shadow-sm h-100 tool-card">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-hand-holding-dollar fa-2x text-danger"></i>
-                            </div>
-                            <h5 class="fw-bold">Loan Eligibility Check</h5>
-                            <p class="text-muted small mb-0">Aapki salary ke hisaab se kitna loan milega? SBI, HDFC, ICICI sabhi banks ke eligibility criteria ke saath.</p>
+                <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('eligibility')">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="fas fa-hand-holding-dollar fa-2x text-danger"></i>
                         </div>
+                        <h5 class="fw-bold">Loan Eligibility Check</h5>
+                        <p class="text-muted small mb-0">Aapki salary ke hisaab se kitna loan milega? SBI, HDFC, ICICI sabhi banks ke eligibility criteria ke saath.</p>
                     </div>
-                </a>
+                </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <a href="<?php echo BASE_URL; ?>/property-valuation" class="text-decoration-none">
-                    <div class="card border-0 shadow-sm h-100 tool-card">
-                        <div class="card-body p-4 text-center">
-                            <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-house-chimney fa-2x text-secondary"></i>
-                            </div>
-                            <h5 class="fw-bold">Property Valuation</h5>
-                            <p class="text-muted small mb-0">AI-powered property valuation. Apni property ki current market price turant jaanein. Free report!</p>
+                <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('valuation')">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="fas fa-house-chimney fa-2x text-secondary"></i>
                         </div>
+                        <h5 class="fw-bold">Property Valuation</h5>
+                        <p class="text-muted small mb-0">AI-powered property valuation. Apni property ki current market price turant jaanein. Free report!</p>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
+<!-- Tool Modal -->
+<div class="modal fade" id="toolModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+            <div class="modal-header border-0 p-4" id="toolModalHeader" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-calculator text-white fa-xl" id="toolModalIcon"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title text-white fw-bold mb-1" id="toolModalTitle">Tool</h5>
+                        <p class="text-white-50 small mb-0" id="toolModalSubtitle">Calculate instantly</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="toolModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 .tool-card { transition: all 0.3s ease; cursor: pointer; }
 .tool-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.12) !important; }
 .tool-card:hover .rounded-circle { transform: scale(1.1); transition: transform 0.3s; }
+.modal-content { animation: modalSlideUp 0.3s ease; }
+@keyframes modalSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+
+<script>
+function openToolModal(tool) {
+    var header = document.getElementById('toolModalHeader');
+    var icon = document.getElementById('toolModalIcon');
+    var title = document.getElementById('toolModalTitle');
+    var subtitle = document.getElementById('toolModalSubtitle');
+    var body = document.getElementById('toolModalBody');
+
+    var configs = {
+        emi: {
+            color: 'linear-gradient(135deg, #667eea, #764ba2)',
+            icon: 'fa-calculator',
+            title: 'EMI Calculator',
+            subtitle: 'Home loan, car loan — monthly EMI instantly',
+            html: getEMICalculator()
+        },
+        investment: {
+            color: 'linear-gradient(135deg, #11998e, #38ef7d)',
+            icon: 'fa-arrow-trend-up',
+            title: 'Investment Calculator',
+            subtitle: 'Real Estate vs FD vs Gold — compare growth',
+            html: getInvestmentCalculator()
+        },
+        stamp: {
+            color: 'linear-gradient(135deg, #f093fb, #f5576c)',
+            icon: 'fa-file-contract',
+            title: 'Stamp Duty Calculator',
+            subtitle: 'Property price ke hisaab se total cost nikaalein',
+            html: getStampDutyCalculator()
+        },
+        converter: {
+            color: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+            icon: 'fa-vector-square',
+            title: 'Plot Size Converter',
+            subtitle: 'Sabhi units mein plot size convert karein',
+            html: getPlotConverter()
+        },
+        eligibility: {
+            color: 'linear-gradient(135deg, #fa709a, #fee140)',
+            icon: 'fa-hand-holding-dollar',
+            title: 'Loan Eligibility Check',
+            subtitle: 'Aapki salary ke hisaab se kitna loan milega?',
+            html: getLoanEligibility()
+        },
+        valuation: {
+            color: 'linear-gradient(135deg, #a8edea, #fed6e3)',
+            icon: 'fa-house-chimney',
+            title: 'Property Valuation',
+            subtitle: 'AI-powered property valuation. Free report!',
+            html: getPropertyValuation()
+        }
+    };
+
+    var cfg = configs[tool] || configs.emi;
+    header.style.background = cfg.color;
+    icon.className = 'fas ' + cfg.icon + ' text-white fa-xl';
+    title.textContent = cfg.title;
+    subtitle.textContent = cfg.subtitle;
+    body.innerHTML = cfg.html;
+
+    var modal = new bootstrap.Modal(document.getElementById('toolModal'));
+    modal.show();
+}
+
+function getEMICalculator() {
+    return '<div class="row g-4">' +
+        '<div class="col-md-7">' +
+            '<div class="mb-3"><label class="form-label fw-bold">Loan Amount: <span class="text-primary" id="mEmiAmt">₹50,00,000</span></label>' +
+            '<input type="range" class="form-range" min="100000" max="50000000" step="100000" value="5000000" oninput="mCalcEMI()"></div>' +
+            '<div class="mb-3"><label class="form-label fw-bold">Interest Rate: <span class="text-primary" id="mEmiRate">8.5%</span></label>' +
+            '<input type="range" class="form-range" min="5" max="20" step="0.1" value="8.5" oninput="mCalcEMI()"></div>' +
+            '<div class="mb-3"><label class="form-label fw-bold">Tenure: <span class="text-primary" id="mEmiTenure">20 Years</span></label>' +
+            '<input type="range" class="form-range" min="1" max="30" step="1" value="20" oninput="mCalcEMI()"></div></div>' +
+        '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
+            '<p class="text-white-50 mb-1 small">Monthly EMI</p>' +
+            '<p class="display-5 fw-bold mb-0 text-warning" id="mEmiResult">₹42,426</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between"><span class="text-white-50">Total Interest</span><span class="fw-bold" id="mEmiInterest">₹51,82,240</span></div>' +
+            '<div class="d-flex justify-content-between mt-2"><span class="text-white-50">Total Payment</span><span class="fw-bold" id="mEmiTotal">₹1,01,82,240</span></div>' +
+        '</div></div></div>';
+}
+
+function getInvestmentCalculator() {
+    return '<div class="row g-4">' +
+        '<div class="col-md-7">' +
+            '<div class="mb-3"><label class="form-label fw-bold">Investment Amount</label>' +
+            '<select class="form-select" id="mInvAmt" onchange="mCalcInv()">' +
+                '<option value="500000">₹5 Lakh</option><option value="1000000" selected>₹10 Lakh</option>' +
+                '<option value="2500000">₹25 Lakh</option><option value="5000000">₹50 Lakh</option><option value="10000000">₹1 Crore</option></select></div>' +
+            '<div class="mb-3"><label class="form-label fw-bold">Time Period</label>' +
+            '<select class="form-select" id="mInvYrs" onchange="mCalcInv()">' +
+                '<option value="5">5 Years</option><option value="10" selected>10 Years</option>' +
+                '<option value="15">15 Years</option><option value="20">20 Years</option></select></div>' +
+            '<div class="mt-3">' +
+            '<div class="d-flex justify-content-between mb-1"><span>Real Estate <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">₹52,33,855</span></div>' +
+            '<div class="progress mb-2" style="height:6px"><div class="progress-bar bg-success" id="mInvREBar" style="width:100%"></div></div>' +
+            '<div class="d-flex justify-content-between mb-1"><span>FD <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">₹17,90,848</span></div>' +
+            '<div class="progress mb-2" style="height:6px"><div class="progress-bar bg-warning" id="mInvFDBar" style="width:34%"></div></div>' +
+            '<div class="d-flex justify-content-between"><span>Gold <span class="text-primary">(9%)</span></span><span class="fw-bold text-primary" id="mInvGold">₹23,67,364</span></div>' +
+            '<div class="progress" style="height:6px"><div class="progress-bar bg-primary" id="mInvGoldBar" style="width:45%"></div></div></div></div>' +
+        '<div class="col-md-5 text-center d-flex flex-column justify-content-center">' +
+            '<div class="bg-success bg-opacity-10 rounded-4 p-4"><i class="fas fa-trophy fa-3x text-success mb-3"></i>' +
+            '<h4 class="fw-bold text-success">Real Estate Wins!</h4>' +
+            '<p class="text-muted small mb-1"><i class="fas fa-check-circle text-success me-1"></i>Highest returns</p>' +
+            '<p class="text-muted small mb-1"><i class="fas fa-check-circle text-success me-1"></i>Tangible asset</p>' +
+            '<p class="text-muted small"><i class="fas fa-check-circle text-success me-1"></i>Growth + Rental Income</p></div></div></div>';
+}
+
+function getStampDutyCalculator() {
+    return '<div class="row g-4">' +
+        '<div class="col-md-7">' +
+            '<div class="mb-3"><label class="form-label fw-bold">Property Price</label>' +
+            '<input type="number" class="form-control form-control-lg" id="mStampPrice" value="5000000" oninput="mCalcStamp()"></div>' +
+            '<div class="mb-3"><label class="form-label fw-bold">State</label>' +
+            '<select class="form-select" id="mStampState" onchange="mCalcStamp()">' +
+                '<option value="up">Uttar Pradesh</option><option value="bihar">Bihar</option>' +
+                '<option value="mp">Madhya Pradesh</option><option value="delhi">Delhi</option>' +
+                '<option value="maharashtra">Maharashtra</option></select></div>' +
+            '<div class="mb-3"><label class="form-label fw-bold">Property Type</label>' +
+            '<select class="form-select" id="mStampType" onchange="mCalcStamp()">' +
+                '<option value="male">Male (Male Name)</option><option value="female">Female (Female Name)</option>' +
+                '<option value="joint">Joint (Male+Female)</option></select></div></div>' +
+        '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Property Price</span><span class="fw-bold" id="mStampBase">₹50,00,000</span></div>' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Stamp Duty (5%)</span><span class="fw-bold text-warning" id="mStampDuty">₹2,50,000</span></div>' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Registration (1%)</span><span class="fw-bold text-info" id="mStampReg">₹50,000</span></div>' +
+            '<hr class="border-secondary my-2">' +
+            '<div class="d-flex justify-content-between"><span class="text-white-50">Total Cost</span><span class="fw-bold text-success fs-5" id="mStampTotal">₹53,00,000</span></div>' +
+        '</div></div></div>';
+}
+
+function getPlotConverter() {
+    var units = ['Square Feet','Square Meter','Acre','Hectare','Bigha (UP)','Gaj','Square Yard','Katha (UP)','Marla'];
+    var unitOptions = '';
+    for (var i = 0; i < units.length; i++) unitOptions += '<option value="' + i + '">' + units[i] + '</option>';
+    return '<div class="row g-4">' +
+        '<div class="col-md-7">' +
+            '<div class="mb-3"><label class="form-label fw-bold">Value</label>' +
+            '<input type="number" class="form-control form-control-lg" id="mConvVal" value="1000" oninput="mCalcConv()"></div>' +
+            '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small">From</label>' +
+            '<select class="form-select" id="mConvFrom" onchange="mCalcConv()">' + unitOptions + '</select></div>' +
+            '<div class="col-6"><label class="form-label small">To</label>' +
+            '<select class="form-select" id="mConvTo" onchange="mCalcConv()"><option value="0" selected>Square Feet</option><option value="1">Square Meter</option><option value="2">Acre</option><option value="3">Hectare</option><option value="4">Bigha (UP)</option><option value="5">Gaj</option><option value="6">Square Yard</option><option value="7">Katha (UP)</option><option value="8">Marla</option></select></div></div>' +
+            '<div class="alert alert-success mb-0"><i class="fas fa-exchange-alt me-2"></i>Result: <strong id="mConvResult">0.0913 Acre</strong></div></div>' +
+        '<div class="col-md-5"><div class="bg-light rounded-4 p-4 h-100">' +
+            '<h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2 text-info"></i>Quick Reference</h6>' +
+            '<div class="small"><strong>1 Bigha (UP)</strong> = 27,000 Sq Ft<br><strong>1 Gaj</strong> = 9 Sq Ft<br><strong>1 Acre</strong> = 43,560 Sq Ft<br><strong>1 Hectare</strong> = 2.47 Acre<br><strong>1 Katha (UP)</strong> = 1,361 Sq Ft<br><strong>1 Marla</strong> = 272 Sq Ft</div>' +
+        '</div></div></div>';
+}
+
+function getLoanEligibility() {
+    return '<div class="row g-4">' +
+        '<div class="col-md-7">' +
+            '<div class="mb-3"><label class="form-label fw-bold">Monthly Income (Net Salary)</label>' +
+            '<input type="number" class="form-control form-control-lg" id="mEligIncome" value="60000" oninput="mCalcElig()" step="1000"></div>' +
+            '<div class="mb-3"><label class="form-label fw-bold">Existing Monthly EMI</label>' +
+            '<input type="number" class="form-control" id="mEligEmi" value="0" oninput="mCalcElig()"></div>' +
+            '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small">Interest Rate</label>' +
+            '<select class="form-select" id="mEligRate" onchange="mCalcElig()">' +
+                '<option value="8.5">8.5%</option><option value="9.0" selected>9.0%</option><option value="9.5">9.5%</option><option value="10.0">10%</option></select></div>' +
+            '<div class="col-6"><label class="form-label small">Tenure (Years)</label>' +
+            '<select class="form-select" id="mEligTenure" onchange="mCalcElig()">' +
+                '<option value="5">5 Years</option><option value="10">10 Years</option><option value="15">15 Years</option><option value="20" selected>20 Years</option><option value="25">25 Years</option><option value="30">30 Years</option></select></div></div></div>' +
+        '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
+            '<p class="text-white-50 mb-1 small">You Are Eligible For</p>' +
+            '<p class="display-5 fw-bold mb-0 text-success" id="mEligResult">₹27,23,250</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Max EMI</span><span class="fw-bold" id="mEligMaxEmi">₹27,000</span></div>' +
+            '<div class="d-flex justify-content-between"><span class="text-white-50">FOIR Ratio</span><span class="fw-bold" id="mEligFoir">45%</span></div>' +
+        '</div></div></div>';
+}
+
+function getPropertyValuation() {
+    return '<p class="text-center text-muted mb-3"><i class="fas fa-robot me-2"></i>AI-powered estimate based on current market data</p>' +
+        '<div class="row g-4">' +
+        '<div class="col-md-7">' +
+            '<div class="mb-3"><label class="form-label fw-bold">Property Type</label>' +
+            '<select class="form-select" id="mValType" onchange="mCalcVal()">' +
+                '<option value="plot">Plot/Land</option><option value="house">House/Villa</option><option value="flat">Flat/Apartment</option><option value="commercial">Commercial</option></select></div>' +
+            '<div class="mb-3"><label class="form-label fw-bold">Location</label>' +
+            '<select class="form-select" id="mValLoc" onchange="mCalcVal()">' +
+                '<option value="gorakhpur">Gorakhpur</option><option value="lucknow">Lucknow</option>' +
+                '<option value="kushinagar">Kushinagar</option><option value="varanasi">Varanasi</option></select></div>' +
+            '<div class="mb-3"><label class="form-label fw-bold">Area (Sq Ft)</label>' +
+            '<input type="number" class="form-control form-control-lg" id="mValArea" value="1500" oninput="mCalcVal()" step="10"></div>' +
+            '<div class="d-flex gap-2"><div class="flex-fill"><label class="form-label small">Bedrooms</label>' +
+            '<select class="form-select" id="mValBhk" onchange="mCalcVal()"><option value="1">1 BHK</option><option value="2" selected>2 BHK</option><option value="3">3 BHK</option><option value="4">4 BHK</option></select></div>' +
+            '<div class="flex-fill"><label class="form-label small">Furnishing</label>' +
+            '<select class="form-select" id="mValFurn" onchange="mCalcVal()"><option value="0.9">Unfurnished</option><option value="1" selected>Semi-Furnished</option><option value="1.2">Fully Furnished</option></select></div></div></div>' +
+        '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
+            '<p class="text-white-50 mb-1 small">Estimated Market Value</p>' +
+            '<p class="display-5 fw-bold mb-0 text-warning" id="mValResult">₹22,50,000</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Per Sq Ft</span><span class="fw-bold" id="mValPsf">₹1,500</span></div>' +
+            '<div class="d-flex justify-content-between"><span class="text-white-50">Confidence</span><span class="fw-bold text-success" id="mValConf">High</span></div>' +
+        '</div></div></div>';
+}
+
+function mCalcEMI() {
+    var inputs = document.querySelectorAll('#toolModalBody input[type="range"]');
+    var P = parseFloat(inputs[0].value);
+    var R = parseFloat(inputs[1].value) / 12 / 100;
+    var N = parseFloat(inputs[2].value) * 12;
+    document.getElementById('mEmiAmt').textContent = '\u20B9' + P.toLocaleString('en-IN');
+    document.getElementById('mEmiRate').textContent = inputs[1].value + '%';
+    document.getElementById('mEmiTenure').textContent = inputs[2].value + ' Years';
+    var emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
+    var totalPay = emi * N;
+    var totalInt = totalPay - P;
+    document.getElementById('mEmiResult').textContent = '\u20B9' + Math.round(emi).toLocaleString('en-IN');
+    document.getElementById('mEmiInterest').textContent = '\u20B9' + Math.round(totalInt).toLocaleString('en-IN');
+    document.getElementById('mEmiTotal').textContent = '\u20B9' + Math.round(totalPay).toLocaleString('en-IN');
+}
+
+function mCalcInv() {
+    var amt = parseFloat(document.getElementById('mInvAmt').value);
+    var yrs = parseFloat(document.getElementById('mInvYrs').value);
+    var re = amt * Math.pow(1.18, yrs);
+    var fd = amt * Math.pow(1.06, yrs);
+    var gold = amt * Math.pow(1.09, yrs);
+    var maxVal = Math.max(re, fd, gold);
+    document.getElementById('mInvRE').textContent = '\u20B9' + Math.round(re).toLocaleString('en-IN');
+    document.getElementById('mInvFD').textContent = '\u20B9' + Math.round(fd).toLocaleString('en-IN');
+    document.getElementById('mInvGold').textContent = '\u20B9' + Math.round(gold).toLocaleString('en-IN');
+    document.getElementById('mInvREBar').style.width = (re / maxVal * 100) + '%';
+    document.getElementById('mInvFDBar').style.width = (fd / maxVal * 100) + '%';
+    document.getElementById('mInvGoldBar').style.width = (gold / maxVal * 100) + '%';
+}
+
+function mCalcStamp() {
+    var price = parseFloat(document.getElementById('mStampPrice').value) || 0;
+    var state = document.getElementById('mStampState').value;
+    var rates = { up: 0.05, bihar: 0.06, mp: 0.06, delhi: 0.05, maharashtra: 0.05 };
+    var rate = rates[state] || 0.05;
+    var stamp = price * rate;
+    var reg = price * 0.01;
+    document.getElementById('mStampBase').textContent = '\u20B9' + price.toLocaleString('en-IN');
+    document.getElementById('mStampDuty').textContent = '\u20B9' + Math.round(stamp).toLocaleString('en-IN');
+    document.getElementById('mStampReg').textContent = '\u20B9' + Math.round(reg).toLocaleString('en-IN');
+    document.getElementById('mStampTotal').textContent = '\u20B9' + Math.round(price + stamp + reg).toLocaleString('en-IN');
+}
+
+var convFactors = [1, 0.092903, 2.2957e-5, 9.2903e-6, 3.7037e-5, 0.111111, 0.111111, 0.000734, 0.003673];
+function mCalcConv() {
+    var val = parseFloat(document.getElementById('mConvVal').value) || 0;
+    var from = parseInt(document.getElementById('mConvFrom').value);
+    var to = parseInt(document.getElementById('mConvTo').value);
+    var sqft = val / convFactors[from];
+    var result = sqft * convFactors[to];
+    var unitNames = ['Sq Ft','Sq M','Acre','Ha','Bigha','Gaj','Sq Yd','Katha','Marla'];
+    document.getElementById('mConvResult').textContent = result.toFixed(4) + ' ' + unitNames[to];
+}
+
+function mCalcElig() {
+    var income = parseFloat(document.getElementById('mEligIncome').value) || 0;
+    var existing = parseFloat(document.getElementById('mEligEmi').value) || 0;
+    var rate = parseFloat(document.getElementById('mEligRate').value) / 12 / 100;
+    var tenure = parseFloat(document.getElementById('mEligTenure').value) * 12;
+    var maxEmi = (income * 0.5) - existing;
+    var eligible = maxEmi * (Math.pow(1 + rate, tenure) - 1) / (rate * Math.pow(1 + rate, tenure));
+    document.getElementById('mEligResult').textContent = '\u20B9' + Math.round(Math.max(0, eligible)).toLocaleString('en-IN');
+    document.getElementById('mEligMaxEmi').textContent = '\u20B9' + Math.round(Math.max(0, maxEmi)).toLocaleString('en-IN');
+    document.getElementById('mEligFoir').textContent = Math.round((existing + maxEmi) / income * 100) + '%';
+}
+
+var valRates = { gorakhpur: { plot: 1200, house: 1800, flat: 2200, commercial: 3000 }, lucknow: { plot: 2000, house: 3000, flat: 3500, commercial: 5000 }, kushinagar: { plot: 800, house: 1200, flat: 1500, commercial: 2000 }, varanasi: { plot: 1500, house: 2500, flat: 2800, commercial: 4000 } };
+function mCalcVal() {
+    var type = document.getElementById('mValType').value;
+    var loc = document.getElementById('mValLoc').value;
+    var area = parseFloat(document.getElementById('mValArea').value) || 0;
+    var bhk = parseInt(document.getElementById('mValBhk').value);
+    var furn = parseFloat(document.getElementById('mValFurn').value);
+    var baseRate = (valRates[loc] || valRates.gorakhpur)[type] || 1500;
+    var bhkFactor = 0.9 + bhk * 0.1;
+    var value = area * baseRate * bhkFactor * furn;
+    document.getElementById('mValResult').textContent = '\u20B9' + Math.round(value).toLocaleString('en-IN');
+    document.getElementById('mValPsf').textContent = '\u20B9' + Math.round(baseRate * bhkFactor * furn).toLocaleString('en-IN');
+    document.getElementById('mValConf').textContent = loc === 'kushinagar' ? 'Medium' : 'High';
+}
+</script>
 
 <!-- Testimonials -->
 <section class="py-5">

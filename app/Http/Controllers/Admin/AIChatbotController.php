@@ -110,7 +110,7 @@ class AIChatbotController extends AdminController
                 $newStatus = $item['is_active'] ? 0 : 1;
                 $this->db->query("UPDATE chatbot_training_data SET is_active=? WHERE id=?", [$newStatus, $id]);
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AIChatbotController toggleTraining: ' . $e->getMessage()); }
         $this->redirect(BASE_URL . '/admin/chatbot/train');
     }
 
@@ -119,7 +119,7 @@ class AIChatbotController extends AdminController
         $this->requireAdmin();
         try {
             $this->db->delete('chatbot_training_data', ['id' => $id]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AIChatbotController deleteTraining: ' . $e->getMessage()); }
         $this->redirect(BASE_URL . '/admin/chatbot/train');
     }
 }

@@ -635,7 +635,7 @@ class CoreFunctionsController extends BaseController
             $permission = $data['permission'] ?? '';
 
             // Basic permission check logic
-            $userRole = $_SESSION['user_role'] ?? 'guest';
+            $userRole = $_SESSION['role'] ?? 'guest';
             $permissions = [
                 'admin' => ['read', 'write', 'delete', 'manage'],
                 'user' => ['read', 'write'],
@@ -978,7 +978,7 @@ class CoreFunctionsController extends BaseController
      */
     private function getUserRole(): string
     {
-        return $_SESSION['user_role'] ?? 'guest';
+        return $_SESSION['role'] ?? 'guest';
     }
 
     /**

@@ -7,7 +7,7 @@ $extraHead = '<style>
 $investments = [];
 try {
     $stmt = $this->db->prepare("SELECT p.*, s.site_name, s.district as site_location 
-        FROM plots p LEFT JOIN site_master s ON p.colony_id = s.site_id 
+        FROM plots p LEFT JOIN sites s ON p.colony_id = s.id 
         WHERE p.customer_id = ? AND p.is_active = 1 ORDER BY p.updated_at DESC LIMIT 20");
     $userId = $_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0;
     $stmt->execute([$userId]);

@@ -3,26 +3,7 @@
 // TODO: Add proper error handling with try-catch blocks
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You - APS Dream Homes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-            overflow: hidden;
-        }
-
+<style>
         .thank-you-container {
             text-align: center;
             color: white;
@@ -118,23 +99,6 @@
             font-size: 1.3rem;
         }
 
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {
                 transform: translateY(0);
@@ -144,23 +108,6 @@
             }
             60% {
                 transform: translateY(-10px);
-            }
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(720deg);
-                opacity: 0;
             }
         }
 
@@ -188,11 +135,7 @@
             }
         }
     </style>
-</head>
-<body>
-    <div class="particles" id="particles"></div>
-    
-    <div class="thank-you-container">
+<div class="thank-you-container">
         <div class="success-icon">
             <i class="fas fa-check-circle"></i>
         </div>
@@ -233,42 +176,6 @@
     </div>
 
     <script>
-        // Create floating particles
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 50;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                const size = Math.random() * 10 + 5;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-        
-        // Initialize particles when page loads
-        window.addEventListener('load', createParticles);
-        
-        // Add smooth scroll behavior
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
         // Auto-redirect after 10 seconds (optional)
         setTimeout(() => {
             const autoRedirect = confirm('Would you like to return to the homepage?');
@@ -277,5 +184,3 @@
             }
         }, 10000);
     </script>
-</body>
-</html>

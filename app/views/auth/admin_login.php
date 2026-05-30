@@ -423,6 +423,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
         }
     </script>
 
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
 </body>
 
 </html>

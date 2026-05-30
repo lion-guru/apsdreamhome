@@ -26,10 +26,6 @@ foreach ($plots as $plot) {
     $summary[$plot['status']]++;
 }
 
-$layout = 'modern';
-
-// Capture the content for layout injection
-ob_start();
 ?>
 
 <style>
@@ -153,12 +149,6 @@ ob_start();
     </div>
 </div>
 
-<?php
-$content = ob_get_clean();
-
-// Custom scripts
-ob_start();
-?>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.plot-status-table tbody tr').forEach((row) => {
@@ -167,8 +157,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
-<?php
-$scripts = ob_get_clean();
-
-// Include the layout
-require_once __DIR__ . '/../../layouts/' . $layout . '.php';

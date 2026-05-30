@@ -104,7 +104,7 @@ class InquiryController extends AdminController
                 $updateStmt = $this->db->prepare("UPDATE inquiries SET status = 'contacted', updated_at = NOW() WHERE id = ?");
                 $updateStmt->execute([$id]);
                 $inquiry['status'] = 'contacted';
-            } catch (Exception $e) {}
+            } catch (Exception $e) { error_log('InquiryController view status update: ' . $e->getMessage()); }
         }
 
         $data = ['inquiry' => $inquiry];

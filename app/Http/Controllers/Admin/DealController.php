@@ -178,7 +178,7 @@ class DealController extends AdminController
     private function getDeals($stage = '', $search = '')
     {
         $sql = "SELECT ld.*, l.name as lead_name, l.email as lead_email, l.phone as lead_phone,
-                       p.title as property_title, u.name as assigned_to_name
+                        p.title as property_title, u.name as assigned_to_name
                 FROM lead_deals ld
                 LEFT JOIN leads l ON ld.lead_id = l.id
                 LEFT JOIN properties p ON ld.property_id = p.id
@@ -213,7 +213,7 @@ class DealController extends AdminController
     private function getDealsForKanban()
     {
         $sql = "SELECT ld.*, l.name as lead_name, l.email as lead_email, l.phone as lead_phone,
-                       p.title as property_title, u.name as assigned_to_name
+                        p.title as property_title, u.name as assigned_to_name
                 FROM lead_deals ld
                 LEFT JOIN leads l ON ld.lead_id = l.id
                 LEFT JOIN properties p ON ld.property_id = p.id
@@ -303,7 +303,7 @@ class DealController extends AdminController
      */
     private function getAgents()
     {
-        $sql = "SELECT id, name FROM users WHERE role IN ('agent', 'manager', 'admin') AND status = 'active' ORDER BY name";
+        $sql = "SELECT id, name FROM users WHERE role IN ('super_admin','admin','manager','agent') ORDER BY name";
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }

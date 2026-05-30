@@ -15,11 +15,11 @@ class AgentController extends BaseController
         // For testing - create mock session
         $_SESSION['user_id'] = 1;
         $_SESSION['user_name'] = 'Test Agent';
-        $_SESSION['user_role'] = 'agent';
+        $_SESSION['role'] = 'agent';
         $_SESSION['level'] = 'Agent';
 
         // Check if agent is logged in
-        if (!isset($_SESSION['user_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'agent')) {
+        if (!isset($_SESSION['user_id']) || (isset($_SESSION['role']) && $_SESSION['role'] !== 'agent')) {
             header("Location: /agent/login");
             exit();
         }
@@ -90,7 +90,7 @@ class AgentController extends BaseController
     {
         // Redirect if already logged in
         if (isset($_SESSION['user_id'])) {
-            if ($_SESSION['user_role'] === 'agent') {
+            if ($_SESSION['role'] === 'agent') {
                 header("Location: /agent/dashboard");
                 exit();
             }
@@ -112,7 +112,7 @@ class AgentController extends BaseController
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['role'] = $user['role'];
             header("Location: /agent/dashboard");
             exit();
         } else {

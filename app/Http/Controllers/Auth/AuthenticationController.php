@@ -186,7 +186,7 @@ class AuthenticationController
     public function showForgotPassword()
     {
         $data = [
-            'title' => 'Forgot Password - APS Dream Home',
+            'page_title' => 'Forgot Password - APS Dream Home',
             'errors' => $_SESSION['errors'] ?? [],
             'old' => $_SESSION['old'] ?? []
         ];
@@ -194,7 +194,7 @@ class AuthenticationController
         // Clear session messages
         unset($_SESSION['errors'], $_SESSION['old']);
 
-        return $this->viewRenderer->render('auth/forgot-password', $data);
+        return $this->viewRenderer->render('auth/forgot_password', $data);
     }
 
     /**
@@ -238,7 +238,7 @@ class AuthenticationController
         }
 
         $data = [
-            'title' => 'Reset Password - APS Dream Home',
+            'page_title' => 'Reset Password - APS Dream Home',
             'token' => $token,
             'errors' => $_SESSION['errors'] ?? [],
             'old' => $_SESSION['old'] ?? []
@@ -247,7 +247,7 @@ class AuthenticationController
         // Clear session messages
         unset($_SESSION['errors'], $_SESSION['old']);
 
-        return $this->viewRenderer->render('auth/reset-password', $data);
+        return $this->viewRenderer->render('auth/reset_password', $data);
     }
 
     /**

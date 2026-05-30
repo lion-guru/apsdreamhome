@@ -259,6 +259,11 @@
                     <i class="fas fa-chart-area"></i> AI Analytics
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/voice-agents/dashboard" class="sidebar-link <?php echo $isActive('/admin/voice-agents') ? 'active' : ''; ?>">
+                    <i class="fas fa-phone-voice"></i> Voice Agents
+                </a>
+            </li>
         </ul>
 
         <div class="sidebar-section">Users & Team</div>

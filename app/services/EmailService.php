@@ -47,7 +47,8 @@ class EmailService
             $subject = 'Verify Your Email Address';
 
             // Email body
-            $verificationUrl = "http://localhost/apsdreamhome/verify-email?token=" . $token;
+            $appUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+            $verificationUrl = $appUrl . "/verify-email?token=" . $token;
             $message = file_get_contents(__DIR__ . '/../../resources/emails/verification.html');
             $message = str_replace(
                 ['{{name}}', '{{verification_url}}'],
@@ -170,6 +171,7 @@ class EmailService
      */
     private function getWelcomeEmailTemplate($userName)
     {
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         return "
         <!DOCTYPE html>
         <html>
@@ -203,7 +205,7 @@ class EmailService
                         <li>👤 <strong>Manage Profile:</strong> Update your preferences and account information</li>
                     </ul>
 
-                    <a href='http://localhost:8000/dashboard' class='button'>Explore Your Dashboard</a>
+                    <a href='{$baseUrl}/user/dashboard' class='button'>Explore Your Dashboard</a>
 
                     <p>If you have any questions or need assistance, feel free to contact our support team.</p>
 
@@ -225,6 +227,7 @@ class EmailService
      */
     private function getInquiryNotificationTemplate($inquiryData)
     {
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         return "
         <!DOCTYPE html>
         <html>
@@ -270,7 +273,7 @@ class EmailService
                     <div class='info-box'>
                         <h4>Action Required</h4>
                         <p>Please respond to this inquiry within 24 hours to maintain good customer service.</p>
-                        <a href='http://localhost:8000/admin/inquiries' class='button'>View All Inquiries</a>
+                        <a href='{$baseUrl}/admin/inquiries' class='button'>View All Inquiries</a>
                     </div>
 
                     <p><strong>Inquiry Date:</strong> " . date('M j, Y \a\t g:i A', strtotime($inquiryData['created_at'])) . "</p>
@@ -288,6 +291,7 @@ class EmailService
      */
     private function getInquiryResponseTemplate($userName, $propertyTitle, $response)
     {
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         return "
         <!DOCTYPE html>
         <html>
@@ -319,8 +323,8 @@ class EmailService
                     <p>If you have any further questions or need additional information, please don't hesitate to contact us.</p>
 
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='http://localhost:8000/properties' class='button'>Browse More Properties</a>
-                        <a href='http://localhost:8000/dashboard/inquiries' class='button' style='background: #6c757d; margin-left: 10px;'>View All Inquiries</a>
+                        <a href='{$baseUrl}/properties' class='button'>Browse More Properties</a>
+                        <a href='{$baseUrl}/dashboard/inquiries' class='button' style='background: #6c757d; margin-left: 10px;'>View All Inquiries</a>
                     </div>
 
                     <p>We hope to assist you in finding your dream property!</p>
@@ -337,6 +341,7 @@ class EmailService
      */
     private function getNewsletterConfirmationTemplate($userName)
     {
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         return "
         <!DOCTYPE html>
         <html>
@@ -372,7 +377,7 @@ class EmailService
                     <p>We'll only send you valuable content and never spam your inbox. You can unsubscribe at any time.</p>
 
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='http://localhost:8000/properties' class='button'>Explore Properties Now</a>
+                        <a href='{$baseUrl}/properties' class='button'>Explore Properties Now</a>
                     </div>
 
                     <p>Thank you for choosing APS Dream Home for your real estate needs!</p>
@@ -380,7 +385,7 @@ class EmailService
                 </div>
                 <div class='footer'>
                     <p>You received this email because you subscribed to our newsletter.</p>
-                    <p><a href='http://localhost:8000/unsubscribe'>Unsubscribe</a> if you no longer wish to receive these emails.</p>
+                    <p><a href='{$baseUrl}/unsubscribe'>Unsubscribe</a> if you no longer wish to receive these emails.</p>
                 </div>
             </div>
         </body>

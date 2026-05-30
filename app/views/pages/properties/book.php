@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         // Check if customer already exists
-        $check_stmt = $conn->prepare("SELECT id FROM customers WHERE phone = ? OR email = ?");
+        $check_stmt = $conn->prepare("SELECT id FROM users WHERE (phone = ? OR email = ?) AND role = 'customer' LIMIT 1");
         $check_stmt->bind_param("ss", $mobile, $email);
         $check_stmt->execute();
         $existing_customer = $check_stmt->get_result()->fetch_assoc();
@@ -69,13 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($existing_customer) {
             $customer_db_id = $existing_customer['id'];
             // Update existing customer
-            $update_stmt = $conn->prepare("UPDATE customers SET name = ?, email = ?, phone = ? WHERE id = ?");
+            $update_stmt = $conn->prepare("UPDATE users SET name = ?, email = ?, phone = ? WHERE id = ?");
             $update_stmt->bind_param("sssi", $full_name, $email, $mobile, $customer_db_id);
             $update_stmt->execute();
         } else {
             // Create new customer
-            $insert_stmt = $conn->prepare("INSERT INTO customers (id, name, email, phone, password, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-            $insert_stmt->bind_param("sssss", $customer_id, $full_name, $email, $mobile, $hashed_password);
+            $insert_stmt = $conn->prepare("INSERT INTO users (name, email, phone, password, customer_id, user_type, role, created_at) VALUES (?, ?, ?, ?, ?, 'customer', 'user', NOW())");
+            $insert_stmt->bind_param("sssss", $full_name, $email, $mobile, $hashed_password, $customer_id);
             $insert_stmt->execute();
             $customer_db_id = $conn->insert_id;
         }
@@ -110,7 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $whatsapp_message .= "ΓÇó Email + Password\n\n";
 
             $whatsapp_message .= "≡ƒô₧ Need Help? Call: +91-9277121112\n";
-            $whatsapp_message .= "≡ƒîÉ Visit: http://localhost/apsdreamhome/customer_login.php\n\n";
+            $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+            $whatsapp_message .= "≡ƒîÉ Visit: {$baseUrl}/customer_login.php\n\n";
             $whatsapp_message .= "APS Dream Homes - Your Dream Home Awaits! ≡ƒÅíΓ£¿";
 
             // Send WhatsApp (placeholder - integrate with actual WhatsApp API)

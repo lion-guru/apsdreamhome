@@ -564,8 +564,7 @@ class MediaLibraryService
 
     private function getBaseUrl(): string
     {
-        // This should be configured based on your application
-        return 'http://localhost/apsdreamhome';
+        return defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
     }
 
     private function ensureUploadDirectory(): void

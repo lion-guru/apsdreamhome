@@ -583,7 +583,7 @@ class AuthenticationService
         $this->session->regenerate();
         $this->session->set('user_id', $user['id']);
         $this->session->set('user_email', $user['email']);
-        $this->session->set('user_role', $user['role']);
+        $this->session->set('role', $user['role']);
         $this->session->set('user_name', $user['name']);
         $this->session->set('logged_in_at', time());
         

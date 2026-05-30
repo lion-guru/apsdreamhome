@@ -551,6 +551,152 @@ class LandController extends AdminController
     }
 
     /**
+     * Display land acquisitions
+     */
+    public function acquisitions()
+    {
+        $this->requireAdmin();
+        try {
+            $status = $_GET['status'] ?? '';
+            $land_type = $_GET['land_type'] ?? '';
+            $sql = "SELECT * FROM land_acquisitions WHERE 1=1";
+            $params = [];
+            if (!empty($status)) {
+                $sql .= " AND status = ?";
+                $params[] = $status;
+            }
+            if (!empty($land_type)) {
+                $sql .= " AND land_type = ?";
+                $params[] = $land_type;
+            }
+            $sql .= " ORDER BY created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $acquisitions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $totalAcq = count($acquisitions);
+            $totalArea = 0;
+            $totalCost = 0;
+            foreach ($acquisitions as $a) {
+                $totalArea += (float)($a['land_area'] ?? 0);
+                $totalCost += (float)($a['acquisition_cost'] ?? 0);
+            }
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Acquisitions error: " . $e->getMessage());
+            $acquisitions = [];
+            $totalAcq = 0;
+            $totalArea = 0;
+            $totalCost = 0;
+        }
+        return $this->render('admin/land/acquisitions', [
+            'page_title' => 'Land Acquisitions',
+            'acquisitions' => $acquisitions,
+            'total_acquisitions' => $totalAcq,
+            'total_area' => $totalArea,
+            'total_cost' => $totalCost,
+            'filters' => ['status' => $_GET['status'] ?? '', 'land_type' => $_GET['land_type'] ?? '']
+        ]);
+    }
+
+    /**
+     * Display acquisition detail
+     */
+    public function showAcquisition($id)
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->prepare("SELECT a.*, u.name as created_by_name FROM land_acquisitions a LEFT JOIN users u ON a.created_by = u.id WHERE a.id = ?");
+            $stmt->execute([(int)$id]);
+            $acquisition = $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $acquisition = null;
+        }
+        if (!$acquisition) {
+            $this->setFlash('error', 'Acquisition not found');
+            $this->redirect('/admin/land/acquisitions');
+        }
+        return $this->render('admin/land/acquisition-show', [
+            'page_title' => 'Acquisition: ' . ($acquisition['acquisition_number'] ?? ''),
+            'acquisition' => $acquisition
+        ]);
+    }
+
+    /**
+     * Store a new acquisition
+     */
+    public function storeAcquisition()
+    {
+        $this->requireAdmin();
+        $acquisition_number = $_POST['acquisition_number'] ?? ('ACQ' . date('Ymd') . rand(100, 999));
+        $farmer_id = !empty($_POST['farmer_id']) ? (int)$_POST['farmer_id'] : null;
+        $land_area = (float)($_POST['land_area'] ?? 0);
+        $land_area_unit = $_POST['land_area_unit'] ?? 'sqft';
+        $location = $_POST['location'] ?? '';
+        $village = $_POST['village'] ?? '';
+        $tehsil = $_POST['tehsil'] ?? '';
+        $district = $_POST['district'] ?? '';
+        $state = $_POST['state'] ?? '';
+        $acquisition_date = $_POST['acquisition_date'] ?? date('Y-m-d');
+        $acquisition_cost = (float)($_POST['acquisition_cost'] ?? 0);
+        $payment_status = $_POST['payment_status'] ?? 'pending';
+        $land_type = $_POST['land_type'] ?? '';
+        $soil_type = $_POST['soil_type'] ?? '';
+        $water_source = $_POST['water_source'] ?? '';
+        $electricity_available = isset($_POST['electricity_available']) ? 1 : 0;
+        $road_access = isset($_POST['road_access']) ? 1 : 0;
+        $documents = $_POST['documents'] ?? '';
+        $remarks = $_POST['remarks'] ?? '';
+        $status = $_POST['status'] ?? 'active';
+        $created_by = $_SESSION['admin_id'] ?? ($_SESSION['user_id'] ?? null);
+        try {
+            $stmt = $this->db->prepare("INSERT INTO land_acquisitions (acquisition_number, farmer_id, land_area, land_area_unit, location, village, tehsil, district, state, acquisition_date, acquisition_cost, payment_status, land_type, soil_type, water_source, electricity_available, road_access, documents, remarks, status, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$acquisition_number, $farmer_id, $land_area, $land_area_unit, $location, $village, $tehsil, $district, $state, $acquisition_date, $acquisition_cost, $payment_status, $land_type, $soil_type, $water_source, $electricity_available, $road_access, $documents, $remarks, $status, $created_by]);
+            $this->setFlash('success', 'Land acquisition recorded successfully');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed to record acquisition: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/land/acquisitions');
+    }
+
+    /**
+     * Display land records list
+     */
+    public function records()
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->query("SELECT * FROM land_records ORDER BY created_at DESC");
+            $landRecords = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Records error: " . $e->getMessage());
+            $landRecords = [];
+        }
+        return $this->render('admin/land/records', [
+            'page_title' => 'Land Records',
+            'land_records' => $landRecords
+        ]);
+    }
+
+    /**
+     * Store a new land record
+     */
+    public function storeRecord()
+    {
+        $this->requireAdmin();
+        $land_title = $_POST['land_title'] ?? '';
+        $location = $_POST['location'] ?? '';
+        $area = (float)($_POST['area'] ?? 0);
+        $owner_name = $_POST['owner_name'] ?? '';
+        try {
+            $stmt = $this->db->prepare("INSERT INTO land_records (land_title, location, area, owner_name, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $stmt->execute([$land_title, $location, $area, $owner_name]);
+            $this->setFlash('success', 'Land record added successfully');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed to add land record: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/land/records');
+    }
+
+    /**
      * Get land statistics
      */
     public function getStats()

@@ -96,7 +96,7 @@ class AdminLoyaltyController extends AdminController
             $stmt = $db->prepare($sql);
             $stmt->execute([$userId]);
             $points_history = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AdminLoyaltyController member details: ' . $e->getMessage()); }
         
         $this->render('admin/loyalty/member_details', [
             'member' => $member,

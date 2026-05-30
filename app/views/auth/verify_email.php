@@ -17,4 +17,5 @@
     </div>
 </div>
 
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
 <?php include __DIR__ . "/../layouts/footer.php"; ?>

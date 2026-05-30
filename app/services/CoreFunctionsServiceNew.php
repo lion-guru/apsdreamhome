@@ -2,19 +2,25 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
-
 /**
  * Modern Core Functions Service
- * Enhanced implementation of legacy core functions with Laravel integration
+ * Core utility functions without Laravel dependency
  */
 class CoreFunctionsServiceNew
 {
+    private static function storagePath(string $path = ''): string
+    {
+        $base = defined('STORAGE_PATH') ? STORAGE_PATH : (defined('APP_ROOT') ? APP_ROOT . '/storage' : dirname(__DIR__, 2) . '/storage');
+        return $base . ($path ? '/' . ltrim($path, '/') : '');
+    }
+
+    private static function getConfig(string $key, $default = null)
+    {
+        $parts = explode('.', $key);
+        $constName = strtoupper(implode('_', $parts));
+        return defined($constName) ? constant($constName) : $default;
+    }
+
     /**
      * Log admin actions
      */
@@ -22,32 +28,30 @@ class CoreFunctionsServiceNew
     {
         try {
             $logEntry = [
-                'timestamp' => now()->toISOString(),
-                'user_id' => auth()->id() ?? 'system',
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
+                'timestamp' => date('c'),
+                'user_id' => $_SESSION['user_id'] ?? 'system',
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
                 'data' => $data
             ];
 
-            Log::channel('admin_actions')->info('Admin action logged', $logEntry);
-            
+            error_log('Admin action logged: ' . json_encode($logEntry));
+
             // Also store in database for audit trail
-            if (config('admin.log_to_database', true)) {
-                \DB::table('admin_action_logs')->insert([
-                    'user_id' => auth()->id(),
+            if (self::getConfig('admin.log_to_database', true)) {
+                $db = \App\Core\Database\Database::getInstance();
+                $db->insert('admin_action_logs', [
+                    'user_id' => $_SESSION['user_id'] ?? null,
                     'action' => $data['action'] ?? 'unknown',
                     'details' => json_encode($data),
-                    'ip_address' => request()->ip(),
-                    'created_at' => now()
+                    'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+                    'created_at' => date('Y-m-d H:i:s')
                 ]);
             }
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Failed to log admin action', [
-                'error' => $e->getMessage(),
-                'data' => $data
-            ]);
+            error_log('Failed to log admin action: ' . $e->getMessage());
             return false;
         }
     }
@@ -98,11 +102,9 @@ class CoreFunctionsServiceNew
      */
     public static function validateRequestHeaders(): bool
     {
-        $request = request();
-        
         // Check Content-Type for POST requests
-        if ($request->isMethod('POST')) {
-            $contentType = $request->header('Content-Type');
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
             if (!$contentType || 
                 (!str_contains($contentType, 'application/x-www-form-urlencoded') && 
                  !str_contains($contentType, 'multipart/form-data') &&
@@ -112,19 +114,15 @@ class CoreFunctionsServiceNew
         }
 
         // Check User-Agent
-        if (!$request->header('User-Agent')) {
+        if (empty($_SERVER['HTTP_USER_AGENT'])) {
             return false;
         }
 
         // Check for suspicious headers
-        $suspiciousHeaders = ['X-Forwarded-Host', 'X-Real-IP'];
+        $suspiciousHeaders = ['HTTP_X_FORWARDED_HOST', 'HTTP_X_REAL_IP'];
         foreach ($suspiciousHeaders as $header) {
-            if ($request->header($header)) {
-                Log::warning('Suspicious header detected', [
-                    'header' => $header,
-                    'value' => $request->header($header),
-                    'ip' => $request->ip()
-                ]);
+            if (!empty($_SERVER[$header])) {
+                error_log('Suspicious header detected: ' . $header . ' = ' . $_SERVER[$header]);
             }
         }
 
@@ -134,20 +132,22 @@ class CoreFunctionsServiceNew
     /**
      * Send security response
      */
-    public static function sendSecurityResponse(int $statusCode, string $message, $data = null): \Illuminate\Http\JsonResponse
+    public static function sendSecurityResponse(int $statusCode, string $message, $data = null): string
     {
         $response = [
             'success' => false,
             'status' => 'error',
             'message' => $message,
-            'timestamp' => now()->toISOString()
+            'timestamp' => date('c')
         ];
 
         if ($data !== null) {
             $response['data'] = $data;
         }
 
-        return response()->json($response, $statusCode);
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        return json_encode($response);
     }
 
     /**
@@ -161,17 +161,17 @@ class CoreFunctionsServiceNew
 
         // Set secure session parameters
         ini_set('session.cookie_httponly', 1);
-        ini_set('session.cookie_secure', request()->secure());
+        ini_set('session.cookie_secure', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 1 : 0);
         ini_set('session.use_strict_mode', 1);
-        ini_set('session.gc_maxlifetime', config('session.lifetime', 1800));
+        ini_set('session.gc_maxlifetime', 1800);
 
         // Generate CSRF token if not exists
-        if (!session()->has('csrf_token')) {
-            session()->put('csrf_token', self::generateRandomString(32));
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = self::generateRandomString(32);
         }
 
         // Regenerate session ID for security
-        session()->regenerate();
+        session_regenerate_id(true);
     }
 
     /**
@@ -179,7 +179,8 @@ class CoreFunctionsServiceNew
      */
     public static function getCurrentUrl(): string
     {
-        return request()->fullUrl();
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+        return $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['REQUEST_URI'] ?? '/');
     }
 
     /**
@@ -187,20 +188,23 @@ class CoreFunctionsServiceNew
      */
     public static function safeFileExists(string $filepath): bool
     {
-        return Storage::exists($filepath) && Storage::get($filepath) !== false;
+        $fullPath = self::storagePath('app/' . ltrim($filepath, '/'));
+        return file_exists($fullPath) && is_readable($fullPath);
     }
 
     /**
      * Safe redirect function
      */
-    public static function safeRedirect(string $url, bool $permanent = false): \Illuminate\Http\RedirectResponse
+    public static function safeRedirect(string $url, bool $permanent = false): void
     {
         // Validate URL for security
         if (!self::isValidUrl($url)) {
             throw new \InvalidArgumentException('Invalid redirect URL');
         }
 
-        return redirect($url, $permanent ? 301 : 302);
+        http_response_code($permanent ? 301 : 302);
+        header('Location: ' . $url);
+        exit;
     }
 
     /**
@@ -228,7 +232,7 @@ class CoreFunctionsServiceNew
         $phone = preg_replace('/\D/', '', $phone);
         
         // Basic validation - should be 10-15 digits
-        return preg_match('/^\d{10,15}$/', $phone);
+        return (bool) preg_match('/^\d{10,15}$/', $phone);
     }
 
     /**
@@ -236,7 +240,7 @@ class CoreFunctionsServiceNew
      */
     public static function generateRandomString(int $length = 16): string
     {
-        return \Illuminate\Support\Str::random($length);
+        return substr(bin2hex(random_bytes((int) ceil($length / 2))), 0, $length);
     }
 
     /**
@@ -244,7 +248,7 @@ class CoreFunctionsServiceNew
      */
     public static function isAuthenticated(): bool
     {
-        return auth()->check();
+        return !empty($_SESSION['user_id']);
     }
 
     /**
@@ -252,7 +256,7 @@ class CoreFunctionsServiceNew
      */
     public static function getUserRole(): ?string
     {
-        return auth()->user()?->role ?? null;
+        return $_SESSION['role'] ?? null;
     }
 
     /**
@@ -260,7 +264,8 @@ class CoreFunctionsServiceNew
      */
     public static function hasPermission(string $permission): bool
     {
-        return auth()->user()?->hasPermission($permission) ?? false;
+        $permissions = $_SESSION['permissions'] ?? [];
+        return in_array($permission, $permissions);
     }
 
     /**
@@ -276,7 +281,10 @@ class CoreFunctionsServiceNew
      */
     public static function formatDate($date, string $format = 'Y-m-d H:i:s'): string
     {
-        return Carbon::parse($date)->format($format);
+        if ($date instanceof \DateTime) {
+            return $date->format($format);
+        }
+        return date($format, is_numeric($date) ? $date : strtotime((string) $date));
     }
 
     /**
@@ -300,15 +308,13 @@ class CoreFunctionsServiceNew
     public static function ensureDirectoryExists(string $dir): bool
     {
         try {
-            if (!Storage::exists($dir)) {
-                Storage::makeDirectory($dir, 0755, true);
+            $fullDir = self::storagePath('app/' . ltrim($dir, '/'));
+            if (!is_dir($fullDir)) {
+                mkdir($fullDir, 0755, true);
             }
             return true;
         } catch (\Exception $e) {
-            Log::error('Failed to create directory', [
-                'directory' => $dir,
-                'error' => $e->getMessage()
-            ]);
+            error_log('Failed to create directory: ' . $dir . ' - ' . $e->getMessage());
             return false;
         }
     }
@@ -340,11 +346,18 @@ class CoreFunctionsServiceNew
                 return false;
             }
 
-            if (!Storage::exists($sourcePath)) {
+            $fullSource = self::storagePath('app/' . ltrim($sourcePath, '/'));
+            $fullDest = self::storagePath('app/' . ltrim($destinationPath, '/'));
+
+            if (!file_exists($fullSource)) {
                 return false;
             }
 
-            $sourceContent = Storage::get($sourcePath);
+            $sourceContent = file_get_contents($fullSource);
+            if ($sourceContent === false) {
+                return false;
+            }
+
             $imageInfo = getimagesizefromstring($sourceContent);
             
             if (!$imageInfo) {
@@ -360,9 +373,9 @@ class CoreFunctionsServiceNew
 
             // Create image resource based on type
             $sourceImage = match ($type) {
-                IMAGETYPE_JPEG => imagecreatefromjpeg($sourceContent),
-                IMAGETYPE_PNG => imagecreatefrompng($sourceContent),
-                IMAGETYPE_GIF => imagecreatefromgif($sourceContent),
+                IMAGETYPE_JPEG => imagecreatefromjpeg($fullSource),
+                IMAGETYPE_PNG => imagecreatefrompng($fullSource),
+                IMAGETYPE_GIF => imagecreatefromgif($fullSource),
                 default => false
             };
 
@@ -396,17 +409,13 @@ class CoreFunctionsServiceNew
             imagedestroy($newImage);
 
             if ($result) {
-                Storage::put($destinationPath, file_get_contents($tempPath));
+                file_put_contents($fullDest, file_get_contents($tempPath));
                 unlink($tempPath);
             }
 
             return $result;
         } catch (\Exception $e) {
-            Log::error('Image resize failed', [
-                'source' => $sourcePath,
-                'destination' => $destinationPath,
-                'error' => $e->getMessage()
-            ]);
+            error_log('Image resize failed: ' . $sourcePath . ' - ' . $e->getMessage());
             return false;
         }
     }
@@ -416,8 +425,8 @@ class CoreFunctionsServiceNew
      */
     public static function generateSlug(string $string): string
     {
-        $slug = \Illuminate\Support\Str::slug($string, '-');
-        return substr($slug, 0, 100); // Limit length
+        $slug = strtolower(trim(preg_replace('/[^a-z0-9-]+/', '-', strtolower(trim($string))), '-'));
+        return substr($slug, 0, 100);
     }
 
     /**
@@ -425,7 +434,10 @@ class CoreFunctionsServiceNew
      */
     public static function truncateText(string $text, int $length = 100, string $suffix = '...'): string
     {
-        return \Illuminate\Support\Str::limit($text, $length, $suffix);
+        if (mb_strlen($text) <= $length) {
+            return $text;
+        }
+        return mb_strimwidth($text, 0, $length, $suffix);
     }
 
     /**
@@ -433,7 +445,7 @@ class CoreFunctionsServiceNew
      */
     public static function getClientIp(): string
     {
-        return request()->ip();
+        return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
     }
 
     /**
@@ -443,8 +455,8 @@ class CoreFunctionsServiceNew
     {
         $cacheKey = "rate_limit:" . md5($key);
         
-        $attempts = Cache::get($cacheKey, []);
-        $now = now()->timestamp;
+        $attempts = $_SESSION['_cache'][$cacheKey] ?? [];
+        $now = time();
         
         // Filter out old attempts
         $recentAttempts = array_filter($attempts, fn($timestamp) => ($now - $timestamp) < $timeWindow);
@@ -455,17 +467,19 @@ class CoreFunctionsServiceNew
         
         // Add current attempt
         $recentAttempts[] = $now;
-        Cache::put($cacheKey, $recentAttempts, $timeWindow);
+        $_SESSION['_cache'][$cacheKey] = $recentAttempts;
         
         return true; // Not rate limited
     }
 
     /**
-     * Send JSON response
+     * Send JSON response - returns JSON string
      */
-    public static function sendJsonResponse($data, int $statusCode = 200): \Illuminate\Http\JsonResponse
+    public static function sendJsonResponse($data, int $statusCode = 200): string
     {
-        return response()->json($data, $statusCode);
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        return json_encode($data);
     }
 
     /**
@@ -473,7 +487,7 @@ class CoreFunctionsServiceNew
      */
     public static function isAjaxRequest(): bool
     {
-        return request()->ajax();
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
 
     /**
@@ -482,17 +496,15 @@ class CoreFunctionsServiceNew
     public static function getWhatsAppTemplates(): array
     {
         try {
-            $templatesFile = 'whatsapp_templates.php';
+            $templatesFile = self::storagePath('app/whatsapp_templates.php');
             
-            if (Storage::exists($templatesFile)) {
-                return include Storage::path($templatesFile);
+            if (file_exists($templatesFile)) {
+                return include $templatesFile;
             }
             
-            return config('whatsapp.templates', []);
+            return [];
         } catch (\Exception $e) {
-            Log::error('Failed to load WhatsApp templates', [
-                'error' => $e->getMessage()
-            ]);
+            error_log('Failed to load WhatsApp templates: ' . $e->getMessage());
             return [];
         }
     }
@@ -502,7 +514,7 @@ class CoreFunctionsServiceNew
      */
     public static function hashPassword(string $password): string
     {
-        return \Illuminate\Support\Facades\Hash::make($password);
+        return password_hash($password, PASSWORD_BCRYPT);
     }
 
     /**
@@ -510,7 +522,7 @@ class CoreFunctionsServiceNew
      */
     public static function verifyPasswordHash(string $password, string $hash): bool
     {
-        return \Illuminate\Support\Facades\Hash::check($password, $hash);
+        return password_verify($password, $hash);
     }
 
     /**
@@ -552,7 +564,6 @@ class CoreFunctionsServiceNew
             return false;
         }
         
-        // Don't sanitize passwords, return as-is
         return $password;
     }
 

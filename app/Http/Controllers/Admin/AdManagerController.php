@@ -109,7 +109,7 @@ class AdManagerController extends AdminController
             if ($row2) {
                 $autoAdCode = $row2['setting_value'];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AdManagerController index: ' . $e->getMessage()); }
 
         $this->render('admin/ads/settings', [
             'page_title' => 'AdSense Settings',

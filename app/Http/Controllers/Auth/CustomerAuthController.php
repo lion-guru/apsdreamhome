@@ -24,7 +24,7 @@ class CustomerAuthController extends BaseController
         @session_start();
 
         // Redirect if already logged in
-        if (isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'customer') {
+        if (isset($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'customer') {
             header('Location: ' . BASE_URL . '/user/dashboard');
             exit;
         }
@@ -67,12 +67,11 @@ class CustomerAuthController extends BaseController
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_phone'] = $user['phone'] ?? '';
-                $_SESSION['user_type'] = $user['user_type'] ?? 'customer';
-                $_SESSION['user_role'] = $user['role'] ?? 'user';
+                $_SESSION['role'] = $user['role'] ?? 'customer';
                 $_SESSION['logged_in'] = true;
 
                 // Role-based redirect
-                $redirectUrl = $this->getRedirectUrl($user['user_type'] ?? 'customer', $user['role'] ?? 'user');
+                $redirectUrl = $this->getRedirectUrl($user['role'] ?? 'customer', $user['role'] ?? 'user');
                 header('Location: ' . BASE_URL . $redirectUrl);
                 exit;
             } else {
@@ -167,8 +166,7 @@ class CustomerAuthController extends BaseController
                 'password' => $hashed,
                 'referral_code' => $referral_code,
                 'referred_by' => $referrer_id,
-                'user_type' => 'customer',
-                'role' => 'user',
+                'role' => 'customer',
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')

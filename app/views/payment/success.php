@@ -3,12 +3,6 @@
 // TODO: Add proper error handling with try-catch blocks
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Payment Successful' ?> - APS Dream Home</title>
     <?php
     if (!isset($payment_id)) {
         $payment_id = 'N/A'; // Default value if $payment_id is not set
@@ -230,8 +224,6 @@
             }
         }
     </style>
-</head>
-<body>
     <div class="particles" id="particles"></div>
     
     <div class="payment-success-container">
@@ -335,5 +327,5 @@
             }
         }, 15000);
     </script>
-</body>
-</html>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

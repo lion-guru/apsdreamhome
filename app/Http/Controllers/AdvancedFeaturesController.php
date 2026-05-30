@@ -89,7 +89,7 @@ class AdvancedFeaturesController extends BaseController
 
             // Set session
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['role'] = $user['role'];
             $_SESSION['user_name'] = $user['name'];
 
             return $this->jsonResponse([
@@ -298,7 +298,7 @@ class AdvancedFeaturesController extends BaseController
             if ($result['success']) {
                 // Set session for newly registered user
                 $_SESSION['user_id'] = $result['user_id'];
-                $_SESSION['user_role'] = 'customer';
+                $_SESSION['role'] = 'customer';
             }
 
             return $this->jsonResponse($result);

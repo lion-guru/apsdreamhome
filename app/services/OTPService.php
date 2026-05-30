@@ -4,12 +4,14 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use Exception;
+use Twilio\Rest\Client;
 
 class OTPService
 {
     private $db;
     private $otpLength = 6;
     private $expiryMinutes = 10;
+    private $twilioClient;
 
     public function __construct()
     {
@@ -223,10 +225,24 @@ class OTPService
     {
         $message = $this->getSMSMessage($otpCode, $purpose);
 
-        // For demo purposes, just log the message
-        error_log("SMS OTP to $phone: $message");
+        try {
+            $accountSid = getenv('TWILIO_ACCOUNT_SID');
+            $authToken = getenv('TWILIO_AUTH_TOKEN');
+            $fromNumber = getenv('TWILIO_FROM_NUMBER');
 
-        // In production, integrate with SMS gateway like Twilio, AWS SNS, etc.
+            if ($accountSid && $authToken && $fromNumber) {
+                if (!$this->twilioClient) {
+                    $this->twilioClient = new Client($accountSid, $authToken);
+                }
+                $this->twilioClient->messages->create($phone, [
+                    'from' => $fromNumber,
+                    'body' => $message
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Twilio SMS OTP error: " . $e->getMessage());
+        }
+
         return true;
     }
 

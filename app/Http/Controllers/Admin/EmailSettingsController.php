@@ -6,11 +6,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Services\Communication\EmailService;
 
-class EmailSettingsController extends BaseController
+class EmailSettingsController extends AdminController
 {
     protected $db;
     

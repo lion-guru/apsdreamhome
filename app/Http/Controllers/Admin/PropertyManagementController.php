@@ -788,7 +788,7 @@ class PropertyManagementController extends AdminController
             $stmt = $this->db->prepare("SELECT p.*, s.site_name FROM properties p LEFT JOIN sites s ON p.site_id = s.id WHERE p.id = ?");
             $stmt->execute([$id]);
             $data['property'] = $stmt->fetch() ?: [];
-        } catch (Exception $e) {}
+        } catch (Exception $e) { error_log('PropertyManagementController exception: ' . $e->getMessage()); }
         $data['sites'] = [];
         $data['property_types'] = [];
         $data['property_statuses'] = [];
@@ -806,7 +806,7 @@ class PropertyManagementController extends AdminController
             $stmt = $this->db->prepare("SELECT p.*, s.site_name FROM properties p LEFT JOIN sites s ON p.site_id = s.id WHERE p.id = ?");
             $stmt->execute([$id]);
             $data['property'] = $stmt->fetch() ?: [];
-        } catch (Exception $e) {}
+        } catch (Exception $e) { error_log('PropertyManagementController exception: ' . $e->getMessage()); }
         $this->data = array_merge($this->data, $data);
         $this->data['page_title'] = 'Edit Property';
         $this->render('admin/properties/create');

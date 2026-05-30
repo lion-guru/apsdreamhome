@@ -22,15 +22,15 @@ $impersonatingUserId = $_SESSION['god_mode_user_id'] ?? null;
 $roleSwitched = isset($_SESSION['god_mode_role_switched']);
 $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
 ?>
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?> | APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= htmlspecialchars($page_title ?? 'God Mode - Super Admin') ?></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<style>
         :root {
             --god-primary: #6b21a8;
             --god-secondary: #9333ea;
@@ -275,8 +275,6 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             box-shadow: 0 0 0 0.2rem rgba(251, 191, 36, 0.25);
         }
     </style>
-</head>
-<body>
     <!-- Impersonation Warning Banner -->
     <?php if ($isImpersonating): ?>
     <div class="container mt-3">
@@ -618,7 +616,6 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const baseUrl = '<?php echo $base; ?>';
         let selectedUserId = null;
@@ -748,15 +745,41 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
         
         // Search users
         function searchUsers() {
-            const query = document.getElementById('userSearch').value;
-            showToast('Searching for: ' + query);
-            // Implementation would fetch from API
+            const query = document.getElementById('userSearch')?.value || '';
+            fetch(`${baseUrl}/admin/godmode/users?search=${encodeURIComponent(query)}&limit=20`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.users && data.users.length) {
+                        let html = '';
+                        data.users.forEach(u => {
+                            html += `<div class="d-flex justify-content-between align-items-center p-2 border-bottom border-light"><span><strong>${u.name}</strong> <span class="badge bg-${u.role === 'super_admin' ? 'danger' : 'secondary'} ms-1">${u.role}</span><br><small class="text-white-50">${u.email}</small></span><button class="btn btn-sm btn-god" onclick="impersonateUser(${u.id})"><i class="fas fa-mask me-1"></i>Impersonate</button></div>`;
+                        });
+                        document.getElementById('usersList').innerHTML = html;
+                        showToast(`Found ${data.total} users`, 'success');
+                    } else {
+                        showToast('No users found', 'error');
+                    }
+                })
+                .catch(() => showToast('Error searching users', 'error'));
         }
         
         // Filter users by role
         function filterUsers(role) {
             showToast('Filtering by role: ' + role);
-            // Implementation would filter the list
+            fetch(`${baseUrl}/admin/godmode/users?role=${encodeURIComponent(role)}&limit=20`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.users && data.users.length) {
+                        let html = '';
+                        data.users.forEach(u => {
+                            html += `<div class="d-flex justify-content-between align-items-center p-2 border-bottom border-light"><span><strong>${u.name}</strong> <span class="badge bg-${u.role === 'super_admin' ? 'danger' : 'secondary'} ms-1">${u.role}</span><br><small class="text-white-50">${u.email}</small></span><button class="btn btn-sm btn-god" onclick="impersonateUser(${u.id})"><i class="fas fa-mask me-1"></i>Impersonate</button></div>`;
+                        });
+                        document.getElementById('usersList').innerHTML = html;
+                    } else {
+                        showToast('No users found for role: ' + role, 'error');
+                    }
+                })
+                .catch(() => showToast('Error filtering users', 'error'));
         }
         
         // Check system health
@@ -780,5 +803,6 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             return `${minutes}m`;
         }
     </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

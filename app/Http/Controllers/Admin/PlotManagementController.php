@@ -960,7 +960,7 @@ class PlotManagementController extends AdminController
                     'plot_id' => $id, 'old_status' => $old, 'new_status' => $status,
                     'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
                 ]);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log('PlotManagementController updateStatus log: ' . $e->getMessage()); }
             echo json_encode(['success' => true, 'message' => 'Status updated to ' . $status]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);

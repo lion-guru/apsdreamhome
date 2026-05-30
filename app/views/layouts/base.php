@@ -107,12 +107,18 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <!-- Extra head content from views -->
     <?php if (!empty($extraHead)) echo $extraHead; ?>
     <script>
-        // Dynamically set header height for page offset
+        // Dynamically set header height for page offset (immediately + on resize)
         (function() {
             function setHeaderHeight() {
                 var hdr = document.querySelector('header.premium-header');
                 var h = hdr ? hdr.offsetHeight : 80;
                 document.documentElement.style.setProperty('--header-height', h + 'px');
+            }
+            // Run immediately after CSS paints
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setHeaderHeight);
+            } else {
+                setHeaderHeight();
             }
             window.addEventListener('load', setHeaderHeight);
             window.addEventListener('resize', setHeaderHeight);
@@ -244,9 +250,9 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
     <!-- Chatbot JS -->
     <script>
-        window.chatbotApiUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/api/gemini/chat';
+        window.chatbotApiUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/api/ai/chat';
         window.chatbotUserContext = {
-            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['user_role']) ? $_SESSION['user_role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>',
+            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? $_SESSION['role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>',
             userId: '<?php echo $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? ''; ?>',
             userName: '<?php echo addslashes($_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? ''); ?>',
             isLoggedIn: <?php echo (isset($_SESSION['user_id']) || isset($_SESSION['admin_id'])) ? 'true' : 'false'; ?>
@@ -256,7 +262,7 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/premium-header.js"></script>
+    <!-- premium-header.js removed - functionality merged into header.php inline -->
 
     <!-- Utility JS -->
     <script>

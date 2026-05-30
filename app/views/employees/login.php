@@ -536,6 +536,7 @@ require_once __DIR__ . '/../layouts/header.php';
     });
 </script>
 
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
 <?php
 // Include public footer
 require_once __DIR__ . '/../layouts/footer.php';

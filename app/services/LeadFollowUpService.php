@@ -104,7 +104,8 @@ class LeadFollowUpService
     {
         if ($type === 'incomplete_registration') {
             $subject = "Complete Your Registration - APS Dream Home";
-            $message = "Hi $name,\n\nYou started the registration process but didn't complete it. We're here to help if you have any questions.\n\nComplete your registration at: http://localhost/apsdreamhome/register";
+            $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+            $message = "Hi $name,\n\nYou started the registration process but didn't complete it. We're here to help if you have any questions.\n\nComplete your registration at: $baseUrl/register";
         } else {
             $subject = "Thank You for Your Interest - APS Dream Home";
             $message = "Hi $name,\n\nThank you for your interest in APS Dream Home. Our team will contact you shortly.\n\nBest regards,\nAPS Dream Home Team";

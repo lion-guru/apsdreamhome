@@ -24,11 +24,11 @@ loadEnv($projectRoot . '/.env');
 // Gemini AI Configuration - Updated from database
 return [
     'api_key' => $_ENV['GEMINI_API_KEY'] ?? '',
-    'api_url' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    'api_url' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
     'project_id' => '',
-    'model' => 'gemini-1.5-flash',
+    'model' => 'gemini-2.5-flash',
     'temperature' => 0.7,
     'max_tokens' => 8192,
-    'enabled' => false
+    'enabled' => true
 ];
 

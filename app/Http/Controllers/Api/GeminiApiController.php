@@ -522,7 +522,7 @@ class GeminiApiController extends BaseController
         if (isset($_SESSION['user_id'])) {
             $context['user_id'] = $_SESSION['user_id'];
             $context['user_name'] = $_SESSION['user_name'] ?? null;
-            $context['role'] = $_SESSION['user_role'] ?? 'customer';
+            $context['role'] = $_SESSION['role'] ?? 'customer';
 
             // Fetch additional context based on role
             try {

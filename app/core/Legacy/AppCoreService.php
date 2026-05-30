@@ -75,9 +75,11 @@ class App
             }
             
             // Debug logging
-            error_log("ROUTING DEBUG: URI = '$uri', Method = '$method'");
-            error_log("ROUTING DEBUG: BasePath = '$basePath'");
-            error_log("ROUTING DEBUG: Original URI = '" . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "'");
+            if (defined('DEBUG_MODE') && DEBUG_MODE) {
+                error_log("ROUTING DEBUG: URI = '$uri', Method = '$method'");
+                error_log("ROUTING DEBUG: BasePath = '$basePath'");
+                error_log("ROUTING DEBUG: Original URI = '" . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "'");
+            }
             
             // Route the request
             return $this->route($uri, $method);

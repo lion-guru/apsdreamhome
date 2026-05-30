@@ -103,9 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Prepare view data (GET)
 $$page_title = 'KYC Upload | APS Dream Homes';
-$layout = 'modern';
-
-ob_start();
 ?>
 
 <div class="row justify-content-center">
@@ -195,12 +192,6 @@ ob_start();
 }
 </style>
 
-<?php
-$content = ob_get_clean();
-
-// Custom scripts
-ob_start();
-?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('kycUploadForm');
@@ -234,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const allFilled = Array.from(fileInputs).every(input => input.files.length > 0);
         if (!allFilled) {
-            alert('αñòαÑâαñ¬αñ»αñ╛ αñ╕αñ¡αÑÇ αñåαñ╡αñ╢αÑìαñ»αñò αñªαñ╕αÑìαññαñ╛αñ╡αÑçαñ£αñ╝ αñàαñ¬αñ▓αÑïαñí αñòαñ░αÑçαñéαÑñ');
+            alert('αñòαÑâαñ¬αñ»αñ╛ αñ╕α¡αñ¿αÑÇ αñåαñ╡αñ╢αÑìαñ»αñò αñªαñ╕αÑìαññαñ╛αñ╡αÑçαñ£αñ╝ αñàαñ¬αñ▓αÑïαñí αñòαñ░αÑçαñéαÑñ');
             return;
         }
 
@@ -269,8 +260,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<?php
-$scripts = ob_get_clean();
-
-// Include layout
-require_once __DIR__ . '/../../layouts/' . $layout . '.php';

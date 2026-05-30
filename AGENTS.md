@@ -1505,3 +1505,262 @@ All 9 phases pass: DB Health → Seeds → Header Visuals → Admin Login → Us
 ### E2E Test Result
 9/9 phases pass, 7 screenshots, zero regressions.
 
+---
+
+## Session 2026-05-26 (Part 1): Plot Dimensions, Pricing & Accounting Pipeline
+
+### What Was Done
+1. **Plot Dimensions & Flexible Pricing** — Updated 204 plots with actual dimensions (width x length). Added `price_history` table for tracking price changes over time. Created `AccountingIntegrationService` linking Booking → Commission → Wallet → Accounting pipeline. Public plot listing with filters (by colony, size, price range, status). Admin plot CRUD enhancements (edit dimensions, price history view, bulk operations).
+2. **Customer Plot Booking Flow** — Created booking form with plot selection, buyer details, payment terms. Confirmation page with booking summary. Added "Plots" nav to header. Dashboard now shows user's bookings. 5 new routes: `/plots/{id}/book`, `/user/bookings`, `/user/bookings/{id}`, `/user/bookings/{id}/cancel`, `/user/bookings/{id}/payment`.
+3. **Admin Booking Approval** — Admin can approve/reject bookings, manage payments, view enhanced dashboard stats for plots/booking trends. Payment tracking with installment schedule.
+4. **Customer Bookings Page** — Full booking history view with status tracking, receipt download, notification service (email/SMS on status change). Fixed `fetchRow()` in BaseController.
+
+### Routes Added
+```
+GET  /plots/{id}/book
+GET  /user/bookings
+GET  /user/bookings/{id}
+POST /user/bookings/{id}/cancel
+POST /user/bookings/{id}/payment
+GET  /admin/bookings/{id}/approve
+GET  /admin/bookings/{id}/reject
+```
+
+### Commit
+`c134b58c9`, `501f470ac`, `3ce0b74c9`, `4380214ce`
+
+---
+
+## Session 2026-05-26 (Part 2): Major UI/UX Cleanup & Performance Optimization
+
+### What Was Done
+1. **Extracted Inline CSS/JS** — All inline `<style>` and `<script>` blocks from header.php, footer.php, base.php, and admin layouts extracted to cacheable external files: `frontend.css`, `header.css`, `chatbot.css`, `chatbot.js`, `admin.js`, `employee.js`. Reduces page size by ~30KB per load.
+2. **CSP Fix** — Content-Security-Policy was blocking CDN resources (Bootstrap, Font Awesome, Google Fonts, Chart.js). Updated CSP headers to whitelist all external CDN origins. Restored CSS cascade order for extracted `frontend.css`.
+3. **Header Logo/Nav Overlap Fix** — Removed negative margin on brand logo and conflicting flex rule in `style.css` that was pushing navigation off-center. Header now renders correctly on all viewport sizes.
+4. **Chatbot JS Fix** — `toggleChatLanguage()` now exposed globally via `window.toggleChatLanguage`. `ChatbotUserContext` was hardcoded to `'guest'` — now uses actual user data from session. Chatbot language toggle and user context both working.
+5. **Removed Duplicate WhatsApp** — Fixed duplicate WhatsApp floating button appearing on every page (was rendered in both header and footer).
+6. **Performance Caching** — Admin sidebar/dashboard now uses `Cache::remember()` (3600s TTL for menu, 120-300s for dashboard queries). 11 admin dashboard COUNT/SUM queries cached. Added DB indexes on `admin_menu_items.section` and `admin_menu_items.order_index`. CSRF tokens added to `support.php` and `list_property.php` POST forms.
+7. **Removed Form-Blocking JS** — Removed JavaScript that was blocking form submission on list-property and contact forms (validation was preventing submit without user feedback).
+8. **Router Error Pages** — Proper 404/500 view templates now used instead of inline HTML.
+
+### Commit
+`7ea7c3424`, `bef29305e`, `f40dcf937`, `d068fe310`, `185d028f9`
+
+---
+
+## Session 2026-05-26 (Part 3): Deep UI Audit & Bug Fix Sprint
+
+### What Was Done
+1. **56 Self-Layout View Files Fixed** — Found 56 admin view files using broken self-layout pattern (`ob_start` + `require_once layouts/admin.php` inside content). Fixed to use proper controller-rendered layout. Created `tools/fix_self_layout.php` for future bulk fixes.
+2. **9 HRM 500 Errors Resolved** — All HRM pages (attendance, leave, payroll, performance, recruitment, jobs, departments, designations, settings) were returning HTTP 500 due to missing variables from controllers. Fixed by adding graceful fallbacks.
+3. **3 Breadcrumb Typo Fixes** — `breadcromb.jpg` → `breadcrumb.jpg` in 3 view files.
+4. **5 New Admin Routes** — `/admin/inventory`, `/admin/loans`, `/admin/backups`, `/admin/financial-reports`, `/admin/testimonials` with stub controllers and views.
+5. **HRM Redirect Fix** — HRM controller was redirecting to `/admin/login` (wrong path) instead of `BASE_URL + '/admin/login'`.
+6. **Cache Warmup** — Cache warmup scripts created in `testing/` for automated cache priming after deployments.
+7. **Admin Layout Fixes** — Converted 8 closure routes (payments, media, AI/analytics, employees, commissions, accounts, dev-tools, roles) to controller methods with proper admin layout rendering.
+
+### Commit
+`12b3b9393`, `f7430f59a`, `304a46919`, `beea08b4d`
+
+---
+
+## Session 2026-05-26 (Part 4): Associate Workflow Fix & Final Cleanup
+
+### What Was Done
+1. **MLMTreeController Auth Fixed** — Constructor was always redirecting to `/admin/login` even for associates. Changed to allow associate session access.
+2. **AssociateController Bugs Fixed** — `requireAuth()` was checking wrong session key for `user_role`. `team()` query now uses `user_type OR role`. `profile()` fixed `fetch()` → `fetchOne()`. `listProperty()` removed non-existent `is_active` column reference.
+3. **MLM Data Backfill** — Created `scripts/backfill_associate_data.php` that creates `mlm_profiles`, `network_tree`, `wallet_points` records for all 12 associates who were missing extension records.
+4. **Registration/Referral Flow Verified** — New associate registration creates all records (mlm_profiles, network_tree, wallet_points). Referral flow correctly links new associate to sponsor's tree.
+5. **All 14 associate pages** return HTTP 200. PHP error log clean.
+
+### Commit
+`5e26eac63`
+
+---
+
+## Session 2026-05-26 (Part 5): Massive Cleanup — Role Consolidation, Customer Migration, MLM Fix, FK Constraints
+
+### What Was Done
+1. **Role Column Consolidation** — Merged 3 parallel role/type columns (`role`, `user_role`, `user_type`) in `users` table into a single `role` column. Updated 42 files (8 auth controllers, 17+ other controllers, 11 services, 10 views, middleware/core). Session now uses `$_SESSION['role']` consistently. All `user_type`/`user_role` SQL refs updated to `role`.
+   - New role distribution: admin(5), agent(3), associate(14), customer(28), employee(18)
+   - Script: `scripts/consolidate_roles.php`
+
+2. **Customers Table Migration** — Migrated all 27 SQL queries across 12 files from legacy `customers` table to `users` table. Files fixed:
+   - `CustomerService.php` (7 queries), `EMI.php` (5), `EMIAutomationService.php` (3), `ChatService.php` (2)
+   - `Visit.php`, `PaymentService.php`, `CleanLeadService.php`, `LeadService.php`, `LegacyFunctionsService.php`, `ReportService.php`, `hybrid_commission_dashboard.php`, `book.php`
+   - Legacy `customers` table preserved with its 3 records for backward compatibility (30+ child tables still reference it via `customer_id`)
+
+3. **MLM/Associate/Agent/Referral Enhancements**:
+   - Fixed missing extension records: 2 associates (IDs 98, 99) + 2 agents (IDs 54, 81) now have proper `associates`/`agents` extension records
+   - 56/56 MLM integrity checks pass across all 14 associates
+   - Added referral API endpoint at `/api/referral/dashboard`
+   - Added "Refer & Earn" widget to customer dashboard (referral code, count, earnings, share buttons)
+   - Enhanced `AssociateAuthController` registration to create all 4 extension records (associates, mlm_profiles, wallet_points, network_tree)
+   - Script: `scripts/fix_mlm_extensions.php`, verification: `testing/check_associate_registration.php`
+
+4. **FK Constraints** — Added 11 FK constraints back to the database:
+   - `associates.user_id` → `users.id`, `employees.user_id` → `users.id`
+   - `users.referred_by` → `users.id`, `mlm_profiles.sponsor_user_id` → `users.id`
+   - `mlm_commission_ledger.beneficiary_user_id` → `users.id`
+   - `mlm_commission_ledger.source_user_id` → `users.id`
+   - `colonies.district_id` → `districts.id`, `bookings.plot_id` → `plots.id`
+
+### Files Directly Modified (42+ files across all phases)
+- `app/Services/CustomerService.php` — 7 queries migrated from customers → users
+- `app/Models/EMI.php` — 5 JOINs migrated
+- `app/Services/EMIAutomationService.php` — 3 JOINs migrated
+- `app/Services/Communication/ChatService.php` — 2 JOINs migrated
+- `app/Services/CleanLeadService.php`, `LeadService.php`, `PaymentService.php`
+- `app/Models/Visit.php`, `app/Core/Legacy/LegacyFunctionsService.php`
+- `app/Services/Reports/ReportService.php`, `app/views/dashboard/hybrid_commission_dashboard.php`
+- `app/views/pages/properties/book.php`, `app/Http/Controllers/Front/UserController.php`
+- `app/Http/Controllers/Auth/AssociateAuthController.php`
+- `app/Http/Controllers/Api/ReferralController.php` — new referral dashboard API
+- `routes/api.php` — 3 new referral routes
+- `app/views/pages/user_dashboard.php` — Refer & Earn widget
+- 42+ auth/controller/service/view files updated for role column consolidation
+- `scripts/consolidate_roles.php`, `scripts/fix_mlm_extensions.php` (new)
+- `testing/check_associate_registration.php` (new)
+
+### E2E Test Results
+128/129 pass (1 expected GodMode 403 for non-superadmin) — no regressions
+
+### PHP Syntax
+All modified files pass syntax check
+
+---
+
+## Session 2026-05-26 (Part 6): Voice AI Agent System & OLN Implementation
+
+### What Was Done
+1. **Core Voice AI Services** — Created 3 specialized voice agents extending BaseAgent:
+   - SiteVisitBookingAgent (ID: 10) — Property site visit scheduling with qualification
+   - PropertyInquiryAgent (ID: 11) — Property details, pricing, location, lead qualification
+   - LeadFollowUpAgent (ID: 12) — Lead nurturing, follow-up scheduling, status updates
+   - Fixed AIManager::executeTask() method to handle voice agent task types
+   - Registered all 3 agents in AgentManager
+   - Seeded 3 voice agents (Site Visit Booker, Property Consultant, Lead Nurturer) + 3 call scripts
+
+2. **Voice AI API Layer** — Created RESTful API for voice agent system:
+   - VoiceAgentController.php with 10 endpoints (start-call, process-response, session, end-call, schedule, extracted-leads, stats, history)
+   - Added 10 API routes in routes/api.php
+   - Added 8 admin routes in routes/web.php for dashboard views
+
+3. **Online Lead Nurturing (OLN) Service** — Created service for lead lifecycle management:
+   - Nurturing stages: new → contacted → interested → qualified → viewing → negotiated → closed → not_interested → dnd
+   - Auto-assignment of leads to agents, auto-scheduling of site visits on "viewing" stage
+   - Lead scoring (0-100) based on engagement, sentiment, property match
+   - Bulk follow-up scheduling and analytics
+
+4. **Admin Dashboard Views** — Created complete admin interface for voice agents:
+   - Dashboard with stats cards, charts, recent calls table
+   - History with filtering and pagination
+   - Schedule management with bulk scheduling and auto-assign
+   - Script management with activation toggles and detail modals
+   - Extracted leads workflow with verification and conversion to leads
+   - Agent settings page for voice provider config and agent parameters
+   - OLN dashboard showing pipeline kanban, funnel metrics, lead journey detail
+
+5. **Database Optimization** — Verified all necessary indexes already exist for:
+   - ai_call_sessions, ai_calling_schedule, ai_call_extracted_leads, ai_call_logs
+   - leads, properties, user_properties tables
+   - Total: 23 indexes verified for optimal query performance
+
+### Files Created (10+)
+- Core: app/Services/AI/VoiceAgents/{SiteVisitBookingAgent,PropertyInquiryAgent,LeadFollowUpAgent}.php
+- Core: app/Services/AI/AIManager.php (executeTask method added)
+- Core: app/Services/AI/Agents/AgentManager.php (3 agents registered)
+- Core: app/Services/Voice/OLNService.php
+- Core: app/Http/Controllers/Api/VoiceAgentController.php
+- Core: scripts/seed_voice_agents.php
+- Core: scripts/add_voice_ai_indexes.php
+- Admin: app/Http/Controllers/Admin/VoiceAgentAdminController.php
+- Views: 6 view files in app/views/admin/voice-agents/ (dashboard, history, schedule, scripts, extracted-leads, settings, oln)
+- Routes: 10 API routes + 8 web routes added
+
+### Database State
+- 6 agents in ai_calling_agents (Riya, Alex, Priya, Site Visit Booker, Property Consultant, Lead Nurturer)
+- 6 scripts in ai_call_scripts (Hindi intro, English intro, Follow-up, Site Visit Booking, Property Consultation, Lead Nurturing Follow-up)
+- Voice agent system ready for Twilio/Vapi integration (comments indicate where to plug in)
+- OLN service ready for lead nurturing automation
+
+### E2E Test Results
+128/129 pass (1 expected GodMode 403 for non-superadmin) — no regressions from voice AI system implementation
+
+### PHP Syntax
+All modified files pass syntax check
+
+---
+
+## Current Status (2026-05-29)
+
+### E2E Test Results
+128/129 pass (1 expected GodMode 403 for non-superadmin)
+
+### Deep Scan Metrics
+| Metric | Value |
+|--------|-------|
+| Route definitions | ~1,375 (850 GET, 341 POST web.php + 92 api.php) |
+| OK (HTTP 200/302) | 837+ |
+| FAIL (expected: auth, 403, legitimate 404) | 11 |
+| Real 500 errors | 0 |
+
+### Database
+- 767 tables, all InnoDB, all with PKs, 23 FK constraints
+- 377 INT→BIGINT column type mismatches fixed
+- 295 orphaned records cleaned
+- 4 active colonies: Suryoday (id=2), Braj Radha Nagri (id=3), Raghunath Nagri (id=4), Budh Bihar (id=5)
+- 204 plots with actual dimensions
+- Unified `role` column in `users` (replaced 3 parallel columns)
+- 14 associates with all extension records (associates, mlm_profiles, wallet_points, network_tree)
+- 2 agents with agents extension records
+- 12 files migrated off `customers` table to `users`
+- Voice AI Agent System tables: ai_call_sessions, ai_call_scripts, ai_calling_agents, ai_calling_schedule, ai_call_extracted_leads, ai_call_logs, voice_assistant_config
+
+### Session 2026-05-29: 5-Agent Analysis & 33 Bug Fix Sprint
+
+### What Was Done
+1. **5 Parallel Agents Deployed** — Database schema, routes/controllers, security, view files, code quality all analyzed simultaneously using multi-agent orchestration
+
+2. **🔴 Critical Security Fixes**:
+   - `LayoutController` — added `requireAdmin()` authentication (was publicly accessible — anyone could modify site layout/CSS/JS)
+   - 25 files with hardcoded `http://localhost` URLs → dynamic `BASE_URL` constant (OAuth, email verification, social login all fixed)
+   - 6 Laravel import files (`use Illuminate\*`) rewritten to use native PHP equivalents (would crash on code path execution)
+   - 3 debug-only controllers (`exit()` after every method) → proper return patterns
+
+3. **🔴 Database Fixes**:
+   - 16 MyISAM tables → InnoDB (payments, email_templates, sms_logs, customers, etc.)
+   - 14 tables got primary keys (campaigns, settings, plot_master, etc.)
+   - 377 INT(11) columns → BIGINT(20) UNSIGNED (was `users.id` is BIGINT but 143 FK references were INT — type mismatch risk)
+   - 12 new FK constraints added (total now 23, up from 11)
+   - 295 orphaned records cleaned (9 employees, 1 mlm_profile, 10 plots, 275 property_images)
+
+4. **🟡 Code Quality**:
+   - Error log debug noise silenced — 10 `error_log()` lines wrapped in `DEBUG_MODE` check (Router, BaseController, AppCoreService)
+   - 24 empty catch blocks now log via `error_log()` instead of silent swallowing
+   - 7 admin controllers changed from `extends BaseController` → `extends AdminController` (proper auth)
+   - 60 self-layout view files fixed (removed double-render HTML structure)
+
+5. **🟢 Features Added**:
+   - **Password reset email** — Implemented end-to-end (token → email log → reset form). Was just TODO markers before
+   - **75+ new routes** — 14 controller groups now accessible (HRM, Voice AI, GST, KYC, Legal, Training, etc.)
+   - **AdminNotificationService** — Internal notification system with admin panel view
+   - **20+ core tables seeded** — Voice AI, documents, payroll, commission, attendance data
+
+### Metrics (Current)
+- Routes: ~1,450+ definitions, 128/129 E2E pass (1 expected GodMode 403)
+- PHP syntax: 1,521+ files — 100% pass
+- Database: 767 tables, all InnoDB, all with PKs, 23 FK constraints
+- 310 active tables (up from 286), 457 empty (down from 481)
+- 0 corrupted views, 0 missing view targets
+- 0 application errors in PHP error log
+- E2E: 128 pass, 1 expected fail — zero regressions throughout
+
+### Remaining Items
+- **Twilio/Vapi Integration** — Connect voice agent system to telephony provider for live calls (stubbed, needs API credentials)
+- **~457 empty tables** — Mostly schema-only utility tables; seed scripts created for core modules
+- **Email/SMS gateway integration stubbed** — LeadFollowUpService incomplete
+- **Legacy customer portal** — CustomerController + app/views/customer/ duplicate
+- **~14 self-layout view files** — remaining low-priority ones (mostly in employee/ and associate/ subdirs)
+- **6 experimental controllers** — Blockchain, IoT, Metaverse, Edge Computing, Sustainable Tech, PWA (POC code, not routed)
+

@@ -9,16 +9,7 @@ $errors = $errors ?? [];
 $old = $old ?? [];
 $base = BASE_URL;
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Registration - APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <style>
+<style>
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #059669 0%, #047857 25%, #065f46 50%, #064e3b 75%, #022c22 100%);
@@ -288,9 +279,6 @@ $base = BASE_URL;
             }
         }
     </style>
-</head>
-
-<body>
     <a href="<?php echo $base; ?>/" class="home-link">
         <i class="fa-solid fa-arrow-left"></i> Back to Home
     </a>
@@ -399,6 +387,5 @@ $base = BASE_URL;
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+</body></html>

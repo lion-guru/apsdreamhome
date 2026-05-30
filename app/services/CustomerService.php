@@ -49,29 +49,29 @@
 
     public function getCustomer($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM customers WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT u.* FROM customers c JOIN users u ON c.user_id = u.id WHERE c.id = :id");
         $stmt->execute([":id" => $id]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function getCustomerByEmail($email)
     {
-        $stmt = $this->db->prepare("SELECT * FROM customers WHERE email = :email");
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email AND role = 'customer'");
         $stmt->execute([":email" => $email]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function getCustomerByUserId($userId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM customers WHERE user_id = :userId");
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :userId");
         $stmt->execute([":userId" => $userId]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function updateProfile($id, $data)
     {
-        $sql = "UPDATE customers SET ";
-        $params = [":id" => $id];
+        $sql = "UPDATE users SET ";
+        $params = [];
         $updates = [];
 
         foreach ($data as $key => $value) {
@@ -79,7 +79,8 @@
             $params[":$key"] = $value;
         }
 
-        $sql .= implode(", ", $updates) . " WHERE id = :id";
+        $sql .= implode(", ", $updates) . " WHERE id = (SELECT user_id FROM customers WHERE id = :customer_id)";
+        $params[":customer_id"] = $id;
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
@@ -167,13 +168,13 @@
 
     public function verifyEmail($email)
     {
-        $stmt = $this->db->prepare("UPDATE customers SET email_verified = 1 WHERE email = ?");
+        $stmt = $this->db->prepare("UPDATE users SET email_verified = 1 WHERE email = ? AND role = 'customer'");
         return $stmt->execute([$email]);
     }
 
     public function verifyPhone($phone)
     {
-        $stmt = $this->db->prepare("UPDATE customers SET phone_verified = 1 WHERE phone = ?");
+        $stmt = $this->db->prepare("UPDATE users SET phone_verified = 1 WHERE phone = ? AND role = 'customer'");
         return $stmt->execute([$phone]);
     }
 
@@ -183,7 +184,7 @@
 
         try {
             // Update customer KYC status
-            $stmt = $this->db->prepare("UPDATE customers SET kyc_completed = 1, verification_documents = ? WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE users SET kyc_completed = 1, verification_documents = ? WHERE id = (SELECT user_id FROM customers WHERE id = ?)");
             $stmt->execute([json_encode($documents), $customerId]);
 
             // Mark documents as verified

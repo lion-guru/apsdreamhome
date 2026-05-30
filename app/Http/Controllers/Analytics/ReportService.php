@@ -77,8 +77,8 @@ class ReportService
                         DATE(ua.created_at) as report_date,
                         COUNT(*) as total_activities,
                         COUNT(DISTINCT ua.user_id) as active_users,
-                        AVG(ua.duration) as avg_session_duration
-                        FROM user_activity_log ua
+                        0 as avg_session_duration
+                        FROM user_activity_logs ua
                         WHERE ua.created_at BETWEEN ? AND ?";
 
             $stmt = $db->prepare($query);

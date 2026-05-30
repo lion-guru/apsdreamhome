@@ -181,6 +181,8 @@ $router->post('/builder-registration', 'Front\\PageController@builderRegistratio
 $router->get('/stamp-duty-calculator', 'Front\\PageController@stampDutyCalculator');
 $router->get('/plot-size-converter', 'Front\\PageController@plotSizeConverter');
 $router->get('/home-loan-eligibility', 'Front\\PageController@homeLoanEligibility');
+$router->get('/documents', 'Front\\PageController@documentGallery');
+$router->get('/documents/download/{id}', 'Front\\PageController@downloadDocument');
 $router->get('/property-valuation', 'Front\\PageController@propertyValuation');
 $router->get('/tools-hub', 'Front\\PageController@toolsHub');
 $router->get('/rent-vs-buy', 'Front\\PageController@rentVsBuy');
@@ -281,13 +283,21 @@ $router->get('/admin/api-keys/toggle/{id}', 'App\\Http\\Controllers\\Admin\\ApiK
 $router->get('/admin/api-keys/test/{id}', 'App\Http\Controllers\Admin\ApiKeyController@test');
 
 // Admin AI Chatbot Training
-$router->get('/admin/ai-training', function () {
-    require_once __DIR__ . '/../app/views/admin/ai-training.php';
-});
+$router->get('/admin/ai-training', 'App\\Http\\Controllers\\Admin\\AdminAIController@training');
 
 // Admin WhatsApp Integration
 $router->get('/admin/whatsapp-integration', function () {
     require_once __DIR__ . '/../app/views/admin/whatsapp_integration.php';
+});
+
+// Admin WhatsApp Web (QR scan - new)
+$router->get('/admin/whatsapp-web', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    require_once __DIR__ . '/../app/views/admin/whatsapp-web/index.php';
+});
+$router->get('/admin/whatsapp-web/manage', function () {
+    header('Location: http://localhost:3001');
+    exit;
 });
 
 // Missing frontend routes (from header/footer links)
@@ -1021,6 +1031,13 @@ $router->get('/admin/accounting', 'App\\Http\\Controllers\\Admin\\AccountingCont
 
 // Admin Tasks
 $router->get('/admin/tasks', 'App\\Http\\Controllers\\Admin\\TaskController@index');
+$router->get('/admin/tasks/create', 'App\\Http\\Controllers\\Admin\\TaskController@create');
+$router->post('/admin/tasks/store', 'App\\Http\\Controllers\\Admin\\TaskController@store');
+$router->get('/admin/tasks/show/{id}', 'App\\Http\\Controllers\\Admin\\TaskController@show');
+$router->get('/admin/tasks/edit/{id}', 'App\\Http\\Controllers\\Admin\\TaskController@edit');
+$router->post('/admin/tasks/update/{id}', 'App\\Http\\Controllers\\Admin\\TaskController@update');
+$router->post('/admin/tasks/destroy/{id}', 'App\\Http\\Controllers\\Admin\\TaskController@destroy');
+$router->get('/admin/tasks/stats', 'App\\Http\\Controllers\\Admin\\TaskController@getStats');
 
 // Admin Support Tickets
 $router->get('/admin/support_tickets', 'App\\Http\\Controllers\\Admin\\SupportTicketController@index');
@@ -1670,6 +1687,34 @@ $router->get('/admin/news/categories', 'App\\Http\\Controllers\\Admin\\NewsContr
 $router->get('/admin/support-tickets', 'App\\Http\\Controllers\\Admin\\SupportTicketController@index');
 $router->get('/admin/meetings', 'App\\Http\\Controllers\\Admin\\MeetingController@index');
 $router->get('/admin/documents', 'App\\Http\\Controllers\\Admin\\DocumentController@index');
+$router->get('/admin/documents/upload', 'App\\Http\\Controllers\\Admin\\DocumentController@upload');
+$router->post('/admin/documents/store', 'App\\Http\\Controllers\\Admin\\DocumentController@store');
+$router->get('/admin/documents/show/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@show');
+$router->post('/admin/documents/delete/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@delete');
+$router->get('/admin/documents/download/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@download');
+$router->get('/admin/documents/categories', 'App\\Http\\Controllers\\Admin\\DocumentController@categories');
+$router->post('/admin/documents/categories/store', 'App\\Http\\Controllers\\Admin\\DocumentController@storeCategory');
+$router->post('/admin/documents/categories/update/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@updateCategory');
+$router->post('/admin/documents/categories/delete/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@deleteCategory');
+$router->get('/admin/documents/types', 'App\\Http\\Controllers\\Admin\\DocumentController@types');
+$router->post('/admin/documents/types/store', 'App\\Http\\Controllers\\Admin\\DocumentController@storeType');
+$router->post('/admin/documents/types/update/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@updateType');
+$router->post('/admin/documents/types/delete/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@deleteType');
+$router->get('/admin/documents/templates', 'App\\Http\\Controllers\\Admin\\DocumentController@templates');
+$router->post('/admin/documents/templates/store', 'App\\Http\\Controllers\\Admin\\DocumentController@storeTemplate');
+$router->get('/admin/documents/templates/edit/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@editTemplate');
+$router->post('/admin/documents/templates/update/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@updateTemplate');
+$router->post('/admin/documents/templates/delete/{id}', 'App\\Http\\Controllers\\Admin\\DocumentController@deleteTemplate');
+$router->get('/admin/documents/reviews', 'App\\Http\\Controllers\\Admin\\DocumentController@reviews');
+$router->post('/admin/documents/reviews/store', 'App\\Http\\Controllers\\Admin\\DocumentController@storeReview');
+$router->get('/admin/documents/classification', 'App\\Http\\Controllers\\Admin\\DocumentController@classification');
+$router->get('/admin/documents/business', 'App\\Http\\Controllers\\Admin\\DocumentController@businessDocuments');
+$router->get('/admin/documents/customer', 'App\\Http\\Controllers\\Admin\\DocumentController@customerDocuments');
+$router->get('/admin/documents/user', 'App\\Http\\Controllers\\Admin\\DocumentController@userDocuments');
+$router->get('/admin/documents/property', 'App\\Http\\Controllers\\Admin\\DocumentController@propertyDocuments');
+$router->get('/admin/documents/generated', 'App\\Http\\Controllers\\Admin\\DocumentController@generatedDocuments');
+$router->get('/admin/documents/ocr', 'App\\Http\\Controllers\\Admin\\DocumentController@ocrDocuments');
+$router->get('/admin/documents/search', 'App\\Http\\Controllers\\Admin\\DocumentController@search');
 
 // AI Chatbot
 $router->get('/admin/chatbot', 'App\\Http\\Controllers\\Admin\\AIChatbotController@index');
@@ -1838,4 +1883,470 @@ $router->get('/pwa/service-worker', 'Tech\\PWAController@serviceWorker');
 $router->get('/pwa/manifest', 'Tech\\PWAController@manifest');
 $router->get('/pwa/offline', 'Tech\\PWAController@offline');
 
+// ═══════════════════════════════════════════════════
+// CUSTOMER LEAD EXTRAS MANAGEMENT (New System)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/customer-lead/behavior', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@behavior');
+$router->get('/admin/customer-lead/behavior/{id}', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@showBehavior');
+$router->get('/admin/customer-lead/journeys', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@journeys');
+$router->get('/admin/customer-lead/journeys/{id}', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@showJourney');
+$router->get('/admin/customer-lead/lead-scores', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@leadScores');
+$router->post('/admin/customer-lead/lead-scores/update/{id}', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@updateLeadScore');
+$router->get('/admin/customer-lead/events', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@events');
+$router->get('/admin/customer-lead/events/{id}', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@showEvent');
+$router->get('/admin/customer-lead/custom-fields', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@customFields');
+$router->post('/admin/customer-lead/custom-fields/store', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@storeCustomField');
+$router->post('/admin/customer-lead/custom-fields/update/{id}', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@updateCustomField');
+$router->post('/admin/customer-lead/custom-fields/delete/{id}', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@deleteCustomField');
+$router->get('/admin/customer-lead/approvals', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@approvals');
+$router->get('/admin/customer-lead/approvals/{id}', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@showApproval');
+$router->post('/admin/customer-lead/approvals/update-status/{id}', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@updateApprovalStatus');
+$router->get('/admin/customer-lead/file-extractions', 'App\\Http\\Controllers\\Admin\\CustomerLeadExtrasController@fileExtractions');
 
+// ═══════════════════════════════════════════════════
+// HR MANAGEMENT SYSTEM (New System)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/hr', 'App\\Http\\Controllers\\Admin\\HRController@index');
+$router->get('/admin/hr/employees', 'App\\Http\\Controllers\\Admin\\HRController@employees');
+$router->get('/admin/hr/employees/create', 'App\\Http\\Controllers\\Admin\\HRController@createEmployee');
+$router->post('/admin/hr/employees/store', 'App\\Http\\Controllers\\Admin\\HRController@storeEmployee');
+$router->get('/admin/hr/employees/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@editEmployee');
+$router->post('/admin/hr/employees/update/{id}', 'App\\Http\\Controllers\\Admin\\HRController@updateEmployee');
+$router->get('/admin/hr/employees/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@deleteEmployee');
+$router->get('/admin/hr/employees/view/{id}', 'App\\Http\\Controllers\\Admin\\HRController@viewEmployee');
+$router->get('/admin/hr/attendance', 'App\\Http\\Controllers\\Admin\\HRController@attendance');
+$router->post('/admin/hr/attendance/mark', 'App\\Http\\Controllers\\Admin\\HRController@markAttendance');
+$router->get('/admin/hr/attendance/report', 'App\\Http\\Controllers\\Admin\\HRController@attendanceReport');
+$router->get('/admin/hr/leaves', 'App\\Http\\Controllers\\Admin\\HRController@leaves');
+$router->post('/admin/hr/leaves/store', 'App\\Http\\Controllers\\Admin\\HRController@storeLeave');
+$router->get('/admin/hr/leaves/approve/{id}', 'App\\Http\\Controllers\\Admin\\HRController@approveLeave');
+$router->get('/admin/hr/leaves/reject/{id}', 'App\\Http\\Controllers\\Admin\\HRController@rejectLeave');
+$router->get('/admin/hr/leave-types', 'App\\Http\\Controllers\\Admin\\HRController@leaveTypes');
+$router->post('/admin/hr/leave-types/store', 'App\\Http\\Controllers\\Admin\\HRController@storeLeaveType');
+$router->get('/admin/hr/leave-balances', 'App\\Http\\Controllers\\Admin\\HRController@leaveBalances');
+$router->get('/admin/hr/shifts', 'App\\Http\\Controllers\\Admin\\HRController@shifts');
+$router->post('/admin/hr/shifts/store', 'App\\Http\\Controllers\\Admin\\HRController@storeShift');
+$router->any('/admin/hr/shifts/assign', 'App\\Http\\Controllers\\Admin\\HRController@assignShift');
+$router->get('/admin/hr/shifts/schedule', 'App\\Http\\Controllers\\Admin\\HRController@shiftSchedule');
+$router->get('/admin/hr/kpis', 'App\\Http\\Controllers\\Admin\\HRController@kpis');
+$router->post('/admin/hr/kpis/store', 'App\\Http\\Controllers\\Admin\\HRController@storeKpi');
+$router->get('/admin/hr/performance', 'App\\Http\\Controllers\\Admin\\HRController@performance');
+$router->post('/admin/hr/performance/store', 'App\\Http\\Controllers\\Admin\\HRController@storeReview');
+$router->get('/admin/hr/bonuses', 'App\\Http\\Controllers\\Admin\\HRController@bonuses');
+$router->post('/admin/hr/bonuses/store', 'App\\Http\\Controllers\\Admin\\HRController@storeBonus');
+$router->get('/admin/hr/salary-structure', 'App\\Http\\Controllers\\Admin\\HRController@salaryStructure');
+$router->post('/admin/hr/salary-structure/store', 'App\\Http\\Controllers\\Admin\\HRController@storeSalaryStructure');
+$router->get('/admin/hr/salary-structure/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@editSalaryStructure');
+$router->post('/admin/hr/salary-structure/update/{id}', 'App\\Http\\Controllers\\Admin\\HRController@updateSalaryStructure');
+$router->get('/admin/hr/documents', 'App\\Http\\Controllers\\Admin\\HRController@employeeDocuments');
+$router->post('/admin/hr/documents/upload', 'App\\Http\\Controllers\\Admin\\HRController@uploadEmployeeDocument');
+$router->get('/admin/hr/activities', 'App\\Http\\Controllers\\Admin\\HRController@activities');
+$router->get('/admin/hr/report', 'App\\Http\\Controllers\\Admin\\HRController@employeeReport');
+$router->get('/admin/hr/settings', 'App\\Http\\Controllers\\Admin\\HRController@settings');
+
+// ═══════════════════════════════════════════════════
+// WORK SCHEDULE & SHIFT MANAGEMENT (New System)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/schedule', 'App\\Http\\Controllers\\Admin\\ScheduleController@index');
+$router->get('/admin/schedule/shift-types', 'App\\Http\\Controllers\\Admin\\ScheduleController@shiftTypes');
+$router->post('/admin/schedule/shift-types/store', 'App\\Http\\Controllers\\Admin\\ScheduleController@storeShiftType');
+$router->post('/admin/schedule/shift-types/update/{id}', 'App\\Http\\Controllers\\Admin\\ScheduleController@updateShiftType');
+$router->post('/admin/schedule/shift-types/delete/{id}', 'App\\Http\\Controllers\\Admin\\ScheduleController@deleteShiftType');
+$router->get('/admin/schedule/employee-shifts', 'App\\Http\\Controllers\\Admin\\ScheduleController@employeeShifts');
+$router->post('/admin/schedule/assign-shift', 'App\\Http\\Controllers\\Admin\\ScheduleController@assignShift');
+$router->post('/admin/schedule/assignments/update/{id}', 'App\\Http\\Controllers\\Admin\\ScheduleController@updateAssignment');
+$router->post('/admin/schedule/assignments/remove/{id}', 'App\\Http\\Controllers\\Admin\\ScheduleController@removeAssignment');
+$router->get('/admin/schedule/shift-schedule', 'App\\Http\\Controllers\\Admin\\ScheduleController@shiftSchedule');
+$router->post('/admin/schedule/create', 'App\\Http\\Controllers\\Admin\\ScheduleController@createSchedule');
+$router->post('/admin/schedule/bulk', 'App\\Http\\Controllers\\Admin\\ScheduleController@bulkSchedule');
+$router->get('/admin/schedule/work-schedules', 'App\\Http\\Controllers\\Admin\\ScheduleController@workSchedules');
+$router->post('/admin/schedule/work-schedules/store', 'App\\Http\\Controllers\\Admin\\ScheduleController@storeWorkSchedule');
+$router->get('/admin/schedule/weekly', 'App\\Http\\Controllers\\Admin\\ScheduleController@weeklyView');
+$router->get('/admin/schedule/rotation', 'App\\Http\\Controllers\\Admin\\ScheduleController@rotation');
+
+// ═══════════════════════════════════════════════════
+// SALARY & PAYMENT MANAGEMENT SYSTEM (New System)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/salary', 'App\\Http\\Controllers\\Admin\\SalaryController@index');
+$router->get('/admin/salary/stats', 'App\\Http\\Controllers\\Admin\\SalaryController@stats');
+$router->get('/admin/salary/structures', 'App\\Http\\Controllers\\Admin\\SalaryController@structures');
+$router->get('/admin/salary/structures/edit/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@editStructure');
+$router->post('/admin/salary/structures/store', 'App\\Http\\Controllers\\Admin\\SalaryController@storeStructure');
+$router->post('/admin/salary/structures/update/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@updateStructure');
+$router->get('/admin/salary/payments', 'App\\Http\\Controllers\\Admin\\SalaryController@payments');
+$router->get('/admin/salary/payments/create', 'App\\Http\\Controllers\\Admin\\SalaryController@createPayment');
+$router->post('/admin/salary/payments/store', 'App\\Http\\Controllers\\Admin\\SalaryController@storePayment');
+$router->get('/admin/salary/payments/view/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@viewPayment');
+$router->post('/admin/salary/payments/bulk', 'App\\Http\\Controllers\\Admin\\SalaryController@processBulk');
+$router->get('/admin/salary/payouts', 'App\\Http\\Controllers\\Admin\\SalaryController@payouts');
+$router->post('/admin/salary/payouts/create', 'App\\Http\\Controllers\\Admin\\SalaryController@createPayout');
+$router->post('/admin/salary/payouts/process/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@processPayout');
+$router->get('/admin/salary/history', 'App\\Http\\Controllers\\Admin\\SalaryController@history');
+$router->get('/admin/salary/history/employee/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@historyByEmployee');
+$router->get('/admin/salary/contracts', 'App\\Http\\Controllers\\Admin\\SalaryController@contracts');
+$router->post('/admin/salary/contracts/store', 'App\\Http\\Controllers\\Admin\\SalaryController@storeContract');
+$router->get('/admin/salary/contracts/view/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@viewContract');
+$router->post('/admin/salary/contracts/terminate/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@terminateContract');
+$router->get('/admin/salary/plans', 'App\\Http\\Controllers\\Admin\\SalaryController@plans');
+$router->post('/admin/salary/plans/store', 'App\\Http\\Controllers\\Admin\\SalaryController@storePlan');
+$router->post('/admin/salary/plans/update/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@updatePlan');
+$router->get('/admin/salary/records', 'App\\Http\\Controllers\\Admin\\SalaryController@records');
+$router->get('/admin/salary/records/{year}/{month}', 'App\\Http\\Controllers\\Admin\\SalaryController@recordByMonth');
+$router->get('/admin/salary/tracker', 'App\\Http\\Controllers\\Admin\\SalaryController@tracker');
+$router->post('/admin/salary/tracker/update/{id}', 'App\\Http\\Controllers\\Admin\\SalaryController@updateTracker');
+$router->get('/admin/salary/report', 'App\\Http\\Controllers\\Admin\\SalaryController@report');
+$router->get('/admin/salary/export-csv', 'App\\Http\\Controllers\\Admin\\SalaryController@exportCSV');
+$router->get('/admin/salary/payroll-integration', 'App\\Http\\Controllers\\Admin\\SalaryController@payrollIntegration');
+
+// ═══════════════════════════════════════════════════
+// AI MANAGEMENT (Integrations, Chatbot Logs, Memory)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/ai-management/integrations', 'App\\Http\\Controllers\\Admin\\AIManagementController@integrations');
+$router->post('/admin/ai-management/toggle-integration/{id}', 'App\\Http\\Controllers\\Admin\\AIManagementController@toggleIntegration');
+$router->get('/admin/ai-management/chatbot-logs', 'App\\Http\\Controllers\\Admin\\AIManagementController@chatbotLogs');
+$router->get('/admin/ai-management/context-memory', 'App\\Http\\Controllers\\Admin\\AIManagementController@contextMemory');
+$router->get('/admin/ai-management/generated-content', 'App\\Http\\Controllers\\Admin\\AIManagementController@generatedContent');
+$router->post('/admin/ai-management/toggle-content/{id}', 'App\\Http\\Controllers\\Admin\\AIManagementController@toggleContent');
+$router->get('/admin/ai-management/lead-scores', 'App\\Http\\Controllers\\Admin\\AIManagementController@leadScores');
+$router->get('/admin/ai-management/suggestions', 'App\\Http\\Controllers\\Admin\\AIManagementController@suggestions');
+$router->get('/admin/ai-management/usage-analytics', 'App\\Http\\Controllers\\Admin\\AIManagementController@usageAnalytics');
+
+// ═══════════════════════════════════════════════════
+// COMPANY SETTINGS
+// ═══════════════════════════════════════════════════
+$router->get('/admin/company/settings', 'App\\Http\\Controllers\\Admin\\CompanyController@settings');
+$router->post('/admin/company/settings', 'App\\Http\\Controllers\\Admin\\CompanyController@updateSettings');
+$router->get('/admin/company/employees', 'App\\Http\\Controllers\\Admin\\CompanyController@employees');
+$router->post('/admin/company/employees', 'App\\Http\\Controllers\\Admin\\CompanyController@addEmployee');
+
+// ═══════════════════════════════════════════════════
+// GST INVOICE MANAGEMENT
+// ═══════════════════════════════════════════════════
+$router->get('/admin/gst', 'App\\Http\\Controllers\\Admin\\GstController@index');
+$router->get('/admin/gst/create', 'App\\Http\\Controllers\\Admin\\GstController@create');
+$router->post('/admin/gst/store', 'App\\Http\\Controllers\\Admin\\GstController@store');
+$router->get('/admin/gst/{id}', 'App\\Http\\Controllers\\Admin\\GstController@show');
+
+// ═══════════════════════════════════════════════════
+// KYC DOCUMENT VERIFICATION
+// ═══════════════════════════════════════════════════
+$router->get('/admin/kyc', 'App\\Http\\Controllers\\Admin\\KycController@index');
+$router->get('/admin/kyc/pending', 'App\\Http\\Controllers\\Admin\\KycController@pending');
+$router->get('/admin/kyc/{id}', 'App\\Http\\Controllers\\Admin\\KycController@show');
+$router->post('/admin/kyc/{id}/verify', 'App\\Http\\Controllers\\Admin\\KycController@verify');
+
+// ═══════════════════════════════════════════════════
+// PAYROLL MANAGEMENT
+// ═══════════════════════════════════════════════════
+$router->get('/admin/payroll', 'App\\Http\\Controllers\\Admin\\PayrollController@index');
+$router->get('/admin/payroll/create', 'App\\Http\\Controllers\\Admin\\PayrollController@create');
+$router->post('/admin/payroll/store', 'App\\Http\\Controllers\\Admin\\PayrollController@store');
+$router->get('/admin/payroll/{id}/edit', 'App\\Http\\Controllers\\Admin\\PayrollController@edit');
+$router->post('/admin/payroll/{id}/update', 'App\\Http\\Controllers\\Admin\\PayrollController@update');
+$router->get('/admin/payroll/advances', 'App\\Http\\Controllers\\Admin\\PayrollController@advances');
+$router->post('/admin/payroll/advances/add', 'App\\Http\\Controllers\\Admin\\PayrollController@addAdvance');
+
+// ═══════════════════════════════════════════════════
+// TRAINING COURSES
+// ═══════════════════════════════════════════════════
+$router->get('/admin/training', 'App\\Http\\Controllers\\Admin\\TrainingController@courses');
+$router->get('/admin/training/create', 'App\\Http\\Controllers\\Admin\\TrainingController@createCourse');
+$router->post('/admin/training/store', 'App\\Http\\Controllers\\Admin\\TrainingController@storeCourse');
+$router->get('/admin/training/{id}/edit', 'App\\Http\\Controllers\\Admin\\TrainingController@editCourse');
+$router->post('/admin/training/{id}/update', 'App\\Http\\Controllers\\Admin\\TrainingController@updateCourse');
+$router->get('/admin/training/modules', 'App\\Http\\Controllers\\Admin\\TrainingController@modules');
+$router->post('/admin/training/modules/store', 'App\\Http\\Controllers\\Admin\\TrainingController@storeModule');
+$router->get('/admin/training/enrollments', 'App\\Http\\Controllers\\Admin\\TrainingController@enrollments');
+$router->get('/admin/training/enrollments/{id}', 'App\\Http\\Controllers\\Admin\\TrainingController@showEnrollment');
+$router->get('/admin/training/certificates', 'App\\Http\\Controllers\\Admin\\TrainingController@certificates');
+
+// ═══════════════════════════════════════════════════
+// VOICE AGENTS
+// ═══════════════════════════════════════════════════
+$router->get('/admin/voice-agents', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@dashboard');
+$router->get('/admin/voice-agents/dashboard', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@dashboard');
+$router->get('/admin/voice-agents/history', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@history');
+$router->get('/admin/voice-agents/schedule', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@schedule');
+$router->post('/admin/voice-agents/bulk-schedule', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@bulkSchedule');
+$router->post('/admin/voice-agents/auto-assign', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@autoAssign');
+$router->get('/admin/voice-agents/scripts', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@scripts');
+$router->get('/admin/voice-agents/extracted-leads', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@extractedLeads');
+$router->get('/admin/voice-agents/settings', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@settings');
+$router->get('/admin/voice-agents/oln-dashboard', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@olnDashboard');
+$router->post('/admin/voice-agents/cancel-schedule/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@cancelSchedule');
+$router->post('/admin/voice-agents/reschedule/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@rescheduleCall');
+$router->post('/admin/voice-agents/ajax/convert-lead', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxConvertLead');
+$router->get('/admin/voice-agents/ajax/lead-timeline/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxLeadTimeline');
+
+// ═══════════════════════════════════════════════════
+// FARMERS MANAGEMENT (Admin)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/farmers/manage', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@index');
+$router->get('/admin/farmers/manage/{id}', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@show');
+$router->get('/admin/farmers/agreements', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@agreements');
+$router->get('/admin/farmers/agreements/{id}', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@showAgreement');
+$router->post('/admin/farmers/agreements/store', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@storeAgreement');
+$router->post('/admin/farmers/agreements/{id}/status', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@updateAgreementStatus');
+$router->get('/admin/farmers/loans', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@loans');
+$router->get('/admin/farmers/loans/{id}', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@showLoan');
+$router->post('/admin/farmers/loans/store', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@storeLoan');
+$router->post('/admin/farmers/loans/{id}/status', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@updateLoanStatus');
+$router->get('/admin/farmers/gata', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@gata');
+$router->post('/admin/farmers/gata/store', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@storeGata');
+
+// ═══════════════════════════════════════════════════
+// PROJECT PROGRESS TRACKING
+// ═══════════════════════════════════════════════════
+$router->get('/admin/projects/progress', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@index');
+$router->get('/admin/projects/progress/{id}', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@show');
+$router->post('/admin/projects/progress/{id}/update', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@updateProgress');
+$router->get('/admin/projects/progress/{id}/budget', 'App\\Http\\Controllers\\Admin\\ProjectProgressController@budget');
+
+// ═══════════════════════════════════════════════════
+// PROPERTY FEATURES (Ratings, Reviews, Favorites, Maintenance)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/property-features/ratings', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@ratings');
+$router->post('/admin/property-features/reviews/{id}/status', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@updateReviewStatus');
+$router->get('/admin/property-features/favorites', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@favorites');
+$router->get('/admin/property-features/maintenance', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@maintenance');
+$router->get('/admin/property-features/maintenance/{id}', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@showMaintenance');
+$router->post('/admin/property-features/maintenance/{id}/status', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@updateMaintenanceStatus');
+$router->post('/admin/property-features/maintenance/assign', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@assignMaintenance');
+$router->get('/admin/property-features/market-data', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@marketData');
+$router->post('/admin/property-features/market-data/store', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@storeMarketData');
+$router->get('/admin/property-features/analytics', 'App\\Http\\Controllers\\Admin\\PropertyFeaturesController@analytics');
+
+// ═══════════════════════════════════════════════════
+// BANKING & TRANSACTIONS
+// ═══════════════════════════════════════════════════
+$router->get('/admin/banking', 'App\\Http\\Controllers\\Admin\\BankingController@index');
+$router->get('/admin/banking/{id}', 'App\\Http\\Controllers\\Admin\\BankingController@show');
+$router->get('/admin/banking/reconciliation', 'App\\Http\\Controllers\\Admin\\BankingController@reconciliation');
+$router->post('/admin/banking/reconcile', 'App\\Http\\Controllers\\Admin\\BankingController@reconcile');
+$router->get('/admin/banking/financial-years', 'App\\Http\\Controllers\\Admin\\BankingController@financialYears');
+
+// ═══════════════════════════════════════════════════
+// MLM REWARDS & RANK CRITERIA
+// ═══════════════════════════════════════════════════
+$router->get('/admin/mlm-rewards', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rankCriteria');
+$router->post('/admin/mlm-rewards/rank-criteria/store', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@storeRankCriteria');
+$router->get('/admin/mlm-rewards/rewards', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rewards');
+$router->get('/admin/mlm-rewards/withdrawals', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@withdrawals');
+$router->post('/admin/mlm-rewards/withdrawals/{id}/status', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@updateWithdrawalStatus');
+$router->get('/admin/mlm-rewards/upgrades', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@upgrades');
+
+// ═══════════════════════════════════════════════════
+// LEGAL SERVICES (Admin)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/legal/services', 'App\\Http\\Controllers\\Admin\\LegalController@services');
+$router->get('/admin/legal/services/create', 'App\\Http\\Controllers\\Admin\\LegalController@createService');
+$router->post('/admin/legal/services/store', 'App\\Http\\Controllers\\Admin\\LegalController@storeService');
+$router->get('/admin/legal/disputes', 'App\\Http\\Controllers\\Admin\\LegalController@disputes');
+$router->get('/admin/legal/disputes/{id}', 'App\\Http\\Controllers\\Admin\\LegalController@showDispute');
+$router->post('/admin/legal/disputes/{id}/update', 'App\\Http\\Controllers\\Admin\\LegalController@updateDispute');
+$router->get('/admin/legal/deadlines', 'App\\Http\\Controllers\\Admin\\LegalController@deadlines');
+$router->post('/admin/legal/deadlines/store', 'App\\Http\\Controllers\\Admin\\LegalController@storeDeadline');
+
+// ═══════════════════════════════════════════════════
+// TELECALLER MANAGEMENT (Admin)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/telecaller', 'App\\Http\\Controllers\\Admin\\TelecallerController@index');
+$router->get('/admin/telecaller/{id}', 'App\\Http\\Controllers\\Admin\\TelecallerController@showTask');
+$router->post('/admin/telecaller/store', 'App\\Http\\Controllers\\Admin\\TelecallerController@store');
+$router->get('/admin/telecaller/performance', 'App\\Http\\Controllers\\Admin\\TelecallerController@performance');
+$router->get('/admin/telecaller/performance/{id}', 'App\\Http\\Controllers\\Admin\\TelecallerController@showPerformance');
+$router->post('/admin/telecaller/performance/update', 'App\\Http\\Controllers\\Admin\\TelecallerController@updatePerformance');
+
+// ═══════════════════════════════════════════════════
+// MARKETPLACE, COMPLIANCE, DEVELOPER, ANALYTICS, PERFORMANCE, SECURITY
+// ═══════════════════════════════════════════════════
+$router->get('/admin/marketplace', 'App\\Http\\Controllers\\Admin\\AdminMarketplaceController@index');
+$router->get('/admin/compliance', 'App\\Http\\Controllers\\Admin\\AdminComplianceController@index');
+$router->get('/admin/developer', 'App\\Http\\Controllers\\Admin\\AdminDeveloperController@index');
+$router->get('/admin/analytics/advanced', 'App\\Http\\Controllers\\Admin\\AnalyticsController@advanced');
+$router->get('/admin/performance', 'App\\Http\\Controllers\\Admin\\AdminPerformanceController@index');
+$router->get('/admin/security', 'App\\Http\\Controllers\\Admin\\AdminSecurityController@index');
+
+// ============================================================
+// REDIRECT ROUTES (backward compatibility with different URL styles)
+// ============================================================
+
+// /admin/workflow (no s) -> /admin/workflows
+$router->get('/admin/workflow', function() {
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/workflows');
+    exit;
+});
+$router->get('/admin/workflow/approvals', function() {
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/workflows/pending');
+    exit;
+});
+$router->get('/admin/workflow/reports', function() {
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/workflows');
+    exit;
+});
+
+// /admin/schedule/weekly-view -> /admin/schedule/weekly
+$router->get('/admin/schedule/weekly-view', function() {
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/schedule/weekly');
+    exit;
+});
+
+// /admin/customer-leads -> /admin/customer-lead dashboard
+$router->get('/admin/customer-leads', function() {
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/customer-lead/behavior');
+    exit;
+});
+
+// /admin/farmers -> /farmers (public)
+$router->get('/admin/farmers', function() {
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/farmers');
+    exit;
+});
+
+// Training courses redirect (sidebar link alias)
+$router->get('/admin/training/courses', function() {
+    $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
+    header('Location: ' . $base . '/admin/training');
+    exit;
+});
+
+// ============================================================
+// NOTIFICATION ROUTES
+// ============================================================
+$router->get('/admin/notifications', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@index');
+$router->get('/admin/notifications/panel', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@panel');
+$router->post('/admin/notifications/mark-read/{id}', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@markRead');
+$router->post('/admin/notifications/mark-all-read', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@markAllRead');
+
+// ============================================================
+// TECH: BLOCKCHAIN PROPERTY VERIFICATION
+// ============================================================
+$router->get('/blockchain/dashboard', 'Tech\\BlockchainController@verificationDashboard');
+$router->any('/blockchain/verify/{id}', 'Tech\\BlockchainController@verifyProperty');
+$router->get('/blockchain/certificate/{id}', 'Tech\\BlockchainController@viewCertificate');
+$router->get('/blockchain/transactions/{id}', 'Tech\\BlockchainController@transactionHistory');
+$router->get('/blockchain/generate-certificate/{id}', 'Tech\\BlockchainController@generateCertificate');
+$router->get('/blockchain/explorer/{id}', 'Tech\\BlockchainController@blockchainExplorer');
+$router->get('/blockchain/smart-contract', 'Tech\\BlockchainController@smartContract');
+$router->get('/blockchain/nft-certificates', 'Tech\\BlockchainController@nftCertificates');
+$router->any('/blockchain/transfer/{id}', 'Tech\\BlockchainController@transferOwnership');
+$router->get('/blockchain/provenance/{id}', 'Tech\\BlockchainController@propertyProvenance');
+$router->get('/blockchain/document-verification/{id}', 'Tech\\BlockchainController@documentVerification');
+$router->any('/blockchain/signature/{id}', 'Tech\\BlockchainController@digitalSignature');
+$router->get('/admin/blockchain', 'Tech\\BlockchainController@adminBlockchain');
+$router->get('/admin/blockchain/process/{id}', 'Tech\\BlockchainController@processVerification');
+$router->get('/admin/blockchain/analytics', 'Tech\\BlockchainController@blockchainAnalytics');
+$router->get('/admin/blockchain/fraud-detection', 'Tech\\BlockchainController@fraudDetection');
+$router->get('/api/blockchain/verification-status/{id}', 'Tech\\BlockchainController@apiVerificationStatus');
+$router->post('/api/blockchain/verify-document', 'Tech\\BlockchainController@apiVerifyDocument');
+$router->post('/api/blockchain/submit-documents', 'Tech\\BlockchainController@apiSubmitDocuments');
+
+// ============================================================
+// TECH: IoT SMART HOME
+// ============================================================
+$router->get('/iot/smart-home/{id}', 'Tech\\IoTController@smartHomeDashboard');
+$router->any('/iot/devices', 'Tech\\IoTController@manageDevices');
+$router->any('/iot/device-control/{id}', 'Tech\\IoTController@deviceControl');
+$router->any('/iot/automation/{id}', 'Tech\\IoTController@automationRules');
+$router->get('/iot/energy/{id}', 'Tech\\IoTController@energyMonitoring');
+$router->get('/iot/security/{id}', 'Tech\\IoTController@securityMonitoring');
+$router->get('/iot/device-catalog', 'Tech\\IoTController@deviceCatalog');
+$router->get('/iot/demo', 'Tech\\IoTController@demo');
+$router->get('/iot/market-insights', 'Tech\\IoTController@marketInsights');
+$router->get('/iot/service-packages', 'Tech\\IoTController@servicePackages');
+$router->get('/iot/installation-guide', 'Tech\\IoTController@installationGuide');
+$router->get('/iot/troubleshooting', 'Tech\\IoTController@troubleshooting');
+$router->any('/iot/roi-calculator', 'Tech\\IoTController@roiCalculator');
+$router->get('/admin/iot/analytics', 'Tech\\IoTController@iotAnalytics');
+$router->get('/api/iot/device-status/{id}', 'Tech\\IoTController@apiDeviceStatus');
+$router->post('/api/iot/control-device', 'Tech\\IoTController@apiControlDevice');
+$router->get('/api/iot/energy/{id}', 'Tech\\IoTController@apiEnergyData');
+$router->post('/api/iot/compatibility', 'Tech\\IoTController@compatibilityCheck');
+$router->any('/api/iot/integration', 'Tech\\IoTController@apiDeviceIntegration');
+
+// ============================================================
+// TECH: METAVERSE INTEGRATION
+// ============================================================
+$router->any('/metaverse/virtual-development', 'Tech\\MetaverseController@virtualDevelopment');
+$router->get('/metaverse/collaborative-spaces', 'Tech\\MetaverseController@collaborativeSpace');
+$router->get('/metaverse/collaborative-space/{id}', 'Tech\\MetaverseController@collaborativeSpace');
+$router->any('/metaverse/create-space', 'Tech\\MetaverseController@createCollaborativeSpace');
+$router->get('/metaverse/virtual-marketplace', 'Tech\\MetaverseController@virtualMarketplace');
+$router->get('/metaverse/vr-showroom/{id}', 'Tech\\MetaverseController@vrShowroom');
+$router->get('/metaverse/virtual-events', 'Tech\\MetaverseController@virtualEvents');
+$router->get('/metaverse/nft-ownership/{id}', 'Tech\\MetaverseController@nftOwnership');
+$router->get('/metaverse/vr-tours', 'Tech\\MetaverseController@vrTours');
+$router->any('/metaverse/virtual-property/{id}', 'Tech\\MetaverseController@customizeVirtualProperty');
+$router->get('/metaverse/social-hub', 'Tech\\MetaverseController@socialHub');
+$router->get('/metaverse/virtual-economy', 'Tech\\MetaverseController@virtualEconomy');
+$router->get('/metaverse/academy', 'Tech\\MetaverseController@metaverseAcademy');
+$router->get('/metaverse/investment-portfolio', 'Tech\\MetaverseController@investmentPortfolio');
+$router->get('/admin/metaverse/analytics', 'Tech\\MetaverseController@metaverseAnalytics');
+$router->get('/api/metaverse/vr-data/{id}', 'Tech\\MetaverseController@apiVRData');
+$router->post('/api/metaverse/create-property', 'Tech\\MetaverseController@apiCreateVirtualProperty');
+$router->post('/api/metaverse/join-space', 'Tech\\MetaverseController@apiJoinSpace');
+
+// ============================================================
+// TECH: EDGE COMPUTING & 5G
+// ============================================================
+$router->get('/edge/5g-integration', 'Tech\\EdgeComputingController@fiveGIntegration');
+$router->any('/edge/ai', 'Tech\\EdgeComputingController@edgeAI');
+$router->get('/edge/real-time-processing', 'Tech\\EdgeComputingController@realTimeProcessing');
+$router->get('/edge/mobile-edge', 'Tech\\EdgeComputingController@mobileEdge');
+$router->get('/edge/content-delivery', 'Tech\\EdgeComputingController@contentDelivery');
+$router->get('/edge/cost-analysis', 'Tech\\EdgeComputingController@costAnalysis');
+$router->get('/edge/security-features', 'Tech\\EdgeComputingController@securityFeatures');
+$router->get('/edge/performance-benchmarks', 'Tech\\EdgeComputingController@performanceBenchmarks');
+$router->get('/edge/integration-guide', 'Tech\\EdgeComputingController@integrationGuide');
+$router->get('/edge/use-cases', 'Tech\\EdgeComputingController@useCases');
+$router->any('/edge/roi-calculator', 'Tech\\EdgeComputingController@roiCalculator');
+$router->get('/edge/roadmap', 'Tech\\EdgeComputingController@roadmap');
+$router->get('/edge/partnerships', 'Tech\\EdgeComputingController@partnerships');
+$router->get('/edge/education', 'Tech\\EdgeComputingController@education');
+$router->get('/edge/industry-impact', 'Tech\\EdgeComputingController@industryImpact');
+$router->get('/edge/sustainability', 'Tech\\EdgeComputingController@sustainability');
+$router->get('/edge/research', 'Tech\\EdgeComputingController@research');
+$router->get('/edge/case-studies', 'Tech\\EdgeComputingController@caseStudies');
+$router->get('/admin/edge/dashboard', 'Tech\\EdgeComputingController@edgeDashboard');
+$router->get('/admin/edge/distributed-network', 'Tech\\EdgeComputingController@distributedNetwork');
+$router->get('/api/edge/status', 'Tech\\EdgeComputingController@apiEdgeStatus');
+$router->post('/api/edge/process', 'Tech\\EdgeComputingController@apiProcessAtEdge');
+
+// ============================================================
+// TECH: SUSTAINABLE TECHNOLOGY
+// ============================================================
+$router->get('/sustainability/carbon-footprint', 'Tech\\SustainableTechController@carbonFootprint');
+$router->get('/sustainability/energy-efficiency', 'Tech\\SustainableTechController@energyEfficiency');
+$router->get('/sustainability/green-technology', 'Tech\\SustainableTechController@greenTechnology');
+$router->get('/sustainability/sustainable-properties', 'Tech\\SustainableTechController@sustainableProperties');
+$router->get('/sustainability/environmental-impact', 'Tech\\SustainableTechController@environmentalImpact');
+$router->get('/sustainability/green-finance', 'Tech\\SustainableTechController@greenFinance');
+$router->get('/sustainability/education', 'Tech\\SustainableTechController@sustainabilityEducation');
+$router->get('/sustainability/partnerships', 'Tech\\SustainableTechController@sustainabilityPartnerships');
+$router->get('/sustainability/innovation-lab', 'Tech\\SustainableTechController@innovationLab');
+$router->get('/sustainability/awards', 'Tech\\SustainableTechController@awards');
+$router->any('/sustainability/calculator', 'Tech\\SustainableTechController@sustainabilityCalculator');
+$router->get('/sustainability/roadmap', 'Tech\\SustainableTechController@sustainabilityRoadmap');
+$router->get('/sustainability/case-studies', 'Tech\\SustainableTechController@caseStudies');
+$router->get('/sustainability/community-engagement', 'Tech\\SustainableTechController@communityEngagement');
+$router->get('/sustainability/governance', 'Tech\\SustainableTechController@governance');
+$router->get('/sustainability/investment-opportunities', 'Tech\\SustainableTechController@investmentOpportunities');
+$router->get('/sustainability/trends', 'Tech\\SustainableTechController@trends');
+$router->get('/sustainability/resources', 'Tech\\SustainableTechController@resources');
+$router->get('/sustainability/challenges', 'Tech\\SustainableTechController@challenges');
+$router->get('/sustainability/success-stories', 'Tech\\SustainableTechController@successStories');
+$router->get('/sustainability/future-vision', 'Tech\\SustainableTechController@futureVision');
+$router->get('/admin/sustainability/dashboard', 'Tech\\SustainableTechController@sustainabilityDashboard');
+$router->get('/admin/sustainability/reporting', 'Tech\\SustainableTechController@sustainabilityReporting');
+$router->get('/api/sustainability/data', 'Tech\\SustainableTechController@apiSustainabilityData');
+$router->get('/api/sustainability/endpoints', 'Tech\\SustainableTechController@apiSustainabilityEndpoints');
+
+// ============================================================
+// TECH: PWA ADDITIONAL ROUTES
+// ============================================================
+$router->post('/api/pwa/subscribe', 'Tech\\PWAController@subscribeNotifications');
+$router->post('/api/pwa/send-notification', 'Tech\\PWAController@sendPushNotification');
+$router->get('/pwa/install-prompt', 'Tech\\PWAController@installPrompt');
+$router->get('/api/pwa/stats', 'Tech\\PWAController@getPWAStats');
+$router->post('/api/pwa/log-install-prompt', 'Tech\\PWAController@logInstallPrompt');
+$router->post('/api/pwa/log-installation', 'Tech\\PWAController@logInstallation');

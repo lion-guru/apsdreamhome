@@ -10,8 +10,6 @@ $$page_title = 'Universal Login - APS Dream Home';
 $page_description = 'Login with email, mobile number, or Google';
 $active_page = 'login';
 
-// Content for base layout
-ob_start();
 ?>
 
 <!-- Universal Login Section -->
@@ -480,9 +478,6 @@ ob_start();
         }
     });
 </script>
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+</body></html>
 
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/base.php';
-echo $content;
-?>

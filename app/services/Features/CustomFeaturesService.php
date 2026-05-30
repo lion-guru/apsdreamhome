@@ -73,14 +73,18 @@ class CustomFeaturesService
 
             // Activity log table
             $this->db->execute("
-                CREATE TABLE IF NOT EXISTS activity_log (
+                CREATE TABLE IF NOT EXISTS activity_logs (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id INT,
+                    user_id INT NULL,
                     action VARCHAR(100) NOT NULL,
-                    description TEXT,
-                    entity_type VARCHAR(50),
-                    entity_id INT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    description TEXT NULL,
+                    entity_type VARCHAR(50) NULL,
+                    entity_id INT NULL,
+                    user_type VARCHAR(20) NULL,
+                    details VARCHAR(255) NULL,
+                    ip_address VARCHAR(45) NULL,
+                    user_agent TEXT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     INDEX idx_user_id (user_id),
                     INDEX idx_action (action),
                     INDEX idx_created_at (created_at)
@@ -320,7 +324,7 @@ class CustomFeaturesService
             $stats['properties'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM properties WHERE status = 'active'")['count'] ?? 0;
 
             // Recent activities
-            $stats['recent_activities'] = $this->db->fetchAll("SELECT * FROM activity_log WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY created_at DESC LIMIT 10");
+            $stats['recent_activities'] = $this->db->fetchAll("SELECT * FROM activity_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY created_at DESC LIMIT 10");
 
             return $stats;
         } catch (\Exception $e) {
@@ -489,7 +493,7 @@ class CustomFeaturesService
     private function logActivity(string $action, string $description, string $entityType, int $entityId): void
     {
         try {
-            $sql = "INSERT INTO activity_log (action, description, entity_type, entity_id, created_at) VALUES (?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO activity_logs (action, description, entity_type, entity_id, created_at) VALUES (?, ?, ?, ?, NOW())";
             $this->db->execute($sql, [$action, $description, $entityType, $entityId]);
         } catch (\Exception $e) {
             error_log('Failed to log activity: ' . $e->getMessage());

@@ -493,8 +493,8 @@ class DashboardService
     {
         try {
             $this->db->execute(
-                "INSERT INTO admin_activities (user_id, action, data, created_at) VALUES (?, ?, ?, NOW())",
-                [$userId, $action, json_encode($data)]
+                "INSERT INTO admin_activity_log (admin_id, action, details, ip_address, user_agent, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
+                [$userId, $action, json_encode($data), $_SERVER['REMOTE_ADDR'] ?? 'unknown', $_SERVER['HTTP_USER_AGENT'] ?? 'unknown']
             );
 
             $this->logger->info("Admin activity logged", [
@@ -519,7 +519,7 @@ class DashboardService
     public function getAdminActivityLogs(int $limit = 50, array $filters = []): array
     {
         try {
-            $sql = "SELECT * FROM admin_activities WHERE 1=1";
+            $sql = "SELECT * FROM admin_activity_log WHERE 1=1";
             $params = [];
 
             if (!empty($filters['user_id'])) {
@@ -550,9 +550,9 @@ class DashboardService
             return array_map(function($log) {
                 return [
                     'id' => $log['id'],
-                    'user_id' => $log['user_id'],
+                    'user_id' => $log['admin_id'],
                     'action' => $log['action'],
-                    'data' => json_decode($log['data'], true) ?: [],
+                    'data' => json_decode($log['details'] ?? '{}', true) ?: [],
                     'created_at' => $log['created_at']
                 ];
             }, $logs);

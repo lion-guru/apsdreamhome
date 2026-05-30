@@ -301,20 +301,20 @@ class LeadScoringService
         
         // Get available agents
         $agents = $this->db->fetchAll(
-            "SELECT id FROM users WHERE user_type = 'agent' AND status = 'active'"
+            "SELECT id FROM users WHERE role = 'agent' AND status = 'active'"
         );
         
         if (empty($agents)) {
             // Fallback to associates
             $agents = $this->db->fetchAll(
-                "SELECT id FROM users WHERE user_type = 'associate' AND status = 'active'"
+                "SELECT id FROM users WHERE role = 'associate' AND status = 'active'"
             );
         }
         
         if (empty($agents)) {
             // Fallback to admin
             $agents = $this->db->fetchAll(
-                "SELECT id FROM users WHERE user_type IN ('admin', 'super_admin') AND status = 'active'"
+                "SELECT id FROM users WHERE role IN ('admin', 'super_admin') AND status = 'active'"
             );
         }
         

@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Services\AdminMenuService;
 use App\Http\Middleware\RBACManager;
 
-class AdminMenuPermissionController
+class AdminMenuPermissionController extends AdminController
 {
     private $menuService;
 
     public function __construct()
     {
+        parent::__construct();
         $this->menuService = new AdminMenuService();
     }
 

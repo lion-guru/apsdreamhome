@@ -75,7 +75,7 @@ class AuthenticationService
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['role'] = $user['role'];
             $_SESSION['logged_in'] = true;
             $_SESSION['login_time'] = time();
 
@@ -220,7 +220,7 @@ class AuthenticationService
     {
         try {
             // Log admin action
-            if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
+            if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
                 CoreFunctionsServiceCustom::logAdminAction([
                     'action' => 'logout',
                     'user_id' => $_SESSION['user_id'] ?? 0
@@ -373,7 +373,13 @@ class AuthenticationService
                 throw new Exception('Failed to store reset token');
             }
 
-            // TODO: Send reset email (implement email service)
+            // Log reset link (email sending placeholder - integrate with EmailService when SMTP configured)
+            $resetLink = (defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome') . '/reset-password?token=' . $token;
+            error_log("PASSWORD RESET LINK for {$email}: {$resetLink}");
+
+            // TODO: Send actual email via EmailService when SMTP is configured
+            // $emailService = new \App\Services\Communication\EmailService();
+            // $emailService->sendPasswordResetEmail($email, $token);
 
             // Log admin action
             CoreFunctionsServiceCustom::logAdminAction([
@@ -419,7 +425,7 @@ class AuthenticationService
             return false;
         }
 
-        $userRole = $_SESSION['user_role'] ?? '';
+        $userRole = $_SESSION['role'] ?? '';
 
         // Simple role-based permissions
         $permissions = [

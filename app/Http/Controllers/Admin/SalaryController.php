@@ -1,0 +1,707 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Admin\AdminController;
+
+class SalaryController extends AdminController
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    // ──────────────────────────────────────────────
+    // DASHBOARD / OVERVIEW
+    // ──────────────────────────────────────────────
+
+    public function index()
+    {
+        $this->requireAdmin();
+        try {
+            $totalPaid = $this->db->fetch("SELECT COALESCE(SUM(net_salary),0) as total FROM salary_payments WHERE status='paid' AND MONTH(payment_date)=MONTH(CURDATE()) AND YEAR(payment_date)=YEAR(CURDATE())")['total'] ?? 0;
+            $pendingCount = $this->db->fetch("SELECT COUNT(*) as c FROM salary_payments WHERE status='pending'")['c'] ?? 0;
+            $employeeCount = $this->db->fetch("SELECT COUNT(DISTINCT employee_id) as c FROM salary_structures WHERE is_active=1")['c'] ?? 0;
+            $pendingAmount = $this->db->fetch("SELECT COALESCE(SUM(net_salary),0) as total FROM salary_payments WHERE status='pending'")['total'] ?? 0;
+
+            $recentPayments = $this->db->fetchAll("
+                SELECT sp.*, u.name as employee_name
+                FROM salary_payments sp
+                LEFT JOIN users u ON sp.employee_id = u.id
+                ORDER BY sp.created_at DESC LIMIT 10
+            ") ?? [];
+        } catch (\Exception $e) {
+            $totalPaid = 0; $pendingCount = 0; $employeeCount = 0; $pendingAmount = 0; $recentPayments = [];
+        }
+        return $this->render('admin/salary/index', [
+            'page_title' => 'Salary Management',
+            'total_paid' => $totalPaid,
+            'pending_count' => $pendingCount,
+            'employee_count' => $employeeCount,
+            'pending_amount' => $pendingAmount,
+            'recent_payments' => $recentPayments
+        ]);
+    }
+
+    public function stats()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+        try {
+            $monthly = $this->db->fetchAll("
+                SELECT DATE_FORMAT(payment_date,'%b') as label, COALESCE(SUM(net_salary),0) as total
+                FROM salary_payments WHERE status='paid' AND payment_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                GROUP BY DATE_FORMAT(payment_date,'%Y-%m') ORDER BY MIN(payment_date)
+            ") ?: [];
+            echo json_encode(['success' => true, 'data' => $monthly]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ──────────────────────────────────────────────
+    // SALARY STRUCTURES
+    // ──────────────────────────────────────────────
+
+    public function structures()
+    {
+        $this->requireAdmin();
+        try {
+            $structures = $this->db->fetchAll("
+                SELECT s.*, u.name as employee_name, u.email as employee_email
+                FROM salary_structures s
+                LEFT JOIN users u ON s.employee_id = u.id
+                ORDER BY s.is_active DESC, s.created_at DESC
+            ") ?? [];
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $structures = []; $employees = [];
+        }
+        return $this->render('admin/salary/structures', [
+            'page_title' => 'Salary Structures',
+            'structures' => $structures,
+            'employees' => $employees
+        ]);
+    }
+
+    public function storeStructure()
+    {
+        $this->requireAdmin();
+        $employee_id = (int)($_POST['employee_id'] ?? 0);
+        $basic = (float)($_POST['basic_salary'] ?? 0);
+        $hra = (float)($_POST['hra'] ?? 0);
+        $da = (float)($_POST['da'] ?? 0);
+        $ta = (float)($_POST['travel_allowance'] ?? 0);
+        $ma = (float)($_POST['medical_allowance'] ?? 0);
+        $sa = (float)($_POST['special_allowance'] ?? 0);
+        $pf = (float)($_POST['pf_percent'] ?? 12);
+        $tax = (float)($_POST['tax_deduction'] ?? 0);
+        $eff = $_POST['effective_from'] ?? date('Y-m-d');
+        try {
+            $stmt = $this->db->prepare("INSERT INTO salary_structures (employee_id, basic_salary, hra, da, travel_allowance, medical_allowance, special_allowance, pf_percent, tax_deduction, effective_from, is_active, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,1,NOW())");
+            $stmt->execute([$employee_id, $basic, $hra, $da, $ta, $ma, $sa, $pf, $tax, $eff]);
+            $sid = $this->db->lastInsertId();
+            $this->logHistory($employee_id, 'salary_structure_created', '0', (string)$sid, (int)($_SESSION['admin_id'] ?? 0));
+            $this->setFlash('success', 'Salary structure created');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/structures');
+    }
+
+    public function editStructure($id)
+    {
+        $this->requireAdmin();
+        try {
+            $structure = $this->db->fetch("SELECT s.*, u.name as employee_name FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.id=?", [$id]);
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $structure = null; $employees = [];
+        }
+        if (!$structure) { $this->setFlash('error', 'Not found'); $this->redirect('/admin/salary/structures'); }
+        return $this->render('admin/salary/structures', [
+            'page_title' => 'Edit Salary Structure',
+            'edit_structure' => $structure,
+            'structures' => $this->db->fetchAll("SELECT s.*, u.name as en FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id ORDER BY s.created_at DESC") ?? [],
+            'employees' => $employees
+        ]);
+    }
+
+    public function updateStructure($id)
+    {
+        $this->requireAdmin();
+        $basic = (float)($_POST['basic_salary'] ?? 0);
+        $hra = (float)($_POST['hra'] ?? 0);
+        $da = (float)($_POST['da'] ?? 0);
+        $ta = (float)($_POST['travel_allowance'] ?? 0);
+        $ma = (float)($_POST['medical_allowance'] ?? 0);
+        $sa = (float)($_POST['special_allowance'] ?? 0);
+        $pf = (float)($_POST['pf_percent'] ?? 12);
+        $tax = (float)($_POST['tax_deduction'] ?? 0);
+        $eff = $_POST['effective_from'] ?? date('Y-m-d');
+        try {
+            $this->db->execute("UPDATE salary_structures SET basic_salary=?, hra=?, da=?, travel_allowance=?, medical_allowance=?, special_allowance=?, pf_percent=?, tax_deduction=?, effective_from=? WHERE id=?", [$basic, $hra, $da, $ta, $ma, $sa, $pf, $tax, $eff, $id]);
+            $this->setFlash('success', 'Structure updated');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/structures');
+    }
+
+    // ──────────────────────────────────────────────
+    // SALARY PAYMENTS
+    // ──────────────────────────────────────────────
+
+    public function payments()
+    {
+        $this->requireAdmin();
+        $status = $_GET['status'] ?? '';
+        $employee_id = (int)($_GET['employee_id'] ?? 0);
+        try {
+            $where = []; $params = [];
+            if ($status) { $where[] = 'sp.status=?'; $params[] = $status; }
+            if ($employee_id) { $where[] = 'sp.employee_id=?'; $params[] = $employee_id; }
+            $sql = "SELECT sp.*, u.name as employee_name FROM salary_payments sp LEFT JOIN users u ON sp.employee_id=u.id";
+            if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+            $sql .= " ORDER BY sp.created_at DESC LIMIT 100";
+            $payments = $this->db->fetchAll($sql, $params) ?? [];
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $payments = []; $employees = [];
+        }
+        return $this->render('admin/salary/payments', [
+            'page_title' => 'Salary Payments',
+            'payments' => $payments,
+            'employees' => $employees,
+            'filter_status' => $status,
+            'filter_employee' => $employee_id
+        ]);
+    }
+
+    public function createPayment()
+    {
+        $this->requireAdmin();
+        try {
+            $employees = $this->db->fetchAll("SELECT DISTINCT u.id, u.name FROM users u JOIN salary_structures s ON u.id=s.employee_id WHERE s.is_active=1 AND u.role='employee' ORDER BY u.name") ?? [];
+            $structures = $this->db->fetchAll("SELECT s.*, u.name as employee_name FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.is_active=1 ORDER BY u.name") ?? [];
+        } catch (\Exception $e) {
+            $employees = []; $structures = [];
+        }
+        return $this->render('admin/salary/payment_create', [
+            'page_title' => 'Create Salary Payment',
+            'employees' => $employees,
+            'structures' => $structures
+        ]);
+    }
+
+    public function storePayment()
+    {
+        $this->requireAdmin();
+        $employee_id = (int)($_POST['employee_id'] ?? 0);
+        $structure_id = (int)($_POST['structure_id'] ?? 0);
+        $gross = (float)($_POST['gross_salary'] ?? 0);
+        $deductions = (float)($_POST['total_deductions'] ?? 0);
+        $net = $gross - $deductions;
+        $payment_date = $_POST['payment_date'] ?? date('Y-m-d');
+        $method = $_POST['payment_method'] ?? 'bank_transfer';
+        $txn = $_POST['transaction_id'] ?? '';
+        $status = $_POST['status'] ?? 'pending';
+        $notes = $_POST['notes'] ?? '';
+        try {
+            $stmt = $this->db->prepare("INSERT INTO salary_payments (employee_id, salary_structure_id, gross_salary, total_deductions, net_salary, payment_date, payment_method, transaction_id, status, paid_by, notes, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())");
+            $stmt->execute([$employee_id, $structure_id ?: null, $gross, $deductions, $net, $payment_date, $method, $txn, $status, (int)($_SESSION['admin_id'] ?? 0), $notes]);
+            $this->logHistory($employee_id, 'payment_created', '0', number_format($net, 2), (int)($_SESSION['admin_id'] ?? 0));
+            $this->setFlash('success', 'Payment record created');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/payments');
+    }
+
+    public function viewPayment($id)
+    {
+        $this->requireAdmin();
+        try {
+            $payment = $this->db->fetch("SELECT sp.*, u.name as employee_name, u.email as employee_email, u.phone as employee_phone FROM salary_payments sp LEFT JOIN users u ON sp.employee_id=u.id WHERE sp.id=?", [$id]);
+        } catch (\Exception $e) {
+            $payment = null;
+        }
+        if (!$payment) { $this->setFlash('error', 'Payment not found'); $this->redirect('/admin/salary/payments'); }
+        return $this->render('admin/salary/payment_view', [
+            'page_title' => 'Payment Details',
+            'payment' => $payment
+        ]);
+    }
+
+    public function processBulk()
+    {
+        $this->requireAdmin();
+        $month = (int)($_POST['month'] ?? 0);
+        $year = (int)($_POST['year'] ?? 0);
+        if (!$month || !$year) { $this->setFlash('error', 'Month and year required'); $this->redirect('/admin/salary/payments'); }
+        try {
+            $employees = $this->db->fetchAll("SELECT DISTINCT s.employee_id, s.basic_salary, s.hra, s.da, s.travel_allowance, s.medical_allowance, s.special_allowance, s.pf_percent, s.tax_deduction FROM salary_structures s WHERE s.is_active=1 AND s.employee_id NOT IN (SELECT employee_id FROM salary_payments WHERE MONTH(payment_date)=? AND YEAR(payment_date)=? AND status='paid')", [$month, $year]) ?? [];
+            $count = 0;
+            foreach ($employees as $emp) {
+                $gross = (float)$emp['basic_salary'] + (float)$emp['hra'] + (float)$emp['da'] + (float)$emp['travel_allowance'] + (float)$emp['medical_allowance'] + (float)$emp['special_allowance'];
+                $pfAmt = $gross * ((float)$emp['pf_percent'] / 100);
+                $deductions = $pfAmt + (float)$emp['tax_deduction'];
+                $net = $gross - $deductions;
+                $this->db->execute("INSERT INTO salary_payments (employee_id, gross_salary, total_deductions, net_salary, payment_date, status, paid_by, notes, created_at) VALUES (?,?,?,?,?,?,?,?,NOW())", [$emp['employee_id'], $gross, $deductions, $net, $year . '-' . str_pad($month,2,'0',STR_PAD_LEFT) . '-01', 'pending', (int)($_SESSION['admin_id'] ?? 0), 'Bulk processed']);
+                $count++;
+            }
+            $this->setFlash('success', "Bulk processed $count employees");
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Bulk failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/payments');
+    }
+
+    // ──────────────────────────────────────────────
+    // SALARY PAYOUTS
+    // ──────────────────────────────────────────────
+
+    public function payouts()
+    {
+        $this->requireAdmin();
+        try {
+            $batches = $this->db->fetchAll("
+                SELECT payout_batch_id, COUNT(*) as total, SUM(amount) as total_amount,
+                       SUM(CASE WHEN status='processed' THEN 1 ELSE 0 END) as processed_count,
+                       SUM(CASE WHEN status='failed' THEN 1 ELSE 0 END) as failed_count,
+                       MIN(payout_date) as payout_date, MAX(created_at) as created_at
+                FROM salary_payouts GROUP BY payout_batch_id ORDER BY MAX(created_at) DESC
+            ") ?? [];
+            $payouts = $this->db->fetchAll("SELECT po.*, u.name as employee_name FROM salary_payouts po LEFT JOIN users u ON po.employee_id=u.id ORDER BY po.created_at DESC LIMIT 100") ?? [];
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' AND status='active' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $batches = []; $payouts = []; $employees = [];
+        }
+        return $this->render('admin/salary/payouts', [
+            'page_title' => 'Salary Payouts',
+            'batches' => $batches,
+            'payouts' => $payouts,
+            'employees' => $employees
+        ]);
+    }
+
+    public function createPayout()
+    {
+        $this->requireAdmin();
+        $employee_ids = $_POST['employee_ids'] ?? [];
+        $amounts = $_POST['amounts'] ?? [];
+        $method = $_POST['payment_method'] ?? 'bank_transfer';
+        $notes = $_POST['notes'] ?? '';
+        if (empty($employee_ids)) { $this->setFlash('error', 'Select at least one employee'); $this->redirect('/admin/salary/payouts'); }
+        try {
+            $batch_id = 'BATCH-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
+            foreach ($employee_ids as $i => $eid) {
+                $amt = (float)($amounts[$i] ?? 0);
+                if ($amt <= 0) continue;
+                $this->db->execute("INSERT INTO salary_payouts (payout_batch_id, employee_id, amount, payout_date, status, payment_method, notes, created_at) VALUES (?,?,?,?,?,?,?,NOW())", [$batch_id, (int)$eid, $amt, date('Y-m-d'), 'pending', $method, $notes]);
+            }
+            $this->setFlash('success', "Payout batch $batch_id created");
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/payouts');
+    }
+
+    public function processPayout($id)
+    {
+        $this->requireAdmin();
+        try {
+            $payout = $this->db->fetch("SELECT * FROM salary_payouts WHERE id=?", [$id]);
+            if (!$payout) { $this->setFlash('error', 'Payout not found'); $this->redirect('/admin/salary/payouts'); }
+            $ref = $_POST['reference_no'] ?? 'REF-' . $payout['payout_batch_id'] . '-' . $id;
+            $this->db->execute("UPDATE salary_payouts SET status='processed', reference_no=?, payout_date=CURDATE() WHERE id=?", [$ref, $id]);
+            $this->setFlash('success', 'Payout processed');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/payouts');
+    }
+
+    // ──────────────────────────────────────────────
+    // SALARY HISTORY
+    // ──────────────────────────────────────────────
+
+    public function history()
+    {
+        $this->requireAdmin();
+        $employee_id = (int)($_GET['employee_id'] ?? 0);
+        try {
+            $where = []; $params = [];
+            if ($employee_id) { $where[] = 'sh.employee_id=?'; $params[] = $employee_id; }
+            $sql = "SELECT sh.*, u.name as employee_name, uc.name as changed_by_name FROM salary_history sh LEFT JOIN users u ON sh.employee_id=u.id LEFT JOIN users uc ON sh.changed_by=uc.id";
+            if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+            $sql .= " ORDER BY sh.created_at DESC LIMIT 200";
+            $history = $this->db->fetchAll($sql, $params) ?? [];
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $history = []; $employees = [];
+        }
+        return $this->render('admin/salary/history', [
+            'page_title' => 'Salary History',
+            'history' => $history,
+            'employees' => $employees,
+            'filter_employee' => $employee_id
+        ]);
+    }
+
+    public function historyByEmployee($id)
+    {
+        $this->requireAdmin();
+        try {
+            $employee = $this->db->fetch("SELECT id, name, email FROM users WHERE id=?", [$id]);
+            $history = $this->db->fetchAll("SELECT sh.*, uc.name as changed_by_name FROM salary_history sh LEFT JOIN users uc ON sh.changed_by=uc.id WHERE sh.employee_id=? ORDER BY sh.created_at DESC LIMIT 200", [$id]) ?? [];
+        } catch (\Exception $e) {
+            $employee = null; $history = [];
+        }
+        if (!$employee) { $this->setFlash('error', 'Employee not found'); $this->redirect('/admin/salary/history'); }
+        return $this->render('admin/salary/history', [
+            'page_title' => 'History - ' . htmlspecialchars($employee['name'] ?? ''),
+            'history' => $history,
+            'employees' => [$employee],
+            'filter_employee' => $id
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // SALARY CONTRACTS
+    // ──────────────────────────────────────────────
+
+    public function contracts()
+    {
+        $this->requireAdmin();
+        try {
+            $contracts = $this->db->fetchAll("
+                SELECT c.*, u.name as employee_name, uc.name as created_by_name
+                FROM salary_contracts c
+                LEFT JOIN users u ON c.employee_id = u.id
+                LEFT JOIN users uc ON c.created_by = uc.id
+                ORDER BY c.created_at DESC
+            ") ?? [];
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $contracts = []; $employees = [];
+        }
+        return $this->render('admin/salary/contracts', [
+            'page_title' => 'Salary Contracts',
+            'contracts' => $contracts,
+            'employees' => $employees
+        ]);
+    }
+
+    public function storeContract()
+    {
+        $this->requireAdmin();
+        $employee_id = (int)($_POST['employee_id'] ?? 0);
+        $type = $_POST['contract_type'] ?? 'permanent';
+        $start = $_POST['start_date'] ?? date('Y-m-d');
+        $end = $_POST['end_date'] ?? null;
+        $amount = (float)($_POST['salary_amount'] ?? 0);
+        $bonus = (float)($_POST['signing_bonus'] ?? 0);
+        $terms = $_POST['terms'] ?? '';
+        try {
+            $this->db->execute("INSERT INTO salary_contracts (employee_id, contract_type, start_date, end_date, salary_amount, signing_bonus, terms, status, created_by, created_at) VALUES (?,?,?,?,?,?,?,'active',?,NOW())", [$employee_id, $type, $start, $end ?: null, $amount, $bonus, $terms, (int)($_SESSION['admin_id'] ?? 0)]);
+            $this->logHistory($employee_id, 'contract_created', '0', "type=$type amount=$amount", (int)($_SESSION['admin_id'] ?? 0));
+            $this->setFlash('success', 'Contract created');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/contracts');
+    }
+
+    public function viewContract($id)
+    {
+        $this->requireAdmin();
+        try {
+            $contract = $this->db->fetch("SELECT c.*, u.name as employee_name, u.email as employee_email, uc.name as created_by_name FROM salary_contracts c LEFT JOIN users u ON c.employee_id=u.id LEFT JOIN users uc ON c.created_by=uc.id WHERE c.id=?", [$id]);
+        } catch (\Exception $e) {
+            $contract = null;
+        }
+        if (!$contract) { $this->setFlash('error', 'Contract not found'); $this->redirect('/admin/salary/contracts'); }
+        return $this->render('admin/salary/contract_view', [
+            'page_title' => 'Contract Details',
+            'contract' => $contract
+        ]);
+    }
+
+    public function terminateContract($id)
+    {
+        $this->requireAdmin();
+        try {
+            $contract = $this->db->fetch("SELECT * FROM salary_contracts WHERE id=?", [$id]);
+            if (!$contract) { $this->setFlash('error', 'Not found'); $this->redirect('/admin/salary/contracts'); }
+            $this->db->execute("UPDATE salary_contracts SET status='terminated', end_date=CURDATE() WHERE id=?", [$id]);
+            $this->logHistory($contract['employee_id'], 'contract_terminated', 'active', 'terminated', (int)($_SESSION['admin_id'] ?? 0));
+            $this->setFlash('success', 'Contract terminated');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/contracts');
+    }
+
+    // ──────────────────────────────────────────────
+    // SALARY PLANS
+    // ──────────────────────────────────────────────
+
+    public function plans()
+    {
+        $this->requireAdmin();
+        try {
+            $plans = $this->db->fetchAll("SELECT * FROM salary_plans ORDER BY created_at DESC") ?? [];
+        } catch (\Exception $e) {
+            $plans = [];
+        }
+        return $this->render('admin/salary/plans', [
+            'page_title' => 'Salary Plans',
+            'plans' => $plans
+        ]);
+    }
+
+    public function storePlan()
+    {
+        $this->requireAdmin();
+        $name = $_POST['name'] ?? '';
+        $desc = $_POST['description'] ?? '';
+        $base = (float)($_POST['base_salary'] ?? 0);
+        $bonus = (float)($_POST['bonus_percent'] ?? 0);
+        $comm = (float)($_POST['commission_percent'] ?? 0);
+        $benefits = $_POST['benefits_json'] ?? '';
+        if (!$name) { $this->setFlash('error', 'Plan name required'); $this->redirect('/admin/salary/plans'); }
+        try {
+            $this->db->execute("INSERT INTO salary_plans (name, description, base_salary, bonus_percent, commission_percent, benefits_json, is_active, created_at) VALUES (?,?,?,?,?,?,1,NOW())", [$name, $desc, $base, $bonus, $comm, $benefits]);
+            $this->setFlash('success', 'Plan created');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/plans');
+    }
+
+    public function updatePlan($id)
+    {
+        $this->requireAdmin();
+        $name = $_POST['name'] ?? '';
+        $desc = $_POST['description'] ?? '';
+        $base = (float)($_POST['base_salary'] ?? 0);
+        $bonus = (float)($_POST['bonus_percent'] ?? 0);
+        $comm = (float)($_POST['commission_percent'] ?? 0);
+        $benefits = $_POST['benefits_json'] ?? '';
+        $active = (int)($_POST['is_active'] ?? 1);
+        if (!$name) { $this->setFlash('error', 'Plan name required'); $this->redirect('/admin/salary/plans'); }
+        try {
+            $this->db->execute("UPDATE salary_plans SET name=?, description=?, base_salary=?, bonus_percent=?, commission_percent=?, benefits_json=?, is_active=? WHERE id=?", [$name, $desc, $base, $bonus, $comm, $benefits, $active, $id]);
+            $this->setFlash('success', 'Plan updated');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/plans');
+    }
+
+    // ──────────────────────────────────────────────
+    // SALARY RECORDS
+    // ──────────────────────────────────────────────
+
+    public function records()
+    {
+        $this->requireAdmin();
+        try {
+            $records = $this->db->fetchAll("
+                SELECT r.*, u.name as employee_name
+                FROM salary_records r
+                LEFT JOIN users u ON r.employee_id = u.id
+                ORDER BY r.year DESC, r.month DESC, u.name ASC LIMIT 200
+            ") ?? [];
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $months = [];
+            foreach ($records as $r) {
+                $key = $r['year'] . '-' . str_pad($r['month'],2,'0',STR_PAD_LEFT);
+                $months[$key] = ['year' => $r['year'], 'month' => $r['month']];
+            }
+        } catch (\Exception $e) {
+            $records = []; $employees = []; $months = [];
+        }
+        return $this->render('admin/salary/records', [
+            'page_title' => 'Salary Records',
+            'records' => $records,
+            'employees' => $employees,
+            'months' => $months
+        ]);
+    }
+
+    public function recordByMonth($year, $month)
+    {
+        $this->requireAdmin();
+        try {
+            $records = $this->db->fetchAll("
+                SELECT r.*, u.name as employee_name
+                FROM salary_records r
+                LEFT JOIN users u ON r.employee_id = u.id
+                WHERE r.year=? AND r.month=?
+                ORDER BY u.name ASC
+            ", [(int)$year, (int)$month]) ?? [];
+        } catch (\Exception $e) {
+            $records = [];
+        }
+        return $this->render('admin/salary/records', [
+            'page_title' => "Salary Records - $month/$year",
+            'records' => $records,
+            'filter_year' => $year,
+            'filter_month' => $month
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // SALARY TRACKER
+    // ──────────────────────────────────────────────
+
+    public function tracker()
+    {
+        $this->requireAdmin();
+        $employee_id = (int)($_GET['employee_id'] ?? 0);
+        $month = (int)($_GET['month'] ?? 0);
+        $year = (int)($_GET['year'] ?? 0);
+        try {
+            $where = []; $params = [];
+            if ($employee_id) { $where[] = 't.employee_id=?'; $params[] = $employee_id; }
+            if ($month) { $where[] = 't.month=?'; $params[] = $month; }
+            if ($year) { $where[] = 't.year=?'; $params[] = $year; }
+            $sql = "SELECT t.*, u.name as employee_name FROM salary_tracker t LEFT JOIN users u ON t.employee_id=u.id";
+            if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+            $sql .= " ORDER BY t.year DESC, t.month DESC LIMIT 200";
+            $tracker = $this->db->fetchAll($sql, $params) ?? [];
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $tracker = []; $employees = [];
+        }
+        return $this->render('admin/salary/tracker', [
+            'page_title' => 'Salary Tracker',
+            'tracker' => $tracker,
+            'employees' => $employees,
+            'filter_employee' => $employee_id,
+            'filter_month' => $month,
+            'filter_year' => $year
+        ]);
+    }
+
+    public function updateTracker($id)
+    {
+        $this->requireAdmin();
+        $paid = (float)($_POST['paid_amount'] ?? 0);
+        $status = $_POST['payment_status'] ?? 'pending';
+        $date = $_POST['payment_date'] ?? date('Y-m-d');
+        try {
+            $current = $this->db->fetch("SELECT * FROM salary_tracker WHERE id=?", [$id]);
+            if (!$current) { $this->setFlash('error', 'Not found'); $this->redirect('/admin/salary/tracker'); }
+            $due = (float)$current['net_pay'] - $paid;
+            $this->db->execute("UPDATE salary_tracker SET paid_amount=?, due_amount=?, payment_status=?, payment_date=? WHERE id=?", [$paid, max(0, $due), $status, $date, $id]);
+            $this->logHistory($current['employee_id'], 'tracker_updated', $current['payment_status'], $status, (int)($_SESSION['admin_id'] ?? 0));
+            $this->setFlash('success', 'Tracker updated');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/salary/tracker');
+    }
+
+    // ──────────────────────────────────────────────
+    // REPORTS
+    // ──────────────────────────────────────────────
+
+    public function report()
+    {
+        $this->requireAdmin();
+        $month = (int)($_GET['month'] ?? 0);
+        $year = (int)($_GET['year'] ?? 0);
+        $employee_id = (int)($_GET['employee_id'] ?? 0);
+        try {
+            $where = []; $params = [];
+            if ($month) { $where[] = 'MONTH(sp.payment_date)=?'; $params[] = $month; }
+            if ($year) { $where[] = 'YEAR(sp.payment_date)=?'; $params[] = $year; }
+            if ($employee_id) { $where[] = 'sp.employee_id=?'; $params[] = $employee_id; }
+            $sql = "SELECT sp.*, u.name as employee_name, u.email as employee_email FROM salary_payments sp LEFT JOIN users u ON sp.employee_id=u.id";
+            if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+            $sql .= " ORDER BY sp.payment_date DESC";
+            $payments = $this->db->fetchAll($sql, $params) ?? [];
+            $total_gross = array_sum(array_column($payments, 'gross_salary'));
+            $total_net = array_sum(array_column($payments, 'net_salary'));
+            $total_ded = array_sum(array_column($payments, 'total_deductions'));
+            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+        } catch (\Exception $e) {
+            $payments = []; $total_gross = 0; $total_net = 0; $total_ded = 0; $employees = [];
+        }
+        return $this->render('admin/salary/report', [
+            'page_title' => 'Salary Report',
+            'payments' => $payments,
+            'total_gross' => $total_gross,
+            'total_net' => $total_net,
+            'total_ded' => $total_ded,
+            'employees' => $employees,
+            'filter_month' => $month,
+            'filter_year' => $year,
+            'filter_employee' => $employee_id
+        ]);
+    }
+
+    public function exportCSV()
+    {
+        $this->requireAdmin();
+        $month = (int)($_GET['month'] ?? 0);
+        $year = (int)($_GET['year'] ?? 0);
+        $employee_id = (int)($_GET['employee_id'] ?? 0);
+        try {
+            $where = []; $params = [];
+            if ($month) { $where[] = 'MONTH(sp.payment_date)=?'; $params[] = $month; }
+            if ($year) { $where[] = 'YEAR(sp.payment_date)=?'; $params[] = $year; }
+            if ($employee_id) { $where[] = 'sp.employee_id=?'; $params[] = $employee_id; }
+            $sql = "SELECT sp.*, u.name as employee_name, u.email as employee_email FROM salary_payments sp LEFT JOIN users u ON sp.employee_id=u.id";
+            if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+            $sql .= " ORDER BY sp.payment_date DESC";
+            $rows = $this->db->fetchAll($sql, $params) ?? [];
+        } catch (\Exception $e) {
+            $rows = [];
+        }
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="salary_report_' . date('Ymd') . '.csv"');
+        $out = fopen('php://output', 'w');
+        fputcsv($out, ['ID', 'Employee', 'Email', 'Gross', 'Deductions', 'Net', 'Date', 'Method', 'Status']);
+        foreach ($rows as $r) {
+            fputcsv($out, [$r['id'], $r['employee_name'] ?? '', $r['employee_email'] ?? '', $r['gross_salary'] ?? 0, $r['total_deductions'] ?? 0, $r['net_salary'] ?? 0, $r['payment_date'] ?? '', $r['payment_method'] ?? '', $r['status'] ?? '']);
+        }
+        fclose($out);
+        exit;
+    }
+
+    // ──────────────────────────────────────────────
+    // PAYROLL INTEGRATION
+    // ──────────────────────────────────────────────
+
+    public function payrollIntegration()
+    {
+        $this->requireAdmin();
+        try {
+            $payrollCount = $this->db->fetch("SELECT COUNT(*) as c FROM employee_payroll")['c'] ?? 0;
+            $payrollTotal = $this->db->fetch("SELECT COALESCE(SUM(net_salary),0) as total FROM employee_payroll WHERE payment_status='paid'")['total'] ?? 0;
+        } catch (\Exception $e) {
+            $payrollCount = 0; $payrollTotal = 0;
+        }
+        return $this->render('admin/salary/payroll_integration', [
+            'page_title' => 'Payroll Integration',
+            'payroll_count' => $payrollCount,
+            'payroll_total' => $payrollTotal
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // HELPERS
+    // ──────────────────────────────────────────────
+
+    private function logHistory($employee_id, $field, $old, $new, $changed_by)
+    {
+        try {
+            $this->db->execute("INSERT INTO salary_history (employee_id, field_changed, old_value, new_value, changed_by, changed_at, created_at) VALUES (?,?,?,?,?,NOW(),NOW())", [$employee_id, $field, $old, $new, $changed_by]);
+        } catch (\Exception $e) { error_log('SalaryController logHistory: ' . $e->getMessage()); }
+    }
+}

@@ -10,8 +10,6 @@ if (session_status() === PHP_SESSION_NONE) {
 // Page title
 $page_title = $page_title ?? 'Reset Password - APS Dream Home';
 
-// Content for base layout
-ob_start();
 ?>
 <!-- Reset Password Section -->
 <div class="reset-password-section">
@@ -45,7 +43,7 @@ ob_start();
                         </div>
                     <?php endif; ?>
 
-                    <form action="<?= BASE_URL ?>auth/reset-password" method="POST" class="reset-form">
+                    <form action="<?= BASE_URL ?>/reset-password" method="POST" class="reset-form">
                         <input type="hidden" name="token" value="<?php echo htmlspecialchars($token ?? ''); ?>">
 
                         <div class="mb-4">
@@ -429,9 +427,6 @@ ob_start();
         }
     });
 </script>
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+</body></html>
 
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/base.php';
-echo $content;
-?>

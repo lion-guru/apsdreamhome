@@ -3,16 +3,7 @@
 // TODO: Add proper error handling with try-catch blocks
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? htmlspecialchars($page_title) : 'Admin Login - APS Dream Homes'; ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/css/admin-login.css" rel="stylesheet">
-    <style>
+<style>
         body {
             font-family: Arial, sans-serif;
             max-width: 400px;
@@ -42,9 +33,6 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
     </style>
-</head>
-
-<body>
     <div class="login-container">
         <?php if (!empty($success)): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -93,7 +81,3 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-
-</html>

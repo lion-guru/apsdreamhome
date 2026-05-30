@@ -28,7 +28,7 @@ $totalQA = $db->fetchOne("SELECT COUNT(*) as count FROM ai_knowledge_base")['cou
 $mostAsked = $db->fetchAll("SELECT question_pattern, usage_count FROM ai_knowledge_base WHERE usage_count > 0 ORDER BY usage_count DESC LIMIT 5");
 
 // Get users by role
-$roleStats = $db->fetchAll("SELECT role, user_type, COUNT(*) as count FROM users GROUP BY role, user_type");
+$roleStats = $db->fetchAll("SELECT role, COUNT(*) as count FROM users GROUP BY role");
 
 // All 14 role dashboards
 $roleDashboards = [
@@ -400,7 +400,7 @@ $roleDashboards = [
                                 <?php
                                 $userCount = 0;
                                 foreach ($roleStats as $stat) {
-                                    if ($stat['role'] === $dashboard['role'] || $stat['user_type'] === $dashboard['role']) {
+                                    if ($stat['role'] === $dashboard['role']) {
                                         $userCount += $stat['count'];
                                     }
                                 }

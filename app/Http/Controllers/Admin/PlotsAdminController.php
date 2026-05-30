@@ -12,14 +12,14 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
     // Check if user is logged in and has admin access
     private function checkAuth()
     {
-        if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
             header('Location: /admin/login');
-            exit();
+            return;
         }
 
-        if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'employee') {
+        if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'employee') {
             header('Location: /admin/login');
-            exit();
+            return;
         }
     }
 
@@ -111,7 +111,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
             if (empty($colony_id) || empty($plot_number) || empty($area_sqft) || empty($price_per_sqft)) {
                 $_SESSION['error'] = 'Required fields: Colony, Plot Number, Area, and Price per Sqft';
                 header('Location: /admin/plots/create');
-                exit();
+                return;
             }
 
             try {
@@ -121,11 +121,11 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
 
                 $_SESSION['success'] = 'Plot created successfully';
                 header('Location: /admin/plots');
-                exit();
+                return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'Plot already exists or error occurred: ' . $e->getMessage();
                 header('Location: /admin/plots/create');
-                exit();
+                return;
             }
         }
 
@@ -144,7 +144,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
         if (!$plot) {
             $_SESSION['error'] = 'Plot not found';
             header('Location: /admin/plots');
-            exit();
+            return;
         }
 
         $colonies = \App\Models\Colony::getWithDistrictAndStateName(['c.*', 'd.name as district_name', 's.name as state_name'], true);
@@ -185,7 +185,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
             if (empty($colony_id) || empty($plot_number) || empty($area_sqft) || empty($price_per_sqft)) {
                 $_SESSION['error'] = 'Required fields: Colony, Plot Number, Area, and Price per Sqft';
                 header("Location: /admin/plots/edit/$id");
-                exit();
+                return;
             }
 
             try {
@@ -202,11 +202,11 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
 
                 $_SESSION['success'] = 'Plot updated successfully';
                 header('Location: /admin/plots');
-                exit();
+                return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'Plot already exists or error occurred: ' . $e->getMessage();
                 header("Location: /admin/plots/edit/$id");
-                exit();
+                return;
             }
         }
 
@@ -228,7 +228,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
         }
 
         header('Location: /admin/plots');
-        exit();
+        return;
     }
 
     // Update plot status (AJAX)
@@ -243,7 +243,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
 
         if (empty($new_status)) {
             echo json_encode(['success' => false, 'message' => 'Status is required']);
-            exit();
+            return;
         }
 
         try {
@@ -254,7 +254,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
 
             if (!$plot) {
                 echo json_encode(['success' => false, 'message' => 'Plot not found']);
-                exit();
+                return;
             }
 
             $old_status = $plot['status'];
@@ -270,7 +270,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
         } catch (\PDOException $e) {
             echo json_encode(['success' => false, 'message' => 'Error updating status: ' . $e->getMessage()]);
         }
-        exit();
+        return;
     }
 
     // View plot details
@@ -285,7 +285,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
         if (!$plot) {
             $_SESSION['error'] = 'Plot not found';
             header('Location: /admin/plots');
-            exit();
+            return;
         }
 
         // Get status history
@@ -314,7 +314,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
 
         if (empty($plot_ids) || empty($new_status)) {
             echo json_encode(['success' => false, 'message' => 'Plots and status are required']);
-            exit();
+            return;
         }
 
         try {
@@ -340,7 +340,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
         } catch (\PDOException $e) {
             echo json_encode(['success' => false, 'message' => 'Error updating plots: ' . $e->getMessage()]);
         }
-        exit();
+        return;
     }
 
     // Export plots data
@@ -406,7 +406,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
         }
 
         fclose($output);
-        exit();
+        return;
     }
 
     // Helper methods

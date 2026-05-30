@@ -209,7 +209,8 @@ class AIController extends BaseController
 
         // Call backend
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://localhost/apsdreamhome/ai_backend_fixed.php');
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        curl_setopt($ch, CURLOPT_URL, $baseUrl . '/ai_backend_fixed.php');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($test_data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -276,12 +277,21 @@ class AIController extends BaseController
     }
 
     /**
-     * Get user role (simplified for demo)
+     * Get user role from session
      */
     private function getUserRole()
     {
-        // In real implementation, this would check session/auth
-        return 'superadmin'; // Default to full access for demo
+        @session_start();
+        if (isset($_SESSION['role'])) {
+            return $_SESSION['role'];
+        }
+        if (isset($_SESSION['admin_user_id']) || isset($_SESSION['admin_id'])) {
+            return 'admin';
+        }
+        if (isset($_SESSION['user_id'])) {
+            return 'customer';
+        }
+        return 'guest';
     }
     
     // ========== SENIOR DEVELOPER METHODS ==========
@@ -527,7 +537,7 @@ class AIController extends BaseController
             return 'not_configured';
         }
 
-        if ($this->config['api_key'] === 'YOUR_REAL_GEMINI_API_KEY_HERE') {
+        if (strpos($this->config['api_key'], 'YOUR_') === 0) {
             return 'placeholder';
         }
 

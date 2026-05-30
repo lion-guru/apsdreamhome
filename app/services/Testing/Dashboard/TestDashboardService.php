@@ -6,8 +6,8 @@ session_start();
 $_SESSION['user_id'] = 1;
 $_SESSION['user_email'] = 'test@apsdreamhome.com';
 $_SESSION['user_name'] = 'Test User';
-$_SESSION['user_role'] = 'customer';
-$_SESSION['user_type'] = 'customer';
+$_SESSION['role'] = 'customer';
+$_SESSION['role'] = 'customer';
 
 // Redirect to dashboard
 header('Location: dashboard');

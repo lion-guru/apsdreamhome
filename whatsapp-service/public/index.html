@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APS Dream Home - WhatsApp Service</title>
+    <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: white; border-radius: 16px; padding: 40px; max-width: 480px; width: 90%; box-shadow: 0 4px 24px rgba(0,0,0,0.1); text-align: center; }
+        .status { padding: 12px; border-radius: 8px; margin: 16px 0; font-size: 14px; }
+        .connected { background: #d4edda; color: #155724; }
+        .disconnected { background: #fff3cd; color: #856404; }
+        .error { background: #f8d7da; color: #721c24; }
+        #qr-container { margin: 20px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; }
+        #qr-container img { max-width: 280px; image-rendering: pixelated; }
+        .info { color: #666; font-size: 13px; margin: 8px 0; }
+        .btn { padding: 10px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin: 4px; transition: opacity .2s; }
+        .btn:hover { opacity: .85; }
+        .btn-primary { background: #25D366; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .hidden { display: none; }
+        h1 { font-size: 24px; margin-bottom: 4px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 20px; }
+        .checklist { text-align: left; margin: 16px 0; padding: 0 20px; }
+        .checklist li { margin: 6px 0; font-size: 13px; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="background:#25D366;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <h1>WhatsApp Service</h1>
+        <p class="subtitle">APS Dream Home - AI Agent</p>
+
+        <div id="status" class="status disconnected">Initializing...</div>
+
+        <div id="qr-container" class="hidden">
+            <p style="font-weight:600;margin-bottom:8px">📱 Scan with WhatsApp</p>
+            <p class="info">Open WhatsApp > Menu > Linked Devices > Link a Device</p>
+            <div id="qr-code"></div>
+            <p class="info" style="margin-top:8px">QR refreshes automatically every 30s</p>
+        </div>
+
+        <div id="connected-info" class="hidden">
+            <div style="font-size:48px;margin:16px 0">✅</div>
+            <p style="font-weight:600;color:#25D366">WhatsApp Connected!</p>
+            <p id="phone-number" class="info"></p>
+            <p class="info">AI Agent ab WhatsApp pe active hai</p>
+        </div>
+
+        <div id="actions" class="hidden" style="margin-top:16px">
+            <button class="btn btn-danger" onclick="reconnect()">🔁 New QR</button>
+            <button class="btn btn-secondary" onclick="logout()">🚪 Logout</button>
+        </div>
+
+        <div class="checklist">
+            <p style="font-weight:600;margin:12px 0 8px">✅ Connected hone ke baad:</p>
+            <ul>
+                <li>AI Agent automatically SMS/notification bhejega</li>
+                <li>Booking confirmation WhatsApp pe jayega</li>
+                <li>Inquiry replies AI handle karega</li>
+                <li>Ye service background me chalta rahega</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        const statusEl = document.getElementById('status');
+        const qrContainer = document.getElementById('qr-container');
+        const qrCodeEl = document.getElementById('qr-code');
+        const connectedInfo = document.getElementById('connected-info');
+        const phoneEl = document.getElementById('phone-number');
+        const actions = document.getElementById('actions');
+
+        socket.on('status', (data) => {
+            if (data.connected) {
+                statusEl.className = 'status connected';
+                statusEl.textContent = `✅ Connected${data.number ? ' - ' + data.number : ''}`;
+                qrContainer.classList.add('hidden');
+                connectedInfo.classList.remove('hidden');
+                actions.classList.remove('hidden');
+                if (data.number) phoneEl.textContent = `📞 ${data.number}`;
+            } else {
+                statusEl.className = 'status disconnected';
+                statusEl.textContent = data.reason ? `⚠ Disconnected: ${data.reason}. Reconnecting...` : '⚠ Disconnected';
+                connectedInfo.classList.add('hidden');
+            }
+            if (data.authenticated) {
+                statusEl.textContent = '🔐 Authenticated! Waiting for connection...';
+            }
+            if (data.auth_failure) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Auth failed: ${data.message}. Click "New QR" to retry.`;
+                qrContainer.classList.remove('hidden');
+                actions.classList.remove('hidden');
+            }
+        });
+
+        socket.on('qr', (data) => {
+            qrContainer.classList.remove('hidden');
+            connectedInfo.classList.add('hidden');
+            qrCodeEl.innerHTML = `<img src="${data.qr}" alt="QR Code">`;
+            statusEl.className = 'status disconnected';
+            statusEl.textContent = '📱 Scan QR with WhatsApp';
+            actions.classList.remove('hidden');
+        });
+
+        socket.on('incoming', (data) => {
+            console.log('Incoming message:', data);
+        });
+
+        async function reconnect() {
+            await fetch('/api/reconnect', { method: 'POST' });
+            statusEl.textContent = '🔄 Reconnecting...';
+            qrContainer.classList.add('hidden');
+        }
+
+        async function logout() {
+            if (confirm('Logout from WhatsApp Web?')) {
+                await fetch('/api/logout', { method: 'POST' });
+                statusEl.textContent = '🚪 Logged out. Refresh QR for new login.';
+                connectedInfo.classList.add('hidden');
+                qrContainer.classList.remove('hidden');
+                actions.classList.remove('hidden');
+            }
+        }
+
+        // Check status on load
+        fetch('/api/status').then(r => r.json()).then(data => {
+            if (data.connected) {
+                statusEl.className = 'status connected';
+                statusEl.textContent = `✅ Connected${data.number ? ' - ' + data.number : ''}`;
+                qrContainer.classList.add('hidden');
+                connectedInfo.classList.remove('hidden');
+                actions.classList.remove('hidden');
+                if (data.number) phoneEl.textContent = `📞 ${data.number}`;
+            } else if (data.qr_generated) {
+                fetch('/api/qr').then(r => r.json()).then(qr => {
+                    qrContainer.classList.remove('hidden');
+                    qrCodeEl.innerHTML = `<img src="${qr.qr}" alt="QR Code">`;
+                    statusEl.textContent = '📱 Scan QR with WhatsApp';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

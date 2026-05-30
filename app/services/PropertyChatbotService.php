@@ -17,6 +17,30 @@ class PropertyChatbotService
 
     private function initResponses()
     {
+        // Fetch live colony data from DB
+        $colonies = [];
+        try {
+            $sql = "SELECT c.name, d.name as district FROM colonies c LEFT JOIN districts d ON c.district_id = d.id WHERE c.is_active = 1 ORDER BY c.name";
+            $result = $this->db->query($sql);
+            $colonies = $result->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $colonies = [];
+        }
+
+        $projectsList = '';
+        $locationsList = '';
+        if (!empty($colonies)) {
+            foreach ($colonies as $i => $c) {
+                $num = $i + 1;
+                $district = ucfirst(strtolower($c['district'] ?? 'UP'));
+                $projectsList .= "{$num}. {$c['name']} - {$district}\n";
+                $locationsList .= "• {$c['name']} - {$district}\n";
+            }
+        } else {
+            $projectsList = "1. Suryoday Colony - Gorakhpur\n2. Raghunath Nagri - Gorakhpur\n3. Braj Radha Nagri - Gorakhpur\n4. Budh Bihar Colony - Kushinagar";
+            $locationsList = "• Suryoday Colony - Gorakhpur\n• Raghunath Nagri - Gorakhpur\n• Braj Radha Nagri - Gorakhpur\n• Budh Bihar Colony - Kushinagar";
+        }
+
         $this->responses = [
             'greeting' => [
                 'patterns' => ['hi', 'hello', 'hey', 'namaste', 'good morning', 'good evening'],
@@ -24,15 +48,21 @@ class PropertyChatbotService
             ],
             'properties' => [
                 'patterns' => ['property', 'properties', 'plot', 'plots', 'home', 'house', 'flat', 'apartment', 'villa'],
-                'response' => "We offer premium properties in Gorakhpur, Lucknow & across UP!\n\n🏠 Our Featured Projects:\n1. Suyoday Colony - Premium Plots from ₹7.5 Lakhs\n2. Raghunat Nagri - Integrated Township from ₹8.5 Lakhs\n3. Braj Radha Nagri - Affordable Plots from ₹6.5 Lakhs\n\n📞 Call: +91 92771 21112\n🌐 Visit: {BASE_URL}/properties"
+                'response' => function() use ($projectsList) {
+                    return "We offer premium properties in Gorakhpur, Lucknow & across UP!\n\n🏠 Our Featured Projects:\n{$projectsList}\n\n📞 Call: +91 92771 21112\n🌐 Visit: {BASE_URL}/properties";
+                }
             ],
             'price' => [
                 'patterns' => ['price', 'cost', 'budget', 'cheap', 'affordable', 'lakhs', 'rupees', 'expensive'],
-                'response' => "Our plots start from ₹6.5 Lakhs!\n\n💰 Price Range:\n• Budget Plots: ₹6.5 - ₹8 Lakhs\n• Premium Plots: ₹8 - ₹12 Lakhs\n• Commercial: ₹15 Lakhs+\n\n📊 EMI starts at ₹8,000/month\n\nWould you like to see properties in your budget range?"
+                'response' => function() {
+                    return "Our plots start from ₹6.5 Lakhs!\n\n💰 Price Range:\n• Budget Plots: ₹6.5 - ₹8 Lakhs\n• Premium Plots: ₹8 - ₹12 Lakhs\n• Commercial: ₹15 Lakhs+\n\n📊 EMI starts at ₹8,000/month\n\nWould you like to see properties in your budget range?";
+                }
             ],
             'location' => [
                 'patterns' => ['location', 'address', 'where', 'gorakhpur', 'lucknow', 'kushinagar', 'area'],
-                'response' => "📍 Our Office:\n1st floor, Singhariya Chauraha, Kunraghat, Deoria Road, Gorakhpur, UP - 273008\n\n🏗️ Project Locations:\n• Suyoday Colony - Gorakhpur\n• Raghunat Nagri - Gorakhpur\n• Budh Bihar Colony - Kushinagar\n• Awadhpuri - Lucknow\n\n🕐 Mon-Sat: 9:00 AM - 7:00 PM\n📞 +91 92771 21112"
+                'response' => function() use ($locationsList) {
+                    return "📍 Our Office:\n1st floor, Singhariya Chauraha, Kunraghat, Deoria Road, Gorakhpur, UP - 273008\n\n🏗️ Project Locations:\n{$locationsList}\n\n🕐 Mon-Sat: 9:00 AM - 7:00 PM\n📞 +91 92771 21112";
+                }
             ],
             'contact' => [
                 'patterns' => ['contact', 'phone', 'call', 'email', 'reach', 'connect', 'whatsapp'],
@@ -115,7 +145,7 @@ Is there anything else I can help you with?\n\n🏠 Explore more:\n{BASE_URL}/pr
 
     private function handleBookingIntent($message)
     {
-        $baseUrl = rtrim(BASE_URL ?? 'http://localhost/apsdreamhome', '/');
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         return [
             'reply' => "🗓️ <strong>Book Free Site Visit!</strong>\n\n" .
                        "I'd love to help you visit our properties.\n\n" .
@@ -145,7 +175,12 @@ Is there anything else I can help you with?\n\n🏠 Explore more:\n{BASE_URL}/pr
         foreach ($this->responses as $category => $data) {
             foreach ($data['patterns'] as $pattern) {
                 if (strpos($message, $pattern) !== false) {
-                    return str_replace('{BASE_URL}', rtrim(BASE_URL ?? 'http://localhost/apsdreamhome', '/'), $data['response']);
+                    $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+                    $response = $data['response'];
+                    if (is_callable($response)) {
+                        return str_replace('{BASE_URL}', $baseUrl, $response());
+                    }
+                    return str_replace('{BASE_URL}', $baseUrl, $response);
                 }
             }
         }
@@ -155,7 +190,7 @@ Is there anything else I can help you with?\n\n🏠 Explore more:\n{BASE_URL}/pr
 
     private function getDefaultResponse()
     {
-        $baseUrl = rtrim(BASE_URL ?? 'http://localhost/apsdreamhome', '/');
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         return "🤔 <strong>I'm not sure I understand that.</strong>\n\n" .
                "I can help you with:\n" .
                "• 🏠 Properties & Projects\n" .

@@ -303,7 +303,7 @@ class BaseController
     {
         $config = [
             'app_name' => 'APS Dream Home',
-            'app_url' => defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome',
+            'app_url' => defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome',
             'timezone' => 'Asia/Kolkata'
         ];
 
@@ -315,7 +315,7 @@ class BaseController
      */
     protected function hasRole($role)
     {
-        return ($_SESSION['user_role'] ?? $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '') === $role;
+        return ($_SESSION['role'] ?? $_SESSION['admin_role'] ?? '') === $role;
     }
 
     /**
@@ -569,7 +569,9 @@ class BaseController
         if (isset($this->start_time)) {
             $end_time = microtime(true);
             $execution_time = $end_time - $this->start_time;
-            error_log("Page execution time: " . number_format($execution_time, 4) . " seconds");
+            if (defined('DEBUG_MODE') && DEBUG_MODE) {
+                error_log("Page execution time: " . number_format($execution_time, 4) . " seconds");
+            }
         }
     }
 }

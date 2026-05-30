@@ -495,7 +495,7 @@ class Admin extends Model
         $_SESSION['admin_id'] = $admin['id'];
         $_SESSION['admin_name'] = $admin['name'] ?? $admin['username'] ?? 'Admin';
         $_SESSION['admin_email'] = $admin['email'];
-        $_SESSION['user_role'] = 'admin';
+        $_SESSION['role'] = 'admin';
         $_SESSION['login_time'] = time();
     }
 
@@ -508,7 +508,7 @@ class Admin extends Model
         unset($_SESSION['admin_id']);
         unset($_SESSION['admin_name']);
         unset($_SESSION['admin_email']);
-        unset($_SESSION['user_role']);
+        unset($_SESSION['role']);
         unset($_SESSION['login_time']);
     }
 

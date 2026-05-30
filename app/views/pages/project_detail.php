@@ -4,7 +4,7 @@
  * Display individual project/site details
  */
 $project = $project ?? null;
-$baseUrl = defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome';
+$baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
 
 if ($project) {
     $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));

@@ -1,17 +1,9 @@
-<?php $layout = "admin/layouts/unified"; $active_page = "index"; ?>
 <?php
-/**
- * Site Settings Index View
- */
 $settings = $settings ?? [];
 $page_title = $page_title ?? 'Site Settings';
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<body class="bg-light">
-    <div class="container-fluid py-4">
+<div class="container-fluid py-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -75,5 +67,4 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <?php endif; ?>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

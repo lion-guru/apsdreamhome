@@ -3,9 +3,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
-
-class CRMController extends BaseController
+class CRMController extends AdminController
 {
     public function index()
     {

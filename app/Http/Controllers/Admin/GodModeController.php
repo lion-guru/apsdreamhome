@@ -39,13 +39,19 @@ class GodModeController extends \App\Http\Controllers\BaseController
         // Get all roles for role switching
         $roles = $this->getAllRoles();
 
+        try {
+            // Fix: render with correct view path
         $this->render('admin/godmode/dashboard', [
-            'stats' => $stats,
-            'impersonations' => $impersonations,
-            'users' => $users,
-            'roles' => $roles,
-            'current_admin' => $this->getCurrentAdmin()
-        ]);
+                'stats' => $stats,
+                'impersonations' => $impersonations,
+                'users' => $users,
+                'roles' => $roles,
+                'current_admin' => $this->getCurrentAdmin()
+            ]);
+        } catch (\Exception $e) {
+            error_log("GodMode dashboard error: " . $e->getMessage());
+            echo "<h2>God Mode Dashboard</h2><p>An error occurred loading the dashboard. Check error log for details.</p>";
+        }
     }
 
     /**
@@ -341,13 +347,22 @@ class GodModeController extends \App\Http\Controllers\BaseController
      */
     private function getSystemStats()
     {
+        $safeCount = function($table, $where = '1=1', $params = []) {
+            try {
+                $r = $this->db->fetch("SELECT COUNT(*) as count FROM {$table} WHERE {$where}", $params);
+                return $r ? (int)$r['count'] : 0;
+            } catch (\Exception $e) {
+                error_log("GodMode stat [{$table}]: " . $e->getMessage());
+                return 0;
+            }
+        };
         return [
-            'total_users' => $this->db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0,
-            'total_leads' => $this->db->fetch("SELECT COUNT(*) as count FROM leads")['count'] ?? 0,
-            'total_properties' => $this->db->fetch("SELECT COUNT(*) as count FROM user_properties")['count'] ?? 0,
-            'total_commissions' => $this->db->fetch("SELECT COUNT(*) as count FROM commissions")['count'] ?? 0,
-            'active_sessions' => $this->db->fetch("SELECT COUNT(*) as count FROM user_sessions WHERE last_activity > DATE_SUB(NOW(), INTERVAL 1 HOUR)")['count'] ?? 0,
-            'failed_logins_24h' => $this->db->fetch("SELECT COUNT(*) as count FROM login_attempts WHERE created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) AND status = 'failed'")['count'] ?? 0
+            'total_users' => $safeCount('users'),
+            'total_leads' => $safeCount('leads'),
+            'total_properties' => $safeCount('user_properties'),
+            'total_commissions' => $safeCount('commissions'),
+            'active_sessions' => $safeCount('user_sessions', "last_activity > DATE_SUB(NOW(), INTERVAL 1 HOUR)"),
+            'failed_logins_24h' => $safeCount('login_attempts', "created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) AND status = 'failed'")
         ];
     }
 
@@ -543,8 +558,14 @@ class GodModeController extends \App\Http\Controllers\BaseController
     private function checkStorageHealth()
     {
         $uploadsDir = __DIR__ . '/../../../public/uploads';
-        $free = disk_free_space($uploadsDir);
-        $total = disk_total_space($uploadsDir);
+        if (!is_dir($uploadsDir)) {
+            return ['status' => 'unknown', 'used_percent' => 0, 'free_gb' => 0, 'message' => 'Uploads dir not found'];
+        }
+        $free = @disk_free_space($uploadsDir);
+        $total = @disk_total_space($uploadsDir);
+        if ($free === false || $total === false || $total == 0) {
+            return ['status' => 'unknown', 'used_percent' => 0, 'free_gb' => 0, 'message' => 'Storage info unavailable'];
+        }
         $used = $total - $free;
         $percent = round(($used / $total) * 100);
 
@@ -616,7 +637,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
     protected function render($view, $data = [])
     {
         extract($data);
-        include __DIR__ . "/../../../app/views/{$view}.php";
+        include __DIR__ . "/../../../views/{$view}.php";
     }
 
     /**

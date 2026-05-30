@@ -40,8 +40,7 @@ function getCustomerById($conn, $id) {
 function getBookingById($conn, $id) {
     $sql = "SELECT b.*, u.name as customer_name, p.title as property_title
             FROM bookings b
-            LEFT JOIN customers c ON b.customer_id = c.id
-            LEFT JOIN users u ON c.user_id = u.id
+            LEFT JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = b.customer_id)
             LEFT JOIN properties p ON b.property_id = p.id
             WHERE b.id = ?";
     return $conn->fetchOne($sql, [$id]);

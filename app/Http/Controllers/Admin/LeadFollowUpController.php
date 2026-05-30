@@ -27,7 +27,7 @@ class LeadFollowUpController extends AdminController
         @session_start();
 
         // Check if user is admin
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
@@ -59,7 +59,7 @@ class LeadFollowUpController extends AdminController
         @session_start();
 
         // Check if user is admin
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }

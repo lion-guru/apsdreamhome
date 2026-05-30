@@ -226,17 +226,20 @@ class AuthenticationService
 
             // Generate reset token
             $token = bin2hex(random_bytes(32));
-            $expiry = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
-            // Update user with reset token
-            $updated = $this->db->update('users', [
-                'reset_token' => $token,
-                'reset_token_expiry' => $expiry,
-                'updated_at' => date('Y-m-d H:i:s')
-            ], 'id = ?', [$user['id']]);
+            // Update user with reset token (use DB NOW() for timezone-safe expiry)
+            $sql = "UPDATE users SET reset_token = ?, reset_token_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR), updated_at = NOW() WHERE id = ?";
+            $updated = $this->db->execute($sql, [$token, $user['id']])->rowCount();
 
             if ($updated) {
-                // TODO: Send email with reset link
+                // Log reset link (email sending placeholder - integrate with EmailService when SMTP configured)
+                $resetLink = (defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome') . '/reset-password?token=' . $token;
+                error_log("PASSWORD RESET LINK for {$email}: {$resetLink}");
+
+                // TODO: Send actual email via EmailService when SMTP is configured
+                // $emailService = new \App\Services\Communication\EmailService();
+                // $emailService->sendPasswordResetEmail($email, $token);
+
                 return [
                     'success' => true,
                     'message' => 'Password reset link sent to your email'
@@ -360,7 +363,7 @@ class AuthenticationService
     {
         $this->session->set('user_id', $user['id']);
         $this->session->set('user_email', $user['email']);
-        $this->session->set('user_role', $user['role']);
+        $this->session->set('role', $user['role']);
         $this->session->set('user_name', $user['name']);
 
         if ($remember) {

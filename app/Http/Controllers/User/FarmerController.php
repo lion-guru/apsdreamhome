@@ -352,8 +352,8 @@ class FarmerController extends BaseController
     private function handleError($message)
     {
         $this->setFlash('error', $message);
-        // Don't redirect to same page if that's what caused the error
-        $redirectUrl = ($_SERVER['REQUEST_URI'] ?? '') === '/apsdreamhome/farmers/list' ? '/farmers' : '/farmers/list';
-        $this->redirect($redirectUrl);
+        // Show error inline instead of redirecting to avoid redirect loops
+        echo '<div class="alert alert-danger m-4">Error: ' . htmlspecialchars($message) . '</div>';
+        exit;
     }
 }

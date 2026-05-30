@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
-
-class BuilderController extends BaseController
+class BuilderController extends AdminController
 {
     public function index()
     {

@@ -7,12 +7,11 @@
 
 namespace App\Http\Controllers;
 
-require_once __DIR__ . '/BaseController.php';
+require_once __DIR__ . '/Admin/AdminController.php';
 
 use App\Core\Database\Database;
-use App\Http\Controllers\Admin\AdminController;
 
-class MLMTreeController extends AdminController
+class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
 {
     public function __construct()
     {
@@ -21,7 +20,7 @@ class MLMTreeController extends AdminController
             @session_start();
         }
         $isAdmin = isset($_SESSION['admin_id']);
-        $isAssociate = isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'associate';
+        $isAssociate = isset($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'associate';
         $isCustomer = isset($_SESSION['user_id']);
         if (!$isAdmin && !$isAssociate && !$isCustomer) {
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/associate/login');
@@ -46,7 +45,7 @@ class MLMTreeController extends AdminController
         @session_start();
 
         $userId = $_SESSION['user_id'] ?? null;
-        $userType = $_SESSION['user_type'] ?? null;
+        $userType = $_SESSION['role'] ?? null;
 
         // Allow admin to view any user's tree
         $viewUserId = $_GET['user_id'] ?? $userId;
