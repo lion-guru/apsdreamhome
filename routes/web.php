@@ -324,6 +324,8 @@ $router->get('/user/network', function () {
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
 $router->post('/property/review', 'Front\\PageController@reviewSubmit');
+$router->get('/listing/{id}', 'Front\\PageController@userPropertyDetail');
+$router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
 $router->get('/dashboard', 'DashboardController@index');
 $router->get('/dashboard/profile', 'DashboardController@profile');
 $router->post('/dashboard/profile', 'DashboardController@updateProfile');

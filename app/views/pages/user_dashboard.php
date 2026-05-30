@@ -165,6 +165,11 @@ $user = $user ?? [];
                                         <span class="badge bg-<?php echo ($property['status'] ?? '') === 'approved' || ($property['status'] ?? '') === 'active' ? 'success' : 'warning'; ?>">
                                             <?php echo ucfirst($property['status'] ?? 'pending'); ?>
                                         </span>
+                                        <?php if (($property['status'] ?? '') === 'approved' && !empty($property['id'])): ?>
+                                        <a href="<?php echo BASE_URL; ?>/listing/<?php echo $property['id']; ?>" class="btn btn-sm btn-outline-primary mt-1" target="_blank">
+                                            <i class="fas fa-external-link-alt"></i> View
+                                        </a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>

@@ -268,7 +268,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                     $isAssociate = isset($_SESSION['associate_id']) && $_SESSION['associate_id'];
                     $isAgent = isset($_SESSION['agent_id']) && $_SESSION['agent_id'];
                     $isEmployee = isset($_SESSION['employee_id']) && $_SESSION['employee_id'];
-                    $isAdmin = isset($_SESSION['admin_user_id']) && $_SESSION['admin_user_id'];
+                    $isAdmin = isset($_SESSION['admin_id']) && $_SESSION['admin_id'];
                     $isLoggedIn = $isCustomer || $isAssociate || $isAgent || $isEmployee || $isAdmin;
 
                     if ($isLoggedIn):

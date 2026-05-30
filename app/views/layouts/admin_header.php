@@ -140,7 +140,7 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
         <div class="sidebar-section">Team</div>
         <ul class="sidebar-menu">
             <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users" class="sidebar-link <?php echo strpos($current_uri, '/admin/users') !== false ? 'active' : ''; ?>"><i class="fas fa-users"></i> Users</a></li>
-            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/employee/dashboard" class="sidebar-link"><i class="fas fa-user-tie"></i> Employees</a></li>
+            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/employees" class="sidebar-link <?php echo strpos($current_uri, '/admin/employees') !== false ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> Employees</a></li>
         </ul>
         <div class="sidebar-section">System</div>
         <ul class="sidebar-menu">

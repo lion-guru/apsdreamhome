@@ -1967,6 +1967,9 @@ class PageController extends BaseController
             $location = trim($_POST['location'] ?? '');
             $area = (int)str_replace([',', ' '], '', $_POST['area'] ?? 0);
             $description = trim($_POST['description'] ?? '');
+            $stateId = (int)($_POST['selected_state_id'] ?? 0);
+            $districtId = (int)($_POST['selected_district_id'] ?? 0);
+            $cityName = trim($_POST['selected_city_name'] ?? $_POST['city'] ?? '');
 
             if (empty($name) || empty($phone) || empty($propertyType)) {
                 $_SESSION['flash_error'] = 'Please fill in all required fields.';
@@ -2020,8 +2023,8 @@ class PageController extends BaseController
                     $this->db->query("SELECT 1 FROM user_properties LIMIT 1");
 
                     $stmt = $this->db->prepare("
-                        INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                        INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, state_id, district_id, city_name, status, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
                     ");
                     $stmt->execute([
                         $userId,
@@ -2037,7 +2040,10 @@ class PageController extends BaseController
                         $price,
                         $listingType === 'rent' ? 'month' : 'lakh',
                         $description,
-                        $imagePath
+                        $imagePath,
+                        $stateId ?: null,
+                        $districtId ?: null,
+                        $cityName ?: null
                     ]);
                     $propertyId = $this->db->lastInsertId();
                     $savedToUserProperties = true;
@@ -2046,8 +2052,8 @@ class PageController extends BaseController
                     if (strpos($e1->getMessage(), "doesn't exist") !== false) {
                         $this->createUserPropertiesTable();
                         $stmt = $this->db->prepare("
-                            INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                            INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, state_id, district_id, city_name, status, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
                         ");
                         $stmt->execute([
                             $userId,
@@ -2063,7 +2069,10 @@ class PageController extends BaseController
                             $price,
                             $listingType === 'rent' ? 'month' : 'lakh',
                             $description,
-                            $imagePath
+                            $imagePath,
+                            $stateId ?: null,
+                            $districtId ?: null,
+                            $cityName ?: null
                         ]);
                         $propertyId = $this->db->lastInsertId();
                         $savedToUserProperties = true;
@@ -2415,5 +2424,81 @@ class PageController extends BaseController
             }
         }
         $this->render('pages/rera_lookup', $data);
+    }
+
+    public function userPropertyDetail($id = null)
+    {
+        if (!$id) {
+            $this->redirect('/properties');
+            return;
+        }
+
+        try {
+            $stmt = $this->db->prepare("SELECT up.*, s.name as state_name, d.name as district_name FROM user_properties up LEFT JOIN states s ON up.state_id = s.id LEFT JOIN districts d ON up.district_id = d.id WHERE up.id = ? AND up.status = 'approved' LIMIT 1");
+            $stmt->execute([$id]);
+            $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $property = null;
+        }
+
+        if (!$property) {
+            $this->notFound();
+            return;
+        }
+
+        // Increment view count
+        try {
+            $this->db->query("UPDATE user_properties SET views = views + 1 WHERE id = ?", [$id]);
+        } catch (\Exception $e) {}
+
+        $data = [
+            'page_title' => ($property['name'] ?? 'Property') . ' - APS Dream Home',
+            'page_description' => 'View property details',
+            'property' => $property
+        ];
+        $this->render('properties/user_detail', $data);
+    }
+
+    public function propertyInquiry()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/properties');
+            return;
+        }
+
+        $propertyId = (int)($_POST['property_id'] ?? 0);
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        if (!$propertyId || empty($name) || empty($phone)) {
+            $_SESSION['flash_error'] = 'Please fill in all required fields.';
+            $this->redirect('/listing/' . $propertyId);
+            return;
+        }
+
+        try {
+            $stmt = $this->db->prepare("INSERT INTO inquiries (property_id, name, email, phone, message, type, property_type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'property_inquiry', 'user_property', 'new', 'high', NOW())");
+            $stmt->execute([$propertyId, $name, $email, $phone, $message]);
+
+            // Also notify property owner
+            try {
+                $prop = $this->db->fetch("SELECT * FROM user_properties WHERE id = ?", [$propertyId]);
+                if ($prop && !empty($prop['email'])) {
+                    $ownerMsg = "New inquiry for your property '{$prop['name']}'!\n\nFrom: $name ($phone, $email)\nMessage: $message\n\nAPS Dream Home";
+                    @mail($prop['email'], "Inquiry for your property: {$prop['name']}", $ownerMsg, "From: info@apsdreamhome.com\r\nReply-To: $email");
+                }
+            } catch (\Exception $e) {
+                error_log("Property owner notification error: " . $e->getMessage());
+            }
+
+            $_SESSION['flash_success'] = 'Your inquiry has been sent. The property owner will contact you soon!';
+        } catch (\Exception $e) {
+            error_log("Property inquiry error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to send inquiry. Please call us at +91 92771 21112.';
+        }
+
+        $this->redirect('/listing/' . $propertyId);
     }
 }
