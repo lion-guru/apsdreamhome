@@ -91,7 +91,7 @@ $extraHead = '<style>
                                 <?php if ($p['status'] === 'pending'): ?>
                                     <span class="badge bg-warning">Under Review</span>
                                 <?php elseif ($p['status'] === 'approved'): ?>
-                                    <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-sm btn-outline-primary">View Listing</a>
+                                    <a href="<?php echo BASE_URL; ?>/listing/<?php echo $p['id']; ?>" class="btn btn-sm btn-outline-primary" target="_blank">View Listing <i class="fas fa-external-link-alt ms-1"></i></a>
                                 <?php elseif ($p['status'] === 'rejected'): ?>
                                     <span class="badge bg-danger">Rejected - Contact Us</span>
                                 <?php endif; ?>

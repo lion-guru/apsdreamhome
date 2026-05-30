@@ -106,7 +106,7 @@ class UserPropertyController extends AdminController
         $action = $_POST['action'] ?? '';
         $adminNotes = trim($_POST['admin_notes'] ?? '');
 
-        if (!$id || !in_array($action, ['approve', 'reject', 'verify'])) {
+        if (!$id || !in_array($action, ['approve', 'reject', 'verify', 'mark_sold'])) {
             header('Location: /admin/user-properties?error=invalid');
             exit;
         }
@@ -117,16 +117,27 @@ class UserPropertyController extends AdminController
             $status = 'approved';
         } elseif ($action === 'reject') {
             $status = 'rejected';
+        } elseif ($action === 'mark_sold') {
+            $status = 'sold';
         } else {
             $status = 'verified';
         }
 
-        $stmt = $this->db->prepare("
-            UPDATE user_properties 
-            SET status = ?, verified_by = ?, verified_at = NOW(), updated_at = NOW()
-            WHERE id = ?
-        ");
-        $stmt->execute([$status, $adminId, $id]);
+        if ($action === 'mark_sold') {
+            $stmt = $this->db->prepare("
+                UPDATE user_properties 
+                SET status = ?, verified_by = ?, verified_at = NOW(), sold_at = NOW(), admin_notes = ?, updated_at = NOW()
+                WHERE id = ?
+            ");
+            $stmt->execute([$status, $adminId, $adminNotes, $id]);
+        } else {
+            $stmt = $this->db->prepare("
+                UPDATE user_properties 
+                SET status = ?, verified_by = ?, verified_at = NOW(), admin_notes = ?, updated_at = NOW()
+                WHERE id = ?
+            ");
+            $stmt->execute([$status, $adminId, $adminNotes, $id]);
+        }
 
         // Send email notification to property owner
         try {

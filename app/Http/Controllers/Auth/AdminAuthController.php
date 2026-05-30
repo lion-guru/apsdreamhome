@@ -36,13 +36,15 @@ class AdminAuthController extends BaseController
             }
 
             $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_user_id'] = $admin['id'];
             $_SESSION['admin_email'] = $admin['email'] ?? 'admin@apsdreamhome.com';
             $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
             $_SESSION['admin_name'] = $admin['name'] ?? 'Admin';
             $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
+            $_SESSION['employee_id'] = $admin['id'];
             $_SESSION['user_id'] = $admin['id'];
             $_SESSION['role'] = $admin['role'] ?? 'admin';
-            $_SESSION['user_email'] = $admin['email'] ?? 'admin@apsdreamhome.com';
+            $_SESSION['user_email'] = $admin['email'] ?? 'apsdreamhome.com';
             $_SESSION['user_name'] = $admin['name'] ?? 'Admin';
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
@@ -107,13 +109,15 @@ class AdminAuthController extends BaseController
             }
 
             $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_user_id'] = $admin['id'];
             $_SESSION['admin_email'] = $admin['email'] ?? 'admin@apsdreamhome.com';
             $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
             $_SESSION['admin_name'] = $admin['name'] ?? 'Admin';
             $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
+            $_SESSION['employee_id'] = $admin['id'];
             $_SESSION['user_id'] = $admin['id'];
             $_SESSION['role'] = $admin['role'] ?? 'admin';
-            $_SESSION['user_email'] = $admin['email'] ?? 'admin@apsdreamhome.com';
+            $_SESSION['user_email'] = $admin['email'] ?? 'apsdreamhome.com';
             $_SESSION['user_name'] = $admin['name'] ?? 'Admin';
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
@@ -151,9 +155,11 @@ class AdminAuthController extends BaseController
             $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('super_admin','admin','manager','agent') LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['admin_id'] = $user['id'];
+                $_SESSION['admin_user_id'] = $user['id'];
                 $_SESSION['admin_email'] = $user['email'];
                 $_SESSION['admin_role'] = $user['role'];
                 $_SESSION['admin_name'] = $user['name'];
+                $_SESSION['employee_id'] = $user['id'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['role'] = $user['role'];
