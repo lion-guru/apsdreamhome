@@ -66,3 +66,5 @@ $page_description = $page_description ?? 'Login to your APS Dream Home account';
         </div>
     </div>
 </section>
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+</body></html>

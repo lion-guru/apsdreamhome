@@ -131,7 +131,7 @@ class ServiceController extends AdminController
                 $leadStmt = $this->db->prepare("SELECT * FROM leads WHERE id = ?");
                 $leadStmt->execute([$service['lead_id']]);
                 $service['lead'] = $leadStmt->fetch(\PDO::FETCH_ASSOC);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log('ServiceController view lead fetch: ' . $e->getMessage()); }
         }
 
         // Get property details if exists
@@ -140,7 +140,7 @@ class ServiceController extends AdminController
                 $propStmt = $this->db->prepare("SELECT * FROM sites WHERE id = ?");
                 $propStmt->execute([$service['property_id']]);
                 $service['property'] = $propStmt->fetch(\PDO::FETCH_ASSOC);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log('ServiceController view property fetch: ' . $e->getMessage()); }
         }
 
         $data = ['service' => $service];

@@ -68,7 +68,7 @@
         .then(function(r) { return r.json(); })
         .then(function(data) {
             typingDiv.remove();
-            var reply = data.reply || data.message || 'Sorry, I didn\'t understand. Please try again.';
+            var reply = data.response || data.reply || data.message || 'Sorry, I didn\'t understand. Please try again.';
             appendMessage(reply, 'bot');
         })
         .catch(function() {

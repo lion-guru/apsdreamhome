@@ -131,7 +131,7 @@ class BaseApiController extends BaseController
     {
         // Define BASE_URL if not defined
         if (!defined('BASE_URL')) {
-            define('BASE_URL', 'http://localhost/apsdreamhome/public');
+            define('BASE_URL', 'http://localhost/apsdreamhome');
         }
         
         $data = array_merge($this->data, $data);

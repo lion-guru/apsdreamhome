@@ -29,7 +29,7 @@ const colony_site_plot_urls = [
   '/admin/plots', '/admin/plots/create', '/admin/plots/check-availability',
   '/admin/sites', '/admin/sites/create',
   '/admin/locations/colonies', '/admin/locations/colonies/create',
-  '/admin/plot-costs', '/admin/plot-costs/colony/1', '/admin/plot-costs/report/1',
+  '/admin/plot-costs', '/admin/plot-costs/colony/2', '/admin/plot-costs/report/2',
   '/colonies', '/plots',
 ];
 

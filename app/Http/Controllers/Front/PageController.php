@@ -23,7 +23,7 @@ class PageController extends BaseController
                 $pageTitle = $row['title'];
                 $pageContent = $row['content'];
             }
-        } catch (\Exception $e) {}
+         } catch (\Exception $e) { error_log('PageController loadPageContent: ' . $e->getMessage()); }
         return [$pageTitle, $pageContent];
     }
 
@@ -590,10 +590,55 @@ class PageController extends BaseController
     public function services()
     {
         [$cmsTitle, $pageContent] = $this->loadPageContent('services');
+        $services = [
+            (object)[
+                'icon' => 'fas fa-home',
+                'color' => 'primary',
+                'title' => 'Property Sales',
+                'description' => 'Find your dream home from our extensive collection of residential and commercial properties with expert guidance.',
+                'features' => 'Residential Properties,Commercial Properties,Investment Properties,Expert Negotiation'
+            ],
+            (object)[
+                'icon' => 'fas fa-hand-holding-usd',
+                'color' => 'success',
+                'title' => 'Home Loan Assistance',
+                'description' => 'We help you secure the best home loan with competitive interest rates from leading banks and financial institutions.',
+                'features' => 'Loan Pre-approval,Best Interest Rates,Documentation Help,Quick Processing'
+            ],
+            (object)[
+                'icon' => 'fas fa-gavel',
+                'color' => 'warning',
+                'title' => 'Legal Services',
+                'description' => 'Complete legal support for property transactions including title verification, agreement drafting, and registration.',
+                'features' => 'Title Verification,Agreement Drafting,Property Registration,Legal Consultation'
+            ],
+            (object)[
+                'icon' => 'fas fa-couch',
+                'color' => 'info',
+                'title' => 'Interior Design',
+                'description' => 'Turnkey interior design solutions for your new home - from modular kitchens to complete home interiors.',
+                'features' => 'Modular Kitchen,Wardrobe Design,False Ceiling,Complete Interiors'
+            ],
+            (object)[
+                'icon' => 'fas fa-file-contract',
+                'color' => 'danger',
+                'title' => 'Registry & Mutation',
+                'description' => 'Hassle-free property registration and mutation services with experienced professionals handling all paperwork.',
+                'features' => 'Sale Deed Registration,Mutation Services,Stamp Paper,Property Tax'
+            ],
+            (object)[
+                'icon' => 'fas fa-building',
+                'color' => 'secondary',
+                'title' => 'Property Management',
+                'description' => 'Comprehensive property management services including tenant management, rent collection, and maintenance.',
+                'features' => 'Tenant Management,Rent Collection,Property Maintenance,Regular Inspections'
+            ]
+        ];
         $data = [
             'page_title' => ($cmsTitle ?: 'Our Services') . ' - APS Dream Home',
             'page_description' => 'Services offered by APS Dream Home',
-            'pageContent' => $pageContent
+            'pageContent' => $pageContent,
+            'services' => $services
         ];
         $this->render('pages/services', $data);
     }
@@ -983,7 +1028,7 @@ class PageController extends BaseController
             try {
                 $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
                 $sStmt->execute([$this->db->lastInsertId(), "Budget: ₹{$budget}, Location: {$location}, Type: {$project_type}"]);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log('PageController constructionInquiry service interests: ' . $e->getMessage()); }
 
             $_SESSION['flash_success'] = 'Thank you! We will contact you shortly regarding your construction project.';
         } catch (\Exception $e) {
@@ -1866,6 +1911,7 @@ class PageController extends BaseController
                     $contactStmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
                     $contactStmt->execute([$name, $email, $phone, 'Quick Inquiry - ' . ucfirst(str_replace('_', ' ', $requirement)), $fullMessage, $_SERVER['REMOTE_ADDR'] ?? 'unknown']);
                 } catch (\Exception $e2) {
+                    error_log('PageController handleQuickInquiry contacts: ' . $e2->getMessage());
                 }
 
                 // Track service interests based on requirement
@@ -2293,6 +2339,62 @@ class PageController extends BaseController
             'current_page' => $page,
             'total_pages' => max(1, ceil($totalPlots / $perPage)),
         ]);
+    }
+
+    public function documentGallery()
+    {
+        $category = $_GET['category'] ?? '';
+        $search = trim($_GET['q'] ?? '');
+
+        $where = 'WHERE is_published = 1';
+        $params = [];
+        if ($category) {
+            $where .= ' AND category = ?';
+            $params[] = $category;
+        }
+        if ($search) {
+            $where .= ' AND (title LIKE ? OR description LIKE ?)';
+            $params[] = '%' . $search . '%';
+            $params[] = '%' . $search . '%';
+        }
+
+        $documents = $this->db->fetchAll("SELECT * FROM document_gallery $where ORDER BY sort_order ASC, created_at DESC", $params);
+        $categories = $this->db->fetchAll("SELECT DISTINCT category FROM document_gallery WHERE is_published = 1 ORDER BY category", []);
+
+        $data = [
+            'page_title' => 'Document Gallery - APS Dream Home',
+            'page_description' => 'Download property brochures, guides, legal documents and more',
+            'documents' => $documents,
+            'categories' => $categories,
+            'selected_category' => $category,
+            'search_query' => $search
+        ];
+        $this->render('pages/document_gallery', $data);
+    }
+
+    public function downloadDocument($id)
+    {
+        $doc = $this->db->fetch("SELECT * FROM document_gallery WHERE id = ? AND is_published = 1", [$id]);
+        if (!$doc) {
+            $this->notFound();
+            return;
+        }
+        // Increment download count
+        try {
+            $this->db->query("UPDATE document_gallery SET downloads_count = downloads_count + 1 WHERE id = ?", [$id]);
+        } catch (\Exception $e) {}
+
+        $filePath = __DIR__ . '/../../../../assets/' . $doc['file_path'];
+        if (!file_exists($filePath)) {
+            $_SESSION['flash_error'] = 'File not found. Please contact support.';
+            $this->redirect('/documents');
+            return;
+        }
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . basename($doc['file_path']) . '"');
+        header('Content-Length: ' . filesize($filePath));
+        readfile($filePath);
+        exit;
     }
 
     public function reraLookup()

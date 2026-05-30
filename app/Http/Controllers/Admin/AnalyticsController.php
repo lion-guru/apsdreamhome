@@ -560,6 +560,25 @@ class AnalyticsController extends AdminController
     }
 
     /**
+     * Advanced Analytics Dashboard
+     */
+    public function advanced()
+    {
+        try {
+            $data = [
+                'page_title' => 'Advanced Analytics - APS Dream Home',
+                'active_page' => 'advanced_analytics',
+                'page_heading' => 'Advanced Analytics'
+            ];
+            return $this->render('admin/analytics/advanced', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Advanced Analytics error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load advanced analytics');
+            return $this->redirect('admin/analytics');
+        }
+    }
+
+    /**
      * Get export data
      */
     private function getExportData(string $type, string $startDate, string $endDate): array

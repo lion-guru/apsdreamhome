@@ -8,16 +8,7 @@ $csrf_token = $csrf_token ?? '';
 $error = $error ?? null;
 $base = BASE_URL;
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Login - APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <style>
+<style>
         * {
             margin: 0;
             padding: 0;
@@ -225,9 +216,6 @@ $base = BASE_URL;
             }
         }
     </style>
-</head>
-
-<body>
 
     <div class="login-card">
         <div class="login-header">
@@ -316,6 +304,5 @@ $base = BASE_URL;
             }
         }
     </script>
-</body>
-
-</html>
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+</body></html>

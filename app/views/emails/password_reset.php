@@ -1,4 +1,10 @@
-
+<?php
+$baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+$resetToken = $reset_token ?? 'RESET_TOKEN_HERE';
+$resetLink = $baseUrl . '/reset-password?token=' . urlencode($resetToken);
+$requestIp = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
+$requestTime = date('Y-m-d H:i:s');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +39,7 @@
 
             <p><strong>Reset your password:</strong></p>
             <p style="text-align: center;">
-                <a href="http://localhost/apsdreamhome/reset-password?token=RESET_TOKEN_HERE" class="reset-button">Reset Password Now</a>
+                <a href="<?= $resetLink ?>" class="reset-button">Reset Password Now</a>
             </p>
 
             <p><strong>Didn't request this reset?</strong></p>
@@ -47,10 +53,10 @@
         </div>
 
         <div class="footer">
-            <p>This password reset request was made from IP: Unknown</p>
-            <p>Request time: 2025-10-20 22:24:36</p>
+            <p>This password reset request was made from IP: <?= $requestIp ?></p>
+            <p>Request time: <?= $requestTime ?></p>
             <p>If you did not request this reset, your account is still secure.</p>
-            <p>&copy; 2025 APS Dream Home. All rights reserved.</p>
+            <p>&copy; <?= date('Y') ?> APS Dream Home. All rights reserved.</p>
         </div>
     </div>
 </body>

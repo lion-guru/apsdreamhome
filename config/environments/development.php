@@ -13,7 +13,7 @@ return [
     // Application Settings
     'APP_ENV' => 'development',
     'APP_DEBUG' => true,
-    'APP_URL' => getenv('APP_URL') ?: 'http://localhost/apsdreamhome',
+    'APP_URL' => getenv('APP_URL') ?: (defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome'),
 
     // Security Settings
     'CSRF_PROTECTION' => true,

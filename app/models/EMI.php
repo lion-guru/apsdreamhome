@@ -194,8 +194,7 @@ class EMI extends Model
         $sql = "SELECT ep.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
                        p.title as property_title, p.location as property_location
                 FROM emi_plans ep
-                LEFT JOIN customers c ON ep.customer_id = c.id
-                LEFT JOIN users u ON c.user_id = u.id
+                LEFT JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = ep.customer_id)
                 LEFT JOIN properties p ON ep.property_id = p.id
                 WHERE ep.id = ?";
 
@@ -333,8 +332,7 @@ class EMI extends Model
         // Base query
         $sql = "SELECT ep.*, u.name as customer_name, p.title as property_title
                 FROM emi_plans ep
-                LEFT JOIN customers c ON ep.customer_id = c.id
-                LEFT JOIN users u ON c.user_id = u.id
+                LEFT JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = ep.customer_id)
                 LEFT JOIN properties p ON ep.property_id = p.id";
 
         $where = [];
@@ -698,8 +696,7 @@ class EMI extends Model
                         ad.auser as admin_name
                     FROM foreclosure_logs fl
                     JOIN emi_plans ep ON fl.emi_plan_id = ep.id
-                    LEFT JOIN customers c ON ep.customer_id = c.id
-                    LEFT JOIN users u ON c.user_id = u.id
+                    LEFT JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = ep.customer_id)
                     LEFT JOIN properties p ON ep.property_id = p.id
                     LEFT JOIN admin ad ON fl.attempted_by = ad.id
                     WHERE 1=1";
@@ -741,8 +738,7 @@ class EMI extends Model
                     pay.created_by as foreclosed_by_id,
                     ad.auser as admin_name
                 FROM emi_plans ep
-                LEFT JOIN customers c ON ep.customer_id = c.id
-                LEFT JOIN users u ON c.user_id = u.id
+                LEFT JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = ep.customer_id)
                 LEFT JOIN properties p ON ep.property_id = p.id
                 LEFT JOIN payments pay ON ep.foreclosure_payment_id = pay.id
                 LEFT JOIN admin ad ON pay.created_by = ad.aid
@@ -784,8 +780,7 @@ class EMI extends Model
                          py.payment_method, py.description as payment_description
                   FROM emi_installments ei
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
-                  JOIN customers c ON ep.customer_id = c.id
-                  JOIN users u ON c.user_id = u.id
+                  JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = ep.customer_id)
                   JOIN properties p ON ep.property_id = p.id
                   LEFT JOIN payments py ON ei.payment_id = py.id
                   WHERE ei.id = ?";

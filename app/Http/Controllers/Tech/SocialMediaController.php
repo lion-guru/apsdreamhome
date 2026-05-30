@@ -123,7 +123,7 @@ class SocialMediaController extends BaseController
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['role'] = $user['role'];
 
             // Save social media connection
             $this->saveSocialConnection($user['id'], $provider, $user_profile['social_id']);

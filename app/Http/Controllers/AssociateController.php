@@ -22,7 +22,7 @@ class AssociateController extends BaseController
     private function requireAuth()
     {
         @session_start();
-        if (empty($_SESSION['user_id']) || ($_SESSION['user_role'] ?? '') !== 'associate') {
+        if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'associate') {
             $_SESSION['flash_error'] = 'Please login as an associate to access this page';
             $this->redirect('/associate/login');
         }
@@ -88,13 +88,13 @@ class AssociateController extends BaseController
         $mlmLevel = 'Associate'; $teamSales = 0;
         $recentLeads = []; $recentCommissions = []; $activities = [];
 
-        try { $totalLeads = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate'", [$userId]); } catch (\Exception $e) {}
-        try { $propertiesSold = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties WHERE user_id = ? AND status = 'approved'", [$userId]); } catch (\Exception $e) {}
+        try { $totalLeads = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate'", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        try { $propertiesSold = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties WHERE user_id = ? AND status = 'approved'", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         // Commission stats from commissions table
-        try { $totalCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?)", [$userId, $userId]); } catch (\Exception $e) {}
-        try { $pendingCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'pending'", [$userId, $userId]); } catch (\Exception $e) {}
-        try { $commissionThisMonth = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'paid' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [$userId, $userId]); } catch (\Exception $e) {}
+        try { $totalCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?)", [$userId, $userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        try { $pendingCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'pending'", [$userId, $userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        try { $commissionThisMonth = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'paid' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [$userId, $userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         // MLM profile data
         try {
@@ -105,7 +105,7 @@ class AssociateController extends BaseController
                 $directReferrals = (int)($profile['direct_referrals'] ?? 0);
                 $teamSales = (float)($profile['lifetime_sales'] ?? 0);
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         // Network tree level breakdown
         try {
@@ -121,14 +121,14 @@ class AssociateController extends BaseController
                     elseif ((int)$row['level'] == 3) $level3Count = (int)$row['cnt'];
                 }
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         // Also count direct referrals from users table
         if ($directReferrals == 0) {
-            try { $directReferrals = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) {}
+            try { $directReferrals = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         }
         if ($networkSize == 0) {
-            try { $networkSize = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) {}
+            try { $networkSize = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         }
 
         // Recent leads
@@ -137,24 +137,24 @@ class AssociateController extends BaseController
                 "SELECT name, phone, CONCAT('Lead #', id) as type, status, DATE(created_at) as date FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate' ORDER BY created_at DESC LIMIT 5",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         // Recent commissions
         try {
             $recentCommissions = $this->db->fetchAll(
                 "SELECT c.id, c.commission_type as property, c.amount, c.status, DATE(c.created_at) as date FROM commissions c WHERE (c.user_id = ? OR c.associate_id = ?) ORDER BY c.created_at DESC LIMIT 5",
                 [$userId, $userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         // Recent activities
         try {
             $rawActivities = $this->db->fetchAll(
-                "SELECT action, created_at FROM activity_log WHERE user_id = ? AND user_type = 'associate' ORDER BY created_at DESC LIMIT 5",
+                "SELECT action, created_at FROM activity_logs WHERE user_id = ? AND user_type = 'associate' ORDER BY created_at DESC LIMIT 5",
                 [$userId]
             );
             foreach ($rawActivities as $a) {
                 $activities[] = ['icon' => 'fa-clock', 'text' => $a['action'], 'time' => $this->timeAgo($a['created_at']), 'color' => 'blue'];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         // Fallbacks
         if (empty($recentLeads)) {
@@ -230,7 +230,7 @@ class AssociateController extends BaseController
         $states = [];
         try {
             $states = $this->db->fetchAll("SELECT id, name FROM states ORDER BY name LIMIT 50");
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         $this->render('associate/add_property', [
             'page_title' => 'Add Property - APS Dream Home',
@@ -258,7 +258,7 @@ class AssociateController extends BaseController
                  ORDER BY created_at DESC LIMIT 20",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         $this->render('associate/leads', [
             'page_title' => 'My Leads - APS Dream Home',
@@ -336,7 +336,7 @@ class AssociateController extends BaseController
                 "SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE associate_id = ? AND status = 'pending'",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         $totalPages = max(1, ceil($totalCount / $perPage));
 
@@ -381,7 +381,7 @@ class AssociateController extends BaseController
                  ORDER BY created_at DESC LIMIT 20",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         $this->render('associate/properties', [
             'page_title' => 'My Properties - APS Dream Home',
@@ -408,7 +408,7 @@ class AssociateController extends BaseController
                  ORDER BY created_at DESC LIMIT 20",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         $this->render('associate/sold', [
             'page_title' => 'Sold Properties - APS Dream Home',
@@ -435,7 +435,7 @@ class AssociateController extends BaseController
                  ORDER BY created_at DESC LIMIT 20",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         $this->render('associate/pending', [
             'page_title' => 'Pending Deals - APS Dream Home',
@@ -518,7 +518,7 @@ class AssociateController extends BaseController
                 ];
             }
         } catch (\Exception $e) {
-            // Table might not exist, use defaults
+            error_log('AssociateController settings notification prefs: ' . $e->getMessage());
         }
 
         $success = $_SESSION['flash_success'] ?? null;
@@ -699,7 +699,7 @@ class AssociateController extends BaseController
         $teamMembers = [];
         try {
             $teamMembers = $db->fetchAll(
-                "SELECT id, name, email, phone, status, created_at FROM users WHERE referred_by = ? AND (user_type = 'associate' OR role = 'associate') ORDER BY created_at DESC",
+                "SELECT id, name, email, phone, status, created_at FROM users WHERE referred_by = ? AND role = 'associate' ORDER BY created_at DESC",
                 [$associateId]
             );
         } catch (\Exception $e) {
@@ -732,13 +732,13 @@ class AssociateController extends BaseController
 
         try {
             $currentPlan = $this->db->fetchOne("SELECT * FROM mlm_plans WHERE status = 'active' LIMIT 1");
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         try {
             $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_order");
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         try {
             $userProfile = $this->db->fetchOne("SELECT current_level, total_team_size, direct_referrals, lifetime_sales FROM mlm_profiles WHERE user_id = ?", [$userId]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         if ($userProfile) {
             $currentRank = $userProfile['current_level'] ?? 'Associate';

@@ -49,7 +49,7 @@ class FacebookAuthController extends \App\Http\Controllers\BaseController
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user_name'] = $user['name'];
                     $_SESSION['user_email'] = $user['email'];
-                    $_SESSION['user_role'] = $user['role'] ?? 'customer';
+                    $_SESSION['role'] = $user['role'] ?? 'customer';
                     header('Location: ' . BASE_URL . '/user/dashboard');
                     exit;
                 }

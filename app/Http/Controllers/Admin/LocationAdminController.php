@@ -12,7 +12,6 @@ class LocationAdminController extends AdminController
         $sql = "SELECT s.*, COUNT(d.id) as district_count 
                 FROM states s 
                 LEFT JOIN districts d ON s.id = d.state_id 
-                WHERE s.is_active = 1 
                 GROUP BY s.id 
                 ORDER BY s.name";
         $stmt = $this->db->query($sql);
@@ -32,7 +31,7 @@ class LocationAdminController extends AdminController
             if (empty($name) || empty($code)) {
                 $_SESSION['error'] = 'All fields are required';
                 header('Location: /admin/locations/states/create');
-                exit();
+                return;
             }
 
             try {
@@ -41,11 +40,11 @@ class LocationAdminController extends AdminController
 
                 $_SESSION['success'] = 'State created successfully';
                 header('Location: /admin/locations/states');
-                exit();
+                return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'State already exists or error occurred';
                 header('Location: /admin/locations/states/create');
-                exit();
+                return;
             }
         }
 
@@ -63,7 +62,7 @@ class LocationAdminController extends AdminController
         if (!$state) {
             $_SESSION['error'] = 'State not found';
             header('Location: /admin/locations/states');
-            exit();
+            return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -74,7 +73,7 @@ class LocationAdminController extends AdminController
             if (empty($name) || empty($code)) {
                 $_SESSION['error'] = 'All fields are required';
                 header("Location: /admin/locations/states/edit/$id");
-                exit();
+                return;
             }
 
             try {
@@ -83,11 +82,11 @@ class LocationAdminController extends AdminController
 
                 $_SESSION['success'] = 'State updated successfully';
                 header('Location: /admin/locations/states');
-                exit();
+                return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'State already exists or error occurred';
                 header("Location: /admin/locations/states/edit/$id");
-                exit();
+                return;
             }
         }
 
@@ -108,7 +107,7 @@ class LocationAdminController extends AdminController
         }
 
         header('Location: /admin/locations/states');
-        exit();
+        return;
     }
 
     // Districts Management
@@ -161,7 +160,7 @@ class LocationAdminController extends AdminController
             if (empty($state_id) || empty($name) || empty($code)) {
                 $_SESSION['error'] = 'All fields are required';
                 header('Location: /admin/locations/districts/create');
-                exit();
+                return;
             }
 
             try {
@@ -170,11 +169,11 @@ class LocationAdminController extends AdminController
 
                 $_SESSION['success'] = 'District created successfully';
                 header('Location: /admin/locations/districts');
-                exit();
+                return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'District already exists or error occurred';
                 header('Location: /admin/locations/districts/create');
-                exit();
+                return;
             }
         }
 
@@ -192,7 +191,7 @@ class LocationAdminController extends AdminController
         if (!$district) {
             $_SESSION['error'] = 'District not found';
             header('Location: /admin/locations/districts');
-            exit();
+            return;
         }
 
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
@@ -206,7 +205,7 @@ class LocationAdminController extends AdminController
             if (empty($state_id) || empty($name) || empty($code)) {
                 $_SESSION['error'] = 'All fields are required';
                 header("Location: /admin/locations/districts/edit/$id");
-                exit();
+                return;
             }
 
             try {
@@ -215,11 +214,11 @@ class LocationAdminController extends AdminController
 
                 $_SESSION['success'] = 'District updated successfully';
                 header('Location: /admin/locations/districts');
-                exit();
+                return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'District already exists or error occurred';
                 header("Location: /admin/locations/districts/edit/$id");
-                exit();
+                return;
             }
         }
 
@@ -240,7 +239,7 @@ class LocationAdminController extends AdminController
         }
 
         header('Location: /admin/locations/districts');
-        exit();
+        return;
     }
 
     // Colonies Management
@@ -311,7 +310,7 @@ class LocationAdminController extends AdminController
             if (empty($district_id) || empty($name)) {
                 $_SESSION['error'] = 'District and Colony Name are required';
                 header('Location: /admin/locations/colonies/create');
-                exit();
+                return;
             }
 
             try {
@@ -320,11 +319,11 @@ class LocationAdminController extends AdminController
 
                 $_SESSION['success'] = 'Colony created successfully';
                 header('Location: /admin/locations/colonies');
-                exit();
+                return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'Colony already exists or error occurred';
                 header('Location: /admin/locations/colonies/create');
-                exit();
+                return;
             }
         }
 
@@ -342,7 +341,7 @@ class LocationAdminController extends AdminController
         if (!$colony) {
             $_SESSION['error'] = 'Colony not found';
             header('Location: /admin/locations/colonies');
-            exit();
+            return;
         }
 
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
@@ -365,7 +364,7 @@ class LocationAdminController extends AdminController
             if (empty($district_id) || empty($name)) {
                 $_SESSION['error'] = 'District and Colony Name are required';
                 header("Location: /admin/locations/colonies/edit/$id");
-                exit();
+                return;
             }
 
             try {
@@ -374,11 +373,11 @@ class LocationAdminController extends AdminController
 
                 $_SESSION['success'] = 'Colony updated successfully';
                 header('Location: /admin/locations/colonies');
-                exit();
+                return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'Colony already exists or error occurred';
                 header("Location: /admin/locations/colonies/edit/$id");
-                exit();
+                return;
             }
         }
 
@@ -399,7 +398,7 @@ class LocationAdminController extends AdminController
         }
 
         header('Location: /admin/locations/colonies');
-        exit();
+        return;
     }
 
     // API endpoints for AJAX calls
@@ -412,7 +411,7 @@ class LocationAdminController extends AdminController
         $districts = \App\Models\District::getByState($state_id, ['*'], true);
 
         echo json_encode($districts);
-        exit();
+        return;
     }
 
     public function getColoniesByDistrict($district_id)
@@ -426,6 +425,6 @@ class LocationAdminController extends AdminController
         $colonies = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         echo json_encode($colonies);
-        exit();
+        return;
     }
 }

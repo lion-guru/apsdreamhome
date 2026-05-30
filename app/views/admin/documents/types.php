@@ -1,0 +1,107 @@
+<?php $page_title = $page_title ?? 'Document Types'; ?>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0"><i class="fas fa-file-alt me-2"></i>Document Types</h1>
+        <a href="<?= BASE_URL ?>/admin/documents" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+    </div>
+
+    <?php if (!empty($_SESSION['flash_message'])): ?>
+        <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type'] ?? 'info') ?> alert-dismissible fade show">
+            <?= htmlspecialchars($_SESSION['flash_message']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php $_SESSION['flash_message'] = ''; $_SESSION['flash_type'] = ''; endif; ?>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header"><i class="fas fa-plus me-2"></i>Add Document Type</div>
+                <div class="card-body">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/store">
+                        <div class="mb-3">
+                            <label class="form-label">Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Slug</label>
+                            <input type="text" name="slug" class="form-control" placeholder="Auto-generated if empty">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category_id" class="form-select">
+                                <option value="">-- None --</option>
+                                <?php if (!empty($categories)): ?>
+                                    <?php foreach ($categories as $cat): ?>
+                                        <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Create Type</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header"><i class="fas fa-list me-2"></i>All Document Types</div>
+                <div class="card-body">
+                    <?php if (!empty($types)): ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr><th>Name</th><th>Slug</th><th>Category</th><th>Status</th><th>Actions</th></tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($types as $t): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($t['name'] ?? '') ?></td>
+                                            <td><code><?= htmlspecialchars($t['slug'] ?? '') ?></code></td>
+                                            <td><?= htmlspecialchars($t['category_name'] ?? '-') ?></td>
+                                            <td><span class="badge bg-<?= ($t['is_active'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($t['is_active'] ?? 0) ? 'Active' : 'Inactive' ?></span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#editType<?= (int)$t['id'] ?>"><i class="fas fa-edit"></i></button>
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/delete/<?= (int)$t['id'] ?>" style="display:inline" onsubmit="return confirm('Delete this type?');">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <tr class="collapse" id="editType<?= (int)$t['id'] ?>">
+                                            <td colspan="5" class="bg-light">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/update/<?= (int)$t['id'] ?>" class="row g-2">
+                                                    <div class="col-md-3"><input type="text" name="name" class="form-control form-control-sm" value="<?= htmlspecialchars($t['name'] ?? '') ?>" required></div>
+                                                    <div class="col-md-2"><input type="text" name="slug" class="form-control form-control-sm" value="<?= htmlspecialchars($t['slug'] ?? '') ?>"></div>
+                                                    <div class="col-md-3">
+                                                        <select name="category_id" class="form-select form-select-sm">
+                                                            <option value="">None</option>
+                                                            <?php foreach ($categories as $cat): ?>
+                                                                <option value="<?= (int)$cat['id'] ?>" <?= ((int)($t['category_id'] ?? 0) === (int)$cat['id']) ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-check mt-2">
+                                                            <input type="checkbox" name="is_active" class="form-check-input" value="1" id="activeType<?= (int)$t['id'] ?>" <?= ($t['is_active'] ?? 0) ? 'checked' : '' ?>>
+                                                            <label class="form-check-label" for="activeType<?= (int)$t['id'] ?>">Active</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2"><button type="submit" class="btn btn-sm btn-success w-100"><i class="fas fa-save"></i> Update</button></div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted text-center py-3">No document types defined yet.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

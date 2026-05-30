@@ -47,3 +47,5 @@
         </div>
     </div>
 </div>
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+</body></html>

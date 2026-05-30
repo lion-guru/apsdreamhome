@@ -78,7 +78,6 @@ class AgentAuthController extends BaseController
                 'password' => $hashed,
                 'referral_code' => $referral_code,
                 'referred_by' => $referrer_id,
-                'user_type' => 'agent',
                 'role' => 'agent',
                 'experience' => $experience,
                 'status' => 'active',
@@ -167,7 +166,7 @@ class AgentAuthController extends BaseController
     public function login()
     {
         @session_start();
-        if (isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'agent') {
+        if (isset($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'agent') {
             header('Location: ' . BASE_URL . '/agent/dashboard');
             exit;
         }
@@ -194,13 +193,13 @@ class AgentAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
-            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND user_type = 'agent' LIMIT 1", [$email, $email]);
+            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = 'agent' LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['agent_id'] = $user['customer_id'];
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
-                $_SESSION['user_type'] = 'agent';
+                $_SESSION['role'] = 'agent';
                 $_SESSION['logged_in'] = true;
                 header('Location: ' . BASE_URL . '/agent/dashboard');
                 exit;

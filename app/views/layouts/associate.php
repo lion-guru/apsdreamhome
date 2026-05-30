@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../config/database.php';
 
 // Get user role from session
-$userRole = $_SESSION['user_role'] ?? 'associate';
+$userRole = $_SESSION['role'] ?? 'associate';
 
 /**
  * Get role-based sidebar menu

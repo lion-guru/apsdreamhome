@@ -298,7 +298,7 @@ class AuthController extends BaseApiController
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
             $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_type'] = $user['user_type'];
+            $_SESSION['role'] = $user['role'];
 
             // Set remember me cookie if requested
             if ($remember) {
@@ -466,7 +466,7 @@ class AuthController extends BaseApiController
             $_SESSION['user_id'] = $userId;
             $_SESSION['user_name'] = $firstName . ' ' . $lastName;
             $_SESSION['user_email'] = $email;
-            $_SESSION['user_type'] = $userType;
+            $_SESSION['role'] = $userType;
 
             $this->setFlash('success', 'Account created successfully! Welcome to APS Dream Home.');
             $this->redirect('/dashboard');
@@ -538,7 +538,7 @@ class AuthController extends BaseApiController
         try {
             if (!$this->db) { return; }
             $this->db->table('users')->where('id', $user_id)->update(['last_login' => date('Y-m-d H:i:s')]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AuthController exception: ' . $e->getMessage()); }
     }
 
     public function setRememberMeCookie($user_id)
@@ -556,15 +556,15 @@ class AuthController extends BaseApiController
     public function logUserActivity($userId, $action, $description)
     {
         try {
-            $this->db->table('user_activity_log')->insert([
+            $this->db->table('user_activity_logs')->insert([
                 'user_id' => $userId,
                 'action' => $action,
-                'description' => $description,
+                'context' => $description,
                 'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
                 'created_at' => date('Y-m-d H:i:s')
             ]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AuthController exception: ' . $e->getMessage()); }
     }
 
     public function sendVerificationEmail($email, $token)

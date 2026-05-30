@@ -187,7 +187,7 @@ class LoggingService
     public function logUserActivity(int $userId, string $action, array $details = []): void
     {
         try {
-            $sql = "INSERT INTO user_activity_log (user_id, action, details, ip_address, user_agent, created_at) 
+            $sql = "INSERT INTO user_activity_logs (user_id, action, context, ip_address, user_agent, created_at) 
                     VALUES (?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);

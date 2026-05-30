@@ -13,11 +13,12 @@ class SocialLoginService
     public function __construct()
     {
         $this->db = Database::getInstance();
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         $this->providers = [
             'google' => [
                 'client_id' => getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? 'your-google-client-id'),
                 'client_secret' => getenv('GOOGLE_CLIENT_SECRET') ?: ($_ENV['GOOGLE_CLIENT_SECRET'] ?? 'your-google-client-secret'),
-                'redirect_uri' => 'http://localhost/apsdreamhome/auth/google/callback',
+                'redirect_uri' => $baseUrl . '/auth/google/callback',
                 'auth_url' => 'https://accounts.google.com/o/oauth2/v2/auth',
                 'token_url' => 'https://oauth2.googleapis.com/token',
                 'user_info_url' => 'https://www.googleapis.com/oauth2/v2/userinfo'
@@ -25,7 +26,7 @@ class SocialLoginService
             'facebook' => [
                 'client_id' => getenv('FACEBOOK_APP_ID') ?: ($_ENV['FACEBOOK_APP_ID'] ?? 'your-facebook-app-id'),
                 'client_secret' => getenv('FACEBOOK_APP_SECRET') ?: ($_ENV['FACEBOOK_APP_SECRET'] ?? 'your-facebook-app-secret'),
-                'redirect_uri' => 'http://localhost/apsdreamhome/auth/facebook/callback',
+                'redirect_uri' => $baseUrl . '/auth/facebook/callback',
                 'auth_url' => 'https://www.facebook.com/v18.0/dialog/oauth',
                 'token_url' => 'https://graph.facebook.com/v18.0/oauth/access_token',
                 'user_info_url' => 'https://graph.facebook.com/v18.0/me'
@@ -33,7 +34,7 @@ class SocialLoginService
             'linkedin' => [
                 'client_id' => getenv('LINKEDIN_CLIENT_ID') ?: ($_ENV['LINKEDIN_CLIENT_ID'] ?? 'your-linkedin-client-id'),
                 'client_secret' => getenv('LINKEDIN_CLIENT_SECRET') ?: ($_ENV['LINKEDIN_CLIENT_SECRET'] ?? 'your-linkedin-client-secret'),
-                'redirect_uri' => 'http://localhost/apsdreamhome/auth/linkedin/callback',
+                'redirect_uri' => $baseUrl . '/auth/linkedin/callback',
                 'auth_url' => 'https://www.linkedin.com/oauth/v2/authorization',
                 'token_url' => 'https://www.linkedin.com/oauth/v2/accessToken',
                 'user_info_url' => 'https://api.linkedin.com/v2/people/~'

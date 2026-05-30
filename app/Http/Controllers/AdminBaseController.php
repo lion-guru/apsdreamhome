@@ -110,7 +110,7 @@ class AdminBaseController extends BaseController
         }
         
         // Try session first
-        $role = $_SESSION['admin_role'] ?? $_SESSION['user_role'] ?? null;
+        $role = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? null;
         
         if ($role) {
             return $role;

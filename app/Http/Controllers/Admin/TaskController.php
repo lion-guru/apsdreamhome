@@ -19,6 +19,7 @@ class TaskController extends AdminController
     public function __construct()
     {
         parent::__construct();
+        $this->requireAdmin();
         $this->loggingService = new LoggingService();
 
         // Register middlewares

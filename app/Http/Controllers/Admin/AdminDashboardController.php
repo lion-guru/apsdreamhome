@@ -417,7 +417,7 @@ class AdminDashboardController extends AdminBaseController
         $stats = [];
         
         $stats['total_employees'] = $this->db->fetch("SELECT COUNT(*) as count FROM employees WHERE status = 'active'")['count'] ?? 0;
-        $stats['on_leave'] = $this->db->fetch("SELECT COUNT(*) as count FROM leaves WHERE status = 'approved' AND CURDATE() BETWEEN from_date AND to_date")['count'] ?? 0;
+        $stats['on_leave'] = $this->db->fetch("SELECT COUNT(*) as count FROM employee_leaves WHERE status = 'approved' AND CURDATE() BETWEEN start_date AND end_date")['count'] ?? 0;
         $stats['new_hires'] = $this->db->fetch(
             "SELECT COUNT(*) as count FROM employees WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
         )['count'] ?? 0;

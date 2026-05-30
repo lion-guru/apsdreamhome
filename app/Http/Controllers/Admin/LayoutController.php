@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Core\Database\Database;
-use App\Http\Controllers\BaseController;
 
-class LayoutController extends BaseController {
+class LayoutController extends AdminController {
     
     public function __construct() {
         parent::__construct();
+        $this->requireAdmin();
         $this->db = Database::getInstance();
     }
     

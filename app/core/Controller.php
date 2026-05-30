@@ -104,14 +104,10 @@ class Controller
      */
     public function __construct()
     {
-        error_log("CoreController: Starting constructor");
-        
         // Get the base path from APP_ROOT constant or use default
         $basePath = defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__, 2);
-        
-        error_log("CoreController: Getting App instance with basePath: $basePath");
+
         $app = App::getInstance($basePath);
-        error_log("CoreController: App instance obtained");
 
         $this->request = $app->request();
         $this->response = $app->response();
@@ -122,8 +118,6 @@ class Controller
         $this->db = $app->db();
         $this->session = $app->session();
         $this->app = $app;
-        
-        error_log("CoreController: Constructor complete");
     }
 
     /**

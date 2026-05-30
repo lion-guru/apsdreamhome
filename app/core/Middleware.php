@@ -73,7 +73,7 @@ abstract class Middleware
         if ($user && isset($user['role'])) {
             return $user['role'];
         }
-        return $_SESSION['user_role'] ?? null;
+        return $_SESSION['role'] ?? null;
     }
     
     /**

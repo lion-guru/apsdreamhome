@@ -1,11 +1,28 @@
-<!-- Footer Ad Banner -->
-<?php
-$adService = new \App\Services\AdManagerService();
-echo $adService->renderSlot('footer_banner');
-unset($adService);
-?>
+<!-- Footer Stats Banner -->
+<div class="footer-stats-banner bg-primary bg-gradient text-white py-3">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-6 col-md-3 mb-2 mb-md-0">
+                <div class="fs-3 fw-bold">15+</div>
+                <div class="small opacity-75">Years Experience</div>
+            </div>
+            <div class="col-6 col-md-3 mb-2 mb-md-0">
+                <div class="fs-3 fw-bold">500+</div>
+                <div class="small opacity-75">Happy Families</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="fs-3 fw-bold">4</div>
+                <div class="small opacity-75">Premium Colonies</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="fs-3 fw-bold">204+</div>
+                <div class="small opacity-75">Plots Available</div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<footer class="mt-5 bg-dark text-white py-5">
+<footer class="bg-dark text-white py-5">
     <div class="container">
         <!-- Newsletter Signup -->
         <div class="row mb-5 pb-4 border-bottom border-secondary">
@@ -73,9 +90,9 @@ unset($adService);
                 <h6 class="text-uppercase mb-3">Our Services</h6>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none">Property Sales</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/financial-services" class="text-light text-decoration-none">Home Loan Assistance</a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none">Property Valuation</a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/interior-design" class="text-light text-decoration-none">Interior Design</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/legal/services" class="text-light text-decoration-none">Legal Services</a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/legal/services" class="text-light text-decoration-none">Legal Documentation</a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/resell" class="text-light text-decoration-none">Resell Properties</a></li>
                 </ul>
             </div>

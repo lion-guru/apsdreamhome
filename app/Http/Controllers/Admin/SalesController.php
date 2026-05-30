@@ -104,7 +104,7 @@ class SalesController extends AdminController
             $countSql = str_replace("SELECT s.*, u.name as associate_name, u.email as associate_email, pr.title as property_title, pr.price as property_price, c.name as customer_name, c.email as customer_email, b.booking_number", "SELECT COUNT(DISTINCT s.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = ($countStmt->fetch()['total'] ?? 0);
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";

@@ -13,23 +13,68 @@ use App\Core\Database\Database;
 class SmartAIController extends BaseController
 {
     private $geminiApiKey;
-    private $geminiEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+    private $geminiEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+    private $openrouterApiKey;
+    private $openrouterModel = 'anthropic/claude-3.5-haiku';
+    private $huggingfaceApiKey;
+    private $huggingfaceModel = 'mistralai/Mistral-7B-Instruct-v0.3';
     private $systemPrompt;
 
     public function __construct()
     {
         parent::__construct();
 
-        // Load Gemini API key from config
-        $config = json_decode(file_get_contents(__DIR__ . '/../../../config/app_config.json'), true);
-        $this->geminiApiKey = $config['ai']['gemini_api_key'] ?? '';
+        // Load Gemini API key from multiple sources
+        $this->geminiApiKey = $_ENV['GEMINI_API_KEY'] ?? getenv('GEMINI_API_KEY') ?: '';
+        if (empty($this->geminiApiKey) || $this->geminiApiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+            $configPath = __DIR__ . '/../../../config/app_config.json';
+            if (file_exists($configPath)) {
+                $config = json_decode(file_get_contents($configPath), true);
+                $this->geminiApiKey = $config['ai']['gemini_api_key'] ?? '';
+            }
+        }
+        if (empty($this->geminiApiKey) || $this->geminiApiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+            try {
+                $row = $this->db->fetch("SELECT key_value FROM api_keys WHERE key_name = 'GEMINI_API_KEY' AND is_active = 1");
+                $this->geminiApiKey = $row['key_value'] ?? '';
+            } catch (\Exception $e) {
+                error_log("SmartAI: DB key load failed: " . $e->getMessage());
+            }
+        }
+        // Also try ai_settings as last resort
+        if (empty($this->geminiApiKey) || $this->geminiApiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+            try {
+                $row = $this->db->fetch("SELECT api_key FROM ai_settings WHERE service = 'gemini' AND is_active = 1");
+                $this->geminiApiKey = $row['api_key'] ?? '';
+            } catch (\Exception $e) {}
+        }
+
+        // Load OpenRouter API key from api_keys table
+        try {
+            $row = $this->db->fetch("SELECT key_value FROM api_keys WHERE key_name = 'OpenRouter' AND is_active = 1");
+            $this->openrouterApiKey = $row['key_value'] ?? getenv('OPENROUTER_API_KEY') ?: '';
+        } catch (\Exception $e) {}
+
+        // Load HuggingFace API key from api_keys table
+        try {
+            $row = $this->db->fetch("SELECT key_value FROM api_keys WHERE key_name = 'HuggingFace' AND is_active = 1");
+            $this->huggingfaceApiKey = $row['key_value'] ?? getenv('HUGGINGFACE_API_KEY') ?: '';
+        } catch (\Exception $e) {}
 
         // Build system prompt with project knowledge
         $this->systemPrompt = $this->buildSystemPrompt();
     }
 
     /**
-     * Main chat endpoint - RBAC aware
+     * CSRF check is disabled for API controllers — handled by router for /api/ routes
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Main chat endpoint - RBAC aware (accepts JSON + form-data)
      */
     public function chat()
     {
@@ -38,9 +83,11 @@ class SmartAIController extends BaseController
         // Get user context
         $userContext = $this->getUserContext();
 
-        $message = trim($_POST['message'] ?? $_GET['message'] ?? '');
-        $sessionId = $_POST['session_id'] ?? $_GET['session_id'] ?? session_id();
-        $language = $_POST['language'] ?? $this->detectLanguage($message);
+        // Accept both JSON and form-encoded input
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $message = trim($_POST['message'] ?? $input['message'] ?? $_GET['message'] ?? '');
+        $sessionId = $_POST['session_id'] ?? $input['session_id'] ?? $_GET['session_id'] ?? session_id();
+        $language = $_POST['language'] ?? $input['language'] ?? $this->detectLanguage($message);
 
         if (empty($message)) {
             echo json_encode(['error' => 'Kuch to likhiye! / Please type something!']);
@@ -50,29 +97,66 @@ class SmartAIController extends BaseController
         // Check for actions first (booking, lead creation, etc.)
         $actionResult = $this->detectAndPerformAction($message, $userContext);
 
-        // Get AI response
+        // Get AI response (Gemini → OpenRouter → HuggingFace → rule-based → local)
+        $modelUsed = 'none';
+        $response = null;
+
+        // 1. Try Gemini
         if (!empty($this->geminiApiKey) && $this->geminiApiKey !== 'YOUR_GEMINI_API_KEY_HERE') {
             $response = $this->getGeminiResponse($message, $userContext, $language);
-        } else {
-            // Fallback to smart local processing
-            $response = $this->getSmartLocalResponse($message, $userContext, $language);
+            if (!empty($response) && strpos($response, 'quota') === false && strpos($response, 'API key') === false) {
+                $modelUsed = 'gemini';
+            }
         }
 
+        // 2. Try OpenRouter (free tier) if Gemini failed
+        if ($response === null && !empty($this->openrouterApiKey)) {
+            $response = $this->getOpenRouterResponse($message, $userContext, $language);
+            if (!empty($response)) {
+                $modelUsed = 'openrouter';
+            }
+        }
+
+        // 3. Try HuggingFace if OpenRouter failed
+        if ($response === null && !empty($this->huggingfaceApiKey)) {
+            $response = $this->getHuggingFaceResponse($message, $userContext, $language);
+            if (!empty($response)) {
+                $modelUsed = 'huggingface';
+            }
+        }
+
+        // 4. Fallback to PropertyChatbotService (rule-based)
+        if ($response === null) {
+            try {
+                $chatbotService = new \App\Services\PropertyChatbotService();
+                $ruleResponse = $chatbotService->processMessage($message);
+                $response = $ruleResponse['reply'] ?? null;
+                if ($response) $modelUsed = 'rule';
+            } catch (\Exception $e) {}
+        }
+
+        // 5. Ultimate fallback to smart local processing
+        if ($response === null) {
+            $response = $this->getSmartLocalResponse($message, $userContext, $language);
+            $modelUsed = 'local';
+        }
+        
         // Add action confirmation if action was performed
         if ($actionResult['performed']) {
             $response .= "\n\n✅ " . $actionResult['message'];
         }
-
+        
         // Save conversation for learning
         $this->saveConversation($sessionId, $message, $response, $userContext);
-
+        
         echo json_encode([
             'success' => true,
             'response' => $response,
             'session_id' => $sessionId,
             'user_context' => $userContext['role'],
             'language' => $language,
-            'action_performed' => $actionResult['performed'] ?? false
+            'action_performed' => $actionResult['performed'] ?? false,
+            'model' => $modelUsed
         ]);
         exit;
     }
@@ -251,7 +335,86 @@ class SmartAIController extends BaseController
     }
 
     /**
-     * Smart local response (fallback)
+     * Get response from OpenRouter (free tier models)
+     */
+    private function getOpenRouterResponse($message, $userContext, $language)
+    {
+        $contextPrompt = $this->buildContextPrompt($userContext);
+        $prompt = $this->systemPrompt . "\n\n" . $contextPrompt . "\n\n";
+        $prompt .= "User (" . ($language === 'hi' ? 'Hindi' : 'English') . "): " . $message . "\n\nResponse:";
+
+        try {
+            $url = 'https://openrouter.ai/api/v1/chat/completions';
+            $payload = [
+                'model' => $this->openrouterModel,
+                'messages' => [['role' => 'user', 'content' => $prompt]],
+                'temperature' => 0.7,
+                'max_tokens' => 500
+            ];
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $this->openrouterApiKey,
+                'HTTP-Referer: https://apsdreamhome.com',
+                'X-Title: APS Dream Home AI'
+            ]);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+
+            $response = curl_exec($ch);
+            curl_close($ch);
+
+            $result = json_decode($response, true);
+            if (isset($result['choices'][0]['message']['content'])) {
+                return trim($result['choices'][0]['message']['content']);
+            }
+        } catch (\Exception $e) {
+            error_log("OpenRouter API Error: " . $e->getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Get response from HuggingFace (free inference API)
+     */
+    private function getHuggingFaceResponse($message, $userContext, $language)
+    {
+        $prompt = $this->systemPrompt . "\n\nUser (" . ($language === 'hi' ? 'Hindi' : 'English') . "): " . $message . "\n\nResponse:";
+
+        try {
+            $url = 'https://api-inference.huggingface.co/models/' . $this->huggingfaceModel;
+            $payload = ['inputs' => $prompt, 'parameters' => ['max_new_tokens' => 500, 'temperature' => 0.7]];
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $this->huggingfaceApiKey
+            ]);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+
+            $response = curl_exec($ch);
+            curl_close($ch);
+
+            $result = json_decode($response, true);
+            if (isset($result[0]['generated_text'])) {
+                $text = $result[0]['generated_text'];
+                $text = substr($text, strlen($prompt));
+                return trim($text) ?: null;
+            }
+        } catch (\Exception $e) {
+            error_log("HuggingFace API Error: " . $e->getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Smart local response (final fallback)
      */
     private function getSmartLocalResponse($message, $userContext, $language)
     {
@@ -350,7 +513,7 @@ You are APS AI - a smart, friendly real estate assistant for APS Dream Home (Utt
 PROJECT KNOWLEDGE:
 - Company: APS Dream Home - Premium Real Estate in UP
 - Locations: Gorakhpur, Kushinagar, Lucknow, Varanasi
-- Projects: Suryoday Heights, Raghunath City Center, Braj Radha Enclave, Budh Bihar Colony
+- Projects: Suryoday Colony, Raghunath Nagri, Braj Radha Nagri, Budh Bihar Colony
 - Price Range: ₹5.5 Lakh to ₹50 Lakh
 - Services: Buy, Sell, Rent, Home Loan, Legal, Interior Design
 

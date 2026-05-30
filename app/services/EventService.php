@@ -2,12 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
-use Carbon\Carbon;
-
 /**
  * Modern Event Bus Service
  * Advanced event-driven architecture with pub/sub system and real-time processing
@@ -260,14 +254,14 @@ class EventService
         }
 
         if (!empty($filters['start_date'])) {
-            $startDate = Carbon::parse($filters['start_date'])->timestamp;
+                $startDate = strtotime($filters['start_date']);
             $history = array_filter($history, fn($event) => 
                 $event['metadata']['timestamp'] >= $startDate
             );
         }
 
         if (!empty($filters['end_date'])) {
-            $endDate = Carbon::parse($filters['end_date'])->timestamp;
+            $endDate = strtotime($filters['end_date']);
             $history = array_filter($history, fn($event) => 
                 $event['metadata']['timestamp'] <= $endDate
             );
@@ -372,11 +366,11 @@ class EventService
      */
     private function processEventAsync(array $event): void
     {
-        // Use Laravel's queue system for async processing
-        Queue::push('App\Jobs\ProcessEventJob', [
-            'event' => $event,
-            'subscriptions' => $this->getMatchingSubscriptions($event['name'])
-        ]);
+        // Async processing - dispatch via shutdown handler
+        $subscriptions = $this->getMatchingSubscriptions($event['name']);
+        register_shutdown_function(function () use ($event, $subscriptions) {
+            $this->dispatchEvent($event);
+        });
     }
 
     /**

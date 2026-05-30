@@ -10,7 +10,7 @@
 // Check if user is authenticated
 $isAuthenticated = isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 $userName = $_SESSION['user_name'] ?? '';
-$userRole = $_SESSION['user_role'] ?? '';
+$userRole = $_SESSION['role'] ?? '';
 $userAvatar = $_SESSION['user_avatar'] ?? '';
 ?>
 

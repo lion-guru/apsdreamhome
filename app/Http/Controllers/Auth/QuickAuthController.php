@@ -61,8 +61,7 @@ class QuickAuthController extends Controller
                 'password' => $password,
                 'referral_code' => $newReferralCode,
                 'referred_by' => $referrerId,
-                'user_type' => 'customer',
-                'role' => 'user',
+                'role' => 'customer',
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
@@ -133,7 +132,7 @@ class QuickAuthController extends Controller
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
             $_SESSION['user_phone'] = $phone;
-            $_SESSION['user_type'] = 'customer';
+            $_SESSION['role'] = 'customer';
             $_SESSION['success'] = 'Account created successfully! Welcome to APS Dream Home.';
 
             echo json_encode(['success' => true, 'redirect' => '/customer/dashboard']);
@@ -257,8 +256,7 @@ class QuickAuthController extends Controller
                 'password' => $password,
                 'referral_code' => $newReferralCode,
                 'referred_by' => $associateId,
-                'user_type' => 'customer',
-                'role' => 'user',
+                'role' => 'customer',
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')

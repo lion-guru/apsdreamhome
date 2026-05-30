@@ -100,7 +100,7 @@ class Router
      */
     public function __construct(App $app)
     {
-        error_log("ROUTER CONSTRUCTOR (Core): Core Router instantiated - " . __FILE__);
+        if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log("ROUTER CONSTRUCTOR (Core): Core Router instantiated - " . __FILE__); }
         $this->app = $app;
         $this->routes = new RouteCollection();
     }
@@ -110,7 +110,7 @@ class Router
      */
     public function get($uri, $action)
     {
-        error_log("ROUTER GET (Core): Called with path: '$uri'");
+        if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log("ROUTER GET (Core): Called with path: '$uri'"); }
         return $this->addRoute('GET', $uri, $action);
     }
 
@@ -489,22 +489,22 @@ class Router
             return $this->handleLegacyFallback($method, $uri);
         }
 
-        error_log("Route found: " . $route->uri());
+        if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log("Route found: " . $route->uri()); }
         $this->currentRoute = $route;
 
         // Apply route middleware
         $response = $this->runRouteMiddleware($route);
 
         if ($response instanceof Response) {
-            error_log("Middleware returned response");
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log("Middleware returned response"); }
             return $response;
         }
 
         // Execute the route action
-        error_log("Running route action");
+        if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log("Running route action"); }
         $response = $this->runRoute($route);
 
-        error_log("Preparing response");
+        if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log("Preparing response"); }
         return $this->prepareResponse($response);
     }
 

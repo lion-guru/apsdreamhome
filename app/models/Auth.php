@@ -282,34 +282,34 @@ class Auth extends Model
     public static function createPasswordReset(string $email): string
     {
         $token = bin2hex(random_bytes(32));
-        $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
+        $expires = date('Y-m-d H:i:s', time() + 3600);
 
-        $sql = "INSERT INTO password_resets (email, token, expires_at, created_at) 
+        $user = self::raw("SELECT id FROM users WHERE email = ?", [$email]);
+        if (!$user) return '';
+
+        $userId = $user[0]['id'];
+        $sql = "INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at) 
                 VALUES (?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()";
         
-        self::execute($sql, [$email, $token, $expires, $token, $expires]);
+        self::execute($sql, [$userId, $token, $expires, $token, $expires]);
 
         return $token;
     }
 
-    /**
-     * Validate password reset token
-     */
     public static function validatePasswordReset(string $token): ?array
     {
-        $sql = "SELECT * FROM password_resets WHERE token = ? AND expires_at > NOW()";
+        $sql = "SELECT prt.*, u.email FROM password_reset_tokens prt
+                JOIN users u ON prt.user_id = u.id
+                WHERE prt.token = ? AND prt.expires_at > NOW()";
         $result = self::raw($sql, [$token]);
         
         return $result ? $result[0] : null;
     }
 
-    /**
-     * Delete password reset token
-     */
     public static function deletePasswordReset(string $token): void
     {
-        $sql = "DELETE FROM password_resets WHERE token = ?";
+        $sql = "DELETE FROM password_reset_tokens WHERE token = ?";
         self::execute($sql, [$token]);
     }
 

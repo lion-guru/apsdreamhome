@@ -25,12 +25,10 @@ class LandPurchase extends Model
         $table = static::$table;
         $sql = "SELECT lp.*, fh.khasra_number, fh.land_area, fh.land_area_unit, fh.location,
                        f.name as farmer_name, f.phone as farmer_phone, f.email as farmer_email,
-                       s.name as state_name, d.name as district_name
+                       f.state as state_name, f.district as district_name
                 FROM {$table} lp
                 JOIN farmer_land_holdings fh ON lp.land_holding_id = fh.id
                 JOIN farmers f ON fh.farmer_id = f.id
-                LEFT JOIN states s ON f.state_id = s.id
-                LEFT JOIN districts d ON f.district_id = d.id
                 ORDER BY lp.purchase_date DESC";
 
         $stmt = static::getDb()->prepare($sql);
@@ -46,12 +44,10 @@ class LandPurchase extends Model
         $table = static::$table;
         $sql = "SELECT lp.*, fh.khasra_number, fh.land_area, fh.land_area_unit, fh.location,
                        f.name as farmer_name, f.phone as farmer_phone, f.email as farmer_email, f.bank_account, f.ifsc_code,
-                       s.name as state_name, d.name as district_name
+                       f.state as state_name, f.district as district_name
                 FROM {$table} lp
                 JOIN farmer_land_holdings fh ON lp.land_holding_id = fh.id
                 JOIN farmers f ON fh.farmer_id = f.id
-                LEFT JOIN states s ON f.state_id = s.id
-                LEFT JOIN districts d ON f.district_id = d.id
                 WHERE lp.id = :id";
 
         $stmt = static::getDb()->prepare($sql);

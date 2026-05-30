@@ -2,6 +2,7 @@
 
 namespace App\Services\AI;
 
+use Exception;
 use App\Services\AI\Modules\NLPProcessor;
 use App\Services\AI\Modules\DataAnalyst;
 use App\Services\AI\Modules\DecisionEngine;
@@ -290,6 +291,134 @@ class AIManager
         ]);
 
         return $decision['agent_id'];
+    }
+
+    /**
+     * Execute a task for an AI agent
+     * Routes to the appropriate module based on task type
+     */
+    public function executeTask($agentId, $taskType, $inputData)
+    {
+        $start_time = microtime(true);
+        $result = ['status' => 'error', 'data' => null, 'message' => 'Unknown task type'];
+
+        try {
+            switch ($taskType) {
+                case 'initiate_call':
+                case 'voice_call':
+                    $script_type = $inputData['script_type'] ?? 'intro';
+                    $script = $this->db->fetch(
+                        "SELECT * FROM ai_call_scripts WHERE script_code LIKE ? OR script_name LIKE ? LIMIT 1",
+                        ["%$script_type%", "%$script_type%"]
+                    );
+                    $result = [
+                        'status' => 'success',
+                        'data' => [
+                            'script' => $script ?: null,
+                            'lead_id' => $inputData['lead_id'] ?? null,
+                            'phone' => $inputData['phone'] ?? '',
+                            'action' => 'initiate_call'
+                        ],
+                        'message' => 'Call initiation prepared'
+                    ];
+                    break;
+
+                case 'analyze_response':
+                    $transcript = $inputData['transcript'] ?? '';
+                    $analysis = $this->nlp->analyze($transcript);
+                    $intent = $analysis['intent']['name'] ?? 'unknown';
+                    $sentiment = $analysis['sentiment']['label'] ?? 'neutral';
+                    $result = [
+                        'status' => 'success',
+                        'data' => [
+                            'intent' => $intent,
+                            'sentiment' => $sentiment,
+                            'confidence' => $analysis['intent']['confidence'] ?? 0,
+                            'entities' => $analysis['entities'] ?? [],
+                            'is_strategic' => $analysis['is_strategic'] ?? false
+                        ],
+                        'message' => "Intent: $intent, Sentiment: $sentiment"
+                    ];
+                    break;
+
+                case 'schedule_followup':
+                    $lead_id = $inputData['lead_id'] ?? null;
+                    $recommendation = $inputData['recommendation'] ?? [];
+                    $delay_days = is_array($recommendation) ? ($recommendation['delay_days'] ?? 3) : 3;
+                    $follow_up_date = date('Y-m-d', strtotime("+$delay_days days"));
+                    if ($lead_id) {
+                        $this->db->execute(
+                            "UPDATE leads SET next_activity_date = ? WHERE id = ?",
+                            [$follow_up_date . ' 10:00:00', $lead_id]
+                        );
+                    }
+                    $result = [
+                        'status' => 'success',
+                        'data' => [
+                            'lead_id' => $lead_id,
+                            'follow_up_date' => $follow_up_date,
+                            'delay_days' => $delay_days
+                        ],
+                        'message' => "Follow-up scheduled for $follow_up_date"
+                    ];
+                    break;
+
+                case 'transcript_analysis':
+                    $transcript = $inputData['transcript'] ?? '';
+                    $analysis = $this->nlp->analyze($transcript);
+                    $decision = $this->decider->evaluate('call_outcome', [
+                        'transcript' => $transcript,
+                        'sentiment' => $analysis['sentiment']['label'] ?? 'neutral',
+                        'complexity' => $analysis['complexity'] ?? 'low'
+                    ]);
+                    $result = [
+                        'status' => 'success',
+                        'data' => [
+                            'transcript_length' => strlen($transcript),
+                            'summary' => substr($transcript, 0, 500),
+                            'sentiment' => $analysis['sentiment']['label'] ?? 'neutral',
+                            'key_points' => $analysis['entities'] ?? [],
+                            'recommendation' => $decision['recommendation'] ?? 'no_action'
+                        ],
+                        'message' => 'Transcript analyzed'
+                    ];
+                    break;
+
+                default:
+                    $result = [
+                        'status' => 'error',
+                        'data' => null,
+                        'message' => "Unknown task type: $taskType"
+                    ];
+            }
+        } catch (Exception $e) {
+            $result = [
+                'status' => 'error',
+                'data' => null,
+                'message' => $e->getMessage()
+            ];
+        }
+
+        $execution_time = round((microtime(true) - $start_time) * 1000);
+
+        $this->logAgentActivity(
+            $agentId,
+            null,
+            $taskType,
+            $inputData,
+            $result,
+            $execution_time,
+            $result['status'],
+            $result['status'] === 'error' ? $result['message'] : null
+        );
+
+        $this->auditLog('task_execution', [
+            'agent_id' => $agentId,
+            'task_type' => $taskType,
+            'status' => $result['status']
+        ], $result['status'] === 'error' ? 'error' : 'info');
+
+        return $result;
     }
 
     /**

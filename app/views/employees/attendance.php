@@ -7,15 +7,7 @@
  * Shows employee attendance records with location-based check-in/out
  */
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'Employee Attendance'; ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
+<style>
         .stats-card { border-radius: 12px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .check-in-btn { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none; }
         .check-out-btn { background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); border: none; }
@@ -26,8 +18,6 @@
         .attendance-status-half-day { color: #fd7e14; }
         .attendance-status-early-leave { color: #6f42c1; }
     </style>
-</head>
-<body>
     <div class="container-fluid py-4">
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">

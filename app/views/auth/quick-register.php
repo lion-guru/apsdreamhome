@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
                     $userId = generateUserId();
                     
-                    $stmt = $db->prepare("INSERT INTO users (user_id, name, email, phone, password, user_type, status, created_at) VALUES (?, ?, ?, ?, ?, 'customer', 'active', NOW())");
+                    $stmt = $db->prepare("INSERT INTO users (user_id, name, email, phone, password, role, status, created_at) VALUES (?, ?, ?, ?, ?, 'customer', 'active', NOW())");
                     $stmt->execute([$userId, $name, $email, $phone, $hashedPassword]);
                     
                     // Send credentials via WhatsApp
@@ -265,6 +265,6 @@ function generateUserId() {
             this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
         });
     </script>
-    
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
 </body>
 </html>

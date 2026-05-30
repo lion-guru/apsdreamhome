@@ -1,6 +1,17 @@
+<?php $page_title = $page_title ?? 'Upload Document'; ?>
 <div class="container-fluid py-4">
-    <h1 class="h3 mb-4"><i class="fas fa-upload me-2"></i>Upload Document</h1>
-    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0"><i class="fas fa-upload me-2"></i>Upload Document</h1>
+        <a href="<?= BASE_URL ?>/admin/documents" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+    </div>
+
+    <?php if (!empty($_SESSION['flash_message'])): ?>
+        <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type'] ?? 'info') ?> alert-dismissible fade show">
+            <?= htmlspecialchars($_SESSION['flash_message']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php $_SESSION['flash_message'] = ''; $_SESSION['flash_type'] = ''; endif; ?>
+
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/documents/store" enctype="multipart/form-data">
@@ -18,6 +29,30 @@
                             <option value="agreement">Agreement</option>
                             <option value="kyc">KYC Document</option>
                             <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Category</label>
+                        <select name="category_id" class="form-select">
+                            <option value="">-- None --</option>
+                            <?php if (!empty($categories)): ?>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Document Sub-Type</label>
+                        <select name="doc_type_id" class="form-select">
+                            <option value="">-- None --</option>
+                            <?php if (!empty($doc_types)): ?>
+                                <?php foreach ($doc_types as $dt): ?>
+                                    <option value="<?= (int)$dt['id'] ?>"><?= htmlspecialchars($dt['name']) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
                 </div>

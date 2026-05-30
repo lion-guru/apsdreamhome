@@ -76,7 +76,7 @@ class WalletController extends BaseController
         try {
             $userData = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ?", [$userId]);
             $userReferralCode = $userData['referral_code'] ?? '';
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('WalletController exception: ' . $e->getMessage()); }
 
         $data = [
             'wallet' => $wallet,
@@ -174,11 +174,11 @@ class WalletController extends BaseController
         $emis = [];
         try {
             $emis = $this->db->fetchAll(
-                "SELECT * FROM emi_schedules WHERE user_id = ? AND status = 'pending' ORDER BY due_date ASC",
+                "SELECT * FROM emi_schedule WHERE customer_id = ? AND status = 'pending' ORDER BY due_date ASC",
                 [$userId]
             );
         } catch (\Exception $e) {
-            // EMI table might not exist yet
+            error_log('WalletController emi fetch: ' . $e->getMessage());
         }
 
         $data = [
@@ -286,7 +286,7 @@ class WalletController extends BaseController
                 [$userId]
             );
         } catch (\Exception $e) {
-            // Bank accounts table might not exist yet
+            error_log('WalletController bank accounts: ' . $e->getMessage());
         }
 
         // Get withdrawal history
@@ -297,7 +297,7 @@ class WalletController extends BaseController
                 [$userId]
             );
         } catch (\Exception $e) {
-            // Withdrawal requests table might not exist yet
+            error_log('WalletController withdrawals: ' . $e->getMessage());
         }
 
         $data = [
@@ -383,7 +383,7 @@ class WalletController extends BaseController
                 [$userId]
             );
         } catch (\Exception $e) {
-            // Table might not exist
+            error_log('WalletController bank accounts list: ' . $e->getMessage());
         }
 
         $data = [
@@ -631,7 +631,7 @@ class WalletController extends BaseController
         try {
             $userData = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ?", [$associateId]);
             $userReferralCode = $userData['referral_code'] ?? '';
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('WalletController exception: ' . $e->getMessage()); }
 
         $data = [
             'wallet' => $wallet,

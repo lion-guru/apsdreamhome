@@ -1,5 +1,4 @@
-<?php include APP_PATH . '/views/admin/layouts/header.php'; 
-
+<?php
 $calculations = $calculations ?? [];
 $properties = $properties ?? [];
 ?>

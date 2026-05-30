@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
-
-class AgentController extends BaseController
+class AgentController extends AdminController
 {
     public function index()
     {

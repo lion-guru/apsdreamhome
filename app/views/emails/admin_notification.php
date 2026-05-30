@@ -1,4 +1,4 @@
-
+<?php $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,7 +41,7 @@
             </ol>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="http://localhost/apsdreamhome/admin" class="button">Open Admin Panel</a>
+                <a href="<?= $baseUrl ?>/admin" class="button">Open Admin Panel</a>
             </div>
         </div>
 

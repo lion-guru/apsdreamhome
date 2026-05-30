@@ -1,6 +1,11 @@
 <?php
 
 namespace App\Services\AI\Agents;
+
+use App\Services\AI\VoiceAgents\SiteVisitBookingAgent;
+use App\Services\AI\VoiceAgents\PropertyInquiryAgent;
+use App\Services\AI\VoiceAgents\LeadFollowUpAgent;
+
 /**
  * AgentManager - Central registry and orchestrator for all AI Agents
  */
@@ -30,6 +35,11 @@ class AgentManager {
         $this->registerAgent('researcher', new ResearchAgent());
         $this->registerAgent('analyst', new DataAnalysisAgent());
         $this->registerAgent('content_creator', new ContentCreationAgent());
+
+        // Register Voice AI agents
+        $this->registerAgent('site_visit_booking', new SiteVisitBookingAgent());
+        $this->registerAgent('property_inquiry', new PropertyInquiryAgent());
+        $this->registerAgent('lead_followup', new LeadFollowUpAgent());
 
         // Register agents with workflow engine
         foreach ($this->agents as $name => $agent) {

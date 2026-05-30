@@ -129,9 +129,9 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                             </div>
 
                             <!-- Hidden fields for state/district IDs -->
-                            <input type="hidden" name="state_id" id="state_id_hidden">
-                            <input type="hidden" name="district_id" id="district_id_hidden">
-                            <input type="hidden" name="city_name" id="city_name_hidden">
+                            <input type="hidden" name="selected_state_id" id="selected_state_id">
+                            <input type="hidden" name="selected_district_id" id="selected_district_id">
+                            <input type="hidden" name="selected_city_name" id="selected_city_name">
 
                             <!-- Price -->
                             <div class="mb-3">
@@ -140,6 +140,12 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                                     <span class="input-group-text">₹</span>
                                     <input type="text" name="price" id="price" class="form-control" placeholder="e.g. 25 Lakh or 15000/month" required autocomplete="transaction-amount">
                                 </div>
+                            </div>
+
+                            <!-- Area (sq ft) -->
+                            <div class="mb-3">
+                                <label for="area" class="form-label fw-bold">Area (sq ft) *</label>
+                                <input type="text" name="area" id="area" class="form-control" placeholder="e.g. 1500 sq ft" required autocomplete="off">
                             </div>
 
                             <!-- Name & Phone -->
@@ -154,10 +160,28 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                                 </div>
                             </div>
 
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold">Email Address</label>
+                                <input type="email" name="email" id="email" class="form-control" placeholder="your@email.com" autocomplete="email" value="<?php echo htmlspecialchars($userEmail); ?>">
+                            </div>
+
                             <!-- Description -->
                             <div class="mb-3">
                                 <label for="description" class="form-label fw-bold">Full Address / Location</label>
                                 <textarea name="description" id="description" class="form-control" rows="3" placeholder="Plot size, road width, nearby landmarks..." autocomplete="street-address"></textarea>
+                            </div>
+
+                            <!-- Pincode & City -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="pincode" class="form-label fw-bold">Pincode</label>
+                                    <input type="text" name="pincode" id="pincode" class="form-control" placeholder="e.g. 273008" maxlength="6" autocomplete="postal-code">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="form-label fw-bold">City/Town</label>
+                                    <input type="text" name="city" id="city" class="form-control" placeholder="e.g. Gorakhpur" autocomplete="address-level2">
+                                </div>
                             </div>
 
                             <!-- Image Upload -->
@@ -295,75 +319,94 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 <!-- Smart Form JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Location cascade functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Location cascade
+    const stateSelect = document.getElementById('state_id');
+    const districtSelect = document.getElementById('district_id');
 
-        // State change - load districts
-        document.getElementById('state_id').addEventListener('change', async function() {
-            const stateId = this.value;
-            const districtSelect = document.getElementById('district_id');
-
-            if (!stateId) {
-                districtSelect.innerHTML = '<option value="">Select State First...</option>';
-                districtSelect.disabled = true;
-                return;
-            }
-
+    stateSelect.addEventListener('change', async function() {
+        const stateId = this.value;
+        if (!stateId) {
+            districtSelect.innerHTML = '<option value="">Select State First...</option>';
             districtSelect.disabled = true;
-            districtSelect.innerHTML = '<option value="">Loading...</option>';
-
-            try {
-                const response = await fetch('/api/locations/districts?state_id=' + stateId);
-                const districts = await response.json();
-
-                districtSelect.innerHTML = '<option value="">Select District...</option>';
-                districts.forEach(d => {
-                    const option = document.createElement('option');
-                    option.value = d.name; // Use name for the form field
-                    option.dataset.id = d.id;
-                    option.textContent = d.name;
-                    districtSelect.appendChild(option);
-                });
-                districtSelect.disabled = false;
-
-            } catch (error) {
-                console.error('Error loading districts:', error);
-                districtSelect.innerHTML = '<option value="">Error loading</option>';
-            }
-        });
-
-        // District change - update hidden fields
-        document.getElementById('district_id').addEventListener('change', function() {
-            const stateSelect = document.getElementById('state_id');
-            const selectedOption = this.options[this.selectedIndex];
-
-            document.getElementById('state_id_hidden').value = stateSelect.value;
-            document.getElementById('district_id_hidden').value = selectedOption.dataset.id || '';
-            document.getElementById('city_name_hidden').value = this.value;
-        });
-    });
-
-    // Handle guest submit - show quick register modal
-    function handleGuestSubmit() {
-        // Validate form first
-        const name = document.querySelector('input[name="name"]').value;
-        const phone = document.querySelector('input[name="phone"]').value;
-
-        if (!name || !phone) {
-            alert('Please fill in your name and phone number first');
             return;
         }
+        districtSelect.disabled = true;
+        districtSelect.innerHTML = '<option value="">Loading...</option>';
+        try {
+            const resp = await fetch(BASE_URL + '/api/locations/districts?state_id=' + stateId);
+            const districts = await resp.json();
+            districtSelect.innerHTML = '<option value="">Select District...</option>';
+            districts.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.name;
+                opt.dataset.id = d.id;
+                opt.textContent = d.name;
+                districtSelect.appendChild(opt);
+            });
+            districtSelect.disabled = false;
+        } catch(e) {
+            console.error('Error loading districts:', e);
+            districtSelect.innerHTML = '<option value="">Error loading</option>';
+        }
+    });
 
-        // Pre-fill quick register modal with form data
-        document.getElementById('qrName').value = name;
-        document.getElementById('qrPhone').value = phone;
-        document.getElementById('qrEmail').value = '';
-        document.getElementById('qrReferralCode').value = '';
+    // Update hidden fields when district changes
+    districtSelect.addEventListener('change', function() {
+        const selected = this.options[this.selectedIndex];
+        document.getElementById('selected_state_id').value = stateSelect.value;
+        document.getElementById('selected_district_id').value = selected ? (selected.dataset.id || '') : '';
+        document.getElementById('selected_city_name').value = this.value;
+    });
 
-        // Show quick register modal
-        const modal = new bootstrap.Modal(document.getElementById('quickRegisterModal'));
-        modal.show();
+    // Pincode autofill via API
+    const pincodeInput = document.getElementById('pincode');
+    if (pincodeInput) {
+        let pincodeTimer;
+        pincodeInput.addEventListener('input', function() {
+            clearTimeout(pincodeTimer);
+            pincodeTimer = setTimeout(async () => {
+                const pincode = this.value.trim();
+                if (pincode.length === 6 && /^\d+$/.test(pincode)) {
+                    try {
+                        const resp = await fetch(BASE_URL + '/api/locations/pincode/' + pincode);
+                        const data = await resp.json();
+                        if (data.found && data.data) {
+                            const cityInput = document.getElementById('city');
+                            if (cityInput && data.data.city) cityInput.value = data.data.city;
+                            if (data.data.district && districtSelect) {
+                                for (let i = 0; i < districtSelect.options.length; i++) {
+                                    if (districtSelect.options[i].textContent.includes(data.data.district)) {
+                                        districtSelect.value = districtSelect.options[i].value;
+                                        districtSelect.dispatchEvent(new Event('change'));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } catch(e) {
+                        console.log('Pincode lookup not available');
+                    }
+                }
+            }, 500);
+        });
     }
+});
+
+function handleGuestSubmit() {
+    const name = document.querySelector('input[name="name"]').value;
+    const phone = document.querySelector('input[name="phone"]').value;
+    if (!name || !phone) {
+        alert('Please fill in your name and phone number first');
+        return;
+    }
+    document.getElementById('qrName').value = name;
+    document.getElementById('qrPhone').value = phone;
+    document.getElementById('qrEmail').value = document.querySelector('input[name="email"]').value || '';
+    document.getElementById('qrReferralCode').value = '';
+    const modal = new bootstrap.Modal(document.getElementById('quickRegisterModal'));
+    modal.show();
+}
 </script>
 
 <!-- Include Quick Register Modal -->

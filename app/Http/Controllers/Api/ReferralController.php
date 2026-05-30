@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use \Exception;
+use Exception;
+use App\Services\ReferralService;
 
 class ReferralController extends BaseApiController
 {
@@ -89,6 +90,50 @@ class ReferralController extends BaseApiController
             );
 
             return $this->jsonSuccess($stats);
+
+        } catch (Exception $e) {
+            return $this->jsonError($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Get referral dashboard (uses ReferralService for MLM tables)
+     */
+    public function dashboard()
+    {
+        try {
+            $userId = $_SESSION['user_id'] ?? $this->getCurrentUserId();
+            if (!$userId) {
+                return $this->jsonError('Authentication required', 401);
+            }
+
+            $referralService = new ReferralService();
+
+            $referralLink = $referralService->getReferralLink($userId);
+            $stats = $referralService->getNetworkStats($userId);
+            $directReferrals = $referralService->getDirectReferrals($userId);
+            $analytics = $referralService->getReferralAnalytics($userId);
+
+            $referralCode = null;
+            $stmt = $this->db->prepare("SELECT referral_code FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($userData) {
+                $referralCode = $userData['referral_code'];
+            }
+
+            $walletStmt = $this->db->prepare("SELECT points_balance, total_earned, referral_earnings FROM wallet_points WHERE user_id = ?");
+            $walletStmt->execute([$userId]);
+            $wallet = $walletStmt->fetch(\PDO::FETCH_ASSOC);
+
+            return $this->jsonSuccess([
+                'referral_code' => $referralCode,
+                'referral_link' => $referralLink,
+                'wallet' => $wallet ?: null,
+                'stats' => $stats,
+                'direct_referrals' => $directReferrals,
+                'analytics' => $analytics
+            ]);
 
         } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);

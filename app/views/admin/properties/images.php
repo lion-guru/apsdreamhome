@@ -27,9 +27,6 @@ $images = $images ?? [];
 
 $base = BASE_URL;
 $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
-
-// Start output buffering for layout
-ob_start();
 ?>
 
 <div class="container-fluid">

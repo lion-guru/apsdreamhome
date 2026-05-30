@@ -40,7 +40,7 @@ class AuthHelper
         }
 
         // Check specific role
-        $currentRole = $_SESSION['auth']['role'] ?? $_SESSION['user_role'] ?? $_SESSION['role'] ?? null;
+        $currentRole = $_SESSION['auth']['role'] ?? $_SESSION['role'] ?? null;
         
         // Admin role check
         if ($role === 'admin') {
@@ -70,7 +70,7 @@ class AuthHelper
      */
     public static function role()
     {
-        return $_SESSION['auth']['role'] ?? $_SESSION['user_role'] ?? $_SESSION['role'] ?? null;
+        return $_SESSION['auth']['role'] ?? $_SESSION['role'] ?? null;
     }
 
     /**

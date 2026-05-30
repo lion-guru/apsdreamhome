@@ -24,7 +24,7 @@ class DashboardController extends BaseController
                 exit;
             }
 
-            $userType = $_SESSION['user_type'] ?? 'customer';
+            $userType = $_SESSION['role'] ?? 'customer';
 
             // Redirect based on user type
             switch ($userType) {
@@ -270,7 +270,7 @@ class DashboardController extends BaseController
         ];
 
         $this->layout = 'layouts/base';
-        $this->render('user/enquiries', [
+        $this->render('pages/user_inquiries', [
             'page_title' => 'My Inquiries - APS Dream Home',
             'page_description' => 'Your property inquiry history',
             'enquiries' => $inquiries

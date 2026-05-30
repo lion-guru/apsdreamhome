@@ -29,7 +29,7 @@ class UnifiedAuthController extends BaseController
 
         // Redirect if already logged in
         if (isset($_SESSION['user_id'])) {
-            $redirectUrl = $this->getRedirectUrl($_SESSION['user_type'] ?? 'customer', $_SESSION['user_role'] ?? 'user');
+            $redirectUrl = $this->getRedirectUrl($_SESSION['role'] ?? 'customer', $_SESSION['role'] ?? 'user');
             header('Location: ' . BASE_URL . $redirectUrl);
             exit;
         }
@@ -75,12 +75,11 @@ class UnifiedAuthController extends BaseController
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_phone'] = $user['phone'] ?? '';
-                $_SESSION['user_type'] = $user['user_type'] ?? 'customer';
-                $_SESSION['user_role'] = $user['role'] ?? 'user';
+                $_SESSION['role'] = $user['role'] ?? 'customer';
                 $_SESSION['logged_in'] = true;
 
                 // Role-based redirect
-                $redirectUrl = $this->getRedirectUrl($user['user_type'] ?? 'customer', $user['role'] ?? 'user');
+                $redirectUrl = $this->getRedirectUrl($user['role'] ?? 'customer', $user['role'] ?? 'user');
                 header('Location: ' . BASE_URL . $redirectUrl);
                 exit;
             } else {
@@ -183,7 +182,6 @@ class UnifiedAuthController extends BaseController
                 'password' => $hashed,
                 'referral_code' => $referral_code,
                 'referred_by' => $referrer_id,
-                'user_type' => $user_type,
                 'role' => $role,
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),

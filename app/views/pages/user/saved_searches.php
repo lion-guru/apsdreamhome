@@ -15,11 +15,6 @@ if (!isset($_SESSION['uid'])) {
 $user_id = $_SESSION['uid'];
 $user_name = h($_SESSION['name'] ?? 'User');
 
-// Page variables
-$$page_title = 'My Saved Searches | APS Dream Homes';
-$layout = 'modern';
-
-ob_start();
 ?>
 
 <div class="container py-5 mt-5">
@@ -125,7 +120,4 @@ ob_start();
 .avatar-initial { background-color: #eee; }
 </style>
 
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../../layouts/' . $layout . '.php';
-?>
+

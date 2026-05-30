@@ -21,7 +21,7 @@ $currentUser = [
     'id' => $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0,
     'name' => $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'User',
     'email' => $_SESSION['admin_email'] ?? '',
-    'role' => $_SESSION['admin_role'] ?? $_SESSION['user_role'] ?? 'guest'
+    'role' => $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'guest'
 ];
 
 $currentRole = $currentUser['role'];

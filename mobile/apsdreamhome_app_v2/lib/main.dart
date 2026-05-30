@@ -13,9 +13,6 @@ import 'core/services/api_service.dart';
 import 'core/services/database_helper.dart';
 import 'data/repositories/property_repository.dart';
 import 'data/repositories/auth_repository.dart';
-import 'data/repositories/booking_repository.dart';
-import 'data/repositories/lead_repository.dart';
-import 'data/repositories/mlm_repository.dart';
 import 'presentation/providers/property_providers.dart';
 
 

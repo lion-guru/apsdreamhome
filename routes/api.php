@@ -49,7 +49,7 @@ $router->post('/api/notification', 'Api\NotificationController@create');
 
 
 // AI Assistant API Routes
-$router->post('/api/ai/chat', 'AIAssistantController@chat');
+$router->post('/api/assistant/chat', 'AIAssistantController@chat');
 $router->post('/api/v2/mobile/ai/parse-lead', 'AIAssistantController@parseLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Gemini AI API Routes
@@ -110,6 +110,11 @@ $router->post('/api/whatsapp-templates/send-test', 'WhatsAppTemplateController@s
 $router->get('/api/whatsapp-templates/stats', 'WhatsAppTemplateController@getUsageStats');
 $router->get('/api/whatsapp-templates/preview/{id}', 'WhatsAppTemplateController@previewTemplate');
 
+// Referral API Routes
+$router->get('/api/referral/dashboard', 'Api\ReferralController@dashboard');
+$router->get('/api/referral/stats', 'Api\ReferralController@stats');
+$router->get('/api/referral/list', 'Api\ReferralController@index');
+
 // MLM API Routes
 $router->get('/api/mlm/analytics', 'MLMController@getAnalytics');
 $router->post('/api/mlm/commission', 'MLMController@calculateCommission');
@@ -135,3 +140,15 @@ $router->get('/api/search/facets', 'Api\SearchController@getFacets');
 $router->get('/api/search/recent', 'Api\SearchController@getRecentSearches');
 $router->get('/api/search/popular', 'Api\SearchController@getPopularSearches');
 $router->post('/api/search/clear-cache', 'Api\SearchController@clearCache');
+
+// Voice Agent API Routes
+$router->post('/api/voice-agent/start-call', 'App\Http\Controllers\Api\VoiceAgentController@startCall');
+$router->post('/api/voice-agent/process-response', 'App\Http\Controllers\Api\VoiceAgentController@processResponse');
+$router->get('/api/voice-agent/session/{id}', 'App\Http\Controllers\Api\VoiceAgentController@getSession');
+$router->post('/api/voice-agent/end-call', 'App\Http\Controllers\Api\VoiceAgentController@endCall');
+$router->get('/api/voice-agent/schedule', 'App\Http\Controllers\Api\VoiceAgentController@getSchedule');
+$router->post('/api/voice-agent/schedule', 'App\Http\Controllers\Api\VoiceAgentController@scheduleCall');
+$router->get('/api/voice-agent/extracted-leads', 'App\Http\Controllers\Api\VoiceAgentController@getExtractedLeads');
+$router->post('/api/voice-agent/extracted-leads/convert/{id}', 'App\Http\Controllers\Api\VoiceAgentController@convertExtractedLead');
+$router->get('/api/voice-agent/stats', 'App\Http\Controllers\Api\VoiceAgentController@getStats');
+$router->get('/api/voice-agent/call-history', 'App\Http\Controllers\Api\VoiceAgentController@getCallHistory');

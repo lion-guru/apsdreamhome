@@ -103,7 +103,13 @@
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card property-card h-100">
                         <div class="position-relative">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/<?php echo htmlspecialchars($property['image'] ?? 'placeholder.jpg'); ?>" 
+                            <?php
+                                $imgSrc = BASE_URL . '/assets/images/properties/' . htmlspecialchars($property['image'] ?? '');
+                                if (empty($property['image'])) {
+                                    $imgSrc = BASE_URL . '/assets/images/placeholder/property.svg';
+                                }
+                            ?>
+                            <img src="<?php echo $imgSrc; ?>" 
                                  class="card-img-top" 
                                  alt="<?php echo htmlspecialchars($property['name']); ?>"
                                  style="height: 200px; object-fit: cover;"

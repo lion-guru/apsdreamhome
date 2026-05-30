@@ -35,7 +35,7 @@ class AdManagerService
                 INDEX idx_slot_key (slot_key),
                 INDEX idx_status (status)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
     }
 
     public function getSlot(string $slotKey): ?array
@@ -48,7 +48,7 @@ class AdManagerService
                 $this->incrementViews($ad['id']);
                 return $ad;
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
         return null;
     }
 
@@ -102,14 +102,14 @@ class AdManagerService
     {
         try {
             $this->db->prepare("UPDATE ad_slots SET views = views + 1 WHERE id = ?")->execute([$id]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
     }
 
     public function incrementClicks(int $id): void
     {
         try {
             $this->db->prepare("UPDATE ad_slots SET clicks = clicks + 1 WHERE id = ?")->execute([$id]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
     }
 
     public function renderSlot(string $slotKey): string

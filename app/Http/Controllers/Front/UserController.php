@@ -22,7 +22,7 @@ class UserController extends BaseController
         }
 
         // Accept customer type OR default to customer if not specified
-        $userType = $_SESSION['user_type'] ?? '';
+        $userType = $_SESSION['role'] ?? '';
         if ($userType !== '' && $userType !== 'customer') {
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
@@ -84,6 +84,26 @@ class UserController extends BaseController
             $recentPayments = [];
         }
 
+        $referralCode = $user['referral_code'] ?? '';
+        $referralCount = 0;
+        $referralEarnings = 0;
+        $referralLink = $referralCode ? (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . $referralCode : '';
+        try {
+            $stmt = $this->db->prepare("SELECT direct_referrals FROM mlm_profiles WHERE user_id = ?");
+            $stmt->execute([$user['id']]);
+            $profile = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($profile) {
+                $referralCount = (int)($profile['direct_referrals'] ?? 0);
+            }
+            $stmt = $this->db->prepare("SELECT referral_earnings FROM wallet_points WHERE user_id = ?");
+            $stmt->execute([$user['id']]);
+            $wallet = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($wallet) {
+                $referralEarnings = (float)($wallet['referral_earnings'] ?? 0);
+            }
+        } catch (\Exception $e) {
+        }
+
         $data = [
             'page_title' => 'My Dashboard - APS Dream Home',
             'page_description' => 'Manage your properties and inquiries',
@@ -100,6 +120,10 @@ class UserController extends BaseController
             'recentPayments' => $recentPayments,
             'registered' => isset($_GET['registered']),
             'loginSuccess' => isset($_GET['login']),
+            'referral_code' => $referralCode,
+            'referral_link' => $referralLink,
+            'referral_count' => $referralCount,
+            'referral_earnings' => $referralEarnings,
         ];
 
         $this->layout = 'layouts/customer';

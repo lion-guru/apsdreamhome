@@ -1,4 +1,4 @@
-
+<?php $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,7 +38,7 @@
                 </ul>
             </div>
 
-            <p><strong>Ready to explore?</strong> <a href="http://localhost/apsdreamhome/login" class="button">Login to Your Account</a></p>
+            <p><strong>Ready to explore?</strong> <a href="<?= $baseUrl ?>/login" class="button">Login to Your Account</a></p>
 
             <p>If you have any questions, our support team is here to help:</p>
             <p>📧 Email: support@apsdreamhome.com<br>

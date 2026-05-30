@@ -26,7 +26,7 @@ $mlmEnabled = !empty($user['referral_code']);
 
 // Get direct referrals (Level 1)
 $directReferrals = $db->fetchAll(
-    "SELECT u.id, u.name, u.email, u.phone, u.created_at, u.user_type,
+    "SELECT u.id, u.name, u.email, u.phone, u.created_at, u.role as user_type,
             (SELECT COUNT(*) FROM users WHERE referred_by = u.id) as downline_count
      FROM users u 
      WHERE u.referred_by = ?

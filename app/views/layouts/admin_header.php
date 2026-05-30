@@ -30,7 +30,7 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
             --main-bg: #f1f5f9; --card-bg: #ffffff; --card-border: #e2e8f0;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--main-bg); overflow-x: hidden; }
+        html, body { font-family: 'Inter', sans-serif; background: var(--main-bg); overflow-x: hidden; }
         .sidebar {
             position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
             background: var(--sidebar-bg); z-index: 1000; overflow-y: auto; transition: transform 0.3s;
@@ -49,7 +49,7 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
         .sidebar-link.active { background: var(--sidebar-active); color: #fff; }
         .sidebar-link i { width: 20px; margin-right: 10px; font-size: 0.95rem; color: var(--sidebar-icon); text-align: center; }
         .sidebar-link.active i, .sidebar-link:hover i { color: #fff; }
-        .main-content { margin-left: 260px; min-height: 100vh; }
+        .main-content { margin-left: 260px; min-height: 100vh; overflow-x: hidden; }
         .top-navbar {
             background: #fff; height: 60px; padding: 0 24px;
             display: flex; align-items: center; justify-content: space-between;

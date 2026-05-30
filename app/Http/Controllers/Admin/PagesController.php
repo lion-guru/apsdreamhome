@@ -10,7 +10,7 @@ class PagesController extends AdminController
         try {
             $stmt = $this->db->query("SELECT id, title, slug, status, updated_at FROM pages ORDER BY title");
             $pages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('PagesController exception: ' . $e->getMessage()); }
         $this->render('admin/pages/index', ['pages' => $pages, 'page_title' => 'CMS Pages']);
     }
 
@@ -32,7 +32,7 @@ class PagesController extends AdminController
         try {
             $stmt = $this->db->prepare("INSERT INTO pages (title, slug, content, meta_description, meta_keywords, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
             $stmt->execute([$title, $slug, $content, $meta_description, $meta_keywords, $status]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('PagesController exception: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/pages');
         exit;
     }
@@ -45,7 +45,7 @@ class PagesController extends AdminController
             $stmt = $this->db->prepare("SELECT * FROM pages WHERE id = ?");
             $stmt->execute([$id]);
             $page = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('PagesController exception: ' . $e->getMessage()); }
         if (!$page) {
             header('Location: ' . BASE_URL . '/admin/pages');
             exit;
@@ -64,7 +64,7 @@ class PagesController extends AdminController
         try {
             $stmt = $this->db->prepare("UPDATE pages SET title = ?, content = ?, meta_description = ?, meta_keywords = ?, status = ?, updated_at = NOW() WHERE id = ?");
             $stmt->execute([$title, $content, $meta_description, $meta_keywords, $status, $id]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('PagesController exception: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/pages');
         exit;
     }

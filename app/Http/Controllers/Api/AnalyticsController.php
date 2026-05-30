@@ -13,9 +13,9 @@ class AnalyticsController extends BaseApiController
             $activeUsers = 0;
             $todayLeads = 0;
             $todayVisits = 0;
-            try { $activeUsers = $db->fetch("SELECT COUNT(*) as count FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")['count'] ?? 0; } catch (\Exception $e) {}
-            try { $todayLeads = $db->fetch("SELECT COUNT(*) as count FROM leads WHERE DATE(created_at) = CURDATE()")['count'] ?? 0; } catch (\Exception $e) {}
-            try { $todayVisits = $db->fetch("SELECT COUNT(*) as count FROM page_visits WHERE DATE(visited_at) = CURDATE()")['count'] ?? 0; } catch (\Exception $e) {}
+            try { $activeUsers = $db->fetch("SELECT COUNT(*) as count FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")['count'] ?? 0; } catch (\Exception $e) { error_log('AnalyticsController exception: ' . $e->getMessage()); }
+            try { $todayLeads = $db->fetch("SELECT COUNT(*) as count FROM leads WHERE DATE(created_at) = CURDATE()")['count'] ?? 0; } catch (\Exception $e) { error_log('AnalyticsController exception: ' . $e->getMessage()); }
+            try { $todayVisits = $db->fetch("SELECT COUNT(*) as count FROM visitor_page_views WHERE DATE(visited_at) = CURDATE()")['count'] ?? 0; } catch (\Exception $e) { error_log('AnalyticsController exception: ' . $e->getMessage()); }
             echo json_encode(['success' => true, 'data' => ['active_users' => (int)$activeUsers, 'today_leads' => (int)$todayLeads, 'today_visits' => (int)$todayVisits]]);
         } catch (\Exception $e) {
             http_response_code(500);

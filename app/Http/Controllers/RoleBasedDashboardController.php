@@ -203,7 +203,7 @@ class RoleBasedDashboardController extends BaseController
     private function getCurrentUserRole()
     {
         // Check admin session first, then user session, then fallback to guest
-        return $_SESSION['admin_role'] ?? $_SESSION['user_role'] ?? 'guest';
+        return $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'guest';
     }
 
     /**
@@ -528,8 +528,8 @@ class RoleBasedDashboardController extends BaseController
     private function getRecentActivities($role)
     {
         try {
-            $sql = "SELECT * FROM user_activity_log WHERE role = ? ORDER BY created_at DESC LIMIT 10";
-            return $this->db->fetchAll($sql, [$role]);
+            $sql = "SELECT ual.*, u.name as user_name FROM user_activity_logs ual LEFT JOIN users u ON ual.user_id = u.id ORDER BY ual.created_at DESC LIMIT 10";
+            return $this->db->fetchAll($sql);
         } catch (Exception $e) {
             return [];
         }

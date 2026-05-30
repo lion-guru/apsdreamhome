@@ -102,11 +102,6 @@ $user_data['utype'] = $user_data['role'];
 $user_data['uemail'] = $user_data['email'];
 $user_data['uphone'] = $user_data['phone'];
 
-// Page variables
-$$page_title = 'Edit Profile | APS Dream Homes';
-$layout = 'modern';
-
-ob_start();
 ?>
 
 <div class="container py-5 mt-5">
@@ -231,7 +226,3 @@ ob_start();
     }
 </style>
 
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/modern.php';
-?>

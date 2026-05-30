@@ -15,8 +15,3 @@ $page_heading = $page_heading ?? 'AI Calling';
         </div>
     </div>
 </div>
-?>
-<?php
-
-
-?>

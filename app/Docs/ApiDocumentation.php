@@ -38,7 +38,7 @@ class ApiDocumentation
                     'title' => 'APS Dream Home API Documentation',
                     'version' => '1.0.0',
                     'description' => 'Comprehensive RESTful API for APS Dream Home platform',
-                    'base_url' => $this->config->get('app_url', 'http://localhost/apsdreamhome') . '/api',
+                    'base_url' => $this->config->get('app_url', defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome') . '/api',
                     'endpoints' => $endpoints,
                     'schemas' => $schemas,
                     'examples' => $examples,

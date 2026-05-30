@@ -118,7 +118,8 @@ async function sendMessage() {
     document.getElementById('loading').style.display = 'block';
 
     try {
-        const response = await fetch('<?= BASE_URL ?>api/ai/chatbot', {
+        // Try Gemini-powered AI first
+        let response = await fetch('<?= BASE_URL ?>api/ai/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -126,9 +127,20 @@ async function sendMessage() {
             body: JSON.stringify({ message })
         });
 
-        const data = await response.json();
-        if (data.success) {
-            addMessage(data.reply, false);
+        let data = await response.json();
+        
+        // If Gemini failed, fall back to rule-based chatbot
+        if (!data.gemini) {
+            response = await fetch('<?= BASE_URL ?>api/ai/chatbot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+            data = await response.json();
+        }
+
+        if (data.success || data.reply) {
+            addMessage(data.reply || data.response, false);
             if (data.quick_replies && data.quick_replies.length > 0) {
                 showQuickReplies(data.quick_replies);
             }

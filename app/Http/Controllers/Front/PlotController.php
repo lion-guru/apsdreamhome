@@ -24,7 +24,7 @@ class PlotController extends BaseController
             header('Location: ' . BASE_URL . '/login');
             exit;
         }
-        $userType = $_SESSION['user_type'] ?? '';
+        $userType = $_SESSION['role'] ?? '';
         if ($userType !== '' && $userType !== 'customer') {
             header('Location: ' . BASE_URL . '/login');
             exit;

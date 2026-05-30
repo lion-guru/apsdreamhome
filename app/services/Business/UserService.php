@@ -50,7 +50,7 @@ class UserService
                 FROM users u
                 LEFT JOIN property_views pv ON u.id = pv.user_id
                 LEFT JOIN properties p ON pv.property_id = p.id
-                LEFT JOIN enquiries e ON u.id = e.user_id
+                LEFT JOIN inquiries e ON u.id = e.user_id
                 WHERE 1=1";
             
             $params = [];
@@ -157,7 +157,7 @@ class UserService
                 FROM users u
                 LEFT JOIN property_views pv ON u.id = pv.user_id
                 LEFT JOIN properties p ON pv.property_id = p.id
-                LEFT JOIN enquiries e ON u.id = e.user_id
+                LEFT JOIN inquiries e ON u.id = e.user_id
                 LEFT JOIN favorites f ON u.id = f.user_id
                 WHERE u.id = ?
                 GROUP BY u.id";
@@ -345,7 +345,7 @@ class UserService
             $userStats = $this->db->fetch(
                 "SELECT 
                     (SELECT COUNT(*) FROM properties WHERE user_id = ?) as property_count,
-                    (SELECT COUNT(*) FROM enquiries WHERE user_id = ?) as enquiry_count",
+                    (SELECT COUNT(*) FROM inquiries WHERE user_id = ?) as enquiry_count",
                 [$id, $id]
             );
 
@@ -493,7 +493,7 @@ class UserService
         try {
             $sql = "SELECT 
                 action, details, ip_address, user_agent, created_at
-                FROM activity_log
+                FROM activity_logs
                 WHERE user_id = ?
                 ORDER BY created_at DESC
                 LIMIT ?";
@@ -581,7 +581,7 @@ class UserService
     private function logActivity($action, $userId, $details = '')
     {
         try {
-            $sql = "INSERT INTO activity_log (user_id, action, details, ip_address, user_agent, created_at) 
+            $sql = "INSERT INTO activity_logs (user_id, action, details, ip_address, user_agent, created_at) 
                      VALUES (?, ?, ?, ?, ?, NOW())";
             
             $params = [

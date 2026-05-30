@@ -293,6 +293,11 @@
     border-color: transparent;
 }
 
+/* Header offset - main content below fixed header */
+main {
+    padding-top: var(--header-height, 80px);
+}
+
 /* Mobile fixes */
 @media (max-width: 767px) {
     .hero-section { min-height: 50vh; }

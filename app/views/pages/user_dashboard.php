@@ -251,9 +251,49 @@ $user = $user ?? [];
 
     <!-- Right Column -->
     <div class="col-lg-4">
+        <?php if (!empty($referral_code)): ?>
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-gift text-danger me-2"></i>Refer & Earn</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <div class="display-6 fw-bold text-danger mb-1"><?= htmlspecialchars($referral_code) ?></div>
+                    <small class="text-muted">Your Referral Code</small>
+                </div>
+                <div class="row text-center g-2 mb-3">
+                    <div class="col-6">
+                        <div class="bg-light rounded-3 p-2">
+                            <div class="fw-bold text-primary"><?= (int)$referral_count ?></div>
+                            <small class="text-muted">Referrals</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light rounded-3 p-2">
+                            <div class="fw-bold text-success">₹<?= number_format($referral_earnings, 2) ?></div>
+                            <small class="text-muted">Earnings</small>
+                        </div>
+                    </div>
+                </div>
+                <?php if (!empty($referral_link)): ?>
+                <div class="input-group input-group-sm mb-2">
+                    <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link) ?>" readonly>
+                    <button class="btn btn-outline-primary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('refLink').value);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='<i class=\'fas fa-copy\'></i>',2000)"><i class="fas fa-copy"></i></button>
+                </div>
+                <small class="text-muted d-block mb-2">Share this link to earn rewards</small>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="https://wa.me/?text=<?= urlencode('Join APS Dream Home using my referral code: ' . $referral_code . ' - ' . $referral_link) ?>" target="_blank" class="btn btn-sm btn-success"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($referral_link) ?>" target="_blank" class="btn btn-sm btn-primary"><i class="fab fa-facebook"></i></a>
+                    <a href="mailto:?subject=Join APS Dream Home&body=Use my referral code <?= $referral_code ?> to register: <?= urlencode($referral_link) ?>" class="btn btn-sm btn-secondary"><i class="fas fa-envelope"></i></a>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i>Account Info</h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">

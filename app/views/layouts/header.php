@@ -138,13 +138,13 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
 }
 ?>
 <header class="premium-header fixed-top" id="mainHeader">
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-xl">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo" style="height: 40px; width: auto; max-width: 130px;">
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" id="navbarToggler" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -197,6 +197,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 ['label' => 'Legal Services', 'url' => '/legal-services', 'icon' => 'fas fa-gavel'],
                                 ['label' => 'Interior Design', 'url' => '/interior-design', 'icon' => 'fas fa-couch'],
                                 ['label' => 'Resell Property', 'url' => '/resell', 'icon' => 'fas fa-handshake'],
+                                ['label' => 'Documents', 'url' => '/documents', 'icon' => 'fas fa-folder-open'],
                             ]
                         ],
                         [
@@ -451,21 +452,127 @@ try {
 
 <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/header.css" rel="stylesheet">
 <style>
-    /* Header background - not transparent */
+    /* Premium Header Styling */
     .premium-header {
         background: #ffffff;
         border-bottom: 1px solid rgba(0,0,0,0.06);
         transition: background 0.3s ease, box-shadow 0.3s ease;
     }
-    /* Slight transparency on scroll for modern look */
+    .premium-header::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #4f46e5, #7c3aed, #a855f7, #4f46e5);
+        background-size: 300% 100%;
+        animation: gradientSlide 4s ease infinite;
+        pointer-events: none;
+    }
+    @keyframes gradientSlide {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
     .premium-header.header-scrolled {
         background: rgba(255,255,255,0.97);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
     }
 
+    /* Desktop nav links */
+    .premium-header .navbar-nav .nav-link {
+        font-weight: 500;
+        font-size: 14px;
+        padding: 24px 12px !important;
+        color: #1e293b;
+        position: relative;
+        transition: color 0.2s;
+    }
+    .premium-header .navbar-nav .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+        border-radius: 2px;
+    }
+    .premium-header .navbar-nav .nav-link:hover::after,
+    .premium-header .navbar-nav .nav-link.active::after {
+        width: 60%;
+    }
+    .premium-header .navbar-nav .nav-link:hover { color: #4f46e5; }
+    .premium-header .navbar-nav .nav-link.active { color: #4f46e5; }
+
+    /* Premium dropdown menus */
+    .premium-header .dropdown-menu {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+        padding: 8px;
+        margin-top: 8px;
+        background: #fff;
+        animation: dropdownIn 0.2s ease;
+        min-width: 200px;
+    }
+    .premium-header .dropdown-menu .dropdown-item {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #475569;
+        transition: all 0.15s;
+    }
+    .premium-header .dropdown-menu .dropdown-item:hover {
+        background: #f1f5f9;
+        color: #4f46e5;
+        transform: translateX(4px);
+    }
+    .premium-header .dropdown-menu .dropdown-item i { width: 20px; color: #4f46e5; }
+    .premium-header .dropdown-menu .dropdown-header { font-size: 11px; color: #94a3b8; padding: 6px 14px; letter-spacing: 0.5px; }
+    @keyframes dropdownIn {
+        from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Call & Admin buttons */
+    .btn-call {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        border: none;
+        color: #fff !important;
+        border-radius: 24px;
+        padding: 8px 18px;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s;
+        box-shadow: 0 2px 12px rgba(34,197,94,0.3);
+    }
+    .btn-call:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(34,197,94,0.4); }
+    .btn-admin {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        border: none;
+        color: #fff !important;
+        border-radius: 24px;
+        padding: 8px 16px;
+        font-weight: 500;
+        font-size: 13px;
+        transition: all 0.3s;
+    }
+    .btn-admin:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+
+    /* Highlighted nav item (Post Property FREE) */
+    .premium-header .nav-link[style*="background"] {
+        border-radius: 24px !important;
+        margin: 12px 0 !important;
+    }
+
     /* Mobile menu enhancements */
-    .navbar-toggler { border: none; padding: 8px; transition: transform .3s; }
+    .navbar-toggler { border: none; padding: 8px; transition: transform .3s; position: relative; z-index: 9999; }
     .navbar-toggler[aria-expanded="true"] { transform: rotate(90deg); }
     .navbar-toggler-icon { background-image: none; display: flex; align-items: center; justify-content: center; }
     .navbar-toggler-icon::before { content: '\f0c9'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 1.3rem; color: #4f46e5; }
@@ -474,34 +581,57 @@ try {
     /* Mobile backdrop overlay */
     .nav-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 9997; opacity: 0; transition: opacity .3s; }
     .nav-backdrop.show { display: block; opacity: 1; }
+    .premium-header.menu-open { z-index: 9999; }
+    .premium-header.menu-open .navbar-toggler { z-index: 10000; }
     
-    @media (max-width: 991.98px) {
+    @media (max-width: 1199.98px) {
         .premium-header .navbar-collapse {
             position: fixed; top: 0; left: 0; width: 85%; max-width: 320px; height: 100vh;
-            background: #fff; z-index: 9998; padding: 20px; overflow-y: auto;
-            transform: translateX(-100%); transition: transform .3s ease;
-            box-shadow: 4px 0 20px rgba(0,0,0,.15);
+            background: #fff; z-index: 9998; padding: 20px 16px; overflow-y: auto;
+            transform: translateX(-100%); transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 4px 0 30px rgba(0,0,0,.15);
             display: block !important;
         }
-        .premium-header .navbar-collapse.show {
-            transform: translateX(0);
-        }
+        .premium-header .navbar-collapse.show { transform: translateX(0); }
         .premium-header .navbar-nav { margin-left: 0 !important; flex-direction: column; width: 100%; }
         .premium-header .navbar-nav .nav-item { width: 100%; }
-        .premium-header .navbar-nav .nav-link { padding: 12px 10px; border-radius: 8px; }
-        .premium-header .navbar-nav .nav-link:hover { background: #f1f5f9; }
+        .premium-header .navbar-nav .nav-link { padding: 12px 10px; border-radius: 8px; font-size: 14px; }
+        .premium-header .navbar-nav .nav-link::after { display: none; }
         .premium-header .navbar-nav .dropdown-menu {
             position: static !important; border: none; box-shadow: none;
             padding-left: 15px; background: #f8fafc; border-radius: 8px;
             margin: 4px 0; display: block !important; max-height: 0; overflow: hidden;
             transition: max-height .3s ease; padding-top: 0; padding-bottom: 0;
+            animation: none;
         }
         .premium-header .navbar-nav .dropdown-menu.show-mobile { max-height: 2000px; padding-top: 8px; padding-bottom: 8px; }
         .premium-header .navbar-nav .dropdown-menu .dropdown-item { padding: 10px 12px; border-radius: 6px; }
-        .premium-header .navbar-nav .dropdown-menu .dropdown-item:hover { background: #e2e8f0; }
+        .premium-header .navbar-nav .dropdown-menu .dropdown-item:hover { background: #e2e8f0; transform: none; }
         .premium-header .ms-2 { margin-left: 0 !important; margin-top: 8px; }
         #compareBadge, .btn-compare, .btn-admin { display: none !important; }
+        /* Add brand to top of mobile menu */
+        .premium-header .navbar-collapse::before {
+            content: 'APS Dream Home';
+            display: block;
+            font-weight: 700;
+            font-size: 18px;
+            color: #4f46e5;
+            padding: 12px 0 16px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            letter-spacing: -0.3px;
+        }
     }
+    @media (min-width: 768px) and (max-width: 1199.98px) {
+        .premium-header .navbar-collapse { width: 60%; max-width: 340px; }
+        .premium-header .navbar-brand img { height: 38px; }
+    }
+    @media (max-width: 400px) {
+        .premium-header .navbar-brand img { height: 32px; }
+        .premium-header .navbar-brand span { font-size: 14px; }
+        .btn-call { font-size: 12px; padding: 4px 8px; }
+    }
+    main { padding-top: var(--header-height, 80px); }
 </style>
 
 <script>
@@ -509,58 +639,101 @@ try {
 
     document.addEventListener('DOMContentLoaded', function() {
         var header = document.getElementById('mainHeader');
-        var toggler = header.querySelector('.navbar-toggler');
-        var navCollapse = header.querySelector('.navbar-collapse');
-        
+        if (!header) return;
+        var toggler = document.getElementById('navbarToggler');
+        var navCollapse = document.getElementById('navbarNav');
+        if (!toggler || !navCollapse) return;
+
         // Create backdrop overlay for mobile menu
         var backdrop = document.createElement('div');
         backdrop.className = 'nav-backdrop';
         document.body.appendChild(backdrop);
 
-        // Toggle mobile menu
-        if (toggler && navCollapse) {
-            toggler.addEventListener('click', function() {
-                var isOpen = navCollapse.classList.contains('show');
-                navCollapse.classList.toggle('show');
-                backdrop.classList.toggle('show');
-                toggler.setAttribute('aria-expanded', String(!isOpen));
-                document.body.style.overflow = isOpen ? '' : 'hidden';
-            });
-
-            // Close on backdrop click
-            backdrop.addEventListener('click', function() {
-                navCollapse.classList.remove('show');
-                backdrop.classList.remove('show');
-                toggler.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            });
-
-            // Convert dropdowns to click-to-expand on mobile
-            navCollapse.querySelectorAll('.dropdown-toggle').forEach(function(dt) {
-                dt.addEventListener('click', function(e) {
-                    if (window.innerWidth <= 991.98) {
-                        e.preventDefault();
-                        var menu = this.nextElementSibling;
-                        if (menu && menu.classList.contains('dropdown-menu')) {
-                            menu.classList.toggle('show-mobile');
-                        }
-                    }
-                });
-            });
+        function openMenu() {
+            navCollapse.classList.add('show');
+            backdrop.classList.add('show');
+            header.classList.add('menu-open');
+            toggler.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
         }
+        function closeMenu() {
+            navCollapse.classList.remove('show');
+            backdrop.classList.remove('show');
+            header.classList.remove('menu-open');
+            toggler.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+        function isMobile() { return window.innerWidth <= 1199.98; }
 
-        // Scroll effect
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                header.classList.add('header-scrolled');
-                header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
+        // Toggle mobile menu on hamburger click
+        toggler.addEventListener('click', function() {
+            if (navCollapse.classList.contains('show')) {
+                closeMenu();
             } else {
-                header.classList.remove('header-scrolled');
-                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
+                openMenu();
             }
         });
 
-        // Sync aria-expanded for Bootstrap dropdowns
+        // Close on backdrop click
+        backdrop.addEventListener('click', closeMenu);
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && navCollapse.classList.contains('show')) {
+                closeMenu();
+            }
+        });
+
+        // Prevent Bootstrap dropdown on mobile; use custom expand instead
+        function setupDropdowns() {
+            var mobile = isMobile();
+            navCollapse.querySelectorAll('.dropdown-toggle').forEach(function(dt) {
+                if (mobile) {
+                    dt.removeAttribute('data-bs-toggle');
+                } else {
+                    dt.setAttribute('data-bs-toggle', 'dropdown');
+                }
+            });
+        }
+        setupDropdowns();
+
+        // Re-evaluate on resize (cross breakpoint)
+        var resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(setupDropdowns, 150);
+        });
+
+        // Click handler for mobile dropdown toggles
+        navCollapse.addEventListener('click', function(e) {
+            var dt = e.target.closest('.dropdown-toggle');
+            if (!dt) return;
+            // Only handle clicks when in mobile mode (no data-bs-toggle)
+            if (dt.hasAttribute('data-bs-toggle')) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var menu = dt.nextElementSibling;
+            if (menu && menu.classList.contains('dropdown-menu')) {
+                menu.classList.toggle('show-mobile');
+            }
+        });
+
+        // Scroll effect
+        var scrollTimer;
+        window.addEventListener('scroll', function() {
+            if (scrollTimer) cancelAnimationFrame(scrollTimer);
+            scrollTimer = requestAnimationFrame(function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('header-scrolled');
+                    header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
+                } else {
+                    header.classList.remove('header-scrolled');
+                    header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
+                }
+            });
+        });
+
+        // Sync aria-expanded for Bootstrap dropdowns (desktop only)
         header.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(function(dt) {
             dt.addEventListener('shown.bs.dropdown', function() { dt.setAttribute('aria-expanded', 'true'); });
             dt.addEventListener('hidden.bs.dropdown', function() { dt.setAttribute('aria-expanded', 'false'); });
@@ -568,11 +741,8 @@ try {
 
         // Close mobile menu on window resize above breakpoint
         window.addEventListener('resize', function() {
-            if (window.innerWidth > 991.98 && navCollapse.classList.contains('show')) {
-                navCollapse.classList.remove('show');
-                backdrop.classList.remove('show');
-                toggler.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
+            if (!isMobile() && navCollapse.classList.contains('show')) {
+                closeMenu();
             }
         });
     });

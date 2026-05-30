@@ -271,7 +271,8 @@ class VisitController extends AdminController
                 'visit' => $visit,
                 'properties' => $properties,
                 'customers' => $customers,
-                'associates' => $associates
+                'associates' => $associates,
+                'users' => $associates
             ];
 
             return $this->render('admin/visits/edit', $data);

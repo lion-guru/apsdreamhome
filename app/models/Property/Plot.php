@@ -50,7 +50,7 @@ class Plot extends Model {
         return static::query()
             ->select('p.*, s.site_name, s.location as site_location')
             ->from('plots as p')
-            ->leftJoin('site_master as s', 'p.site_id', '=', 's.id')
+            ->leftJoin('sites as s', 'p.site_id', '=', 's.id')
             ->where('p.customer_id', $customerId)
             ->where('p.status', 'active')
             ->orderBy('p.updated_at', 'DESC')

@@ -14,7 +14,7 @@
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
-            <form method="POST" action="/admin/workflows/store">
+            <form method="POST" action="/admin/workflows/create">
                 <div class="row g-3">
                     <div class="col-md-8"><label class="form-label">Workflow Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control" required></div>
                     <div class="col-md-4"><label class="form-label">Type</label><select name="type" class="form-select"><option value="approval">Approval</option><option value="task">Task</option><option value="onboarding">Onboarding</option><option value="custom">Custom</option></select></div>

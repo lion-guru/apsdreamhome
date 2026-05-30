@@ -8,12 +8,11 @@ use App\Core\App;
  * CM Dashboard Controller
  * Chief Manager Dashboard
  */
-class CMDashboardController
+class CMDashboardController extends AdminController
 {
-    private $db;
-
     public function __construct()
     {
+        parent::__construct();
         $this->db = App::database();
     }
 
@@ -240,7 +239,7 @@ class CMDashboardController
     public function jsonResponse($data, $status = 200)
     {
         header('Content-Type: application/json');
-        http_response_code($statusCode);
+        http_response_code($status);
         echo json_encode($data);
         exit;
     }

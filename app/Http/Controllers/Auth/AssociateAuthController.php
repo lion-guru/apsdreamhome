@@ -77,7 +77,6 @@ class AssociateAuthController extends BaseController
                 'password' => $hashed,
                 'referral_code' => $referral_code,
                 'referred_by' => $referrer_id,
-                'user_type' => 'associate',
                 'role' => 'associate',
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -99,6 +98,17 @@ class AssociateAuthController extends BaseController
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            // Create associates extension record
+            $db->execute("INSERT INTO associates (user_id, name, email, phone, password, level, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'bronze', 'active', ?, ?)", [
+                $newUserId,
+                $name,
+                $email,
+                $phone,
+                $hashed,
+                date('Y-m-d H:i:s'),
+                date('Y-m-d H:i:s')
             ]);
 
             // Create mlm_profile for new associate
@@ -233,7 +243,7 @@ class AssociateAuthController extends BaseController
     public function associateLogin()
     {
         @session_start();
-        if (isset($_SESSION['user_id']) && ($_SESSION['user_type'] ?? '') === 'associate') {
+        if (isset($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'associate') {
             header('Location: ' . BASE_URL . '/associate/dashboard');
             exit;
         }
@@ -260,15 +270,14 @@ class AssociateAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
-            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND user_type = 'associate' AND status = 'active' LIMIT 1", [$email, $email]);
+            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = 'associate' AND status = 'active' LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_phone'] = $user['phone'] ?? '';
-                $_SESSION['user_type'] = $user['user_type'] ?? 'associate';
-                $_SESSION['user_role'] = $user['role'] ?? 'associate';
+                $_SESSION['role'] = $user['role'] ?? 'associate';
                 $_SESSION['referral_code'] = $user['referral_code'] ?? '';
                 $_SESSION['associate_logged_in'] = true;
                 $_SESSION['logged_in'] = true;

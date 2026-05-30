@@ -6,10 +6,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 
-class PropertyImageController extends BaseController
+class PropertyImageController extends AdminController
 {
     protected $db;
     private $uploadPath;

@@ -1,4 +1,4 @@
-
+<?php $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +26,7 @@
         <div class="content">
             <div class="property-card">
                 <h3>Property Title</h3>
-                <p><strong>Property URL:</strong> <a href="http://localhost/apsdreamhome/properties">http://localhost/apsdreamhome/properties</a></p>
+                <p><strong>Property URL:</strong> <a href="<?= $baseUrl ?>/properties"><?= $baseUrl ?>/properties</a></p>
             </div>
 
             <div class="inquiry-details">
@@ -47,7 +47,7 @@
             </ol>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="http://localhost/apsdreamhome/admin" class="button">View in Admin Panel</a>
+                <a href="<?= $baseUrl ?>/admin" class="button">View in Admin Panel</a>
                 <a href="mailto:unknown@example.com" class="button" style="background: #28a745;">Reply to Customer</a>
             </div>
         </div>

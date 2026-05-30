@@ -530,7 +530,7 @@ class AdminController extends BaseController
      */
     public function requireAdmin()
     {
-        if (!$this->isLoggedIn() || ($_SESSION['user_role'] ?? '') !== 'admin') {
+        if (!$this->isLoggedIn() || !in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'])) {
             $this->setFlash('error', 'Admin access required');
             $this->redirect('/admin/login');
         }

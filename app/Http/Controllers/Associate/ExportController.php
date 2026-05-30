@@ -93,7 +93,7 @@ class ExportController extends BaseController
         try {
             $total = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE parent_id = ?", [$associate_id])['cnt'] ?? 0);
             $active = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE parent_id = ? AND status = 'active'", [$associate_id])['cnt'] ?? 0);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }
         $active_pct = ($total > 0) ? round(($active / $total) * 100, 1) : 0;
 
         fputcsv($out, [$total, $active, $active_pct . '%']);
@@ -121,7 +121,7 @@ class ExportController extends BaseController
                 "SELECT amount as payout_amount, payout_percent, period, status, generated_on FROM payouts WHERE associate_id=? ORDER BY generated_on DESC",
                 [$associate_id]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }
 
         foreach ($payouts as $row) {
             fputcsv($out, [
@@ -158,7 +158,7 @@ class ExportController extends BaseController
             foreach ($members as $i => $row) {
                 fputcsv($out, [$i+1, $row['name'], $row['phone'], $row['created_at'], $row['status'] ?? 'active']);
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }
 
         fclose($out);
         exit;
@@ -211,7 +211,7 @@ class ExportController extends BaseController
             foreach ($associates as $row) {
                 fputcsv($out, [$row['name'], $row['join_date'], ucfirst($row['status'] ?? 'active')]);
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }
 
         fclose($out);
         exit;
@@ -241,7 +241,7 @@ class ExportController extends BaseController
             foreach ($sales as $row) {
                 fputcsv($out, [$row['id'], $row['amount'], $row['created_at'], ucfirst($row['status'] ?? 'pending')]);
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }
 
         fclose($out);
         exit;
@@ -271,7 +271,7 @@ class ExportController extends BaseController
             foreach ($registry as $row) {
                 fputcsv($out, [$row['id'], $row['plot_id'], $row['created_at'], ucfirst($row['status'] ?? 'pending')]);
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }
 
         fclose($out);
         exit;

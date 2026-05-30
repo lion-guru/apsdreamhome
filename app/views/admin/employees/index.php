@@ -5,7 +5,7 @@
  */
 
 @@session_start();
-if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin')) {
+if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin')) {
     header("Location: " . BASE_URL . "/admin/login");
     exit();
 }

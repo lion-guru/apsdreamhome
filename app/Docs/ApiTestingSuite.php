@@ -21,7 +21,8 @@ class ApiTestingSuite
     {
         $this->db = Database::getInstance();
         $this->config = App::getInstance();
-        $this->baseUrl = $this->config->get('app_url', 'http://localhost/apsdreamhome') . '/api';
+        $defaultUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $this->baseUrl = $this->config->get('app_url', $defaultUrl) . '/api';
     }
 
     /**

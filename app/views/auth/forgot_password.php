@@ -9,8 +9,6 @@ if (empty($_SESSION['csrf_token'])) {
 $page_title = $page_title ?? 'Forgot Password - APS Dream Home';
 $page_description = 'Reset your password with email or mobile number';
 
-// Content for base layout
-ob_start();
 ?>
 
 <!-- Forgot Password Section -->
@@ -385,9 +383,6 @@ ob_start();
         }
     });
 </script>
+<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+</body></html>
 
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/base.php';
-echo $content;
-?>

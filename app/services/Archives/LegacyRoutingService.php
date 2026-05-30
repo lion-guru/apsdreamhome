@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\CoreFunctionsController;
-use Illuminate\Support\Facades\Route;
 
 /**
  * Core Functions Routes

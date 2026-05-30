@@ -27,6 +27,7 @@ class AdminWorkflowController extends AdminController
     public function __construct()
     {
         parent::__construct();
+        $this->requireAdmin();
         try {
             $this->workflowService = new WorkflowEngineService();
         } catch (\Exception $e) { error_log("WorkflowEngineService error: " . $e->getMessage()); }

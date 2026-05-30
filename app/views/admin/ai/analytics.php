@@ -1,23 +1,10 @@
 <?php
-/**
- * AI Analytics View
- */
 $analytics_data = $analytics_data ?? [];
 $predictions = $predictions ?? [];
 $page_title = $page_title ?? 'AI Analytics';
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title); ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container-fluid py-4">
+<div class="container-fluid py-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -84,8 +71,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             <div class="progress" style="height: 20px;">
                                                 <div class="progress-bar bg-success" style="width: <?php echo $prediction['confidence_score'] ?? 0; ?>%">
                                                     <?php echo $prediction['confidence_score'] ?? 0; ?>%
-                                                </div>
-                                            </div>
+    </div>
                                         </td>
                                         <td><?php echo isset($prediction['prediction_date']) ? date('M d, Y', strtotime($prediction['prediction_date'])) : '-'; ?></td>
                                     </tr>
@@ -102,7 +88,4 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    </div>

@@ -1,4 +1,4 @@
-
+<?php $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,8 +48,8 @@
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="http://localhost/apsdreamhome/payment/receipt" class="button">Download Receipt</a>
-                <a href="http://localhost/apsdreamhome/dashboard" class="button" style="background: #6c757d;">View Dashboard</a>
+                <a href="<?= $baseUrl ?>/payment/receipt" class="button">Download Receipt</a>
+                <a href="<?= $baseUrl ?>/dashboard" class="button" style="background: #6c757d;">View Dashboard</a>
             </div>
 
             <p>If you have any questions about your payment, please contact our support team:</p>

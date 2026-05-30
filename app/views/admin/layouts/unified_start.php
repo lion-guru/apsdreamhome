@@ -114,7 +114,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                     $ndb = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4', 'root', '');
                     $ndb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $notifCount = (int)$ndb->query("SELECT COUNT(*) FROM inquiries WHERE status = 'new'")->fetchColumn();
-                } catch (Exception $e) {}
+                } catch (Exception $e) { error_log('admin/layouts/unified_start notif count: ' . $e->getMessage()); }
                 ?>
                 <button class="nav-icon" title="Notifications">
                     <i class="fas fa-bell"></i>

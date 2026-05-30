@@ -167,7 +167,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $whatsapp_message .= "ΓÅ░ It will be live within 24 hours\n";
             $whatsapp_message .= "≡ƒô₧ Our team will contact you soon\n\n";
 
-            $whatsapp_message .= "≡ƒöù Track Status: http://localhost/apsdreamhome/resell-status.php\n";
+            $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+            $whatsapp_message .= "≡ƒöù Track Status: {$baseUrl}/resell-status.php\n";
             $whatsapp_message .= "≡ƒô▒ Support: +91-9277121112\n\n";
             $whatsapp_message .= "APS Dream Homes - Your Property, Our Priority! ≡ƒÅáΓ£¿";
 

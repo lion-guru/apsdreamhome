@@ -317,7 +317,8 @@ class MonitoringController extends BaseController
                 ]
             ]);
 
-            $url = 'http://localhost/apsdreamhome' . $endpoint;
+            $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+            $url = $baseUrl . $endpoint;
             $response = @file_get_contents($url, false, $context);
 
             $responseTime = microtime(true) - $startTime;

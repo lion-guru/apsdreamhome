@@ -13,8 +13,8 @@ class GoogleAuthController extends Controller
     public function googleRedirect()
     {
         $clientId = getenv('GOOGLE_CLIENT_ID');
-        $redirectUri = 'http://localhost/apsdreamhome/auth/google/callback';
-        // $redirectUri = 'https://seasonless-elissa-unwrathfully.ngrok-free.dev/auth/google/callback';
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $redirectUri = $baseUrl . '/auth/google/callback';
 
         $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
             'client_id' => $clientId,
@@ -43,8 +43,8 @@ class GoogleAuthController extends Controller
 
         $clientId = getenv('GOOGLE_CLIENT_ID');
         $clientSecret = getenv('GOOGLE_CLIENT_SECRET');
-        $redirectUri = 'http://localhost/apsdreamhome/auth/google/callback';
-        // $redirectUri = 'https://seasonless-elissa-unwrathfully.ngrok-free.dev/auth/google/callback';
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $redirectUri = $baseUrl . '/auth/google/callback';
 
         // Exchange code for access token
         $tokenUrl = 'https://oauth2.googleapis.com/token';
@@ -90,11 +90,11 @@ class GoogleAuthController extends Controller
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_phone'] = $user['phone'];
-            $_SESSION['user_type'] = $user['user_type'] ?? 'customer';
+            $_SESSION['role'] = $user['role'] ?? 'customer';
             $_SESSION['success'] = 'Welcome back, ' . $user['name'] . '!';
 
             // Redirect based on user type
-            $redirectUrl = $this->getRedirectUrl($user['user_type'] ?? 'customer');
+            $redirectUrl = $this->getRedirectUrl($user['role'] ?? 'customer');
             header('Location: ' . $redirectUrl);
             exit;
         } else {
@@ -187,8 +187,7 @@ class GoogleAuthController extends Controller
                 'password' => $password,
                 'referral_code' => $newReferralCode,
                 'referred_by' => $referrerId,
-                'user_type' => $role,
-                'role' => $role === 'customer' ? 'user' : $role,
+                'role' => $role,
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
@@ -262,7 +261,7 @@ class GoogleAuthController extends Controller
             $_SESSION['user_name'] = $googleUserData['name'];
             $_SESSION['user_email'] = $googleUserData['email'];
             $_SESSION['user_phone'] = $phone;
-            $_SESSION['user_type'] = $role;
+            $_SESSION['role'] = $role;
             $_SESSION['success'] = 'Account created successfully! Welcome to APS Dream Home.';
 
             // Clear Google user data from session

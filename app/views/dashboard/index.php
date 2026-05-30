@@ -22,7 +22,7 @@ try {
 
 // Recent leads
 $recentLeads = [];
-try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? []; } catch (\Exception $e) {}
+try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? []; } catch (\Exception $e) { error_log('dashboard/index recentLeads: ' . $e->getMessage()); }
 ?>
 
 <!-- Dashboard Header -->

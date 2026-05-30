@@ -377,15 +377,23 @@ class AuthService
             $token = bin2hex(random_bytes(32));
             $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
 
-            // Save reset token
-            $sql = "INSERT INTO password_resets (email, token, expires_at, created_at) 
+            $user = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
+            if (!$user) {
+                return ['success' => false, 'message' => 'Email not found'];
+            }
+            $sql = "INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at) 
                     VALUES (?, ?, ?, NOW())
                     ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()";
             
-            $this->db->execute($sql, [$email, $token, $expires, $token, $expires]);
+            $this->db->execute($sql, [$user['id'], $token, $expires, $token, $expires]);
 
-            // TODO: Send email with reset link
-            // This would integrate with your email service
+            // Log reset link (email sending placeholder - integrate with EmailService when SMTP configured)
+            $resetLink = (defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome') . '/reset-password?token=' . $token;
+            error_log("PASSWORD RESET LINK for {$email}: {$resetLink}");
+
+            // TODO: Send actual email via EmailService when SMTP is configured
+            // $emailService = new \App\Services\Communication\EmailService();
+            // $emailService->sendPasswordResetEmail($email, $token);
 
             $this->logger->info('Password reset requested', ['email' => $email]);
 
@@ -409,8 +417,9 @@ class AuthService
     public function resetPassword(string $token, string $newPassword): array
     {
         try {
-            // Validate token
-            $sql = "SELECT * FROM password_resets WHERE token = ? AND expires_at > NOW()";
+            $sql = "SELECT prt.*, u.email FROM password_reset_tokens prt
+                    JOIN users u ON prt.user_id = u.id
+                    WHERE prt.token = ? AND prt.expires_at > NOW()";
             $reset = $this->db->fetchOne($sql, [$token]);
             
             if (!$reset) {
@@ -435,8 +444,7 @@ class AuthService
             $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE email = ?";
             $this->db->execute($sql, [$hashedPassword, $reset['email']]);
 
-            // Delete reset token
-            $this->db->execute("DELETE FROM password_resets WHERE token = ?", [$token]);
+            $this->db->execute("DELETE FROM password_reset_tokens WHERE token = ?", [$token]);
 
             $this->logger->info('Password reset successful', ['email' => $reset['email']]);
 
@@ -560,7 +568,7 @@ class AuthService
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_role'] = $user['role'];
+        $_SESSION['role'] = $user['role'];
         $_SESSION['last_activity'] = time();
         $_SESSION['created_at'] = time();
 
