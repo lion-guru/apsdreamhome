@@ -9,9 +9,9 @@ use App\Core\Database\Database;
  * FAQ Controller
  * Handles FAQ management for admin panel
  */
-class FaqController extends BaseController
+class FaqController extends AdminController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

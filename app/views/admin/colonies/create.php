@@ -2,6 +2,7 @@
 <div class="container-fluid px-4">
     <h4 class="mb-4"><i class="fas fa-plus-circle text-primary me-2"></i>New Colony</h4>
     <form method="POST" action="<?php echo BASE_URL; ?>/admin/colonies/store" class="row g-4">
+        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Basic Info</h6></div>
             <div class="card-body">

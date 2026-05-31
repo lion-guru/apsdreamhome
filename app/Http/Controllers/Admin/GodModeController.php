@@ -14,6 +14,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
     public function __construct()
     {
         parent::__construct();
+        $this->layout = 'layouts/admin';
         $this->db = Database::getInstance();
     }
 
@@ -629,15 +630,6 @@ class GodModeController extends \App\Http\Controllers\BaseController
         }
 
         return round($bytes, 2) . ' ' . $units[$unitIndex];
-    }
-
-    /**
-     * Render helper
-     */
-    protected function render($view, $data = [])
-    {
-        extract($data);
-        include __DIR__ . "/../../../views/{$view}.php";
     }
 
     /**

@@ -26,6 +26,7 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/visits/store">
+                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Select Lead</label>

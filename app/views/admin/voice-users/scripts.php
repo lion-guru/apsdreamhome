@@ -1,0 +1,47 @@
+<?php $scripts = $scripts ?? []; ?>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Call Scripts</h4>
+    <button class="btn btn-primary btn-sm" onclick="alert('Create new script')"><i class="fas fa-plus"></i> New Script</button>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Script Name</th>
+                        <th>Language</th>
+                        <th>Agent</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($scripts)): ?>
+                        <tr><td colspan="5" class="text-center text-muted py-4">No scripts found.</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($scripts as $s): ?>
+                            <tr>
+                                <td><strong><?= htmlspecialchars($s['name'] ?? $s['script_name'] ?? 'Unnamed') ?></strong></td>
+                                <td><?= htmlspecialchars($s['language'] ?? 'en') ?></td>
+                                <td><?= htmlspecialchars($s['agent_name'] ?? $s['agent'] ?? 'General') ?></td>
+                                <td><?php $active = $s['is_active'] ?? $s['status'] ?? 0; ?>
+                                    <span class="badge bg-<?= $active ? 'success' : 'secondary' ?>">
+                                        <?= $active ? 'Active' : 'Inactive' ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info" onclick="alert('View script')" title="View"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-<?= $active ? 'warning' : 'success' ?>" onclick="alert('Toggle status')" title="<?= $active ? 'Deactivate' : 'Activate' ?>">
+                                        <i class="fas fa-<?= $active ? 'pause' : 'play' ?>"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="alert('Edit script')" title="Edit"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

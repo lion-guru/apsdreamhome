@@ -16,6 +16,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
             <form method="POST" action="/admin/visits/update/<?= $visit['id'] ?? 0 ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="row g-3">
                     <div class="col-md-6"><label class="form-label">Customer</label><select name="customer_id" class="form-select"><option value="">Select</option><?php foreach ($users as $c): ?><option value="<?= $c['id'] ?>" <?= ($visit['customer_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= $c['name'] ?></option><?php endforeach; ?></select></div>
                     <div class="col-md-6"><label class="form-label">Assigned To</label><select name="assigned_to" class="form-select"><option value="">Unassigned</option><?php foreach ($users as $u): ?><option value="<?= $u['id'] ?>" <?= ($visit['assigned_to'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= $u['name'] ?? $u['username'] ?></option><?php endforeach; ?></select></div>

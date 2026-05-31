@@ -32,6 +32,7 @@ $error = $error ?? null;
         </div>
         <div class="card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/campaigns/store">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <!-- Basic Information -->
                 <div class="row mb-4">
                     <div class="col-md-6">

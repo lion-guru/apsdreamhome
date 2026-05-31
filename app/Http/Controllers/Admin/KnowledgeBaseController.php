@@ -9,9 +9,9 @@ use App\Core\Database\Database;
  * Knowledge Base Controller
  * Handles knowledge base article management for admin panel
  */
-class KnowledgeBaseController extends BaseController
+class KnowledgeBaseController extends AdminController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

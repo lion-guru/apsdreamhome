@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\Localization\LocalizationService;
 use App\Services\SystemLogger as Logger;
 
 /**
  * Controller for Localization operations
  */
-class LocalizationController extends BaseController
+class LocalizationController extends AdminController
 {
     private ?LocalizationService $localizationService = null;
     private $logger;
@@ -407,20 +408,30 @@ class LocalizationController extends BaseController
     public function management()
     {
         $this->requireAdmin();
-        $this->requireLocalizationService();
-        try {
-            $stats = $this->localizationService->getStatistics();
 
-            return $this->view('localization.management', [
-                'stats' => $stats,
-                'current_locale' => $this->localizationService->getCurrentLocale(),
-                'supported_locales' => $this->localizationService->getSupportedLocales(),
-                'page_title' => 'Localization Management - APS Dream Home'
-            ]);
-        } catch (\Exception $e) {
-            $this->logger?->error("Failed to load localization management", ['error' => $e->getMessage()]);
-            return $this->view('errors.500');
+        $serviceAvailable = $this->localizationService !== null;
+        $stats = [];
+        $current_locale = 'en';
+        $supported_locales = ['en' => 'English', 'hi' => 'Hindi'];
+
+        if ($serviceAvailable) {
+            try {
+                $stats = $this->localizationService->getStatistics();
+                $current_locale = $this->localizationService->getCurrentLocale();
+                $supported_locales = $this->localizationService->getSupportedLocales();
+            } catch (\Exception $e) {
+                $this->logger?->error("Failed to load localization management", ['error' => $e->getMessage()]);
+                $serviceAvailable = false;
+            }
         }
+
+        return $this->render('admin/localization/index', [
+            'serviceAvailable' => $serviceAvailable,
+            'stats' => $stats,
+            'current_locale' => $current_locale,
+            'supported_locales' => $supported_locales,
+            'page_title' => 'Localization Management'
+        ]);
     }
 
     /**

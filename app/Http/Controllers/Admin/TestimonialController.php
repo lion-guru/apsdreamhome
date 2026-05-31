@@ -9,9 +9,9 @@ use App\Core\Database\Database;
  * Testimonial Controller
  * Handles testimonial management for admin panel
  */
-class TestimonialController extends BaseController
+class TestimonialController extends AdminController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

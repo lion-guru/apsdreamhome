@@ -6,6 +6,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/payroll/store">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Employee</label>

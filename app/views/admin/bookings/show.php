@@ -109,7 +109,7 @@ $extraHead = '<style>
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label fw-bold">Total Amount</label>
-                    <h4 class="text-primary">₹<?= number_format(floatval(booking['total_amount'] ?? 0), 2) ?></h4>
+                    <h4 class="text-primary">₹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></h4>
                 </div>
 
                 <div class="mb-3">
@@ -119,7 +119,7 @@ $extraHead = '<style>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Balance Due</label>
-                    <h4 class="text-danger">₹<?= number_format(floatval(booking['total_amount'] ?? 0) - $total_paid, 2) ?></h4>
+                    <h4 class="text-danger">₹<?= number_format(floatval($booking['total_amount'] ?? 0) - $total_paid, 2) ?></h4>
                 </div>
 
                 <div class="mb-3">

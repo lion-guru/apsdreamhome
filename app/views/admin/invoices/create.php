@@ -17,6 +17,7 @@
         </div>
         <div class="card-body">
             <form action="/admin/invoices/store" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Invoice Number</label>

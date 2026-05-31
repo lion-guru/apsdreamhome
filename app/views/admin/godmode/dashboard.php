@@ -22,14 +22,6 @@ $impersonatingUserId = $_SESSION['god_mode_user_id'] ?? null;
 $roleSwitched = isset($_SESSION['god_mode_role_switched']);
 $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
 ?>
-?><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= htmlspecialchars($page_title ?? 'God Mode - Super Admin') ?></title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 <style>
         :root {
             --god-primary: #6b21a8;
@@ -38,10 +30,11 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             --god-dark: #1e1b4b;
         }
         
-        body {
+        .god-mode-dashboard {
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
             min-height: 100vh;
             color: #fff;
+            padding: 20px;
         }
         
         .god-header {
@@ -275,6 +268,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             box-shadow: 0 0 0 0.2rem rgba(251, 191, 36, 0.25);
         }
     </style>
+<div class="god-mode-dashboard">
     <!-- Impersonation Warning Banner -->
     <?php if ($isImpersonating): ?>
     <div class="container mt-3">
@@ -803,6 +797,4 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             return `${minutes}m`;
         }
     </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</div>
