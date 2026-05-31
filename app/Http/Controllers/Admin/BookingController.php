@@ -16,6 +16,192 @@ use Exception;
 class BookingController extends AdminController
 {
 
+    public function index()
+    {
+        try {
+            $page = max(1, intval($_GET['page'] ?? 1));
+            $perPage = 20;
+            $offset = ($page - 1) * $perPage;
+            $filters = [
+                'search' => $_GET['search'] ?? '',
+                'status' => $_GET['status'] ?? '',
+                'customer_id' => $_GET['customer_id'] ?? '',
+                'associate_id' => $_GET['associate_id'] ?? '',
+                'sort' => $_GET['sort'] ?? 'b.created_at',
+                'order' => $_GET['order'] ?? 'DESC'
+            ];
+
+            $where = [];
+            $params = [];
+            if (!empty($filters['search'])) {
+                $where[] = "(b.booking_number LIKE ? OR u.name LIKE ? OR p.title LIKE ?)";
+                $searchTerm = '%' . $filters['search'] . '%';
+                $params[] = $searchTerm; $params[] = $searchTerm; $params[] = $searchTerm;
+            }
+            if (!empty($filters['status'])) {
+                $where[] = "b.status = ?";
+                $params[] = $filters['status'];
+            }
+            if (!empty($filters['customer_id'])) {
+                $where[] = "b.customer_id = ?";
+                $params[] = $filters['customer_id'];
+            }
+            $whereClause = count($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+
+            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM bookings b LEFT JOIN properties p ON b.property_id = p.id LEFT JOIN users u ON b.customer_id = u.id $whereClause");
+            $countStmt->execute($params);
+            $total = intval($countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
+            $totalPages = max(1, ceil($total / $perPage));
+
+            $stmt = $this->db->prepare(
+                "SELECT b.*, p.title as property_title, p.location as property_location,
+                        u.name as customer_name, u.email as customer_email,
+                        a.name as associate_name, a.email as associate_email
+                 FROM bookings b
+                 LEFT JOIN properties p ON b.property_id = p.id
+                 LEFT JOIN users u ON b.customer_id = u.id
+                 LEFT JOIN users a ON b.associate_id = a.id
+                 $whereClause
+                 ORDER BY b.created_at DESC
+                 LIMIT $perPage OFFSET $offset"
+            );
+            $stmt->execute($params);
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $customers = $this->db->query("SELECT id, name FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $associates = $this->db->query("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+
+            return $this->render('admin/bookings/index', [
+                'bookings' => $bookings,
+                'total' => $total,
+                'filters' => $filters,
+                'customers' => $customers,
+                'associates' => $associates,
+                'total_pages' => $totalPages,
+                'current_page' => $page
+            ]);
+        } catch (Exception $e) {
+            return $this->render('admin/bookings/index', [
+                'bookings' => [], 'total' => 0, 'filters' => [],
+                'customers' => [], 'associates' => [],
+                'total_pages' => 1, 'current_page' => 1,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function create()
+    {
+        try {
+            $customers = $this->db->query("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $properties = $this->db->query("SELECT id, title, location FROM properties WHERE status = 'active' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
+            return $this->render('admin/bookings/create', ['customers' => $customers, 'properties' => $properties]);
+        } catch (Exception $e) {
+            return $this->render('admin/bookings/create', ['customers' => [], 'properties' => [], 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function store()
+    {
+        try {
+            $data = $_POST;
+            $stmt = $this->db->prepare(
+                "INSERT INTO bookings (customer_id, property_id, visit_date, status, notes, created_at)
+                 VALUES (?, ?, ?, 'pending', ?, NOW())"
+            );
+            $stmt->execute([$data['customer_id'], $data['property_id'], $data['visit_date'] ?? date('Y-m-d'), $data['notes'] ?? '']);
+            $_SESSION['flash_message'] = 'Booking created successfully.';
+            $_SESSION['flash_type'] = 'success';
+            $this->redirect('/admin/bookings');
+        } catch (Exception $e) {
+            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
+            $this->redirect('/admin/bookings/create');
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT b.*, p.title as property_title, p.location, p.price, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                 FROM bookings b
+                 LEFT JOIN properties p ON b.property_id = p.id
+                 LEFT JOIN users u ON b.customer_id = u.id
+                 WHERE b.id = ?"
+            );
+            $stmt->execute([$id]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $this->render('admin/bookings/show', ['booking' => $booking]);
+        } catch (Exception $e) {
+            return $this->render('admin/bookings/show', ['booking' => null, 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM bookings WHERE id = ?");
+            $stmt->execute([$id]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $customers = $this->db->query("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $properties = $this->db->query("SELECT id, title, location FROM properties WHERE status = 'active' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
+            return $this->render('admin/bookings/edit', ['booking' => $booking, 'customers' => $customers, 'properties' => $properties]);
+        } catch (Exception $e) {
+            return $this->render('admin/bookings/edit', ['booking' => null, 'customers' => [], 'properties' => [], 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function update($id)
+    {
+        try {
+            $data = $_POST;
+            $stmt = $this->db->prepare(
+                "UPDATE bookings SET customer_id = ?, property_id = ?, visit_date = ?, status = ?, notes = ? WHERE id = ?"
+            );
+            $stmt->execute([$data['customer_id'], $data['property_id'], $data['visit_date'] ?? date('Y-m-d'), $data['status'] ?? 'pending', $data['notes'] ?? '', $id]);
+            $_SESSION['flash_message'] = 'Booking updated successfully.';
+            $_SESSION['flash_type'] = 'success';
+            $this->redirect('/admin/bookings');
+        } catch (Exception $e) {
+            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
+            $this->redirect('/admin/bookings/' . $id . '/edit');
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM bookings WHERE id = ?");
+            $stmt->execute([$id]);
+            $_SESSION['flash_message'] = 'Booking deleted successfully.';
+            $_SESSION['flash_type'] = 'success';
+        } catch (Exception $e) {
+            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
+        }
+        $this->redirect('/admin/bookings');
+    }
+
+    public function processPayment($id)
+    {
+        try {
+            $data = $_POST;
+            $stmt = $this->db->prepare(
+                "INSERT INTO payments (booking_id, amount, payment_date, payment_method, transaction_id, status, notes)
+                 VALUES (?, ?, NOW(), ?, ?, 'completed', ?)"
+            );
+            $stmt->execute([$id, $data['amount'] ?? 0, $data['payment_method'] ?? 'cash', $data['transaction_id'] ?? '', $data['notes'] ?? '']);
+            $_SESSION['flash_message'] = 'Payment processed successfully.';
+            $_SESSION['flash_type'] = 'success';
+        } catch (Exception $e) {
+            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
+        }
+        $this->redirect('/admin/bookings/' . $id);
+    }
+
     public function availability($propertyId)
     {
         try {
