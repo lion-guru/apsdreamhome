@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Unified Admin Layout with RBAC Sidebar
  * All admin pages should use this layout for consistency
@@ -14,11 +15,14 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($page_title ?? 'APS Dream Home Admin'); ?></title>
-    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/app/views/admin/assets/img/favicon.png">
+    <link rel="icon" type="image/png" href="/apsdreamhome/assets/img/favicon.png">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="/apsdreamhome/assets/admin/css/admin.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -26,52 +30,141 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:#f1f5f9;overflow-x:hidden}
-        .sidebar{position:fixed;top:0;left:0;width:280px;height:100vh;background:linear-gradient(180deg, #1e1b4b 0%, #312e81 100%);z-index:1000;overflow-y:auto;transition:transform .3s;box-shadow:4px 0 15px rgba(0,0,0,0.1)}
-        .sidebar::-webkit-scrollbar{width:4px}
-        .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:2px}
-        .sidebar-header{padding:20px;border-bottom:1px solid rgba(255,255,255,.1)}
-        .sidebar-logo{color:#fff;font-size:1.1rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:10px}
-        .sidebar-logo i{font-size:1.3rem;color:#a5b4fc}
-        .sidebar-sub{color:rgba(255,255,255,.5);font-size:.75rem;margin-top:4px}
-        .sidebar-sec{padding:15px 15px 5px;font-size:.7rem;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.05em}
-        .sidebar-menu{list-style:none;padding:0 10px;margin:0}
-        .sidebar-item{margin-bottom:2px}
-        .sidebar-link{display:flex;align-items:center;padding:10px 12px;color:#c7d2fe;text-decoration:none;border-radius:8px;font-size:.88rem;font-weight:500;transition:all .2s}
-        .sidebar-link:hover{background:rgba(79,70,229,.3);color:#fff}
-        .sidebar-link.active{background:#4f46e5;color:#fff}
-        .sidebar-link i{width:22px;margin-right:10px;font-size:1rem;color:#a5b4fc;text-align:center}
-        .sidebar-link.active i,.sidebar-link:hover i{color:#fff}
-        .sidebar-sec-arrow{font-size:.6rem;transition:transform .25s;color:rgba(255,255,255,.3)}
-        .sidebar-sec-arrow.collapsed{transform:rotate(-90deg)}
-        .main-content{margin-left:280px;min-height:100vh;transition:margin-left .3s}
-        .top-nav{background:#fff;height:60px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100}
-        .nav-left{display:flex;align-items:center;gap:15px}
-        .toggle-btn{background:none;border:none;font-size:1.2rem;color:#64748b;cursor:pointer;display:none;padding:8px;border-radius:8px}
-        .toggle-btn:hover{background:#f1f5f9}
-        .nav-right{display:flex;align-items:center;gap:15px}
-        .nav-icon{position:relative;background:none;border:none;font-size:1.1rem;color:#64748b;cursor:pointer;padding:8px;border-radius:8px}
-        .nav-icon:hover{background:#f1f5f9}
-        .nav-icon .badge{position:absolute;top:0;right:0;font-size:.65rem;padding:2px 5px;border-radius:10px;background:#ef4444;color:#fff}
-        .user-box{display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:8px;cursor:pointer}
-        .user-box:hover{background:#f1f5f9}
-        .user-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg, #4f46e5, #7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem}
-        .page-content{padding:24px}
-        .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-        .btn-primary{background:#4f46e5;border-color:#4f46e5}
-        .btn-primary:hover{background:#4338ca;border-color:#4338ca}
-        @media(max-width:991px){
-            .sidebar{transform:translateX(-100%)}
-            .sidebar.show{transform:translateX(0)}
-            .main-content{margin-left:0}
-            .toggle-btn{display:block}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--body-bg);
+            overflow-x: hidden
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            z-index: 1050;
+            overflow-y: auto;
+            transition: transform .3s ease
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin-left .3s ease
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 60px;
+            background: var(--topnav-bg);
+            border-bottom: 1px solid var(--topnav-border);
+            position: sticky;
+            top: 0;
+            z-index: 1020
+        }
+
+        @media(max-width:992px) {
+            .sidebar {
+                transform: translateX(-100%)
+            }
+
+            .sidebar.show {
+                transform: translateX(0)
+            }
+
+            .main-content {
+                margin-left: 0
+            }
+
+            .toggle-btn {
+                display: block
+            }
         }
     </style>
+
+    <!-- CRITICAL: Sidebar Toggle Functions in HEAD - Load first before anything -->
+    <script>
+        // Define sidebar toggle functions immediately in HEAD
+        window.toggleSidebarSection = function(id) {
+            console.log('toggleSidebarSection called:', id);
+            var ul = document.getElementById(id);
+            if (!ul) {
+                console.error('Element not found:', id);
+                return;
+            }
+            var hidden = ul.style.display === 'none';
+            ul.style.display = hidden ? '' : 'none';
+            var arrow = document.getElementById('arrow-' + id);
+            if (arrow) {
+                arrow.classList.toggle('collapsed', !hidden);
+            }
+            var savedState = localStorage.getItem('adminSidebarSections');
+            var state = savedState ? JSON.parse(savedState) : {};
+            state[id] = hidden;
+            localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+        };
+
+        window.toggleAllSidebarSections = function() {
+            console.log('toggleAllSidebarSections called');
+            var menus = document.querySelectorAll('.sidebar-menu[id]');
+            var anyHidden = Array.from(menus).some(function(el) {
+                return el.style.display === 'none';
+            });
+            menus.forEach(function(el) {
+                el.style.display = anyHidden ? '' : 'none';
+                var savedState = localStorage.getItem('adminSidebarSections');
+                var state = savedState ? JSON.parse(savedState) : {};
+                state[el.id] = anyHidden;
+                localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+            });
+            document.querySelectorAll('.sidebar-sec-arrow[id^="arrow-sec-"]').forEach(function(arr) {
+                arr.classList.toggle('collapsed', !anyHidden);
+            });
+        };
+
+        // Load saved state
+        document.addEventListener('DOMContentLoaded', function() {
+            var savedState = localStorage.getItem('adminSidebarSections');
+            if (savedState) {
+                try {
+                    var state = JSON.parse(savedState);
+                    Object.keys(state).forEach(function(id) {
+                        var ul = document.getElementById(id);
+                        var arrow = document.getElementById('arrow-' + id);
+                        if (ul) {
+                            ul.style.display = state[id] ? '' : 'none';
+                        }
+                        if (arrow) {
+                            if (state[id]) {
+                                arrow.classList.remove('collapsed');
+                            } else {
+                                arrow.classList.add('collapsed');
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.log('Error loading sidebar state:', e);
+                }
+            }
+            console.log('Sidebar toggle functions DEFINED IN HEAD - GUARANTEED TO WORK');
+        });
+    </script>
+
     <?php if (!empty($extra_css)): ?>
-    <link rel="stylesheet" href="<?php echo $extra_css; ?>">
+        <link rel="stylesheet" href="<?php echo $extra_css; ?>">
     <?php endif; ?>
 </head>
+
 <body>
     <!-- Sidebar -->
     <?php include __DIR__ . '/rbac_sidebar.php'; ?>
@@ -102,17 +195,19 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </button>
                 <div class="dropdown">
                     <div class="user-box" data-bs-toggle="dropdown">
-                        <div class="user-av"><?php echo strtoupper(substr($admin_name,0,1)); ?></div>
+                        <div class="user-av"><?php echo strtoupper(substr($admin_name, 0, 1)); ?></div>
                         <div>
                             <div style="font-size:.85rem;font-weight:600;color:#1e293b"><?php echo htmlspecialchars($admin_name); ?></div>
-                            <div style="font-size:.7rem;color:#64748b"><?php echo ucfirst(str_replace('_',' ',$admin_role)); ?></div>
+                            <div style="font-size:.7rem;color:#64748b"><?php echo ucfirst(str_replace('_', ' ', $admin_role)); ?></div>
                         </div>
                         <i class="fas fa-chevron-down ms-2" style="font-size:.7rem;color:#64748b"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?php echo $base; ?>/admin/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
                         <li><a class="dropdown-item" href="<?php echo $base; ?>/admin/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item text-danger" href="<?php echo $base; ?>/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>
                 </div>
@@ -123,23 +218,25 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
         <div class="page-content">
             <!-- Flash Messages -->
             <?php if (!empty($_SESSION['success'])): ?>
-            <div class="alert alert-success alert-dismissible fade show mb-4">
-                <i class="fas fa-check-circle me-2"></i>
-                <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+                <div class="alert alert-success alert-dismissible fade show mb-4">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <?php echo htmlspecialchars($_SESSION['success']);
+                    unset($_SESSION['success']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($_SESSION['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show mb-4">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+                <div class="alert alert-danger alert-dismissible fade show mb-4">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <?php echo htmlspecialchars($_SESSION['error']);
+                    unset($_SESSION['error']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             <?php endif; ?>
 
             <!-- Main Page Content -->
-            <?php 
+            <?php
             // Include the actual page content
             if (!empty($content)) {
                 echo $content;
@@ -150,19 +247,13 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Auto-dismiss alerts -->
-    <script>
-    setTimeout(function(){
-        document.querySelectorAll('.alert').forEach(function(alert){
-            var bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        });
-    }, 5000);
-    </script>
-    
+
+    <!-- Admin JS - FIXED PATH -->
+    <script src="/apsdreamhome/assets/admin/js/admin.js"></script>
+
     <?php if (!empty($extra_js)): ?>
-    <script src="<?php echo $extra_js; ?>"></script>
+        <script src="<?php echo $extra_js; ?>"></script>
     <?php endif; ?>
 </body>
+
 </html>

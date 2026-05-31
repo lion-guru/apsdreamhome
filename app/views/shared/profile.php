@@ -26,8 +26,6 @@ $memberSince = $user['created_at'] ?? date('Y-m-d');
 $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
 ?>
  
-<?php include APP_PATH . '/views/admin/layouts/header.php'; ?>
-
 <div class="page-content">
     <?php if ($success): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -35,16 +33,15 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
- 
+  
     <?php if ($error): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="fas fa-exclamation-circle me-2"></i><?php echo $error; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
- 
+  
     <div class="row">
-        <!-- Profile Card -->
         <div class="col-lg-4 mb-4">
             <div class="card">
                 <div class="card-body text-center py-4">
@@ -54,9 +51,9 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
                     <h5 class="mb-1"><?php echo htmlspecialchars($userName); ?></h5>
                     <p class="text-muted mb-2"><?php echo htmlspecialchars($userEmail); ?></p>
                     <span class="badge bg-primary mb-3"><?php echo $roleDisplayName; ?></span>
- 
+  
                     <hr class="my-3">
- 
+  
                     <div class="text-start">
                         <p class="mb-2"><i class="fas fa-calendar me-2 text-muted"></i><small class="text-muted">Member since</small><br><strong><?php echo date('F Y', strtotime($memberSince)); ?></strong></p>
                         <?php if (!empty($userPhone)): ?>
@@ -66,8 +63,7 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
                 </div>
             </div>
         </div>
- 
-        <!-- Profile Form -->
+  
         <div class="col-lg-8">
             <div class="card">
                 <div class="card-header">
@@ -101,7 +97,7 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
                     </form>
                 </div>
             </div>
-
+  
             <?php if ($securityUrl): ?>
                 <div class="card mt-4">
                     <div class="card-header">
@@ -117,5 +113,3 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
         </div>
     </div>
 </div>
-
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

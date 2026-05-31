@@ -1,6 +1,6 @@
 <?php
-// Standalone Admin Dashboard - Now uses Unified Layout with RBAC Sidebar
-require __DIR__ . '/layouts/unified_start.php';
+// Standalone Admin Dashboard - Content partial (layout provided by admin.php)
+$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
 
 <!-- Page Header -->
@@ -180,4 +180,4 @@ require __DIR__ . '/layouts/unified_start.php';
     </div>
 </div>
 
-<?php require __DIR__ . '/layouts/unified_end.php'; ?>
+

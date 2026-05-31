@@ -15,8 +15,7 @@ class AdminProfileController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        // Disable layout since profile view uses direct header/footer includes
-        $this->layout = null;
+        $this->layout = 'layouts/admin';
     }
 
     /**
@@ -49,18 +48,18 @@ class AdminProfileController extends AdminController
             define('BASE_PATH', dirname(__DIR__, 3));
         }
 
-        // Use unified shared profile view
-        $active_page = 'profile';
-        $page_title = 'My Profile';
-        $page_description = 'Manage your profile information';
-        
-        // Set variables for shared view
         $userRole = 'admin';
         $profileUrl = BASE_URL . '/admin/profile';
         $securityUrl = BASE_URL . '/admin/profile/security';
         $canEdit = true;
 
-        include __DIR__ . '/../../../views/shared/profile.php';
+        $this->render('shared/profile', [
+            'user' => $user,
+            'userRole' => $userRole,
+            'profileUrl' => $profileUrl,
+            'securityUrl' => $securityUrl,
+            'canEdit' => $canEdit,
+        ]);
     }
 
     /**

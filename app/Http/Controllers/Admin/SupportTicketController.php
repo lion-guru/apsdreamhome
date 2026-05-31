@@ -46,8 +46,8 @@ class SupportTicketController extends AdminController
                            a.name as assigned_agent_name,
                            a.email as assigned_agent_email
                     FROM support_tickets st
-                    LEFT JOIN users u ON st.customer_id = u.id
-                    LEFT JOIN users a ON st.assigned_agent_id = a.id
+                    LEFT JOIN users u ON st.user_id = u.id
+                    LEFT JOIN users a ON st.assigned_to = a.id
                     WHERE 1=1";
             $params = [];
 
@@ -74,10 +74,8 @@ class SupportTicketController extends AdminController
             $sql .= " ORDER BY st.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT st.*, u.name as customer_name, u.email as customer_email, a.name as assigned_agent_name, a.email as assigned_agent_email", "SELECT COUNT(DISTINCT st.id) as total", $sql);
-            $countStmt = $this->db->prepare($countSql);
-            $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $countStmt = $this->db->query("SELECT COUNT(*) as total FROM support_tickets");
+            $total = (int)($countStmt->fetch()['total'] ?? 0);
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";

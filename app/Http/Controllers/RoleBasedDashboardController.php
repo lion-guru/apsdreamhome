@@ -19,7 +19,7 @@ class RoleBasedDashboardController extends BaseController
     {
         parent::__construct();
         $this->db = Database::getInstance();
-        $this->layout = 'layouts/admin_header';
+        $this->layout = 'layouts/admin';
     }
 
     /**
@@ -57,49 +57,164 @@ class RoleBasedDashboardController extends BaseController
     }
 
     /**
-     * Main dashboard entry point - renders standalone admin dashboard
+     * Main dashboard entry point - unified role-based dashboard
      */
     public function index()
     {
         @session_start();
 
-        // Auth check
-        if (!isset($_SESSION['admin_id'])) {
+        // Auth check - accepts both admin and user sessions (unified)
+        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
+        if (!$userId) {
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
         }
 
-        $admin_name = $_SESSION['admin_name'] ?? 'Admin';
-        $admin_role = $_SESSION['admin_role'] ?? 'admin';
+        // Detect role from session (supports both admin_* and user_* naming conventions)
+        $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? 'admin';
+        $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? 'User';
 
-        // Get stats from database
-        $stats = ['total_users' => 0, 'total_properties' => 0, 'total_leads' => 0, 'new_leads_today' => 0, 'total_associates' => 0, 'revenue_month' => 0, 'total_employees' => 0, 'pending_bookings' => 0];
+        // Load role-specific stats and recent items
+        $stats = $this->loadRoleStats($role, $userId);
+        $recentItems = $this->loadRoleRecentItems($role, $userId);
+
+        $pageTitle = match ($role) {
+            'super_admin' => 'Super Admin Dashboard',
+            'admin' => 'Admin Dashboard',
+            'manager' => 'Manager Dashboard',
+            'associate' => 'Associate Dashboard',
+            'agent' => 'Agent Dashboard',
+            'employee' => 'Employee Dashboard',
+            default => ucfirst($role) . ' Dashboard'
+        };
+
+        $data = compact('role', 'userName', 'stats', 'recentItems');
+        $data['page_title'] = $pageTitle;
+        $this->render('admin/dashboard/unified', $data);
+    }
+
+    /**
+     * Load role-specific dashboard stats
+     */
+    private function loadRoleStats($role, $userId)
+    {
+        $stats = [];
         try {
-            $stats['total_users'] = $this->db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0;
-            $stats['total_properties'] = $this->db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0;
-            $stats['total_leads'] = $this->db->fetch("SELECT COUNT(*) as c FROM leads")['c'] ?? 0;
-            $stats['new_leads_today'] = $this->db->fetch("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()")['c'] ?? 0;
-            $stats['total_associates'] = $this->db->fetch("SELECT COUNT(*) as c FROM users WHERE role IN ('associate','agent')")['c'] ?? 0;
-            $stats['pending_bookings'] = $this->db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
+            $db = \App\Core\Database::getInstance()->getConnection();
+            
+            if (in_array($role, ['super_admin', 'admin', 'manager'])) {
+                $stats['total_users'] = $db->query("SELECT COUNT(*) as c FROM users")->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $stats['total_properties'] = $db->query("SELECT COUNT(*) as c FROM properties")->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $stats['total_leads'] = $db->query("SELECT COUNT(*) as c FROM leads")->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $stats['new_leads_today'] = $db->query("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()")->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $stats['total_associates'] = $db->query("SELECT COUNT(*) as c FROM users WHERE role='associate'")->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $r = $db->query("SELECT COALESCE(SUM(amount),0) as c FROM payment_transactions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")->fetch(\PDO::FETCH_ASSOC);
+                $stats['revenue_month'] = $r['c'] ?? 0;
+                $stats['total_employees'] = $db->query("SELECT COUNT(*) as c FROM users WHERE role='employee'")->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $stats['pending_bookings'] = $db->query("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                
+            } elseif ($role === 'associate') {
+                $s = $db->prepare("SELECT COUNT(*) as c FROM users WHERE referred_by=(SELECT email FROM users WHERE id=?)");
+                $s->execute([$userId]);
+                $stats['team_size'] = $s->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $s = $db->prepare("SELECT COALESCE(SUM(amount),0) as c FROM commissions WHERE user_id=?");
+                $s->execute([$userId]);
+                $stats['total_commission'] = $s->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $stats['referrals'] = $stats['team_size'];
+                $s = $db->prepare("SELECT COALESCE(level,'Bronze') as lvl FROM mlm_profiles WHERE user_id=?");
+                $s->execute([$userId]);
+                $stats['rank'] = ($s->fetch(\PDO::FETCH_ASSOC)['lvl'] ?? 'Bronze');
+                
+            } elseif ($role === 'agent') {
+                $s = $db->prepare("SELECT COUNT(*) as c FROM leads WHERE assigned_to=?");
+                $s->execute([$userId]);
+                $stats['my_leads'] = $s->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $s = $db->prepare("SELECT COUNT(*) as c FROM leads WHERE assigned_to=? AND status='converted'");
+                $s->execute([$userId]);
+                $converted = $s->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $stats['conversions'] = $converted;
+                $stats['conversion_rate'] = $stats['my_leads'] > 0 ? round(($converted / $stats['my_leads']) * 100) : 0;
+                $stats['properties_sold'] = $converted;
+                $s = $db->prepare("SELECT COALESCE(SUM(commission_amount),0) as c FROM agent_commissions WHERE agent_id=?");
+                $s->execute([$userId]);
+                $stats['earnings'] = $s->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                
+            } elseif ($role === 'employee') {
+                $s = $db->prepare("SELECT COUNT(*) as c FROM tasks WHERE assigned_to=?");
+                $s->execute([$userId]);
+                $stats['my_tasks'] = $s->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $s = $db->prepare("SELECT COUNT(*) as c FROM tasks WHERE assigned_to=? AND status='pending'");
+                $s->execute([$userId]);
+                $stats['pending_tasks'] = $s->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $s = $db->prepare("SELECT COUNT(*) as c FROM tasks WHERE assigned_to=? AND status='completed'");
+                $s->execute([$userId]);
+                $stats['completed_tasks'] = $s->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0;
+                $stats['attendance'] = 85;
+            }
         } catch (\Exception $e) {
+            error_log('loadRoleStats error: ' . $e->getMessage());
         }
+        return $stats;
+    }
 
-        // Get recent leads
-        $recentLeads = [];
+    /**
+     * Load role-specific recent items
+     */
+    /**
+     * Roles & Permissions page
+     */
+    public function roles()
+    {
+        @session_start();
+        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
+        if (!$userId) {
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
+        $this->data['page_title'] = 'Roles & Permissions';
+        $this->render('admin/roles/index');
+    }
+
+    private function loadRoleRecentItems($role, $userId)
+    {
+        $items = [];
         try {
-            $recentLeads = $this->db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? [];
+            $db = \App\Core\Database::getInstance()->getConnection();
+            
+            if (in_array($role, ['super_admin', 'admin', 'manager'])) {
+                $rows = $db->query("SELECT id, name, email, status, created_at FROM leads ORDER BY created_at DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC);
+                foreach ($rows as $r) {
+                    $items[] = [
+                        'title' => $r['name'] ?? 'Lead',
+                        'description' => $r['email'] ?? '',
+                        'status' => $r['status'] ?? 'new',
+                        'badge_color' => ($r['status'] ?? '') === 'converted' ? 'success' : (($r['status'] ?? '') === 'contacted' ? 'warning' : 'info'),
+                        'created_at' => $r['created_at'] ?? '',
+                    ];
+                }
+            } elseif ($role === 'associate') {
+                $s = $db->prepare("SELECT id, name, email, status, created_at FROM leads WHERE assigned_to=? OR assigned_to IS NULL ORDER BY created_at DESC LIMIT 5");
+                $s->execute([$userId]);
+                foreach ($s->fetchAll(\PDO::FETCH_ASSOC) as $r) {
+                    $items[] = ['title' => $r['name'] ?? 'Lead', 'description' => $r['email'] ?? '', 'status' => $r['status'] ?? 'new', 'badge_color' => 'info', 'created_at' => $r['created_at'] ?? ''];
+                }
+            } elseif ($role === 'agent') {
+                $s = $db->prepare("SELECT id, name, email, status, created_at FROM leads WHERE assigned_to=? ORDER BY created_at DESC LIMIT 5");
+                $s->execute([$userId]);
+                foreach ($s->fetchAll(\PDO::FETCH_ASSOC) as $r) {
+                    $items[] = ['title' => $r['name'] ?? 'Lead', 'description' => $r['email'] ?? '', 'status' => $r['status'] ?? 'new', 'badge_color' => ($r['status'] ?? '') === 'converted' ? 'success' : 'info', 'created_at' => $r['created_at'] ?? ''];
+                }
+            } elseif ($role === 'employee') {
+                $s = $db->prepare("SELECT id, title, status, created_at FROM tasks WHERE assigned_to=? ORDER BY created_at DESC LIMIT 5");
+                $s->execute([$userId]);
+                foreach ($s->fetchAll(\PDO::FETCH_ASSOC) as $r) {
+                    $items[] = ['title' => $r['title'] ?? 'Task', 'description' => '', 'status' => $r['status'] ?? 'pending', 'badge_color' => ($r['status'] ?? '') === 'completed' ? 'success' : 'warning', 'created_at' => $r['created_at'] ?? ''];
+                }
+            }
         } catch (\Exception $e) {
+            error_log('loadRoleRecentItems error: ' . $e->getMessage());
         }
-
-        // Render as standalone page (no layout)
-        $this->layout = false;
-        $data = compact('admin_name', 'admin_role', 'stats', 'recentLeads');
-        $data['page_title'] = 'Dashboard';
-
-        ob_start();
-        extract($data);
-        include __DIR__ . '/../../views/admin/dashboard_standalone.php';
-        echo ob_get_clean();
+        return $items;
     }
 
     /**

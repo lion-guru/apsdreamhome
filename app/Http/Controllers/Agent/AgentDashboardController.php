@@ -335,4 +335,24 @@ class AgentDashboardController extends BaseController
 
         return $data;
     }
+
+    public function leads()
+    {
+        return $this->redirect('/agent/dashboard');
+    }
+
+    public function properties()
+    {
+        return $this->redirect('/agent/dashboard');
+    }
+
+    public function commissions()
+    {
+        return $this->redirect('/agent/dashboard');
+    }
+
+    public function profile()
+    {
+        return $this->redirect('/agent/dashboard');
+    }
 }

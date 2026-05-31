@@ -1,5 +1,5 @@
 <?php
-@@session_start();
+@session_start();
 if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin')) {
     header("Location: " . BASE_URL . "/admin/login");
     exit();
@@ -177,7 +177,8 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                                 <option value="">Unassigned</option>
                                 <?php
                                 try {
-                                    $usersStmt = $this->db->query("SELECT id, name FROM users WHERE role IN ('admin','employee','agent') ORDER BY name");
+                                    $usersDb = \App\Core\Database\Database::getInstance();
+                                    $usersStmt = $usersDb->query("SELECT id, name FROM users WHERE role IN ('admin','employee','agent') ORDER BY name");
                                     $users = $usersStmt->fetchAll(\PDO::FETCH_ASSOC);
                                     foreach ($users as $u): ?>
                                     <option value="<?php echo $u['id']; ?>"><?php echo $u['name']; ?></option>

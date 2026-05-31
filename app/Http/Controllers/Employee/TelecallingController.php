@@ -24,7 +24,7 @@ class TelecallingController extends BaseController
     }
 
     /**
-     * Initialize employee session
+     * Initialize employee session (also allows admin access)
      */
     private function initializeEmployeeSession()
     {
@@ -34,7 +34,9 @@ class TelecallingController extends BaseController
 
         $this->employeeId = $_SESSION['employee_id'] ?? null;
 
-        if (!$this->employeeId) {
+        // Allow both employee AND admin to access telecalling pages
+        $isAdmin = isset($_SESSION['admin_id']) || (isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin','super_admin','manager']));
+        if (!$this->employeeId && !$isAdmin) {
             header('Location: ' . BASE_URL . '/employee/login');
             exit;
         }
@@ -536,6 +538,61 @@ class TelecallingController extends BaseController
                 'message' => $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * Assign leads to telecallers
+     */
+    public function assign()
+    {
+        $leads = [];
+        $telecallers = [];
+        try {
+            $leads = $this->db->fetchAll("SELECT id, name, phone, source, status, created_at FROM leads ORDER BY created_at DESC LIMIT 50");
+            $telecallers = $this->db->fetchAll("SELECT u.id, u.name FROM users u WHERE u.role = 'employee' ORDER BY u.name");
+        } catch (Exception $e) {
+            error_log("Telecalling assign error: " . $e->getMessage());
+        }
+        $this->render('employee/telecalling_assign', [
+            'page_title' => 'Assign Leads - Telecalling',
+            'leads' => $leads,
+            'telecallers' => $telecallers,
+        ]);
+    }
+
+    /**
+     * Telecalling commissions page
+     */
+    public function commissions()
+    {
+        $this->render('employee/telecalling_dashboard', [
+            'page_title' => 'Telecalling Commissions',
+            'today_stats' => [],
+            'lead_queue' => [],
+            'call_history' => [],
+            'performance' => [],
+            'scripts' => [],
+            'follow_ups' => [],
+        ]);
+    }
+
+    /**
+     * Telecalling approvals page
+     */
+    public function approvals()
+    {
+        $pendingApprovals = [];
+        try {
+            $pendingApprovals = $this->db->fetchAll("SELECT l.id, l.name, l.phone, l.status, l.created_at, 
+                (SELECT COUNT(*) FROM leads WHERE id = l.id AND status = 'converted') as deals 
+                FROM leads l WHERE l.status = 'pending_approval' ORDER BY l.created_at DESC LIMIT 20");
+        } catch (Exception $e) {
+            error_log("Telecalling approvals error: " . $e->getMessage());
+        }
+        $this->render('employee/telecalling_approvals', [
+            'page_title' => 'Lead Approvals - Telecalling',
+            'pending_approvals' => $pendingApprovals,
+        ]);
     }
 
     /**

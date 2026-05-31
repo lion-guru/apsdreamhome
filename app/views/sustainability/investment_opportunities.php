@@ -31,7 +31,7 @@
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-building me-2 text-info"></i>Sustainable Properties</h5></div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Available</span><strong><?= ($sp['properties_available'] ?? 0) ?></strong></div>
-                    <div class="d-flex justify-content-between mb-2"><span>Avg Premium</span><strong>₹<?= number_format($sp['avg_premium'] ?? 0) ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Avg Premium</span><strong>₹<?php $ap = $sp['avg_premium'] ?? 0; echo is_numeric($ap) ? number_format($ap) : htmlspecialchars($ap); ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Rental Yield</span><strong class="text-success"><?= ($sp['rental_yield'] ?? '0%') ?></strong></div>
                     <div class="d-flex justify-content-between"><span>Appreciation</span><strong class="text-success"><?= ($sp['appreciation_rate'] ?? '0%') ?></strong></div>
                 </div>

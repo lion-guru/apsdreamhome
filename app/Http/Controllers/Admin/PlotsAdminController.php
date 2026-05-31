@@ -73,7 +73,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
         // Get statistics
         $stats = $this->getPlotsStatistics();
 
-        include __DIR__ . '/../../views/admin/plots/index.php';
+        include __DIR__ . '/../../../views/admin/plots/index.php';
     }
 
     // Create new plot
@@ -129,7 +129,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
             }
         }
 
-        include __DIR__ . '/../../views/admin/plots/create.php';
+        include __DIR__ . '/../../../views/admin/plots/create.php';
     }
 
     // Edit plot
@@ -210,7 +210,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
             }
         }
 
-        include __DIR__ . '/../../views/admin/plots/edit.php';
+        include __DIR__ . '/../../../views/admin/plots/edit.php';
     }
 
     // Delete plot
@@ -298,7 +298,7 @@ class PlotsAdminController extends \App\Http\Controllers\BaseController
         $stmt->execute([$id]);
         $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        include __DIR__ . '/../../views/admin/plots/show.php';
+        include __DIR__ . '/../../../views/admin/plots/show.php';
     }
 
     // Bulk operations

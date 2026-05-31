@@ -1,2 +1,1 @@
-// Admin JS
-console.log('Admin panel loaded');
+// Admin panel JS (legacy file - functionality moved to assets/admin/js/admin.js)

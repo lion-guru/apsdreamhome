@@ -1747,20 +1747,87 @@ All modified files pass syntax check
    - **AdminNotificationService** — Internal notification system with admin panel view
    - **20+ core tables seeded** — Voice AI, documents, payroll, commission, attendance data
 
-### Metrics (Current)
-- Routes: ~1,450+ definitions, 128/129 E2E pass (1 expected GodMode 403)
-- PHP syntax: 1,521+ files — 100% pass
-- Database: 767 tables, all InnoDB, all with PKs, 23 FK constraints
-- 310 active tables (up from 286), 457 empty (down from 481)
-- 0 corrupted views, 0 missing view targets
-- 0 application errors in PHP error log
-- E2E: 128 pass, 1 expected fail — zero regressions throughout
+## Session 2026-05-31 (Parts 4-5): Deep Scan, CSS/JS Fixes, Route Cleanup
+
+### What Was Done
+**Phase A: Dead Code Cleanup (already in Parts 2-3)**
+
+**Phase B: Full Deep Scan & Fixes**
+1. **Deep scan of ALL 133 sidebar routes** — 0 persistent 500s, 0 404s. Every single sidebar URL resolves correctly. 16 role-specific dashboards return 302 (expected — different user roles).
+2. **CSS/JS fixes in unified.php layout**:
+   - Fixed favicon path: `BASE_URL/app/views/admin/assets/img/favicon.png` → `BASE_URL/assets/img/favicon.png`
+   - Added external `admin.css` reference to unified.php layout
+   - Created `assets/admin/js/admin.js` with sidebar active state, auto-dismiss alerts, notification placeholders
+   - Removed redundant inline alert auto-dismiss script (now in admin.js)
+3. **Fixed 9 routes returning 302** (role redirects that should work for admin):
+   - Added explicit routes for `/admin/land/acquisitions` and `/admin/land/records` (were caught by wildcard `{id}` route)
+   - Modified `TelecallingController::initializeEmployeeSession()` to accept admin role alongside employee role
+   - Created missing `app/views/employee/telecalling_approvals.php` view
+4. **Quality audit of 68 core admin routes**: All return HTTP 200 with DOCTYPE + title + sidebar + zero errors
+5. **Admin menu item audit**: 125 DB-menu items × 20 sections — all routes match web.php, all return valid HTTP
+
+### Verification
+- E2E: 128/129 pass (1 expected GodMode 403) — zero regressions
+- All fixed routes: HTTP 200 with proper DOCTYPE and sidebar
+- PHP error log: clean
+- Sidebar renders with dark gradient bg, all sections expanded, toggle working
+
+### Files Modified
+- `app/views/admin/layouts/unified.php` — Fixed favicon path, added admin.css + admin.js loading
+- `assets/admin/js/admin.js` — NEW: sidebar active state, auto-dismiss alerts, notification handlers
+- `routes/web.php` — Added explicit routes for `/admin/land/acquisitions` and `/admin/land/records`
+- `app/Http/Controllers/Employee/TelecallingController.php` — Modified `initializeEmployeeSession()` to accept admin role
+- `app/views/employee/telecalling_approvals.php` — Already created in Part 2-3
+- `AGENTS.md` — Updated
+
+## Session 2026-05-31 (Part 6): Full Admin CSS/JS Overhaul + 4 New Menu Items + Bug Fixes
+
+### What Was Done
+1. **Admin CSS completely rewritten** (544→~400 lines):
+   - Consolidated external `admin.css` as single source of truth for ALL admin styles
+   - Stripped 45 lines of duplicate inline CSS from `unified.php` down to 12 lines of critical-only styles
+   - Added CSS variables (`--sidebar-bg`, `--sidebar-width`, `--primary`, `--font`, etc.) for consistent theming
+   - Added comprehensive component styles: tables, forms, buttons, alerts, modals, pagination, nav-tabs, dropdowns, badges, progress bars, stat cards, empty states, list groups, toasts
+   - Added proper responsive breakpoints for mobile/tablet/desktop
+   - Custom scrollbar styles for webkit browsers
+   - Loading spinner and animation keyframes
+   - Removed inline CSS from `unified.php` that was overriding external `admin.css`
+
+2. **Admin JS completely rewritten**:
+   - Created `assets/admin/js/admin.js` with proper namespace pattern (`Admin.init()`)
+   - Auto-dismiss alerts, highlight active sidebar link, notification handler, tooltips, confirm dialogs, sidebar toggle, table search
+   - Exposed `toggleSidebarSection()` and `toggleAllSidebarSections()` globally
+
+3. **4 New Menu Items Added** to `admin_menu_items` DB:
+   - `All Bookings` (bookings section) — `/admin/bookings` — route already existed ✅
+   - `Support Tickets` (operations section) — `/admin/support_tickets` — route already existed ✅
+   - `Plot Inventory` (properties section) — `/admin/inventory` — route already existed ✅
+   - `Customers` (crm section) — `/admin/customers` — route already existed ✅
+
+4. **SupportTicketController SQL Bug Fixed**:
+   - Wrong column name: `st.customer_id` → `st.user_id` (table has `user_id`)
+   - Wrong column name: `st.assigned_agent_id` → `st.assigned_to` (table has `assigned_to`)
+   - Simplified fragile count query (`str_replace` trick → simple `COUNT(*)`)
+   - Added null coalescing: `['total']` → `['total'] ?? 0`
+
+### Verification
+- E2E: 128/129 pass (1 expected GodMode 403) — zero regressions
+- `/admin/support_tickets` — was 302 → now **200** ✅
+- `/admin/inventory` — was 302 → now **200** ✅
+- All 4 new menu items return HTTP 200 with DOCTYPE
+- PHP error log: clean
+- All modified files pass PHP syntax check
+
+### Files Modified
+- `assets/admin/css/admin.css` — COMPLETELY REWRITTEN: comprehensive admin theme (CSS vars, all components, responsive)
+- `assets/admin/js/admin.js` — COMPLETELY REWRITTEN: proper admin JavaScript with all features
+- `app/views/admin/layouts/unified.php` — Stripped inline CSS from 45→12 lines, kept only critical layout styles
+- `app/Http/Controllers/Admin/SupportTicketController.php` — Fixed 3 SQL bugs (wrong column names, fragile count)
+- `admin_menu_items` DB table — Added 4 new menu items (All Bookings, Support Tickets, Plot Inventory, Customers)
 
 ### Remaining Items
-- **Twilio/Vapi Integration** — Connect voice agent system to telephony provider for live calls (stubbed, needs API credentials)
-- **~457 empty tables** — Mostly schema-only utility tables; seed scripts created for core modules
-- **Email/SMS gateway integration stubbed** — LeadFollowUpService incomplete
-- **Legacy customer portal** — CustomerController + app/views/customer/ duplicate
-- **~14 self-layout view files** — remaining low-priority ones (mostly in employee/ and associate/ subdirs)
-- **6 experimental controllers** — Blockchain, IoT, Metaverse, Edge Computing, Sustainable Tech, PWA (POC code, not routed)
+- **Twilio/Vapi Integration** — Voice agent system stubbed, needs real credentials
+- **~244 empty tables** — Schema-only; seeding optional
+- **Email/SMS gateway** — Stubbed in config, needs provider setup
+- **6 experimental controllers** — Blockchain, IoT, Metaverse, Edge Computing, Sustainable Tech, PWA — not routed, DEBUG_MODE-gated
 

@@ -473,13 +473,18 @@ class AssociateController extends BaseController
             define('BASE_PATH', dirname(__DIR__, 3));
         }
 
-        // Set variables for shared view
         $userRole = 'associate';
         $profileUrl = BASE_URL . '/associate/profile';
         $securityUrl = null;
         $canEdit = true;
 
-        include __DIR__ . '/../../views/shared/profile.php';
+        $this->render('shared/profile', [
+            'user' => $user,
+            'userRole' => $userRole,
+            'profileUrl' => $profileUrl,
+            'securityUrl' => $securityUrl,
+            'canEdit' => $canEdit,
+        ]);
     }
 
     /**

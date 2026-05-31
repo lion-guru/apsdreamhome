@@ -91,6 +91,7 @@ class GoogleAuthController extends Controller
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_phone'] = $user['phone'];
             $_SESSION['role'] = $user['role'] ?? 'customer';
+            $_SESSION['logged_in'] = true;
             $_SESSION['success'] = 'Welcome back, ' . $user['name'] . '!';
 
             // Redirect based on user type
@@ -262,6 +263,7 @@ class GoogleAuthController extends Controller
             $_SESSION['user_email'] = $googleUserData['email'];
             $_SESSION['user_phone'] = $phone;
             $_SESSION['role'] = $role;
+            $_SESSION['logged_in'] = true;
             $_SESSION['success'] = 'Account created successfully! Welcome to APS Dream Home.';
 
             // Clear Google user data from session

@@ -133,6 +133,7 @@ class QuickAuthController extends Controller
             $_SESSION['user_email'] = $email;
             $_SESSION['user_phone'] = $phone;
             $_SESSION['role'] = 'customer';
+            $_SESSION['logged_in'] = true;
             $_SESSION['success'] = 'Account created successfully! Welcome to APS Dream Home.';
 
             echo json_encode(['success' => true, 'redirect' => '/customer/dashboard']);

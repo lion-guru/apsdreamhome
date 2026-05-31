@@ -387,6 +387,10 @@ $router->get('/agent/login', 'Auth\\AgentAuthController@login');
 $router->post('/agent/login', 'Auth\\AgentAuthController@authenticate');
 $router->get('/agent/logout', 'Auth\\AgentAuthController@logout');
 $router->get('/agent/dashboard', 'Agent\\AgentDashboardController@index');
+$router->get('/agent/leads', 'Agent\\AgentDashboardController@leads');
+$router->get('/agent/properties', 'Agent\\AgentDashboardController@properties');
+$router->get('/agent/commissions', 'Agent\\AgentDashboardController@commissions');
+$router->get('/agent/profile', 'Agent\\AgentDashboardController@profile');
 
 // Associate Auth
 $router->get('/associate/register', 'Auth\\AssociateAuthController@associateRegister');
@@ -892,32 +896,9 @@ $router->get('/customer/notifications', 'App\Http\Controllers\CustomerController
 
 // Property Routes (Note: /properties handled by Front\PageController@properties)
 $router->get('/properties/search', 'App\Http\Controllers\PropertyController@search');
-$router->get('/colonies', 'App\Http\Controllers\PropertyController@colonies');
-$router->get('/colonies/{id}', 'App\Http\Controllers\PropertyController@colony');
-$router->get('/resell/{id}', 'App\Http\Controllers\PropertyController@resellDetail');
-$router->get('/submit-property', 'App\Http\Controllers\PropertyController@submitProperty');
+$router->get('/colonies', 'Front\PageController@colonies');
+$router->get('/ai-chatbot', 'Front\PageController@aiChatbotPage');
 
-// Payment Routes
-$router->get('/payment', 'App\Http\Controllers\PaymentController@index');
-$router->get('/payment/initiate', 'App\Http\Controllers\PaymentController@initiate');
-$router->post('/payment/initiate', 'App\Http\Controllers\PaymentController@initiate');
-$router->post('/payment/process', 'App\Http\Controllers\PaymentController@process');
-$router->get('/payment/success', 'App\Http\Controllers\PaymentController@success');
-$router->get('/payment/failure', 'App\Http\Controllers\PaymentController@failure');
-$router->post('/payment/webhook', 'App\Http\Controllers\PaymentController@webhook');
-$router->get('/payment/history', 'App\Http\Controllers\PaymentController@history');
-$router->get('/payment/plans', 'App\Http\Controllers\PaymentController@plans');
-$router->get('/payment/emi-calculator', 'App\Http\Controllers\PaymentController@emiCalculator');
-$router->post('/payment/emi-calculator', 'App\Http\Controllers\PaymentController@emiCalculator');
-$router->get('/payment/refund', 'App\Http\Controllers\PaymentController@refund');
-$router->post('/payment/refund', 'App\Http\Controllers\PaymentController@refund');
-$router->get('/payment/settings', 'App\Http\Controllers\PaymentController@settings');
-$router->post('/payment/settings', 'App\Http\Controllers\PaymentController@settings');
-
-// Missing Routes
-$router->get('/privacy-policy', function () {
-    include __DIR__ . '/../app/views/pages/privacy-policy.php';
-});
 $router->get('/terms', 'App\\Http\\Controllers\\Front\\PageController@legalTermsPage');
 $router->get('/inquiry', function () {
     include __DIR__ . '/../app/views/pages/inquiry.php';
@@ -1116,9 +1097,7 @@ $router->post('/admin/invoices/delete/{id}', function($id) {
     header('Location: ' . BASE_URL . '/admin/invoices');
     exit;
 });
-$router->get('/admin/roles', function () {
-    require __DIR__ . '/../app/views/admin/roles/index.php';
-});
+$router->get('/admin/roles', 'App\\Http\\Controllers\\RoleBasedDashboardController@roles');
 $router->get('/admin/associates', function () {
     header('Location: ' . BASE_URL . '/admin/mlm/associates');
     exit;
@@ -1269,6 +1248,23 @@ $router->post('/admin/team/destroy/{id}', 'App\\Http\\Controllers\\Admin\\TeamCo
 // Admin Expenses
 $router->get('/admin/expenses', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
 $router->get('/admin/expenses/create', 'App\\Http\\Controllers\\Admin\\ExpensesController@create');
+$router->get('/admin/expense', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
+
+// Admin FAQ
+$router->get('/admin/faqs', function() {
+    require __DIR__ . '/../app/views/admin/faqs.php';
+});
+
+// Admin Settings Company
+$router->get('/admin/settings/company', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+
+// Admin Cache Clear
+$router->get('/admin/cache', function() {
+    require __DIR__ . '/../app/views/admin/cache.php';
+});
+
+// Admin Service Enquiries (alias for services)
+$router->get('/admin/services/enquiry', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
 
 // Admin Activity Log
 $router->get('/admin/activity-log', 'App\\Http\\Controllers\\Admin\\ActivityLogController@index');
@@ -1357,6 +1353,8 @@ $router->get('/admin/builder-dashboard/materials', 'App\\Http\\Controllers\\Admi
 $router->get('/admin/land', 'App\\Http\\Controllers\\Admin\\LandController@index');
 $router->get('/admin/land/create', 'App\\Http\\Controllers\\Admin\\LandController@create');
 $router->post('/admin/land/store', 'App\\Http\\Controllers\\Admin\\LandController@store');
+$router->get('/admin/land/acquisitions', 'App\\Http\\Controllers\\Admin\\LandController@acquisitions');
+$router->get('/admin/land/records', 'App\\Http\\Controllers\\Admin\\LandController@records');
 $router->get('/admin/land/{id}', 'App\\Http\\Controllers\\Admin\\LandController@show');
 $router->get('/admin/land/{id}/edit', 'App\\Http\\Controllers\\Admin\\LandController@edit');
 $router->post('/admin/land/{id}/update', 'App\\Http\\Controllers\\Admin\\LandController@update');
@@ -1447,129 +1445,20 @@ $router->get('/admin/ajax/global-search', 'App\\Http\\Controllers\\Admin\\AjaxCo
 $router->post('/admin/ajax/save-content', 'App\\Http\\Controllers\\Admin\\AjaxController@saveContent');
 
 // ============================================================
-// ADMIN ROLE-BASED DASHBOARDS (rich admin/dashboards/* views)
-// Each closure starts session, checks admin auth, sets safe defaults, and renders the view
+// OLD ADMIN ROLE-BASED DASHBOARDS — all redirect to unified /admin/dashboard
+// which renders role-appropriate stats via admin.php canonical layout
 // ============================================================
 
-// --- Accounting (includes cfo.php) ---
-$router->get('/admin/dashboard/accounting', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $financial_overview = $expense_stats = $commission_stats = $profit_analysis = [];
-    require __DIR__ . '/../app/views/admin/dashboards/accounting.php';
-});
-
-// --- CM / Customer Management (includes sales.php) ---
-$router->get('/admin/dashboard/cm', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $sales_targets = ['target' => 0, 'achieved' => 0];
-    $leads_pipeline = ['hot' => 0, 'warm' => 0, 'cold' => 0, 'total' => 0];
-    require __DIR__ . '/../app/views/admin/dashboards/cm.php';
-});
-
-// --- COO / Operations (standalone, uses ?? defaults) ---
-$router->get('/admin/dashboard/coo', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $project_performance = ['overall' => '0%', 'resources' => '0%', 'active_tasks' => 0];
-    require __DIR__ . '/../app/views/admin/dashboards/coo.php';
-});
-
-// --- Director (includes ceo.php) ---
-$router->get('/admin/dashboard/director', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $business_stats = ['total_properties' => 0, 'available_properties' => 0];
-    $revenue_stats = ['total_revenue' => 0, 'pending_revenue' => 0];
-    $team_stats = ['total_users' => 0, 'active_users' => 0];
-    $commission_stats = ['total_commissions' => 0, 'avg_commission' => 0];
-    require __DIR__ . '/../app/views/admin/dashboards/director.php';
-});
-
-// --- Finance (includes cfo.php) ---
-$router->get('/admin/dashboard/finance', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $financial_overview = $expense_stats = $commission_stats = $profit_analysis = [];
-    require __DIR__ . '/../app/views/admin/dashboards/finance.php';
-});
-
-// --- HR (standalone, uses ?? defaults) ---
-$router->get('/admin/dashboard/hr', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $employee_stats = ['total' => 0, 'new_hires' => 0];
-    $pending_leaves = ['count' => 0, 'list' => []];
-    require __DIR__ . '/../app/views/admin/dashboards/hr.php';
-});
-
-// --- IT (includes cto.php) ---
-$router->get('/admin/dashboard/it', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $server_health = ['uptime' => 'N/A', 'memory_usage' => 'N/A'];
-    $api_usage = ['openrouter_calls' => 0, 'gemini_calls' => 0];
-    $ai_agents_status = [];
-    require __DIR__ . '/../app/views/admin/dashboards/it.php';
-});
-
-// --- Marketing (standalone, uses ?? defaults) ---
-$router->get('/admin/dashboard/marketing', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $leads_pipeline = ['hot' => 0, 'warm' => 0, 'cold' => 0, 'total' => 0];
-    $marketing_roi = ['overall' => '0x', 'active_campaigns' => 0];
-    require __DIR__ . '/../app/views/admin/dashboards/marketing.php';
-});
-
-// --- Operations (standalone, uses ?? defaults) ---
-$router->get('/admin/dashboard/operations', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $inventory_stats = ['total_items' => 0, 'low_stock' => 0];
-    $task_status = ['completed_today' => 0];
-    require __DIR__ . '/../app/views/admin/dashboards/operations.php';
-});
-
-// --- Superadmin (standalone, needs arrays) ---
-$router->get('/admin/dashboard/superadmin', function () {
-    @session_start();
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-        exit;
-    }
-    $user_management_stats = ['total_admins' => 0, 'active_users' => 0];
-    $ai_agents_status = [];
-    require __DIR__ . '/../app/views/admin/dashboards/superadmin.php';
-});
+$router->get('/admin/dashboard/accounting', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/cm', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/coo', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/director', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/finance', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/hr', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/it', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/marketing', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/operations', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/superadmin', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
 
 // ============================================================
 // ORPHANED PUBLIC PAGE ROUTES (added 2026-05-15)
@@ -2354,3 +2243,150 @@ $router->get('/pwa/install-prompt', 'Tech\\PWAController@installPrompt');
 $router->get('/api/pwa/stats', 'Tech\\PWAController@getPWAStats');
 $router->post('/api/pwa/log-install-prompt', 'Tech\\PWAController@logInstallPrompt');
 $router->post('/api/pwa/log-installation', 'Tech\\PWAController@logInstallation');
+
+// ============================================================
+// NOTIFICATION MANAGEMENT (old NotificationController, now using admin.php layout)
+// ============================================================
+$router->get('/admin/notification-management', 'NotificationController@index');
+$router->get('/admin/notification-management/templates', 'NotificationController@templates');
+$router->get('/admin/notification-management/templates/create', 'NotificationController@createTemplate');
+$router->get('/admin/notification-management/templates/edit/{id}', 'NotificationController@editTemplate');
+$router->get('/admin/notification-management/logs/email', 'NotificationController@emailLogs');
+$router->get('/admin/notification-management/logs/sms', 'NotificationController@smsLogs');
+$router->get('/admin/notification-management/settings', 'NotificationController@settings');
+$router->get('/admin/notification-management/send-test', 'NotificationController@sendTest');
+$router->get('/admin/notification-management/preview/{id}', 'NotificationController@preview');
+
+// Redirect old /user/notifications to admin notification management
+$router->get('/user/notifications', function () {
+    header('Location: ' . BASE_URL . '/admin/notification-management');
+    exit;
+});
+
+// ============================================================
+// MISSING SIDEBAR MENU ROUTES (19 items from admin_menu_items table)
+// ============================================================
+
+// Associate section
+$router->get('/admin/associate-extensions', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Associate Extensions';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Associate Extensions</h1><p class="text-muted">Manage associate profile extensions and custom fields.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+
+// Marketing section
+$router->get('/admin/marketing/strategies', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Marketing Strategies';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Marketing Strategies</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/marketing/marketplace', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Marketing Marketplace';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Marketing Marketplace</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+
+// Commission section (MLM)
+$router->get('/admin/commission/agent-rates', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Agent Commission Rates';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Agent Commission Rates</h1><p class="text-muted">Configure commission rates for agents.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/associate/structure', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Associate Commission Structure';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Associate Commission Structure</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/associate/calculations', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Associate Commission Calculations';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Associate Commission Calculations</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/bonuses', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Commission Bonuses';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Commission Bonuses</h1><p class="text-muted">Manage bonus rules and payouts.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/mlm/levels', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'MLM Commission Levels';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Commission Levels</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/mlm/records', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'MLM Commission Records';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Commission Records</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/mlm/analytics', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'MLM Commission Analytics';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Commission Analytics</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/revenue/daily', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Daily Revenue';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Daily Revenue</h1><p class="text-muted">View daily revenue breakdown.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/telecaller/rules', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Telecaller Commission Rules';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Telecaller Commission Rules</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/commission/telecaller/commissions', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'Telecaller Commissions';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Telecaller Commissions</h1><p class="text-muted">This section is under development.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+
+// MLM section
+$router->get('/admin/mlm/rank-criteria', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'MLM Rank Criteria';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Rank Criteria</h1><p class="text-muted">Define rank advancement criteria for associates.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/mlm/upgrades', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'MLM Upgrades';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Upgrades</h1><p class="text-muted">View and manage associate rank upgrades.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/mlm/withdrawals', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'MLM Withdrawals';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Withdrawals</h1><p class="text-muted">Manage withdrawal requests from associates.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/mlm/rewards', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'MLM Rewards';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Rewards</h1><p class="text-muted">Manage rewards and recognition for associates.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+
+// Settings section (API)
+$router->get('/admin/api/integrations', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'API Integrations';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">API Integrations</h1><p class="text-muted">Manage third-party API integrations and webhooks.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});
+$router->get('/admin/api/developers', function () {
+    \App\Core\Middleware\AuthMiddleware::requireAdmin();
+    $page_title = 'API Developers';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">API Developers</h1><p class="text-muted">Developer portal with API documentation and keys.</p></div>';
+    include APP_PATH . '/views/layouts/admin.php';
+});

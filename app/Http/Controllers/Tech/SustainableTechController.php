@@ -1000,7 +1000,9 @@ class SustainableTechController extends BaseController
             $property_data = json_decode(file_get_contents('php://input'), true);
 
             if (!$property_data) {
-                sendJsonResponse(['success' => false, 'error' => 'Invalid property data'], 400);
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid property data']);
+                exit;
             }
 
             $sustainability_score = $this->calculateSustainabilityScore($property_data);
@@ -1106,7 +1108,7 @@ class SustainableTechController extends BaseController
     {
         header('Content-Type: application/json');
 
-        $data_type = Security::sanitize($_GET['type']) ?? '';
+        $data_type = Security::sanitize($_GET['type'] ?? '');
 
         switch ($data_type) {
             case 'carbon_footprint':
@@ -1517,7 +1519,7 @@ class SustainableTechController extends BaseController
             ]
         ];
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $endpoints
         ]);

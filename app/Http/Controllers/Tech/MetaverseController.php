@@ -234,7 +234,7 @@ class MetaverseController extends BaseController
             $this->jsonResponse(['success' => false, 'error' => 'Space ID required'], 400);
         }
 
-        $join_result = $this->joinCollaborativeSpace($space_id, $_SESSION['user_id'], $user_avatar);
+        $join_result = $this->joinCollaborativeSpace($space_id, $_SESSION['user_id'] ?? null, $user_avatar);
 
         $this->jsonResponse([
             'success' => $join_result['success'],
@@ -256,7 +256,7 @@ class MetaverseController extends BaseController
             $stmt->execute(['id' => $property_id]);
             return $stmt->fetch();
         } catch (Exception $e) {
-            error_log('Property details fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Property details fetch error: ' . $e->getMessage()); }
             return null;
         }
     }
@@ -284,7 +284,7 @@ class MetaverseController extends BaseController
 
             return $vr_data;
         } catch (Exception $e) {
-            error_log('VR data fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('VR data fetch error: ' . $e->getMessage()); }
             return [];
         }
     }
@@ -354,7 +354,7 @@ class MetaverseController extends BaseController
                 'location' => $property_data['location'],
                 'price' => $property_data['base_price'],
                 'environment' => $property_data['environment'],
-                'createdBy' => $_SESSION['user_id']
+                'createdBy' => $_SESSION['user_id'] ?? null
             ]);
 
             if ($success) {
@@ -368,7 +368,7 @@ class MetaverseController extends BaseController
 
             return false;
         } catch (Exception $e) {
-            error_log('Virtual property creation error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Virtual property creation error: ' . $e->getMessage()); }
             return false;
         }
     }
@@ -421,7 +421,7 @@ class MetaverseController extends BaseController
                 'skyboxUrl' => $scene_data['skybox']
             ]);
         } catch (Exception $e) {
-            error_log('VR scene save error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('VR scene save error: ' . $e->getMessage()); }
             return false;
         }
     }
@@ -490,7 +490,7 @@ class MetaverseController extends BaseController
                 return [];
             }
 
-            $user_id = $_SESSION['user_id'];
+            $user_id = $_SESSION['user_id'] ?? null;
 
             $sql = "SELECT cs.*, COUNT(csp.user_id) as participant_count
                     FROM collaborative_spaces cs
@@ -504,7 +504,7 @@ class MetaverseController extends BaseController
 
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            error_log('User collaborative spaces fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('User collaborative spaces fetch error: ' . $e->getMessage()); }
             return [];
         }
     }
@@ -525,7 +525,7 @@ class MetaverseController extends BaseController
 
             return $stmt->fetch();
         } catch (Exception $e) {
-            error_log('Collaborative space details fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Collaborative space details fetch error: ' . $e->getMessage()); }
             return null;
         }
     }
@@ -551,7 +551,7 @@ class MetaverseController extends BaseController
 
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            error_log('Space participants fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Space participants fetch error: ' . $e->getMessage()); }
             return [];
         }
     }
@@ -601,7 +601,7 @@ class MetaverseController extends BaseController
 
             return ['success' => false, 'message' => 'Failed to join space'];
         } catch (Exception $e) {
-            error_log('Space join error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Space join error: ' . $e->getMessage()); }
             return ['success' => false, 'message' => 'Join failed'];
         }
     }
@@ -625,7 +625,7 @@ class MetaverseController extends BaseController
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            error_log('Virtual properties marketplace fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Virtual properties marketplace fetch error: ' . $e->getMessage()); }
             return [];
         }
     }
@@ -705,7 +705,7 @@ class MetaverseController extends BaseController
 
             return $stmt->fetch();
         } catch (Exception $e) {
-            error_log('NFT data fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('NFT data fetch error: ' . $e->getMessage()); }
             return null;
         }
     }
@@ -869,21 +869,21 @@ class MetaverseController extends BaseController
                 'maxParticipants' => $space_data['max_participants'],
                 'environment' => $space_data['environment'],
                 'isPublic' => $space_data['is_public'],
-                'createdBy' => $_SESSION['user_id']
+                'createdBy' => $_SESSION['user_id'] ?? null
             ]);
 
             if ($success) {
                 $space_id = $this->db->lastInsertId();
 
                 // Add creator as first participant
-                $this->joinCollaborativeSpace($space_id, $_SESSION['user_id'], 'host');
+                $this->joinCollaborativeSpace($space_id, $_SESSION['user_id'] ?? null, 'host');
 
                 return $space_id;
             }
 
             return false;
         } catch (Exception $e) {
-            error_log('Space creation error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Space creation error: ' . $e->getMessage()); }
             return false;
         }
     }
@@ -969,7 +969,7 @@ class MetaverseController extends BaseController
 
             return $stmt->fetch();
         } catch (Exception $e) {
-            error_log('Virtual property details fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Virtual property details fetch error: ' . $e->getMessage()); }
             return null;
         }
     }
@@ -1020,10 +1020,10 @@ class MetaverseController extends BaseController
             return $stmt->execute([
                 'virtualPropertyId' => $virtual_property_id,
                 'customizationData' => json_encode($customization_data),
-                'appliedBy' => $_SESSION['user_id']
+                'appliedBy' => $_SESSION['user_id'] ?? null
             ]);
         } catch (Exception $e) {
-            error_log('Customization apply error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Customization apply error: ' . $e->getMessage()); }
             return false;
         }
     }

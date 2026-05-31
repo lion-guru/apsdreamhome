@@ -30,16 +30,7 @@ $stats = [
     'total_budget' => 50000000,
 ];
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Builder Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
+<style>
         .dashboard-card {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
             border-radius: 1rem;
@@ -80,8 +71,7 @@ $stats = [
     </style>
 </head>
 
-<body>
-    <div class="container-fluid py-4">
+<div class="container-fluid py-4">
         <div class="row mb-4">
             <div class="col-12">
                 <h2 class="mb-0">Welcome, <?php echo $builder_name; ?>!</h2>
@@ -230,6 +220,3 @@ $stats = [
             });
         });
     </script>
-</body>
-
-</html>
