@@ -473,7 +473,7 @@ class AiController extends AdminController
             }
 
             // Get customer preferences
-            $sql = "SELECT * FROM customer_preferences WHERE customer_id = ?";
+            $sql = "SELECT * FROM users WHERE customer_id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$customerId]);
             $preferences = $stmt->fetch();

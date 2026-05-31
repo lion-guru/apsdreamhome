@@ -89,7 +89,7 @@ class SystemDiagnosticController extends AdminController
             $dbCheck = $this->db && $this->db->getConnection();
 
             if ($dbCheck) {
-                $requiredTables = ['users', 'properties', 'customers', 'leads', 'property_visits', 'notifications'];
+                $requiredTables = ['users', 'properties', 'users', 'leads', 'property_visits', 'notifications'];
                 $tableStatus = [];
 
                 $result = $this->db->query("SHOW TABLES");

@@ -29,19 +29,19 @@ class ScheduleController extends AdminController
                         st.name as shift_type_name, st.color, st.start_time as shift_start_time,
                         st.end_time as shift_end_time
                  FROM employee_shifts es
-                 JOIN employees e ON es.employee_id = e.id
+                 JOIN users e ON es.employee_id = e.id
                  JOIN shift_types st ON es.shift_type_id = st.id
                  WHERE es.shift_date = ?
                  ORDER BY st.start_time",
                 [$today]
             );
 
-            // Total employees (active)
+            // Total users (active)
             $totalEmployees = $this->db->fetch(
-                "SELECT COUNT(*) as count FROM employees WHERE status = 'active'"
+                "SELECT COUNT(*) as count FROM users WHERE status = 'active'"
             )['count'] ?? 0;
 
-            // Employees on shift today
+            // users on shift today
             $onShiftToday = count($todayShifts);
 
             // Shift types count
@@ -76,7 +76,7 @@ class ScheduleController extends AdminController
                 "SELECT e.department,
                         COUNT(DISTINCT e.id) as total,
                         COUNT(DISTINCT es.id) as scheduled
-                 FROM employees e
+                 FROM users e
                  LEFT JOIN employee_shifts es ON e.id = es.employee_id AND es.shift_date = ?
                  WHERE e.status = 'active'
                  GROUP BY e.department",
@@ -87,7 +87,7 @@ class ScheduleController extends AdminController
             $recentChanges = $this->db->fetchAll(
                 "SELECT es.*, e.name as employee_name, st.name as shift_type
                  FROM employee_shifts es
-                 JOIN employees e ON es.employee_id = e.id
+                 JOIN users e ON es.employee_id = e.id
                  JOIN shift_types st ON es.shift_type_id = st.id
                  ORDER BY es.updated_at DESC
                  LIMIT 10"
@@ -284,7 +284,7 @@ class ScheduleController extends AdminController
                         st.name as shift_type_name, st.color, st.start_time as shift_start_time,
                         st.end_time as shift_end_time
                  FROM employee_shifts es
-                 JOIN employees e ON es.employee_id = e.id
+                 JOIN users e ON es.employee_id = e.id
                  JOIN shift_types st ON es.shift_type_id = st.id
                  $whereClause
                  ORDER BY es.shift_date DESC, st.start_time",
@@ -292,8 +292,8 @@ class ScheduleController extends AdminController
             );
 
             // For filters
-            $employees = $this->db->fetchAll(
-                "SELECT id, name, department FROM employees WHERE status = 'active' ORDER BY name"
+            $users = $this->db->fetchAll(
+                "SELECT id, name, department FROM users WHERE status = 'active' ORDER BY name"
             );
             $shiftTypes = $this->db->fetchAll(
                 "SELECT id, name FROM shift_types WHERE is_active = 1 ORDER BY name"
@@ -302,7 +302,7 @@ class ScheduleController extends AdminController
             return $this->render('admin/schedule/employee_shifts', [
                 'page_title' => 'Employee Shift Assignments',
                 'assignments' => $assignments,
-                'employees' => $employees,
+                'users' => $users,
                 'shift_types' => $shiftTypes,
                 'filters' => [
                     'employee_id' => $employeeId,
@@ -490,10 +490,10 @@ class ScheduleController extends AdminController
                 ];
             }
 
-            // Get employees
-            $employees = $this->db->fetchAll(
+            // Get users
+            $users = $this->db->fetchAll(
                 "SELECT e.id, e.name, e.department, e.designation
-                 FROM employees e
+                 FROM users e
                  WHERE e.status = 'active'
                  ORDER BY e.name"
             );
@@ -504,7 +504,7 @@ class ScheduleController extends AdminController
                         st.name as shift_type_name, st.color, st.start_time as shift_start_time,
                         st.end_time as shift_end_time
                  FROM employee_shifts es
-                 JOIN employees e ON es.employee_id = e.id
+                 JOIN users e ON es.employee_id = e.id
                  JOIN shift_types st ON es.shift_type_id = st.id
                  WHERE es.shift_date BETWEEN ? AND ?
                  ORDER BY es.shift_date, e.name",
@@ -527,7 +527,7 @@ class ScheduleController extends AdminController
                 'week_end' => $weekEnd,
                 'week_offset' => $weekOffset,
                 'week_dates' => $weekDates,
-                'employees' => $employees,
+                'users' => $users,
                 'schedule_grid' => $scheduleGrid,
                 'shift_types' => $shiftTypes,
                 'department_id' => $departmentId,
@@ -611,14 +611,14 @@ class ScheduleController extends AdminController
                 return $this->redirect('/admin/schedule/shift-schedule');
             }
 
-            // Get employees in department
-            $employees = $this->db->fetchAll(
-                "SELECT id FROM employees WHERE department = ? AND status = 'active'",
+            // Get users in department
+            $users = $this->db->fetchAll(
+                "SELECT id FROM users WHERE department = ? AND status = 'active'",
                 [$department]
             );
 
-            if (empty($employees)) {
-                $this->setFlash('warning', 'No active employees found in the selected department.');
+            if (empty($users)) {
+                $this->setFlash('warning', 'No active users found in the selected department.');
                 return $this->redirect('/admin/schedule/shift-schedule');
             }
 
@@ -634,7 +634,7 @@ class ScheduleController extends AdminController
             while ($current <= $end) {
                 $dateStr = $current->format('Y-m-d');
 
-                foreach ($employees as $emp) {
+                foreach ($users as $emp) {
                     // Check existing
                     $existing = $this->db->fetch(
                         "SELECT id FROM employee_shifts WHERE employee_id = ? AND shift_date = ? AND status NOT IN ('cancelled', 'no_show')",
@@ -680,10 +680,10 @@ class ScheduleController extends AdminController
                 $params[] = $department;
             }
 
-            $employees = $this->db->fetchAll(
+            $users = $this->db->fetchAll(
                 "SELECT e.id, e.name, e.department, e.designation,
                         ws.id as ws_id, ws.shift_start, ws.shift_end, ws.work_days, ws.is_active as ws_active
-                 FROM employees e
+                 FROM users e
                  LEFT JOIN work_schedules ws ON e.id = ws.employee_id
                  $where
                  ORDER BY e.name",
@@ -691,14 +691,14 @@ class ScheduleController extends AdminController
             );
 
             $departments = $this->db->fetchAll(
-                "SELECT DISTINCT department FROM employees WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
+                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
             );
 
             $dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
             return $this->render('admin/schedule/work_schedules', [
                 'page_title' => 'Work Schedules',
-                'employees' => $employees,
+                'users' => $users,
                 'departments' => $departments,
                 'department' => $department,
                 'day_names' => $dayNames,
@@ -796,9 +796,9 @@ class ScheduleController extends AdminController
                 $params[] = $department;
             }
 
-            $employees = $this->db->fetchAll(
+            $users = $this->db->fetchAll(
                 "SELECT e.id, e.name, e.department, e.designation
-                 FROM employees e
+                 FROM users e
                  WHERE e.status = 'active' $where
                  ORDER BY e.name",
                 $params
@@ -829,7 +829,7 @@ class ScheduleController extends AdminController
             }
 
             $departments = $this->db->fetchAll(
-                "SELECT DISTINCT department FROM employees WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
+                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
             );
 
             return $this->render('admin/schedule/weekly_view', [
@@ -838,7 +838,7 @@ class ScheduleController extends AdminController
                 'week_end' => $weekEnd,
                 'week_offset' => $weekOffset,
                 'week_dates' => $weekDates,
-                'employees' => $employees,
+                'users' => $users,
                 'schedule_grid' => $scheduleGrid,
                 'work_schedules' => $workSchedules,
                 'departments' => $departments,
@@ -869,7 +869,7 @@ class ScheduleController extends AdminController
             );
 
             $departments = $this->db->fetchAll(
-                "SELECT DISTINCT department FROM employees WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
+                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
             );
 
             return $this->render('admin/schedule/rotation', [

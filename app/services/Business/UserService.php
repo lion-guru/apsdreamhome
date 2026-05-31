@@ -472,7 +472,7 @@ class UserService
                 SUM(CASE WHEN status = 'suspended' THEN 1 ELSE 0 END) as suspended_users,
                 SUM(CASE WHEN role = 'client' THEN 1 ELSE 0 END) as client_users,
                 SUM(CASE WHEN role = 'associate' THEN 1 ELSE 0 END) as associate_users,
-                SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admin_users,
+                SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as users,
                 COUNT(CASE WHEN registered_date >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as new_users_week,
                 COUNT(CASE WHEN registered_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users_month
                 FROM users";

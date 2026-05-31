@@ -122,7 +122,7 @@ try {
         'Test Campaign',
         'This is a test campaign for advanced features',
         'general',
-        'customers',
+        'users',
         date('Y-m-d'),
         100000,
         1

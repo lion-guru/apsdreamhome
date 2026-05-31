@@ -13,7 +13,7 @@ class Event extends Model
     protected static $table = 'event_log';
     protected static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'event_id',
         'event_name',
         'event_data',

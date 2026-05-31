@@ -88,9 +88,9 @@ class AdminDashboardService
             );
             $stats['monthly_revenue'] = $result['monthly_revenue'] ?? 0;
             
-            // Total associates
+            // Total users
             $result = $this->database->selectOne(
-                "SELECT COUNT(*) as total_associates FROM associates WHERE status = 'active'"
+                "SELECT COUNT(*) as total_associates FROM users WHERE status = 'active'"
             );
             $stats['total_associates'] = $result['total_associates'] ?? 0;
             
@@ -559,14 +559,14 @@ class AdminDashboardService
                     ['title' => 'User Roles', 'url' => '/admin/roles']
                 ]
             ],
-            'associates' => [
-                'title' => 'Associates',
+            'users' => [
+                'title' => 'users',
                 'icon' => 'user-tie',
-                'url' => '/admin/associates',
+                'url' => '/admin/users',
                 'submenu' => [
-                    ['title' => 'All Associates', 'url' => '/admin/associates'],
-                    ['title' => 'Add Associate', 'url' => '/admin/associates/add'],
-                    ['title' => 'Performance Report', 'url' => '/admin/associates/performance']
+                    ['title' => 'All users', 'url' => '/admin/users'],
+                    ['title' => 'Add Associate', 'url' => '/admin/users/add'],
+                    ['title' => 'Performance Report', 'url' => '/admin/users/performance']
                 ]
             ],
             'leads' => [

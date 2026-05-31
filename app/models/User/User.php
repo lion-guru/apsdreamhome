@@ -21,7 +21,7 @@ use App\Core\Database\Model;
 class User extends Model
 {
     protected static $table = 'users';
-    protected array $fillable = [
+    protected $fillable = [
         'username',
         'email',
         'password',
@@ -218,7 +218,7 @@ class User extends Model
     }
 
     /**
-     * Get active agents for dropdowns
+     * Get active users for dropdowns
      */
     public static function getActiveAgents()
     {
@@ -228,7 +228,7 @@ class User extends Model
             $stmt = $pdo->query("SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name");
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log('Active agents query error: ' . $e->getMessage());
+            error_log('Active users query error: ' . $e->getMessage());
             return [];
         }
     }

@@ -10,7 +10,7 @@
     <style>
         .testimonial-hero {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(15, 52, 96, 0.9)), 
-                        url('https://via.placeholder.com/1920x400/1a1a2e/ffffff?text=Happy+Customers') center/cover;
+                        url('https://via.placeholder.com/1920x400/1a1a2e/ffffff?text=Happy+users') center/cover;
             color: white;
             padding: 120px 0 80px;
             position: relative;
@@ -298,7 +298,7 @@
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title" data-aos="fade-up">Client Stories</h2>
-                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Real experiences from our valued customers</p>
+                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Real experiences from our valued users</p>
             </div>
 
             <!-- Filter Buttons -->

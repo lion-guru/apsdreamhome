@@ -1,6 +1,6 @@
 <?php
-$customers = $customers ?? [];
-$agents = $agents ?? [];
+$users = $users ?? [];
+$users = $users ?? [];
 $page_title = $page_title ?? 'Create Support Ticket';
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <label class="form-label">Customer *</label>
                             <select name="customer_id" class="form-select" required>
                                 <option value="">Select Customer</option>
-                                <?php foreach ($customers as $customer): ?>
+                                <?php foreach ($users as $customer): ?>
                                     <option value="<?php echo $customer['id']; ?>"><?php echo htmlspecialchars($customer['name'] . ' (' . $customer['email'] . ')'); ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <label class="form-label">Assign To</label>
                             <select name="assigned_agent_id" class="form-select">
                                 <option value="">Unassigned</option>
-                                <?php foreach ($agents as $agent): ?>
+                                <?php foreach ($users as $agent): ?>
                                     <option value="<?php echo $agent['id']; ?>"><?php echo htmlspecialchars(agent['name'] ?? ''); ?></option>
                                 <?php endforeach; ?>
                             </select>

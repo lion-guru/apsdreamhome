@@ -361,15 +361,15 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
         $this->requireAdmin();
         $db = Database::getInstance()->getConnection();
         try {
-            $agents = $db->query("SELECT id, name FROM users WHERE onboarding_track IN ('networker','free_consultant') AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $users = $db->query("SELECT id, name FROM users WHERE onboarding_track IN ('networker','free_consultant') AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
             $plots = $db->query("SELECT id, plot_no, block_name, size_sqft, basic_price, status FROM inventory_plots WHERE status = 'Available' ORDER BY block_name, plot_no")->fetchAll(\PDO::FETCH_ASSOC);
             $plots2 = $db->query("SELECT id, plot_number as plot_no, block, area_sqft, total_price, status FROM plots WHERE status = 'available' AND colony_id = 2 ORDER BY block, plot_number")->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            $agents = []; $plots = []; $plots2 = [];
+            $users = []; $plots = []; $plots2 = [];
         }
         $this->render('admin/mlm-realestate/create_booking', [
             'page_title' => 'Create Booking',
-            'agents' => $agents,
+            'users' => $users,
             'plots' => $plots,
             'plots2' => $plots2,
         ]);

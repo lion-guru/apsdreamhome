@@ -1,7 +1,7 @@
 <?php
 $page_title = $page_title ?? 'Create Campaign';
 $campaign_types = $campaign_types ?? ['general', 'offer', 'promotion', 'announcement'];
-$target_audiences = $target_audiences ?? ['all', 'customers', 'agents', 'employees', 'admin'];
+$target_audiences = $target_audiences ?? ['all', 'users', 'users', 'users', 'admin'];
 $error = $error ?? null;
 ?>
 

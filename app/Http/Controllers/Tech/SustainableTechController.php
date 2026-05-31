@@ -700,13 +700,13 @@ class SustainableTechController extends BaseController
                 'risk_mitigation' => '85% risk reduction',
                 'future_outlook' => 'Strong growth potential'
             ],
-            'customers' => [
+            'users' => [
                 'service_satisfaction' => '4.7/5',
                 'sustainability_features' => '85% feature adoption',
                 'eco_friendly_options' => '92% customer preference',
                 'feedback_score' => '4.6/5'
             ],
-            'employees' => [
+            'users' => [
                 'satisfaction_score' => '4.6/5',
                 'green_initiatives' => '78% participation',
                 'training_programs' => '95% completion rate',

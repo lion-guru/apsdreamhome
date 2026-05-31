@@ -222,7 +222,7 @@ class EmployeeAttendance extends Model
         
         $sql = "SELECT e.id, e.name, e.department_id, e.employee_code,
                        a.check_in_time, a.check_out_time, a.status, a.work_hours
-                FROM employees e
+                FROM users e
                 LEFT JOIN employee_attendance a ON e.id = a.employee_id 
                     AND DATE(a.check_in_time) = CURDATE()
                 WHERE e.status = 'active'";
@@ -235,16 +235,16 @@ class EmployeeAttendance extends Model
     }
 
     /**
-     * Mark absent for employees who didn't check in
+     * Mark absent for users who didn't check in
      */
     public function markAbsentForMissing(): int
     {
         $db = Database::getInstance();
         
-        // Get all active employees who haven't checked in today
+        // Get all active users who haven't checked in today
         $sql = "INSERT INTO employee_attendance (employee_id, check_in_time, status, created_at)
                 SELECT e.id, NOW(), 'absent', NOW()
-                FROM employees e
+                FROM users e
                 WHERE e.status = 'active'
                 AND e.id NOT IN (
                     SELECT employee_id FROM employee_attendance 

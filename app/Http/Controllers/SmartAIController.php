@@ -213,7 +213,7 @@ class SmartAIController extends BaseController
 
             // Get network stats
             $networkStats = $this->db->fetch(
-                "SELECT COUNT(*) as total FROM associates WHERE referrer_id = ?",
+                "SELECT COUNT(*) as total FROM users WHERE referrer_id = ?",
                 [$associateId]
             );
             $data['network_size'] = $networkStats['total'] ?? 0;
@@ -460,7 +460,7 @@ class SmartAIController extends BaseController
         if (strpos($msg, 'network') !== false || strpos($msg, 'team') !== false || strpos($msg, 'referral') !== false) {
             if ($role === 'associate') {
                 $size = $userContext['data']['network_size'] ?? 0;
-                return "👥 *Aapka Network:*\n\nTotal Associates: {$size}\n\n🔗 *Referral Link:*\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\n📱 Social media par share karein:\n• WhatsApp\n• Facebook\n• Instagram\n\nJitne zyada referrals, utna zyada commission! 💰";
+                return "👥 *Aapka Network:*\n\nTotal users: {$size}\n\n🔗 *Referral Link:*\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\n📱 Social media par share karein:\n• WhatsApp\n• Facebook\n• Instagram\n\nJitne zyada referrals, utna zyada commission! 💰";
             }
         }
 

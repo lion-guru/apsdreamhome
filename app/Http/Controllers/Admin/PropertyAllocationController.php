@@ -7,7 +7,7 @@ use App\Core\Database\Database;
 
 /**
  * Property Allocation Controller - Plot Allocation Management
- * Manages plot status, allocation to customers, availability calendar
+ * Manages plot status, allocation to users, availability calendar
  */
 class PropertyAllocationController extends BaseController
 {
@@ -39,7 +39,7 @@ class PropertyAllocationController extends BaseController
                         ELSE pa.status
                     END as status_label
                     FROM property_allocations pa
-                    LEFT JOIN customers c ON pa.customer_id = c.id
+                    LEFT JOIN users c ON pa.customer_id = c.id
                     LEFT JOIN properties p ON pa.property_id = p.id
                     ORDER BY pa.created_at DESC";
             
@@ -77,8 +77,8 @@ class PropertyAllocationController extends BaseController
         try {
             $conn = $this->db->getConnection();
             
-            // Get customers for dropdown
-            $customers = $conn->query("SELECT id, name, email, phone FROM customers ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get users for dropdown
+            $users = $conn->query("SELECT id, name, email, phone FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
             
             // Get available properties for dropdown
             $properties = $conn->query("SELECT id, title, location, plot_number, area_sqft, price 
@@ -88,7 +88,7 @@ class PropertyAllocationController extends BaseController
             
             $data = [
                 'page_title' => 'Create Property Allocation',
-                'customers' => $customers,
+                'users' => $users,
                 'properties' => $properties
             ];
             
@@ -166,7 +166,7 @@ class PropertyAllocationController extends BaseController
                         ELSE pa.status
                     END as status_label
                     FROM property_allocations pa
-                    LEFT JOIN customers c ON pa.customer_id = c.id
+                    LEFT JOIN users c ON pa.customer_id = c.id
                     LEFT JOIN properties p ON pa.property_id = p.id
                     WHERE pa.id = ?";
             

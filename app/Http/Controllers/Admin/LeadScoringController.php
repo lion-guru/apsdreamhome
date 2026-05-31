@@ -43,8 +43,8 @@ class LeadScoringController extends AdminController
             // Get score distribution
             $scoreDistribution = $tablesExist ? $this->getScoreDistribution() : ['hot_count' => 0, 'warm_count' => 0, 'cold_count' => 0];
 
-            // Get agents for filter
-            $agents = $this->getAgents();
+            // Get users for filter
+            $users = $this->getAgents();
 
             // Get scoring statistics
             $stats = $tablesExist ? $this->getScoringStats() : ['avg_score' => 0, 'total_scored' => 0, 'pending_scoring' => 0];
@@ -53,7 +53,7 @@ class LeadScoringController extends AdminController
                 'page_title' => 'Lead Scoring Dashboard - APS Dream Home',
                 'leads' => $leads,
                 'score_distribution' => $scoreDistribution,
-                'agents' => $agents,
+                'users' => $users,
                 'stats' => $stats,
                 'filters' => [
                     'score_min' => $scoreMin,
@@ -72,7 +72,7 @@ class LeadScoringController extends AdminController
                 'page_title' => 'Lead Scoring Dashboard - APS Dream Home',
                 'leads' => [],
                 'score_distribution' => ['hot_count' => 0, 'warm_count' => 0, 'cold_count' => 0],
-                'agents' => [],
+                'users' => [],
                 'stats' => ['avg_score' => 0, 'total_scored' => 0, 'pending_scoring' => 0],
                 'filters' => [
                     'score_min' => 0,
@@ -501,7 +501,7 @@ class LeadScoringController extends AdminController
     }
 
     /**
-     * Get agents list
+     * Get users list
      */
     private function getAgents()
     {
@@ -617,8 +617,8 @@ class LeadScoringController extends AdminController
                 ]);
             }
 
-            // Get available agents (least busy first)
-            $agents = $this->pdo->query(
+            // Get available users (least busy first)
+            $users = $this->pdo->query(
                 "SELECT u.id, u.name, COUNT(l.id) as lead_count
                  FROM users u
                  LEFT JOIN leads l ON u.id = l.assigned_to AND l.status NOT IN ('converted', 'lost')
@@ -627,10 +627,10 @@ class LeadScoringController extends AdminController
                  ORDER BY lead_count ASC"
             )->fetchAll(\PDO::FETCH_ASSOC);
 
-            if (empty($agents)) {
+            if (empty($users)) {
                 return $this->jsonResponse([
                     'success' => false,
-                    'message' => 'No available agents found'
+                    'message' => 'No available users found'
                 ]);
             }
 
@@ -638,14 +638,14 @@ class LeadScoringController extends AdminController
             $agentIndex = 0;
 
             foreach ($leads as $lead) {
-                $agent = $agents[$agentIndex % count($agents)];
+                $agent = $users[$agentIndex % count($users)];
                 $stmt = $this->pdo->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?");
                 $stmt->execute([$agent['id'], $lead['id']]);
                 $assigned++;
                 $agentIndex++;
             }
 
-            $this->setFlash('success', "Auto-assigned {$assigned} leads to agents");
+            $this->setFlash('success', "Auto-assigned {$assigned} leads to users");
             return $this->jsonResponse([
                 'success' => true,
                 'message' => "Auto-assigned {$assigned} leads",

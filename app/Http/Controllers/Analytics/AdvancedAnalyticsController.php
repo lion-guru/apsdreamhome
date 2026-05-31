@@ -505,7 +505,7 @@ class AdvancedAnalyticsController extends AdminController
             $sql = "SELECT city, state,
                            COUNT(*) as properties,
                            AVG(price) as avg_price,
-                           COUNT(DISTINCT created_by) as agents
+                           COUNT(DISTINCT created_by) as users
                     FROM properties
                     WHERE status = 'available'
                     GROUP BY city, state

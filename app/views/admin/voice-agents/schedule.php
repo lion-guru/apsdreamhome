@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Call Schedule</h3>
         <div>
-            <a href="<?= BASE_URL ?>/admin/voice-agents/dashboard" class="btn btn-outline-primary">
+            <a href="<?= BASE_URL ?>/admin/voice-users/dashboard" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left"></i> Dashboard
             </a>
         </div>
@@ -96,7 +96,7 @@
                                             onclick="setupReschedule(this)">
                                             <i class="fas fa-calendar"></i>
                                         </button>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/voice-agents/schedule/cancel" style="display:inline">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/cancel" style="display:inline">
                                             <input type="hidden" name="schedule_id" value="<?= $item['id'] ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this call?')">
                                                 <i class="fas fa-times"></i>
@@ -121,7 +121,7 @@
                     <h6 class="mb-0 fw-bold"><i class="fas fa-plus-circle me-1"></i> Bulk Schedule</h6>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-agents/schedule/bulk">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/bulk">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Select Leads</label>
                             <div style="max-height:200px;overflow-y:auto">
@@ -173,10 +173,10 @@
             <div class="card">
                 <div class="card-body text-center">
                     <h6 class="fw-bold"><i class="fas fa-robot me-1"></i> Auto-Assign Leads</h6>
-                    <p class="small text-muted">Automatically assign pending leads to available agents</p>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-agents/schedule/auto-assign">
-                        <button type="submit" class="btn btn-info w-100" onclick="return confirm('Auto-assign pending leads to agents?')">
-                            <i class="fas fa-magic me-1"></i> Auto-Assign Leads to Agents
+                    <p class="small text-muted">Automatically assign pending leads to available users</p>
+                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/auto-assign">
+                        <button type="submit" class="btn btn-info w-100" onclick="return confirm('Auto-assign pending leads to users?')">
+                            <i class="fas fa-magic me-1"></i> Auto-Assign Leads to users
                         </button>
                     </form>
                 </div>
@@ -188,7 +188,7 @@
 <!-- Reschedule Modal -->
 <div class="modal fade" id="rescheduleModal" tabindex="-1">
     <div class="modal-dialog">
-        <form method="POST" action="<?= BASE_URL ?>/admin/voice-agents/schedule/reschedule">
+        <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/reschedule">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Reschedule Call</h5>

@@ -1,11 +1,11 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="mb-0"><i class="fas fa-phone-voice me-2"></i> Voice Agents Dashboard</h3>
+        <h3 class="mb-0"><i class="fas fa-phone-voice me-2"></i> Voice users Dashboard</h3>
         <div>
-            <a href="<?= BASE_URL ?>/admin/voice-agents/schedule" class="btn btn-outline-primary me-2">
+            <a href="<?= BASE_URL ?>/admin/voice-users/schedule" class="btn btn-outline-primary me-2">
                 <i class="fas fa-calendar-alt"></i> View Schedule
             </a>
-            <a href="<?= BASE_URL ?>/admin/voice-agents/extracted-leads" class="btn btn-outline-success">
+            <a href="<?= BASE_URL ?>/admin/voice-users/extracted-leads" class="btn btn-outline-success">
                 <i class="fas fa-database"></i> Extracted Leads
             </a>
         </div>
@@ -112,10 +112,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if (empty($agents)): ?>
+                                <?php if (empty($users)): ?>
                                 <tr><td colspan="6" class="text-center text-muted py-3">No agent data available</td></tr>
                                 <?php else: ?>
-                                <?php foreach ($agents as $agent): ?>
+                                <?php foreach ($users as $agent): ?>
                                 <tr>
                                     <td class="fw-small"><?= htmlspecialchars($agent['agent_name'] ?? '-') ?></td>
                                     <td class="text-center"><?= (int)($agent['total_calls_made'] ?? 0) ?></td>
@@ -140,7 +140,7 @@
             <div class="card h-100">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h6 class="mb-0 fw-bold">Recent Calls</h6>
-                    <a href="<?= BASE_URL ?>/admin/voice-agents/history" class="btn btn-sm btn-outline-primary">View All</a>
+                    <a href="<?= BASE_URL ?>/admin/voice-users/history" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -197,19 +197,19 @@
                 <div class="card-body">
                     <h6 class="fw-bold mb-3">Quick Actions</h6>
                     <div class="d-flex flex-wrap gap-2">
-                        <a href="<?= BASE_URL ?>/admin/voice-agents/scripts" class="btn btn-primary">
+                        <a href="<?= BASE_URL ?>/admin/voice-users/scripts" class="btn btn-primary">
                             <i class="fas fa-scroll me-1"></i> Manage Scripts
                         </a>
-                        <a href="<?= BASE_URL ?>/admin/voice-agents/schedule" class="btn btn-warning">
+                        <a href="<?= BASE_URL ?>/admin/voice-users/schedule" class="btn btn-warning">
                             <i class="fas fa-calendar-alt me-1"></i> Schedule Calls
                         </a>
-                        <a href="<?= BASE_URL ?>/admin/voice-agents/extracted-leads" class="btn btn-success">
+                        <a href="<?= BASE_URL ?>/admin/voice-users/extracted-leads" class="btn btn-success">
                             <i class="fas fa-user-plus me-1"></i> Review Extracted Leads
                         </a>
-                        <a href="<?= BASE_URL ?>/admin/voice-agents/oln" class="btn btn-info">
+                        <a href="<?= BASE_URL ?>/admin/voice-users/oln" class="btn btn-info">
                             <i class="fas fa-seedling me-1"></i> Lead Nurturing Pipeline
                         </a>
-                        <a href="<?= BASE_URL ?>/admin/voice-agents/settings" class="btn btn-secondary">
+                        <a href="<?= BASE_URL ?>/admin/voice-users/settings" class="btn btn-secondary">
                             <i class="fas fa-cog me-1"></i> Agent Settings
                         </a>
                     </div>

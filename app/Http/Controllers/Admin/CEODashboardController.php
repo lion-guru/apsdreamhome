@@ -52,7 +52,7 @@ class CEODashboardController extends AdminController
             $team_stats = $this->db->fetchOne(
                 "SELECT 
                     COUNT(*) as total_users,
-                    COUNT(CASE WHEN role = 'admin' THEN 1 END) as admin_users,
+                    COUNT(CASE WHEN role = 'admin' THEN 1 END) as users,
                     COUNT(CASE WHEN role = 'associate' THEN 1 END) as associate_users,
                     COUNT(CASE WHEN role = 'customer' THEN 1 END) as customer_users,
                     COUNT(CASE WHEN status = 'active' THEN 1 END) as active_users

@@ -8,7 +8,7 @@ class PasswordResetToken extends Model
 {
     public static $table = 'password_reset_tokens';
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'token',
         'expires_at',

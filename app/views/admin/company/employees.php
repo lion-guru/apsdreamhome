@@ -1,14 +1,14 @@
 <?php
 
-$page_title = 'Company Employees';
-$employees = $employees ?? [];
+$page_title = 'Company users';
+$users = $users ?? [];
 ?>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-2"><i class="fas fa-users me-2"></i>Company Employees</h1>
-            <p class="text-muted">Manage employees linked to your organization</p>
+            <h1 class="h3 mb-2"><i class="fas fa-users me-2"></i>Company users</h1>
+            <p class="text-muted">Manage users linked to your organization</p>
         </div>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
             <i class="fas fa-plus me-1"></i>Add Employee
@@ -27,10 +27,10 @@ $employees = $employees ?? [];
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>Employee List</h5>
         </div>
         <div class="card-body">
-            <?php if (empty($employees)): ?>
+            <?php if (empty($users)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-user-plus fa-4x text-muted mb-3"></i>
-                    <p class="text-muted">No employees added yet. Click "Add Employee" to get started.</p>
+                    <p class="text-muted">No users added yet. Click "Add Employee" to get started.</p>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
@@ -47,7 +47,7 @@ $employees = $employees ?? [];
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($employees as $emp): ?>
+                            <?php foreach ($users as $emp): ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($emp['user_name'] ?? 'N/A') ?></strong></td>
                                 <td><?= htmlspecialchars($emp['user_email'] ?? 'N/A') ?></td>
@@ -74,7 +74,7 @@ $employees = $employees ?? [];
 <div class="modal fade" id="addEmployeeModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="<?= BASE_URL ?>/admin/company/employees/add">
+            <form method="POST" action="<?= BASE_URL ?>/admin/company/users/add">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Add Employee</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

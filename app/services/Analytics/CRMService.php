@@ -214,7 +214,7 @@ class CRMAnalyticsManager
             SUM(CASE WHEN customer_status = 'vip' THEN 1 ELSE 0 END) as vip_customers,
             AVG(total_purchase_value) as avg_customer_value,
             AVG(DATEDIFF(NOW(), created_at)/365) as avg_customer_lifespan_years
-            FROM customer_profiles";
+            FROM users";
 
         $analytics['customer_acquisition'] = $this->db->fetch($sql);
 
@@ -224,7 +224,7 @@ class CRMAnalyticsManager
             COUNT(*) as customer_count,
             AVG(total_purchase_value) as avg_value,
             SUM(total_purchase_value) as total_value
-            FROM customer_profiles
+            FROM users
             GROUP BY customer_type";
 
         $analytics['customer_segmentation'] = $this->db->fetchAll($sql);
@@ -235,7 +235,7 @@ class CRMAnalyticsManager
             COUNT(*) as customer_count,
             AVG(cp.total_purchase_value) as avg_clv,
             AVG(DATEDIFF(NOW(), cp.created_at)/365) as avg_lifespan_years
-            FROM customer_profiles cp
+            FROM users cp
             GROUP BY cp.customer_type";
 
         $results = $this->db->fetchAll($sql);
@@ -259,12 +259,12 @@ class CRMAnalyticsManager
             round(($satisfaction['satisfied_customers'] / $satisfaction['total_interactions']) * 100, 2) : 0;
         $analytics['customer_satisfaction'] = $satisfaction;
 
-        // Repeat customers
+        // Repeat users
         $sql = "SELECT
             COUNT(DISTINCT cp.id) as total_customers,
             COUNT(DISTINCT CASE WHEN cp.total_purchases > 1 THEN cp.id END) as repeat_customers,
             AVG(cp.total_purchases) as avg_purchases_per_customer
-            FROM customer_profiles cp";
+            FROM users cp";
 
         $repeatCustomers = $this->db->fetch($sql);
         $repeatCustomers['repeat_customer_rate'] = ($repeatCustomers['total_customers'] ?? 0) > 0 ?
@@ -458,7 +458,7 @@ class CRMAnalyticsManager
             COUNT(*) as customers_acquired,
             AVG(total_purchase_value) as avg_purchase_value,
             SUM(total_purchase_value) as total_revenue
-            FROM customer_profiles
+            FROM users
             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')
             ORDER BY date";
@@ -615,20 +615,20 @@ class CRMAnalyticsManager
             SUM(CASE WHEN customer_status = 'active' THEN 1 ELSE 0 END) as active_customers,
             SUM(CASE WHEN customer_status = 'vip' THEN 1 ELSE 0 END) as vip_customers,
             AVG(total_purchase_value) as avg_customer_value
-            FROM customer_profiles";
+            FROM users";
 
         $report['summary'] = $this->db->fetch($sql);
 
         // Customer segmentation
         $sql = "SELECT customer_type, COUNT(*) as count, SUM(total_purchase_value) as total_value
-                FROM customer_profiles
+                FROM users
                 GROUP BY customer_type";
 
         $report['customer_segments'] = $this->db->fetchAll($sql);
 
-        // Top customers
+        // Top users
         $sql = "SELECT first_name, last_name, total_purchase_value, total_purchases, customer_type
-                FROM customer_profiles
+                FROM users
                 ORDER BY total_purchase_value DESC
                 LIMIT 10";
 
@@ -767,7 +767,7 @@ class CRMAnalyticsManager
         return [
             'total_leads' => $this->getTotalCount('leads'),
             'total_opportunities' => $this->getTotalCount('opportunities'),
-            'total_customers' => $this->getTotalCount('customer_profiles'),
+            'total_customers' => $this->getTotalCount('users'),
             'total_revenue' => $this->getTotalRevenue(),
             'conversion_rate' => $this->getConversionRate(),
             'avg_deal_size' => $this->getAverageDealSize(),

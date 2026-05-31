@@ -566,7 +566,7 @@ class Campaign extends Model
      */
     private function findTriggerTargets(string $triggerType, array $conditions): array
     {
-        // This would implement logic to find leads/customers that match trigger conditions
+        // This would implement logic to find leads/users that match trigger conditions
         // For example, leads with score changes, behavior events, etc.
         return []; // Placeholder
     }

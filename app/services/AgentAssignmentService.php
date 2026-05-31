@@ -9,7 +9,7 @@ use PDO;
 
 /**
  * Agent Assignment Service
- * Handles automatic and manual assignment of agents/offices to direct customers
+ * Handles automatic and manual assignment of users/offices to direct users
  */
 
 class AgentAssignmentService
@@ -180,12 +180,12 @@ class AgentAssignmentService
         $propertyType = $preferences['property_type'] ?? '';
         $budgetRange = $preferences['budget_range'] ?? '';
 
-        // Build query to find suitable agents
+        // Build query to find suitable users
         $sql = "SELECT a.*, 
                        COUNT(ca.id) as current_assignments,
                        AVG(ar.rating) as avg_rating,
                        COUNT(p.id) as properties_handled
-                FROM agents a
+                FROM users a
                 LEFT JOIN customer_assignments ca ON a.user_id = ca.agent_id AND ca.status = 'active'
                 LEFT JOIN agent_reviews ar ON a.user_id = ar.agent_id
                 LEFT JOIN properties p ON a.user_id = p.assigned_agent_id
@@ -306,7 +306,7 @@ class AgentAssignmentService
             // Get assignee details
             if ($assignmentType === 'agent') {
                 $assigneeStmt = $this->db->prepare("SELECT u.name, u.email, u.phone FROM users u 
-                                                   JOIN agents a ON u.id = a.user_id 
+                                                   JOIN users a ON u.id = a.user_id 
                                                    WHERE u.id = :assignee_id LIMIT 1");
             } else {
                 $assigneeStmt = $this->db->prepare("SELECT o.name, o.email, o.phone FROM offices o 
@@ -358,7 +358,7 @@ class AgentAssignmentService
      */
     private function updateAgentWorkload(int $agentId): void
     {
-        $sql = "UPDATE agents SET workload = workload + 1 WHERE user_id = :agent_id";
+        $sql = "UPDATE users SET workload = workload + 1 WHERE user_id = :agent_id";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['agent_id' => $agentId]);
     }
@@ -400,7 +400,7 @@ class AgentAssignmentService
                      ]);
 
             // Update old agent workload
-            $this->db->prepare("UPDATE agents SET workload = workload - 1 WHERE user_id = :agent_id")
+            $this->db->prepare("UPDATE users SET workload = workload - 1 WHERE user_id = :agent_id")
                      ->execute(['agent_id' => $currentAssignment['agent_id']]);
 
             // Create new assignment

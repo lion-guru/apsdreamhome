@@ -295,7 +295,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
                                 <td><strong>Best For</strong></td>
                                 <td>Network builders</td>
                                 <td>Direct sellers</td>
-                                <td>Ambitious agents</td>
+                                <td>Ambitious users</td>
                             </tr>
                         </tbody>
                     </table></div>
@@ -324,7 +324,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
                                 <small class="text-muted">MLM Network Builder</small>
                             </div>
                         </div>
-                        <p>"I built a team of 50+ agents in just 3 months. Now earning ₹1.5L monthly from network commissions alone!"</p>
+                        <p>"I built a team of 50+ users in just 3 months. Now earning ₹1.5L monthly from network commissions alone!"</p>
                         <div class="text-success fw-bold">💰 ₹1,50,000/month</div>
                     </div>
                 </div>
@@ -377,7 +377,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
                             <i class="fas fa-users"></i>
                         </div>
                         <h3>500+</h3>
-                        <p class="text-muted">Active Agents</p>
+                        <p class="text-muted">Active users</p>
                     </div>
                 </div>
                 <div class="col-md-3">

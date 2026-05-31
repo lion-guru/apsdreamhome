@@ -237,7 +237,7 @@ class SecurityMiddleware
             }
         }
         
-        // Check for unusual user agents
+        // Check for unusual user users
         $botPatterns = [
             '/bot/i', '/crawler/i', '/spider/i', '/scraper/i'
         ];

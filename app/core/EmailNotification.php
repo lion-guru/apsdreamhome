@@ -354,7 +354,7 @@ class EmailNotification {
                     <div class='highlight'>
                         <h3>&#x1F554; What Happens Next?</h3>
                         <div class='steps'>
-                            <p><strong>Step 1:</strong> Our expert agents will review your inquiry</p>
+                            <p><strong>Step 1:</strong> Our expert users will review your inquiry</p>
                             <p><strong>Step 2:</strong> You'll receive a response within 24 hours</p>
                             <p><strong>Step 3:</strong> We may contact you for additional information if needed</p>
                             <p><strong>Step 4:</strong> You can track your inquiry status in your account</p>
@@ -496,9 +496,9 @@ class EmailNotification {
                         <div class='features'>
                             <p>&#x1F381; <strong>Browse Properties:</strong> Explore our extensive property listings</p>
                             <p>&#x2764; <strong>Save Favorites:</strong> Save properties you're interested in</p>
-                            <p>&#x1F4DD; <strong>Submit Inquiries:</strong> Contact agents about properties</p>
+                            <p>&#x1F4DD; <strong>Submit Inquiries:</strong> Contact users about properties</p>
                             <p>&#x1F4CA; <strong>Personal Dashboard:</strong> Track your activity and preferences</p>
-                            <p>&#x1F4F1; <strong>Contact Agents:</strong> Direct communication with our experts</p>
+                            <p>&#x1F4F1; <strong>Contact users:</strong> Direct communication with our experts</p>
                             <p>&#x1F3C6; <strong>Join Associate Program:</strong> Opportunity to earn through our MLM system</p>
                         </div>
                     </div>

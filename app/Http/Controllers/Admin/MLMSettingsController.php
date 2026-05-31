@@ -108,7 +108,7 @@ class MLMSettingsController extends AdminController
     public function associateProgress()
     {
         $this->requireAdmin();
-        $associates = $this->db->fetchAll("
+        $users = $this->db->fetchAll("
             SELECT u.id, u.name, u.email, u.phone,
                    mp.current_level, mp.direct_referrals, mp.lifetime_sales,
                    mp.total_team_size
@@ -118,13 +118,13 @@ class MLMSettingsController extends AdminController
             ORDER BY mp.current_level DESC, mp.lifetime_sales DESC
         ");
         $progressData = [];
-        foreach ($associates as $a) {
+        foreach ($users as $a) {
             $progress = $this->rankService->getProgress($a['id']);
             $progressData[] = $progress ?? [];
         }
         $this->render('admin/mlm-settings/associate_progress', [
             'page_title' => 'Associate Rank Progress - Admin',
-            'associates' => $associates,
+            'users' => $users,
             'progress_data' => $progressData,
         ]);
     }

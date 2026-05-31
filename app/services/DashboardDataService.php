@@ -40,7 +40,7 @@ class AdminDashboard
                     SUM(CASE WHEN o.amount > 0 THEN o.amount ELSE 0 END) as total_revenue
                 FROM users u
                 LEFT JOIN properties p ON u.id = p.user_id
-                LEFT JOIN associates a ON u.id = a.user_id
+                LEFT JOIN users a ON u.id = a.user_id
                 LEFT JOIN orders o ON u.id = o.user_id
                 WHERE u.role IN ('admin', 'manager')
             ");
@@ -50,7 +50,7 @@ class AdminDashboard
                 'overview' => [
                     'users' => $stats['total_users'] ?? 0,
                     'properties' => $stats['total_properties'] ?? 0,
-                    'associates' => $stats['total_associates'] ?? 0,
+                    'users' => $stats['total_associates'] ?? 0,
                     'orders' => $stats['total_orders'] ?? 0,
                     'revenue' => $stats['total_revenue'] ?? 0,
                     'order_stats' => [

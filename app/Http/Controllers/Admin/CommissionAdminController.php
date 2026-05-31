@@ -180,7 +180,7 @@ class CommissionAdminController extends AdminController
                 "SELECT cb.*, u.name as associate_name FROM commission_bonuses cb
                  LEFT JOIN users u ON cb.associate_id = u.id ORDER BY cb.created_at DESC"
             );
-            $this->data['associates'] = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role IN ('associate','agent') ORDER BY name");
+            $this->data['users'] = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role IN ('associate','agent') ORDER BY name");
             $this->data['page_title'] = 'Commission Bonuses';
             return $this->render('admin/commission/bonuses', $this->data);
         } catch (\Exception $e) {
@@ -346,7 +346,7 @@ class CommissionAdminController extends AdminController
             );
             $r = $this->db->fetchAll("SELECT COALESCE(SUM(revenue),0) as total_rev, COALESCE(SUM(commission),0) as total_comm, COALESCE(SUM(deals),0) as total_deals FROM revenue_commission_daily");
             $this->data['summary'] = $r[0] ?? ['total_rev'=>0,'total_comm'=>0,'total_deals'=>0];
-            $this->data['agents'] = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('agent','associate') ORDER BY name");
+            $this->data['users'] = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('agent','associate') ORDER BY name");
             $this->data['page_title'] = 'Daily Revenue Commission';
             return $this->render('admin/commission/revenue_daily', $this->data);
         } catch (\Exception $e) {

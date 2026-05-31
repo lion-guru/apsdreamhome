@@ -60,13 +60,13 @@ class GstController extends AdminController
         try {
             $custStmt = $this->db->prepare("SELECT id, name, email, phone, gstin FROM users WHERE role = 'customer' ORDER BY name ASC LIMIT 200");
             $custStmt->execute();
-            $customers = $custStmt->fetchAll(\PDO::FETCH_ASSOC);
+            $users = $custStmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            $customers = [];
+            $users = [];
         }
         return $this->render('admin/gst/create', [
             'page_title' => 'Create GST Invoice',
-            'customers' => $customers
+            'users' => $users
         ]);
     }
 

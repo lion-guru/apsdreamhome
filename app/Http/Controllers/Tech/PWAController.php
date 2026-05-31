@@ -174,7 +174,7 @@ const STATIC_CACHE_URLS = [
 
 const API_CACHE_URLS = [
     '/api/properties',
-    '/api/agents',
+    '/api/users',
     '/api/location/cities'
 ];
 

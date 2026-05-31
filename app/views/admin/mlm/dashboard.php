@@ -21,7 +21,7 @@
                         <div class="col-md-3">
                             <div class="card bg-primary text-white">
                                 <div class="card-body">
-                                    <h5 class="card-title">Total Associates</h5>
+                                    <h5 class="card-title">Total users</h5>
                                     <h3>7</h3>
                                     <small>Active Network</small>
                                 </div>
@@ -30,7 +30,7 @@
                         <div class="col-md-3">
                             <div class="card bg-success text-white">
                                 <div class="card-body">
-                                    <h5 class="card-title">Active Associates</h5>
+                                    <h5 class="card-title">Active users</h5>
                                     <h3>6</h3>
                                     <small>1 Pending</small>
                                 </div>

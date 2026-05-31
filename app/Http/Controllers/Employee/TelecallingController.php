@@ -219,7 +219,7 @@ class TelecallingController extends BaseController
                                    COUNT(cl.id) as calls,
                                    SUM(CASE WHEN l.status = 'converted' THEN 1 ELSE 0 END) as conversions,
                                    (SUM(CASE WHEN l.status = 'converted' THEN 1 ELSE 0 END) / COUNT(*)) * 100 as conversion_rate
-                            FROM employees e
+                            FROM users e
                             JOIN call_logs cl ON e.id = cl.employee_id
                             JOIN leads l ON cl.lead_id = l.id
                             WHERE e.role = 'telecalling_executive'

@@ -2,7 +2,7 @@
 $page_title = $page_title ?? 'Employee Shifts - APS Dream Home';
 $page_heading = $page_heading ?? 'Employee Shift Assignments';
 $assignments = $assignments ?? [];
-$employees = $employees ?? [];
+$users = $users ?? [];
 $shift_types = $shift_types ?? [];
 $filters = $filters ?? [];
 ?>
@@ -18,8 +18,8 @@ $filters = $filters ?? [];
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-auto">
                     <select name="employee_id" class="form-select form-select-sm">
-                        <option value="">All Employees</option>
-                        <?php foreach ($employees as $emp): ?>
+                        <option value="">All users</option>
+                        <?php foreach ($users as $emp): ?>
                             <option value="<?= $emp['id'] ?>" <?= ($filters['employee_id'] ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>

@@ -9,7 +9,7 @@ class CareerApplication extends UnifiedModel
     public static $table = 'career_applications';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'career_id',
         'name',
         'email',

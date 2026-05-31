@@ -289,7 +289,7 @@ class AnalyticsController extends AdminController
             $result = $this->db->fetchOne($sql);
             $metrics['avg_commission_per_associate'] = round((float)($result['avg_commission'] ?? 0), 2);
 
-            // Active associates
+            // Active users
             $sql = "SELECT COUNT(*) as active_associates
                     FROM users
                     WHERE role = 'associate' AND status = 'active'";
@@ -600,7 +600,7 @@ class AnalyticsController extends AdminController
                             WHERE b.created_at BETWEEN ? AND ?
                             ORDER BY b.created_at DESC";
                     break;
-                case 'associates':
+                case 'users':
                     $sql = "SELECT u.*, COALESCE(SUM(mcl.amount), 0) as total_commission
                             FROM users u
                             LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'

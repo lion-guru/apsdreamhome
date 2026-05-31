@@ -8,7 +8,7 @@ class State extends Model
 {
     public static $table = 'states';
 
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'code',
         'status'

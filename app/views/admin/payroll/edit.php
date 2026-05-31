@@ -12,7 +12,7 @@
                         <label class="form-label">Employee</label>
                         <select name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
-                            <?php foreach ($employees ?? [] as $emp): ?>
+                            <?php foreach ($users ?? [] as $emp): ?>
                                 <option value="<?= $emp['id'] ?>" <?= ($emp['id'] == ($payroll['employee_id'] ?? 0)) ? 'selected' : '' ?>><?= htmlspecialchars($emp['name']) ?></option>
                             <?php endforeach; ?>
                         </select>

@@ -11,16 +11,16 @@ class MLMController extends AdminController
         return $this->render('admin/mlm/dashboard');
     }
     
-    public function associates() 
+    public function users() 
     {
-        $this->data['page_title'] = 'Associates';
-        return $this->render('admin/mlm/associates/index');
+        $this->data['page_title'] = 'users';
+        return $this->render('admin/mlm/users/index');
     }
     
     public function createAssociate() 
     {
         $this->data['page_title'] = 'Create Associate';
-        return $this->render('admin/mlm/associates/create');
+        return $this->render('admin/mlm/users/create');
     }
     
     public function commission() 

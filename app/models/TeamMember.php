@@ -9,7 +9,7 @@ class TeamMember extends UnifiedModel
     public static $table = 'team_members';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'position',
         'bio',

@@ -221,17 +221,17 @@ class AdminDashboardController extends AdminBaseController
         
         $stats = [];
         $stats['team_size'] = $this->db->fetch(
-            "SELECT COUNT(*) as count FROM employees WHERE manager_id = ?",
+            "SELECT COUNT(*) as count FROM users WHERE manager_id = ?",
             [$userId]
         )['count'] ?? 0;
         
         $stats['team_leads'] = $this->db->fetch(
-            "SELECT COUNT(*) as count FROM leads WHERE assigned_to IN (SELECT id FROM employees WHERE manager_id = ?)",
+            "SELECT COUNT(*) as count FROM leads WHERE assigned_to IN (SELECT id FROM users WHERE manager_id = ?)",
             [$userId]
         )['count'] ?? 0;
         
         $stats['team_sales'] = $this->db->fetch(
-            "SELECT COALESCE(SUM(amount), 0) as total FROM bookings WHERE assigned_to IN (SELECT id FROM employees WHERE manager_id = ?)",
+            "SELECT COALESCE(SUM(amount), 0) as total FROM bookings WHERE assigned_to IN (SELECT id FROM users WHERE manager_id = ?)",
             [$userId]
         )['total'] ?? 0;
         
@@ -239,7 +239,7 @@ class AdminDashboardController extends AdminBaseController
     }
 
     /**
-     * Get MLM stats for associates
+     * Get MLM stats for users
      */
     protected function getMLMStats(): array
     {
@@ -416,10 +416,10 @@ class AdminDashboardController extends AdminBaseController
     {
         $stats = [];
         
-        $stats['total_employees'] = $this->db->fetch("SELECT COUNT(*) as count FROM employees WHERE status = 'active'")['count'] ?? 0;
+        $stats['total_employees'] = $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE status = 'active'")['count'] ?? 0;
         $stats['on_leave'] = $this->db->fetch("SELECT COUNT(*) as count FROM employee_leaves WHERE status = 'approved' AND CURDATE() BETWEEN start_date AND end_date")['count'] ?? 0;
         $stats['new_hires'] = $this->db->fetch(
-            "SELECT COUNT(*) as count FROM employees WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
+            "SELECT COUNT(*) as count FROM users WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
         )['count'] ?? 0;
         
         return $stats;

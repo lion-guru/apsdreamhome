@@ -169,12 +169,12 @@ class ExportController extends BaseController
      */
     private function exportDownlineCSV($parent_id, $level)
     {
-        $associates = $this->db->fetchAll(
-            "SELECT id, name, post, business_volume, join_date, phone FROM associates WHERE parent_id = ? ORDER BY join_date DESC",
+        $users = $this->db->fetchAll(
+            "SELECT id, name, post, business_volume, join_date, phone FROM users WHERE parent_id = ? ORDER BY join_date DESC",
             [$parent_id]
         );
 
-        foreach ($associates as $row) {
+        foreach ($users as $row) {
             fputcsv($this->output, [
                 $level,
                 $row['name'],
@@ -204,11 +204,11 @@ class ExportController extends BaseController
         $to = $_GET['to'] ?? date('Y-m-d');
 
         try {
-            $associates = $this->db->fetchAll(
+            $users = $this->db->fetchAll(
                 "SELECT name, created_at as join_date, status FROM users WHERE parent_id = ? AND created_at >= ? AND created_at <= ? ORDER BY created_at DESC",
                 [$associate_id, $from, $to]
             );
-            foreach ($associates as $row) {
+            foreach ($users as $row) {
                 fputcsv($out, [$row['name'], $row['join_date'], ucfirst($row['status'] ?? 'active')]);
             }
         } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }

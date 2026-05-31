@@ -11,7 +11,7 @@ class LeadCustomFieldValue extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'lead_id',
         'field_id',
         'field_value',
@@ -23,7 +23,7 @@ class LeadCustomFieldValue extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'field_value' => 'array',
     ];
 

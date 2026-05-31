@@ -8,7 +8,7 @@ class InvestorDetail extends Model
 {
     public static $table = 'investor_details';
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'investment_range',
         'investment_type',

@@ -125,7 +125,7 @@ class PlottingService
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (plot_id) REFERENCES plots(id) ON DELETE CASCADE,
                 FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL,
-                FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE SET NULL,
+                FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE SET NULL,
                 FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->database->query($sql);
@@ -164,7 +164,7 @@ class PlottingService
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (booking_id) REFERENCES plot_bookings(id) ON DELETE CASCADE,
-                FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE SET NULL
+                FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->database->query($sql);
         } catch (\Exception $e) {
@@ -505,7 +505,7 @@ class PlottingService
                     JOIN plots p ON pb.plot_id = p.id
                     JOIN land_acquisitions la ON p.land_acquisition_id = la.id
                     LEFT JOIN users u ON pb.customer_id = u.id
-                    LEFT JOIN associates a ON pb.associate_id = a.id
+                    LEFT JOIN users a ON pb.associate_id = a.id
                     WHERE 1=1";
             $params = [];
 

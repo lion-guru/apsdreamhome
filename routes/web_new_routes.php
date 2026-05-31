@@ -23,14 +23,14 @@ $router->get('/admin/customer-lead/file-extractions', 'App\\Http\\Controllers\\A
 // Dashboard
 $router->get('/admin/hr', 'App\\Http\\Controllers\\Admin\\HRController@index');
 
-// Employees
-$router->get('/admin/hr/employees', 'App\\Http\\Controllers\\Admin\\HRController@employees');
-$router->get('/admin/hr/employees/create', 'App\\Http\\Controllers\\Admin\\HRController@createEmployee');
-$router->post('/admin/hr/employees/store', 'App\\Http\\Controllers\\Admin\\HRController@storeEmployee');
-$router->get('/admin/hr/employees/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@editEmployee');
-$router->post('/admin/hr/employees/update/{id}', 'App\\Http\\Controllers\\Admin\\HRController@updateEmployee');
-$router->get('/admin/hr/employees/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@deleteEmployee');
-$router->get('/admin/hr/employees/view/{id}', 'App\\Http\\Controllers\\Admin\\HRController@viewEmployee');
+// users
+$router->get('/admin/hr/users', 'App\\Http\\Controllers\\Admin\\HRController@users');
+$router->get('/admin/hr/users/create', 'App\\Http\\Controllers\\Admin\\HRController@createEmployee');
+$router->post('/admin/hr/users/store', 'App\\Http\\Controllers\\Admin\\HRController@storeEmployee');
+$router->get('/admin/hr/users/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@editEmployee');
+$router->post('/admin/hr/users/update/{id}', 'App\\Http\\Controllers\\Admin\\HRController@updateEmployee');
+$router->get('/admin/hr/users/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@deleteEmployee');
+$router->get('/admin/hr/users/view/{id}', 'App\\Http\\Controllers\\Admin\\HRController@viewEmployee');
 
 // Attendance
 $router->get('/admin/hr/attendance', 'App\\Http\\Controllers\\Admin\\HRController@attendance');

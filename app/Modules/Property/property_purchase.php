@@ -51,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::sanitize($_POST['submit_b
     }
 }
 
-// Get available agents for dropdown
-$agents = $db->query("SELECT id, name, email FROM users WHERE type = 'agent' AND status = 'active'")->fetchAll(\PDO::FETCH_ASSOC);
+// Get available users for dropdown
+$users = $db->query("SELECT id, name, email FROM users WHERE type = 'agent' AND status = 'active'")->fetchAll(\PDO::FETCH_ASSOC);
 
 // Check if user is MLM associate
-$associate = $db->fetch("SELECT * FROM associates WHERE user_id = :user_id", ['user_id' => $_SESSION['user_id']]);
+$associate = $db->fetch("SELECT * FROM users WHERE user_id = :user_id", ['user_id' => $_SESSION['user_id']]);
 $is_associate = $associate ? true : false;
 
 $page_title = "Property Purchase - " . h($property['title']);
@@ -287,7 +287,7 @@ $page_title = "Property Purchase - " . h($property['title']);
         </div>
     </div>
 
-    <!-- MLM Commission Info (for associates) -->
+    <!-- MLM Commission Info (for users) -->
     <?php if ($is_associate): ?>
         <div class="commission-info">
             <h4>🎯 MLM Commission Benefits</h4>
@@ -343,7 +343,7 @@ $page_title = "Property Purchase - " . h($property['title']);
                 <label class="form-label">Preferred Agent (Optional)</label>
                 <select name="agent_id" class="form-control">
                     <option value="">Select an agent</option>
-                    <?php foreach ($agents as $agent): ?>
+                    <?php foreach ($users as $agent): ?>
                         <option value="<?php echo $agent['id']; ?>">
                             <?php echo h($agent['name'] . ' - ' . $agent['email']); ?>
                         </option>

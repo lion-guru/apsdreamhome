@@ -11,7 +11,7 @@ namespace App\Models;
 class AgentReview extends Model {
     public static $table = 'agent_reviews';
     
-    protected array $fillable = [
+    protected $fillable = [
         'agent_id',
         'user_id',
         'rating',

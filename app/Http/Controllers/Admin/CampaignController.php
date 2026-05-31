@@ -38,7 +38,7 @@ class CampaignController extends AdminController
 
         $this->data['page_title'] = 'Create Campaign - APS Dream Home';
         $this->data['campaign_types'] = ['general', 'offer', 'promotion', 'announcement'];
-        $this->data['target_audiences'] = ['all', 'customers', 'agents', 'employees', 'admin'];
+        $this->data['target_audiences'] = ['all', 'users', 'users', 'users', 'admin'];
 
         $this->render('admin/campaigns/create');
     }
@@ -108,7 +108,7 @@ class CampaignController extends AdminController
         $this->data['campaign'] = $campaign;
         $this->data['page_title'] = 'Edit Campaign - APS Dream Home';
         $this->data['campaign_types'] = ['general', 'offer', 'promotion', 'announcement'];
-        $this->data['target_audiences'] = ['all', 'customers', 'agents', 'employees', 'admin'];
+        $this->data['target_audiences'] = ['all', 'users', 'users', 'users', 'admin'];
 
         $this->render('admin/campaigns/edit');
     }
@@ -325,13 +325,13 @@ class CampaignController extends AdminController
             $params = [];
 
             switch ($targetAudience) {
-                case 'customers':
+                case 'users':
                     $query .= " WHERE role = 'customer'";
                     break;
-                case 'agents':
+                case 'users':
                     $query .= " WHERE role = 'associate'";
                     break;
-                case 'employees':
+                case 'users':
                     $query .= " WHERE role = 'employee'";
                     break;
                 case 'admin':
@@ -494,9 +494,9 @@ class CampaignController extends AdminController
 
             $templates = $db->query("SELECT template_name, language FROM whatsapp_templates WHERE status = 'approved' ORDER BY template_name")->fetchAll(\PDO::FETCH_ASSOC);
 
-            $stats['customers'] = $db->query("SELECT COUNT(*) as cnt FROM users WHERE phone IS NOT NULL AND phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
+            $stats['users'] = $db->query("SELECT COUNT(*) as cnt FROM users WHERE phone IS NOT NULL AND phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
             $stats['leads'] = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE phone IS NOT NULL AND phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
-            $stats['associates'] = $db->query("SELECT COUNT(*) as cnt FROM mlm_associates ma JOIN users u ON ma.user_id = u.id WHERE u.phone IS NOT NULL AND u.phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
+            $stats['users'] = $db->query("SELECT COUNT(*) as cnt FROM mlm_associates ma JOIN users u ON ma.user_id = u.id WHERE u.phone IS NOT NULL AND u.phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $audience = $_POST['audience'] ?? '';
@@ -541,7 +541,7 @@ class CampaignController extends AdminController
             }
         } catch (\Exception $e) {
             $templates = $templates ?? [];
-            $stats = $stats ?? ['customers' => 0, 'leads' => 0, 'associates' => 0];
+            $stats = $stats ?? ['users' => 0, 'leads' => 0, 'users' => 0];
             $message_text = $message_text ?? ($_SERVER['REQUEST_METHOD'] === 'POST' ? 'Broadcast failed: ' . $e->getMessage() : '');
             $message_type = $message_type ?? 'danger';
         }

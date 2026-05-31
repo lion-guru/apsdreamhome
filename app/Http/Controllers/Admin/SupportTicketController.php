@@ -115,15 +115,15 @@ class SupportTicketController extends AdminController
     public function create()
     {
         try {
-            // Get customers and agents for dropdowns using models
-            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
-            $agents = \App\Models\User::getAgents('active', ['admin', 'support', 'associate'], ['id', 'name', 'email']);
+            // Get users and users for dropdowns using models
+            $users = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $users = \App\Models\User::getAgents('active', ['admin', 'support', 'associate'], ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Create Support Ticket - APS Dream Home',
                 'active_page' => 'support_tickets',
-                'customers' => $customers,
-                'agents' => $agents
+                'users' => $users,
+                'users' => $users
             ];
 
             return $this->render('admin/support_tickets/create', $data);
@@ -284,15 +284,15 @@ class SupportTicketController extends AdminController
             }
 
             // Get dropdown options using models
-            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
-            $agents = \App\Models\User::getAgents('active', ['admin', 'support', 'associate'], ['id', 'name', 'email']);
+            $users = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $users = \App\Models\User::getAgents('active', ['admin', 'support', 'associate'], ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Edit Support Ticket - APS Dream Home',
                 'active_page' => 'support_tickets',
                 'ticket' => $ticket,
-                'customers' => $customers,
-                'agents' => $agents
+                'users' => $users,
+                'users' => $users
             ];
 
             return $this->render('admin/support_tickets/edit', $data);

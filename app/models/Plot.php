@@ -10,7 +10,7 @@ class Plot extends Model
 {
     protected static $table = 'plots';
 
-    protected array $fillable = [
+    protected $fillable = [
         'project_id',
         'plot_number',
         'area_sqft',

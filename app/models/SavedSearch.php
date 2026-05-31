@@ -8,7 +8,7 @@ use App\Core\UnifiedModel;
 
 class SavedSearch extends UnifiedModel {
     public static $table = 'saved_searches';
-    protected array $fillable = ['user_id', 'name', 'filters', 'created_at'];
+    protected $fillable = ['user_id', 'name', 'filters', 'created_at'];
 
     public function getByUserId($userId) {
         return static::query()

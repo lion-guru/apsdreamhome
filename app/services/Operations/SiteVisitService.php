@@ -346,7 +346,7 @@ class SiteVisitService
             a.name as assigned_name, a.phone as assigned_phone
             FROM site_visits sv
             JOIN properties p ON sv.property_id = p.id
-            LEFT JOIN associates a ON sv.assigned_to = a.id
+            LEFT JOIN users a ON sv.assigned_to = a.id
             WHERE {$whereClause}
             ORDER BY visit_date, visit_time";
         

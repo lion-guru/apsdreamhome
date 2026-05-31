@@ -17,7 +17,7 @@ class LeadNote extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'lead_id',
         'content',
         'is_private',
@@ -29,7 +29,7 @@ class LeadNote extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'is_private' => 'boolean',
     ];
 

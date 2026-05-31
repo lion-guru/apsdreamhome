@@ -98,7 +98,7 @@ class AIDashboardController extends BaseController
     private function getActiveModelsCount()
     {
         try {
-            // Use AIManager to get active agents count or fallback
+            // Use AIManager to get active users count or fallback
             if (method_exists($this->aiManager, 'getAgentsByStatus')) {
                 $activeAgents = $this->aiManager->getAgentsByStatus('active');
                 return count($activeAgents);

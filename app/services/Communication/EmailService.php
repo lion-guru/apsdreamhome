@@ -435,7 +435,7 @@ class EmailService
                 <li>Browse premium properties in Uttar Pradesh</li>
                 <li>Save your favorite listings</li>
                 <li>Book site visits</li>
-                <li>Connect with our agents</li>
+                <li>Connect with our users</li>
             </ul>
             
             <center>

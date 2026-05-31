@@ -25,14 +25,14 @@ class AssociateController extends BaseController
     public function dashboard()
     {
         try {
-            $associates = $this->associateService->getAllAssociates();
+            $users = $this->associateService->getAllAssociates();
             $activeAssociates = $this->associateService->getActiveAssociates();
             
             $data = [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
-                'associates' => $associates,
+                'users' => $users,
                 'active_associates' => $activeAssociates,
-                'total_associates' => count($associates),
+                'total_associates' => count($users),
                 'active_count' => count($activeAssociates)
             ];
             
@@ -48,17 +48,17 @@ class AssociateController extends BaseController
     public function index()
     {
         try {
-            $associates = $this->associateService->getAllAssociates();
+            $users = $this->associateService->getAllAssociates();
             
             $data = [
-                'page_title' => 'Associates - APS Dream Home',
-                'associates' => $associates,
-                'total_count' => count($associates)
+                'page_title' => 'users - APS Dream Home',
+                'users' => $users,
+                'total_count' => count($users)
             ];
             
             $this->render('associate/index', $data);
         } catch (Exception $e) {
-            $this->renderError('Error loading associates', $e->getMessage());
+            $this->renderError('Error loading users', $e->getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ class AssociateController extends BaseController
     {
         $data = [
             'page_title' => 'Create Associate - APS Dream Home',
-            'action' => '/associates/store'
+            'action' => '/users/store'
         ];
         
         $this->render('associate/create', $data);
@@ -99,7 +99,7 @@ class AssociateController extends BaseController
                 $associateId = $this->associateService->createAssociate($data);
                 
                 if ($associateId) {
-                    header('Location: /associates');
+                    header('Location: /users');
                     exit;
                 } else {
                     throw new Exception('Failed to create associate');
@@ -126,7 +126,7 @@ class AssociateController extends BaseController
             $data = [
                 'page_title' => 'Edit Associate - APS Dream Home',
                 'associate' => $associate,
-                'action' => '/associates/update/' . $id
+                'action' => '/users/update/' . $id
             ];
             
             $this->render('associate/edit', $data);
@@ -159,7 +159,7 @@ class AssociateController extends BaseController
                 $result = $this->associateService->updateAssociate($id, $data);
                 
                 if ($result) {
-                    header('Location: /associates');
+                    header('Location: /users');
                     exit;
                 } else {
                     throw new Exception('Failed to update associate');
@@ -179,7 +179,7 @@ class AssociateController extends BaseController
             $result = $this->associateService->deleteAssociate($id);
             
             if ($result) {
-                header('Location: /associates');
+                header('Location: /users');
                 exit;
             } else {
                 throw new Exception('Failed to delete associate');
@@ -261,7 +261,7 @@ class AssociateController extends BaseController
                 $result = $this->associateService->updateAssociateStatus($id, $status);
                 
                 if ($result) {
-                    header('Location: /associates');
+                    header('Location: /users');
                     exit;
                 } else {
                     throw new Exception('Failed to update associate status');

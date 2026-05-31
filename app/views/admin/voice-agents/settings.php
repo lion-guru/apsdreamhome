@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0"><i class="fas fa-cog me-2"></i> Voice Agent Settings</h3>
         <div>
-            <a href="<?= BASE_URL ?>/admin/voice-agents/dashboard" class="btn btn-outline-primary">
+            <a href="<?= BASE_URL ?>/admin/voice-users/dashboard" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left"></i> Dashboard
             </a>
         </div>
@@ -11,15 +11,15 @@
     <div class="row">
         <!-- Agent Cards -->
         <div class="col-md-7 mb-4">
-            <h5 class="fw-bold mb-3"><i class="fas fa-robot me-1"></i> AI Calling Agents</h5>
+            <h5 class="fw-bold mb-3"><i class="fas fa-robot me-1"></i> AI Calling users</h5>
 
-            <?php if (empty($agents)): ?>
+            <?php if (empty($users)): ?>
             <div class="text-center py-4">
                 <i class="fas fa-robot fa-3x text-muted mb-3"></i>
-                <p class="text-muted">No agents configured</p>
+                <p class="text-muted">No users configured</p>
             </div>
             <?php else: ?>
-            <?php foreach ($agents as $agent): ?>
+            <?php foreach ($users as $agent): ?>
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="row align-items-center">
@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="col-auto">
-                            <form method="POST" action="<?= BASE_URL ?>/admin/voice-agents/settings" class="d-inline">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/settings" class="d-inline">
                                 <input type="hidden" name="agent_id" value="<?= htmlspecialchars($agent['agent_id']) ?>">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="small"><?= (int)($agent['current_calls'] ?? 0) ?>/<?= (int)($agent['max_concurrent_calls'] ?? 5) ?></span>
@@ -87,7 +87,7 @@
                         $vSettings = json_decode($voice_settings['settings'], true) ?? [];
                     }
                     ?>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-agents/settings">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/settings">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Provider</label>
                             <select name="voice_provider" class="form-select">
@@ -114,7 +114,7 @@
                                         $sel = ($vSettings['default_script'] ?? '') === $s['script_code'] ? 'selected' : '';
                                         echo "<option value=\"{$s['script_code']}\" $sel>" . htmlspecialchars($s['script_name']) . "</option>";
                                     }
-                                } catch (\Exception $e) { error_log('voice-agents/settings scripts dropdown: ' . $e->getMessage()); }
+                                } catch (\Exception $e) { error_log('voice-users/settings scripts dropdown: ' . $e->getMessage()); }
                                 ?>
                             </select>
                         </div>
@@ -135,7 +135,7 @@
                         $sSettings = json_decode($schedule_settings['settings'], true) ?? [];
                     }
                     ?>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-agents/settings">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/settings">
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label small fw-bold">Calling Hours Start</label>

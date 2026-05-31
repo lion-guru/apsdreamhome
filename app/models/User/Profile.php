@@ -6,9 +6,9 @@ use App\Core\Database\Model;
 
 class CustomerProfile extends Model
 {
-    public static $table = 'customer_profiles';
+    public static $table = 'users';
 
-    protected array $fillable = [
+    protected $fillable = [
         'customer_number',
         'user_id',
         'name',

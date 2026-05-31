@@ -2,7 +2,7 @@
 
 namespace App\Services\AI\VoiceAgents;
 
-use App\Services\AI\Agents\BaseAgent;
+use App\Services\AI\users\BaseAgent;
 use Exception;
 
 class LeadFollowUpAgent extends BaseAgent

@@ -33,11 +33,11 @@ class WorkDistributionController extends BaseController
             $requiredRole = $taskData['required_role'] ?? null;
             $priority = $taskData['priority'] ?? 'medium';
             
-            // 3. Get available employees in department
+            // 3. Get available users in department
             $availableEmployees = $this->getAvailableEmployees($department, $requiredRole);
             
             if (empty($availableEmployees)) {
-                throw new Exception("No available employees found for this task");
+                throw new Exception("No available users found for this task");
             }
             
             // 4. Calculate workload balance
@@ -75,14 +75,14 @@ class WorkDistributionController extends BaseController
     }
 
     /**
-     * Get available employees for task assignment
+     * Get available users for task assignment
      */
     private function getAvailableEmployees($department, $requiredRole = null)
     {
         $query = "SELECT e.id, e.name, e.role, e.department, 
                         e.workload_capacity, e.current_workload,
                         e.skills, e.performance_score
-                 FROM employees e
+                 FROM users e
                  WHERE e.status = 'active'
                  AND e.department = ?
                  AND e.current_workload < e.workload_capacity";
@@ -100,13 +100,13 @@ class WorkDistributionController extends BaseController
     }
 
     /**
-     * Calculate workloads for employees
+     * Calculate workloads for users
      */
-    private function calculateWorkloads($employees)
+    private function calculateWorkloads($users)
     {
         $workloads = [];
         
-        foreach ($employees as $employee) {
+        foreach ($users as $employee) {
             // Get current active tasks count
             $taskQuery = "SELECT COUNT(*) as active_tasks
                           FROM tasks
@@ -132,20 +132,20 @@ class WorkDistributionController extends BaseController
     /**
      * Match skills with task requirements
      */
-    private function matchSkills($taskData, $employees)
+    private function matchSkills($taskData, $users)
     {
         $skillMatch = [];
         $requiredSkills = $taskData['required_skills'] ?? [];
         
         if (empty($requiredSkills)) {
-            // If no specific skills required, all employees have equal match
-            foreach ($employees as $employee) {
+            // If no specific skills required, all users have equal match
+            foreach ($users as $employee) {
                 $skillMatch[$employee['id']] = 100;
             }
             return $skillMatch;
         }
         
-        foreach ($employees as $employee) {
+        foreach ($users as $employee) {
             $employeeSkills = json_decode($employee['skills'] ?? '[]', true);
             $matchingSkills = array_intersect($requiredSkills, $employeeSkills);
             
@@ -162,12 +162,12 @@ class WorkDistributionController extends BaseController
     /**
      * Find best employee for task assignment
      */
-    private function findBestEmployee($employees, $workloads, $skillMatch, $priority)
+    private function findBestEmployee($users, $workloads, $skillMatch, $priority)
     {
         $bestEmployee = null;
         $bestScore = -1;
         
-        foreach ($employees as $employee) {
+        foreach ($users as $employee) {
             $employeeId = $employee['id'];
             
             // Calculate assignment score
@@ -187,7 +187,7 @@ class WorkDistributionController extends BaseController
             
             // Priority adjustment
             if ($priority === 'high') {
-                // For high priority, prefer employees with better performance
+                // For high priority, prefer users with better performance
                 $score += ($performanceFactor - 50) * 0.3;
             }
             
@@ -261,7 +261,7 @@ class WorkDistributionController extends BaseController
     private function sendEmailNotification($employeeId, $taskData, $taskId)
     {
         // Get employee email
-        $employeeQuery = "SELECT name, email FROM employees WHERE id = ?";
+        $employeeQuery = "SELECT name, email FROM users WHERE id = ?";
         $employee = $this->db->fetchOne($employeeQuery, [$employeeId]);
         
         if ($employee && !empty($employee['email'])) {
@@ -294,7 +294,7 @@ class WorkDistributionController extends BaseController
      */
     private function getEmployeeName($employeeId)
     {
-        $query = "SELECT name FROM employees WHERE id = ? LIMIT 1";
+        $query = "SELECT name FROM users WHERE id = ? LIMIT 1";
         $result = $this->db->fetchOne($query, [$employeeId]);
         return $result['name'] ?? 'Unknown';
     }
@@ -352,7 +352,7 @@ class WorkDistributionController extends BaseController
                         COUNT(DISTINCT wd.assigned_to) as unique_employees
                     FROM work_distribution_logs wd
                     JOIN tasks t ON wd.task_id = t.id
-                    JOIN employees e ON wd.assigned_to = e.id
+                    JOIN users e ON wd.assigned_to = e.id
                     WHERE {$dateFilter} {$whereClause}
                     GROUP BY wd.department, e.role
                     ORDER BY total_assignments DESC";
@@ -370,9 +370,9 @@ class WorkDistributionController extends BaseController
     public function rebalanceWorkloads($department)
     {
         try {
-            // Get employees with high workloads
+            // Get users with high workloads
             $highWorkloadQuery = "SELECT e.id, e.name, e.current_workload, e.workload_capacity
-                                 FROM employees e
+                                 FROM users e
                                  WHERE e.department = ?
                                  AND e.status = 'active'
                                  AND (e.current_workload / e.workload_capacity) > 0.8
@@ -380,9 +380,9 @@ class WorkDistributionController extends BaseController
             
             $overloadedEmployees = $this->db->fetchAll($highWorkloadQuery, [$department]);
             
-            // Get employees with low workloads
+            // Get users with low workloads
             $lowWorkloadQuery = "SELECT e.id, e.name, e.current_workload, e.workload_capacity
-                                FROM employees e
+                                FROM users e
                                 WHERE e.department = ?
                                 AND e.status = 'active'
                                 AND (e.current_workload / e.workload_capacity) < 0.5
@@ -392,7 +392,7 @@ class WorkDistributionController extends BaseController
             
             $rebalancingActions = [];
             
-            // Reassign tasks from overloaded to underloaded employees
+            // Reassign tasks from overloaded to underloaded users
             foreach ($overloadedEmployees as $overloaded) {
                 $tasksToReassign = min(2, $overloaded['current_workload'] - $overloaded['workload_capacity']);
                 
@@ -433,7 +433,7 @@ class WorkDistributionController extends BaseController
                                 'to_employee' => $underloaded['name']
                             ];
                             
-                            // Notify employees
+                            // Notify users
                             $this->notifyReassignment($task['id'], $overloaded['id'], $underloaded['id']);
                         }
                     }
@@ -459,7 +459,7 @@ class WorkDistributionController extends BaseController
      */
     private function updateEmployeeWorkload($employeeId)
     {
-        $query = "UPDATE employees 
+        $query = "UPDATE users 
                   SET current_workload = (
                       SELECT COUNT(*) 
                       FROM tasks 
@@ -484,7 +484,7 @@ class WorkDistributionController extends BaseController
     }
 
     /**
-     * Notify employees of task reassignment
+     * Notify users of task reassignment
      */
     private function notifyReassignment($taskId, $fromEmployee, $toEmployee)
     {

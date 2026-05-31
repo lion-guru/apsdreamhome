@@ -21,7 +21,7 @@ $isAssign = ($mode ?? '') === 'assign';
                         <label class="form-label">Employee <span class="text-danger">*</span></label>
                         <select name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
-                            <?php foreach ($employees ?? [] as $emp): ?>
+                            <?php foreach ($users ?? [] as $emp): ?>
                                 <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>

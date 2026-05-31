@@ -14,7 +14,7 @@ class AIEcosystemManager {
     }
 
     public function seedAgents() {
-        $agents = [
+        $users = [
             ['Lead Generator', 'lead_gen', ['lead_scoring', 'intent_analysis', 'automated_followup']],
             ['EMI Collector', 'emi_collector', ['billing_reminders', 'payment_processing', 'emi_tracking']],
             ['Market Researcher', 'researcher', ['web_scraping', 'competitor_analysis', 'price_tracking']],
@@ -24,7 +24,7 @@ class AIEcosystemManager {
             ['Telecaller AI', 'telecalling', ['voice_synthesis', 'lead_qualification', 'appointment_scheduling']]
         ];
 
-        foreach ($agents as $agent) {
+        foreach ($users as $agent) {
             $name = $agent[0];
             $type = $agent[1];
             $capabilities = json_encode($agent[2]);
@@ -221,7 +221,7 @@ class AIEcosystemManager {
     }
 
     public function populateOpenSourceTools() {
-        // First seed agents
+        // First seed users
         $this->seedAgents();
 
         $tools = [

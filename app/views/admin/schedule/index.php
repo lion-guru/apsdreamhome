@@ -30,7 +30,7 @@ $day_of_week = $day_of_week ?? date('w');
             <div class="card border-0 shadow-sm bg-primary text-white">
                 <div class="card-body text-center py-3">
                     <h5 class="mb-0"><?= $total_employees ?></h5>
-                    <small>Total Employees</small>
+                    <small>Total users</small>
                 </div>
             </div>
         </div>

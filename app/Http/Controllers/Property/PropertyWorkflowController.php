@@ -477,7 +477,7 @@ class PropertyController extends BaseController
     private function getUserAssignedAgent(int $userId): ?array
     {
         $sql = "SELECT a.*, u.name, u.email, u.phone 
-                FROM agents a
+                FROM users a
                 JOIN users u ON a.user_id = u.id
                 JOIN customer_assignments ca ON a.user_id = ca.agent_id
                 WHERE ca.customer_id = :user_id AND ca.status = 'active'

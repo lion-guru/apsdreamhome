@@ -196,13 +196,13 @@ class CampaignService
                 case 'all':
                     $query = "SELECT id FROM users WHERE status = 'active'";
                     break;
-                case 'customers':
+                case 'users':
                     $query = "SELECT id FROM users WHERE role = 'customer' AND status = 'active'";
                     break;
-                case 'agents':
+                case 'users':
                     $query = "SELECT id FROM users WHERE role IN ('agent', 'associate') AND status = 'active'";
                     break;
-                case 'employees':
+                case 'users':
                     $query = "SELECT id FROM users WHERE role = 'employee' AND status = 'active'";
                     break;
                 default:

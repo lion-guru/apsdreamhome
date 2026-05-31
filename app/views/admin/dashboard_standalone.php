@@ -48,7 +48,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="card stat-card">
             <div class="stat-icon i"><i class="fas fa-network-wired"></i></div>
             <div>
-                <div class="stat-label">Associates</div>
+                <div class="stat-label">users</div>
                 <div class="stat-value"><?php echo number_format($stats['total_associates'] ?? 0); ?></div>
             </div>
         </div>
@@ -70,7 +70,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="card stat-card">
             <div class="stat-icon p"><i class="fas fa-user-tie"></i></div>
             <div>
-                <div class="stat-label">Employees</div>
+                <div class="stat-label">users</div>
                 <div class="stat-value"><?php echo number_format($stats['total_employees'] ?? 0); ?></div>
             </div>
         </div>

@@ -12,8 +12,8 @@ $page_title = $page_title ?? 'Employee Documents';
             <div class="col-md-4">
                 <label class="form-label small">Employee</label>
                 <select name="employee_id" class="form-select" onchange="this.form.submit()">
-                    <option value="">All Employees</option>
-                    <?php foreach ($employees ?? [] as $emp): ?>
+                    <option value="">All users</option>
+                    <?php foreach ($users ?? [] as $emp): ?>
                         <option value="<?= $emp['id'] ?>" <?= ($emp_id ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name'] ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -78,7 +78,7 @@ $page_title = $page_title ?? 'Employee Documents';
                         <label class="form-label">Employee</label>
                         <select name="employee_id" class="form-select" required>
                             <option value="">Select</option>
-                            <?php foreach ($employees ?? [] as $emp): ?>
+                            <?php foreach ($users ?? [] as $emp): ?>
                                 <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>

@@ -5,8 +5,8 @@ $e = $employee ?? [];
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0"><i class="fas fa-id-card me-2"></i>Employee Profile</h4>
     <div>
-        <a href="<?= BASE_URL ?>/admin/hr/employees/edit/<?= $e['id'] ?? 0 ?>" class="btn btn-primary"><i class="fas fa-edit me-2"></i>Edit</a>
-        <a href="<?= BASE_URL ?>/admin/hr/employees" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
+        <a href="<?= BASE_URL ?>/admin/hr/users/edit/<?= $e['id'] ?? 0 ?>" class="btn btn-primary"><i class="fas fa-edit me-2"></i>Edit</a>
+        <a href="<?= BASE_URL ?>/admin/hr/users" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
     </div>
 </div>
 

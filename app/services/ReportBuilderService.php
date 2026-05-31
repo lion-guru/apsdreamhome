@@ -66,7 +66,7 @@ class ReportBuilderService
             DATE(created_at) as date,
             COUNT(*) as bookings,
             SUM(amount) as revenue,
-            COUNT(DISTINCT customer_id) as customers
+            COUNT(DISTINCT customer_id) as users
             FROM bookings 
             WHERE DATE(created_at) BETWEEN ? AND ?
             AND status = 'confirmed'
@@ -220,7 +220,7 @@ class ReportBuilderService
             COALESCE(SUM(CASE WHEN c.status = 'paid' THEN c.amount ELSE 0 END), 0) as paid_amount,
             COALESCE(SUM(CASE WHEN c.status != 'paid' THEN c.amount ELSE 0 END), 0) as pending_amount
             FROM commissions c
-            JOIN associates a ON c.associate_id = a.id
+            JOIN users a ON c.associate_id = a.id
             WHERE {$where}
             GROUP BY c.associate_id
             ORDER BY total_amount DESC";

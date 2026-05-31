@@ -13,16 +13,16 @@
 
 #### **Successfully Converted Files:**
 1. ✅ `app/views/team/dashboard.blade.php` → `app/views/team/dashboard.php`
-2. ✅ `app/views/employees/tasks/index.blade.php` → `app/views/employees/tasks/index.php`
-3. ✅ `app/views/employees/leaves/index.blade.php` → `app/views/employees/leaves/index.php`
-4. ✅ `app/views/employees/attendance/index.blade.php` → `app/views/employees/attendance/index.php`
-5. ✅ `app/views/employees/dashboard.blade.php` → `app/views/employees/dashboard.php`
-6. ✅ `app/views/employees/profile.blade.php` → `app/views/employees/profile.php`
+2. ✅ `app/views/users/tasks/index.blade.php` → `app/views/users/tasks/index.php`
+3. ✅ `app/views/users/leaves/index.blade.php` → `app/views/users/leaves/index.php`
+4. ✅ `app/views/users/attendance/index.blade.php` → `app/views/users/attendance/index.php`
+5. ✅ `app/views/users/dashboard.blade.php` → `app/views/users/dashboard.php`
+6. ✅ `app/views/users/profile.blade.php` → `app/views/users/profile.php`
 7. ✅ `app/views/components/mobile-table.blade.php` → `app/views/components/mobile-table.php`
 8. ✅ `app/views/components/mobile-dashboard-card.blade.php` → `app/views/components/mobile-dashboard-card.php`
 9. ✅ `app/views/auth/register.blade.php` → `app/views/auth/register.php`
 10. ✅ `app/views/auth/logout.blade.php` → `app/views/auth/logout.php`
-11. ✅ `app/views/agents/dashboard.blade.php` → `app/views/agents/dashboard.php`
+11. ✅ `app/views/users/dashboard.blade.php` → `app/views/users/dashboard.php`
 
 ### 🛡️ **SECURITY ENHANCEMENTS:**
 - **XSS Prevention:** All `{{ }}` converted to `<?php echo htmlspecialchars(); ?>`

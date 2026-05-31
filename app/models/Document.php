@@ -508,7 +508,7 @@ class Document extends Model
         return $this->query(
             "SELECT ed.*, e.name as employee_name
              FROM employee_documents ed
-             LEFT JOIN employees e ON ed.employee_id = e.id
+             LEFT JOIN users e ON ed.employee_id = e.id
              WHERE ed.expires_at IS NOT NULL
              AND ed.expires_at <= ?
              AND ed.expires_at >= CURDATE()

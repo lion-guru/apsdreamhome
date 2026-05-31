@@ -14,9 +14,9 @@
                         <div class="mb-3">
                             <label class="form-label">Audience <span class="text-danger">*</span></label>
                             <select name="audience" class="form-select" required>
-                                <option value="all_customers">All Customers</option>
+                                <option value="all_customers">All users</option>
                                 <option value="all_leads">All Leads</option>
-                                <option value="all_associates">All Associates</option>
+                                <option value="all_associates">All users</option>
                                 <option value="recent_inquiries">Recent Inquiries (30 days)</option>
                                 <option value="custom">Custom Phone Numbers</option>
                             </select>
@@ -55,9 +55,9 @@
                     </ul>
                     <hr>
                     <?php if (isset($stats)): ?>
-                        <p class="small mb-1">Total Customers: <strong><?= $stats['customers'] ?? 0 ?></strong></p>
+                        <p class="small mb-1">Total users: <strong><?= $stats['users'] ?? 0 ?></strong></p>
                         <p class="small mb-1">Total Leads: <strong><?= $stats['leads'] ?? 0 ?></strong></p>
-                        <p class="small mb-0">Total Associates: <strong><?= $stats['associates'] ?? 0 ?></strong></p>
+                        <p class="small mb-0">Total users: <strong><?= $stats['users'] ?? 0 ?></strong></p>
                     <?php endif; ?>
                 </div>
             </div>

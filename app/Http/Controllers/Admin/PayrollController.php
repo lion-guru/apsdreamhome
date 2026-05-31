@@ -33,13 +33,13 @@ class PayrollController extends AdminController
         try {
             $empStmt = $this->db->prepare("SELECT id, name, email FROM users WHERE role = 'employee' ORDER BY name ASC");
             $empStmt->execute();
-            $employees = $empStmt->fetchAll(\PDO::FETCH_ASSOC);
+            $users = $empStmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            $employees = [];
+            $users = [];
         }
         return $this->render('admin/payroll/create', [
             'page_title' => 'Add Payroll Record',
-            'employees' => $employees
+            'users' => $users
         ]);
     }
 
@@ -82,14 +82,14 @@ class PayrollController extends AdminController
         try {
             $empStmt = $this->db->prepare("SELECT id, name, email FROM users WHERE role = 'employee' ORDER BY name ASC");
             $empStmt->execute();
-            $employees = $empStmt->fetchAll(\PDO::FETCH_ASSOC);
+            $users = $empStmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            $employees = [];
+            $users = [];
         }
         return $this->render('admin/payroll/edit', [
             'page_title' => 'Edit Payroll Record',
             'payroll' => $payroll,
-            'employees' => $employees
+            'users' => $users
         ]);
     }
 

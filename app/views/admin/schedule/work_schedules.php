@@ -1,7 +1,7 @@
 <?php
 $page_title = $page_title ?? 'Work Schedules - APS Dream Home';
 $page_heading = $page_heading ?? 'Work Schedules';
-$employees = $employees ?? [];
+$users = $users ?? [];
 $departments = $departments ?? [];
 $department = $department ?? '';
 $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -13,14 +13,14 @@ $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','
     </div>
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
-            <?php if (empty($employees)): ?>
+            <?php if (empty($users)): ?>
                 <div class="text-center py-5 text-muted"><i class="fas fa-calendar fa-3x mb-3"></i><p>No work schedules defined yet.</p></div>
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead><tr><th>Employee</th><th>Department</th><th>Work Days</th><th>Shift</th><th>Status</th><th>Actions</th></tr></thead>
                         <tbody>
-                        <?php foreach ($employees as $emp): ?>
+                        <?php foreach ($users as $emp): ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($emp['name'] ?? '') ?></strong></td>
                                 <td><?= htmlspecialchars($emp['department'] ?? '') ?></td>

@@ -50,20 +50,20 @@ class OLNService
                 [$limit]
             );
 
-            $agents = $this->db->fetchAll(
+            $users = $this->db->fetchAll(
                 "SELECT * FROM ai_calling_agents WHERE is_active = 1 ORDER BY current_load ASC"
             );
 
-            if (empty($agents)) {
-                return ['assigned' => 0, 'message' => 'No active agents available'];
+            if (empty($users)) {
+                return ['assigned' => 0, 'message' => 'No active users available'];
             }
 
             $assigned = 0;
             $agentIndex = 0;
-            $agentCount = count($agents);
+            $agentCount = count($users);
 
             foreach ($unassigned as $lead) {
-                $agent = $agents[$agentIndex % $agentCount];
+                $agent = $users[$agentIndex % $agentCount];
                 $agentIndex++;
 
                 $this->db->execute(

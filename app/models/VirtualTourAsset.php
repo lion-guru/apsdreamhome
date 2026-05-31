@@ -9,7 +9,7 @@ class VirtualTourAsset extends UnifiedModel
     public static $table = 'virtual_tour_assets';
     public static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'tour_id',
         'file_path',
         'title',

@@ -9,7 +9,7 @@ namespace App\Models;
 class TrafficStat extends Model {
     public static $table = 'traffic_stats';
     
-    protected array $fillable = [
+    protected $fillable = [
         'source',
         'medium',
         'campaign',

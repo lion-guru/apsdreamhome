@@ -329,10 +329,10 @@ class AdvancedAnalyticsService
         $typeStmt->execute([$dateFrom, $dateTo]);
         $byType = $typeStmt->fetchAll(\PDO::FETCH_ASSOC);
         
-        // Top agents
+        // Top users
         $agentSql = "SELECT a.name, COUNT(b.id) as bookings, SUM(b.total_amount) as revenue
             FROM bookings b
-            JOIN associates a ON b.agent_id = a.id
+            JOIN users a ON b.agent_id = a.id
             WHERE b.status = 'confirmed' AND DATE(b.created_at) BETWEEN ? AND ?
             GROUP BY a.id ORDER BY revenue DESC LIMIT 5";
         $agentStmt = $this->database->prepare($agentSql);
@@ -375,14 +375,14 @@ class AdvancedAnalyticsService
      */
     private function getTopPerformers(string $dateFrom, string $dateTo): array
     {
-        // Top agents by sales
+        // Top users by sales
         $agentSql = "SELECT 
             a.id,
             a.name,
             COUNT(b.id) as bookings,
             SUM(b.total_amount) as revenue,
             AVG(b.total_amount) as avg_deal_size
-            FROM associates a
+            FROM users a
             LEFT JOIN bookings b ON a.id = b.agent_id 
                 AND b.status = 'confirmed' 
                 AND DATE(b.created_at) BETWEEN ? AND ?
@@ -393,7 +393,7 @@ class AdvancedAnalyticsService
         
         $agentStmt = $this->database->prepare($agentSql);
         $agentStmt->execute([$dateFrom, $dateTo]);
-        $agents = $agentStmt->fetchAll(\PDO::FETCH_ASSOC);
+        $users = $agentStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Top properties
         $propSql = "SELECT 
@@ -423,7 +423,7 @@ class AdvancedAnalyticsService
         $properties = $propStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return [
-            'agents' => $agents,
+            'users' => $users,
             'properties' => $properties
         ];
     }

@@ -74,7 +74,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch leads: ' . $e->getMessage(), 500);
         }
     }
@@ -134,7 +134,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response, 201);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to create lead: ' . $e->getMessage(), 500);
         }
     }
@@ -160,7 +160,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch lead: ' . $e->getMessage(), 500);
         }
     }
@@ -209,7 +209,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to update lead: ' . $e->getMessage(), 500);
         }
     }
@@ -241,7 +241,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to delete lead: ' . $e->getMessage(), 500);
         }
     }
@@ -292,7 +292,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to add note: ' . $e->getMessage(), 500);
         }
     }
@@ -366,7 +366,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to upload file: ' . $e->getMessage(), 500);
         }
     }
@@ -424,7 +424,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to update status: ' . $e->getMessage(), 500);
         }
     }
@@ -482,7 +482,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to assign lead: ' . $e->getMessage(), 500);
         }
     }
@@ -547,7 +547,7 @@ class ApiLeadController extends BaseController
                             'to' => $userId,
                         ]);
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $errors[] = "Failed to assign lead $leadId: " . $e->getMessage();
                 }
             }
@@ -563,7 +563,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to bulk assign leads: ' . $e->getMessage(), 500);
         }
     }
@@ -574,40 +574,30 @@ class ApiLeadController extends BaseController
     public function getStats()
     {
         try {
+            $db = \App\Core\Database\Database::getInstance();
+            $conn = $db->getConnection();
+
             // Get total leads count
-            $totalLeads = count(Lead::all()->toArray());
+            $stmt = $conn->query("SELECT COUNT(*) as cnt FROM leads");
+            $totalLeads = $stmt->fetch(\PDO::FETCH_OBJ)->cnt ?? 0;
 
             // Get leads by status
             $leadsByStatus = [];
-            $statuses = LeadStatus::active();
-            foreach ($statuses as $status) {
-                $count = count(array_filter(Lead::all()->toArray(), function ($lead) use ($status) {
-                    return $lead->status === $status->name;
-                }));
-                if ($count > 0) {
-                    $leadsByStatus[$status->name] = $count;
-                }
+            $stmt = $conn->query("SELECT status, COUNT(*) as cnt FROM leads WHERE status IS NOT NULL AND status != '' GROUP BY status");
+            foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $row) {
+                $leadsByStatus[$row->status] = (int)$row->cnt;
             }
 
             // Get leads by source
             $leadsBySource = [];
-            $sources = LeadSource::active();
-            foreach ($sources as $source) {
-                $count = count(array_filter(Lead::all()->toArray(), function ($lead) use ($source) {
-                    return $lead->source === $source->name;
-                }));
-                if ($count > 0) {
-                    $leadsBySource[$source->name] = $count;
-                }
+            $stmt = $conn->query("SELECT source, COUNT(*) as cnt FROM leads WHERE source IS NOT NULL AND source != '' GROUP BY source");
+            foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $row) {
+                $leadsBySource[$row->source] = (int)$row->cnt;
             }
 
             // Get recent activities (last 10)
-            $recentActivities = [];
-            $activities = LeadActivity::all()->toArray();
-            usort($activities, function ($a, $b) {
-                return strtotime($b->created_at ?? '2020-01-01') - strtotime($a->created_at ?? '2020-01-01');
-            });
-            $recentActivities = array_slice($activities, 0, 10);
+            $stmt = $conn->query("SELECT * FROM lead_activities ORDER BY created_at DESC LIMIT 10");
+            $recentActivities = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
             $response = [
                 'success' => true,
@@ -620,7 +610,7 @@ class ApiLeadController extends BaseController
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch statistics: ' . $e->getMessage(), 500);
         }
     }
@@ -631,18 +621,26 @@ class ApiLeadController extends BaseController
     public function getLookupData()
     {
         try {
+            $db = \App\Core\Database\Database::getInstance();
+            $conn = $db->getConnection();
+
+            $statuses = $conn->query("SELECT * FROM lead_statuses ORDER BY sort_order ASC")->fetchAll(\PDO::FETCH_OBJ);
+            $sources = $conn->query("SELECT * FROM lead_sources ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
+            $tags = $conn->query("SELECT * FROM lead_tags ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
+            $users = $conn->query("SELECT id, name, email, role FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
+
             $response = [
                 'success' => true,
                 'data' => [
-                    'statuses' => LeadStatus::active(),
-                    'sources' => LeadSource::active(),
-                    'tags' => LeadTag::all(),
-                    'users' => User::all(),
+                    'statuses' => $statuses,
+                    'sources' => $sources,
+                    'tags' => $tags,
+                    'users' => $users,
                 ],
             ];
 
             $this->jsonResponse($response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch lookup data: ' . $e->getMessage(), 500);
         }
     }
@@ -652,66 +650,32 @@ class ApiLeadController extends BaseController
      */
     private function buildLeadQuery($search, $status, $source, $assignedTo, $tag, $dateFrom, $dateTo, $sortField, $sortDirection, $currentUser)
     {
-        $leads = Lead::all()->toArray();
+        $db = \App\Core\Database\Database::getInstance();
+        $conn = $db->getConnection();
+        $where = [];
+        $params = [];
 
-        // Apply search filter
         if ($search) {
-            $leads = array_filter($leads, function ($lead) use ($search) {
-                return stripos($lead->first_name ?? '', $search) !== false ||
-                    stripos($lead->last_name ?? '', $search) !== false ||
-                    stripos($lead->email ?? '', $search) !== false ||
-                    stripos($lead->phone ?? '', $search) !== false;
-            });
+            $where[] = "(name LIKE ? OR email LIKE ? OR phone LIKE ?)";
+            $s = "%$search%";
+            $params = array_merge($params, [$s, $s, $s]);
         }
+        if ($status) { $where[] = "status = ?"; $params[] = $status; }
+        if ($source) { $where[] = "source = ?"; $params[] = $source; }
+        if ($assignedTo) { $where[] = "assigned_to = ?"; $params[] = $assignedTo; }
+        if ($dateFrom) { $where[] = "created_at >= ?"; $params[] = $dateFrom; }
+        if ($dateTo) { $where[] = "created_at <= ?"; $params[] = $dateTo; }
 
-        // Apply status filter
-        if ($status) {
-            $leads = array_filter($leads, function ($lead) use ($status) {
-                return $lead->status === $status;
-            });
+        $sql = "SELECT * FROM leads";
+        if ($where) $sql .= " WHERE " . implode(" AND ", $where);
+        $allowedSort = ['created_at', 'updated_at', 'first_name', 'last_name', 'email', 'status', 'source'];
+        if ($sortField && in_array($sortField, $allowedSort)) {
+            $dir = ($sortDirection === 'desc') ? 'DESC' : 'ASC';
+            $sql .= " ORDER BY $sortField $dir";
         }
-
-        // Apply source filter
-        if ($source) {
-            $leads = array_filter($leads, function ($lead) use ($source) {
-                return $lead->source === $source;
-            });
-        }
-
-        // Apply assigned to filter
-        if ($assignedTo) {
-            $leads = array_filter($leads, function ($lead) use ($assignedTo) {
-                return $lead->assigned_to == $assignedTo;
-            });
-        }
-
-        // Apply date filters
-        if ($dateFrom) {
-            $leads = array_filter($leads, function ($lead) use ($dateFrom) {
-                return ($lead->created_at ?? '') >= $dateFrom;
-            });
-        }
-
-        if ($dateTo) {
-            $leads = array_filter($leads, function ($lead) use ($dateTo) {
-                return ($lead->created_at ?? '') <= $dateTo;
-            });
-        }
-
-        // Apply sorting
-        if ($sortField && $sortDirection) {
-            usort($leads, function ($a, $b) use ($sortField, $sortDirection) {
-                $valA = $a->$sortField ?? '';
-                $valB = $b->$sortField ?? '';
-
-                if ($sortDirection === 'desc') {
-                    return $valB <=> $valA;
-                }
-                return $valA <=> $valB;
-            });
-        }
-
-        return array_values($leads);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
     }
 
     /**
@@ -721,32 +685,31 @@ class ApiLeadController extends BaseController
     {
         $data = [
             'id' => $lead->id,
-            'first_name' => $lead->first_name,
-            'last_name' => $lead->last_name,
-            'email' => $lead->email,
-            'phone' => $lead->phone,
-            'status' => $lead->status,
-            'source' => $lead->source,
-            'assigned_to' => $lead->assigned_to,
-            'created_at' => $lead->created_at,
-            'updated_at' => $lead->updated_at,
+            'name' => $lead->name ?? '',
+            'email' => $lead->email ?? '',
+            'phone' => $lead->phone ?? '',
+            'status' => $lead->status ?? '',
+            'source' => $lead->source ?? '',
+            'assigned_to' => $lead->assigned_to ?? '',
+            'created_at' => $lead->created_at ?? '',
+            'updated_at' => $lead->updated_at ?? '',
         ];
 
         if ($fullDetails) {
-            $data['company'] = $lead->company;
-            $data['job_title'] = $lead->job_title;
-            $data['website'] = $lead->website;
-            $data['address'] = $lead->address;
-            $data['city'] = $lead->city;
-            $data['state'] = $lead->state;
-            $data['postal_code'] = $lead->postal_code;
-            $data['country'] = $lead->country;
-            $data['description'] = $lead->description;
-            $data['estimated_value'] = $lead->estimated_value;
-            $data['rating'] = $lead->rating;
-            $data['last_contact_date'] = $lead->last_contact_date;
-            $data['next_followup_date'] = $lead->next_followup_date;
-            $data['custom_fields'] = $lead->custom_fields;
+            $data['company'] = $lead->company ?? '';
+            $data['address'] = $lead->address ?? '';
+            $data['city'] = $lead->city ?? '';
+            $data['state'] = $lead->state ?? '';
+            $data['pincode'] = $lead->pincode ?? '';
+            $data['notes'] = $lead->notes ?? '';
+            $data['estimated_value'] = $lead->estimated_value ?? '';
+            $data['budget'] = $lead->budget ?? '';
+            $data['property_interest'] = $lead->property_interest ?? '';
+            $data['location_preference'] = $lead->location_preference ?? '';
+            $data['last_activity_date'] = $lead->last_activity_date ?? '';
+            $data['next_activity_date'] = $lead->next_activity_date ?? '';
+            $data['lead_score'] = $lead->lead_score ?? 0;
+            $data['priority'] = $lead->priority ?? 'medium';
         }
 
         return $data;
@@ -774,7 +737,7 @@ class ApiLeadController extends BaseController
     /**
      * Send JSON response
      */
-    protected function jsonResponse($data, $statusCode = 200)
+    public function jsonResponse($data, $statusCode = 200)
     {
         http_response_code($statusCode);
         header('Content-Type: application/json');

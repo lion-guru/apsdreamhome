@@ -9,7 +9,7 @@ namespace App\Models;
 class Notification extends Model {
     public static $table = 'notifications';
     
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'type',
         'message',

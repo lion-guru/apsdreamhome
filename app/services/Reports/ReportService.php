@@ -41,8 +41,8 @@ class ReportService
                         s.status
                     FROM sales s
                     LEFT JOIN properties p ON s.property_id = p.id
-                    LEFT JOIN associates a ON s.associate_id = a.id
-                    LEFT JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = s.customer_id)
+                    LEFT JOIN users a ON s.associate_id = a.id
+                    LEFT JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = s.customer_id)
                     WHERE s.sale_date BETWEEN :start_date AND :end_date
                     ORDER BY s.sale_date DESC";
             
@@ -155,7 +155,7 @@ class ReportService
                         COALESCE(SUM(s.commission_amount), 0) as total_commission,
                         AVG(s.sale_amount) as average_sale,
                         MAX(s.sale_date) as last_sale_date
-                    FROM associates a
+                    FROM users a
                     LEFT JOIN sales s ON a.id = s.associate_id 
                         AND s.sale_date BETWEEN :start_date AND :end_date
                     GROUP BY a.id
@@ -329,7 +329,7 @@ class ReportService
                 'data' => [
                     'sales' => $salesData,
                     'properties' => $propertyData,
-                    'customers' => $customerData,
+                    'users' => $customerData,
                     'trends' => $trendsData
                 ]
             ];

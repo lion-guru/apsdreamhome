@@ -59,7 +59,7 @@
                             </h2>
                             <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    APS Dream Home has been serving customers in Gorakhpur and surrounding areas for over 8 years. We have established ourselves as a trusted name in real estate with a proven track record of successful projects and satisfied customers.
+                                    APS Dream Home has been serving users in Gorakhpur and surrounding areas for over 8 years. We have established ourselves as a trusted name in real estate with a proven track record of successful projects and satisfied users.
                                 </div>
                             </div>
                         </div>
@@ -243,7 +243,7 @@
                             </h2>
                             <div id="collapse13" class="accordion-collapse collapse" aria-labelledby="heading13" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    We provide comprehensive after-sales support including property handover assistance, defect rectification (within warranty period), maintenance guidance, and ongoing customer support. Our relationship with customers continues long after the sale is completed.
+                                    We provide comprehensive after-sales support including property handover assistance, defect rectification (within warranty period), maintenance guidance, and ongoing customer support. Our relationship with users continues long after the sale is completed.
                                 </div>
                             </div>
                         </div>

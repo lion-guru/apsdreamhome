@@ -8,7 +8,7 @@ namespace App\Models;
 class MortgageInquiry extends Model {
     public static $table = 'mortgage_inquiries';
     
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'phone',

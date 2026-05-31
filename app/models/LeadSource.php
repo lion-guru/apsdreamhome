@@ -17,7 +17,7 @@ class LeadSource extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'description',
         'is_active',
@@ -31,7 +31,7 @@ class LeadSource extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'is_active' => 'boolean',
         'sort_order' => 'integer',
     ];

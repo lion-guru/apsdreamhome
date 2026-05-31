@@ -8,7 +8,7 @@ class LeadTag extends Model
 {
     protected static $table = 'lead_tags';
 
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'color',
         'created_by',

@@ -23,7 +23,7 @@ class AssociateController
     }
 
     /**
-     * Show associates list
+     * Show users list
      */
     public function index($request)
     {
@@ -44,9 +44,9 @@ class AssociateController
         $result = $this->associateService->getAllAssociates($page, $limit, $filters);
 
         $data = [
-            'title' => 'Associates - APS Dream Home',
+            'title' => 'users - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
-            'associates' => $result['data'],
+            'users' => $result['data'],
             'pagination' => [
                 'current_page' => $result['current_page'],
                 'last_page' => $result['last_page'],
@@ -60,7 +60,7 @@ class AssociateController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('business/associates/index', $data);
+        return $this->viewRenderer->render('business/users/index', $data);
     }
 
     /**
@@ -79,7 +79,7 @@ class AssociateController
 
         if (!$id) {
             $_SESSION['errors'] = ['Associate ID is required'];
-            $this->redirect('/associates');
+            $this->redirect('/users');
             return;
         }
 
@@ -87,7 +87,7 @@ class AssociateController
 
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/associates');
+            $this->redirect('/users');
             return;
         }
 
@@ -104,7 +104,7 @@ class AssociateController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('business/associates/show', $data);
+        return $this->viewRenderer->render('business/users/show', $data);
     }
 
     /**
@@ -129,7 +129,7 @@ class AssociateController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('business/associates/create', $data);
+        return $this->viewRenderer->render('business/users/create', $data);
     }
 
     /**
@@ -159,11 +159,11 @@ class AssociateController
 
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
-            $this->redirect('/associates');
+            $this->redirect('/users');
         } else {
             $_SESSION['errors'] = $result['errors'] ?? [$result['message']];
             $_SESSION['old_input'] = $data;
-            $this->redirect('/associates/create');
+            $this->redirect('/users/create');
         }
 
         return $result;
@@ -185,7 +185,7 @@ class AssociateController
 
         if (!$id) {
             $_SESSION['errors'] = ['Associate ID is required'];
-            $this->redirect('/associates');
+            $this->redirect('/users');
             return;
         }
 
@@ -193,7 +193,7 @@ class AssociateController
 
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/associates');
+            $this->redirect('/users');
             return;
         }
 
@@ -208,7 +208,7 @@ class AssociateController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('business/associates/edit', $data);
+        return $this->viewRenderer->render('business/users/edit', $data);
     }
 
     /**
@@ -246,11 +246,11 @@ class AssociateController
 
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
-            $this->redirect("/associates/$id");
+            $this->redirect("/users/$id");
         } else {
             $_SESSION['errors'] = $result['errors'] ?? [$result['message']];
             $_SESSION['old_input'] = $data;
-            $this->redirect("/associates/$id/edit");
+            $this->redirect("/users/$id/edit");
         }
 
         return $result;
@@ -286,7 +286,7 @@ class AssociateController
             $_SESSION['errors'] = [$result['message']];
         }
 
-        $this->redirect('/associates');
+        $this->redirect('/users');
 
         return $result;
     }
@@ -338,7 +338,7 @@ class AssociateController
 
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/associates');
+            $this->redirect('/users');
             return;
         }
 
@@ -354,7 +354,7 @@ class AssociateController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('business/associates/performance', $data);
+        return $this->viewRenderer->render('business/users/performance', $data);
     }
 
     /**
@@ -377,7 +377,7 @@ class AssociateController
     }
 
     /**
-     * Export associates (AJAX)
+     * Export users (AJAX)
      */
     public function exportAssociates($request)
     {
@@ -398,7 +398,7 @@ class AssociateController
     }
 
     /**
-     * Search associates (AJAX)
+     * Search users (AJAX)
      */
     public function searchAssociates($request)
     {
@@ -421,13 +421,13 @@ class AssociateController
         }
 
         try {
-            $associates = \App\Models\Associate::search($query, $limit);
+            $users = \App\Models\Associate::search($query, $limit);
 
             return [
                 'success' => true,
                 'data' => array_map(function ($associate) {
                     return $associate->toArray();
-                }, $associates)
+                }, $users)
             ];
         } catch (\Exception $e) {
             return [
@@ -467,7 +467,7 @@ class AssociateController
             $_SESSION['errors'] = [$result['message']];
         }
 
-        $this->redirect('/associates');
+        $this->redirect('/users');
 
         return $result;
     }
@@ -502,7 +502,7 @@ class AssociateController
             $_SESSION['errors'] = [$result['message']];
         }
 
-        $this->redirect('/associates');
+        $this->redirect('/users');
 
         return $result;
     }

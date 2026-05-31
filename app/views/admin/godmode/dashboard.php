@@ -394,10 +394,10 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                     <div class="mb-3">
                         <small class="text-muted">Quick Filters:</small>
                         <div class="mt-2">
-                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('customer')">Customers</span>
-                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('associate')">Associates</span>
-                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('agent')">Agents</span>
-                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('employee')">Employees</span>
+                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('customer')">users</span>
+                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('associate')">users</span>
+                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('agent')">users</span>
+                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('employee')">users</span>
                         </div>
                     </div>
                     

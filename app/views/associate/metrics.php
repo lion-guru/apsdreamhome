@@ -3,7 +3,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home me-1"></i>Home</a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate">Associates</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate">users</a></li>
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate/show/<?= $associate['id'] ?? '' ?>"><?= htmlspecialchars($associate['name'] ?? '') ?></a></li>
             <li class="breadcrumb-item active" aria-current="page">Metrics</li>
         </ol>
@@ -97,7 +97,7 @@
         <div class="card-body text-center py-5">
             <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
             <h5 class="text-muted">Associate Not Found</h5>
-            <a href="<?= BASE_URL ?>/associate" class="btn btn-primary mt-2">Back to Associates</a>
+            <a href="<?= BASE_URL ?>/associate" class="btn btn-primary mt-2">Back to users</a>
         </div>
     </div>
     <?php endif; ?>

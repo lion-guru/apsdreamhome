@@ -3,12 +3,12 @@ $page_title = $page_title ?? 'Add Employee';
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Add Employee</h4>
-    <a href="<?= BASE_URL ?>/admin/hr/employees" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
+    <a href="<?= BASE_URL ?>/admin/hr/users" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
 </div>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">
-        <form method="POST" action="<?= BASE_URL ?>/admin/hr/employees/store">
+        <form method="POST" action="<?= BASE_URL ?>/admin/hr/users/store">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
@@ -46,7 +46,7 @@ $page_title = $page_title ?? 'Add Employee';
             </div>
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create Employee</button>
-                <a href="<?= BASE_URL ?>/admin/hr/employees" class="btn btn-secondary ms-2">Cancel</a>
+                <a href="<?= BASE_URL ?>/admin/hr/users" class="btn btn-secondary ms-2">Cancel</a>
             </div>
         </form>
     </div>

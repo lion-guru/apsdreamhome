@@ -35,7 +35,7 @@ $report = $report ?? [
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Associates
+                                Total users
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?= count($report['network_growth']) > 0 ? array_sum(array_column($report['network_growth'], 'new_associates')) : 0 ?>
@@ -195,7 +195,7 @@ $report = $report ?? [
                     <thead>
                         <tr>
                             <th>Period</th>
-                            <th>New Associates</th>
+                            <th>New users</th>
                             <th>New Referrals</th>
                             <th>Total Commissions</th>
                         </tr>
@@ -227,14 +227,14 @@ new Chart(networkGrowthCtx, {
     data: {
         labels: networkGrowthData.map(d => d.month),
         datasets: [{
-            label: 'Total Associates',
+            label: 'Total users',
             data: networkGrowthData.map(d => d.total_associates),
             borderColor: '#4e73df',
             backgroundColor: 'rgba(78, 115, 223, 0.1)',
             tension: 0.4,
             fill: true
         }, {
-            label: 'New Associates',
+            label: 'New users',
             data: networkGrowthData.map(d => d.new_associates),
             borderColor: '#1cc88a',
             backgroundColor: 'rgba(28, 200, 138, 0.1)',

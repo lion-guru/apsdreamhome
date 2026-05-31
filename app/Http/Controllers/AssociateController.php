@@ -545,7 +545,7 @@ class AssociateController extends BaseController
     }
 
     /**
-     * List Property page for Associates
+     * List Property page for users
      */
     public function listProperty()
     {

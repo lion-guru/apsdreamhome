@@ -3,7 +3,7 @@
  * Testimonials Index View
  */
 $page_title = $page_title ?? 'Testimonials - APS Dream Home';
-$page_description = $page_description ?? 'Read what our satisfied customers have to say about APS Dream Home';
+$page_description = $page_description ?? 'Read what our satisfied users have to say about APS Dream Home';
 $testimonials = $testimonials ?? [];
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
@@ -59,8 +59,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <!-- Hero Section -->
     <section class="bg-primary text-white py-5">
         <div class="container text-center">
-            <h1 class="display-5 fw-bold mb-3">What Our Customers Say</h1>
-            <p class="lead">Real stories from real customers who found their dream home with us</p>
+            <h1 class="display-5 fw-bold mb-3">What Our users Say</h1>
+            <p class="lead">Real stories from real users who found their dream home with us</p>
         </div>
     </section>
 

@@ -4,7 +4,7 @@ $e = $employee ?? [];
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Edit Employee</h4>
-    <a href="<?= BASE_URL ?>/admin/hr/employees" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
+    <a href="<?= BASE_URL ?>/admin/hr/users" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
 </div>
 
 <div class="card border-0 shadow-sm">
@@ -12,7 +12,7 @@ $e = $employee ?? [];
         <?php if (!$e): ?>
             <div class="alert alert-danger">Employee not found</div>
         <?php else: ?>
-        <form method="POST" action="<?= BASE_URL ?>/admin/hr/employees/update/<?= $e['id'] ?>">
+        <form method="POST" action="<?= BASE_URL ?>/admin/hr/users/update/<?= $e['id'] ?>">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
@@ -53,7 +53,7 @@ $e = $employee ?? [];
             </div>
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Update Employee</button>
-                <a href="<?= BASE_URL ?>/admin/hr/employees" class="btn btn-secondary ms-2">Cancel</a>
+                <a href="<?= BASE_URL ?>/admin/hr/users" class="btn btn-secondary ms-2">Cancel</a>
             </div>
         </form>
         <?php endif; ?>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Employees Management - APS Dream Home Admin
+ * users Management - APS Dream Home Admin
  */
 
 @@session_start();
@@ -10,8 +10,8 @@ if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['role']) || $_SESSION['ro
     exit();
 }
 
-$page_title = 'Employees Management';
-$page_description = 'Manage employees and team members';
+$page_title = 'users Management';
+$page_description = 'Manage users and team members';
 
 
 ?>
@@ -19,8 +19,8 @@ $page_description = 'Manage employees and team members';
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="h3 mb-2">Employees Management</h1>
-            <p class="text-muted">Manage employees and team members</p>
+            <h1 class="h3 mb-2">users Management</h1>
+            <p class="text-muted">Manage users and team members</p>
         </div>
     </div>
 
@@ -41,7 +41,7 @@ $page_description = 'Manage employees and team members';
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted mb-1">Total Employees</h6>
+                            <h6 class="text-muted mb-1">Total users</h6>
                             <h3 class="mb-0">45</h3>
                         </div>
                     </div>

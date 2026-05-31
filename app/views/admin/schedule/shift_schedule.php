@@ -5,7 +5,7 @@ $week_start = $week_start ?? '';
 $week_end = $week_end ?? '';
 $week_offset = $week_offset ?? 0;
 $week_dates = $week_dates ?? [];
-$employees = $employees ?? [];
+$users = $users ?? [];
 $schedule_grid = $schedule_grid ?? [];
 $shift_types = $shift_types ?? [];
 $department_id = $department_id ?? '';
@@ -32,10 +32,10 @@ $department_id = $department_id ?? '';
                 </tr>
             </thead>
             <tbody>
-                <?php if (empty($employees)): ?>
-                    <tr><td colspan="8" class="text-center text-muted py-4">No employees found.</td></tr>
+                <?php if (empty($users)): ?>
+                    <tr><td colspan="8" class="text-center text-muted py-4">No users found.</td></tr>
                 <?php else: ?>
-                    <?php foreach ($employees as $emp): ?>
+                    <?php foreach ($users as $emp): ?>
                         <tr>
                             <td><strong><?= htmlspecialchars($emp['name'] ?? '') ?></strong><br><small class="text-muted"><?= htmlspecialchars($emp['department'] ?? '') ?></small></td>
                             <?php foreach ($week_dates as $wd): ?>

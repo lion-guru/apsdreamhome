@@ -146,15 +146,15 @@ class BookingController extends AdminController
             $bookings = $stmt->fetchAll();
 
             // Get filter options
-            $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
-            $associates = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
 
             $data = [
                 'page_title' => 'Bookings - APS Dream Home',
                 'bookings' => $bookings,
                 'filters' => $filters,
-                'customers' => $customers,
-                'associates' => $associates,
+                'users' => $users,
+                'users' => $users,
                 'total' => $total,
                 'total_pages' => ceil($total / $filters['per_page']),
                 'current_page' => $filters['page']
@@ -259,15 +259,15 @@ class BookingController extends AdminController
 
             // Get form data
             $properties = $this->db->fetchAll("SELECT id, title, price FROM properties ORDER BY title");
-            $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
-            $associates = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
 
             $data = [
                 'page_title' => 'Edit Booking - APS Dream Home',
                 'booking' => $booking,
                 'properties' => $properties,
-                'customers' => $customers,
-                'associates' => $associates
+                'users' => $users,
+                'users' => $users
             ];
 
             return $this->render('admin/bookings/edit', $data);
@@ -617,19 +617,19 @@ class BookingController extends AdminController
         // Using direct query for simple list or use model method if available
         $properties = $this->db->fetchAll("SELECT id, title, price FROM properties WHERE status = 'available' ORDER BY title");
 
-        // Fetch customers (users with role='customer')
+        // Fetch users (users with role='customer')
         // Using direct query to be efficient
-        $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
+        $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
 
-        // Fetch associates (users with role='associate' and status='active')
+        // Fetch users (users with role='associate' and status='active')
         // For associate assignment in booking
-        $associates = $this->db->fetchAll("SELECT id, name, email, mlm_rank FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
+        $users = $this->db->fetchAll("SELECT id, name, email, mlm_rank FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
 
         return $this->render('admin/bookings/create', [
             'page_title' => $this->mlSupport->translate('Add New Booking') . ' - ' . $this->getConfig('app_name'),
             'properties' => $properties,
-            'customers' => $customers,
-            'associates' => $associates
+            'users' => $users,
+            'users' => $users
         ]);
     }
 

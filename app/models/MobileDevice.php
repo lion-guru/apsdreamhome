@@ -9,7 +9,7 @@ namespace App\Models;
 class MobileDevice extends Model {
     public static $table = 'mobile_devices';
     
-    protected array $fillable = [
+    protected $fillable = [
         'device_user',
         'push_token',
         'platform',

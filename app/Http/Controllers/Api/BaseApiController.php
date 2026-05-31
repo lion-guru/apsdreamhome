@@ -15,6 +15,14 @@ class BaseApiController extends BaseController
     }
 
     /**
+     * API controllers skip CSRF protection (use token/auth instead)
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
+    /**
      * Handle CORS for API requests
      */
     protected function handleCors()

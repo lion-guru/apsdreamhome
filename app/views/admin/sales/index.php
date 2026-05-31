@@ -5,7 +5,7 @@ $page = $page ?? 1;
 $per_page = $per_page ?? 20;
 $total_pages = $total_pages ?? 1;
 $filters = $filters ?? ['search' => '', 'status' => '', 'associate_id' => ''];
-$associates = $associates ?? [];
+$users = $users ?? [];
 $page_title = $page_title ?? 'Sales Management';
 ?>
 
@@ -71,8 +71,8 @@ $page_title = $page_title ?? 'Sales Management';
                 </div>
                 <div class="col-md-3">
                     <select name="associate_id" class="form-select">
-                        <option value="">All Associates</option>
-                        <?php foreach ($associates as $associate): ?>
+                        <option value="">All users</option>
+                        <?php foreach ($users as $associate): ?>
                             <option value="<?= $associate['id'] ?>" <?= $filters['associate_id'] == $associate['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($associate['name'] ?? '') ?>
                             </option>

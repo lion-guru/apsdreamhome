@@ -13,7 +13,7 @@ class Visit extends Model
     protected static $table = 'property_visits';
     protected static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'customer_id',
         'property_id',
         'associate_id',
@@ -36,7 +36,7 @@ class Visit extends Model
     {
         $sql = "SELECT v.*, u.name as customer_name, p.title as property_title 
                 FROM property_visits v
-                JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = v.customer_id)
+                JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = v.customer_id)
                 JOIN properties p ON v.property_id = p.id
                 WHERE v.visit_date >= NOW() AND v.status != 'cancelled'
                 ORDER BY v.visit_date ASC LIMIT ?";

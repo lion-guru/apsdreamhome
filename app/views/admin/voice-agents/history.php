@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0"><i class="fas fa-history me-2"></i> Call History</h3>
         <div>
-            <a href="<?= BASE_URL ?>/admin/voice-agents/dashboard" class="btn btn-outline-primary">
+            <a href="<?= BASE_URL ?>/admin/voice-users/dashboard" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left"></i> Dashboard
             </a>
         </div>
@@ -11,7 +11,7 @@
     <!-- Filter Bar -->
     <div class="card mb-4">
         <div class="card-body">
-            <form method="GET" action="<?= BASE_URL ?>/admin/voice-agents/history">
+            <form method="GET" action="<?= BASE_URL ?>/admin/voice-users/history">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label small">Date From</label>
@@ -24,7 +24,7 @@
                     <div class="col-md-2">
                         <label class="form-label small">Agent</label>
                         <select name="agent" class="form-select">
-                            <option value="">All Agents</option>
+                            <option value="">All users</option>
                             <?php foreach ($agents_list as $a): ?>
                             <option value="<?= htmlspecialchars($a['agent_id']) ?>" <?= ($filters['agent'] ?? '') === $a['agent_id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($a['agent_name']) ?>
@@ -50,7 +50,7 @@
                 </div>
                 <div class="mt-2">
                     <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter me-1"></i> Filter</button>
-                    <a href="<?= BASE_URL ?>/admin/voice-agents/history" class="btn btn-outline-secondary btn-sm">Clear</a>
+                    <a href="<?= BASE_URL ?>/admin/voice-users/history" class="btn btn-outline-secondary btn-sm">Clear</a>
                 </div>
             </form>
         </div>
@@ -127,7 +127,7 @@
                 <ul class="pagination pagination-sm mb-0 justify-content-center">
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                     <li class="page-item <?= $i === ($page ?? 1) ? 'active' : '' ?>">
-                        <a class="page-link" href="<?= BASE_URL ?>/admin/voice-agents/history?page=<?= $i ?><?= !empty($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '' ?><?= !empty($_GET['agent']) ? '&agent=' . urlencode($_GET['agent']) : '' ?><?= !empty($_GET['date_from']) ? '&date_from=' . urlencode($_GET['date_from']) : '' ?><?= !empty($_GET['date_to']) ? '&date_to=' . urlencode($_GET['date_to']) : '' ?><?= !empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?>"><?= $i ?></a>
+                        <a class="page-link" href="<?= BASE_URL ?>/admin/voice-users/history?page=<?= $i ?><?= !empty($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '' ?><?= !empty($_GET['agent']) ? '&agent=' . urlencode($_GET['agent']) : '' ?><?= !empty($_GET['date_from']) ? '&date_from=' . urlencode($_GET['date_from']) : '' ?><?= !empty($_GET['date_to']) ? '&date_to=' . urlencode($_GET['date_to']) : '' ?><?= !empty($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '' ?>"><?= $i ?></a>
                     </li>
                     <?php endfor; ?>
                 </ul>

@@ -178,7 +178,7 @@
             <div class="col-lg-8">
                 <h2 class="mb-4">Ready to Invest in Your Future?</h2>
                 <p class="lead mb-4">
-                    Join thousands of happy customers who have found their dream properties with APS Dream Homes.
+                    Join thousands of happy users who have found their dream properties with APS Dream Homes.
                     Our colonies offer the perfect blend of modern living and investment opportunities.
                 </p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">

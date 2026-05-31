@@ -14,7 +14,7 @@ class VoiceAgentAdminController extends AdminController
     public function index()
     {
         $this->requireAdmin();
-        $this->redirect('/admin/voice-agents/dashboard');
+        $this->redirect('/admin/voice-users/dashboard');
     }
 
     public function dashboard()
@@ -57,14 +57,14 @@ class VoiceAgentAdminController extends AdminController
         }
 
         try {
-            $agents = $this->db->fetchAll("
+            $users = $this->db->fetchAll("
                 SELECT agent_name, total_calls_made, successful_calls, 
                        avg_call_duration, conversion_rate, status
                 FROM ai_calling_agents 
                 ORDER BY total_calls_made DESC
             ");
         } catch (\Exception $e) {
-            $agents = [];
+            $users = [];
         }
 
         try {
@@ -81,8 +81,8 @@ class VoiceAgentAdminController extends AdminController
             $recentCalls = [];
         }
 
-        return $this->render('admin/voice-agents/dashboard', [
-            'page_title' => 'Voice Agents Dashboard',
+        return $this->render('admin/voice-users/dashboard', [
+            'page_title' => 'Voice users Dashboard',
             'today_calls' => $todayCalls,
             'connected' => $connected,
             'interested' => $interested,
@@ -90,7 +90,7 @@ class VoiceAgentAdminController extends AdminController
             'conversion_rate' => $conversionRate,
             'call_trend' => $callTrend,
             'lead_sources' => $leadSources,
-            'agents' => $agents,
+            'users' => $users,
             'recent_calls' => $recentCalls,
         ]);
     }
@@ -165,7 +165,7 @@ class VoiceAgentAdminController extends AdminController
             $agentsList = [];
         }
 
-        return $this->render('admin/voice-agents/history', [
+        return $this->render('admin/voice-users/history', [
             'page_title' => 'Call History',
             'calls' => $calls,
             'agents_list' => $agentsList,
@@ -211,7 +211,7 @@ class VoiceAgentAdminController extends AdminController
             $leadsForSchedule = [];
         }
 
-        return $this->render('admin/voice-agents/schedule', [
+        return $this->render('admin/voice-users/schedule', [
             'page_title' => 'Call Schedule',
             'today_count' => $today,
             'pending_count' => $pending,
@@ -236,7 +236,7 @@ class VoiceAgentAdminController extends AdminController
             $scripts = [];
         }
 
-        return $this->render('admin/voice-agents/scripts', [
+        return $this->render('admin/voice-users/scripts', [
             'page_title' => 'Call Scripts',
             'scripts' => $scripts,
         ]);
@@ -285,7 +285,7 @@ class VoiceAgentAdminController extends AdminController
             $totalExtracted = 0; $verified = 0; $converted = 0; $pendingReview = 0; $leads = [];
         }
 
-        return $this->render('admin/voice-agents/extracted-leads', [
+        return $this->render('admin/voice-users/extracted-leads', [
             'page_title' => 'Extracted Leads',
             'total_extracted' => $totalExtracted,
             'verified' => $verified,
@@ -327,13 +327,13 @@ class VoiceAgentAdminController extends AdminController
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error saving settings: ' . $e->getMessage();
             }
-            $this->redirect('/admin/voice-agents/settings');
+            $this->redirect('/admin/voice-users/settings');
         }
 
         try {
-            $agents = $this->db->fetchAll("SELECT * FROM ai_calling_agents ORDER BY agent_name");
+            $users = $this->db->fetchAll("SELECT * FROM ai_calling_agents ORDER BY agent_name");
         } catch (\Exception $e) {
-            $agents = [];
+            $users = [];
         }
 
         try {
@@ -348,9 +348,9 @@ class VoiceAgentAdminController extends AdminController
             $scheduleSettings = ['settings' => '{}'];
         }
 
-        return $this->render('admin/voice-agents/settings', [
+        return $this->render('admin/voice-users/settings', [
             'page_title' => 'Voice Agent Settings',
-            'agents' => $agents,
+            'users' => $users,
             'voice_settings' => $voiceSettings,
             'schedule_settings' => $scheduleSettings,
         ]);
@@ -398,7 +398,7 @@ class VoiceAgentAdminController extends AdminController
             $settings = [];
         }
 
-        return $this->render('admin/voice-agents/oln', [
+        return $this->render('admin/voice-users/oln', [
             'page_title' => 'OLN - Online Lead Nurturing',
             'stage_new' => $newLeads,
             'stage_contacted' => $contacted,
@@ -477,7 +477,7 @@ class VoiceAgentAdminController extends AdminController
 
         if (!$scheduleId || !$newDate) {
             $_SESSION['error'] = 'Invalid schedule data';
-            $this->redirect('/admin/voice-agents/schedule');
+            $this->redirect('/admin/voice-users/schedule');
         }
 
         try {
@@ -487,7 +487,7 @@ class VoiceAgentAdminController extends AdminController
             $_SESSION['error'] = 'Error rescheduling: ' . $e->getMessage();
         }
 
-        $this->redirect('/admin/voice-agents/schedule');
+        $this->redirect('/admin/voice-users/schedule');
     }
 
     public function cancelSchedule()
@@ -497,7 +497,7 @@ class VoiceAgentAdminController extends AdminController
         $scheduleId = (int)($_POST['schedule_id'] ?? 0);
         if (!$scheduleId) {
             $_SESSION['error'] = 'Invalid schedule ID';
-            $this->redirect('/admin/voice-agents/schedule');
+            $this->redirect('/admin/voice-users/schedule');
         }
 
         try {
@@ -507,7 +507,7 @@ class VoiceAgentAdminController extends AdminController
             $_SESSION['error'] = 'Error cancelling: ' . $e->getMessage();
         }
 
-        $this->redirect('/admin/voice-agents/schedule');
+        $this->redirect('/admin/voice-users/schedule');
     }
 
     public function bulkSchedule()
@@ -521,7 +521,7 @@ class VoiceAgentAdminController extends AdminController
 
         if (empty($leadIds) || empty($agentId) || empty($scheduleDate)) {
             $_SESSION['error'] = 'Please select leads, agent, and date';
-            $this->redirect('/admin/voice-agents/schedule');
+            $this->redirect('/admin/voice-users/schedule');
         }
 
         $success = 0;
@@ -546,7 +546,7 @@ class VoiceAgentAdminController extends AdminController
         }
 
         $_SESSION['success'] = "$success leads scheduled for calling";
-        $this->redirect('/admin/voice-agents/schedule');
+        $this->redirect('/admin/voice-users/schedule');
     }
 
     public function autoAssign()
@@ -554,23 +554,23 @@ class VoiceAgentAdminController extends AdminController
         $this->requireAdmin();
 
         try {
-            $agents = $this->db->fetchAll("SELECT agent_id, current_calls, max_concurrent_calls, daily_call_limit, status FROM ai_calling_agents WHERE status = 'active'");
+            $users = $this->db->fetchAll("SELECT agent_id, current_calls, max_concurrent_calls, daily_call_limit, status FROM ai_calling_agents WHERE status = 'active'");
             $pendingLeads = $this->db->fetchAll("SELECT l.id, l.name, l.phone, l.property_interest FROM leads l LEFT JOIN ai_calling_schedule s ON s.lead_id = l.id AND s.status = 'pending' WHERE l.status IN ('new','contacted','nurture') AND s.id IS NULL LIMIT 50");
         } catch (\Exception $e) {
-            $agents = []; $pendingLeads = [];
+            $users = []; $pendingLeads = [];
         }
 
-        if (empty($agents) || empty($pendingLeads)) {
-            $_SESSION['error'] = 'No available agents or leads to assign';
-            $this->redirect('/admin/voice-agents/schedule');
+        if (empty($users) || empty($pendingLeads)) {
+            $_SESSION['error'] = 'No available users or leads to assign';
+            $this->redirect('/admin/voice-users/schedule');
         }
 
         $assigned = 0;
         $agentIndex = 0;
-        $agentCount = count($agents);
+        $agentCount = count($users);
 
         foreach ($pendingLeads as $lead) {
-            $agent = $agents[$agentIndex % $agentCount];
+            $agent = $users[$agentIndex % $agentCount];
             $agentIndex++;
 
             try {
@@ -584,8 +584,8 @@ class VoiceAgentAdminController extends AdminController
             } catch (\Exception $e) { error_log('VoiceAgentAdminController autoAssign: ' . $e->getMessage()); }
         }
 
-        $_SESSION['success'] = "$assigned leads auto-assigned to agents";
-        $this->redirect('/admin/voice-agents/schedule');
+        $_SESSION['success'] = "$assigned leads auto-assigned to users";
+        $this->redirect('/admin/voice-users/schedule');
     }
 
     public function ajaxLeadTimeline()

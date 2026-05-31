@@ -100,8 +100,8 @@ class AssociateAuthController extends BaseController
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
-            // Create associates extension record
-            $db->execute("INSERT INTO associates (user_id, name, email, phone, password, level, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'bronze', 'active', ?, ?)", [
+            // Create users extension record
+            $db->execute("INSERT INTO users (user_id, name, email, phone, password, level, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'bronze', 'active', ?, ?)", [
                 $newUserId,
                 $name,
                 $email,

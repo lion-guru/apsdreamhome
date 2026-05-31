@@ -8,7 +8,7 @@ namespace App\Models;
 class LeadAssignmentHistory extends Model
 {
     protected static $table = 'lead_assignment_history';
-    protected array $fillable = [
+    protected $fillable = [
         'lead_id',
         'assigned_to',
         'assigned_by',
@@ -17,7 +17,7 @@ class LeadAssignmentHistory extends Model
         'notes',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'assigned_at' => 'datetime',
     ];
 

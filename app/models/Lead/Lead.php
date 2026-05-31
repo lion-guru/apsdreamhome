@@ -45,7 +45,7 @@ class Lead extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'first_name',
         'last_name',
         'email',
@@ -77,7 +77,7 @@ class Lead extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'estimated_value' => 'float',
         'rating' => 'integer',
         'last_contact_date' => 'string',

@@ -242,7 +242,7 @@ class SecurityEnhancementService
             }
         }
 
-        // Suspicious user agents
+        // Suspicious user users
         $suspiciousAgents = [
             '/sqlmap/i',
             '/nikto/i',

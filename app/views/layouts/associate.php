@@ -17,7 +17,7 @@ function getRoleBasedSidebar($userRole)
 {
     global $pdo;
 
-    // Static menu for associates (fallback if database menu doesn't exist)
+    // Static menu for users (fallback if database menu doesn't exist)
     if ($userRole === 'associate') {
         return [
             [

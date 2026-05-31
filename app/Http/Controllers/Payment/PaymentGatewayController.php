@@ -68,8 +68,8 @@ class PaymentGatewayController extends BaseController
             refund_date DATETIME,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE SET NULL,
-            FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL,
+            FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL,
             FOREIGN KEY (plot_id) REFERENCES plots(id) ON DELETE SET NULL
         )";
 
@@ -105,7 +105,7 @@ class PaymentGatewayController extends BaseController
             remarks TEXT,
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE CASCADE,
+            FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (transaction_id) REFERENCES payment_transactions(transaction_id) ON DELETE SET NULL,
             FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
@@ -340,7 +340,7 @@ class PaymentGatewayController extends BaseController
     }
 
     /**
-     * Payment history for associates
+     * Payment history for users
      */
     public function paymentHistory()
     {

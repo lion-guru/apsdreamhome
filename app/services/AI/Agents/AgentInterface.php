@@ -2,9 +2,9 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-namespace App\Services\AI\Agents;
+namespace App\Services\AI\users;
 /**
- * AgentInterface - Standard interface for all AI Agents
+ * AgentInterface - Standard interface for all AI users
  */
 interface AgentInterface {
     /**

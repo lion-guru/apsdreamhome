@@ -1,7 +1,7 @@
 <?php $layout = "admin/layouts/unified"; $active_page = "index"; ?>
 <?php
-$page_title = $page_title ?? 'Customers';
-$customers = $customers ?? [];
+$page_title = $page_title ?? 'users';
+$users = $users ?? [];
 $total = $total ?? 0;
 $page = $page ?? 1;
 $per_page = $per_page ?? 20;
@@ -13,7 +13,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-0">Customers</h1>
+            <h1 class="h3 mb-0">users</h1>
             <p class="text-muted mb-0">Manage customer accounts and bookings</p>
         </div>
     </div>
@@ -30,14 +30,14 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
                     <div class="h2 mb-0 text-primary"><?= $total ?></div>
-                    <small class="text-muted">Total Customers</small>
+                    <small class="text-muted">Total users</small>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="h2 mb-0 text-success"><?= count(array_filter($customers, fn($c) => ($c['status'] ?? '') === 'active')) ?></div>
+                    <div class="h2 mb-0 text-success"><?= count(array_filter($users, fn($c) => ($c['status'] ?? '') === 'active')) ?></div>
                     <small class="text-muted">Active</small>
                 </div>
             </div>
@@ -45,7 +45,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="h2 mb-0 text-warning"><?= count(array_filter($customers, fn($c) => ($c['status'] ?? '') === 'inactive')) ?></div>
+                    <div class="h2 mb-0 text-warning"><?= count(array_filter($users, fn($c) => ($c['status'] ?? '') === 'inactive')) ?></div>
                     <small class="text-muted">Inactive</small>
                 </div>
             </div>
@@ -53,7 +53,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="h2 mb-0 text-info"><?= array_sum(array_column($customers, 'booking_count')) ?></div>
+                    <div class="h2 mb-0 text-info"><?= array_sum(array_column($users, 'booking_count')) ?></div>
                     <small class="text-muted">Total Bookings</small>
                 </div>
             </div>
@@ -63,7 +63,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
     <!-- Filter Form -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
-            <form method="GET" action="<?= BASE_URL ?>/admin/customers" class="row g-3">
+            <form method="GET" action="<?= BASE_URL ?>/admin/users" class="row g-3">
                 <div class="col-md-4">
                     <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="<?= htmlspecialchars($filters['search']) ?>">
                 </div>
@@ -80,7 +80,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                     </button>
                 </div>
                 <div class="col-md-3">
-                    <a href="<?= BASE_URL ?>/admin/customers" class="btn btn-outline-secondary w-100">
+                    <a href="<?= BASE_URL ?>/admin/users" class="btn btn-outline-secondary w-100">
                         <i class="fas fa-times me-1"></i>Clear
                     </a>
                 </div>
@@ -88,7 +88,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
         </div>
     </div>
 
-    <!-- Customers Table -->
+    <!-- users Table -->
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -104,8 +104,8 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($customers)): ?>
-                            <?php foreach ($customers as $customer): ?>
+                        <?php if (!empty($users)): ?>
+                            <?php foreach ($users as $customer): ?>
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
@@ -134,7 +134,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                                         <?= isset($customer['created_at']) ? date('d M Y', strtotime($customer['created_at'])) : 'N/A' ?>
                                     </td>
                                     <td class="text-end pe-4">
-                                        <a href="<?= BASE_URL ?>/admin/customers/<?= $customer['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?= BASE_URL ?>/admin/users/<?= $customer['id'] ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
@@ -144,7 +144,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                             <tr>
                                 <td colspan="6" class="text-center py-4 text-muted">
                                     <i class="fas fa-users fa-2x mb-2"></i>
-                                    <p class="mb-0">No customers found</p>
+                                    <p class="mb-0">No users found</p>
                                 </td>
                             </tr>
                         <?php endif; ?>
@@ -160,7 +160,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                     <ul class="pagination justify-content-center mb-0">
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                             <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                                <a class="page-link" href="<?= BASE_URL ?>/admin/customers?page=<?= $i ?>&search=<?= urlencode($filters['search']) ?>&status=<?= urlencode($filters['status']) ?>"><?= $i ?></a>
+                                <a class="page-link" href="<?= BASE_URL ?>/admin/users?page=<?= $i ?>&search=<?= urlencode($filters['search']) ?>&status=<?= urlencode($filters['status']) ?>"><?= $i ?></a>
                             </li>
                         <?php endfor; ?>
                     </ul>

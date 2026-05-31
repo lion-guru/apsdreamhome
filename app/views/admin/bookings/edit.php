@@ -64,7 +64,7 @@ $active_page = 'bookings';
                     <label for="customer_id" class="form-label">Customer *</label>
                     <select class="form-select" id="customer_id" name="customer_id" required>
                         <option value="">Select Customer</option>
-                        <?php foreach ($customers as $customer): ?>
+                        <?php foreach ($users as $customer): ?>
                             <option value="<?= $customer['id'] ?>"
                                 <?= $customer['id'] == $booking['customer_id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($customer['name'] ?? '') ?> (<?= htmlspecialchars($customer['email'] ?? '') ?>)
@@ -83,7 +83,7 @@ $active_page = 'bookings';
                     </label>
                     <select class="form-select" id="associate_id" name="associate_id">
                         <option value="">No Associate (Direct Booking)</option>
-                        <?php foreach ($associates as $associate): ?>
+                        <?php foreach ($users as $associate): ?>
                             <option value="<?= $associate['id'] ?>"
                                 <?= $associate['id'] == $booking['associate_id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($associate['name'] ?? '') ?>

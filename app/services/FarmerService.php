@@ -66,7 +66,7 @@ class FarmerService
                     (SELECT COALESCE(SUM(land_area), 0) FROM farmer_land_holdings WHERE farmer_id = fp.id) as total_land_area,
                     (SELECT COUNT(*) FROM farmer_transactions WHERE farmer_id = fp.id) as transaction_count
                     FROM farmer_profiles fp
-                    LEFT JOIN associates a ON fp.associate_id = a.id
+                    LEFT JOIN users a ON fp.associate_id = a.id
                     LEFT JOIN users ua ON a.user_id = ua.id";
             $params = [];
             $conditions = [];
@@ -100,7 +100,7 @@ class FarmerService
 
             // Count total
             $countSql = "SELECT COUNT(*) FROM farmer_profiles fp
-                         LEFT JOIN associates a ON fp.associate_id = a.id
+                         LEFT JOIN users a ON fp.associate_id = a.id
                          LEFT JOIN users ua ON a.user_id = ua.id";
             if (!empty($conditions)) {
                 $countSql .= " WHERE " . implode(" AND ", $conditions);
@@ -134,7 +134,7 @@ class FarmerService
             $db = $this->db();
             $sql = "SELECT fp.*, ua.name as associate_name, u.name as created_by_name
                     FROM farmer_profiles fp
-                    LEFT JOIN associates a ON fp.associate_id = a.id
+                    LEFT JOIN users a ON fp.associate_id = a.id
                     LEFT JOIN users ua ON a.user_id = ua.id
                     LEFT JOIN users u ON fp.created_by = u.id
                     WHERE fp.id = ?";
@@ -743,7 +743,7 @@ class FarmerService
             $db = \App\Core\Database\Database::getInstance();
             $sql = "SELECT fp.*, ua.name as associate_name
                     FROM farmer_profiles fp
-                    LEFT JOIN associates a ON fp.associate_id = a.id
+                    LEFT JOIN users a ON fp.associate_id = a.id
                     LEFT JOIN users ua ON a.user_id = ua.id
                     WHERE (fp.full_name LIKE ? OR fp.farmer_number LIKE ? OR fp.phone LIKE ? OR fp.village LIKE ? OR fp.aadhar_number LIKE ?)";
             $params = array_fill(0, 5, '%' . $query . '%');

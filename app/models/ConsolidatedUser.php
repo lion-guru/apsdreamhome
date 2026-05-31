@@ -16,7 +16,7 @@ class ConsolidatedUser extends UnifiedModel
 {
     protected static $table = 'users';
 
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',
@@ -29,7 +29,7 @@ class ConsolidatedUser extends UnifiedModel
         'updated_at'
     ];
 
-    protected array $hidden = [
+    protected $hidden = [
         'password',
         'remember_token'
     ];

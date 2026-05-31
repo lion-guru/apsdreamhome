@@ -2,17 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Property;
-use \Exception;
-
 class SeoController extends BaseApiController
 {
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('auth', ['only' => ['update']]);
-        $this->middleware('role:admin', ['only' => ['update']]);
-        $this->middleware('csrf', ['only' => ['update']]);
     }
 
     /**
@@ -21,11 +15,14 @@ class SeoController extends BaseApiController
     public function getMetadata()
     {
         try {
-            $url = $this->request()->input('url', '/');
-            $pageName = \trim($this->request()->input('page', 'home'));
+            $url = $_GET['url'] ?? '/';
+            $pageName = trim($_GET['page'] ?? 'home');
 
-            $seoModel = $this->model('SeoMetadata');
-            $metadata = $seoModel->getByPage($pageName);
+            $db = \App\Core\Database\Database::getInstance();
+            $conn = $db->getConnection();
+            $stmt = $conn->prepare("SELECT * FROM seo_metadata WHERE page_name = ? LIMIT 1");
+            $stmt->execute([$pageName]);
+            $metadata = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $data = [
                 'title' => $metadata['meta_title'] ?? 'APS Dream Home - Premium Real Estate',
@@ -38,29 +35,8 @@ class SeoController extends BaseApiController
                 'robots' => $metadata['robots'] ?? 'index, follow'
             ];
 
-            $propertyModel = $this->model('Property');
-
-            // If it's a property page, fetch property details to override
-            if (\preg_match('/property-detail\.php\?id=(\d+)/', $url, $matches) || \preg_match('/\/properties\/(\d+)/', $url, $matches)) {
-                $id = $matches[1];
-                $prop = $propertyModel->find($id);
-
-                if ($prop) {
-                    $data['title'] = $prop->title . ' | APS Dream Home';
-                    $data['description'] = \substr(\strip_tags($prop->description), 0, 160);
-                    $data['og_title'] = $prop->title;
-                    $data['og_description'] = $data['description'];
-                    // Use first property image for OG if available
-                    $images = $this->db->fetchAll("SELECT image_path FROM property_images WHERE property_id = ? LIMIT 1", [$id]);
-                    if (!empty($images)) {
-                        $data['og_image'] = 'https://apsdreamhome.com/' . $images[0]['image_path'];
-                    }
-                }
-            }
-
             return $this->jsonSuccess($data);
-
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -70,45 +46,50 @@ class SeoController extends BaseApiController
      */
     public function update()
     {
-        if ($this->request()->getMethod() !== 'POST') {
-            return $this->jsonError('Method not allowed', 405);
-        }
+        $this->requireAdmin();
 
         try {
-            $pageName = $this->request()->input('page_name', '');
+            $pageName = $_POST['page_name'] ?? '';
             if (empty($pageName)) {
                 return $this->jsonError('Page name is required', 400);
             }
 
-            $seoModel = $this->model('SeoMetadata');
-            $existing = $seoModel->getByPage($pageName);
+            $db = \App\Core\Database\Database::getInstance();
+            $conn = $db->getConnection();
+
+            $stmt = $conn->prepare("SELECT id FROM seo_metadata WHERE page_name = ? LIMIT 1");
+            $stmt->execute([$pageName]);
+            $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $data = [
-                'page_name' => $pageName,
-                'meta_title' => $this->request()->input('meta_title'),
-                'meta_description' => $this->request()->input('meta_description'),
-                'meta_keywords' => $this->request()->input('meta_keywords'),
-                'og_title' => $this->request()->input('og_title'),
-                'og_description' => $this->request()->input('og_description'),
-                'og_image' => $this->request()->input('og_image'),
-                'canonical_url' => $this->request()->input('canonical_url'),
-                'robots' => $this->request()->input('robots', 'index, follow')
+                'meta_title' => $_POST['meta_title'] ?? '',
+                'meta_description' => $_POST['meta_description'] ?? '',
+                'meta_keywords' => $_POST['meta_keywords'] ?? '',
+                'og_title' => $_POST['og_title'] ?? '',
+                'og_description' => $_POST['og_description'] ?? '',
+                'og_image' => $_POST['og_image'] ?? '',
+                'canonical_url' => $_POST['canonical_url'] ?? '',
+                'robots' => $_POST['robots'] ?? 'index, follow'
             ];
 
             if ($existing) {
-                $seo = new \App\Models\SeoMetadata($existing);
-                $seo->fill($data);
+                $sets = [];
+                $params = [];
+                foreach ($data as $col => $val) {
+                    $sets[] = "$col = ?";
+                    $params[] = $val;
+                }
+                $params[] = $existing['id'];
+                $conn->prepare("UPDATE seo_metadata SET " . implode(', ', $sets) . " WHERE id = ?")->execute($params);
             } else {
-                $seo = new \App\Models\SeoMetadata($data);
+                $cols = array_keys($data);
+                $placeholders = rtrim(str_repeat('?,', count($cols)), ',');
+                $vals = array_values($data);
+                $conn->prepare("INSERT INTO seo_metadata (page_name, " . implode(',', $cols) . ") VALUES (?, $placeholders)")->execute(array_merge([$pageName], $vals));
             }
 
-            if ($seo->save()) {
-                return $this->jsonSuccess(null, 'SEO metadata updated successfully');
-            }
-
-            return $this->jsonError('Failed to update SEO metadata', 500);
-
-        } catch (Exception $e) {
+            return $this->jsonSuccess(null, 'SEO metadata updated successfully');
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

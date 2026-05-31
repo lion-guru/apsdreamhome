@@ -13,7 +13,7 @@
                         <div class="mb-2"><label class="form-label">Associate</label>
                             <select name="associate_id" class="form-select" required>
                                 <option value="">Select</option>
-                                <?php foreach ($associates ?? [] as $a): ?>
+                                <?php foreach ($users ?? [] as $a): ?>
                                 <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name']) ?> (<?= htmlspecialchars($a['email']) ?>)</option>
                                 <?php endforeach; ?>
                             </select>

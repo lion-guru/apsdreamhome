@@ -9,7 +9,7 @@ class LandProject extends UnifiedModel
     public static $table = 'land_projects';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'location',
         'description',

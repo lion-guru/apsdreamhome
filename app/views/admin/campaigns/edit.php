@@ -1,7 +1,7 @@
 <?php
 $campaign = $campaign ?? [];
 $campaign_types = $campaign_types ?? ['general', 'offer', 'promotion', 'announcement'];
-$target_audiences = $target_audiences ?? ['all', 'customers', 'agents', 'employees', 'admin'];
+$target_audiences = $target_audiences ?? ['all', 'users', 'users', 'users', 'admin'];
 $page_title = $page_title ?? 'Edit Campaign';
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>

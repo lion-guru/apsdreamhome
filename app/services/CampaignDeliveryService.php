@@ -293,15 +293,15 @@ class CampaignDeliveryService
                 $query = "SELECT * FROM users WHERE status = 'active'";
                 return $this->db->fetchAll($query);
                 
-            case 'customers':
+            case 'users':
                 $query = "SELECT * FROM users WHERE role = 'customer' AND status = 'active'";
                 return $this->db->fetchAll($query);
                 
-            case 'agents':
+            case 'users':
                 $query = "SELECT * FROM users WHERE role = 'associate' AND status = 'active'";
                 return $this->db->fetchAll($query);
                 
-            case 'employees':
+            case 'users':
                 $query = "SELECT * FROM users WHERE role = 'employee' AND status = 'active'";
                 return $this->db->fetchAll($query);
                 

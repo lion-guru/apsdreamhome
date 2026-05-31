@@ -12,18 +12,18 @@ class AssociateExtensionController extends AdminController
         try {
             $stmt = $this->db->prepare("
                 SELECT a.*, u.name, u.email, u.phone, u.role, u.status as user_status
-                FROM associates a
+                FROM users a
                 LEFT JOIN users u ON a.user_id = u.id
                 ORDER BY u.name ASC
             ");
             $stmt->execute();
-            $associates = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            $associates = [];
+            $users = [];
         }
         return $this->render('admin/associate-extensions/index', [
             'page_title' => 'Associate Extensions',
-            'associates' => $associates
+            'users' => $users
         ]);
     }
 
@@ -34,7 +34,7 @@ class AssociateExtensionController extends AdminController
             $stmt = $this->db->prepare("
                 SELECT a.*, u.name, u.email, u.phone, u.role, u.status as user_status,
                     u.created_at as user_created_at
-                FROM associates a
+                FROM users a
                 LEFT JOIN users u ON a.user_id = u.id
                 WHERE a.id = ?
             ");
@@ -60,7 +60,7 @@ class AssociateExtensionController extends AdminController
         $badges = $_POST['badges'] ?? '';
         $training_progress = $_POST['training_progress'] ?? 0;
         try {
-            $stmt = $this->db->prepare("UPDATE associates SET points = ?, badges = ?, training_progress = ? WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE users SET points = ?, badges = ?, training_progress = ? WHERE id = ?");
             $stmt->execute([$points, $badges, $training_progress, $id]);
             $this->setFlash('success', 'Associate extension updated successfully');
         } catch (\Exception $e) {

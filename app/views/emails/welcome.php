@@ -33,7 +33,7 @@
                     <li>Browse thousands of verified properties</li>
                     <li>Use advanced search filters</li>
                     <li>Save favorite properties</li>
-                    <li>Contact verified agents</li>
+                    <li>Contact verified users</li>
                     <li>Get personalized recommendations</li>
                 </ul>
             </div>

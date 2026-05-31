@@ -63,7 +63,7 @@ class FarmerServiceEnhanced
                 created_by BIGINT(20) UNSIGNED,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE SET NULL,
+                FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE SET NULL,
                 FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->database->query($sql);
@@ -235,7 +235,7 @@ class FarmerServiceEnhanced
     {
         $sql = "SELECT f.*, a.name as associate_name
                 FROM farmer_profiles f
-                LEFT JOIN associates a ON f.associate_id = a.id
+                LEFT JOIN users a ON f.associate_id = a.id
                 WHERE 1=1";
 
         $params = [];
@@ -290,7 +290,7 @@ class FarmerServiceEnhanced
 
         $sql = "SELECT f.*, a.name as associate_name
                 FROM farmer_profiles f
-                LEFT JOIN associates a ON f.associate_id = a.id
+                LEFT JOIN users a ON f.associate_id = a.id
                 WHERE f.id = ?";
 
         try {

@@ -892,7 +892,7 @@ class PageController extends BaseController
     {
         $data = [
             'page_title' => 'Customer Reviews - APS Dream Home',
-            'page_description' => 'Read reviews from our satisfied customers'
+            'page_description' => 'Read reviews from our satisfied users'
         ];
         $this->render('pages/customer_reviews', $data);
     }
@@ -1758,7 +1758,7 @@ class PageController extends BaseController
     {
         $data = [
             'page_title' => 'Schedule a Meeting - APS Dream Home',
-            'page_description' => 'Book an appointment with our agents'
+            'page_description' => 'Book an appointment with our users'
         ];
         $this->render('pages/schedule_meeting', $data);
     }

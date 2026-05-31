@@ -160,7 +160,7 @@ $user_profile = $user_profile ?? null;
         <h5 class="card-title mb-0"><i class="fas fa-link text-primary me-2"></i>Your Referral Link</h5>
     </div>
     <div class="card-body">
-        <p class="text-muted">Share this link with potential associates to grow your team:</p>
+        <p class="text-muted">Share this link with potential users to grow your team:</p>
         <div class="input-group">
             <input type="text" class="form-control" id="refLink" value="<?php echo BASE_URL; ?>/associate/register?ref=<?php echo urlencode($_SESSION['referral_code'] ?? ''); ?>" readonly>
             <button class="btn btn-primary" onclick="copyRefLink()"><i class="fas fa-copy me-1"></i> Copy</button>

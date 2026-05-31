@@ -3,7 +3,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home me-1"></i>Home</a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate">Associates</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate">users</a></li>
             <li class="breadcrumb-item active" aria-current="page">Add Associate</li>
         </ol>
     </nav>

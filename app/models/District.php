@@ -8,7 +8,7 @@ class District extends Model
 {
     public static $table = 'districts';
 
-    protected array $fillable = [
+    protected $fillable = [
         'state_id',
         'name',
         'code',

@@ -49,7 +49,7 @@
 
     public function getCustomer($id)
     {
-        $stmt = $this->db->prepare("SELECT u.* FROM customers c JOIN users u ON c.user_id = u.id WHERE c.id = :id");
+        $stmt = $this->db->prepare("SELECT u.* FROM users c JOIN users u ON c.user_id = u.id WHERE c.id = :id");
         $stmt->execute([":id" => $id]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
@@ -79,7 +79,7 @@
             $params[":$key"] = $value;
         }
 
-        $sql .= implode(", ", $updates) . " WHERE id = (SELECT user_id FROM customers WHERE id = :customer_id)";
+        $sql .= implode(", ", $updates) . " WHERE id = (SELECT user_id FROM users WHERE id = :customer_id)";
         $params[":customer_id"] = $id;
 
         $stmt = $this->db->prepare($sql);
@@ -136,13 +136,13 @@
 
     public function updatePreference($customerId, $key, $value, $type = "string")
     {
-        $stmt = $this->db->prepare("INSERT INTO customer_preferences (customer_id, preference_key, preference_value, preference_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE preference_value = VALUES(preference_value), updated_at = NOW()");
+        $stmt = $this->db->prepare("INSERT INTO users (customer_id, preference_key, preference_value, preference_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE preference_value = VALUES(preference_value), updated_at = NOW()");
         return $stmt->execute([$customerId, $key, $value, $type]);
     }
 
     public function getPreferences($customerId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM customer_preferences WHERE customer_id = ?");
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE customer_id = ?");
         $stmt->execute([$customerId]);
 
         $preferences = [];
@@ -184,7 +184,7 @@
 
         try {
             // Update customer KYC status
-            $stmt = $this->db->prepare("UPDATE users SET kyc_completed = 1, verification_documents = ? WHERE id = (SELECT user_id FROM customers WHERE id = ?)");
+            $stmt = $this->db->prepare("UPDATE users SET kyc_completed = 1, verification_documents = ? WHERE id = (SELECT user_id FROM users WHERE id = ?)");
             $stmt->execute([json_encode($documents), $customerId]);
 
             // Mark documents as verified

@@ -9,7 +9,7 @@ class Service extends UnifiedModel
     public static $table = 'services';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'description',
         'icon',

@@ -11,7 +11,7 @@
                         <label class="form-label">Customer</label>
                         <select name="user_id" class="form-select">
                             <option value="0">Walk-in / No Account</option>
-                            <?php foreach ($customers ?? [] as $c): ?>
+                            <?php foreach ($users ?? [] as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['email']) ?>)</option>
                             <?php endforeach; ?>
                         </select>

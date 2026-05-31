@@ -8,7 +8,7 @@ namespace App\Models;
 class PropertyViewing extends Model {
     public static $table = 'property_viewings';
     
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'phone',

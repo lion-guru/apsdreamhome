@@ -7,7 +7,7 @@ use App\Models\Model;
 class About extends Model
 {
     protected static $table = 'about';
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'content',
         'image',

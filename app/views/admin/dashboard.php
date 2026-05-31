@@ -49,7 +49,7 @@ try {
     $stats['new_leads_today'] = $db->fetch("SELECT COUNT(*) as count FROM leads WHERE DATE(created_at) = CURDATE()")['count'] ?? 0;
     $stats['total_associates'] = $db->fetch("SELECT COUNT(*) as count FROM users WHERE role IN ('associate', 'agent')")['count'] ?? 0;
     $stats['revenue_month'] = $db->fetch("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")['total'] ?? 0;
-    $stats['total_employees'] = $db->fetch("SELECT COUNT(*) as count FROM employees")['count'] ?? 0;
+    $stats['total_employees'] = $db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
     $stats['pending_bookings'] = $db->fetch("SELECT COUNT(*) as count FROM bookings WHERE status = 'pending'")['count'] ?? 0;
 } catch (\Exception $e) {
     // Silently handle database errors
@@ -129,7 +129,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="stat-card">
             <div class="stat-icon info"><i class="fas fa-network-wired"></i></div>
             <div class="stat-content">
-                <div class="stat-label">Associates</div>
+                <div class="stat-label">users</div>
                 <div class="stat-value"><?php echo number_format($stats['total_associates']); ?></div>
             </div>
         </div>
@@ -152,7 +152,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="stat-card">
             <div class="stat-icon primary"><i class="fas fa-user-tie"></i></div>
             <div class="stat-content">
-                <div class="stat-label">Employees</div>
+                <div class="stat-label">users</div>
                 <div class="stat-value"><?php echo number_format($stats['total_employees']); ?></div>
             </div>
         </div>

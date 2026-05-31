@@ -75,7 +75,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
                 DATE_FORMAT(created_at, '%Y-%m') as month,
                 COUNT(*) as new_associates,
                 SUM(COUNT(*)) OVER (ORDER BY DATE_FORMAT(created_at, '%Y-%m')) as total_associates
-            FROM associates
+            FROM users
             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
             GROUP BY DATE_FORMAT(created_at, '%Y-%m')
             ORDER BY month ASC
@@ -86,7 +86,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
     }
     
     /**
-     * Get top performing associates
+     * Get top performing users
      */
     private function getTopPerformers($db): array
     {
@@ -99,7 +99,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
                 COUNT(DISTINCT r.id) as direct_referrals,
                 SUM(c.amount) as total_commissions,
                 a.created_at
-            FROM associates a
+            FROM users a
             LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id
             LEFT JOIN mlm_commissions c ON a.id = c.associate_id AND c.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY a.id
@@ -121,7 +121,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
                 mlm_level as level,
                 COUNT(*) as associate_count,
                 ROUND(AVG(total_earnings), 2) as avg_earnings
-            FROM associates
+            FROM users
             GROUP BY mlm_level
             ORDER BY mlm_level ASC
         ";
@@ -163,7 +163,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
                 COUNT(DISTINCT a.id) as new_associates,
                 COUNT(DISTINCT r.id) as new_referrals,
                 COALESCE(SUM(c.amount), 0) as total_commissions
-            FROM associates a
+            FROM users a
             LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id 
                 AND r.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
             LEFT JOIN mlm_commissions c ON c.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
@@ -176,7 +176,7 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
                 COUNT(DISTINCT a.id) as new_associates,
                 COUNT(DISTINCT r.id) as new_referrals,
                 COALESCE(SUM(c.amount), 0) as total_commissions
-            FROM associates a
+            FROM users a
             LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id 
                 AND r.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
                 AND r.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')

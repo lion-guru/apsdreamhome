@@ -10,7 +10,7 @@ class Sale extends Model
     public static $table = 'property_sales';
     public static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'property_id',
         'buyer_id',
         'agent_id',
@@ -74,7 +74,7 @@ class Sale extends Model
 
             // Check if buyer is an MLM associate
             $associate = static::query()
-                ->from('associates')
+                ->from('users')
                 ->where('user_id', $buyerId)
                 ->first();
 
@@ -107,7 +107,7 @@ class Sale extends Model
 
                         // Update upline balance (using uid from user table)
                         $uplineUser = static::query()
-                            ->from('associates')
+                            ->from('users')
                             ->select(['user_id'])
                             ->where('id', $uplineId)
                             ->first();
@@ -196,7 +196,7 @@ class Sale extends Model
 
             // Find upline
             $row = static::query()
-                ->from('associates')
+                ->from('users')
                 ->select(['parent_id'])
                 ->where('id', $currentId)
                 ->first();

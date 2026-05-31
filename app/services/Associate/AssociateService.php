@@ -22,17 +22,17 @@ class AssociateService
     }
 
     /**
-     * Get all associates
+     * Get all users
      */
     public function getAllAssociates()
     {
         try {
-            $sql = "SELECT * FROM associates ORDER BY created_at DESC";
+            $sql = "SELECT * FROM users ORDER BY created_at DESC";
             $stmt = $this->database->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            $this->logger->error("Error getting all associates: " . $e->getMessage());
+            $this->logger->error("Error getting all users: " . $e->getMessage());
             return [];
         }
     }
@@ -43,7 +43,7 @@ class AssociateService
     public function getAssociateById($id)
     {
         try {
-            $sql = "SELECT * FROM associates WHERE id = :id";
+            $sql = "SELECT * FROM users WHERE id = :id";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
@@ -60,7 +60,7 @@ class AssociateService
     public function createAssociate($data)
     {
         try {
-            $sql = "INSERT INTO associates (name, email, phone, address, commission_rate, status, created_at) 
+            $sql = "INSERT INTO users (name, email, phone, address, commission_rate, status, created_at) 
                     VALUES (:name, :email, :phone, :address, :commission_rate, :status, NOW())";
             $stmt = $this->database->prepare($sql);
             
@@ -92,7 +92,7 @@ class AssociateService
     public function updateAssociate($id, $data)
     {
         try {
-            $sql = "UPDATE associates SET 
+            $sql = "UPDATE users SET 
                         name = :name, 
                         email = :email, 
                         phone = :phone, 
@@ -131,7 +131,7 @@ class AssociateService
     public function deleteAssociate($id)
     {
         try {
-            $sql = "DELETE FROM associates WHERE id = :id";
+            $sql = "DELETE FROM users WHERE id = :id";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
             $result = $stmt->execute();
@@ -154,7 +154,7 @@ class AssociateService
     public function calculateCommission($associateId, $propertyId, $saleAmount)
     {
         try {
-            $sql = "SELECT commission_rate FROM associates WHERE id = :id";
+            $sql = "SELECT commission_rate FROM users WHERE id = :id";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $associateId);
             $stmt->execute();
@@ -202,17 +202,17 @@ class AssociateService
     }
 
     /**
-     * Get active associates
+     * Get active users
      */
     public function getActiveAssociates()
     {
         try {
-            $sql = "SELECT * FROM associates WHERE status = 'active' ORDER BY name";
+            $sql = "SELECT * FROM users WHERE status = 'active' ORDER BY name";
             $stmt = $this->database->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            $this->logger->error("Error getting active associates: " . $e->getMessage());
+            $this->logger->error("Error getting active users: " . $e->getMessage());
             return [];
         }
     }
@@ -223,7 +223,7 @@ class AssociateService
     public function updateAssociateStatus($id, $status)
     {
         try {
-            $sql = "UPDATE associates SET status = :status, updated_at = NOW() WHERE id = :id";
+            $sql = "UPDATE users SET status = :status, updated_at = NOW() WHERE id = :id";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':status', $status);

@@ -279,9 +279,9 @@ class JWTAuthService
     private function getUserData(int $userId, string $userType): ?array
     {
         $table = match($userType) {
-            'customer' => 'customers',
-            'associate' => 'associates',
-            'agent' => 'agents',
+            'customer' => 'users',
+            'associate' => 'users',
+            'agent' => 'users',
             'admin' => 'users',
             default => null
         };

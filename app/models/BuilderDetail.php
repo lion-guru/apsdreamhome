@@ -8,7 +8,7 @@ class BuilderDetail extends Model
 {
     public static $table = 'builder_details';
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'company_name',
         'rera_registration',

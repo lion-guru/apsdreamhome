@@ -13,7 +13,7 @@ class MediaLibrary extends Model
     protected static $table = 'media_library';
     protected static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'original_name',
         'filename',
         'title',

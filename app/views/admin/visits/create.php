@@ -64,7 +64,7 @@ $page_title = 'Schedule Site Visit - APS Dream Home';
                                 <label class="form-label">Assign Agent</label>
                                 <select class="form-select" name="agent_id">
                                     <option value="">Select Agent</option>
-                                    <?php foreach (($agents ?? []) as $agent): ?>
+                                    <?php foreach (($users ?? []) as $agent): ?>
                                         <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>

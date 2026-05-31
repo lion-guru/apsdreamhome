@@ -258,8 +258,8 @@
                         <tbody>
                             <tr><td><i class="fas fa-university me-2 text-primary"></i>State Bank of India (SBI)</td><td class="text-end fw-bold">8.50%</td><td class="text-end">0.35%</td><td>First-time buyers, Low rates</td></tr>
                             <tr><td><i class="fas fa-building me-2 text-danger"></i>HDFC Ltd.</td><td class="text-end fw-bold">8.55%</td><td class="text-end">0.50%</td><td>Quick processing, Digital</td></tr>
-                            <tr><td><i class="fas fa-building me-2 text-warning"></i>ICICI Bank</td><td class="text-end fw-bold">8.55%</td><td class="text-end">0.50%</td><td>Existing customers, Balance transfer</td></tr>
-                            <tr><td><i class="fas fa-university me-2 text-success"></i>Punjab National Bank (PNB)</td><td class="text-end fw-bold">8.50%</td><td class="text-end">0.25%</td><td>Low processing fee, Govt employees</td></tr>
+                            <tr><td><i class="fas fa-building me-2 text-warning"></i>ICICI Bank</td><td class="text-end fw-bold">8.55%</td><td class="text-end">0.50%</td><td>Existing users, Balance transfer</td></tr>
+                            <tr><td><i class="fas fa-university me-2 text-success"></i>Punjab National Bank (PNB)</td><td class="text-end fw-bold">8.50%</td><td class="text-end">0.25%</td><td>Low processing fee, Govt users</td></tr>
                             <tr><td><i class="fas fa-building me-2 text-info"></i>Axis Bank</td><td class="text-end fw-bold">8.60%</td><td class="text-end">0.50%</td><td>Salaried professionals, NRIs</td></tr>
                             <tr><td><i class="fas fa-building me-2 text-secondary"></i>Kotak Mahindra Bank</td><td class="text-end fw-bold">8.65%</td><td class="text-end">0.50%</td><td>Self-employed, Flexible tenure</td></tr>
                         </tbody>

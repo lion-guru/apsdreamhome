@@ -593,7 +593,7 @@ class PerformanceDashboard extends Model
             $recommendations[] = [
                 'type' => 'network_growth',
                 'title' => 'Expand Your Network',
-                'description' => 'Focus on recruiting new associates to grow your network.',
+                'description' => 'Focus on recruiting new users to grow your network.',
                 'priority' => 'medium'
             ];
         }

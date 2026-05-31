@@ -156,8 +156,8 @@ $sectionNames = [
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/customers" class="sidebar-link <?php echo $currentPage == 'customers' ? 'active' : ''; ?>">
-                    <i class="fas fa-user-friends"></i> Customers
+                <a href="<?php echo $base; ?>/admin/users" class="sidebar-link <?php echo $currentPage == 'users' ? 'active' : ''; ?>">
+                    <i class="fas fa-user-friends"></i> users
                 </a>
             </li>
             <li class="sidebar-item">
@@ -306,8 +306,8 @@ $sectionNames = [
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/employees" class="sidebar-link <?php echo $currentPage == 'employees' ? 'active' : ''; ?>">
-                    <i class="fas fa-id-badge"></i> Employees
+                <a href="<?php echo $base; ?>/admin/users" class="sidebar-link <?php echo $currentPage == 'users' ? 'active' : ''; ?>">
+                    <i class="fas fa-id-badge"></i> users
                 </a>
             </li>
         </ul>
@@ -387,8 +387,8 @@ $sectionNames = [
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/mlm/associates" class="sidebar-link <?php echo $currentPage == 'mlm-associates' ? 'active' : ''; ?>">
-                    <i class="fas fa-user-tie"></i> Associates
+                <a href="<?php echo $base; ?>/admin/mlm/users" class="sidebar-link <?php echo $currentPage == 'mlm-users' ? 'active' : ''; ?>">
+                    <i class="fas fa-user-tie"></i> users
                 </a>
             </li>
         </ul>

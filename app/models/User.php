@@ -49,7 +49,7 @@ class User extends UnifiedModel
     }
 
     /**
-     * Get customers for select dropdown
+     * Get users for select dropdown
      * 
      * @param string $status Filter by status (default: active)
      * @param array $columns Columns to select (default: id, name, email)
@@ -85,7 +85,7 @@ class User extends UnifiedModel
     }
 
     /**
-     * Get associates for select dropdown
+     * Get users for select dropdown
      * 
      * @param string $status Filter by status (default: active)
      * @param array $columns Columns to select (default: id, name, email)
@@ -121,7 +121,7 @@ class User extends UnifiedModel
     }
 
     /**
-     * Get agents (admin, support, associate) for select dropdown
+     * Get users (admin, support, associate) for select dropdown
      * 
      * @param string $status Filter by status (default: active)
      * @param array $roles Specific roles to fetch (default: admin, support, associate)
@@ -241,7 +241,7 @@ class User extends UnifiedModel
     }
 
     /**
-     * Get employees for select dropdown
+     * Get users for select dropdown
      * 
      * @param string $status Filter by status (default: active)
      * @param array $columns Columns to select (default: id, name, email)

@@ -9,7 +9,7 @@ class MarketingLead extends UnifiedModel
     public static $table = 'marketing_leads';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'first_name',
         'last_name',
         'email',

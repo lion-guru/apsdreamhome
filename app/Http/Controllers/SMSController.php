@@ -21,6 +21,11 @@ class SMSController extends BaseController
         $this->smsService = new SMSService();
     }
 
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     /**
      * Send OTP via AJAX
      */

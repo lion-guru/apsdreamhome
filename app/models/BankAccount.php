@@ -9,7 +9,7 @@ class BankAccount extends UnifiedModel
     public static $table = 'bank_accounts';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'bank_name',
         'account_name',
         'account_number',

@@ -7,7 +7,7 @@ namespace App\Models;
 
 class EmailVerification extends Model {
     protected static $table = 'email_verifications';
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'token',
         'expires_at',

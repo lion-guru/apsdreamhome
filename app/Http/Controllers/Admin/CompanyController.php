@@ -53,10 +53,10 @@ class CompanyController extends AdminController
         $this->redirect('/admin/company/settings');
     }
 
-    public function employees()
+    public function users()
     {
         $this->requireAdmin();
-        $employees = $this->db->fetchAll("
+        $users = $this->db->fetchAll("
             SELECT ce.*, u.name as user_name, u.email as user_email, u.phone as user_phone
             FROM company_employees ce
             JOIN users u ON u.id = ce.user_id
@@ -64,9 +64,9 @@ class CompanyController extends AdminController
             ORDER BY ce.join_date DESC
         ") ?: [];
 
-        $this->render('admin/company/employees', [
-            'page_title' => 'Company Employees',
-            'employees' => $employees
+        $this->render('admin/company/users', [
+            'page_title' => 'Company users',
+            'users' => $users
         ]);
     }
 
@@ -74,7 +74,7 @@ class CompanyController extends AdminController
     {
         $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/admin/company/employees');
+            $this->redirect('/admin/company/users');
         }
 
         $company = $this->db->fetch("SELECT id FROM company_settings LIMIT 1");
@@ -93,6 +93,6 @@ class CompanyController extends AdminController
         ]);
 
         $_SESSION['success'] = 'Employee added successfully!';
-        $this->redirect('/admin/company/employees');
+        $this->redirect('/admin/company/users');
     }
 }

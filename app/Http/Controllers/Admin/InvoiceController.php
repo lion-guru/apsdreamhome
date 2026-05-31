@@ -11,7 +11,7 @@ use App\Core\Database\Database;
  */
 class InvoiceController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {
@@ -25,6 +25,7 @@ class InvoiceController extends BaseController
      */
     public function index()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -41,7 +42,7 @@ class InvoiceController extends BaseController
                         ELSE i.status
                     END as status_label
                     FROM invoices i
-                    LEFT JOIN customers c ON i.customer_id = c.id
+                    LEFT JOIN users c ON i.customer_id = c.id
                     LEFT JOIN properties p ON i.property_id = p.id
                     ORDER BY i.created_at DESC";
             
@@ -76,11 +77,12 @@ class InvoiceController extends BaseController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
-            // Get customers for dropdown
-            $customers = $conn->query("SELECT id, name, email, phone FROM customers ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get users for dropdown
+            $users = $conn->query("SELECT id, name, email, phone FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
             
             // Get properties for dropdown
             $properties = $conn->query("SELECT id, title, location, price FROM properties WHERE status = 'available' ORDER BY title ASC")->fetchAll(\PDO::FETCH_ASSOC);
@@ -90,7 +92,7 @@ class InvoiceController extends BaseController
             
             $data = [
                 'page_title' => 'Create Invoice',
-                'customers' => $customers,
+                'users' => $users,
                 'properties' => $properties,
                 'invoice_number' => $invoiceNumber
             ];
@@ -111,6 +113,7 @@ class InvoiceController extends BaseController
      */
     public function store()
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -149,6 +152,7 @@ class InvoiceController extends BaseController
      */
     public function show($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -165,7 +169,7 @@ class InvoiceController extends BaseController
                         ELSE i.status
                     END as status_label
                     FROM invoices i
-                    LEFT JOIN customers c ON i.customer_id = c.id
+                    LEFT JOIN users c ON i.customer_id = c.id
                     LEFT JOIN properties p ON i.property_id = p.id
                     WHERE i.id = ?";
             
@@ -203,13 +207,14 @@ class InvoiceController extends BaseController
      */
     public function edit($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
             // Get invoice details
             $sql = "SELECT i.*, c.name as customer_name, p.title as property_title
                     FROM invoices i
-                    LEFT JOIN customers c ON i.customer_id = c.id
+                    LEFT JOIN users c ON i.customer_id = c.id
                     LEFT JOIN properties p ON i.property_id = p.id
                     WHERE i.id = ?";
             
@@ -222,14 +227,14 @@ class InvoiceController extends BaseController
                 exit;
             }
             
-            // Get customers and properties for dropdown
-            $customers = $conn->query("SELECT id, name, email, phone FROM customers ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get users and properties for dropdown
+            $users = $conn->query("SELECT id, name, email, phone FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
             $properties = $conn->query("SELECT id, title, location, price FROM properties ORDER BY title ASC")->fetchAll(\PDO::FETCH_ASSOC);
             
             $data = [
                 'page_title' => 'Edit Invoice',
                 'invoice' => $invoice,
-                'customers' => $customers,
+                'users' => $users,
                 'properties' => $properties
             ];
             
@@ -247,6 +252,7 @@ class InvoiceController extends BaseController
      */
     public function update($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -281,6 +287,7 @@ class InvoiceController extends BaseController
      */
     public function delete($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -305,6 +312,7 @@ class InvoiceController extends BaseController
      */
     public function markAsPaid($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             
@@ -335,6 +343,7 @@ class InvoiceController extends BaseController
      */
     public function sendInvoice($id)
     {
+        $this->requireAdmin();
         try {
             $conn = $this->db->getConnection();
             

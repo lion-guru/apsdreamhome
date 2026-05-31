@@ -15,7 +15,7 @@ class ConsolidatedProperty extends UnifiedModel
 {
     protected static $table = 'properties';
 
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'description',
         'property_type_id',
