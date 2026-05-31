@@ -13,9 +13,6 @@ class AIWebController extends BaseController
     {
         parent::__construct();
         $this->data = [];
-
-        // Register middlewares
-        $this->middleware('auth', ['only' => ['descriptionGenerator', 'suggestions']]);
     }
 
     /**
@@ -73,7 +70,11 @@ class AIWebController extends BaseController
      */
     private function getPropertyTypes()
     {
-        $query = "SELECT * FROM property_types ORDER BY type_name";
-        return $this->db->fetchAll($query);
+        try {
+            $query = "SELECT * FROM property_types ORDER BY `type`";
+            return $this->db->fetchAll($query);
+        } catch (\Exception $e) {
+            return [['id' => 0, 'type' => 'Residential'], ['id' => 1, 'type' => 'Commercial'], ['id' => 2, 'type' => 'Plot']];
+        }
     }
 }

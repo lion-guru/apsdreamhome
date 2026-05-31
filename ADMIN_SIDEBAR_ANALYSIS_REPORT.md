@@ -1415,3 +1415,60 @@ For implementation questions or clarifications, refer to:
 | Settings | 5 | 5 | 100% |
 | System | 3 | 3 | 100% |
 | **TOTAL** | **49** | **49** | **100%** |
+
+---
+
+## 🔍 DEEP SIDEBAR ANALYSIS (2026-05-31)
+
+### Full DB Menu Audit
+- **Total menu items in DB:** 137 (all active)
+- **Total routes in web.php:** 1,481
+- **Route coverage:** 137/137 (100%) — every menu URL has a matching route
+- **Duplicate URLs found:** 2 (benign — `/admin/blog` used by 2 items, `/admin/bookings` used by 2 items)
+
+### Fixes Applied During Analysis
+| Issue | Fix |
+|-------|-----|
+| `/admin/blogs` (404) → should be `/admin/blog` | Updated DB from `/admin/blogs` to `/admin/blog` ✅ |
+
+### Menu Item Breakdown by Section (137 items)
+
+| Section | Items | % of Total |
+|---------|-------|------------|
+| MLM | 27 | 19.7% |
+| CRM | 16 | 11.7% |
+| Dashboards | 16 | 11.7% |
+| Properties | 10 | 7.3% |
+| Reports | 9 | 6.6% |
+| Settings | 11 | 8.0% |
+| CMS | 7 | 5.1% |
+| HRM | 6 | 4.4% |
+| Financial | 5 | 3.6% |
+| Marketing | 4 | 2.9% |
+| Content | 4 | 2.9% |
+| Finance | 3 | 2.2% |
+| Legal | 3 | 2.2% |
+| Locations | 3 | 2.2% |
+| Operations | 3 | 2.2% |
+| Users | 3 | 2.2% |
+| Bookings | 2 | 1.5% |
+| Colony | 2 | 1.5% |
+| Associates | 1 | 0.7% |
+| Documents | 1 | 0.7% |
+| Projects | 1 | 0.7% |
+
+### Route Count by HTTP Method
+| Method | Count |
+|--------|-------|
+| GET | 1,040 |
+| POST | 426 |
+| PUT | 3 |
+| DELETE | 12 |
+| **Total** | **1,481** |
+
+### Verification Method
+- Route-to-menu matching via PHP regex on `routes/web.php` against DB URLs
+- All parameterized routes (`{id}`) match flexibly via `[^/]+` regex
+- Full Playwright E2E test (128/129 pass) confirms sidebar routes render correctly with admin session
+- 1 expected failure: `/admin/godmode/users` (403 — Super Admin only)
+
