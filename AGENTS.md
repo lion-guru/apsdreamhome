@@ -1937,3 +1937,45 @@ All modified files pass syntax check
 - **~20 remaining meaningful controllers** still unrouted (Banking, Invoice, Report, Async, Marketing, Media, Team, HR/Salary, Payroll, Advanced Analytics) — good candidates for next session
 - **E2E test** has 1 expected GodMode 403 for non-superadmin — not a bug
 
+---
+
+## Session 2026-05-31 (Part 9): Route 5 More Controllers — ReportsEngine, CMDashboard, TeamManagement, Cron, Localization
+
+### What Was Done
+1. **Routed 5 controllers (31 new routes)**:
+   - **Reports\ReportController** (11 routes `/admin/reports-engine/*`) — Full report generation dashboard with sales, property, associate, customer, financial reports. Added `$this->requireAdmin()` to all public methods.
+   - **Admin\CMDashboardController** (3 routes `/admin/cm-dashboard/*`) — Chief Manager dashboard with team analytics & performance metrics. Fixed: removed `App::database()` (class didn't exist), changed `private getRecentActivities()` to `getCmRecentActivities()` (conflict with parent `AdminController::getRecentActivities()`), switched from raw `require_once` to `$this->render()`.
+   - **TeamManagementController** (7 routes `/team/*`) — Team overview, CRUD members, messaging. Already had `requireLogin()`.
+   - **System\CronController** (1 route `/system/cron/daily`) — Daily automation tasks with API key auth.
+   - **LocalizationController** (12 routes: 10 API `/api/localization/*` + 2 admin pages `/admin/localization/*`) — Locale management, CRUD translations, import/export. Fixed nullable typed property + null-safe `requireLocalizationService()` + admin auth on management pages.
+
+2. **Fixed 3 bugs discovered during routing**:
+   - `CMDashboardController`: `$this->db = App::database()` failed because `App` class doesn't exist → removed (BaseController already sets `$this->db`).
+   - `CMDashboardController`: `private function getRecentActivities()` conflicts with parent `AdminController::public function getRecentActivities()` → renamed to `getCmRecentActivities()`.
+   - `LocalizationController`: `private LocalizationService $localizationService` was non-nullable but `getInstance()` throws when service not initialized → made nullable with graceful `requireLocalizationService()` guard returning 503.
+   - `cm_dashboard.php` view: stripped self-contained `ob_start()`/`ob_get_clean()`/layout include since `$this->render()` now handles layout.
+
+3. **Added 3 admin menu items** to `admin_menu_items` DB: CM Dashboard (dashboards section), Reports Engine (reports section), Localization (settings section).
+
+4. **Cleaned up**: Removed test scripts. PHP syntax clean on all 5 files.
+
+### Verification
+- `/admin/cm-dashboard` → 200 (was 500) ✅
+- `/admin/cm-dashboard/team-analytics` → 401 (JSON auth) ✅
+- `/admin/cm-dashboard/performance-metrics` → 401 (JSON auth) ✅
+- `/team` → 302 (login redirect) ✅
+- `/team/messages` → 302 (login redirect) ✅
+- `/admin/reports-engine` → 302 (admin login redirect) ✅
+- `/api/localization/current` → 503 (service unavailable gracefully) ✅
+- All 5 files pass PHP syntax check ✅
+- `117 lines added, 50 removed` across 6 files ✅
+- Committed at `a897c5f9b` ✅
+
+### Files Modified
+- `app/Http/Controllers/Reports/ReportController.php` — Added `$this->requireAdmin()` to 11 public methods
+- `app/Http/Controllers/Admin/CMDashboardController.php` — Removed `App::database()`, renamed `getRecentActivities()`→`getCmRecentActivities()`, switched to `$this->render()`
+- `app/Http/Controllers/LocalizationController.php` — Fixed nullable `$localizationService` type, added `requireLocalizationService()`, added `requireAdmin()` on admin pages, null-safe logger calls
+- `app/views/dashboard/cm_dashboard.php` — Stripped self-contained buffering/layout include
+- `routes/web.php` — Added 31 new routes (reports-engine: 11, cm-dashboard: 3, team: 7, cron: 1, localization: 12)
+- `admin_menu_items` DB table — Added 3 new menu items
+
