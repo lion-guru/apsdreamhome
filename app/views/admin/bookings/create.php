@@ -28,7 +28,7 @@ $active_page = 'bookings';
         </h5>
     </div>
     <div class="card-body">
-        <form action="/admin/bookings/store" method="POST">
+        <form action="<?php echo BASE_URL; ?>/admin/bookings" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
             <div class="row">

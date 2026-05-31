@@ -28,10 +28,9 @@ class DealPipelineController extends BaseController
         try {
             $conn = $this->db->getConnection();
             
-            // Get all deals with customer and property details, grouped by stage
-            $sql = "SELECT d.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
-                    p.title as property_title, p.location as property_location, p.price as property_price,
-                    CASE d.stage
+            // Get all deals with assignment details, grouped by stage
+            $sql = "SELECT d.*, u.name as assigned_to_name,
+                    CASE d.stage_id
                         WHEN 'lead' THEN 'Lead'
                         WHEN 'qualified' THEN 'Qualified'
                         WHEN 'site_visit' THEN 'Site Visit'
@@ -40,20 +39,12 @@ class DealPipelineController extends BaseController
                         WHEN 'agreement' THEN 'Agreement'
                         WHEN 'closed_won' THEN 'Closed Won'
                         WHEN 'closed_lost' THEN 'Closed Lost'
-                        ELSE d.stage
-                    END as stage_label,
-                    CASE d.priority
-                        WHEN 'low' THEN 'Low'
-                        WHEN 'medium' THEN 'Medium'
-                        WHEN 'high' THEN 'High'
-                        WHEN 'urgent' THEN 'Urgent'
-                        ELSE d.priority
-                    END as priority_label
+                        ELSE COALESCE(d.stage_id, 'lead')
+                    END as stage_label
                     FROM deals d
-                    LEFT JOIN users c ON d.customer_id = c.id
-                    LEFT JOIN properties p ON d.property_id = p.id
+                    LEFT JOIN users u ON d.assigned_to = u.id
                     WHERE d.status = 'active'
-                    ORDER BY d.stage, d.priority DESC, d.created_at DESC";
+                    ORDER BY d.stage_id, d.created_at DESC";
             
             $stmt = $conn->prepare($sql);
             $stmt->execute();
@@ -72,8 +63,9 @@ class DealPipelineController extends BaseController
             ];
             
             foreach ($deals as $deal) {
-                if (isset($dealsByStage[$deal['stage']])) {
-                    $dealsByStage[$deal['stage']][] = $deal;
+                $stageKey = $deal['stage_id'] ?? 'lead';
+                if (isset($dealsByStage[$stageKey])) {
+                    $dealsByStage[$stageKey][] = $deal;
                 }
             }
             
@@ -86,10 +78,10 @@ class DealPipelineController extends BaseController
                 'stats' => $stats
             ];
             
-            return $this->render('admin.deal-pipeline.index', $data);
+            return $this->render('admin/deal-pipeline/index', $data);
             
         } catch (\Exception $e) {
-            return $this->render('admin.deal-pipeline.index', [
+            return $this->render('admin/deal-pipeline/index', [
                 'page_title' => 'Deal Pipeline - Kanban Board',
                 'deals' => [],
                 'stats' => [],
@@ -119,14 +111,13 @@ class DealPipelineController extends BaseController
             $data = [
                 'page_title' => 'Create New Deal',
                 'users' => $users,
-                'properties' => $properties,
-                'users' => $users
+                'properties' => $properties
             ];
             
-            return $this->render('admin.deal-pipeline.create', $data);
+            return $this->render('admin/deal-pipeline/create', $data);
             
         } catch (\Exception $e) {
-            return $this->render('admin.deal-pipeline.create', [
+            return $this->render('admin/deal-pipeline/create', [
                 'page_title' => 'Create New Deal',
                 'error' => $e->getMessage()
             ]);
@@ -142,27 +133,23 @@ class DealPipelineController extends BaseController
         try {
             $conn = $this->db->getConnection();
             
-            $dealNumber = 'DEAL-' . date('Ymd-His');
-            $customerId = $_POST['customer_id'] ?? 0;
-            $propertyId = $_POST['property_id'] ?? 0;
+            $leadId = $_POST['lead_id'] ?? null;
+            $dealName = trim($_POST['deal_name'] ?? 'New Deal');
             $assignedTo = $_POST['assigned_to'] ?? 0;
             $dealValue = $_POST['deal_value'] ?? 0;
             $expectedCloseDate = $_POST['expected_close_date'] ?? null;
             $probability = $_POST['probability'] ?? 50;
-            $priority = $_POST['priority'] ?? 'medium';
-            $stage = $_POST['stage'] ?? 'lead';
-            $notes = $_POST['notes'] ?? '';
-            $source = $_POST['source'] ?? 'manual';
+            $stageId = $_POST['stage_id'] ?? 'lead';
             
             $sql = "INSERT INTO deals 
-                    (deal_number, customer_id, property_id, assigned_to, deal_value, 
-                     expected_close_date, probability, priority, stage, source, notes, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
+                    (deal_name, lead_id, assigned_to, deal_value, 
+                     expected_close_date, probability, stage_id, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
             
             $stmt = $conn->prepare($sql);
             $stmt->execute([
-                $dealNumber, $customerId, $propertyId, $assignedTo, $dealValue,
-                $expectedCloseDate, $probability, $priority, $stage, $source, $notes
+                $dealName, $leadId, $assignedTo, $dealValue,
+                $expectedCloseDate, $probability, $stageId
             ]);
             
             header('Location: /admin/deal-pipeline?success=Deal created successfully');
@@ -183,11 +170,8 @@ class DealPipelineController extends BaseController
         try {
             $conn = $this->db->getConnection();
             
-            $sql = "SELECT d.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
-                    c.address as customer_address,
-                    p.title as property_title, p.location as property_location, p.price as property_price,
-                    u.name as assigned_to_name,
-                    CASE d.stage
+            $sql = "SELECT d.*, u.name as assigned_to_name,
+                    CASE d.stage_id
                         WHEN 'lead' THEN 'Lead'
                         WHEN 'qualified' THEN 'Qualified'
                         WHEN 'site_visit' THEN 'Site Visit'
@@ -196,18 +180,9 @@ class DealPipelineController extends BaseController
                         WHEN 'agreement' THEN 'Agreement'
                         WHEN 'closed_won' THEN 'Closed Won'
                         WHEN 'closed_lost' THEN 'Closed Lost'
-                        ELSE d.stage
-                    END as stage_label,
-                    CASE d.priority
-                        WHEN 'low' THEN 'Low'
-                        WHEN 'medium' THEN 'Medium'
-                        WHEN 'high' THEN 'High'
-                        WHEN 'urgent' THEN 'Urgent'
-                        ELSE d.priority
-                    END as priority_label
+                        ELSE COALESCE(d.stage_id, 'lead')
+                    END as stage_label
                     FROM deals d
-                    LEFT JOIN users c ON d.customer_id = c.id
-                    LEFT JOIN properties p ON d.property_id = p.id
                     LEFT JOIN users u ON d.assigned_to = u.id
                     WHERE d.id = ?";
             
@@ -226,12 +201,12 @@ class DealPipelineController extends BaseController
             $dealHistory = $history->fetchAll(\PDO::FETCH_ASSOC);
             
             $data = [
-                'page_title' => 'Deal Details - ' . $deal['deal_number'],
+                'page_title' => 'Deal Details - ' . ($deal['deal_name'] ?? ('Deal #' . $deal['id'])),
                 'deal' => $deal,
                 'deal_history' => $dealHistory
             ];
             
-            return $this->render('admin.deal-pipeline.show', $data);
+            return $this->render('admin/deal-pipeline/show', $data);
             
         } catch (\Exception $e) {
             header('Location: /admin/deal-pipeline?error=' . urlencode($e->getMessage()));
@@ -258,12 +233,12 @@ class DealPipelineController extends BaseController
             }
             
             // Get current stage
-            $current = $conn->prepare("SELECT stage FROM deals WHERE id = ?");
+            $current = $conn->prepare("SELECT stage_id FROM deals WHERE id = ?");
             $current->execute([$id]);
             $currentStage = $current->fetchColumn();
             
             // Update deal stage
-            $conn->prepare("UPDATE deals SET stage = ?, updated_at = NOW() WHERE id = ?")->execute([$newStage, $id]);
+            $conn->prepare("UPDATE deals SET stage_id = ?, updated_at = NOW() WHERE id = ?")->execute([$newStage, $id]);
             
             // Log stage change in history
             $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, created_at)
@@ -318,22 +293,17 @@ class DealPipelineController extends BaseController
             $conn = $this->db->getConnection();
             
             // Get current stage
-            $current = $conn->prepare("SELECT stage, customer_id, property_id, deal_value FROM deals WHERE id = ?");
+            $current = $conn->prepare("SELECT stage_id, deal_value FROM deals WHERE id = ?");
             $current->execute([$id]);
             $dealData = $current->fetch(\PDO::FETCH_ASSOC);
             
             // Update deal stage to closed won
-            $conn->prepare("UPDATE deals SET stage = 'closed_won', status = 'completed', closed_at = NOW() WHERE id = ?")->execute([$id]);
+            $conn->prepare("UPDATE deals SET stage_id = 'closed_won', status = 'completed' WHERE id = ?")->execute([$id]);
             
             // Log in history
             $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, created_at)
                           VALUES (?, 'deal_won', ?, 'closed_won', NOW())";
-            $conn->prepare($historySql)->execute([$id, $dealData['stage']]);
-            
-            // If property is assigned, mark it as booked
-            if ($dealData['property_id']) {
-                $conn->prepare("UPDATE properties SET status = 'booked' WHERE id = ?")->execute([$dealData['property_id']]);
-            }
+            $conn->prepare($historySql)->execute([$id, $dealData['stage_id'] ?? '']);
             
             header('Location: /admin/deal-pipeline?success=Deal marked as won');
             exit;
@@ -354,12 +324,12 @@ class DealPipelineController extends BaseController
             $conn = $this->db->getConnection();
             
             // Get current stage
-            $current = $conn->prepare("SELECT stage FROM deals WHERE id = ?");
+            $current = $conn->prepare("SELECT stage_id FROM deals WHERE id = ?");
             $current->execute([$id]);
             $currentStage = $current->fetchColumn();
             
             // Update deal stage to closed lost
-            $conn->prepare("UPDATE deals SET stage = 'closed_lost', status = 'completed', closed_at = NOW() WHERE id = ?")->execute([$id]);
+            $conn->prepare("UPDATE deals SET stage_id = 'closed_lost', status = 'completed' WHERE id = ?")->execute([$id]);
             
             // Log in history
             $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, created_at)
@@ -400,12 +370,12 @@ class DealPipelineController extends BaseController
             $timeline = $history->fetchAll(\PDO::FETCH_ASSOC);
             
             $data = [
-                'page_title' => 'Deal Timeline - ' . $dealData['deal_number'],
+                'page_title' => 'Deal Timeline - ' . ($dealData['deal_name'] ?? ('Deal #' . $dealData['id'])),
                 'deal' => $dealData,
                 'timeline' => $timeline
             ];
             
-            return $this->render('admin.deal-pipeline.timeline', $data);
+            return $this->render('admin/deal-pipeline/timeline', $data);
             
         } catch (\Exception $e) {
             header('Location: /admin/deal-pipeline?error=' . urlencode($e->getMessage()));
@@ -424,15 +394,15 @@ class DealPipelineController extends BaseController
             $stats = [
                 'total_deals' => $conn->query("SELECT COUNT(*) FROM deals WHERE status = 'active'")->fetchColumn(),
                 'total_value' => $conn->query("SELECT COALESCE(SUM(deal_value), 0) FROM deals WHERE status = 'active'")->fetchColumn(),
-                'won_deals' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage = 'closed_won'")->fetchColumn(),
-                'won_value' => $conn->query("SELECT COALESCE(SUM(deal_value), 0) FROM deals WHERE stage = 'closed_won'")->fetchColumn(),
-                'lost_deals' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage = 'closed_lost'")->fetchColumn(),
-                'lost_value' => $conn->query("SELECT COALESCE(SUM(deal_value), 0) FROM deals WHERE stage = 'closed_lost'")->fetchColumn(),
-                'lead_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage = 'lead' AND status = 'active'")->fetchColumn(),
-                'qualified_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage = 'qualified' AND status = 'active'")->fetchColumn(),
-                'site_visit_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage = 'site_visit' AND status = 'active'")->fetchColumn(),
-                'negotiation_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage = 'negotiation' AND status = 'active'")->fetchColumn(),
-                'booking_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage = 'booking' AND status = 'active'")->fetchColumn(),
+                'won_deals' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage_id = 'closed_won'")->fetchColumn(),
+                'won_value' => $conn->query("SELECT COALESCE(SUM(deal_value), 0) FROM deals WHERE stage_id = 'closed_won'")->fetchColumn(),
+                'lost_deals' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage_id = 'closed_lost'")->fetchColumn(),
+                'lost_value' => $conn->query("SELECT COALESCE(SUM(deal_value), 0) FROM deals WHERE stage_id = 'closed_lost'")->fetchColumn(),
+                'lead_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage_id = 'lead' AND status = 'active'")->fetchColumn(),
+                'qualified_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage_id = 'qualified' AND status = 'active'")->fetchColumn(),
+                'site_visit_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage_id = 'site_visit' AND status = 'active'")->fetchColumn(),
+                'negotiation_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage_id = 'negotiation' AND status = 'active'")->fetchColumn(),
+                'booking_count' => $conn->query("SELECT COUNT(*) FROM deals WHERE stage_id = 'booking' AND status = 'active'")->fetchColumn(),
                 'average_probability' => $conn->query("SELECT AVG(probability) FROM deals WHERE status = 'active'")->fetchColumn()
             ];
             

@@ -29,10 +29,15 @@ class DealController extends BaseController
         $stats = ['total_deals' => 0, 'total_value' => 0, 'won_this_month' => ['count' => 0, 'total' => 0], 'lost_this_month' => ['count' => 0]];
 
         try {
-            $stageRows = $this->db->fetchAll("SELECT id, stage_name FROM deals WHERE status = 'active' GROUP BY stage_id ORDER BY MIN(created_at)");
-            if (empty($stageRows)) {
-                $stageRows = [['id' => 1, 'stage_name' => 'New'], ['id' => 2, 'stage_name' => 'Contacted'], ['id' => 3, 'stage_name' => 'Qualified'], ['id' => 4, 'stage_name' => 'Negotiation'], ['id' => 5, 'stage_name' => 'Closed Won']];
-            }
+            $stageRows = [
+                ['id' => 'lead', 'stage_name' => 'New Lead'],
+                ['id' => 'contacted', 'stage_name' => 'Contacted'],
+                ['id' => 'qualified', 'stage_name' => 'Qualified'],
+                ['id' => 'proposal', 'stage_name' => 'Proposal'],
+                ['id' => 'negotiation', 'stage_name' => 'Negotiation'],
+                ['id' => 'closed_won', 'stage_name' => 'Closed Won'],
+                ['id' => 'closed_lost', 'stage_name' => 'Closed Lost']
+            ];
             foreach ($stageRows as $s) {
                 $sid = intval($s['id'] ?? 1);
                 $stages[] = ['id' => $sid, 'stage_name' => $s['stage_name'], 'stage_order' => $sid];
@@ -84,6 +89,61 @@ class DealController extends BaseController
             'currentUrl' => '/admin/deals'
         ];
         return $this->render('admin/deals/index', $data);
+    }
+
+    /**
+     * Display kanban board view
+     */
+    public function kanban()
+    {
+        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $deals = []; $stages = []; $stats = [];
+
+        try {
+            $stages = [
+                ['id' => 'lead', 'name' => 'New Lead', 'color' => 'info'],
+                ['id' => 'contacted', 'name' => 'Contacted', 'color' => 'primary'],
+                ['id' => 'qualified', 'name' => 'Qualified', 'color' => 'success'],
+                ['id' => 'proposal', 'name' => 'Proposal', 'color' => 'warning'],
+                ['id' => 'negotiation', 'name' => 'Negotiation', 'color' => 'orange'],
+                ['id' => 'closed_won', 'name' => 'Closed Won', 'color' => 'success'],
+                ['id' => 'closed_lost', 'name' => 'Closed Lost', 'color' => 'danger']
+            ];
+
+            $deals = $this->db->fetchAll("SELECT d.*, u.name as assigned_to_name FROM deals d LEFT JOIN users u ON d.assigned_to = u.id WHERE d.status = 'active' ORDER BY d.created_at DESC") ?: [];
+
+            $stats = [
+                'total_deals' => count($deals),
+                'total_value' => array_sum(array_column($deals, 'deal_value')),
+                'won_this_month' => ['count' => 0, 'total' => 0],
+                'lost_this_month' => ['count' => 0]
+            ];
+        } catch (\Exception $e) {
+            error_log("DealController kanban error: " . $e->getMessage());
+        }
+
+        $dealsByStage = [];
+        foreach ($stages as $s) {
+            $dealsByStage[$s['id']] = [];
+        }
+        foreach ($deals as $deal) {
+            $sid = $deal['stage_id'] ?? 'lead';
+            $sid = is_numeric($sid) ? $sid : $sid;
+            if (isset($dealsByStage[$sid])) {
+                $dealsByStage[$sid][] = $deal;
+            }
+        }
+
+        $data = [
+            'pageTitle' => 'Deals Kanban Board',
+            'stages' => $stages,
+            'dealsByStage' => $dealsByStage,
+            'deals' => $deals,
+            'stats' => $stats,
+            'filters' => [],
+            'currentUrl' => '/admin/deals/kanban'
+        ];
+        return $this->render('admin/deals/kanban', $data);
     }
 
     /**

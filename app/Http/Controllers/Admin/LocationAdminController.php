@@ -245,7 +245,7 @@ class LocationAdminController extends AdminController
     // Colonies Management
     public function colonies()
     {
-        
+        $this->requireAdmin();
 
         $district_id = $_GET['district_id'] ?? null;
         $state_id = $_GET['state_id'] ?? null;
@@ -289,7 +289,7 @@ class LocationAdminController extends AdminController
 
     public function createColony()
     {
-        
+        $this->requireAdmin();
 
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
         $districts = \App\Models\District::getWithStateName(['id', 'name', 'state_id'], true);
@@ -332,7 +332,7 @@ class LocationAdminController extends AdminController
 
     public function editColony($id)
     {
-        
+        $this->requireAdmin();
 
         $stmt = $this->db->prepare("SELECT c.*, d.name as district_name, s.name as state_name FROM colonies c LEFT JOIN districts d ON c.district_id = d.id LEFT JOIN states s ON d.state_id = s.id WHERE c.id = ?");
         $stmt->execute([$id]);
@@ -386,7 +386,7 @@ class LocationAdminController extends AdminController
 
     public function deleteColony($id)
     {
-        
+        $this->requireAdmin();
 
         try {
             $stmt = $this->db->prepare("DELETE FROM colonies WHERE id = ?");

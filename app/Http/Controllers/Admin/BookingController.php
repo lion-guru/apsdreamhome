@@ -69,21 +69,21 @@ class BookingController extends AdminController
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             $users = $this->db->query("SELECT id, name FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $users = $this->db->query("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $associates = $this->db->query("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->render('admin/bookings/index', [
                 'bookings' => $bookings,
                 'total' => $total,
                 'filters' => $filters,
                 'users' => $users,
-                'users' => $users,
+                'associates' => $associates,
                 'total_pages' => $totalPages,
                 'current_page' => $page
             ]);
         } catch (Exception $e) {
             return $this->render('admin/bookings/index', [
                 'bookings' => [], 'total' => 0, 'filters' => [],
-                'users' => [], 'users' => [],
+                'users' => [], 'associates' => [],
                 'total_pages' => 1, 'current_page' => 1,
                 'error' => $e->getMessage()
             ]);

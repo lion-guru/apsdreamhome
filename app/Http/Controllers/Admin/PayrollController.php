@@ -137,16 +137,18 @@ class PayrollController extends AdminController
         ]);
     }
 
-    public function addAdvance($employeeId)
+    public function addAdvance()
     {
         $this->requireAdmin();
+        $employee_id = (int)($_POST['employee_id'] ?? 0);
         $advance_amount = $_POST['advance_amount'] ?? 0;
         $advance_reason = $_POST['advance_reason'] ?? '';
         $advance_approved_by = $_POST['advance_approved_by'] ?? '';
         $advance_repay_emi = $_POST['advance_repay_emi'] ?? 0;
+        if (!$employee_id) { $this->setFlash('error', 'Employee ID required'); $this->redirect('/admin/payroll/advances'); }
         try {
-            $stmt = $this->db->prepare("INSERT INTO employee_payroll (employee_id, advance_amount, advance_reason, advance_approved_by, advance_repay_emi, payment_status, created_at) VALUES (?, ?, ?, ?, ?, 'advance', NOW())");
-            $stmt->execute([$employeeId, $advance_amount, $advance_reason, $advance_approved_by, $advance_repay_emi]);
+            $stmt = $this->db->prepare("INSERT INTO employee_payroll (employee_id, advance_amount, advance_reason, advance_approved_by, advance_repay_emi, payment_status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', NOW())");
+            $stmt->execute([$employee_id, $advance_amount, $advance_reason, $advance_approved_by, $advance_repay_emi]);
             $this->setFlash('success', 'Advance added successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to add advance: ' . $e->getMessage());

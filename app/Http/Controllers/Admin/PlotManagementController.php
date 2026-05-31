@@ -42,7 +42,7 @@ class PlotManagementController extends AdminController
     public function create()
     {
         try {
-            $sites = $this->db->fetchAll("SELECT id, site_name FROM sites ORDER BY site_name");
+            $sites = $this->db->fetchAll("SELECT id, name, state_name, district_name, name as colony_name FROM colonies ORDER BY name");
         } catch (\Exception $e) {
             $sites = [];
         }
@@ -65,7 +65,7 @@ class PlotManagementController extends AdminController
             $data = $_POST;
 
             // Validate required fields
-            $required = ['plot_number', 'site_id'];
+            $required = ['plot_number', 'colony_id'];
             foreach ($required as $field) {
                 if (empty($data[$field])) {
                     return $this->jsonError(ucfirst(str_replace('_', ' ', $field)) . ' is required', 400);
@@ -76,7 +76,7 @@ class PlotManagementController extends AdminController
                     VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
-                intval($data['site_id']),
+                intval($data['colony_id']),
                 CoreFunctionsServiceCustom::validateInput($data['plot_number'], 'string'),
                 floatval($data['total_area'] ?? 0),
                 $data['status'] ?? 'available',
