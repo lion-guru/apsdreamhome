@@ -34,25 +34,32 @@ class ReportController extends AdminController
      */
     public function sales()
     {
-        $filters = [
-            'start_date' => $this->request->get('start_date', date('Y-m-01')),
-            'end_date' => $this->request->get('end_date', date('Y-m-t'))
-        ];
+        try {
+            $filters = [
+                'start_date' => $this->request->get('start_date', date('Y-m-01')),
+                'end_date' => $this->request->get('end_date', date('Y-m-t'))
+            ];
 
-        $report = $this->reportService->generateSalesReport($filters);
+            $report = $this->reportService->generateSalesReport($filters);
 
-        // Export to CSV if requested
-        if ($this->request->get('export') === 'csv') {
-            $filename = 'sales-report-' . date('Y-m-d') . '.csv';
-            $this->reportService->exportToCsv($report, $filename);
-            return;
+            if ($this->request->get('export') === 'csv') {
+                $filename = 'sales-report-' . date('Y-m-d') . '.csv';
+                $this->reportService->exportToCsv($report, $filename);
+                return;
+            }
+
+            $this->render('reports/sales', [
+                'title' => 'Sales Report',
+                'report' => $report,
+                'filters' => $filters
+            ]);
+        } catch (\Throwable $e) {
+            $this->render('reports/sales', [
+                'title' => 'Sales Report',
+                'report' => [],
+                'filters' => []
+            ]);
         }
-
-        $this->render('reports/sales', [
-            'title' => 'Sales Report',
-            'report' => $report,
-            'filters' => $filters
-        ]);
     }
 
     /**
@@ -60,26 +67,33 @@ class ReportController extends AdminController
      */
     public function properties()
     {
-        $filters = [
-            'location' => $this->request->get('location'),
-            'min_price' => $this->request->get('min_price') ? (float)$this->request->get('min_price') : null,
-            'max_price' => $this->request->get('max_price') ? (float)$this->request->get('max_price') : null
-        ];
+        try {
+            $filters = [
+                'location' => $this->request->get('location'),
+                'min_price' => $this->request->get('min_price') ? (float)$this->request->get('min_price') : null,
+                'max_price' => $this->request->get('max_price') ? (float)$this->request->get('max_price') : null
+            ];
 
-        $report = $this->reportService->generatePropertyReport($filters);
+            $report = $this->reportService->generatePropertyReport($filters);
 
-        // Export to CSV if requested
-        if ($this->request->get('export') === 'csv') {
-            $filename = 'property-report-' . date('Y-m-d') . '.csv';
-            $this->reportService->exportToCsv($report, $filename);
-            return;
+            if ($this->request->get('export') === 'csv') {
+                $filename = 'property-report-' . date('Y-m-d') . '.csv';
+                $this->reportService->exportToCsv($report, $filename);
+                return;
+            }
+
+            $this->render('reports/properties', [
+                'title' => 'Property Report',
+                'report' => $report,
+                'filters' => $filters
+            ]);
+        } catch (\Throwable $e) {
+            $this->render('reports/properties', [
+                'title' => 'Property Report',
+                'report' => [],
+                'filters' => []
+            ]);
         }
-
-        $this->render('reports/properties', [
-            'title' => 'Property Report',
-            'report' => $report,
-            'filters' => $filters
-        ]);
     }
 
     /**
@@ -87,38 +101,45 @@ class ReportController extends AdminController
      */
     public function userActivity()
     {
-        $filters = [
-            'start_date' => $this->request->get('start_date', date('Y-m-01')),
-            'end_date' => $this->request->get('end_date', date('Y-m-d')),
-            'sort' => $this->request->get('sort', 'last_activity'),
-            'order' => $this->request->get('order', 'DESC'),
-            'page' => (int)$this->request->get('page', 1)
-        ];
+        try {
+            $filters = [
+                'start_date' => $this->request->get('start_date', date('Y-m-01')),
+                'end_date' => $this->request->get('end_date', date('Y-m-d')),
+                'sort' => $this->request->get('sort', 'last_activity'),
+                'order' => $this->request->get('order', 'DESC'),
+                'page' => (int)$this->request->get('page', 1)
+            ];
 
-        $report = $this->reportService->generateUserActivityReport($filters);
+            $report = $this->reportService->generateUserActivityReport($filters);
 
-        // Get total count for pagination
-        $totalUsers = $this->getTotalUsers($filters);
-        $perPage = 20;
-        $totalPages = ceil($totalUsers / $perPage);
+            $totalUsers = $this->getTotalUsers($filters);
+            $perPage = 20;
+            $totalPages = $totalUsers > 0 ? ceil($totalUsers / $perPage) : 1;
 
-        // Export to CSV if requested
-        if ($this->request->get('export') === 'csv') {
-            $filename = 'user-activity-report-' . date('Y-m-d') . '.csv';
-            $this->reportService->exportToCsv($report, $filename);
-            return;
+            if ($this->request->get('export') === 'csv') {
+                $filename = 'user-activity-report-' . date('Y-m-d') . '.csv';
+                $this->reportService->exportToCsv($report, $filename);
+                return;
+            }
+
+            $this->render('reports/user_activity', [
+                'title' => 'User Activity Report',
+                'report' => $report,
+                'filters' => $filters,
+                'pagination' => [
+                    'current_page' => $filters['page'],
+                    'total_pages' => $totalPages,
+                    'base_url' => '/reports/user-activity?' . http_build_query(array_diff_key($filters, ['page' => '']))
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            $this->render('reports/user_activity', [
+                'title' => 'User Activity Report',
+                'report' => [],
+                'filters' => [],
+                'pagination' => ['current_page' => 1, 'total_pages' => 1, 'base_url' => '']
+            ]);
         }
-
-        $this->render('reports/user_activity', [
-            'title' => 'User Activity Report',
-            'report' => $report,
-            'filters' => $filters,
-            'pagination' => [
-                'current_page' => $filters['page'],
-                'total_pages' => $totalPages,
-                'base_url' => '/reports/user-activity?' . http_build_query(array_diff_key($filters, ['page' => '']))
-            ]
-        ]);
     }
 
     /**

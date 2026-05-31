@@ -12,7 +12,7 @@ class MLMAdvancedAnalytics extends UnifiedModel
     public static $table = 'mlm_advanced_analytics';
     public static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'id',
         'user_id',
         'mlm_level',
