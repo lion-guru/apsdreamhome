@@ -25,6 +25,7 @@ class ReportController extends BaseController
      */
     public function dashboard()
     {
+        $this->requireAdmin();
         try {
             $scheduledReports = $this->reportService->getScheduledReports();
             $availableReports = $this->reportService->getAvailableReports();
@@ -50,6 +51,7 @@ class ReportController extends BaseController
      */
     public function generate()
     {
+        $this->requireAdmin();
         try {
             $availableReports = $this->reportService->getAvailableReports();
             $availableFormats = $this->reportService->getAvailableFormats();
@@ -72,6 +74,7 @@ class ReportController extends BaseController
      */
     public function create()
     {
+        $this->requireAdmin();
         try {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $reportType = $_POST['report_type'] ?? 'sales';
@@ -174,6 +177,7 @@ class ReportController extends BaseController
      */
     public function scheduled()
     {
+        $this->requireAdmin();
         try {
             $scheduledReports = $this->reportService->getScheduledReports();
 
@@ -194,6 +198,7 @@ class ReportController extends BaseController
      */
     public function schedule()
     {
+        $this->requireAdmin();
         try {
             $availableReports = $this->reportService->getAvailableReports();
 
@@ -214,6 +219,7 @@ class ReportController extends BaseController
      */
     public function storeSchedule()
     {
+        $this->requireAdmin();
         try {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $reportType = $_POST['report_type'] ?? 'sales';
@@ -245,6 +251,7 @@ class ReportController extends BaseController
      */
     public function sales()
     {
+        $this->requireAdmin();
         try {
             $startDate = $_GET['start_date'] ?? date('Y-m-01');
             $endDate = $_GET['end_date'] ?? date('Y-m-t');
@@ -276,6 +283,7 @@ class ReportController extends BaseController
      */
     public function property()
     {
+        $this->requireAdmin();
         try {
             $status = $_GET['status'] ?? null;
             $format = $_GET['format'] ?? 'array';
@@ -305,6 +313,7 @@ class ReportController extends BaseController
      */
     public function associate()
     {
+        $this->requireAdmin();
         try {
             $startDate = $_GET['start_date'] ?? date('Y-m-01');
             $endDate = $_GET['end_date'] ?? date('Y-m-t');
@@ -336,6 +345,7 @@ class ReportController extends BaseController
      */
     public function customer()
     {
+        $this->requireAdmin();
         try {
             $startDate = $_GET['start_date'] ?? date('Y-m-01');
             $endDate = $_GET['end_date'] ?? date('Y-m-t');
@@ -367,6 +377,7 @@ class ReportController extends BaseController
      */
     public function financial()
     {
+        $this->requireAdmin();
         try {
             $startDate = $_GET['start_date'] ?? date('Y-m-01');
             $endDate = $_GET['end_date'] ?? date('Y-m-t');

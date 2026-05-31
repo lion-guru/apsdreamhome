@@ -1,27 +1,10 @@
 <?php
-
 /**
  * CM Dashboard View
  * Chief Manager Dashboard Interface
  */
-
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    @session_start();
-}
-
-// Check admin authentication
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: ' . BASE_URL . '/admin/login');
-    exit;
-}
-
-// Get admin info
 $admin_name = $_SESSION['admin_name'] ?? 'CM';
 $admin_role = $_SESSION['admin_role'] ?? 'cm';
-
-// Content for admin layout
-ob_start();
 ?>
 
 <!-- CM Dashboard Header -->
@@ -419,8 +402,3 @@ ob_start();
     }, 30000);
 </script>
 
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../../layouts/base.php';
-echo $content;
-?>

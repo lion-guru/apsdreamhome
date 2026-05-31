@@ -10,10 +10,10 @@ use App\Services\SystemLogger as Logger;
  */
 class LocalizationController extends BaseController
 {
-    private LocalizationService $localizationService;
+    private ?LocalizationService $localizationService = null;
     private $logger;
 
-    public function __construct(LocalizationService $localizationService, Logger $logger)
+    public function __construct(LocalizationService $localizationService = null, Logger $logger = null)
     {
         parent::__construct();
         $this->localizationService = $localizationService;
@@ -23,8 +23,17 @@ class LocalizationController extends BaseController
     /**
      * Set locale
      */
+    private function requireLocalizationService(): void
+    {
+        if ($this->localizationService === null) {
+            $this->response(['success' => false, 'message' => 'Localization service not available'], 503);
+            exit;
+        }
+    }
+
     public function setLocale()
     {
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
 
@@ -54,7 +63,7 @@ class LocalizationController extends BaseController
                 ], 500);
             }
         } catch (\Exception $e) {
-            $this->logger->error("Failed to set locale", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to set locale", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to set locale'
@@ -67,6 +76,7 @@ class LocalizationController extends BaseController
      */
     public function getCurrentLocale()
     {
+        $this->requireLocalizationService();
         try {
             $locale = $this->localizationService->getCurrentLocale();
 
@@ -75,7 +85,7 @@ class LocalizationController extends BaseController
                 'locale' => $locale
             ]);
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get current locale", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to get current locale", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to get current locale'
@@ -88,6 +98,7 @@ class LocalizationController extends BaseController
      */
     public function getSupportedLocales()
     {
+        $this->requireLocalizationService();
         try {
             $locales = $this->localizationService->getSupportedLocales();
 
@@ -96,7 +107,7 @@ class LocalizationController extends BaseController
                 'locales' => $locales
             ]);
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get supported locales", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to get supported locales", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to get supported locales'
@@ -109,6 +120,7 @@ class LocalizationController extends BaseController
      */
     public function getTranslations()
     {
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : $this->localizationService->getCurrentLocale();
             $translations = $this->localizationService->getAllTranslations($locale);
@@ -119,7 +131,7 @@ class LocalizationController extends BaseController
                 'locale' => $locale
             ]);
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get translations", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to get translations", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to get translations'
@@ -132,6 +144,7 @@ class LocalizationController extends BaseController
      */
     public function addTranslation()
     {
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
             $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : null;
@@ -163,7 +176,7 @@ class LocalizationController extends BaseController
                 ], 500);
             }
         } catch (\Exception $e) {
-            $this->logger->error("Failed to add translation", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to add translation", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to add translation'
@@ -176,6 +189,7 @@ class LocalizationController extends BaseController
      */
     public function updateTranslation()
     {
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
             $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : null;
@@ -207,7 +221,7 @@ class LocalizationController extends BaseController
                 ], 500);
             }
         } catch (\Exception $e) {
-            $this->logger->error("Failed to update translation", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to update translation", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to update translation'
@@ -220,6 +234,7 @@ class LocalizationController extends BaseController
      */
     public function deleteTranslation()
     {
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
             $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : null;
@@ -250,7 +265,7 @@ class LocalizationController extends BaseController
                 ], 500);
             }
         } catch (\Exception $e) {
-            $this->logger->error("Failed to delete translation", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to delete translation", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to delete translation'
@@ -263,6 +278,7 @@ class LocalizationController extends BaseController
      */
     public function exportTranslations()
     {
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : $this->localizationService->getCurrentLocale();
 
@@ -282,7 +298,7 @@ class LocalizationController extends BaseController
             echo json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             exit;
         } catch (\Exception $e) {
-            $this->logger->error("Failed to export translations", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to export translations", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to export translations'
@@ -295,6 +311,7 @@ class LocalizationController extends BaseController
      */
     public function importTranslations()
     {
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
             $translations = isset($_REQUEST['translations']) ? $_REQUEST['translations'] : null;
@@ -333,7 +350,7 @@ class LocalizationController extends BaseController
                 ], 500);
             }
         } catch (\Exception $e) {
-            $this->logger->error("Failed to import translations", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to import translations", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to import translations'
@@ -346,6 +363,7 @@ class LocalizationController extends BaseController
      */
     public function addLocale()
     {
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
 
@@ -375,7 +393,7 @@ class LocalizationController extends BaseController
                 ], 500);
             }
         } catch (\Exception $e) {
-            $this->logger->error("Failed to add locale", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to add locale", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
                 'message' => 'Failed to add locale'
@@ -388,6 +406,8 @@ class LocalizationController extends BaseController
      */
     public function management()
     {
+        $this->requireAdmin();
+        $this->requireLocalizationService();
         try {
             $stats = $this->localizationService->getStatistics();
 
@@ -398,7 +418,7 @@ class LocalizationController extends BaseController
                 'page_title' => 'Localization Management - APS Dream Home'
             ]);
         } catch (\Exception $e) {
-            $this->logger->error("Failed to load localization management", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to load localization management", ['error' => $e->getMessage()]);
             return $this->view('errors.500');
         }
     }
@@ -408,6 +428,8 @@ class LocalizationController extends BaseController
      */
     public function editor()
     {
+        $this->requireAdmin();
+        $this->requireLocalizationService();
         try {
             $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : $this->localizationService->getCurrentLocale();
             $translations = $this->localizationService->getAllTranslations($locale);
@@ -419,7 +441,7 @@ class LocalizationController extends BaseController
                 'page_title' => 'Translation Editor - APS Dream Home'
             ]);
         } catch (\Exception $e) {
-            $this->logger->error("Failed to load translation editor", ['error' => $e->getMessage()]);
+            $this->logger?->error("Failed to load translation editor", ['error' => $e->getMessage()]);
             return $this->view('errors.500');
         }
     }
