@@ -1979,3 +1979,58 @@ All modified files pass syntax check
 - `routes/web.php` — Added 31 new routes (reports-engine: 11, cm-dashboard: 3, team: 7, cron: 1, localization: 12)
 - `admin_menu_items` DB table — Added 3 new menu items
 
+---
+
+## Sessions 2026-05-31 (Parts 13-14): Sidebar Fixes, Missing Views, Workflow Completion & Form Security
+
+### Parts 13: Sidebar Audit, Missing Views & Form Security
+
+**143 sidebar items batch-tested** — 7 HTTP 500 (all `*-new` routes), 2 HTTP 404, 1 HTTP 503, 5 no-sidebar pages.
+
+**Fixes Applied:**
+1. **7 x 500 fixed** — `TestimonialController`, `FaqController`, `KnowledgeBaseController`, `AdminReportsController` all had `private $db` (PHP 8.2 `Access level must be protected`). Changed to `protected $db` + `extends AdminController`. Now all return HTTP 200 with sidebar.
+2. **2 x 404 fixed** — Added routes: `/admin/mlm/associates/create` → `MLMController@createAssociate`, `/admin/employees` → `HRMController@employeeList`.
+3. **1 x 503 fixed** — `LocalizationController::management()` now gracefully handles unavailable service.
+4. **5 no-sidebar pages fixed** — `TelecallingController` now detects admin URLs and uses admin layout. `GodModeController` now uses parent `render()` with admin layout.
+5. **Created 32 missing view files** — Employee (9), Admin CRM/HR/MLM (7), Voice Agent (7), Business Associate (5), Notification (1), Reports (3) — all pass syntax.
+6. **Fixed 6 missing `$` prefix bugs** in `admin/sites/create.php`, `admin/emi/create.php`, `admin/bookings/show.php`.
+7. **Added CSRF tokens to 20 POST forms** — All admin create/edit forms now secure.
+8. **Created `admin-form-enhancer.js`** — SmartFormAutocomplete integration, location cascade, pincode autofill, phone/email validation, alert auto-dismiss, confirm dialogs, price auto-fill.
+
+### Part 14: Workflow Pipeline Critical Bug Fixes
+
+**Colony → Plot → Booking pipeline (4 critical fixes):**
+- Fixed booking form action mismatch (`/admin/bookings/store` → `/admin/bookings`)
+- Fixed `PlotManagementController` using `site_id` instead of `colony_id` from form
+- Fixed SQL query from `sites` table to `colonies` table (columns exist)
+- Added `requireAdmin()` to `LocationAdminController` colony methods
+- Fixed `BookingController` `$users` variable overwrite
+
+**Lead → Deal → Commission pipeline (5 critical fixes):**
+- Added missing `kanban()` method to `DealController`
+- Fixed route `/admin/deals/create` → `DealController@create` (was `createFromLead`)
+- Fixed `stage_name` column query → hardcoded 7-stage array
+- Fixed `DealPipelineController` 20+ wrong column references (`d.stage`→`d.stage_id`, removed non-existent columns)
+- Fixed dot-notation render paths from `admin.deal-pipeline.index` → `admin/deal-pipeline/index`
+
+**HRM workflow (4 critical fixes):**
+- Fixed `HRController` 18+ `JOIN e.user_id = u.id` queries → `e.id` (column didn't exist)
+- Fixed `addAdvance()` route param mismatch + `payment_status ENUM` violation
+- Redirected sidebar `/admin/hrm/employees` → functional `/admin/hr/users`
+- Fixed `storeEmployee()` inserting into non-existent columns
+
+### Verification
+- **E2E: 128/129 pass** (1 expected GodMode 403) — zero regressions
+- **All PHP syntax checks pass** on 40+ modified/created files
+- **Commits**: Part 13 (`3e9421a73`), Part 14 (`fd691d969`) — both pushed
+
+### Key Metrics (Post-Parts 13-14)
+| Metric | Value |
+|--------|-------|
+| Sidebar items | 143 (all routes resolve, 98%+ HTTP 200) |
+| View files | 668+ (32 new) |
+| POST forms with CSRF | All 55+ admin forms now secure |
+| Critical-workflow bugs fixed | 12 (across 3 pipelines) |
+| E2E pass rate | 128/129 (99.2%) |
+| PHP error log | Clean (zero new errors)
+
