@@ -437,7 +437,7 @@ class PropertyService
     private function logActivity($action, $propertyId, $details = '')
     {
         try {
-            $sql = "INSERT INTO activity_logs (user_id, action, details, ip_address, user_agent, created_at) 
+            $sql = "INSERT INTO activity_logs_unified (user_id, action, details, ip_address, user_agent, created_at) 
                      VALUES (?, ?, ?, ?, ?, NOW())";
 
             $params = [

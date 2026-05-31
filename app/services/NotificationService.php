@@ -44,7 +44,7 @@ class NotificationService
             }
 
             // Create email log
-            $stmt = $this->db->prepare("INSERT INTO email_logs (
+            $stmt = $this->db->prepare("INSERT INTO notifications_unified (
                 template_id, email_type, to_email, to_name, subject, 
                 html_content, text_content, status, provider, created_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
@@ -71,7 +71,7 @@ class NotificationService
             $status = $result["success"] ? "sent" : "failed";
             $errorMessage = $result["success"] ? null : $result["error"];
 
-            $updateStmt = $this->db->prepare("UPDATE email_logs SET 
+            $updateStmt = $this->db->prepare("UPDATE notifications_unified SET 
                 status = ?, sent_at = ?, provider_response = ?, updated_at = NOW()
                 WHERE id = ?");
 
@@ -102,7 +102,7 @@ class NotificationService
             }
 
             // Create SMS log
-            $stmt = $this->db->prepare("INSERT INTO sms_logs (
+            $stmt = $this->db->prepare("INSERT INTO notifications_unified (
                 template_id, sms_type, to_phone, to_name, message, 
                 status, provider, created_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
@@ -127,7 +127,7 @@ class NotificationService
             $status = $result["success"] ? "sent" : "failed";
             $errorMessage = $result["success"] ? null : $result["error"];
 
-            $updateStmt = $this->db->prepare("UPDATE sms_logs SET 
+            $updateStmt = $this->db->prepare("UPDATE notifications_unified SET 
                 status = ?, sent_at = ?, provider_response = ?, updated_at = NOW()
                 WHERE id = ?");
 
@@ -176,7 +176,7 @@ class NotificationService
     public function getEmailLogs($limit = 50, $offset = 0)
     {
         $stmt = $this->db->prepare("SELECT el.*, et.template_name 
-                                     FROM email_logs el 
+                                     FROM notifications_unified el 
                                      LEFT JOIN email_templates et ON el.template_id = et.id 
                                      ORDER BY el.created_at DESC 
                                      LIMIT ? OFFSET ?");
@@ -187,7 +187,7 @@ class NotificationService
     public function getSMSLogs($limit = 50, $offset = 0)
     {
         $stmt = $this->db->prepare("SELECT sl.*, st.template_name 
-                                     FROM sms_logs sl 
+                                     FROM notifications_unified sl 
                                      LEFT JOIN sms_templates st ON sl.template_id = st.id 
                                      ORDER BY sl.created_at DESC 
                                      LIMIT ? OFFSET ?");
@@ -267,14 +267,14 @@ class NotificationService
             SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END) as sent,
             SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered,
             SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed
-            FROM email_logs WHERE DATE(created_at) = CURDATE()")->fetch(PDO::FETCH_ASSOC);
+            FROM notifications_unified WHERE DATE(created_at) = CURDATE()")->fetch(PDO::FETCH_ASSOC);
 
         $smsStats = $this->db->query("SELECT 
             COUNT(*) as total,
             SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END) as sent,
             SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered,
             SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed
-            FROM sms_logs WHERE DATE(created_at) = CURDATE()")->fetch(PDO::FETCH_ASSOC);
+            FROM notifications_unified WHERE DATE(created_at) = CURDATE()")->fetch(PDO::FETCH_ASSOC);
 
         return [
             "email" => $emailStats,

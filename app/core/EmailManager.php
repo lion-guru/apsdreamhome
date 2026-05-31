@@ -119,7 +119,7 @@ class EmailManager
             ];
 
             $stmt = $pdo->prepare("
-                INSERT INTO email_logs (recipient, template, status, data, error_message, ip_address, created_at)
+                INSERT INTO notifications_unified (recipient, template, status, data, error_message, ip_address, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ");
 
@@ -204,7 +204,7 @@ class EmailManager
                     status,
                     COUNT(*) as count,
                     DATE(created_at) as date
-                FROM email_logs
+                FROM notifications_unified
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
                 GROUP BY status, DATE(created_at)
                 ORDER BY date DESC, status

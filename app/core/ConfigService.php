@@ -77,7 +77,7 @@ class ConfigService
                 'session_lifetime' => getenv('SESSION_LIFETIME') ?: 7200,
                 'csrf_token_lifetime' => getenv('CSRF_TOKEN_LIFETIME') ?: 3600,
                 'password_min_length' => getenv('PASSWORD_MIN_LENGTH') ?: 8,
-                'max_login_attempts' => getenv('MAX_LOGIN_ATTEMPTS') ?: 5,
+                'max_activity_logs_unified' => getenv('MAX_activity_logs_unified') ?: 5,
                 'lockout_duration' => getenv('LOCKOUT_DURATION') ?: 900,
             ],
             'storage' => [

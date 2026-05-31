@@ -42,7 +42,7 @@ class CoreFunctionsServiceCustom
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
-            $sql = "INSERT INTO admin_activity_log (user_id, action, context, ip_address, user_agent, created_at) 
+            $sql = "INSERT INTO activity_logs_unified (user_id, action, context, ip_address, user_agent, created_at) 
                     VALUES (?, ?, ?, ?, ?, ?)";
             
             $stmt = $db->prepare($sql);

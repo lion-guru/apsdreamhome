@@ -492,7 +492,7 @@ class PushNotification extends Model
         ];
 
         $db->query(
-            "INSERT INTO notification_history
+            "INSERT INTO notifications_unified
              (user_id, user_type, notification_type, channel, title, message, status, reference_type, reference_id, sent_at, device_info, ip_address)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             array_values($historyData)
@@ -562,7 +562,7 @@ class PushNotification extends Model
                 SUM(CASE WHEN status = 'read' THEN 1 ELSE 0 END) as read,
                 SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed,
                 channel
-             FROM notification_history
+             FROM notifications_unified
              WHERE sent_at >= ?
              GROUP BY channel",
             [$startDate]
@@ -630,7 +630,7 @@ class PushNotification extends Model
     public function getUserNotifications(int $userId, string $userType, int $limit = 20): array
     {
         return $this->query(
-            "SELECT * FROM notification_history
+            "SELECT * FROM notifications_unified
              WHERE user_id = ? AND user_type = ? AND channel = ?
              ORDER BY sent_at DESC LIMIT ?",
             [$userId, $userType, self::CHANNEL_IN_APP, $limit]
@@ -643,7 +643,7 @@ class PushNotification extends Model
     public function markAsRead(int $notificationId, int $userId): array
     {
         $notification = $this->query(
-            "SELECT * FROM notification_history WHERE id = ? AND user_id = ?",
+            "SELECT * FROM notifications_unified WHERE id = ? AND user_id = ?",
             [$notificationId, $userId]
         )->fetch();
 
@@ -652,7 +652,7 @@ class PushNotification extends Model
         }
 
         $this->query(
-            "UPDATE notification_history SET status = 'read', read_at = NOW() WHERE id = ?",
+            "UPDATE notifications_unified SET status = 'read', read_at = NOW() WHERE id = ?",
             [$notificationId]
         );
 

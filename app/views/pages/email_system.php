@@ -351,7 +351,7 @@ function send_pending_welcome_emails($email_system) {
 
     $query = "SELECT email, name, role as user_type FROM users
               WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-              AND id NOT IN (SELECT user_id FROM email_logs WHERE type = 'welcome' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR))";
+              AND id NOT IN (SELECT user_id FROM notifications_unified WHERE type = 'welcome' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR))";
 
     $result = $conn->query($query);
 

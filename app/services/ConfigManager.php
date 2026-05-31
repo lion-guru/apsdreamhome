@@ -340,7 +340,7 @@ class ConfigManager
         // Validate and convert configuration values
         $validationRules = [
             'APP_DEBUG' => 'required|bool',
-            'MAX_LOGIN_ATTEMPTS' => 'required|numeric|min:1|max:10',
+            'MAX_activity_logs_unified' => 'required|numeric|min:1|max:10',
             'LOG_MAX_FILES' => 'required|numeric|min:1|max:50',
             'DB_MAX_CONNECTIONS' => 'required|numeric|min:1|max:100',
             'LOG_MAX_SIZE' => 'required|numeric|min:1|max:1000'
@@ -357,7 +357,7 @@ class ConfigManager
         // Type conversion
         return $validator->convert($value, match ($key) {
             'APP_DEBUG' => 'bool',
-            'MAX_LOGIN_ATTEMPTS', 'LOG_MAX_FILES', 'DB_MAX_CONNECTIONS' => 'int',
+            'MAX_activity_logs_unified', 'LOG_MAX_FILES', 'DB_MAX_CONNECTIONS' => 'int',
             'LOG_MAX_SIZE' => 'float',
             default => 'string'
         });

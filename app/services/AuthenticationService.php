@@ -27,7 +27,7 @@ class AuthenticationService
     {
         try {
             // Rate limiting check
-            $cacheKey = "login_attempts_" . md5($email);
+            $cacheKey = "activity_logs_unified_" . md5($email);
             if (!CoreFunctionsServiceCustom::checkRateLimit($cacheKey, 5, 300)) {
                 return [
                     'success' => false,

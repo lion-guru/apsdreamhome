@@ -483,7 +483,7 @@ class AdminBaseController extends BaseController
     {
         try {
             return $this->db->fetchAll(
-                "SELECT * FROM activity_logs ORDER BY created_at DESC LIMIT ?",
+                "SELECT * FROM activity_logs_unified ORDER BY created_at DESC LIMIT ?",
                 [$limit]
             ) ?? [];
         } catch (\Exception $e) {

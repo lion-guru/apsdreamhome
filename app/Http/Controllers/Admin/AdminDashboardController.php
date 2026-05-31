@@ -433,8 +433,8 @@ class AdminDashboardController extends AdminBaseController
         $stats = [];
         
         $stats['active_campaigns'] = $this->db->fetch("SELECT COUNT(*) as count FROM campaigns WHERE status = 'active'")['count'] ?? 0;
-        $stats['emails_sent'] = $this->db->fetch("SELECT COUNT(*) as count FROM email_logs")['count'] ?? 0;
-        $stats['sms_sent'] = $this->db->fetch("SELECT COUNT(*) as count FROM sms_logs")['count'] ?? 0;
+        $stats['emails_sent'] = $this->db->fetch("SELECT COUNT(*) as count FROM notifications_unified")['count'] ?? 0;
+        $stats['sms_sent'] = $this->db->fetch("SELECT COUNT(*) as count FROM notifications_unified")['count'] ?? 0;
         $stats['leads_from_marketing'] = $this->db->fetch(
             "SELECT COUNT(*) as count FROM leads WHERE source = 'marketing'"
         )['count'] ?? 0;

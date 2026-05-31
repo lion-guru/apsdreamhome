@@ -376,7 +376,7 @@ class EmailService
     private function logEmail($to, $subject, $body, $status, $error = null)
     {
         try {
-            $this->db->insert('email_logs', [
+            $this->db->insert('notifications_unified', [
                 'recipient' => $to,
                 'subject' => $subject,
                 'body' => substr($body, 0, 1000), // Truncate for storage

@@ -8,7 +8,7 @@ namespace App\Services\Legacy;
 class SecurityMonitor {
     // Threat detection thresholds
     private const THRESHOLDS = [
-        'login_attempts' => 5,
+        'activity_logs_unified' => 5,
         'ip_block_duration' => 3600, // 1 hour
         'suspicious_activity_score' => 75,
         'rate_limit' => [
@@ -51,7 +51,7 @@ class SecurityMonitor {
 
             // Track login attempt
             $sql = "
-                INSERT INTO login_attempts
+                INSERT INTO activity_logs_unified
                 (username, ip_address, attempt_time, successful)
                 VALUES (:username, :ip, NOW(), :successful)
             ";
@@ -64,7 +64,7 @@ class SecurityMonitor {
             // Count failed attempts in last hour
             $sql = "
                 SELECT COUNT(*) as failed_attempts
-                FROM login_attempts
+                FROM activity_logs_unified
                 WHERE username = :username
                 AND ip_address = :ip
                 AND successful = 0
@@ -76,7 +76,7 @@ class SecurityMonitor {
             ]);
 
             // Check if brute force threshold is reached
-            if ($attemptsData['failed_attempts'] >= self::THRESHOLDS['login_attempts']) {
+            if ($attemptsData['failed_attempts'] >= self::THRESHOLDS['activity_logs_unified']) {
                 // Block IP
                 $sql = "
                     INSERT INTO ip_block_list
@@ -282,7 +282,7 @@ class SecurityMonitor {
             // Check for recent suspicious login attempts
             $sql = "
                 SELECT COUNT(*) as suspicious_logins
-                FROM login_attempts
+                FROM activity_logs_unified
                 WHERE successful = 0
                 AND attempt_time > DATE_SUB(NOW(), INTERVAL 24 HOUR)
             ";
@@ -290,7 +290,7 @@ class SecurityMonitor {
 
             if ($loginData['suspicious_logins'] > 10) {
                 $securityIssues[] = [
-                    'type' => 'LOGIN_ATTEMPTS',
+                    'type' => 'activity_logs_unified',
                     'severity' => 'HIGH',
                     'description' => 'Unusually high number of failed login attempts'
                 ];

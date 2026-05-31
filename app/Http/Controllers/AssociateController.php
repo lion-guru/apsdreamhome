@@ -148,7 +148,7 @@ class AssociateController extends BaseController
         // Recent activities
         try {
             $rawActivities = $this->db->fetchAll(
-                "SELECT action, created_at FROM activity_logs WHERE user_id = ? AND user_type = 'associate' ORDER BY created_at DESC LIMIT 5",
+                "SELECT action, created_at FROM activity_logs_unified WHERE user_id = ? AND user_type = 'associate' ORDER BY created_at DESC LIMIT 5",
                 [$userId]
             );
             foreach ($rawActivities as $a) {

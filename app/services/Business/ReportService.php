@@ -95,7 +95,7 @@ class ReportService
                 LEFT JOIN property_views pv ON u.id = pv.user_id
                 LEFT JOIN inquiries e ON u.id = e.user_id
                 LEFT JOIN favorites f ON u.id = f.user_id
-                LEFT JOIN activity_logs al ON u.id = al.user_id
+                LEFT JOIN activity_logs_unified al ON u.id = al.user_id
                 WHERE 1=1";
             
             $params = [];
@@ -449,7 +449,7 @@ class ReportService
     private function logActivity($action, $details = '')
     {
         try {
-            $sql = "INSERT INTO activity_logs (user_id, action, details, ip_address, user_agent, created_at) 
+            $sql = "INSERT INTO activity_logs_unified (user_id, action, details, ip_address, user_agent, created_at) 
                      VALUES (?, ?, ?, ?, ?, NOW())";
             
             $params = [

@@ -144,7 +144,7 @@ class LeadScoringService
                     COUNT(*) as total_emails,
                     SUM(CASE WHEN opened = 1 THEN 1 ELSE 0 END) as opened,
                     SUM(CASE WHEN clicked = 1 THEN 1 ELSE 0 END) as clicked
-                FROM email_tracking WHERE lead_id = ?";
+                FROM notifications_unified WHERE lead_id = ?";
         $emailStats = $this->db->query($sql, [$leadId])->fetch(\PDO::FETCH_ASSOC);
 
         if ($emailStats && $emailStats['total_emails'] > 0) {

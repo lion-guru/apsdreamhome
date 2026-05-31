@@ -195,10 +195,10 @@ class EmailSettingsController extends AdminController
     private function getEmailStats()
     {
         return [
-            'total_sent' => $this->db->fetchOne("SELECT COUNT(*) as count FROM email_logs WHERE status = 'sent'")['count'] ?? 0,
-            'total_failed' => $this->db->fetchOne("SELECT COUNT(*) as count FROM email_logs WHERE status = 'failed'")['count'] ?? 0,
-            'today_sent' => $this->db->fetchOne("SELECT COUNT(*) as count FROM email_logs WHERE status = 'sent' AND DATE(created_at) = CURDATE()")['count'] ?? 0,
-            'today_failed' => $this->db->fetchOne("SELECT COUNT(*) as count FROM email_logs WHERE status = 'failed' AND DATE(created_at) = CURDATE()")['count'] ?? 0
+            'total_sent' => $this->db->fetchOne("SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'sent'")['count'] ?? 0,
+            'total_failed' => $this->db->fetchOne("SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'failed'")['count'] ?? 0,
+            'today_sent' => $this->db->fetchOne("SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'sent' AND DATE(created_at) = CURDATE()")['count'] ?? 0,
+            'today_failed' => $this->db->fetchOne("SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'failed' AND DATE(created_at) = CURDATE()")['count'] ?? 0
         ];
     }
     
@@ -208,7 +208,7 @@ class EmailSettingsController extends AdminController
     private function getRecentLogs($limit = 50)
     {
         return $this->db->fetchAll(
-            "SELECT * FROM email_logs ORDER BY created_at DESC LIMIT ?",
+            "SELECT * FROM notifications_unified ORDER BY created_at DESC LIMIT ?",
             [$limit]
         );
     }

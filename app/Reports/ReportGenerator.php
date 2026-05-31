@@ -198,7 +198,7 @@ class ReportGenerator
                         COUNT(CASE WHEN al.action = 'logout' THEN 1 END) as logouts,
                         COUNT(CASE WHEN al.action = 'property_view' THEN 1 END) as property_views
                     FROM users u
-                    LEFT JOIN activity_logs al ON u.id = al.user_id
+                    LEFT JOIN activity_logs_unified al ON u.id = al.user_id
                     WHERE 1=1";
 
             // Apply period filter

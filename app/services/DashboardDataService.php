@@ -81,7 +81,7 @@ class AdminDashboard
                     al.ip_address,
                     al.created_at,
                     u.name as user_name
-                FROM activity_logs al
+                FROM activity_logs_unified al
                 LEFT JOIN users u ON al.user_id = u.id
                 ORDER BY al.created_at DESC 
                 LIMIT ?";

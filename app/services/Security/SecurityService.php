@@ -35,7 +35,7 @@ class SecurityService
         $this->db = $db;
         $this->logger = $logger;
         $this->securityConfig = array_merge([
-            'max_login_attempts' => 5,
+            'max_activity_logs_unified' => 5,
             'lockout_duration' => 900, // 15 minutes
             'session_timeout' => 3600, // 1 hour
             'password_min_length' => 8,
