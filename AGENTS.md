@@ -1896,3 +1896,44 @@ All modified files pass syntax check
 ### E2E Test Results
 128/129 pass — 1 expected GodMode 403. Zero regressions.
 
+---
+
+## Session 2026-05-31 (Part 8): Route Unrouted Controllers — DealPipeline, PropertyAllocation & More
+
+### What Was Done
+1. **Scanned 56 unrouted controller files** — Identified 33 meaningful controllers worth routing, 3 maybe-routable, 14 experimental/debug (skip), 5 dead standalone scripts (skip).
+2. **Routed 4 admin controllers** (9 new routes):
+   - **DealPipelineController** — Full Kanban pipeline: `index`, `create`, `store`, `show`, `moveStage`, `updateProbability`, `markWon`, `markLost`, `timeline`
+   - **PropertyAllocationController** — Plot allocation: `index`, `create`, `store`, `show`, `confirm`, `cancel`, `calendar`
+   - **AssociateExtensionController** — Extension management: `index`, `show`, `updatePoints`
+   - **ApiIntegrationController** — Developer portal: `developers`, `developersCreate`, `developersStore`
+3. **Replaced 2 closure stubs** with proper controller routes: `/admin/associate-extensions`, `/admin/api/developers`.
+4. **Created 7 new view files**: deal-pipeline (4: index, create, show, timeline), property-allocations (3: show, create, calendar).
+5. **Added frontend routes**: `/register/unified` (MLM registration form+post), `/api/advanced/*` (social login, OTP, progressive registration).
+6. **Fixed 2 private->protected $db bugs**: `DealPipelineController` + `PropertyAllocationController` — same `private` vs `protected` inheritance pattern causing HTTP 500.
+7. **Seed Part 3+4**: Seeded api_developers, attempted to find 164 empty tables (mostly logs/experimental — confirmed not worth seeding).
+8. **Committed + pushed** at `8098a1713`.
+
+### Verification
+- 9/9 new routes: HTTP 200 ✅
+- 128/129 E2E pass (1 expected GodMode 403) — zero regressions ✅
+- All modified files pass PHP syntax check ✅
+- PHP error log: clean ✅
+
+### Files Modified
+- `app/Http/Controllers/Admin/DealPipelineController.php` — private→protected $db
+- `app/Http/Controllers/Admin/PropertyAllocationController.php` — private→protected $db
+- `routes/web.php` — 9 new controller routes + 2 closure→controller replacements + 6 frontend routes
+- `app/views/admin/deal-pipeline/index.php` — NEW: Kanban board with 8-stage pipeline
+- `app/views/admin/deal-pipeline/create.php` — NEW: Deal creation form with customer/property select
+- `app/views/admin/deal-pipeline/show.php` — NEW: Deal details with stage move/mark won-lost actions
+- `app/views/admin/deal-pipeline/timeline.php` — NEW: Deal full history timeline
+- `app/views/admin/property-allocations/show.php` — NEW: Allocation details with payment history
+- `app/views/admin/property-allocations/create.php` — NEW: Allocation creation form
+- `app/views/admin/property-allocations/calendar.php` — NEW: Property availability calendar
+
+### Remaining
+- **164 empty tables** (mostly logs/audit/experimental) — populate naturally, no action needed
+- **~20 remaining meaningful controllers** still unrouted (Banking, Invoice, Report, Async, Marketing, Media, Team, HR/Salary, Payroll, Advanced Analytics) — good candidates for next session
+- **E2E test** has 1 expected GodMode 403 for non-superadmin — not a bug
+
