@@ -311,14 +311,19 @@ class EmployeeController extends BaseController
             define('BASE_PATH', dirname(__DIR__, 4));
         }
 
-        // Set variables for shared view
+        $this->layout = 'layouts/admin';
         $userRole = 'employee';
         $profileUrl = BASE_URL . '/employee/profile';
-        $securityUrl = null; // Employees don't have security page yet
+        $securityUrl = null;
         $canEdit = true;
 
-        // Use unified shared profile view
-        include __DIR__ . '/../../../views/shared/profile.php';
+        $this->render('shared/profile', [
+            'user' => $employee,
+            'userRole' => $userRole,
+            'profileUrl' => $profileUrl,
+            'securityUrl' => $securityUrl,
+            'canEdit' => $canEdit,
+        ]);
     }
 
     /**

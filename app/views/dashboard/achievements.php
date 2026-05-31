@@ -4,7 +4,6 @@
  */
 
 $page_title = 'My Achievements - APS Dream Home';
-include __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="container py-4">
@@ -199,5 +198,3 @@ include __DIR__ . '/../layouts/header.php';
         </div>
     </div>
 </div>
-
-<?php include __DIR__ . '/../layouts/footer.php'; ?>

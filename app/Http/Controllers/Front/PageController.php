@@ -1753,45 +1753,6 @@ class PageController extends BaseController
     }
 
     // Property List
-    public function propertyList()
-    {
-        $data = [
-            'page_title' => 'Property List - APS Dream Home',
-            'page_description' => 'Browse all available properties'
-        ];
-        $this->render('pages/properties/list', $data);
-    }
-
-    // Property Edit
-    public function propertyEdit()
-    {
-        $data = [
-            'page_title' => 'Edit Property - APS Dream Home',
-            'page_description' => 'Edit your property listing'
-        ];
-        $this->render('pages/properties/edit', $data);
-    }
-
-    // Book Plot
-    public function bookPlot()
-    {
-        $data = [
-            'page_title' => 'Book a Plot - APS Dream Home',
-            'page_description' => 'Book your dream plot'
-        ];
-        $this->render('pages/properties/book_plot', $data);
-    }
-
-    // Book Property
-    public function bookProperty()
-    {
-        $data = [
-            'page_title' => 'Book Property - APS Dream Home',
-            'page_description' => 'Book your dream property'
-        ];
-        $this->render('pages/properties/book', $data);
-    }
-
     // Schedule Meeting
     public function scheduleMeeting()
     {
@@ -2500,5 +2461,56 @@ class PageController extends BaseController
         }
 
         $this->redirect('/listing/' . $propertyId);
+    }
+
+    public function aiChatbotPage()
+    {
+        $this->render('pages/ai/chatbot', ['page_title' => 'AI Property Assistant']);
+    }
+
+    public function colonies()
+    {
+        try {
+            $rows = $this->db->fetchAll("SELECT c.*, d.name as district_name, s.name as state_name FROM colonies c LEFT JOIN districts d ON c.district_id = d.id LEFT JOIN states s ON d.state_id = s.id WHERE c.is_active = 1 ORDER BY c.name");
+            $totalPlots = $this->db->fetch("SELECT COUNT(*) as total FROM plots WHERE colony_id IN (SELECT id FROM colonies WHERE is_active = 1) AND status = 'available'")['total'] ?? 0;
+            $colonies = [];
+            foreach ($rows as $row) {
+                $amenities = [];
+                if (!empty($row['amenities'])) {
+                    $decoded = json_decode($row['amenities'], true);
+                    $amenities = is_array($decoded) ? $decoded : [];
+                }
+                $highlights = [];
+                if (!empty($row['key_highlights'])) {
+                    $decoded = json_decode($row['key_highlights'], true);
+                    $highlights = is_array($decoded) ? $decoded : [];
+                }
+                $colonies[] = [
+                    'id' => $row['id'],
+                    'name' => $row['name'],
+                    'slug' => $row['slug'],
+                    'description' => $row['description'],
+                    'image' => $row['image_path'] ?? 'assets/images/colonies/placeholder.jpg',
+                    'location' => ($row['district_name'] ?? '') . ', ' . ($row['state_name'] ?? ''),
+                    'district_name' => $row['district_name'] ?? '',
+                    'total_area' => ($row['total_plots'] * 1200) . ' sqft',
+                    'available_plots' => $row['available_plots'] ?? 0,
+                    'starting_price' => '₹' . number_format(intval($row['starting_price'] ?? 0)),
+                    'completion_status' => $row['is_featured'] ? 'Featured' : 'Active',
+                    'amenities' => $amenities,
+                    'highlights' => $highlights,
+                ];
+            }
+            $colonyStats = [
+                'total_colonies' => count($colonies),
+                'total_area' => array_sum(array_map(function($c) { return intval($c['available_plots']) * 1200; }, $colonies)) . ' sqft',
+                'total_plots' => $totalPlots,
+                'cities_covered' => count(array_unique(array_column($colonies, 'district_name')))
+            ];
+        } catch (\Exception $e) {
+            $colonies = [];
+            $colonyStats = ['total_colonies' => 0, 'total_area' => '0', 'total_plots' => 0, 'cities_covered' => 0];
+        }
+        $this->render('pages/colonies', ['colonies' => $colonies, 'colony_stats' => $colonyStats]);
     }
 }

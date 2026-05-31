@@ -46,6 +46,8 @@ class AdminAuthController extends BaseController
             $_SESSION['role'] = $admin['role'] ?? 'admin';
             $_SESSION['user_email'] = $admin['email'] ?? 'apsdreamhome.com';
             $_SESSION['user_name'] = $admin['name'] ?? 'Admin';
+            $_SESSION['user_phone'] = $admin['phone'] ?? '';
+            $_SESSION['logged_in'] = true;
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }
@@ -119,6 +121,8 @@ class AdminAuthController extends BaseController
             $_SESSION['role'] = $admin['role'] ?? 'admin';
             $_SESSION['user_email'] = $admin['email'] ?? 'apsdreamhome.com';
             $_SESSION['user_name'] = $admin['name'] ?? 'Admin';
+            $_SESSION['user_phone'] = $admin['phone'] ?? '';
+            $_SESSION['logged_in'] = true;
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }
@@ -165,6 +169,8 @@ class AdminAuthController extends BaseController
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_phone'] = $user['phone'] ?? '';
+                $_SESSION['logged_in'] = true;
 
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;

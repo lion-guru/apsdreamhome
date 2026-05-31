@@ -56,7 +56,7 @@
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-heart me-2 text-danger"></i>Impact Investing</h5></div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Impact Funds</span><strong>₹<?= ($impact['impact_funds'] ?? '0') ?></strong></div>
-                    <div class="d-flex justify-content-between mb-2"><span>Social Impact</span><strong><?= number_format($impact['social_impact'] ?? 0) ?> beneficiaries</strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Social Impact</span><strong><?php $si = $impact['social_impact'] ?? 0; echo is_numeric($si) ? number_format($si) : htmlspecialchars($si); ?> beneficiaries</strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Environmental Impact</span><strong><?= ($impact['environmental_impact'] ?? '0') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Returns</span><strong class="text-success"><?= ($impact['financial_returns'] ?? '0%') ?></strong></div>
                     <div class="d-flex justify-content-between"><span>Framework</span><strong><?= ($impact['measuring_framework'] ?? 'UN SDG') ?></strong></div>

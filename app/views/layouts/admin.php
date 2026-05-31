@@ -12,16 +12,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Admin CSS -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
+    <style>
+        /* RBAC Sidebar section toggle styles */
+        .sidebar-sec { padding:15px 15px 5px; font-size:.7rem; text-transform:uppercase; color:rgba(255,255,255,.4); font-weight:600; letter-spacing:.05em; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+        .sidebar-sec-arrow { font-size:.6rem; transition:transform .25s; color:rgba(255,255,255,.3) }
+        .sidebar-sec-arrow.collapsed { transform:rotate(-90deg) }
+    </style>
 </head>
 
 <body>
     <?php
     $currentUrl = $_SERVER['REQUEST_URI'] ?? '';
-    $adminName = $_SESSION['admin_name'] ?? 'Admin';
-    $adminRole = $_SESSION['admin_role'] ?? 'admin';
+    $adminName = $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin';
+    $adminRole = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin';
     $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     $isActive = function ($path) use ($currentUrl, $base) {
         $full = $base . $path;
@@ -29,354 +37,60 @@
     };
     ?>
 
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="<?php echo $base; ?>/admin/dashboard" class="sidebar-logo">
-                <i class="fas fa-home"></i>
-                <span>APS Dream Home</span>
-            </a>
-            <div class="sidebar-sub"><?php echo ucfirst(str_replace('_', ' ', $adminRole)); ?> Panel</div>
-        </div>
+    <!-- Sidebar (DB-driven via rbac_sidebar.php) -->
+    <?php include __DIR__ . '/../admin/layouts/rbac_sidebar.php'; ?>
 
-        <div class="sidebar-section">Main</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/dashboard" class="sidebar-link <?php echo $isActive('/admin/dashboard') ? 'active' : ''; ?>">
-                    <i class="fas fa-chart-pie"></i> Dashboard
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/analytics" class="sidebar-link <?php echo $isActive('/admin/analytics') ? 'active' : ''; ?>">
-                    <i class="fas fa-chart-line"></i> Analytics
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/reports" class="sidebar-link <?php echo $isActive('/admin/reports') ? 'active' : ''; ?>">
-                    <i class="fas fa-file-alt"></i> Reports
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">CRM & Sales</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/leads" class="sidebar-link <?php echo $isActive('/admin/leads') ? 'active' : ''; ?>">
-                    <i class="fas fa-bullseye"></i> Leads
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/leads/scoring" class="sidebar-link <?php echo $isActive('/admin/leads/scoring') ? 'active' : ''; ?>">
-                    <i class="fas fa-star"></i> Lead Scoring
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/customers" class="sidebar-link <?php echo $isActive('/admin/customers') ? 'active' : ''; ?>">
-                    <i class="fas fa-users"></i> Customers
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/deals" class="sidebar-link <?php echo $isActive('/admin/deals') ? 'active' : ''; ?>">
-                    <i class="fas fa-handshake"></i> Deals
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/sales" class="sidebar-link <?php echo $isActive('/admin/sales') ? 'active' : ''; ?>">
-                    <i class="fas fa-chart-bar"></i> Sales
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/campaigns" class="sidebar-link <?php echo $isActive('/admin/campaigns') ? 'active' : ''; ?>">
-                    <i class="fas fa-bullhorn"></i> Campaigns
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/bookings" class="sidebar-link <?php echo $isActive('/admin/bookings') ? 'active' : ''; ?>">
-                    <i class="fas fa-file-contract"></i> Bookings
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">Properties</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/properties" class="sidebar-link <?php echo $isActive('/admin/properties') ? 'active' : ''; ?>">
-                    <i class="fas fa-building"></i> All Properties
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/projects" class="sidebar-link <?php echo $isActive('/admin/projects') ? 'active' : ''; ?>">
-                    <i class="fas fa-project-diagram"></i> Projects
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/plots" class="sidebar-link <?php echo $isActive('/admin/plots') ? 'active' : ''; ?>">
-                    <i class="fas fa-map"></i> Plots / Land
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/sites" class="sidebar-link <?php echo $isActive('/admin/sites') ? 'active' : ''; ?>">
-                    <i class="fas fa-map-marker-alt"></i> Sites
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/resell-properties" class="sidebar-link <?php echo $isActive('/admin/resell-properties') ? 'active' : ''; ?>">
-                    <i class="fas fa-exchange-alt"></i> Resell Properties
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">MLM Network</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/network/tree" class="sidebar-link <?php echo $isActive('/admin/network/tree') ? 'active' : ''; ?>">
-                    <i class="fas fa-sitemap"></i> Network Tree
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/network/genealogy" class="sidebar-link <?php echo $isActive('/admin/network/genealogy') ? 'active' : ''; ?>">
-                    <i class="fas fa-project-diagram"></i> Genealogy
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/network/ranks" class="sidebar-link <?php echo $isActive('/admin/network/ranks') ? 'active' : ''; ?>">
-                    <i class="fas fa-medal"></i> Ranks
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/associates" class="sidebar-link <?php echo $isActive('/admin/associates') ? 'active' : ''; ?>">
-                    <i class="fas fa-handshake"></i> Associates
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/commission" class="sidebar-link <?php echo $isActive('/admin/commission') ? 'active' : ''; ?>">
-                    <i class="fas fa-percentage"></i> Commissions
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/payouts" class="sidebar-link <?php echo $isActive('/admin/payouts') ? 'active' : ''; ?>">
-                    <i class="fas fa-money-bill-wave"></i> Payouts
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">Financial</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/payments" class="sidebar-link <?php echo $isActive('/admin/payments') ? 'active' : ''; ?>">
-                    <i class="fas fa-credit-card"></i> Payments
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/emi" class="sidebar-link <?php echo $isActive('/admin/emi') ? 'active' : ''; ?>">
-                    <i class="fas fa-calculator"></i> EMI Plans
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/accounting" class="sidebar-link <?php echo $isActive('/admin/accounting') ? 'active' : ''; ?>">
-                    <i class="fas fa-calculator"></i> Accounting
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/expenses" class="sidebar-link <?php echo $isActive('/admin/expenses') ? 'active' : ''; ?>">
-                    <i class="fas fa-money-bill-wave"></i> Expenses
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">Operations</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/tasks" class="sidebar-link <?php echo $isActive('/admin/tasks') ? 'active' : ''; ?>">
-                    <i class="fas fa-tasks"></i> Tasks
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/visits" class="sidebar-link <?php echo $isActive('/admin/visits') ? 'active' : ''; ?>">
-                    <i class="fas fa-walking"></i> Site Visits
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/support_tickets" class="sidebar-link <?php echo $isActive('/admin/support_tickets') ? 'active' : ''; ?>">
-                    <i class="fas fa-ticket-alt"></i> Support Tickets
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">Marketing</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/gallery" class="sidebar-link <?php echo $isActive('/admin/gallery') ? 'active' : ''; ?>">
-                    <i class="fas fa-images"></i> Gallery
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/testimonials" class="sidebar-link <?php echo $isActive('/admin/testimonials') ? 'active' : ''; ?>">
-                    <i class="fas fa-comment"></i> Testimonials
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/news" class="sidebar-link <?php echo $isActive('/admin/news') ? 'active' : ''; ?>">
-                    <i class="fas fa-newspaper"></i> News
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/blog" class="sidebar-link <?php echo $isActive('/admin/blog') ? 'active' : ''; ?>">
-                    <i class="fas fa-blog"></i> Blog
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/media" class="sidebar-link <?php echo $isActive('/admin/media') ? 'active' : ''; ?>">
-                    <i class="fas fa-photo-video"></i> Media Library
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/engagement" class="sidebar-link <?php echo $isActive('/admin/engagement') ? 'active' : ''; ?>">
-                    <i class="fas fa-heart"></i> Engagement
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/careers" class="sidebar-link <?php echo $isActive('/admin/careers') ? 'active' : ''; ?>">
-                    <i class="fas fa-briefcase"></i> Careers / Jobs
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">AI & Technology</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/ai" class="sidebar-link <?php echo $isActive('/admin/ai') ? 'active' : ''; ?>">
-                    <i class="fas fa-brain"></i> AI Hub
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/ai-settings" class="sidebar-link <?php echo $isActive('/admin/ai-settings') ? 'active' : ''; ?>">
-                    <i class="fas fa-robot"></i> AI Settings
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/ai/analytics" class="sidebar-link <?php echo $isActive('/admin/ai/analytics') ? 'active' : ''; ?>">
-                    <i class="fas fa-chart-area"></i> AI Analytics
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/voice-agents/dashboard" class="sidebar-link <?php echo $isActive('/admin/voice-agents') ? 'active' : ''; ?>">
-                    <i class="fas fa-phone-voice"></i> Voice Agents
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">Users & Team</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/users" class="sidebar-link <?php echo $isActive('/admin/users') ? 'active' : ''; ?>">
-                    <i class="fas fa-users"></i> All Users
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/employees" class="sidebar-link <?php echo $isActive('/admin/employees') ? 'active' : ''; ?>">
-                    <i class="fas fa-user-tie"></i> Employees
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/hrm/employees" class="sidebar-link <?php echo $isActive('/admin/hrm/employees') ? 'active' : ''; ?>">
-                    <i class="fas fa-id-badge"></i> HRM / Employees
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/roles" class="sidebar-link <?php echo $isActive('/admin/roles') ? 'active' : ''; ?>">
-                    <i class="fas fa-user-shield"></i> Roles & Permissions
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/invoices" class="sidebar-link <?php echo $isActive('/admin/invoices') ? 'active' : ''; ?>">
-                    <i class="fas fa-file-invoice"></i> Invoices
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">Locations</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/locations/states" class="sidebar-link <?php echo $isActive('/admin/locations/states') ? 'active' : ''; ?>">
-                    <i class="fas fa-globe"></i> States / Districts
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">Content & Settings</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/pages" class="sidebar-link <?php echo $isActive('/admin/pages') ? 'active' : ''; ?>">
-                    <i class="fas fa-file"></i> CMS Pages
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/legal-pages" class="sidebar-link <?php echo $isActive('/admin/legal-pages') ? 'active' : ''; ?>">
-                    <i class="fas fa-file-alt"></i> Legal Pages
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/activity-log" class="sidebar-link <?php echo $isActive('/admin/activity-log') ? 'active' : ''; ?>">
-                    <i class="fas fa-history"></i> Activity Log
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/settings" class="sidebar-link <?php echo $isActive('/admin/settings') ? 'active' : ''; ?>">
-                    <i class="fas fa-cog"></i> Site Settings
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/api-keys" class="sidebar-link <?php echo $isActive('/admin/api-keys') ? 'active' : ''; ?>">
-                    <i class="fas fa-key"></i> API Keys
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-section">Account</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/" target="_blank" class="sidebar-link">
-                    <i class="fas fa-external-link-alt"></i> View Website
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/admin/logout" class="sidebar-link text-danger">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </li>
-        </ul>
-    </aside>
+    <?php
+    // Live notification/message counts from DB
+    $newLeadsCount = 0;
+    $pendingTicketsCount = 0;
+    $newInquiriesCount = 0;
+    try {
+        $db = \App\Core\Database::getInstance()->getConnection();
+        $stmt = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE DATE(created_at) = CURDATE()");
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $newLeadsCount = $row['cnt'] ?? 0;
+        $stmt = $db->query("SELECT COUNT(*) as cnt FROM support_tickets WHERE status = 'open'");
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $pendingTicketsCount = $row['cnt'] ?? 0;
+        $stmt = $db->query("SELECT COUNT(*) as cnt FROM inquiries WHERE DATE(created_at) = CURDATE()");
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $newInquiriesCount = $row['cnt'] ?? 0;
+    } catch (\Exception $e) { /* silent */ }
+    ?>
 
     <!-- Main Content -->
     <main class="main-content">
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="nav-left">
-                <button class="toggle-btn" onclick="document.getElementById('sidebar').classList.toggle('show')">
+                <button class="toggle-btn" onclick="document.getElementById('sidebarMenu').classList.toggle('show')">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="breadcrumb">
-                    Admin / <strong><?php echo $page_title ?? 'Dashboard'; ?></strong>
-                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">Admin</li>
+                        <li class="breadcrumb-item active" id="breadcrumb-title"><?php echo $page_title ?? 'Dashboard'; ?></li>
+                    </ol>
+                </nav>
             </div>
 
             <div class="nav-right">
-                <!-- Notifications -->
-                <button class="nav-icon" onclick="toggleNotifications()">
+                <!-- Notifications (Leads) -->
+                <button class="nav-icon" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
-                    <span class="badge">3</span>
+                    <span class="badge"><?php echo $newLeadsCount; ?></span>
                 </button>
 
-                <!-- Messages -->
-                <button class="nav-icon" onclick="toggleMessages()">
+                <!-- Messages / Inquiries -->
+                <button class="nav-icon" onclick="toggleMessages()" title="New Inquiries Today">
                     <i class="fas fa-envelope"></i>
-                    <span class="badge">5</span>
+                    <span class="badge"><?php echo $newInquiriesCount; ?></span>
                 </button>
 
-                <!-- Profile Dropdown -->
-                <div style="position: relative;">
-                    <div class="user-box" onclick="toggleProfile()">
+                <!-- Profile Dropdown (Bootstrap native) -->
+                <div class="dropdown" style="position: relative;">
+                    <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
                         <div class="user-avatar"><?php echo strtoupper(substr($adminName, 0, 1)); ?></div>
                         <div class="user-info">
                             <div class="user-name"><?php echo htmlspecialchars($adminName); ?></div>
@@ -385,29 +99,20 @@
                         <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: #64748b;"></i>
                     </div>
 
-                    <!-- Profile Dropdown Menu -->
-                    <div class="dropdown-menu" id="profileDropdown">
-                        <a href="<?php echo $base; ?>/admin/profile" class="dropdown-item">
-                            <i class="fas fa-user"></i> My Profile
-                        </a>
-                        <a href="<?php echo $base; ?>/admin/profile/security" class="dropdown-item">
-                            <i class="fas fa-shield-alt"></i> Security
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="<?php echo $base; ?>/admin/settings" class="dropdown-item">
-                            <i class="fas fa-cog"></i> Settings
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="<?php echo $base; ?>/admin/logout" class="dropdown-item text-danger">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a href="<?php echo $base; ?>/admin/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a></li>
+                        <li><a href="<?php echo $base; ?>/admin/profile/security" class="dropdown-item"><i class="fas fa-shield-alt"></i> Security</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a href="<?php echo $base; ?>/admin/settings" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a href="<?php echo $base; ?>/admin/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
                 </div>
             </div>
         </nav>
 
         <!-- Page Content -->
-        <div class="page-content">
+        <div class="page-content" id="page-content">
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="alert alert-success alert-dismissible fade show">
                     <i class="fas fa-check-circle me-2"></i>
@@ -434,6 +139,129 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Admin JS -->
     <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/admin.js"></script>
+
+    <script>
+    // AJAX Navigation for Sidebar - sidebar remains fixed, only content updates
+    // Guard: only initialize once per page (prevents double-registration after reRunScripts)
+    if (!window._adminAjaxNavInitialized) {
+    window._adminAjaxNavInitialized = true;
+    (function() {
+        var baseUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>';
+
+        function updateActiveSidebar(url) {
+            document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                var href = link.getAttribute('href');
+                link.classList.remove('active');
+                if (!href) return;
+                // Match exact or sub-path after base
+                if (url === href || (href !== baseUrl + '/admin/dashboard' && url.indexOf(href) === 0) || (href.indexOf('?') > -1 && url.indexOf(href.substring(0, href.indexOf('?'))) === 0)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function reRunScripts(container) {
+            container.querySelectorAll('script').forEach(function(oldScript) {
+                var newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(function(attr) {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+        }
+
+        function findContent(doc) {
+            // Try id first, then class fallback
+            var el = doc.getElementById('page-content');
+            if (!el) el = doc.querySelector('.page-content');
+            return el;
+        }
+
+        function navigateTo(url, pushState) {
+            if (pushState !== false) {
+                history.pushState({ url: url }, '', url);
+            }
+
+            var loadingEl = document.getElementById('page-content') || document.querySelector('.page-content');
+            if (loadingEl) loadingEl.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2 text-muted">Loading...</p></div>';
+
+            fetch(url)
+                .then(function(response) {
+                    if (!response.ok) throw new Error('Page load failed: ' + response.status);
+                    return response.text();
+                })
+                .then(function(html) {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+
+                    var newContent = findContent(doc);
+                    var currentContent = document.getElementById('page-content') || document.querySelector('.page-content');
+                    if (newContent && currentContent) {
+                        currentContent.innerHTML = newContent.innerHTML;
+                    } else {
+                        // Fallback: full page reload
+                        window.location.href = url;
+                        return;
+                    }
+
+                    // Update breadcrumb: try #breadcrumb-title first, then .breadcrumb
+                    var newBreadcrumb = doc.getElementById('breadcrumb-title') || doc.querySelector('.breadcrumb');
+                    var currentBreadcrumb = document.getElementById('breadcrumb-title') || document.querySelector('.breadcrumb');
+                    if (newBreadcrumb && currentBreadcrumb) {
+                        currentBreadcrumb.innerHTML = newBreadcrumb.innerHTML;
+                    }
+
+                    updateActiveSidebar(url);
+                    reRunScripts(currentContent);
+                    document.title = doc.title || 'APS Dream Home - Admin';
+                })
+                .catch(function(err) {
+                    console.error('AJAX navigation error:', err);
+                    window.location.href = url;
+                });
+        }
+
+        // Intercept sidebar link clicks
+        document.addEventListener('click', function(e) {
+            var link = e.target.closest('.sidebar-link');
+            if (!link) return;
+
+            // Allow logout, external links, target="_blank" to behave normally
+            if (link.getAttribute('target') === '_blank') return;
+            if (link.getAttribute('href') && link.getAttribute('href').indexOf('/logout') !== -1) return;
+            if (link.getAttribute('href') && link.getAttribute('href').indexOf('://') !== -1 && link.getAttribute('href').indexOf(window.location.hostname) === -1) return;
+
+            e.preventDefault();
+            var href = link.getAttribute('href');
+            if (href) navigateTo(href);
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', function(e) {
+            if (e.state && e.state.url) {
+                navigateTo(e.state.url, false);
+            }
+        });
+
+        // Intercept sidebar subsection links (not primary sidebar-link)
+        document.addEventListener('click', function(e) {
+            var link = e.target.closest('.dropdown-item');
+            if (!link) return;
+            if (link.getAttribute('target') === '_blank') return;
+            if (link.getAttribute('href') && link.getAttribute('href').indexOf('/logout') !== -1) return;
+            var href = link.getAttribute('href');
+            if (!href || href.indexOf('#') === 0) return;
+
+            // Only intercept if it contains /admin/ path
+            if (href.indexOf(baseUrl + '/admin/') === 0 || href.indexOf('/admin/') === 0) {
+                e.preventDefault();
+                navigateTo(href);
+            }
+        });
+    })();
+    }
+    </script>
 </body>
 
 </html>

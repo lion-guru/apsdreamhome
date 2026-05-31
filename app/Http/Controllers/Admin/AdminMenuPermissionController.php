@@ -29,9 +29,9 @@ class AdminMenuPermissionController extends AdminController
 
         $menuItems = $this->menuService->getAllMenuItemsWithPermissions();
         
-        include APP_PATH . '/views/admin/layouts/header.php';
-        include APP_PATH . '/views/admin/menu-permissions/index.php';
-        include APP_PATH . '/views/admin/layouts/footer.php';
+        $this->render('admin/menu-permissions/index', [
+            'menuItems' => $menuItems,
+        ]);
     }
 
     /**

@@ -49,7 +49,9 @@ class FacebookAuthController extends \App\Http\Controllers\BaseController
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user_name'] = $user['name'];
                     $_SESSION['user_email'] = $user['email'];
+                    $_SESSION['user_phone'] = $user['phone'] ?? '';
                     $_SESSION['role'] = $user['role'] ?? 'customer';
+                    $_SESSION['logged_in'] = true;
                     header('Location: ' . BASE_URL . '/user/dashboard');
                     exit;
                 }

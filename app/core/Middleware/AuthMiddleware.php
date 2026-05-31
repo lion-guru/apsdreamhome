@@ -119,6 +119,10 @@ class AuthMiddleware {
         }
     }
 
+    public static function requireAdmin() {
+        self::requireAdminAuth();
+    }
+
     public function handle(array $request, callable $next) {
         if ($this->shouldBypass($request)) return $next($request);
         if (!isset($_SESSION['user_id'])) return $this->handleUnauthenticated($request);

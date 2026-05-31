@@ -25,7 +25,7 @@ require_once __DIR__ . '/init.php';
 // ORM is already handled by config.php or App::database()
 
 // Set page metadata
-$$page_title = 'Property Listings - APS Dream Homes';
+$page_title = 'Property Listings - APS Dream Homes';
 $page_description = 'Browse premium properties and real estate listings in Gorakhpur';
 $page_keywords = 'properties, real estate, Gorakhpur, APS Dream Homes, residential plots';
 
@@ -955,7 +955,7 @@ try {
 
     <!-- Footer -->
     <!-- FIXED: Commented out missing template file -->
-    <!-- <?php include_once __DIR__ . '/includes/templates/footer.php'; ?> -->
+    <?php // include_once __DIR__ . '/includes/templates/footer.php'; ?>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

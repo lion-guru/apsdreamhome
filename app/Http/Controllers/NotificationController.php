@@ -1,60 +1,59 @@
 <?php
 namespace App\Http\Controllers;
 
-class NotificationController 
+use App\Http\Controllers\Admin\AdminController;
+
+class NotificationController extends AdminController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->layout = 'layouts/admin';
+    }
+
     public function index() 
     {
-        // Notification Dashboard
-        include __DIR__ . "/../../views/notification/index.php";
+        $this->render('notification/index', ['page_title' => 'Notification Management']);
     }
     
     public function templates() 
     {
-        // Notification Templates
-        include __DIR__ . "/../../views/notification/templates.php";
+        $this->render('notification/templates', ['page_title' => 'Notification Templates']);
     }
     
     public function createTemplate() 
     {
-        // Create Notification Template
-        include __DIR__ . "/../../views/notification/create_template.php";
+        $this->render('notification/create_template', ['page_title' => 'Create Template']);
     }
     
     public function editTemplate($id) 
     {
-        // Edit Notification Template
-        include __DIR__ . "/../../views/notification/edit_template.php";
+        $this->render('notification/edit_template', ['page_title' => 'Edit Template']);
     }
     
     public function emailLogs() 
     {
-        // Email Logs
-        include __DIR__ . "/../../views/notification/email_logs.php";
+        $this->render('notification/email_logs', ['page_title' => 'Email Logs']);
     }
     
     public function smsLogs() 
     {
-        // SMS Logs
-        include __DIR__ . "/../../views/notification/sms_logs.php";
+        $this->render('notification/sms_logs', ['page_title' => 'SMS Logs']);
     }
     
     public function settings() 
     {
-        // Notification Settings
-        include __DIR__ . "/../../views/notification/settings.php";
+        $this->render('notification/settings', ['page_title' => 'Notification Settings']);
     }
     
     public function sendTest() 
     {
-        // Send Test Notification
-        include __DIR__ . "/../../views/notification/send_test.php";
+        $this->render('notification/send_test', ['page_title' => 'Send Test Notification']);
     }
     
     public function preview() 
     {
-        // Preview Template
-        include __DIR__ . "/../../views/notification/preview.php";
+        $this->render('notification/preview', ['page_title' => 'Preview Template']);
     }
 
     public function getNotifications()

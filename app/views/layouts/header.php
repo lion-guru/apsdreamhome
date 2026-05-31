@@ -194,7 +194,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             'submenu' => [
                                 ['label' => 'All Services', 'url' => '/services', 'icon' => 'fas fa-concierge-bell'],
                                 ['label' => 'Home Loan', 'url' => '/financial-services', 'icon' => 'fas fa-hand-holding-usd'],
-                                ['label' => 'Legal Services', 'url' => '/legal-services', 'icon' => 'fas fa-gavel'],
+                                ['label' => 'Legal Services', 'url' => '/legal/services', 'icon' => 'fas fa-gavel'],
                                 ['label' => 'Interior Design', 'url' => '/interior-design', 'icon' => 'fas fa-couch'],
                                 ['label' => 'Resell Property', 'url' => '/resell', 'icon' => 'fas fa-handshake'],
                                 ['label' => 'Documents', 'url' => '/documents', 'icon' => 'fas fa-folder-open'],
@@ -311,7 +311,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 ['label' => 'Dashboard', 'url' => '/employee/dashboard', 'icon' => 'fa-tachometer-alt'],
                                 ['label' => 'My Tasks', 'url' => '/employee/tasks', 'icon' => 'fa-tasks'],
                                 ['label' => 'Attendance', 'url' => '/employee/attendance', 'icon' => 'fa-clock'],
-                                ['label' => 'Performance', 'url' => '/employee/performance', 'icon' => 'fa-chart-line'],
+                                ['label' => 'Performance', 'url' => '/employee/performance-page', 'icon' => 'fa-chart-line'],
                                 ['label' => 'My Profile', 'url' => '/employee/profile', 'icon' => 'fa-user-cog'],
                             ];
                             $logoutUrl = '/employee/logout';

@@ -130,6 +130,13 @@ class IoTController extends BaseController
     public function energyMonitoring($property_id)
     {
         $property = $this->getPropertyDetails($property_id);
+
+        if (!$property) {
+            $this->setFlash('error', 'Property not found');
+            $this->redirect(BASE_URL . 'properties');
+            return;
+        }
+
         $energy_data = $this->getEnergyData($property_id);
 
         $this->data['page_title'] = 'Energy Monitoring - ' . $property['title'];
@@ -145,6 +152,13 @@ class IoTController extends BaseController
     public function securityMonitoring($property_id)
     {
         $property = $this->getPropertyDetails($property_id);
+
+        if (!$property) {
+            $this->setFlash('error', 'Property not found');
+            $this->redirect(BASE_URL . 'properties');
+            return;
+        }
+
         $security_data = $this->getSecurityData($property_id);
 
         $this->data['page_title'] = 'Security Monitoring - ' . $property['title'];
@@ -223,7 +237,7 @@ class IoTController extends BaseController
             $stmt->execute(['id' => $property_id]);
             return $stmt->fetch();
         } catch (\Exception $e) {
-            error_log('Property fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Property fetch error: ' . $e->getMessage()); }
             return null;
         }
     }
@@ -249,7 +263,7 @@ class IoTController extends BaseController
 
             return $stmt->fetchAll();
         } catch (\Exception $e) {
-            error_log('IoT devices fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('IoT devices fetch error: ' . $e->getMessage()); }
             return [];
         }
     }
@@ -303,7 +317,7 @@ class IoTController extends BaseController
                 $this->setFlash('error', 'Failed to add IoT device');
             }
         } catch (\Exception $e) {
-            error_log('IoT device add error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('IoT device add error: ' . $e->getMessage()); }
             $this->setFlash('error', 'Failed to add IoT device');
         }
     }
@@ -328,7 +342,7 @@ class IoTController extends BaseController
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
         } catch (\Exception $e) {
-            error_log('All IoT devices fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('All IoT devices fetch error: ' . $e->getMessage()); }
             return [];
         }
     }
@@ -374,7 +388,7 @@ class IoTController extends BaseController
 
             return $stmt->fetch();
         } catch (\Exception $e) {
-            error_log('IoT device fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('IoT device fetch error: ' . $e->getMessage()); }
             return null;
         }
     }
@@ -407,7 +421,7 @@ class IoTController extends BaseController
 
             return true;
         } catch (\Exception $e) {
-            error_log('IoT device control error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('IoT device control error: ' . $e->getMessage()); }
             return false;
         }
     }
@@ -476,7 +490,7 @@ class IoTController extends BaseController
                 'userId' => $_SESSION['user_id'] ?? null
             ]);
         } catch (\Exception $e) {
-            error_log('Device control log error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Device control log error: ' . $e->getMessage()); }
             return false;
         }
     }
@@ -506,7 +520,7 @@ class IoTController extends BaseController
 
             return $stmt->fetchAll();
         } catch (\Exception $e) {
-            error_log('Device history fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Device history fetch error: ' . $e->getMessage()); }
             return [];
         }
     }
@@ -541,7 +555,7 @@ class IoTController extends BaseController
                 $this->setFlash('error', 'Failed to create automation rule');
             }
         } catch (\Exception $e) {
-            error_log('Automation rule creation error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Automation rule creation error: ' . $e->getMessage()); }
             $this->setFlash('error', 'Failed to create automation rule');
         }
     }
@@ -565,7 +579,7 @@ class IoTController extends BaseController
 
             return $stmt->fetchAll();
         } catch (\Exception $e) {
-            error_log('Automation rules fetch error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Automation rules fetch error: ' . $e->getMessage()); }
             return [];
         }
     }
@@ -974,7 +988,7 @@ class IoTController extends BaseController
             $stmt = $this->db->prepare($sql);
             return $stmt->execute(['status' => $status, 'deviceId' => $device_id]);
         } catch (\Exception $e) {
-            error_log('Device status update error: ' . $e->getMessage());
+            if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Device status update error: ' . $e->getMessage()); }
             return false;
         }
     }

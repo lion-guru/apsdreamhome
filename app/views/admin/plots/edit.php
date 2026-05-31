@@ -150,7 +150,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Total Price</label>
-                                        <input type="number" class="form-control" name="total_price" step="0.01" value="<?= $plot['total_price'] ?>" id="total_price" onchange="calcPpsFromTotal()">
+                                        <input type="number" class="form-control" name="total_price" step="0.01" value="<?= $plot['total_price'] ?? 0 ?>" id="total_price" onchange="calcPpsFromTotal()">
                                     </div>
                                 </div>
 
@@ -200,13 +200,13 @@
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="corner_plot" id="corner_plot" value="1" <?= $plot['corner_plot'] ? 'checked' : '' ?>>
+                                            <input class="form-check-input" type="checkbox" name="corner_plot" id="corner_plot" value="1" <?= ($plot['corner_plot'] ?? 0) ? 'checked' : '' ?>>
                                             <label class="form-check-label" for="corner_plot">Corner Plot</label>
                                         </div>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="park_facing" id="park_facing" value="1" <?= $plot['park_facing'] ? 'checked' : '' ?>>
+                                            <input class="form-check-input" type="checkbox" name="park_facing" id="park_facing" value="1" <?= ($plot['park_facing'] ?? 0) ? 'checked' : '' ?>>
                                             <label class="form-check-label" for="park_facing">Park Facing</label>
                                         </div>
                                     </div>
