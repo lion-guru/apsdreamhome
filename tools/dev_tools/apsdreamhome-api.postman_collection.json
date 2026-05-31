@@ -1,0 +1,442 @@
+{
+    "info": {
+        "name": "APS Dream Home API",
+        "description": "Complete API collection for APS Dream Home",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "variable": [
+        {
+            "key": "BASE_URL",
+            "value": "http:\/\/localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "API_VERSION",
+            "value": "v1",
+            "type": "string"
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{auth_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text\/javascript",
+                "exec": [
+                    "console.log(\"Request: \" + request.name + \" - \" + request.url);"
+                ]
+            }
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication - Login",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/auth\/login",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/auth\/login"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Authentication - Register",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/auth\/register",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/auth\/register"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Authentication - Logout",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/auth\/logout",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/auth\/logout"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Authentication - Refresh",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/auth\/refresh",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/auth\/refresh"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Properties - List",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/properties",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/properties"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Properties - Show",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/properties\/{id}",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/properties\/{id}"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Properties - Create",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/properties",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/properties"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Properties - Update",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/properties\/{id}",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/properties\/{id}"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Properties - Delete",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/properties\/{id}",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/properties\/{id}"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Users - List",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/users",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/users"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Users - Profile",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/users\/profile",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/users\/profile"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Users - Update",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/users\/profile",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/users\/profile"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Admin - Dashboard",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/admin\/dashboard",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/admin\/dashboard"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Admin - Users",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/admin\/users",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/admin\/users"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Admin - Properties",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/admin\/properties",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/admin\/properties"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Admin - Reports",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application\/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application\/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{BASE_URL}}\/api{{API_VERSION}}\/admin\/reports",
+                    "host": [
+                        "{{BASE_URL}}"
+                    ],
+                    "path": [
+                        "api{{API_VERSION}}\/admin\/reports"
+                    ]
+                }
+            }
+        }
+    ]
+}

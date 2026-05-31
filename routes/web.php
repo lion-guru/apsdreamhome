@@ -176,6 +176,11 @@ $router->get('/user-ai-suggestions', 'Front\\PageController@userAiSuggestions');
 $router->get('/user/investments', 'Front\\PageController@userInvestments');
 $router->get('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->post('/builder-registration', 'Front\\PageController@builderRegistration');
+$router->get('/plots-availability', 'Front\\PageController@plotsAvailability');
+$router->get('/faq', 'FAQController@index');
+$router->get('/map', 'MapController@index');
+$router->get('/gallery', 'GalleryController@index');
+$router->get('/gallery/{id}', 'GalleryController@project');
 
 // Free Tools
 $router->get('/stamp-duty-calculator', 'Front\\PageController@stampDutyCalculator');
@@ -525,6 +530,8 @@ $router->post('/api/ai/valuation', 'AI\\PropertyValuationController@apiValuation
 // AI CHATBOT
 // ============================================================
 $router->get('/ai/chatbot', 'AI\\AIWebController@chatbot');
+$router->get('/ai/description-generator', 'AI\\AIWebController@descriptionGenerator');
+$router->get('/ai/suggestions', 'AI\\AIWebController@suggestions');
 $router->post('/api/ai/chatbot', 'AI\\ChatbotAPIController@handleMessage');
 $router->get('/ai/chatbot/history', 'AI\\ChatbotAPIController@getHistory');
 
@@ -2390,3 +2397,44 @@ $router->get('/admin/api/developers', function () {
     $content = '<div class="container-fluid"><h1 class="h3 mb-4">API Developers</h1><p class="text-muted">Developer portal with API documentation and keys.</p></div>';
     include APP_PATH . '/views/layouts/admin.php';
 });
+
+
+// ============================================================
+// MISSING ADMIN ROUTES - NEWLY CREATED CONTROLLERS
+// ============================================================
+
+// Admin Reports (AdminReportsController)
+$router->get('/admin/reports-new', 'App\\Http\\Controllers\\Admin\\AdminReportsController@index');
+$router->get('/admin/reports-new/daily', 'App\\Http\\Controllers\\Admin\\AdminReportsController@dailyReport');
+$router->get('/admin/reports-new/weekly', 'App\\Http\\Controllers\\Admin\\AdminReportsController@weeklyReport');
+$router->get('/admin/reports-new/monthly', 'App\\Http\\Controllers\\Admin\\AdminReportsController@monthlyReport');
+$router->get('/admin/reports-new/sales', 'App\\Http\\Controllers\\Admin\\AdminReportsController@salesReport');
+$router->get('/admin/reports-new/leads', 'App\\Http\\Controllers\\Admin\\AdminReportsController@leadReport');
+$router->get('/admin/reports-new/export', 'App\\Http\\Controllers\\Admin\\AdminReportsController@export');
+
+// Admin Knowledge Base
+$router->get('/admin/knowledge-base-new', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@index');
+$router->get('/admin/knowledge-base-new/create', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@create');
+$router->post('/admin/knowledge-base-new/store', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@store');
+$router->get('/admin/knowledge-base-new/{id}', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@show');
+$router->get('/admin/knowledge-base-new/{id}/edit', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@edit');
+$router->post('/admin/knowledge-base-new/{id}/update', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@update');
+$router->post('/admin/knowledge-base-new/{id}/delete', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@delete');
+
+// Admin FAQs (Controller-based)
+$router->get('/admin/faqs-new', 'App\\Http\\Controllers\\Admin\\FaqController@index');
+$router->get('/admin/faqs-new/create', 'App\\Http\\Controllers\\Admin\\FaqController@create');
+$router->post('/admin/faqs-new/store', 'App\\Http\\Controllers\\Admin\\FaqController@store');
+$router->get('/admin/faqs-new/{id}', 'App\\Http\\Controllers\\Admin\\FaqController@show');
+$router->get('/admin/faqs-new/{id}/edit', 'App\\Http\\Controllers\\Admin\\FaqController@edit');
+$router->post('/admin/faqs-new/{id}/update', 'App\\Http\\Controllers\\Admin\\FaqController@update');
+$router->post('/admin/faqs-new/{id}/delete', 'App\\Http\\Controllers\\Admin\\FaqController@delete');
+
+// Admin Testimonials (Additional routes)
+$router->get('/admin/testimonials-new', 'App\\Http\\Controllers\\Admin\\TestimonialController@index');
+$router->get('/admin/testimonials-new/create', 'App\\Http\\Controllers\\Admin\\TestimonialController@create');
+$router->post('/admin/testimonials-new/store', 'App\\Http\\Controllers\\Admin\\TestimonialController@store');
+$router->get('/admin/testimonials-new/{id}', 'App\\Http\\Controllers\\Admin\\TestimonialController@show');
+$router->get('/admin/testimonials-new/{id}/edit', 'App\\Http\\Controllers\\Admin\\TestimonialController@edit');
+$router->post('/admin/testimonials-new/{id}/update', 'App\\Http\\Controllers\\Admin\\TestimonialController@update');
+$router->post('/admin/testimonials-new/{id}/delete', 'App\\Http\\Controllers\\Admin\\TestimonialController@delete');

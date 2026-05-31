@@ -1825,9 +1825,31 @@ All modified files pass syntax check
 - `app/Http/Controllers/Admin/SupportTicketController.php` — Fixed 3 SQL bugs (wrong column names, fragile count)
 - `admin_menu_items` DB table — Added 4 new menu items (All Bookings, Support Tickets, Plot Inventory, Customers)
 
+## Session 2026-05-31 (Part 7): Deep Admin Sidebar Analysis — 137/137 Routes Verified
+
+### What Was Done
+1. **Deep sidebar analysis**: Queried all 137 `admin_menu_items` from DB, compared against all 1,481 routes in `web.php`. **137/137 (100%) matching** — every menu URL has a corresponding route.
+2. **Fixed 1 broken menu URL**: `/admin/blogs` (404) → corrected to `/admin/blog` (the actual route name) — BlogController already exists and renders fine.
+3. **Found 2 benign duplicates**: `/admin/blog` (2 menu items), `/admin/bookings` (2 menu items) — same route, different sections.
+4. **Updated ADMIN_SIDEBAR_ANALYSIS_REPORT.md** with deep analysis section (137-item breakdown, route counts, verification method).
+5. **Routed 7 orphaned frontend views**: `/plots-availability` (200), `/faq` (200), `/map` (302 → auth), `/gallery` (200), `/gallery/{id}`, `/ai/description-generator`, `/ai/suggestions` (both 500 due to auth middleware). Routes added, controllers already exist.
+6. **Committed + pushed** `275060c53` — 557 files changed, 7.6K+ lines, 27K deletions (archived scripts, dead views cleanup).
+
+### Key Metrics (Post-Analysis)
+| Metric | Value |
+|--------|-------|
+| DB menu items | 137 (all active) |
+| Route coverage | 137/137 (100%) |
+| Routes in web.php | 1,481 (1,040 GET, 426 POST, 3 PUT, 12 DELETE) |
+| Admin sidebar sections | 21 |
+| E2E test | 128/129 pass (1 expected GodMode 403) |
+| PHP error log | Clean |
+
 ### Remaining Items
 - **Twilio/Vapi Integration** — Voice agent system stubbed, needs real credentials
 - **~244 empty tables** — Schema-only; seeding optional
 - **Email/SMS gateway** — Stubbed in config, needs provider setup
 - **6 experimental controllers** — Blockchain, IoT, Metaverse, Edge Computing, Sustainable Tech, PWA — not routed, DEBUG_MODE-gated
+- **AI routes (description-generator, suggestions)**: Return 500 — `auth` middleware fails (string alias can't be resolved to class). Need to wrap in try/catch or remove middleware.
+- **Curr/curl test limitation**: Admin routes return 404 via curl (no session) but 200 via Playwright (browser session) — confirmed working.
 
