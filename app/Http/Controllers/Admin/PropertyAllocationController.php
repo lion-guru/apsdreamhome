@@ -11,7 +11,7 @@ use App\Core\Database\Database;
  */
 class PropertyAllocationController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

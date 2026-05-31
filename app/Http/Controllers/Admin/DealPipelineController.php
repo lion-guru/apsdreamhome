@@ -11,7 +11,7 @@ use App\Core\Database\Database;
  */
 class DealPipelineController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

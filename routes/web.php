@@ -2275,12 +2275,9 @@ $router->get('/user/notifications', function () {
 // ============================================================
 
 // Associate section
-$router->get('/admin/associate-extensions', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Associate Extensions';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Associate Extensions</h1><p class="text-muted">Manage associate profile extensions and custom fields.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
+$router->get('/admin/associate-extensions', 'App\\Http\\Controllers\\Admin\\AssociateExtensionController@index');
+$router->get('/admin/associate-extensions/show/{id}', 'App\\Http\\Controllers\\Admin\\AssociateExtensionController@show');
+$router->post('/admin/associate-extensions/update-points/{id}', 'App\\Http\\Controllers\\Admin\\AssociateExtensionController@updatePoints');
 
 // Marketing section
 $router->get('/admin/marketing/strategies', function () {
@@ -2391,12 +2388,9 @@ $router->get('/admin/api/integrations', function () {
     $content = '<div class="container-fluid"><h1 class="h3 mb-4">API Integrations</h1><p class="text-muted">Manage third-party API integrations and webhooks.</p></div>';
     include APP_PATH . '/views/layouts/admin.php';
 });
-$router->get('/admin/api/developers', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'API Developers';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">API Developers</h1><p class="text-muted">Developer portal with API documentation and keys.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
+$router->get('/admin/api/developers', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developers');
+$router->get('/admin/api/developers/create', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developersCreate');
+$router->post('/admin/api/developers/store', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developersStore');
 
 
 // ============================================================
@@ -2438,3 +2432,43 @@ $router->get('/admin/testimonials-new/{id}', 'App\\Http\\Controllers\\Admin\\Tes
 $router->get('/admin/testimonials-new/{id}/edit', 'App\\Http\\Controllers\\Admin\\TestimonialController@edit');
 $router->post('/admin/testimonials-new/{id}/update', 'App\\Http\\Controllers\\Admin\\TestimonialController@update');
 $router->post('/admin/testimonials-new/{id}/delete', 'App\\Http\\Controllers\\Admin\\TestimonialController@delete');
+
+// ============================================================
+// DEAL PIPELINE (Kanban Sales Pipeline)
+// ============================================================
+$router->get('/admin/deal-pipeline', 'App\\Http\\Controllers\\Admin\\DealPipelineController@index');
+$router->get('/admin/deal-pipeline/create', 'App\\Http\\Controllers\\Admin\\DealPipelineController@create');
+$router->post('/admin/deal-pipeline/store', 'App\\Http\\Controllers\\Admin\\DealPipelineController@store');
+$router->get('/admin/deal-pipeline/{id}', 'App\\Http\\Controllers\\Admin\\DealPipelineController@show');
+$router->post('/admin/deal-pipeline/{id}/move-stage', 'App\\Http\\Controllers\\Admin\\DealPipelineController@moveStage');
+$router->post('/admin/deal-pipeline/{id}/update-probability', 'App\\Http\\Controllers\\Admin\\DealPipelineController@updateProbability');
+$router->get('/admin/deal-pipeline/{id}/mark-won', 'App\\Http\\Controllers\\Admin\\DealPipelineController@markWon');
+$router->get('/admin/deal-pipeline/{id}/mark-lost', 'App\\Http\\Controllers\\Admin\\DealPipelineController@markLost');
+$router->get('/admin/deal-pipeline/{id}/timeline', 'App\\Http\\Controllers\\Admin\\DealPipelineController@timeline');
+
+// ============================================================
+// PROPERTY ALLOCATIONS
+// ============================================================
+$router->get('/admin/property-allocations', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@index');
+$router->get('/admin/property-allocations/create', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@create');
+$router->post('/admin/property-allocations/store', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@store');
+$router->get('/admin/property-allocations/{id}', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@show');
+$router->get('/admin/property-allocations/{id}/confirm', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@confirm');
+$router->get('/admin/property-allocations/{id}/cancel', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@cancel');
+$router->get('/admin/property-allocations/calendar', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@calendar');
+
+// ============================================================
+// UNIFIED REGISTRATION (MLM + Customer)
+// ============================================================
+$router->get('/register/unified', 'App\\Http\\Controllers\\RegistrationController@showRegistrationForm');
+$router->post('/register/unified', 'App\\Http\\Controllers\\RegistrationController@register');
+
+// ============================================================
+// ADVANCED FEATURES (Social Login, OTP, etc.)
+// ============================================================
+$router->get('/api/advanced/social-auth-url', 'App\\Http\\Controllers\\AdvancedFeaturesController@getSocialAuthUrl');
+$router->get('/api/advanced/social-callback', 'App\\Http\\Controllers\\AdvancedFeaturesController@handleSocialCallback');
+$router->post('/api/advanced/send-otp', 'App\\Http\\Controllers\\AdvancedFeaturesController@sendOTP');
+$router->post('/api/advanced/verify-otp', 'App\\Http\\Controllers\\AdvancedFeaturesController@verifyOTP');
+$router->post('/api/advanced/progressive-register', 'App\\Http\\Controllers\\AdvancedFeaturesController@progressiveRegister');
+$router->post('/api/advanced/webhook/campaign', 'App\\Http\\Controllers\\AdvancedFeaturesController@campaignWebhook');
