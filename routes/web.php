@@ -2526,3 +2526,113 @@ $router->post('/api/localization/import', 'App\\Http\\Controllers\\LocalizationC
 $router->post('/api/localization/add-locale', 'App\\Http\\Controllers\\LocalizationController@addLocale');
 $router->get('/admin/localization', 'App\\Http\\Controllers\\LocalizationController@management');
 $router->get('/admin/localization/editor', 'App\\Http\\Controllers\\LocalizationController@editor');
+
+// ============================================================
+// MEDIA LIBRARY (Media\MediaLibraryController)
+// ============================================================
+$router->get('/admin/media-library', 'App\\Http\\Controllers\\Media\\MediaLibraryController@index');
+$router->get('/admin/media-library/upload', 'App\\Http\\Controllers\\Media\\MediaLibraryController@upload');
+$router->post('/admin/media-library/upload', 'App\\Http\\Controllers\\Media\\MediaLibraryController@handleUpload');
+$router->get('/admin/media-library/details/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@details');
+$router->post('/admin/media-library/update/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@update');
+$router->post('/admin/media-library/delete/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@delete');
+$router->get('/admin/media-library/files', 'App\\Http\\Controllers\\Media\\MediaLibraryController@getMediaFiles');
+$router->get('/admin/media-library/file/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@getMediaFile');
+$router->get('/admin/media-library/categories', 'App\\Http\\Controllers\\Media\\MediaLibraryController@getCategories');
+$router->get('/admin/media-library/stats', 'App\\Http\\Controllers\\Media\\MediaLibraryController@getMediaStats');
+$router->post('/admin/media-library/upload-file', 'App\\Http\\Controllers\\Media\\MediaLibraryController@uploadFile');
+$router->post('/admin/media-library/update-file/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@updateFile');
+$router->post('/admin/media-library/delete-file/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@deleteFile');
+$router->get('/admin/media-library/download/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@download');
+$router->get('/admin/media-library/preview/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@preview');
+$router->post('/admin/media-library/thumbnail/{id}', 'App\\Http\\Controllers\\Media\\MediaLibraryController@createThumbnail');
+
+// ============================================================
+// MARKETING AUTOMATION (Marketing\MarketingAutomationController)
+// ============================================================
+$router->get('/admin/marketing-automation', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@dashboard');
+$router->get('/admin/marketing-automation/leads', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@leads');
+$router->get('/admin/marketing-automation/leads/{id}', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@leadDetails');
+$router->get('/admin/marketing-automation/capture-lead', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@captureLead');
+$router->post('/admin/marketing-automation/capture-lead', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@handleCaptureLead');
+$router->post('/admin/marketing-automation/leads/{id}/status', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@updateLeadStatus');
+$router->post('/admin/marketing-automation/leads/{id}/score', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@assignLeadScore');
+$router->get('/admin/marketing-automation/campaigns', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@campaigns');
+$router->get('/admin/marketing-automation/campaigns/create', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@createCampaign');
+$router->post('/admin/marketing-automation/campaigns/create', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@handleCreateCampaign');
+$router->get('/admin/marketing-automation/api/leads', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@getLeads');
+$router->get('/admin/marketing-automation/api/lead/{id}', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@getLead');
+$router->get('/admin/marketing-automation/api/campaigns', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@getCampaigns');
+$router->get('/admin/marketing-automation/api/dashboard', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@getDashboardData');
+$router->get('/admin/marketing-automation/api/lead-stats', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@getLeadStats');
+$router->post('/admin/marketing-automation/api/capture-lead', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@captureLeadAjax');
+$router->post('/admin/marketing-automation/api/leads/{id}/status', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@updateLeadStatusAjax');
+$router->post('/admin/marketing-automation/api/leads/{id}/score', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@assignLeadScoreAjax');
+$router->post('/admin/marketing-automation/api/campaigns/create', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@createCampaignAjax');
+$router->post('/admin/marketing-automation/api/automation/trigger', 'App\\Http\\Controllers\\Marketing\\MarketingAutomationController@triggerAutomation');
+
+// ============================================================
+// PROPERTY WORKFLOW (Property\PropertyController)
+// ============================================================
+$router->get('/properties-workflow', 'App\\Http\\Controllers\\Property\\PropertyController@index');
+$router->get('/properties-workflow/{id}', 'App\\Http\\Controllers\\Property\\PropertyController@show');
+$router->any('/properties-workflow/{id}/buy', 'App\\Http\\Controllers\\Property\\PropertyController@buy');
+$router->any('/properties-workflow/sell', 'App\\Http\\Controllers\\Property\\PropertyController@sell');
+$router->any('/properties-workflow/{id}/schedule-visit', 'App\\Http\\Controllers\\Property\\PropertyController@scheduleVisit');
+
+// ============================================================
+// PAYMENT GATEWAY (Payment\PaymentGatewayController)
+// ============================================================
+$router->any('/payment/process', 'App\\Http\\Controllers\\Payment\\PaymentGatewayController@processPayment');
+$router->get('/payment/success', 'App\\Http\\Controllers\\Payment\\PaymentGatewayController@paymentSuccess');
+$router->get('/payment/failed', 'App\\Http\\Controllers\\Payment\\PaymentGatewayController@paymentFailed');
+$router->get('/payment/history', 'App\\Http\\Controllers\\Payment\\PaymentGatewayController@paymentHistory');
+
+// ============================================================
+// ANALYTICS REPORTS (Analytics\ReportController)
+// ============================================================
+$router->get('/admin/analytics', 'App\\Http\\Controllers\\Analytics\\ReportController@index');
+$router->get('/admin/analytics/sales', 'App\\Http\\Controllers\\Analytics\\ReportController@sales');
+$router->get('/admin/analytics/properties', 'App\\Http\\Controllers\\Analytics\\ReportController@properties');
+$router->get('/admin/analytics/user-activity', 'App\\Http\\Controllers\\Analytics\\ReportController@userActivity');
+
+// ============================================================
+// ADVANCED ANALYTICS (Analytics\AdvancedAnalyticsController)
+// ============================================================
+$router->get('/admin/analytics/advanced', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@dashboard');
+$router->get('/admin/analytics/advanced/property', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@propertyAnalytics');
+$router->get('/admin/analytics/advanced/user', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@userAnalytics');
+$router->get('/admin/analytics/advanced/financial', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@financialAnalytics');
+$router->get('/admin/analytics/advanced/mlm', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@mlmAnalytics');
+$router->get('/admin/analytics/advanced/realtime', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@apiGetRealtimeData');
+
+// ============================================================
+// PERFORMANCE & CACHE (PerformanceController)
+// ============================================================
+$router->get('/admin/performance', 'App\\Http\\Controllers\\PerformanceController@dashboard');
+$router->get('/admin/performance/metrics', 'App\\Http\\Controllers\\PerformanceController@getMetrics');
+$router->get('/admin/performance/system', 'App\\Http\\Controllers\\PerformanceController@getSystemPerformance');
+$router->get('/admin/performance/database', 'App\\Http\\Controllers\\PerformanceController@getDatabasePerformance');
+$router->get('/admin/performance/cache', 'App\\Http\\Controllers\\PerformanceController@getCachePerformance');
+$router->post('/admin/performance/optimize', 'App\\Http\\Controllers\\PerformanceController@optimize');
+$router->post('/admin/performance/clear-cache', 'App\\Http\\Controllers\\PerformanceController@clearCache');
+$router->get('/admin/performance/report', 'App\\Http\\Controllers\\PerformanceController@generateReport');
+$router->get('/admin/performance/alerts', 'App\\Http\\Controllers\\PerformanceController@getAlerts');
+$router->get('/admin/performance/monitor', 'App\\Http\\Controllers\\PerformanceController@monitor');
+$router->get('/admin/performance/trends', 'App\\Http\\Controllers\\PerformanceController@getTrends');
+$router->post('/admin/performance/threshold', 'App\\Http\\Controllers\\PerformanceController@setThreshold');
+$router->get('/admin/performance/settings', 'App\\Http\\Controllers\\PerformanceController@getSettings');
+$router->post('/admin/performance/settings', 'App\\Http\\Controllers\\PerformanceController@updateSettings');
+
+// ============================================================
+// MEDIA CENTER (Communication\MediaController)
+// ============================================================
+$router->get('/admin/media-center', 'App\\Http\\Controllers\\Communication\\MediaController@index');
+$router->get('/admin/media-center/upload', 'App\\Http\\Controllers\\Communication\\MediaController@upload');
+$router->get('/admin/media-center/media/{id}', 'App\\Http\\Controllers\\Communication\\MediaController@getMedia');
+$router->post('/admin/media-center/media/{id}', 'App\\Http\\Controllers\\Communication\\MediaController@updateMedia');
+$router->delete('/admin/media-center/media/{id}', 'App\\Http\\Controllers\\Communication\\MediaController@deleteMedia');
+$router->get('/admin/media-center/search', 'App\\Http\\Controllers\\Communication\\MediaController@search');
+$router->get('/admin/media-center/gallery/{id}', 'App\\Http\\Controllers\\Communication\\MediaController@getGallery');
+$router->post('/admin/media-center/gallery', 'App\\Http\\Controllers\\Communication\\MediaController@createGallery');
+$router->get('/admin/media-center/stats', 'App\\Http\\Controllers\\Communication\\MediaController@getStats');

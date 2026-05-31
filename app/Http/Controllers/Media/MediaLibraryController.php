@@ -26,7 +26,7 @@ class MediaLibraryController
     /**
      * Show media library
      */
-    public function index($request)
+    public function index($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -66,7 +66,7 @@ class MediaLibraryController
     /**
      * Show upload form
      */
-    public function upload($request)
+    public function upload($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -95,7 +95,7 @@ class MediaLibraryController
     /**
      * Handle file upload
      */
-    public function handleUpload($request)
+    public function handleUpload($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -131,7 +131,7 @@ class MediaLibraryController
     /**
      * Show media file details
      */
-    public function details($request)
+    public function details($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -172,7 +172,7 @@ class MediaLibraryController
     /**
      * Update media file
      */
-    public function update($request)
+    public function update($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -211,7 +211,7 @@ class MediaLibraryController
     /**
      * Delete media file
      */
-    public function delete($request)
+    public function delete($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -246,7 +246,7 @@ class MediaLibraryController
     /**
      * Get media files (AJAX)
      */
-    public function getMediaFiles($request)
+    public function getMediaFiles($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -292,7 +292,7 @@ class MediaLibraryController
     /**
      * Get categories (AJAX)
      */
-    public function getCategories($request)
+    public function getCategories($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -308,7 +308,7 @@ class MediaLibraryController
     /**
      * Get media statistics (AJAX)
      */
-    public function getMediaStats($request)
+    public function getMediaStats($request = [])
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -324,7 +324,7 @@ class MediaLibraryController
     /**
      * Upload file (AJAX)
      */
-    public function uploadFile($request)
+    public function uploadFile($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -349,7 +349,7 @@ class MediaLibraryController
     /**
      * Update file (AJAX)
      */
-    public function updateFile($request)
+    public function updateFile($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -378,7 +378,7 @@ class MediaLibraryController
     /**
      * Delete file (AJAX)
      */
-    public function deleteFile($request)
+    public function deleteFile($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -403,7 +403,7 @@ class MediaLibraryController
     /**
      * Download file
      */
-    public function download($request)
+    public function download($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -453,7 +453,7 @@ class MediaLibraryController
     /**
      * Show file preview
      */
-    public function preview($request)
+    public function preview($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -498,7 +498,7 @@ class MediaLibraryController
     /**
      * Create thumbnail (AJAX)
      */
-    public function createThumbnail($request)
+    public function createThumbnail($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {

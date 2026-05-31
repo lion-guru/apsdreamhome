@@ -16,32 +16,34 @@ class ReportService {
      * @return array
      */
     public function generateSalesReport(array $filters = []) {
-        $query = "SELECT 
-                    DATE(created_at) as date,
-                    COUNT(*) as total_sales,
-                    SUM(amount) as total_amount,
-                    AVG(amount) as average_sale
-                  FROM sales 
-                  WHERE 1=1";
-        
-        $params = [];
-        
-        // Apply date filters
-        if (!empty($filters['start_date'])) {
-            $query .= " AND DATE(created_at) >= ?";
-            $params[] = $filters['start_date'];
+        try {
+            $query = "SELECT 
+                        DATE(created_at) as date,
+                        COUNT(*) as total_sales,
+                        COALESCE(SUM(amount), 0) as total_amount,
+                        COALESCE(AVG(amount), 0) as average_sale
+                      FROM transactions 
+                      WHERE 1=1";
+            
+            $params = [];
+            
+            if (!empty($filters['start_date'])) {
+                $query .= " AND DATE(created_at) >= ?";
+                $params[] = $filters['start_date'];
+            }
+            
+            if (!empty($filters['end_date'])) {
+                $query .= " AND DATE(created_at) <= ?";
+                $params[] = $filters['end_date'];
+            }
+            
+            $query .= " GROUP BY DATE(created_at) ORDER BY date";
+            
+            $stmt = $this->db->query($query, $params);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
         }
-        
-        if (!empty($filters['end_date'])) {
-            $query .= " AND DATE(created_at) <= ?";
-            $params[] = $filters['end_date'];
-        }
-        
-        // Group by date
-        $query .= " GROUP BY DATE(created_at) ORDER BY date";
-        
-        $stmt = $this->db->query($query, $params);
-        return $stmt->fetchAll();
     }
     
     /**
@@ -92,52 +94,52 @@ class ReportService {
      * @return array
      */
     public function generateUserActivityReport(array $filters = []) {
-        $query = "SELECT 
-                    u.id,
-                    u.username,
-                    u.email,
-                    u.role,
-                    COUNT(DISTINCT v.id) as property_views,
-                    COUNT(DISTINCT c.id) as contacts_made,
-                    MAX(v.visited_at) as last_activity
-                  FROM users u
-                  LEFT JOIN property_views v ON u.id = v.user_id
-                  LEFT JOIN contacts c ON u.id = c.user_id
-                  WHERE 1=1";
-        
-        $params = [];
-        
-        // Apply filters
-        if (!empty($filters['start_date'])) {
-            $query .= " AND (v.visited_at >= ? OR c.created_at >= ?)";
-            $params[] = $filters['start_date'];
-            $params[] = $filters['start_date'];
+        try {
+            $query = "SELECT 
+                        u.id,
+                        COALESCE(u.name, u.username, u.email) as name,
+                        u.email,
+                        u.role,
+                        COUNT(DISTINCT v.id) as property_views,
+                        COUNT(DISTINCT c.id) as contacts_made,
+                        MAX(v.visited_at) as last_activity
+                      FROM users u
+                      LEFT JOIN property_views v ON u.id = v.user_id
+                      LEFT JOIN contacts c ON u.id = c.user_id
+                      WHERE 1=1";
+            
+            $params = [];
+            
+            if (!empty($filters['start_date'])) {
+                $query .= " AND (v.visited_at >= ? OR c.created_at >= ?)";
+                $params[] = $filters['start_date'];
+                $params[] = $filters['start_date'];
+            }
+            
+            if (!empty($filters['end_date'])) {
+                $query .= " AND (v.visited_at <= ? OR c.created_at <= ?)";
+                $params[] = $filters['end_date'];
+                $params[] = $filters['end_date'];
+            }
+            
+            $query .= " GROUP BY u.id, u.name, u.email, u.role";
+            
+            $sort = $filters['sort'] ?? 'last_activity';
+            $order = isset($filters['order']) && strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
+            $query .= " ORDER BY $sort $order";
+            
+            $page = max(1, $filters['page'] ?? 1);
+            $perPage = min(50, max(1, $filters['per_page'] ?? 20));
+            $offset = ($page - 1) * $perPage;
+            $query .= " LIMIT ? OFFSET ?";
+            $params[] = $perPage;
+            $params[] = $offset;
+            
+            $stmt = $this->db->query($query, $params);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
         }
-        
-        if (!empty($filters['end_date'])) {
-            $query .= " AND (v.visited_at <= ? OR c.created_at <= ?)";
-            $params[] = $filters['end_date'];
-            $params[] = $filters['end_date'];
-        }
-        
-        // Group by user
-        $query .= " GROUP BY u.id, u.username, u.email, u.role";
-        
-        // Add sorting
-        $sort = $filters['sort'] ?? 'last_activity';
-        $order = isset($filters['order']) && strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
-        $query .= " ORDER BY $sort $order";
-        
-        // Add pagination
-        $page = max(1, $filters['page'] ?? 1);
-        $perPage = min(50, max(1, $filters['per_page'] ?? 20));
-        $offset = ($page - 1) * $perPage;
-        $query .= " LIMIT ? OFFSET ?";
-        $params[] = $perPage;
-        $params[] = $offset;
-        
-        $stmt = $this->db->query($query, $params);
-        return $stmt->fetchAll();
     }
     
     /**

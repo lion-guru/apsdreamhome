@@ -26,7 +26,7 @@ class MarketingAutomationController
     /**
      * Show marketing dashboard
      */
-    public function dashboard($request)
+    public function dashboard($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -54,7 +54,7 @@ class MarketingAutomationController
     /**
      * Show leads list
      */
-    public function leads($request)
+    public function leads($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -93,7 +93,7 @@ class MarketingAutomationController
     /**
      * Show lead details
      */
-    public function leadDetails($request)
+    public function leadDetails($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -134,7 +134,7 @@ class MarketingAutomationController
     /**
      * Show capture lead form
      */
-    public function captureLead($request)
+    public function captureLead($request = [])
     {
         $data = [
             'title' => 'Capture Lead - APS Dream Home',
@@ -152,7 +152,7 @@ class MarketingAutomationController
     /**
      * Handle capture lead
      */
-    public function handleCaptureLead($request)
+    public function handleCaptureLead($request = [])
     {
         $name = trim($request['post']['name'] ?? '');
         $email = trim($request['post']['email'] ?? '');
@@ -193,7 +193,7 @@ class MarketingAutomationController
     /**
      * Update lead status
      */
-    public function updateLeadStatus($request)
+    public function updateLeadStatus($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -229,7 +229,7 @@ class MarketingAutomationController
     /**
      * Assign lead score
      */
-    public function assignLeadScore($request)
+    public function assignLeadScore($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -265,7 +265,7 @@ class MarketingAutomationController
     /**
      * Show campaigns list
      */
-    public function campaigns($request)
+    public function campaigns($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -302,7 +302,7 @@ class MarketingAutomationController
     /**
      * Show create campaign form
      */
-    public function createCampaign($request)
+    public function createCampaign($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -328,7 +328,7 @@ class MarketingAutomationController
     /**
      * Handle create campaign
      */
-    public function handleCreateCampaign($request)
+    public function handleCreateCampaign($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -369,7 +369,7 @@ class MarketingAutomationController
     /**
      * Get leads (AJAX)
      */
-    public function getLeads($request)
+    public function getLeads($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -395,7 +395,7 @@ class MarketingAutomationController
     /**
      * Get lead details (AJAX)
      */
-    public function getLead($request)
+    public function getLead($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -432,7 +432,7 @@ class MarketingAutomationController
     /**
      * Get campaigns (AJAX)
      */
-    public function getCampaigns($request)
+    public function getCampaigns($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -456,7 +456,7 @@ class MarketingAutomationController
     /**
      * Get dashboard data (AJAX)
      */
-    public function getDashboardData($request)
+    public function getDashboardData($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -472,7 +472,7 @@ class MarketingAutomationController
     /**
      * Get lead statistics (AJAX)
      */
-    public function getLeadStats($request)
+    public function getLeadStats($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -488,7 +488,7 @@ class MarketingAutomationController
     /**
      * Capture lead (AJAX)
      */
-    public function captureLeadAjax($request)
+    public function captureLeadAjax($request = [])
     {
         $name = trim($request['post']['name'] ?? '');
         $email = trim($request['post']['email'] ?? '');
@@ -518,7 +518,7 @@ class MarketingAutomationController
     /**
      * Update lead status (AJAX)
      */
-    public function updateLeadStatusAjax($request)
+    public function updateLeadStatusAjax($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -544,7 +544,7 @@ class MarketingAutomationController
     /**
      * Assign lead score (AJAX)
      */
-    public function assignLeadScoreAjax($request)
+    public function assignLeadScoreAjax($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -570,7 +570,7 @@ class MarketingAutomationController
     /**
      * Create campaign (AJAX)
      */
-    public function createCampaignAjax($request)
+    public function createCampaignAjax($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -600,7 +600,7 @@ class MarketingAutomationController
     /**
      * Trigger automation (AJAX)
      */
-    public function triggerAutomation($request)
+    public function triggerAutomation($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {

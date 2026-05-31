@@ -25,7 +25,8 @@ class AdvancedAnalyticsController extends AdminController
         // Get comprehensive analytics data
         $analytics_data = $this->getComprehensiveAnalytics();
 
-        $this->data['page_title'] = $this->mlSupport->translate('Advanced Analytics') . ' - ' . APP_NAME;
+        $mls = $this->mlSupport;
+        $this->data['page_title'] = ($mls ? $mls->translate('Advanced Analytics') : 'Advanced Analytics') . ' - ' . APP_NAME;
         $this->data['analytics_data'] = $analytics_data;
         $this->data['date_range'] = [
             'start' => $this->request->get('start_date', date('Y-m-d', strtotime('-30 days'))),
@@ -41,8 +42,9 @@ class AdvancedAnalyticsController extends AdminController
     public function propertyAnalytics()
     {
         $property_data = $this->getPropertyAnalytics();
+        $mls = $this->mlSupport;
 
-        $this->data['page_title'] = $this->mlSupport->translate('Property Analytics') . ' - ' . APP_NAME;
+        $this->data['page_title'] = ($mls ? $mls->translate('Property Analytics') : 'Property Analytics') . ' - ' . APP_NAME;
         $this->data['property_data'] = $property_data;
 
         $this->render('admin/property_analytics');
@@ -54,8 +56,9 @@ class AdvancedAnalyticsController extends AdminController
     public function userAnalytics()
     {
         $user_data = $this->getUserAnalytics();
+        $mls = $this->mlSupport;
 
-        $this->data['page_title'] = $this->mlSupport->translate('User Analytics') . ' - ' . APP_NAME;
+        $this->data['page_title'] = ($mls ? $mls->translate('User Analytics') : 'User Analytics') . ' - ' . APP_NAME;
         $this->data['user_data'] = $user_data;
 
         $this->render('admin/user_analytics');
@@ -67,8 +70,9 @@ class AdvancedAnalyticsController extends AdminController
     public function financialAnalytics()
     {
         $financial_data = $this->getFinancialAnalytics();
+        $mls = $this->mlSupport;
 
-        $this->data['page_title'] = $this->mlSupport->translate('Financial Analytics') . ' - ' . APP_NAME;
+        $this->data['page_title'] = ($mls ? $mls->translate('Financial Analytics') : 'Financial Analytics') . ' - ' . APP_NAME;
         $this->data['financial_data'] = $financial_data;
 
         $this->render('admin/financial_analytics');
@@ -79,9 +83,14 @@ class AdvancedAnalyticsController extends AdminController
      */
     public function mlmAnalytics()
     {
-        $mlm_data = $this->getMLMAnalytics();
+        try {
+            $mlm_data = $this->getMLMAnalytics();
+        } catch (\Throwable $e) {
+            $mlm_data = [];
+        }
+        $mls = $this->mlSupport;
 
-        $this->data['page_title'] = $this->mlSupport->translate('MLM Analytics') . ' - ' . APP_NAME;
+        $this->data['page_title'] = ($mls ? $mls->translate('MLM Analytics') : 'MLM Analytics') . ' - ' . APP_NAME;
         $this->data['mlm_data'] = $mlm_data;
 
         $this->render('admin/mlm_analytics');
@@ -137,7 +146,7 @@ class AdvancedAnalyticsController extends AdminController
             $data['property_performance'] = $this->getPropertyPerformanceMetrics();
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Comprehensive analytics error: ' . $e->getMessage());
             return [];
         }
@@ -172,7 +181,7 @@ class AdvancedAnalyticsController extends AdminController
             $data['property_age'] = $this->getPropertyAgeAnalysis();
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Property analytics error: ' . $e->getMessage());
             return [];
         }
@@ -206,7 +215,7 @@ class AdvancedAnalyticsController extends AdminController
             $data['retention_metrics'] = $this->getUserRetentionMetrics();
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('User analytics error: ' . $e->getMessage());
             return [];
         }
@@ -241,7 +250,7 @@ class AdvancedAnalyticsController extends AdminController
             $data['profit_margins'] = $this->getProfitMarginAnalysis();
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logger()->error('Financial analytics error: ' . $e->getMessage());
             return [];
         }
@@ -281,7 +290,7 @@ class AdvancedAnalyticsController extends AdminController
             $data['chatbot_stats'] = $chatbot->getChatbotStats();
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MLM analytics error: ' . $e->getMessage());
             return [];
         }
@@ -324,7 +333,7 @@ class AdvancedAnalyticsController extends AdminController
             $data['chatbot_conversations_today'] = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['chatbot_today'];
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logger()->error('Realtime analytics error: ' . $e->getMessage());
             return [];
         }
@@ -336,7 +345,7 @@ class AdvancedAnalyticsController extends AdminController
         try {
             $stmt = $this->db->query("SELECT COUNT(*) as total FROM properties");
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -346,7 +355,7 @@ class AdvancedAnalyticsController extends AdminController
         try {
             $stmt = $this->db->query("SELECT COUNT(*) as active FROM properties WHERE status = 'available'");
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['active'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -356,7 +365,7 @@ class AdvancedAnalyticsController extends AdminController
         try {
             $stmt = $this->db->query("SELECT COUNT(*) as total FROM users");
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -366,7 +375,7 @@ class AdvancedAnalyticsController extends AdminController
         try {
             $stmt = $this->db->query("SELECT COUNT(*) as active FROM users WHERE status = 'active'");
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['active'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -376,7 +385,7 @@ class AdvancedAnalyticsController extends AdminController
         try {
             $stmt = $this->db->query("SELECT COUNT(*) as total FROM property_inquiries");
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -386,7 +395,7 @@ class AdvancedAnalyticsController extends AdminController
         try {
             $stmt = $this->db->query("SELECT SUM(amount) as total FROM transactions");
             return (float)($stmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -402,7 +411,7 @@ class AdvancedAnalyticsController extends AdminController
             $total_sales = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total_sales'];
 
             return $total_inquiries > 0 ? round(($total_sales / $total_inquiries) * 100, 2) : 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -412,7 +421,7 @@ class AdvancedAnalyticsController extends AdminController
         try {
             $stmt = $this->db->query("SELECT AVG(price) as avg_price FROM properties WHERE status = 'available'");
             return (float)($stmt->fetch(\PDO::FETCH_ASSOC)['avg_price'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -439,7 +448,7 @@ class AdvancedAnalyticsController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -485,7 +494,7 @@ class AdvancedAnalyticsController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -505,7 +514,7 @@ class AdvancedAnalyticsController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -529,7 +538,7 @@ class AdvancedAnalyticsController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -557,7 +566,7 @@ class AdvancedAnalyticsController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -617,7 +626,7 @@ class AdvancedAnalyticsController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -632,7 +641,7 @@ class AdvancedAnalyticsController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
