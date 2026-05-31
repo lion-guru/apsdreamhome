@@ -382,7 +382,7 @@ class CleanLeadService
                 "INSERT INTO users (
                     name, email, phone, password, customer_id, referral_code,
                     role, status, kyc_status, mlm_position,
-                    login_attempts, is_newsletter_subscribed, is_promotional_subscribed,
+                    activity_logs_unified, is_newsletter_subscribed, is_promotional_subscribed,
                     rera_deduction_wallet, cumulative_sales, associate_payout_slab,
                     mlm_points, wallet_balance, mlm_rank, commission_rate,
                     mlm_target, experience_years, country, created_at, updated_at

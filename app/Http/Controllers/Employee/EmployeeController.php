@@ -423,7 +423,7 @@ class EmployeeController extends BaseController
         $activities = [];
         if ($employeeId > 0) {
             try {
-                $activities = $this->db->fetchAll("SELECT * FROM activity_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT 100", [$employeeId]);
+                $activities = $this->db->fetchAll("SELECT * FROM activity_logs_unified WHERE user_id = ? ORDER BY created_at DESC LIMIT 100", [$employeeId]);
             } catch (\Exception $e) {
                 $activities = [];
             }

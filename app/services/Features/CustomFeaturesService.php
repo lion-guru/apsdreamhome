@@ -73,7 +73,7 @@ class CustomFeaturesService
 
             // Activity log table
             $this->db->execute("
-                CREATE TABLE IF NOT EXISTS activity_logs (
+                CREATE TABLE IF NOT EXISTS activity_logs_unified (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     user_id INT NULL,
                     action VARCHAR(100) NOT NULL,
@@ -324,7 +324,7 @@ class CustomFeaturesService
             $stats['properties'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM properties WHERE status = 'active'")['count'] ?? 0;
 
             // Recent activities
-            $stats['recent_activities'] = $this->db->fetchAll("SELECT * FROM activity_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY created_at DESC LIMIT 10");
+            $stats['recent_activities'] = $this->db->fetchAll("SELECT * FROM activity_logs_unified WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY created_at DESC LIMIT 10");
 
             return $stats;
         } catch (\Exception $e) {
@@ -493,7 +493,7 @@ class CustomFeaturesService
     private function logActivity(string $action, string $description, string $entityType, int $entityId): void
     {
         try {
-            $sql = "INSERT INTO activity_logs (action, description, entity_type, entity_id, created_at) VALUES (?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO activity_logs_unified (action, description, entity_type, entity_id, created_at) VALUES (?, ?, ?, ?, NOW())";
             $this->db->execute($sql, [$action, $description, $entityType, $entityId]);
         } catch (\Exception $e) {
             error_log('Failed to log activity: ' . $e->getMessage());

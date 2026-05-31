@@ -52,7 +52,7 @@ class UnifiedAuthService
     {
         return [
             'session_timeout' => $_ENV['SESSION_TIMEOUT'] ?? 1800, // 30 minutes
-            'max_login_attempts' => $_ENV['MAX_LOGIN_ATTEMPTS'] ?? 5,
+            'max_activity_logs_unified' => $_ENV['MAX_activity_logs_unified'] ?? 5,
             'lockout_duration' => $_ENV['LOCKOUT_DURATION'] ?? 900, // 15 minutes
             'password_min_length' => $_ENV['PASSWORD_MIN_LENGTH'] ?? 8,
             'require_strong_password' => filter_var($_ENV['REQUIRE_STRONG_PASSWORD'] ?? true, FILTER_VALIDATE_BOOLEAN)
@@ -304,7 +304,7 @@ class UnifiedAuthService
      */
     public function checkLoginAttempts($identifier)
     {
-        $key = 'login_attempts_' . md5($identifier);
+        $key = 'activity_logs_unified_' . md5($identifier);
 
         if (!$this->session->has($key)) {
             return true;
@@ -312,7 +312,7 @@ class UnifiedAuthService
 
         $attempts = $this->session->get($key);
 
-        if ($attempts['count'] >= $this->config['max_login_attempts']) {
+        if ($attempts['count'] >= $this->config['max_activity_logs_unified']) {
             $lockoutTime = $attempts['last_attempt'] + $this->config['lockout_duration'];
 
             if (time() < $lockoutTime) {
@@ -332,7 +332,7 @@ class UnifiedAuthService
      */
     public function recordFailedAttempt($identifier)
     {
-        $key = 'login_attempts_' . md5($identifier);
+        $key = 'activity_logs_unified_' . md5($identifier);
 
         if (!$this->session->has($key)) {
             $this->session->set($key, [
@@ -353,7 +353,7 @@ class UnifiedAuthService
      */
     public function clearFailedAttempts($identifier)
     {
-        $key = 'login_attempts_' . md5($identifier);
+        $key = 'activity_logs_unified_' . md5($identifier);
         $this->session->remove($key);
         return true;
     }

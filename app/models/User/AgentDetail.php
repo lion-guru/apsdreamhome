@@ -4,14 +4,14 @@ namespace App\Models;
 
 use App\Core\Database\Model;
 
-class AgentDetail extends Model
+class users extends Model
 {
-    public static $table = 'agent_details';
+    public static $table = 'users';
 
     protected array $fillable = [
         'user_id',
-        'license_number',
-        'experience_years',
+        'agent_license_number',
+        'agent_experience_years',
         'created_at',
         'updated_at'
     ];

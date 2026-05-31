@@ -158,7 +158,7 @@ function logAdminActivity($conn, $action, $details = '') {
     }
 
     $username = $_SESSION['admin_session']['username'];
-    $sql = "INSERT INTO admin_activity_log (admin_username, action, details) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO activity_logs_unified (admin_username, action, details) VALUES (?, ?, ?)";
     return $conn->execute($sql, [$username, $action, $details]);
 }
 ?>

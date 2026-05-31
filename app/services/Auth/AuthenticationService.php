@@ -334,7 +334,7 @@ class AuthenticationService
     private function checkRateLimit($email)
     {
         $recentAttempts = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM login_logs 
+            "SELECT COUNT(*) as count FROM activity_logs_unified 
              WHERE email = ? AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0",
             [$email]
         )['count'];
@@ -347,7 +347,7 @@ class AuthenticationService
      */
     private function recordLoginAttempt($email, $success)
     {
-        $this->db->insert('login_logs', [
+        $this->db->insert('activity_logs_unified', [
             'email' => $email,
             'success' => $success ? 1 : 0,
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',

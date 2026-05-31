@@ -39,7 +39,7 @@ class SecurityConfigurationService
             'auto_apply_policies' => true,
             'audit_log_changes' => true,
             'config_cache_ttl' => 300, // 5 minutes
-            'max_login_attempts' => 5,
+            'max_activity_logs_unified' => 5,
             'lockout_duration' => 900, // 15 minutes
             'password_min_length' => 12,
             'session_timeout' => 1800, // 30 minutes

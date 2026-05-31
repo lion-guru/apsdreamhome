@@ -22,7 +22,7 @@ class SecurityMiddleware
     private function __construct()
     {
         $this->config = [
-            'max_login_attempts' => 5,
+            'max_activity_logs_unified' => 5,
             'lockout_duration' => 900, // 15 minutes
             'session_timeout' => 3600, // 1 hour
             'csrf_token_lifetime' => 3600,

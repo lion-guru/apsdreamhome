@@ -26,7 +26,7 @@ class PlottingController
     /**
      * Show plotting dashboard
      */
-    public function dashboard($request)
+    public function dashboard($request = [])
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {

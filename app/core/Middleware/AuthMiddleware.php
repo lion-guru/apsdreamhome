@@ -7,7 +7,7 @@ namespace App\Core\Middleware;
  * Provides robust authentication and authorization mechanisms
  */
 class AuthMiddleware {
-    private const MAX_LOGIN_ATTEMPTS = 5;
+    private const MAX_activity_logs_unified = 5;
     private const LOCKOUT_DURATION = 900; // 15 minutes
     private const SESSION_TIMEOUT = 1800; // 30 minutes
     private $options = [];
@@ -78,13 +78,13 @@ class AuthMiddleware {
     }
 
     private static function checkLoginAttempts($username) {
-        if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = [];
+        if (!isset($_SESSION['activity_logs_unified'])) $_SESSION['activity_logs_unified'] = [];
         $currentTime = time();
-        foreach ($_SESSION['login_attempts'] as $user => $timestamp) {
-            if ($currentTime - $timestamp > self::LOCKOUT_DURATION) unset($_SESSION['login_attempts'][$user]);
+        foreach ($_SESSION['activity_logs_unified'] as $user => $timestamp) {
+            if ($currentTime - $timestamp > self::LOCKOUT_DURATION) unset($_SESSION['activity_logs_unified'][$user]);
         }
-        $_SESSION['login_attempts'][$username] = $currentTime;
-        return count($_SESSION['login_attempts']) <= self::MAX_LOGIN_ATTEMPTS;
+        $_SESSION['activity_logs_unified'][$username] = $currentTime;
+        return count($_SESSION['activity_logs_unified']) <= self::MAX_activity_logs_unified;
     }
 
     private static function createSecureSession($username) {

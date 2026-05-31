@@ -493,7 +493,7 @@ class UserService
         try {
             $sql = "SELECT 
                 action, details, ip_address, user_agent, created_at
-                FROM activity_logs
+                FROM activity_logs_unified
                 WHERE user_id = ?
                 ORDER BY created_at DESC
                 LIMIT ?";
@@ -581,7 +581,7 @@ class UserService
     private function logActivity($action, $userId, $details = '')
     {
         try {
-            $sql = "INSERT INTO activity_logs (user_id, action, details, ip_address, user_agent, created_at) 
+            $sql = "INSERT INTO activity_logs_unified (user_id, action, details, ip_address, user_agent, created_at) 
                      VALUES (?, ?, ?, ?, ?, NOW())";
             
             $params = [

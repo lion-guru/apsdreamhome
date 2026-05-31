@@ -45,7 +45,7 @@ class AdminLogger
             ];
 
             return $db->insert(
-                "INSERT INTO admin_activity_log (admin_id, action, context, ip_address, user_agent, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO activity_logs_unified (admin_id, action, context, ip_address, user_agent, created_at) VALUES (?, ?, ?, ?, ?, ?)",
                 [
                     $logEntry['admin_id'],
                     $logEntry['action'],
@@ -109,7 +109,7 @@ class AdminLogger
             $db = self::initDb();
 
             // PERFORMANCE: Select only needed columns instead of SELECT *
-            $sql = "SELECT id, admin_id, action, details, ip_address, created_at FROM admin_activity_log WHERE 1=1";
+            $sql = "SELECT id, admin_id, action, details, ip_address, created_at FROM activity_logs_unified WHERE 1=1";
             $params = [];
 
             if (!empty($filters['admin_id'])) {

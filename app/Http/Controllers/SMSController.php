@@ -85,7 +85,7 @@ class SMSController extends BaseController
 
         $stats = $this->smsService->getStats(30);
         $recentLogs = $this->db->fetchAll(
-            "SELECT * FROM sms_logs ORDER BY created_at DESC LIMIT 50"
+            "SELECT * FROM notifications_unified ORDER BY created_at DESC LIMIT 50"
         );
 
         $base = BASE_URL;
@@ -143,7 +143,7 @@ class SMSController extends BaseController
         $type = $_GET['type'] ?? 'all';
         $limit = min($_GET['limit'] ?? 50, 100);
 
-        $sql = "SELECT * FROM sms_logs";
+        $sql = "SELECT * FROM notifications_unified";
         $params = [];
 
         if ($type !== 'all') {

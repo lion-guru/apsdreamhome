@@ -362,7 +362,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
             'total_properties' => $safeCount('user_properties'),
             'total_commissions' => $safeCount('commissions'),
             'active_sessions' => $safeCount('user_sessions', "last_activity > DATE_SUB(NOW(), INTERVAL 1 HOUR)"),
-            'failed_logins_24h' => $safeCount('login_attempts', "created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) AND status = 'failed'")
+            'failed_logins_24h' => $safeCount('activity_logs_unified', "created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) AND status = 'failed'")
         ];
     }
 
@@ -447,7 +447,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
     private function logImpersonation($userId, $action)
     {
         $this->db->execute(
-            "INSERT INTO admin_audit_logs (admin_id, action, target_type, target_id, details, created_at) 
+            "INSERT INTO activity_logs_unified (admin_id, action, target_type, target_id, details, created_at) 
              VALUES (?, ?, ?, ?, ?, NOW())",
             [
                 $_SESSION['admin_user_id'] ?? null,
@@ -467,7 +467,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
         $action = $restore ? 'role_restore' : 'role_switch';
 
         $this->db->execute(
-            "INSERT INTO admin_audit_logs (admin_id, action, target_type, target_id, details, created_at) 
+            "INSERT INTO activity_logs_unified (admin_id, action, target_type, target_id, details, created_at) 
              VALUES (?, ?, ?, ?, ?, NOW())",
             [
                 $_SESSION['admin_user_id'] ?? null,
@@ -488,7 +488,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
     private function logCommandExecution($command, $result)
     {
         $this->db->execute(
-            "INSERT INTO admin_audit_logs (admin_id, action, target_type, target_id, details, created_at) 
+            "INSERT INTO activity_logs_unified (admin_id, action, target_type, target_id, details, created_at) 
              VALUES (?, ?, ?, ?, ?, NOW())",
             [
                 $_SESSION['admin_user_id'] ?? null,
@@ -527,7 +527,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
 
             case 'reset_failed_logins':
                 // Clear failed login attempts
-                $this->db->execute("DELETE FROM login_attempts WHERE status = 'failed' AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+                $this->db->execute("DELETE FROM activity_logs_unified WHERE status = 'failed' AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
                 return ['success' => true, 'message' => 'Failed login attempts cleared'];
 
             case 'sync_permissions':
@@ -603,7 +603,7 @@ class GodModeController extends \App\Http\Controllers\BaseController
         $checks = [
             'ssl' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
             'debug_mode' => defined('APP_DEBUG') && APP_DEBUG,
-            'failed_logins' => $this->db->fetch("SELECT COUNT(*) as count FROM login_attempts WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR) AND status = 'failed'")['count'] ?? 0
+            'failed_logins' => $this->db->fetch("SELECT COUNT(*) as count FROM activity_logs_unified WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR) AND status = 'failed'")['count'] ?? 0
         ];
 
         $status = ($checks['failed_logins'] > 10) ? 'warning' : 'healthy';

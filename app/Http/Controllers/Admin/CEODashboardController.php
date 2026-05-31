@@ -71,7 +71,7 @@ class CEODashboardController extends AdminController
 
             // Get recent activities
             $activities = $this->db->fetchAll(
-                "SELECT * FROM admin_activity_log 
+                "SELECT * FROM activity_logs_unified 
                 ORDER BY created_at DESC 
                 LIMIT 10"
             );

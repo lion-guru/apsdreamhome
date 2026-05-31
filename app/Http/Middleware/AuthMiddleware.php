@@ -8,7 +8,7 @@ namespace App\Services\Legacy;
  */
 class AuthMiddleware
 {
-    private const MAX_LOGIN_ATTEMPTS = 5;
+    private const MAX_activity_logs_unified = 5;
     private const LOCKOUT_DURATION = 900; // 15 minutes
     private const SESSION_TIMEOUT = 1800; // 30 minutes
 
@@ -128,24 +128,24 @@ class AuthMiddleware
      */
     private static function checkLoginAttempts($username)
     {
-        if (!isset($_SESSION['login_attempts'])) {
-            $_SESSION['login_attempts'] = [];
+        if (!isset($_SESSION['activity_logs_unified'])) {
+            $_SESSION['activity_logs_unified'] = [];
         }
 
         $currentTime = time();
 
         // Clean up old attempts
-        foreach ($_SESSION['login_attempts'] as $attempt => $timestamp) {
+        foreach ($_SESSION['activity_logs_unified'] as $attempt => $timestamp) {
             if ($currentTime - $timestamp > self::LOCKOUT_DURATION) {
-                unset($_SESSION['login_attempts'][$attempt]);
+                unset($_SESSION['activity_logs_unified'][$attempt]);
             }
         }
 
         // Record this attempt
-        $_SESSION['login_attempts'][$username] = $currentTime;
+        $_SESSION['activity_logs_unified'][$username] = $currentTime;
 
         // Check if attempts exceed limit
-        if (count($_SESSION['login_attempts']) > self::MAX_LOGIN_ATTEMPTS) {
+        if (count($_SESSION['activity_logs_unified']) > self::MAX_activity_logs_unified) {
             AdminLogger::securityAlert('BRUTE_FORCE_ATTEMPT', [
                 'username' => $username,
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'

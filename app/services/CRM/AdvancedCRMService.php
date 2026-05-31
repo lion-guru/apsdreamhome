@@ -324,7 +324,7 @@ class AdvancedCRMService
     {
         // Log email sending
         $stmt = $this->database->prepare("
-            INSERT INTO email_logs (lead_id, template, subject, data, sent_at) 
+            INSERT INTO notifications_unified (lead_id, template, subject, data, sent_at) 
             VALUES (?, ?, ?, ?, NOW())
         ");
         

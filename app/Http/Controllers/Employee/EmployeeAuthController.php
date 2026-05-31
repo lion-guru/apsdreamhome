@@ -189,7 +189,7 @@ class EmployeeAuthController extends BaseController
      */
     protected function logLoginAttempt($email, $success, $details = '')
     {
-        $query = "INSERT INTO employee_login_logs (
+        $query = "INSERT INTO employee_activity_logs_unified (
                     email, success, ip_address, user_agent, details, created_at
                 ) VALUES (?, ?, ?, ?, ?, NOW())";
         

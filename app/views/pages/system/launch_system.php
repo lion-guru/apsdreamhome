@@ -163,7 +163,7 @@ try {
     echo "-" . str_repeat("-", 40) . "\n";
     
     // Activity logs
-    $logsResult = $conn->query("SELECT COUNT(*) as count FROM activity_logs");
+    $logsResult = $conn->query("SELECT COUNT(*) as count FROM activity_logs_unified");
     if ($logsResult) {
         $logCount = $logsResult->fetch_assoc()['count'];
         echo "Γ£à Activity logging: $logCount entries\n";

@@ -318,7 +318,7 @@ class Auth extends Model
      */
     public static function recordLoginAttempt(string $email, bool $success): void
     {
-        $sql = "INSERT INTO login_attempts (email, success, ip_address, user_agent, created_at) 
+        $sql = "INSERT INTO activity_logs_unified (email, success, ip_address, user_agent, created_at) 
                 VALUES (?, ?, ?, ?, NOW())";
         
         self::execute($sql, [
@@ -334,7 +334,7 @@ class Auth extends Model
      */
     public static function checkRateLimit(string $email, int $maxAttempts = 5, int $windowMinutes = 15): bool
     {
-        $sql = "SELECT COUNT(*) as attempts FROM login_attempts 
+        $sql = "SELECT COUNT(*) as attempts FROM activity_logs_unified 
                 WHERE email = ? AND success = 0 
                 AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
         
@@ -348,7 +348,7 @@ class Auth extends Model
      */
     public static function getFailedAttempts(string $email, int $minutes = 15): int
     {
-        $sql = "SELECT COUNT(*) as attempts FROM login_attempts 
+        $sql = "SELECT COUNT(*) as attempts FROM activity_logs_unified 
                 WHERE email = ? AND success = 0 
                 AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
         

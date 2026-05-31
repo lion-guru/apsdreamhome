@@ -26,7 +26,7 @@ class FraudDetectionService
     {
         $sql = "SELECT DATEDIFF(NOW(), created_at) as account_age, 
                        status as verification_status, 
-                       COALESCE(login_attempts, 0) as login_attempts,
+                       COALESCE(activity_logs_unified, 0) as activity_logs_unified,
                        '' as last_login_ip,
                        status
                 FROM users WHERE id = ?";
@@ -62,9 +62,9 @@ class FraudDetectionService
         }
 
         // Login attempts
-        if ($user["login_attempts"] > 5) {
+        if ($user["activity_logs_unified"] > 5) {
             $riskScore += 0.2;
-            $riskFactors["multiple_login_attempts"] = true;
+            $riskFactors["multiple_activity_logs_unified"] = true;
             $suspiciousActivities[] = "Multiple failed login attempts";
         }
 
@@ -76,7 +76,7 @@ class FraudDetectionService
 
         // Check for rapid activity
         $recentActivity = $this->db->fetch(
-            "SELECT COUNT(*) as count FROM activity_logs 
+            "SELECT COUNT(*) as count FROM activity_logs_unified 
              WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)",
             [$userId]
         );

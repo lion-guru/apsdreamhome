@@ -493,7 +493,7 @@ class DashboardService
     {
         try {
             $this->db->execute(
-                "INSERT INTO admin_activity_log (admin_id, action, details, ip_address, user_agent, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
+                "INSERT INTO activity_logs_unified (admin_id, action, details, ip_address, user_agent, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
                 [$userId, $action, json_encode($data), $_SERVER['REMOTE_ADDR'] ?? 'unknown', $_SERVER['HTTP_USER_AGENT'] ?? 'unknown']
             );
 
@@ -519,7 +519,7 @@ class DashboardService
     public function getAdminActivityLogs(int $limit = 50, array $filters = []): array
     {
         try {
-            $sql = "SELECT * FROM admin_activity_log WHERE 1=1";
+            $sql = "SELECT * FROM activity_logs_unified WHERE 1=1";
             $params = [];
 
             if (!empty($filters['user_id'])) {

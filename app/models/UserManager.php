@@ -289,7 +289,7 @@ class UserManager
 
             // Delete related records first
             $this->db->query("DELETE FROM user_sessions WHERE user_id = ?", [$id]);
-            $this->db->query("DELETE FROM activity_logs WHERE user_id = ?", [$id]);
+            $this->db->query("DELETE FROM activity_logs_unified WHERE user_id = ?", [$id]);
 
             // Delete user
             $result = $this->db->query("DELETE FROM users WHERE id = ?", [$id]);

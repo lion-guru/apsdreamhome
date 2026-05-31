@@ -556,7 +556,7 @@ class AuthController extends BaseApiController
     public function logUserActivity($userId, $action, $description)
     {
         try {
-            $this->db->table('user_activity_logs')->insert([
+            $this->db->table('user_activity_logs_unified')->insert([
                 'user_id' => $userId,
                 'action' => $action,
                 'context' => $description,

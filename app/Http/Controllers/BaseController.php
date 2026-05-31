@@ -484,7 +484,7 @@ class BaseController
             if (!$userId) return;
 
             $db = \App\Core\Database\Database::getInstance();
-            $sql = "INSERT INTO activity_logs (user_id, action, details, created_at) VALUES (?, ?, ?, NOW())";
+            $sql = "INSERT INTO activity_logs_unified (user_id, action, details, created_at) VALUES (?, ?, ?, NOW())";
             $db->execute($sql, [$userId, $action, $details]);
         } catch (\Exception $e) {
             error_log("Failed to log activity: " . $e->getMessage());

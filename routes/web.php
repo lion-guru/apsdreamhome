@@ -2636,3 +2636,30 @@ $router->get('/admin/media-center/search', 'App\\Http\\Controllers\\Communicatio
 $router->get('/admin/media-center/gallery/{id}', 'App\\Http\\Controllers\\Communication\\MediaController@getGallery');
 $router->post('/admin/media-center/gallery', 'App\\Http\\Controllers\\Communication\\MediaController@createGallery');
 $router->get('/admin/media-center/stats', 'App\\Http\\Controllers\\Communication\\MediaController@getStats');
+
+// ============================================================
+// ADVANCED SECURITY (Tech\AdvancedSecurityController)
+// ============================================================
+$router->get('/admin/security', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityDashboard');
+$router->get('/admin/security/quantum-cryptography', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@quantumCryptography');
+$router->get('/admin/security/zero-trust', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@zeroTrust');
+$router->get('/admin/security/blockchain', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@blockchainSecurity');
+$router->get('/admin/security/ai-security', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@aiSecurity');
+$router->get('/admin/security/mfa', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@mfaEnhancement');
+$router->get('/admin/security/privacy', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@dataPrivacy');
+$router->get('/admin/security/training', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityTraining');
+$router->get('/admin/security/research', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityResearch');
+$router->get('/admin/security/partnerships', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityPartnerships');
+$router->get('/admin/security/benchmarks', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@performanceBenchmarks');
+$router->get('/admin/security/roi-calculator', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@roiCalculator');
+$router->get('/admin/security/roadmap', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityRoadmap');
+$router->get('/admin/security/case-studies', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@caseStudies');
+$router->get('/admin/security/resources', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@resources');
+$router->get('/admin/security/innovation', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@innovation');
+$router->get('/admin/security/awards', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@awards');
+$router->get('/admin/security/future-vision', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@futureVision');
+
+// ============================================================
+// LAND PLOTTING (Land\PlottingController)
+// ============================================================
+$router->get('/admin/plotting', 'App\\Http\\Controllers\\Land\\PlottingController@dashboard');

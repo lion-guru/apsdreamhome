@@ -643,7 +643,7 @@ class RoleBasedDashboardController extends BaseController
     private function getRecentActivities($role)
     {
         try {
-            $sql = "SELECT ual.*, u.name as user_name FROM user_activity_logs ual LEFT JOIN users u ON ual.user_id = u.id ORDER BY ual.created_at DESC LIMIT 10";
+            $sql = "SELECT ual.*, u.name as user_name FROM user_activity_logs_unified ual LEFT JOIN users u ON ual.user_id = u.id ORDER BY ual.created_at DESC LIMIT 10";
             return $this->db->fetchAll($sql);
         } catch (Exception $e) {
             return [];

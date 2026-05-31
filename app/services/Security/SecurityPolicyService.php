@@ -190,7 +190,7 @@ class SecurityPolicyService
     {
         $this->policies = [
             self::DOMAIN_AUTH => [
-                'max_login_attempts' => 5,
+                'max_activity_logs_unified' => 5,
                 'password_min_length' => 12,
                 'session_timeout' => 1800,
                 'two_factor_required' => false

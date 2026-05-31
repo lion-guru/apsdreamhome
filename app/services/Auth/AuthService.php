@@ -23,13 +23,13 @@ class AuthService
         $this->db = $db;
         $this->logger = $logger;
         $this->config = array_merge([
-            'max_login_attempts' => 5,
+            'max_activity_logs_unified' => 5,
             'lockout_duration' => 900,
             'session_timeout' => 3600,
             'password_min_length' => 8
         ], $config);
         
-        $this->maxLoginAttempts = $this->config['max_login_attempts'];
+        $this->maxLoginAttempts = $this->config['max_activity_logs_unified'];
         $this->lockoutDuration = $this->config['lockout_duration'];
     }
 
@@ -487,7 +487,7 @@ class AuthService
 
             // Failed login attempts today
             $stats['failed_logins_today'] = $this->db->fetchOne(
-                "SELECT COUNT(*) FROM login_attempts WHERE success = 0 AND DATE(created_at) = CURDATE()"
+                "SELECT COUNT(*) FROM activity_logs_unified WHERE success = 0 AND DATE(created_at) = CURDATE()"
             ) ?? 0;
 
             // Locked accounts
@@ -520,7 +520,7 @@ class AuthService
 
     private function checkRateLimit(string $email): bool
     {
-        $sql = "SELECT COUNT(*) as attempts FROM login_attempts 
+        $sql = "SELECT COUNT(*) as attempts FROM activity_logs_unified 
                 WHERE email = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0";
         
         $attempts = $this->db->fetchOne($sql, [$email]) ?? 0;
@@ -529,7 +529,7 @@ class AuthService
 
     private function recordLoginAttempt(string $email, bool $success): void
     {
-        $sql = "INSERT INTO login_attempts (email, success, ip_address, user_agent, created_at) 
+        $sql = "INSERT INTO activity_logs_unified (email, success, ip_address, user_agent, created_at) 
                 VALUES (?, ?, ?, ?, NOW())";
         
         $this->db->execute($sql, [
@@ -542,7 +542,7 @@ class AuthService
 
     private function isAccountLocked(int $userId): bool
     {
-        $sql = "SELECT COUNT(*) as count FROM failed_login_attempts 
+        $sql = "SELECT COUNT(*) as count FROM failed_activity_logs_unified 
                 WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
         
         $count = $this->db->fetchOne($sql, [$userId, $this->lockoutDuration / 60]) ?? 0;
@@ -551,13 +551,13 @@ class AuthService
 
     private function incrementFailedAttempts(int $userId): void
     {
-        $sql = "INSERT INTO failed_login_attempts (user_id, created_at) VALUES (?, NOW())";
+        $sql = "INSERT INTO failed_activity_logs_unified (user_id, created_at) VALUES (?, NOW())";
         $this->db->execute($sql, [$userId]);
     }
 
     private function clearFailedAttempts(int $userId): void
     {
-        $sql = "DELETE FROM failed_login_attempts WHERE user_id = ?";
+        $sql = "DELETE FROM failed_activity_logs_unified WHERE user_id = ?";
         $this->db->execute($sql, [$userId]);
     }
 

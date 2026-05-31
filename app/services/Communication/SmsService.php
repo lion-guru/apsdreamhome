@@ -81,7 +81,7 @@ class SMSService
             
             // Get stored OTP
             $record = $this->db->fetchOne(
-                "SELECT * FROM sms_otp_logs 
+                "SELECT * FROM notifications_unified 
                  WHERE mobile = ? AND status = 'pending' 
                  AND created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)
                  ORDER BY created_at DESC LIMIT 1",
@@ -98,7 +98,7 @@ class SMSService
             
             // Mark as verified
             $this->db->query(
-                "UPDATE sms_otp_logs SET status = 'verified', verified_at = NOW() WHERE id = ?",
+                "UPDATE notifications_unified SET status = 'verified', verified_at = NOW() WHERE id = ?",
                 [$record['id']]
             );
             
@@ -270,12 +270,12 @@ class SMSService
     {
         // Invalidate old OTPs
         $this->db->query(
-            "UPDATE sms_otp_logs SET status = 'expired' WHERE mobile = ? AND status = 'pending'",
+            "UPDATE notifications_unified SET status = 'expired' WHERE mobile = ? AND status = 'pending'",
             [$mobile]
         );
         
         // Save new OTP
-        $this->db->insert('sms_otp_logs', [
+        $this->db->insert('notifications_unified', [
             'mobile' => $mobile,
             'otp' => $otp,
             'status' => 'pending',
@@ -290,7 +290,7 @@ class SMSService
     private function logSMS($mobile, $type, $message, $status)
     {
         try {
-            $this->db->insert('sms_logs', [
+            $this->db->insert('notifications_unified', [
                 'mobile' => $mobile,
                 'type' => $type,
                 'message' => substr($message, 0, 500),
@@ -309,15 +309,15 @@ class SMSService
     {
         return [
             'total_sent' => $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM sms_logs WHERE status = 'success' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                "SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'success' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
                 [$days]
             )['count'] ?? 0,
             'total_failed' => $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM sms_logs WHERE status = 'error' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                "SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'error' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
                 [$days]
             )['count'] ?? 0,
             'otp_sent' => $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM sms_logs WHERE type = 'OTP' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                "SELECT COUNT(*) as count FROM notifications_unified WHERE type = 'OTP' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
                 [$days]
             )['count'] ?? 0
         ];
