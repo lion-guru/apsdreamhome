@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0"><i class="fas fa-seedling me-2"></i> OLN - Online Lead Nurturing</h3>
         <div>
-            <a href="<?= BASE_URL ?>/admin/voice-agents/dashboard" class="btn btn-outline-primary">
+            <a href="<?= BASE_URL ?>/admin/voice-users/dashboard" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left"></i> Dashboard
             </a>
         </div>
@@ -324,7 +324,7 @@
                     <h6 class="mb-0 fw-bold"><i class="fas fa-sliders-h me-1"></i> Auto-Nurture Settings</h6>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-agents/settings">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/settings">
                         <input type="hidden" name="max_attempts" value="3">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Follow-up Cadence (Days)</label>
@@ -337,7 +337,7 @@
                         </div>
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" checked id="autoAssignNurture">
-                            <label class="form-check-label small" for="autoAssignNurture">Auto-assign leads to available agents for nurturing</label>
+                            <label class="form-check-label small" for="autoAssignNurture">Auto-assign leads to available users for nurturing</label>
                         </div>
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" checked id="smartPriority">
@@ -528,7 +528,7 @@ function showLeadJourney(btn) {
 
     var leadId = btn.dataset.id;
     if (leadId) {
-        fetch('<?= BASE_URL ?>/admin/voice-agents/ajax/lead-timeline?lead_id=' + leadId)
+        fetch('<?= BASE_URL ?>/admin/voice-users/ajax/lead-timeline?lead_id=' + leadId)
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 if (data.success && data.timeline.length > 0) {

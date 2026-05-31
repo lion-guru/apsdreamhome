@@ -74,14 +74,14 @@ class SalaryController extends AdminController
                 LEFT JOIN users u ON s.employee_id = u.id
                 ORDER BY s.is_active DESC, s.created_at DESC
             ") ?? [];
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
         } catch (\Exception $e) {
-            $structures = []; $employees = [];
+            $structures = []; $users = [];
         }
         return $this->render('admin/salary/structures', [
             'page_title' => 'Salary Structures',
             'structures' => $structures,
-            'employees' => $employees
+            'users' => $users
         ]);
     }
 
@@ -115,16 +115,16 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         try {
             $structure = $this->db->fetch("SELECT s.*, u.name as employee_name FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.id=?", [$id]);
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
         } catch (\Exception $e) {
-            $structure = null; $employees = [];
+            $structure = null; $users = [];
         }
         if (!$structure) { $this->setFlash('error', 'Not found'); $this->redirect('/admin/salary/structures'); }
         return $this->render('admin/salary/structures', [
             'page_title' => 'Edit Salary Structure',
             'edit_structure' => $structure,
             'structures' => $this->db->fetchAll("SELECT s.*, u.name as en FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id ORDER BY s.created_at DESC") ?? [],
-            'employees' => $employees
+            'users' => $users
         ]);
     }
 
@@ -166,14 +166,14 @@ class SalaryController extends AdminController
             if ($where) $sql .= " WHERE " . implode(' AND ', $where);
             $sql .= " ORDER BY sp.created_at DESC LIMIT 100";
             $payments = $this->db->fetchAll($sql, $params) ?? [];
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
         } catch (\Exception $e) {
-            $payments = []; $employees = [];
+            $payments = []; $users = [];
         }
         return $this->render('admin/salary/payments', [
             'page_title' => 'Salary Payments',
             'payments' => $payments,
-            'employees' => $employees,
+            'users' => $users,
             'filter_status' => $status,
             'filter_employee' => $employee_id
         ]);
@@ -183,14 +183,14 @@ class SalaryController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $employees = $this->db->fetchAll("SELECT DISTINCT u.id, u.name FROM users u JOIN salary_structures s ON u.id=s.employee_id WHERE s.is_active=1 AND u.role='employee' ORDER BY u.name") ?? [];
+            $users = $this->db->fetchAll("SELECT DISTINCT u.id, u.name FROM users u JOIN salary_structures s ON u.id=s.employee_id WHERE s.is_active=1 AND u.role='employee' ORDER BY u.name") ?? [];
             $structures = $this->db->fetchAll("SELECT s.*, u.name as employee_name FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.is_active=1 ORDER BY u.name") ?? [];
         } catch (\Exception $e) {
-            $employees = []; $structures = [];
+            $users = []; $structures = [];
         }
         return $this->render('admin/salary/payment_create', [
             'page_title' => 'Create Salary Payment',
-            'employees' => $employees,
+            'users' => $users,
             'structures' => $structures
         ]);
     }
@@ -241,9 +241,9 @@ class SalaryController extends AdminController
         $year = (int)($_POST['year'] ?? 0);
         if (!$month || !$year) { $this->setFlash('error', 'Month and year required'); $this->redirect('/admin/salary/payments'); }
         try {
-            $employees = $this->db->fetchAll("SELECT DISTINCT s.employee_id, s.basic_salary, s.hra, s.da, s.travel_allowance, s.medical_allowance, s.special_allowance, s.pf_percent, s.tax_deduction FROM salary_structures s WHERE s.is_active=1 AND s.employee_id NOT IN (SELECT employee_id FROM salary_payments WHERE MONTH(payment_date)=? AND YEAR(payment_date)=? AND status='paid')", [$month, $year]) ?? [];
+            $users = $this->db->fetchAll("SELECT DISTINCT s.employee_id, s.basic_salary, s.hra, s.da, s.travel_allowance, s.medical_allowance, s.special_allowance, s.pf_percent, s.tax_deduction FROM salary_structures s WHERE s.is_active=1 AND s.employee_id NOT IN (SELECT employee_id FROM salary_payments WHERE MONTH(payment_date)=? AND YEAR(payment_date)=? AND status='paid')", [$month, $year]) ?? [];
             $count = 0;
-            foreach ($employees as $emp) {
+            foreach ($users as $emp) {
                 $gross = (float)$emp['basic_salary'] + (float)$emp['hra'] + (float)$emp['da'] + (float)$emp['travel_allowance'] + (float)$emp['medical_allowance'] + (float)$emp['special_allowance'];
                 $pfAmt = $gross * ((float)$emp['pf_percent'] / 100);
                 $deductions = $pfAmt + (float)$emp['tax_deduction'];
@@ -251,7 +251,7 @@ class SalaryController extends AdminController
                 $this->db->execute("INSERT INTO salary_payments (employee_id, gross_salary, total_deductions, net_salary, payment_date, status, paid_by, notes, created_at) VALUES (?,?,?,?,?,?,?,?,NOW())", [$emp['employee_id'], $gross, $deductions, $net, $year . '-' . str_pad($month,2,'0',STR_PAD_LEFT) . '-01', 'pending', (int)($_SESSION['admin_id'] ?? 0), 'Bulk processed']);
                 $count++;
             }
-            $this->setFlash('success', "Bulk processed $count employees");
+            $this->setFlash('success', "Bulk processed $count users");
         } catch (\Exception $e) {
             $this->setFlash('error', 'Bulk failed: ' . $e->getMessage());
         }
@@ -274,15 +274,15 @@ class SalaryController extends AdminController
                 FROM salary_payouts GROUP BY payout_batch_id ORDER BY MAX(created_at) DESC
             ") ?? [];
             $payouts = $this->db->fetchAll("SELECT po.*, u.name as employee_name FROM salary_payouts po LEFT JOIN users u ON po.employee_id=u.id ORDER BY po.created_at DESC LIMIT 100") ?? [];
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' AND status='active' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' AND status='active' ORDER BY name") ?? [];
         } catch (\Exception $e) {
-            $batches = []; $payouts = []; $employees = [];
+            $batches = []; $payouts = []; $users = [];
         }
         return $this->render('admin/salary/payouts', [
             'page_title' => 'Salary Payouts',
             'batches' => $batches,
             'payouts' => $payouts,
-            'employees' => $employees
+            'users' => $users
         ]);
     }
 
@@ -338,14 +338,14 @@ class SalaryController extends AdminController
             if ($where) $sql .= " WHERE " . implode(' AND ', $where);
             $sql .= " ORDER BY sh.created_at DESC LIMIT 200";
             $history = $this->db->fetchAll($sql, $params) ?? [];
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
         } catch (\Exception $e) {
-            $history = []; $employees = [];
+            $history = []; $users = [];
         }
         return $this->render('admin/salary/history', [
             'page_title' => 'Salary History',
             'history' => $history,
-            'employees' => $employees,
+            'users' => $users,
             'filter_employee' => $employee_id
         ]);
     }
@@ -363,7 +363,7 @@ class SalaryController extends AdminController
         return $this->render('admin/salary/history', [
             'page_title' => 'History - ' . htmlspecialchars($employee['name'] ?? ''),
             'history' => $history,
-            'employees' => [$employee],
+            'users' => [$employee],
             'filter_employee' => $id
         ]);
     }
@@ -383,14 +383,14 @@ class SalaryController extends AdminController
                 LEFT JOIN users uc ON c.created_by = uc.id
                 ORDER BY c.created_at DESC
             ") ?? [];
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
         } catch (\Exception $e) {
-            $contracts = []; $employees = [];
+            $contracts = []; $users = [];
         }
         return $this->render('admin/salary/contracts', [
             'page_title' => 'Salary Contracts',
             'contracts' => $contracts,
-            'employees' => $employees
+            'users' => $users
         ]);
     }
 
@@ -515,19 +515,19 @@ class SalaryController extends AdminController
                 LEFT JOIN users u ON r.employee_id = u.id
                 ORDER BY r.year DESC, r.month DESC, u.name ASC LIMIT 200
             ") ?? [];
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
             $months = [];
             foreach ($records as $r) {
                 $key = $r['year'] . '-' . str_pad($r['month'],2,'0',STR_PAD_LEFT);
                 $months[$key] = ['year' => $r['year'], 'month' => $r['month']];
             }
         } catch (\Exception $e) {
-            $records = []; $employees = []; $months = [];
+            $records = []; $users = []; $months = [];
         }
         return $this->render('admin/salary/records', [
             'page_title' => 'Salary Records',
             'records' => $records,
-            'employees' => $employees,
+            'users' => $users,
             'months' => $months
         ]);
     }
@@ -573,14 +573,14 @@ class SalaryController extends AdminController
             if ($where) $sql .= " WHERE " . implode(' AND ', $where);
             $sql .= " ORDER BY t.year DESC, t.month DESC LIMIT 200";
             $tracker = $this->db->fetchAll($sql, $params) ?? [];
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
         } catch (\Exception $e) {
-            $tracker = []; $employees = [];
+            $tracker = []; $users = [];
         }
         return $this->render('admin/salary/tracker', [
             'page_title' => 'Salary Tracker',
             'tracker' => $tracker,
-            'employees' => $employees,
+            'users' => $users,
             'filter_employee' => $employee_id,
             'filter_month' => $month,
             'filter_year' => $year
@@ -628,9 +628,9 @@ class SalaryController extends AdminController
             $total_gross = array_sum(array_column($payments, 'gross_salary'));
             $total_net = array_sum(array_column($payments, 'net_salary'));
             $total_ded = array_sum(array_column($payments, 'total_deductions'));
-            $employees = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' ORDER BY name") ?? [];
         } catch (\Exception $e) {
-            $payments = []; $total_gross = 0; $total_net = 0; $total_ded = 0; $employees = [];
+            $payments = []; $total_gross = 0; $total_net = 0; $total_ded = 0; $users = [];
         }
         return $this->render('admin/salary/report', [
             'page_title' => 'Salary Report',
@@ -638,7 +638,7 @@ class SalaryController extends AdminController
             'total_gross' => $total_gross,
             'total_net' => $total_net,
             'total_ded' => $total_ded,
-            'employees' => $employees,
+            'users' => $users,
             'filter_month' => $month,
             'filter_year' => $year,
             'filter_employee' => $employee_id

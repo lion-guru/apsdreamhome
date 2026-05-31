@@ -237,7 +237,7 @@ class AdminReportsController extends BaseController
     }
 
     /**
-     * Get new customers count for date
+     * Get new users count for date
      */
     private function getNewCustomersCount($date)
     {

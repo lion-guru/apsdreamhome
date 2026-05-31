@@ -62,7 +62,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <?php foreach ($rank_distribution as $dist): ?>
                                     <div class="list-group-item d-flex justify-content-between align-items-center">
                                         <span class="fw-semibold"><?php echo htmlspecialchars($dist['mlm_rank'] ?? 'Unranked'); ?></span>
-                                        <span class="badge bg-primary"><?php echo $dist['count'] ?? 0; ?> associates</span>
+                                        <span class="badge bg-primary"><?php echo $dist['count'] ?? 0; ?> users</span>
                                     </div>
                                 <?php endforeach; ?>
                             </div>

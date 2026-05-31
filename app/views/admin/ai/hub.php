@@ -138,7 +138,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 <div class="col-md-3">
                     <div class="card bg-primary text-white shadow-sm border-0 mb-4">
                         <div class="card-body">
-                            <h6 class="text-uppercase small mb-2"><?= h($mlSupport->translate('Active Agents')) ?></h6>
+                            <h6 class="text-uppercase small mb-2"><?= h($mlSupport->translate('Active users')) ?></h6>
                             <h3 class="fw-bold mb-0"><?= h($total_agents ?? 0) ?></h3>
                         </div>
                     </div>
@@ -173,13 +173,13 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 <div class="col-md-4">
                     <div class="card shadow-sm border-0 mb-4">
                         <div class="card-header bg-white py-3">
-                            <h5 class="card-title h6 fw-bold mb-0"><?= h($mlSupport->translate('AI Agents')) ?></h5>
+                            <h5 class="card-title h6 fw-bold mb-0"><?= h($mlSupport->translate('AI users')) ?></h5>
                         </div>
                         <div class="card-body p-0">
                             <div class="list-group list-group-flush">
                                 <?php
-                                $agents = $agents_list ?? [];
-                                foreach ($agents as $agent): ?>
+                                $users = $agents_list ?? [];
+                                foreach ($users as $agent): ?>
                                     <div class="list-group-item d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="mb-0 small fw-bold"><?= h($agent['name']) ?></h6>

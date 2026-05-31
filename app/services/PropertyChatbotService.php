@@ -74,7 +74,7 @@ class PropertyChatbotService
             ],
             'register' => [
                 'patterns' => ['register', 'registration', 'signup', 'account', 'booking'],
-                'response' => "📝 Easy Registration!\n\n🏠 For Customers:\n{BASE_URL}/register\n\n🤝 For Associates:\n{BASE_URL}/associate/register\n\n📋 Documents Needed:\n• Aadhaar Card\n• PAN Card\n• Photo\n• Address Proof"
+                'response' => "📝 Easy Registration!\n\n🏠 For users:\n{BASE_URL}/register\n\n🤝 For users:\n{BASE_URL}/associate/register\n\n📋 Documents Needed:\n• Aadhaar Card\n• PAN Card\n• Photo\n• Address Proof"
             ],
             'loan' => [
                 'patterns' => ['loan', 'finance', 'emi', 'bank', 'credit', 'home loan'],

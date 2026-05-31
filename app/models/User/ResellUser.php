@@ -8,7 +8,7 @@ class ResellUser extends Model
 {
     public static $table = 'resell_users';
 
-    protected array $fillable = [
+    protected $fillable = [
         'full_name',
         'mobile',
         'email',

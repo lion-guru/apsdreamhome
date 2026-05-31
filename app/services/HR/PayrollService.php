@@ -108,15 +108,15 @@ class PayrollService
     }
 
     /**
-     * Process payroll for all employees
+     * Process payroll for all users
      */
     public function processPayroll(int $month, int $year, array $options = []): array
     {
-        $employees = $this->getActiveEmployees($options['department_id'] ?? null);
+        $users = $this->getActiveEmployees($options['department_id'] ?? null);
         $processed = [];
         $errors = [];
 
-        foreach ($employees as $emp) {
+        foreach ($users as $emp) {
             $result = $this->calculateSalary($emp['id'], $month, $year);
 
             if ($result['success']) {
@@ -339,11 +339,11 @@ class PayrollService
     }
 
     /**
-     * Get active employees
+     * Get active users
      */
     private function getActiveEmployees(?int $departmentId): array
     {
-        $sql = "SELECT id, name, employee_code FROM employees WHERE status = 'active'";
+        $sql = "SELECT id, name, employee_code FROM users WHERE status = 'active'";
         $params = [];
 
         if ($departmentId) {
@@ -399,7 +399,7 @@ class PayrollService
         $sql = "SELECT p.*, e.name, e.employee_code, e.department_id, e.designation,
                        d.name as department_name
                 FROM employee_payrolls p
-                JOIN employees e ON p.employee_id = e.id
+                JOIN users e ON p.employee_id = e.id
                 LEFT JOIN departments d ON e.department_id = d.id
                 WHERE p.id = ?";
 

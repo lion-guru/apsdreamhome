@@ -114,8 +114,8 @@ $active_page = 'bookings';
                 <div class="col-md-2">
                     <label for="customer_id" class="form-label">Customer</label>
                     <select class="form-select" id="customer_id" name="customer_id">
-                        <option value="">All Customers</option>
-                        <?php foreach ($customers as $customer): ?>
+                        <option value="">All users</option>
+                        <?php foreach ($users as $customer): ?>
                             <option value="<?= $customer['id'] ?>" <?= $filters['customer_id'] == $customer['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($customer['name'] ?? '') ?>
                             </option>
@@ -125,8 +125,8 @@ $active_page = 'bookings';
                 <div class="col-md-2">
                     <label for="associate_id" class="form-label">Associate</label>
                     <select class="form-select" id="associate_id" name="associate_id">
-                        <option value="">All Associates</option>
-                        <?php foreach ($associates as $associate): ?>
+                        <option value="">All users</option>
+                        <?php foreach ($users as $associate): ?>
                             <option value="<?= $associate['id'] ?>" <?= $filters['associate_id'] == $associate['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($associate['name'] ?? '') ?>
                             </option>

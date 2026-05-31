@@ -39,11 +39,11 @@ $total_amount = $total_amount ?? 0;
             <?php else: ?>
                 <form method="POST" action="<?= $base ?>/admin/commission/payout">
                     <div class="mb-3">
-                        <label class="form-label">Select Agents for Payout</label>
+                        <label class="form-label">Select users for Payout</label>
                         <select name="agent_ids[]" class="form-select" multiple size="5">
-                            <option value="all" selected>All Pending Agents</option>
+                            <option value="all" selected>All Pending users</option>
                         </select>
-                        <small class="text-muted">Hold Ctrl/Cmd to select multiple. Choose "All Pending Agents" to process all.</small>
+                        <small class="text-muted">Hold Ctrl/Cmd to select multiple. Choose "All Pending users" to process all.</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Payment Reference</label>
@@ -53,7 +53,7 @@ $total_amount = $total_amount ?? 0;
                         <label class="form-label">Payment Date</label>
                         <input type="date" name="payment_date" class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
-                    <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('Process payout for selected agents?')"><i class="fas fa-paper-plane me-1"></i>Process Payout</button>
+                    <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('Process payout for selected users?')"><i class="fas fa-paper-plane me-1"></i>Process Payout</button>
                 </form>
             <?php endif; ?>
         </div>

@@ -8,7 +8,7 @@ use App\Models\Model;
 
 class Plot extends Model {
     public static $table = 'plots';
-    protected array $fillable = [
+    protected $fillable = [
         'plot_number',
         'land_acquisition_id',
         'plot_area',

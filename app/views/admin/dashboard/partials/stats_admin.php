@@ -21,7 +21,7 @@
     <div class="col-md-6 col-xl-3">
         <div class="card stat-card">
             <div class="stat-icon i"><i class="fas fa-handshake"></i></div>
-            <div><div class="stat-label">Associates</div><div class="stat-value"><?php echo number_format($stats['total_associates'] ?? 0); ?></div></div>
+            <div><div class="stat-label">users</div><div class="stat-value"><?php echo number_format($stats['total_associates'] ?? 0); ?></div></div>
         </div>
     </div>
 </div>
@@ -35,7 +35,7 @@
     <div class="col-md-6 col-xl-3">
         <div class="card stat-card">
             <div class="stat-icon p"><i class="fas fa-user-tie"></i></div>
-            <div><div class="stat-label">Employees</div><div class="stat-value"><?php echo number_format($stats['total_employees'] ?? 0); ?></div></div>
+            <div><div class="stat-label">users</div><div class="stat-value"><?php echo number_format($stats['total_employees'] ?? 0); ?></div></div>
         </div>
     </div>
     <div class="col-md-6 col-xl-3">

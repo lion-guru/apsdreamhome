@@ -17,7 +17,7 @@ class LeadFile extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'lead_id',
         'original_name',
         'file_path',
@@ -33,7 +33,7 @@ class LeadFile extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'file_size' => 'integer',
         'is_private' => 'boolean',
     ];

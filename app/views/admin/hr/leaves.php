@@ -96,8 +96,8 @@ $page_title = $page_title ?? 'Leave Applications';
                         <label class="form-label">Employee</label>
                         <select name="employee_id" class="form-select" required>
                             <option value="">Select</option>
-                            <?php if (isset($employees)): ?>
-                                <?php foreach ($employees as $emp): ?>
+                            <?php if (isset($users)): ?>
+                                <?php foreach ($users as $emp): ?>
                                     <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -133,12 +133,12 @@ $page_title = $page_title ?? 'Leave Applications';
 </div>
 
 <?php
-// Pass employees and leave_types for modal - fetch from controller if needed
+// Pass users and leave_types for modal - fetch from controller if needed
 try {
     $db = \App\Core\Database\Database::getInstance();
-    $GLOBALS['_hr_employees'] = $GLOBALS['_hr_employees'] ?? $db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+    $GLOBALS['_hr_employees'] = $GLOBALS['_hr_employees'] ?? $db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
     $GLOBALS['_hr_leave_types'] = $GLOBALS['_hr_leave_types'] ?? $db->fetchAll("SELECT id, name FROM leave_types WHERE status='active' ORDER BY name");
 } catch (\Exception $e) { $GLOBALS['_hr_employees'] = []; $GLOBALS['_hr_leave_types'] = []; }
-$employees = $GLOBALS['_hr_employees'];
+$users = $GLOBALS['_hr_employees'];
 $leave_types = $GLOBALS['_hr_leave_types'];
 ?>

@@ -11,7 +11,7 @@ namespace App\Models;
 class PropertyReview extends Model {
     public static $table = 'property_reviews';
     
-    protected array $fillable = [
+    protected $fillable = [
         'customer_id',
         'property_id',
         'rating',

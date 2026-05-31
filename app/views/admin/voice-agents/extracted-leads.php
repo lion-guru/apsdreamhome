@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0"><i class="fas fa-database me-2"></i> Extracted Leads</h3>
         <div>
-            <a href="<?= BASE_URL ?>/admin/voice-agents/dashboard" class="btn btn-outline-primary">
+            <a href="<?= BASE_URL ?>/admin/voice-users/dashboard" class="btn btn-outline-primary">
                 <i class="fas fa-arrow-left"></i> Dashboard
             </a>
         </div>
@@ -47,7 +47,7 @@
     <!-- Filters -->
     <div class="card mb-4">
         <div class="card-body">
-            <form method="GET" action="<?= BASE_URL ?>/admin/voice-agents/extracted-leads">
+            <form method="GET" action="<?= BASE_URL ?>/admin/voice-users/extracted-leads">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label small">Interest Level</label>
@@ -81,7 +81,7 @@
                     </div>
                     <div class="col-md-3">
                         <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter me-1"></i> Filter</button>
-                        <a href="<?= BASE_URL ?>/admin/voice-agents/extracted-leads" class="btn btn-outline-secondary btn-sm">Clear</a>
+                        <a href="<?= BASE_URL ?>/admin/voice-users/extracted-leads" class="btn btn-outline-secondary btn-sm">Clear</a>
                     </div>
                 </div>
             </form>
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
             self.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
             var formData = new FormData();
             formData.append('extracted_id', id);
-            fetch('<?= BASE_URL ?>/admin/voice-agents/ajax/convert-lead', {
+            fetch('<?= BASE_URL ?>/admin/voice-users/ajax/convert-lead', {
                 method: 'POST',
                 body: formData
             })

@@ -22,15 +22,15 @@ class Associate
     }
 
     /**
-     * Get all associates
+     * Get all users
      * @param array $filters Optional filters (status, level, etc.)
-     * @return array Associates data
+     * @return array users data
      */
     public function getAll($filters = [])
     {
         try {
             $sql = "SELECT a.*, u.name as user_name, u.email as user_email 
-                    FROM associates a 
+                    FROM users a 
                     LEFT JOIN users u ON a.user_id = u.id 
                     WHERE 1=1";
             $params = [];
@@ -56,17 +56,17 @@ class Associate
 
             $sql .= " ORDER BY a.created_at DESC";
 
-            $associates = $this->db->fetchAll($sql, $params);
+            $users = $this->db->fetchAll($sql, $params);
 
             return [
                 'success' => true,
-                'associates' => $associates,
-                'total' => count($associates)
+                'users' => $users,
+                'total' => count($users)
             ];
         } catch (Exception $e) {
             return [
                 'success' => false,
-                'error' => 'Failed to fetch associates: ' . $e->getMessage()
+                'error' => 'Failed to fetch users: ' . $e->getMessage()
             ];
         }
     }
@@ -80,7 +80,7 @@ class Associate
     {
         try {
             $sql = "SELECT a.*, u.name as user_name, u.email as user_email 
-                    FROM associates a 
+                    FROM users a 
                     LEFT JOIN users u ON a.user_id = u.id 
                     WHERE a.id = ?";
 
@@ -149,7 +149,7 @@ class Associate
             $data['created_at'] = date('Y-m-d H:i:s');
 
             $associateId = $this->db->insert(
-                "INSERT INTO associates (name, email, phone, level, status, user_id, created_at) 
+                "INSERT INTO users (name, email, phone, level, status, user_id, created_at) 
                  VALUES (?, ?, ?, ?, ?, ?, ?)",
                 [
                     $data['name'],
@@ -192,7 +192,7 @@ class Associate
     {
         try {
             // Check if associate exists
-            $existing = $this->db->fetch("SELECT id FROM associates WHERE id = ?", [$id]);
+            $existing = $this->db->fetch("SELECT id FROM users WHERE id = ?", [$id]);
             if (!$existing) {
                 return [
                     'success' => false,
@@ -238,7 +238,7 @@ class Associate
                 $params[] = $id;
             }
 
-            $sql = "UPDATE associates SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = ?";
 
             $result = $this->db->query($sql, $params);
 
@@ -270,7 +270,7 @@ class Associate
     {
         try {
             // Check if associate exists
-            $existing = $this->db->fetch("SELECT id FROM associates WHERE id = ?", [$id]);
+            $existing = $this->db->fetch("SELECT id FROM users WHERE id = ?", [$id]);
             if (!$existing) {
                 return [
                     'success' => false,
@@ -279,7 +279,7 @@ class Associate
             }
 
             // Delete associate
-            $result = $this->db->query("DELETE FROM associates WHERE id = ?", [$id]);
+            $result = $this->db->query("DELETE FROM users WHERE id = ?", [$id]);
 
             if ($result) {
                 return [
@@ -314,7 +314,7 @@ class Associate
                 COUNT(CASE WHEN level = 'gold' THEN 1 END) as gold,
                 COUNT(CASE WHEN level = 'silver' THEN 1 END) as silver,
                 COUNT(CASE WHEN level = 'bronze' THEN 1 END) as bronze
-                FROM associates";
+                FROM users";
 
             $stats = $this->db->fetch($sql);
 

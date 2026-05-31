@@ -13,7 +13,7 @@ class AdminDashboard extends Model
     protected static $table = 'admin_dashboard_stats';
     protected static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'stat_type',
         'stat_value',
         'stat_date',

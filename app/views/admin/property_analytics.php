@@ -75,7 +75,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>City</th><th>State</th><th>Properties</th><th>Avg Price</th><th>Agents</th></tr></thead>
+                            <thead class="table-light"><tr><th>City</th><th>State</th><th>Properties</th><th>Avg Price</th><th>users</th></tr></thead>
                             <tbody>
                                 <?php foreach (($propData['location_performance'] ?? []) as $loc): ?>
                                 <tr>
@@ -83,7 +83,7 @@
                                     <td><?= ($loc['state'] ?? '') ?></td>
                                     <td><?= ($loc['properties'] ?? 0) ?></td>
                                     <td>₹<?= number_format($loc['avg_price'] ?? 0) ?></td>
-                                    <td><?= ($loc['agents'] ?? 0) ?></td>
+                                    <td><?= ($loc['users'] ?? 0) ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                                 <?php if (empty($propData['location_performance'] ?? [])): ?>

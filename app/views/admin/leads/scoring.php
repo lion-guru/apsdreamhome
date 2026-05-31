@@ -121,8 +121,8 @@ $page_title = 'Lead Scoring Dashboard - APS Dream Home';
                 <div class="col-md-3">
                     <label class="form-label">Assigned To</label>
                     <select class="form-select" name="assigned_to">
-                        <option value="">All Agents</option>
-                        <?php foreach ($agents as $agent): ?>
+                        <option value="">All users</option>
+                        <?php foreach ($users as $agent): ?>
                             <option value="<?= $agent['id'] ?>" <?= $filters['assigned_to'] == $agent['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($agent['name'] ?? '') ?>
                             </option>

@@ -37,7 +37,7 @@ class ImportExportService
     {
         $sql = "CREATE TABLE IF NOT EXISTS import_jobs (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            job_type ENUM('properties', 'leads', 'customers', 'associates', 'khatabook_sales') NOT NULL,
+            job_type ENUM('properties', 'leads', 'users', 'users', 'khatabook_sales') NOT NULL,
             file_path VARCHAR(500) NOT NULL,
             file_size INT NOT NULL,
             total_rows INT DEFAULT 0,

@@ -14,7 +14,7 @@ class LeadDeal extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'lead_id',
         'deal_name',
         'deal_value',
@@ -33,7 +33,7 @@ class LeadDeal extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'deal_value' => 'float',
         'probability' => 'integer',
         'expected_close_date' => 'string',
@@ -217,23 +217,23 @@ class LeadDeal extends Model
     {
         $symbols = [
             'USD' => '$',
-            'EUR' => '€',
-            'GBP' => '£',
-            'JPY' => '¥',
-            'INR' => '₹',
+            'EUR' => 'â‚¬',
+            'GBP' => 'Â£',
+            'JPY' => 'Â¥',
+            'INR' => 'â‚¹',
             'AUD' => 'A$',
             'CAD' => 'C$',
             'CHF' => 'CHF ',
-            'CNY' => '¥',
+            'CNY' => 'Â¥',
             'SEK' => 'kr',
             'NZD' => 'NZ$',
             'MXN' => 'MX$',
             'SGD' => 'S$',
             'HKD' => 'HK$',
             'NOK' => 'kr',
-            'KRW' => '₩',
-            'TRY' => '₺',
-            'RUB' => '₽',
+            'KRW' => 'â‚©',
+            'TRY' => 'â‚º',
+            'RUB' => 'â‚½',
             'BRL' => 'R$',
             'ZAR' => 'R',
         ];

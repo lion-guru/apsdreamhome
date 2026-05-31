@@ -14,7 +14,7 @@ class PublicCustomer extends Model
 {
     public static $table = 'users';
     public $id;
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'phone',

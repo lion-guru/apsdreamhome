@@ -10,7 +10,7 @@ use App\Core\UnifiedModel;
 class Feedback extends UnifiedModel {
     public static $table = 'feedback';
     
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'rating',
         'message',

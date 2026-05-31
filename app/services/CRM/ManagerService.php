@@ -168,7 +168,7 @@ class CRMManager
         $this->db->execute($sql);
 
         // Customer profiles table
-        $sql = "CREATE TABLE IF NOT EXISTS customer_profiles (
+        $sql = "CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             customer_number VARCHAR(50) NOT NULL UNIQUE,
             user_id INT,
@@ -219,7 +219,7 @@ class CRMManager
             assigned_to INT,
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (customer_id) REFERENCES customer_profiles(id) ON DELETE CASCADE,
+            FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
             FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
@@ -245,7 +245,7 @@ class CRMManager
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (customer_id) REFERENCES customer_profiles(id) ON DELETE CASCADE,
+            FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
             FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
@@ -314,7 +314,7 @@ class CRMManager
                 ['Google Ads', 'advertisement', 'Google advertisement campaigns', 50, 0, 'active'],
                 ['Facebook', 'social_media', 'Facebook marketing leads', 25, 0, 'active'],
                 ['Referral', 'referral', 'Customer referrals', 0, 0, 'active'],
-                ['Walk-in', 'offline', 'Direct walk-in customers', 0, 0, 'active'],
+                ['Walk-in', 'offline', 'Direct walk-in users', 0, 0, 'active'],
                 ['Associate', 'referral', 'Associate network referrals', 0, 0, 'active'],
                 ['Property Exhibition', 'offline', 'Property exhibition leads', 100, 0, 'active'],
                 ['Newspaper Ads', 'advertisement', 'Newspaper advertisements', 30, 0, 'active']
@@ -848,7 +848,7 @@ class CRMManager
 
             // Check if customer already exists
             if (!empty($lead['email'])) {
-                $checkSql = "SELECT id FROM customer_profiles WHERE email = :email OR phone = :phone";
+                $checkSql = "SELECT id FROM users WHERE email = :email OR phone = :phone";
                 $existingCustomer = $this->db->fetch($checkSql, [':email' => $lead['email'], ':phone' => $lead['phone']]);
                 if ($existingCustomer) {
                     return $existingCustomer['id'];
@@ -856,7 +856,7 @@ class CRMManager
             }
 
             // Create customer profile
-            $customerSql = "INSERT INTO customer_profiles (
+            $customerSql = "INSERT INTO users (
                 customer_number, name, email, phone, alternate_phone,
                 date_of_birth, gender, marital_status, occupation, company, designation, annual_income,
                 address, city, state, pincode, user_id, lead_id
@@ -966,7 +966,7 @@ class CRMManager
     {
         $sql = "SELECT st.*, cp.name, cp.email
                 FROM support_tickets st
-                JOIN customer_profiles cp ON st.customer_id = cp.id
+                JOIN users cp ON st.customer_id = cp.id
                 WHERE st.id = :id";
         try {
             $ticket = $this->db->fetch($sql, [':id' => $ticketId]);
@@ -1015,7 +1015,7 @@ class CRMManager
                 SUM(CASE WHEN customer_status = 'active' THEN 1 ELSE 0 END) as active_customers,
                 SUM(CASE WHEN customer_status = 'vip' THEN 1 ELSE 0 END) as vip_customers,
                 AVG(total_purchase_value) as avg_customer_value
-                FROM customer_profiles";
+                FROM users";
             $dashboard['customer_stats'] = $this->db->fetch($sql);
 
             // Support ticket statistics

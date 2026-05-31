@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-namespace App\Services\AI\Agents;
+namespace App\Services\AI\users;
 /**
  * WhatsAppAgent - Autonomous AI Agent for WhatsApp Communication
  */

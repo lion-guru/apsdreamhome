@@ -14,7 +14,7 @@ class LeadCustomField extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'field_name',
         'field_label',
         'field_type',
@@ -33,7 +33,7 @@ class LeadCustomField extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'field_options' => 'array',
         'validation_rules' => 'array',
         'is_required' => 'boolean',

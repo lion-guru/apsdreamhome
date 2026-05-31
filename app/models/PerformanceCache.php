@@ -13,7 +13,7 @@ class PerformanceCache extends Model
     protected static $table = 'performance_cache';
     protected static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'cache_key',
         'cache_value',
         'cache_data',

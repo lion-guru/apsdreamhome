@@ -88,7 +88,7 @@ class LegalAdvisorController extends BaseController
                         p.title as related_property,
                         c.name as related_client
                  FROM legal_documents ld
-                 LEFT JOIN employees e ON ld.submitted_by = e.id
+                 LEFT JOIN users e ON ld.submitted_by = e.id
                  LEFT JOIN properties p ON ld.related_property_id = p.id
                  LEFT JOIN clients c ON ld.related_client_id = c.id
                  WHERE ld.status = 'pending_review'
@@ -109,7 +109,7 @@ class LegalAdvisorController extends BaseController
                         e.name as responsible_person_name
                  FROM compliance_tasks ct
                  LEFT JOIN departments d ON ct.department_id = d.id
-                 LEFT JOIN employees e ON ct.responsible_person = e.id
+                 LEFT JOIN users e ON ct.responsible_person = e.id
                  WHERE ct.due_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
                  AND ct.status != 'completed'
                  AND (ct.assigned_to = ? OR ct.assigned_to IS NULL)
@@ -131,7 +131,7 @@ class LegalAdvisorController extends BaseController
                  FROM legal_disputes ld
                  LEFT JOIN clients c ON ld.client_id = c.id
                  LEFT JOIN properties p ON ld.property_id = p.id
-                 LEFT JOIN employees e ON ld.assigned_lawyer = e.id
+                 LEFT JOIN users e ON ld.assigned_lawyer = e.id
                  WHERE ld.status IN ('active', 'investigation', 'negotiation')
                  AND (ld.assigned_lawyer = ? OR ld.assigned_lawyer IS NULL)
                  ORDER BY ld.created_at DESC
@@ -470,7 +470,7 @@ class LegalAdvisorController extends BaseController
                     TIMESTAMPDIFF(DAY, CURDATE(), ct.due_date) as days_until_due
                  FROM compliance_tasks ct
                  LEFT JOIN departments d ON ct.department_id = d.id
-                 LEFT JOIN employees e ON ct.responsible_person = e.id
+                 LEFT JOIN users e ON ct.responsible_person = e.id
                  WHERE {$whereClause}
                  ORDER BY ct.due_date ASC";
 
@@ -527,7 +527,7 @@ class LegalAdvisorController extends BaseController
                         TIMESTAMPDIFF(DAY, d.created_at, CURDATE()) as days_open
                  FROM disputes d
                  LEFT JOIN clients c ON d.client_id = c.id
-                 LEFT JOIN employees e ON d.assigned_to = e.id
+                 LEFT JOIN users e ON d.assigned_to = e.id
                  WHERE {$whereClause}
                  ORDER BY d.created_at DESC";
 
@@ -576,7 +576,7 @@ class LegalAdvisorController extends BaseController
         $query = "SELECT dr.*, e.name as submitted_by_name,
                         TIMESTAMPDIFF(DAY, dr.submitted_at, CURDATE()) as days_pending
                  FROM document_reviews dr
-                 LEFT JOIN employees e ON dr.submitted_by = e.id
+                 LEFT JOIN users e ON dr.submitted_by = e.id
                  WHERE {$whereClause}
                  ORDER BY dr.submitted_at DESC";
 

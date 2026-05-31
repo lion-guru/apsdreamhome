@@ -11,7 +11,7 @@ namespace App\Models;
 class SystemAlert extends Model {
     public static $table = 'system_alerts';
     
-    protected array $fillable = [
+    protected $fillable = [
         'level',
         'title',
         'message',

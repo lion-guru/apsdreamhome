@@ -8,7 +8,7 @@ use App\Core\UnifiedModel;
 
 class AreaAmenity extends UnifiedModel {
     public static $table = 'area_amenities';
-    protected array $fillable = ['city', 'name', 'type', 'latitude', 'longitude', 'address', 'rating'];
+    protected $fillable = ['city', 'name', 'type', 'latitude', 'longitude', 'address', 'rating'];
 
     public function getByCity($city, $type = 'all') {
         $query = static::query()

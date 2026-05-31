@@ -120,7 +120,7 @@
             </div>
             <div class="col-6 col-md-3 mb-4">
                 <div class="h2 text-info mb-1"><?php echo $hero_stats['happy_customers']; ?>+</div>
-                <p class="text-muted mb-0">Happy Customers</p>
+                <p class="text-muted mb-0">Happy users</p>
             </div>
             <div class="col-6 col-md-3 mb-4">
                 <div class="h2 text-warning mb-1"><?php echo $hero_stats['awards_won']; ?></div>
@@ -1232,7 +1232,7 @@ function mCalcVal() {
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">What Customers Say</h2>
+            <h2 class="display-6 fw-bold">What users Say</h2>
         </div>
         <div class="row">
             <div class="col-md-4 mb-4">
@@ -1319,7 +1319,7 @@ function mCalcVal() {
                             <i class="fas fa-sack-dollar fa-2x text-danger"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Fixed Monthly Salary</h5>
-                        <p class="text-muted small">Real estate mein aam taur par sirf commission milta hai. Lekin APS Dream home associates aur agents ko <strong class="text-danger">fixed monthly salary</strong> bhi di jaati hai! Target complete karke salary guarantee paayein.</p>
+                        <p class="text-muted small">Real estate mein aam taur par sirf commission milta hai. Lekin APS Dream home users aur users ko <strong class="text-danger">fixed monthly salary</strong> bhi di jaati hai! Target complete karke salary guarantee paayein.</p>
                         <div class="bg-light rounded p-3 mt-3">
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="small">Starter: <strong>₹5,000/mo</strong> <span class="text-muted">(₹15L target, 6mo)</span></span>
@@ -1347,7 +1347,7 @@ function mCalcVal() {
                             <i class="fas fa-shield-heart fa-2x text-success"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Free Insurance Cover</h5>
-                        <p class="text-muted small">Company aapke parivar ki suraksha ka khayal rakhti hai. Sabhi associates aur employees ko <strong class="text-success">free health aur life insurance</strong> cover diya jaata hai.</p>
+                        <p class="text-muted small">Company aapke parivar ki suraksha ka khayal rakhti hai. Sabhi users aur users ko <strong class="text-success">free health aur life insurance</strong> cover diya jaata hai.</p>
                         <div class="bg-light rounded p-3 mt-3">
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="small"><i class="fas fa-check-circle text-success me-1"></i>Health Insurance: <strong>₹5 Lakh</strong></span>
@@ -1413,7 +1413,7 @@ function mCalcVal() {
                             <i class="fas fa-users-between-lines fa-2x text-primary"></i>
                         </div>
                         <h5 class="fw-bold mb-2">MLM Network Benefits</h5>
-                        <p class="text-muted small">Naye associates join karwaiye aur unki sales par <strong class="text-primary">residual commission</strong> paayein. 10 rank structure — har rank ke saath badti hai earning!</p>
+                        <p class="text-muted small">Naye users join karwaiye aur unki sales par <strong class="text-primary">residual commission</strong> paayein. 10 rank structure — har rank ke saath badti hai earning!</p>
                         <div class="bg-light rounded p-3 mt-3" style="max-height:160px;overflow-y:auto;">
                             <div class="small mb-1"><i class="fas fa-crown text-warning me-1"></i>Associate: <strong>5%</strong> (0 team)</div>
                             <div class="small mb-1"><i class="fas fa-crown text-secondary me-1"></i>Bronze: <strong>7%</strong> (5+ team)</div>

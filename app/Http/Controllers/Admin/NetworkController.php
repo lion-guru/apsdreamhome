@@ -55,7 +55,7 @@ class NetworkController extends AdminController
             if ($associateId > 0) {
                 $networkData = $this->getNetworkTree($associateId);
             } else {
-                // Get root associates (those without sponsors)
+                // Get root users (those without sponsors)
                 $sql = "SELECT u.* FROM users u 
                         LEFT JOIN users s ON u.sponsor_id = s.id
                         WHERE u.role = 'associate' AND u.sponsor_id IS NULL
@@ -163,12 +163,12 @@ class NetworkController extends AdminController
         try {
             $stats = [];
 
-            // Total associates
+            // Total users
             $sql = "SELECT COUNT(*) as total FROM users WHERE role = 'associate'";
             $result = $this->db->fetchOne($sql);
             $stats['total_associates'] = (int)($result['total'] ?? 0);
 
-            // Active associates
+            // Active users
             $sql = "SELECT COUNT(*) as total FROM users WHERE role = 'associate' AND status = 'active'";
             $result = $this->db->fetchOne($sql);
             $stats['active_associates'] = (int)($result['total'] ?? 0);

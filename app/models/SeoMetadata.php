@@ -13,7 +13,7 @@ use App\Core\Database\Model;
 class SeoMetadata extends Model {
     public static $table = 'seo_metadata';
     
-    protected array $fillable = [
+    protected $fillable = [
         'page_name',
         'meta_title',
         'meta_description',

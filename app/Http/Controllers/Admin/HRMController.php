@@ -12,16 +12,16 @@ class HRMController extends AdminController
         return $this->render('admin/hrm/index', []);
     }
 
-    public function employees()
+    public function users()
     {
         $this->requireAdmin();
-        return $this->render('admin/hrm/employees/index', []);
+        return $this->render('admin/hrm/users/index', []);
     }
     
     public function createEmployee()
     {
         $this->requireAdmin();
-        return $this->render('admin/hrm/employees/create', []);
+        return $this->render('admin/hrm/users/create', []);
     }
     
     public function attendance()
@@ -99,6 +99,6 @@ class HRMController extends AdminController
     public function employeeList()
     {
         $this->requireAdmin();
-        return $this->render('admin/employees/index', ['page_title' => 'Employees']);
+        return $this->render('admin/users/index', ['page_title' => 'users']);
     }
 }

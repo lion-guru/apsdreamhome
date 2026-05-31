@@ -297,7 +297,7 @@ class UserService
             $sql = "SELECT 
                         COUNT(*) as total_users,
                         COUNT(CASE WHEN status = 'active' THEN 1 END) as active_users,
-                        COUNT(CASE WHEN role = 'admin' THEN 1 END) as admin_users,
+                        COUNT(CASE WHEN role = 'admin' THEN 1 END) as users,
                         COUNT(CASE WHEN role = 'user' THEN 1 END) as regular_users,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users
                     FROM users";

@@ -120,7 +120,7 @@ class Leave extends Model
                        d.name as department_name
                 FROM employee_leaves el
                 LEFT JOIN leave_types lt ON el.leave_type_id = lt.id
-                LEFT JOIN employees e ON el.employee_id = e.id
+                LEFT JOIN users e ON el.employee_id = e.id
                 LEFT JOIN departments d ON e.department_id = d.id
                 WHERE el.status = 'pending'
                 ORDER BY el.created_at ASC

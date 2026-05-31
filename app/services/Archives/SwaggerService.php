@@ -640,10 +640,10 @@
                 }
             }
         },
-        "\/api\/customers": {
+        "\/api\/users": {
             "get": {
-                "summary": "Get all customers",
-                "description": "Get all customers",
+                "summary": "Get all users",
+                "description": "Get all users",
                 "tags": [
                     "General"
                 ],
@@ -698,7 +698,7 @@
                 }
             }
         },
-        "\/api\/customers\/{id}": {
+        "\/api\/users\/{id}": {
             "get": {
                 "summary": "Get customer by ID",
                 "description": "Get customer by ID",
@@ -728,10 +728,10 @@
                 }
             }
         },
-        "\/api\/agents": {
+        "\/api\/users": {
             "get": {
-                "summary": "Get all agents",
-                "description": "Get all agents",
+                "summary": "Get all users",
+                "description": "Get all users",
                 "tags": [
                     "General"
                 ],
@@ -786,7 +786,7 @@
                 }
             }
         },
-        "\/api\/agents\/{id}": {
+        "\/api\/users\/{id}": {
             "get": {
                 "summary": "Get agent by ID",
                 "description": "Get agent by ID",
@@ -816,10 +816,10 @@
                 }
             }
         },
-        "\/api\/associates": {
+        "\/api\/users": {
             "get": {
-                "summary": "Get all associates",
-                "description": "Get all associates",
+                "summary": "Get all users",
+                "description": "Get all users",
                 "tags": [
                     "General"
                 ],
@@ -874,7 +874,7 @@
                 }
             }
         },
-        "\/api\/associates\/{id}": {
+        "\/api\/users\/{id}": {
             "get": {
                 "summary": "Get associate by ID",
                 "description": "Get associate by ID",

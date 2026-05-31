@@ -9,7 +9,7 @@ class Gallery extends UnifiedModel
     public static $table = 'gallery_images';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'category',
         'image_path',
         'caption',

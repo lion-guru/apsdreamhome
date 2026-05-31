@@ -1,9 +1,9 @@
 <?php
-$page_title = $page_title ?? 'Employees';
+$page_title = $page_title ?? 'users';
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0"><i class="fas fa-users me-2"></i>Employees</h4>
-    <a href="<?= BASE_URL ?>/admin/hr/employees/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Employee</a>
+    <h4 class="mb-0"><i class="fas fa-users me-2"></i>users</h4>
+    <a href="<?= BASE_URL ?>/admin/hr/users/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Employee</a>
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
@@ -45,12 +45,12 @@ $page_title = $page_title ?? 'Employees';
                     <tr><th>Name</th><th>Email</th><th>Phone</th><th>Department</th><th>Designation</th><th>Salary</th><th>Status</th><th class="text-end">Actions</th></tr>
                 </thead>
                 <tbody>
-                    <?php if (empty($employees)): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No employees found</td></tr>
+                    <?php if (empty($users)): ?>
+                        <tr><td colspan="8" class="text-center text-muted py-4">No users found</td></tr>
                     <?php else: ?>
-                        <?php foreach ($employees as $e): ?>
+                        <?php foreach ($users as $e): ?>
                             <tr>
-                                <td><a href="<?= BASE_URL ?>/admin/hr/employees/view/<?= $e['id'] ?>" class="text-decoration-none fw-medium"><?= htmlspecialchars($e['name'] ?? '') ?></a></td>
+                                <td><a href="<?= BASE_URL ?>/admin/hr/users/view/<?= $e['id'] ?>" class="text-decoration-none fw-medium"><?= htmlspecialchars($e['name'] ?? '') ?></a></td>
                                 <td><?= htmlspecialchars($e['email'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($e['phone'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($e['department'] ?? '') ?></td>
@@ -66,9 +66,9 @@ $page_title = $page_title ?? 'Employees';
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end">
-                                    <a href="<?= BASE_URL ?>/admin/hr/employees/view/<?= $e['id'] ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
-                                    <a href="<?= BASE_URL ?>/admin/hr/employees/edit/<?= $e['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
-                                    <a href="<?= BASE_URL ?>/admin/hr/employees/delete/<?= $e['id'] ?>" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Delete this employee?')"><i class="fas fa-trash"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/hr/users/view/<?= $e['id'] ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/hr/users/edit/<?= $e['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/hr/users/delete/<?= $e['id'] ?>" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Delete this employee?')"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

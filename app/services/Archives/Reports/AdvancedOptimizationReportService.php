@@ -1255,7 +1255,7 @@
             "type": "large_file_optimization"
         },
         {
-            "file": "C:\\xampp\\htdocs\\apsdreamhome\\app\\Controllers\/..\\views\\customers\\dashboard_modern.php",
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\app\\Controllers\/..\\views\\users\\dashboard_modern.php",
             "original_lines": 1084,
             "optimizations": [
                 "Added performance optimization guidelines",
@@ -1264,7 +1264,7 @@
             "type": "large_file_optimization"
         },
         {
-            "file": "C:\\xampp\\htdocs\\apsdreamhome\\app\\Controllers\/..\\views\\employees\\reporting_structure.php",
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\app\\Controllers\/..\\views\\users\\reporting_structure.php",
             "original_lines": 510,
             "optimizations": [
                 "Added performance optimization guidelines"

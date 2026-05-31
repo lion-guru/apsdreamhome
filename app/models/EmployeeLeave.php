@@ -251,7 +251,7 @@ class EmployeeLeave extends Model
 
         $sql = "SELECT l.*, e.name as employee_name, e.employee_code, d.name as department_name
                 FROM employee_leaves l
-                JOIN employees e ON l.employee_id = e.id
+                JOIN users e ON l.employee_id = e.id
                 LEFT JOIN departments d ON e.department_id = d.id
                 WHERE l.status = 'pending'";
 
@@ -286,7 +286,7 @@ class EmployeeLeave extends Model
 
         $sql = "SELECT l.*, e.name as employee_name, e.employee_code
                 FROM employee_leaves l
-                JOIN employees e ON l.employee_id = e.id
+                JOIN users e ON l.employee_id = e.id
                 WHERE l.status = 'approved'
                 AND CURDATE() BETWEEN l.start_date AND l.end_date";
 
@@ -331,7 +331,7 @@ class EmployeeLeave extends Model
         $db = Database::getInstance();
 
         // Get employee's manager
-        $sql = "SELECT e.manager_id, e.name FROM employees e WHERE e.id = ?";
+        $sql = "SELECT e.manager_id, e.name FROM users e WHERE e.id = ?";
         $employee = $db->query($sql, [$employeeId])->fetch(\PDO::FETCH_ASSOC);
 
         if ($employee && $employee['manager_id']) {

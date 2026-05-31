@@ -84,7 +84,7 @@ $team_stats = $team_stats ?? [];
                 <i class="fas fa-network-wired"></i>
             </div>
             <div class="stat-content">
-                <div class="stat-label">Associates</div>
+                <div class="stat-label">users</div>
                 <div class="stat-value"><?php echo number_format($stats['total_associates'] ?? 0); ?></div>
             </div>
         </div>
@@ -126,7 +126,7 @@ $team_stats = $team_stats ?? [];
                 <i class="fas fa-user-tie"></i>
             </div>
             <div class="stat-content">
-                <div class="stat-label">Employees</div>
+                <div class="stat-label">users</div>
                 <div class="stat-value"><?php echo number_format($stats['total_employees'] ?? 0); ?></div>
             </div>
         </div>
@@ -148,7 +148,7 @@ $team_stats = $team_stats ?? [];
     <?php endif; ?>
 </div>
 
-<!-- MLM Stats for Associates -->
+<!-- MLM Stats for users -->
 <?php if (!empty($mlm_stats)): ?>
 <div class="row g-4 mb-4">
     <div class="col-md-6 col-xl-3">

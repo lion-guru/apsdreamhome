@@ -6,7 +6,7 @@ use App\Core\Database;
 
 /**
  * Training Module Service
- * Video courses, certifications for associates
+ * Video courses, certifications for users
  */
 class TrainingService
 {

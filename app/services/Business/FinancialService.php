@@ -47,7 +47,7 @@ class FinancialService
                 FROM transactions t
                 LEFT JOIN users u ON t.user_id = u.id
                 LEFT JOIN properties p ON t.property_id = p.id
-                LEFT JOIN associates a ON t.associate_id = a.id
+                LEFT JOIN users a ON t.associate_id = a.id
                 WHERE 1=1";
             
             $params = [];
@@ -94,7 +94,7 @@ class FinancialService
                          FROM transactions t
                          LEFT JOIN users u ON t.user_id = u.id
                          LEFT JOIN properties p ON t.property_id = p.id
-                         LEFT JOIN associates a ON t.associate_id = a.id
+                         LEFT JOIN users a ON t.associate_id = a.id
                          WHERE 1=1";
             
             $countParams = [];
@@ -272,7 +272,7 @@ class FinancialService
                 COALESCE(SUM(p.price * a.commission_rate / 100), 0) as total_commission,
                 COALESCE(AVG(p.price), 0) as avg_property_price,
                 MAX(p.sold_date) as last_sale_date
-                FROM associates a
+                FROM users a
                 LEFT JOIN properties p ON a.id = p.associate_id AND p.status = 'sold'
                 WHERE a.status = 'active'";
             
@@ -374,7 +374,7 @@ class FinancialService
                 t.id as transaction_id, t.status as payment_status,
                 t.created_at as commission_paid_date
                 FROM properties p
-                JOIN associates a ON p.associate_id = a.id
+                JOIN users a ON p.associate_id = a.id
                 LEFT JOIN transactions t ON p.id = t.property_id AND t.type = 'commission'
                 WHERE p.associate_id = ? AND p.status = 'sold'";
             
@@ -407,7 +407,7 @@ class FinancialService
     {
         try {
             $associate = $this->db->fetch(
-                "SELECT name, commission_rate FROM associates WHERE id = ?",
+                "SELECT name, commission_rate FROM users WHERE id = ?",
                 [$associateId]
             );
 

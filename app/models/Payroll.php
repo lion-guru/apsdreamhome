@@ -68,7 +68,7 @@ class Payroll extends Model
     }
 
     /**
-     * Process payroll for all employees in a run
+     * Process payroll for all users in a run
      */
     public function processPayrollRun(int $runId): array
     {
@@ -84,15 +84,15 @@ class Payroll extends Model
             return ['success' => false, 'message' => 'Payroll run is not in draft status'];
         }
 
-        // Get all active employees
-        $employees = $db->query("SELECT id, name FROM employees WHERE status = 'active'")->fetchAll();
+        // Get all active users
+        $users = $db->query("SELECT id, name FROM users WHERE status = 'active'")->fetchAll();
 
         $totalGross = 0;
         $totalNet = 0;
         $totalDeductions = 0;
         $processedCount = 0;
 
-        foreach ($employees as $employee) {
+        foreach ($users as $employee) {
             $salaryData = $this->calculateEmployeeSalary($employee['id'], $run['pay_period_start'], $run['pay_period_end']);
 
             if ($salaryData) {
@@ -336,7 +336,7 @@ class Payroll extends Model
 
         $sql = "SELECT pe.*, e.name as employee_name, e.employee_code
                 FROM payroll_entries pe
-                LEFT JOIN employees e ON pe.employee_id = e.id
+                LEFT JOIN users e ON pe.employee_id = e.id
                 WHERE pe.payroll_run_id = ?
                 ORDER BY e.name";
 
@@ -423,7 +423,7 @@ class Payroll extends Model
                        e.designation, e.department
                 FROM payroll_entries pe
                 LEFT JOIN payroll_runs pr ON pe.payroll_run_id = pr.id
-                LEFT JOIN employees e ON pe.employee_id = e.id
+                LEFT JOIN users e ON pe.employee_id = e.id
                 WHERE pe.employee_id = ? AND pe.payroll_run_id = ?";
 
         $payslip = $db->query($sql, [$employeeId, $payrollRunId])->fetch();

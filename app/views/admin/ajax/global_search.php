@@ -39,7 +39,7 @@ try {
     $searchTerm = "%$query%";
 
     // Search in users
-    $userRows = $db->fetchAll("SELECT u.id, u.name, u.email, u.role, COALESCE(a.status, 'active') as status FROM users u LEFT JOIN associates a ON u.id = a.user_id WHERE u.name LIKE :search OR u.email LIKE :search OR u.role LIKE :search LIMIT 5", ['search' => $searchTerm]);
+    $userRows = $db->fetchAll("SELECT u.id, u.name, u.email, u.role, COALESCE(a.status, 'active') as status FROM users u LEFT JOIN users a ON u.id = a.user_id WHERE u.name LIKE :search OR u.email LIKE :search OR u.role LIKE :search LIMIT 5", ['search' => $searchTerm]);
 
     foreach ($userRows as $row) {
         $results[] = [

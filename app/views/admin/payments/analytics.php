@@ -77,7 +77,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Top Customers</h5>
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Top users</h5>
                     </div>
                     <div class="card-body">
                         <?php if (!empty($analytics_data['top_customers'])): ?>

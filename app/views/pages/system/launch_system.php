@@ -34,7 +34,7 @@ try {
     $criticalTests = [
         'admin' => 'Admin authentication system',
         'users' => 'User management system', 
-        'customers' => 'Customer database',
+        'users' => 'Customer database',
         'properties' => 'Property listings',
         'plots' => 'Plot inventory',
         'bookings' => 'Booking system',

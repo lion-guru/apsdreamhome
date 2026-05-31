@@ -76,7 +76,7 @@ try {
     }
 
     // Get user details
-    $stmt = $pdo->prepare("SELECT name, email, status FROM employees WHERE id = :user_id");
+    $stmt = $pdo->prepare("SELECT name, email, status FROM users WHERE id = :user_id");
     $stmt->execute(['user_id' => $user_id]);
     $user = $stmt->fetch();
 

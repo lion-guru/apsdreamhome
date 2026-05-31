@@ -389,7 +389,7 @@ class Admin extends Model
             $stmt->execute();
             $analytics['revenue_trends'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Top performing agents
+            // Top performing users
             $stmt = $this->db->prepare("
                 SELECT u.name, u.email, COUNT(p.id) as properties_sold, COALESCE(SUM(p.price), 0) as total_value
                 FROM users u
@@ -411,7 +411,7 @@ class Admin extends Model
                     COUNT(properties.id) as new_properties,
                     COALESCE(SUM(CASE WHEN payments.status = 'completed' THEN payments.amount ELSE 0 END), 0) as monthly_revenue
                 FROM users
-                LEFT JOIN associates ON users.id = associates.user_id
+                LEFT JOIN users ON users.id = users.user_id
                 LEFT JOIN properties ON DATE_FORMAT(properties.created_at, '%Y-%m') = DATE_FORMAT(users.created_at, '%Y-%m')
                 LEFT JOIN payments ON DATE_FORMAT(payments.created_at, '%Y-%m') = DATE_FORMAT(users.created_at, '%Y-%m')
                 WHERE users.created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)

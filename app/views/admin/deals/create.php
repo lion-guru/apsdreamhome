@@ -81,7 +81,7 @@ $page_title = 'Create Deal - APS Dream Home';
                                 <label class="form-label">Assign To</label>
                                 <select class="form-select" name="assigned_to">
                                     <option value="">Select Agent</option>
-                                    <?php foreach ($agents as $agent): ?>
+                                    <?php foreach ($users as $agent): ?>
                                         <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>

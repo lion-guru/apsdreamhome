@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Services\AI\Agents;
+namespace App\Services\AI\users;
 
 use App\Services\AI\VoiceAgents\SiteVisitBookingAgent;
 use App\Services\AI\VoiceAgents\PropertyInquiryAgent;
 use App\Services\AI\VoiceAgents\LeadFollowUpAgent;
 
 /**
- * AgentManager - Central registry and orchestrator for all AI Agents
+ * AgentManager - Central registry and orchestrator for all AI users
  */
 
 class AgentManager {
     private static $instance = null;
-    private $agents = [];
+    private $users = [];
     private $workflowEngine;
 
     private function __construct() {
@@ -28,7 +28,7 @@ class AgentManager {
     }
 
     private function initializeDefaultAgents() {
-        // Register default agents
+        // Register default users
         $this->registerAgent('whatsapp', new WhatsAppAgent());
         $this->registerAgent('lead_gen', new LeadGenerationAgent());
         $this->registerAgent('emi_collector', new EMICollectionAgent());
@@ -36,23 +36,23 @@ class AgentManager {
         $this->registerAgent('analyst', new DataAnalysisAgent());
         $this->registerAgent('content_creator', new ContentCreationAgent());
 
-        // Register Voice AI agents
+        // Register Voice AI users
         $this->registerAgent('site_visit_booking', new SiteVisitBookingAgent());
         $this->registerAgent('property_inquiry', new PropertyInquiryAgent());
         $this->registerAgent('lead_followup', new LeadFollowUpAgent());
 
-        // Register agents with workflow engine
-        foreach ($this->agents as $name => $agent) {
+        // Register users with workflow engine
+        foreach ($this->users as $name => $agent) {
             $this->workflowEngine->registerAgent($name, $agent);
         }
     }
 
     public function registerAgent($name, $agentInstance) {
-        $this->agents[$name] = $agentInstance;
+        $this->users[$name] = $agentInstance;
     }
 
     public function getAgent($name) {
-        return $this->agents[$name] ?? null;
+        return $this->users[$name] ?? null;
     }
 
     /**
@@ -79,11 +79,11 @@ class AgentManager {
     }
 
     /**
-     * Get all registered agents and their status
+     * Get all registered users and their status
      */
     public function getAllAgentsStatus() {
         $statuses = [];
-        foreach ($this->agents as $name => $agent) {
+        foreach ($this->users as $name => $agent) {
             $statuses[$name] = $agent->getStatus();
         }
         return $statuses;

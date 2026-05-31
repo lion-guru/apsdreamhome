@@ -37,7 +37,7 @@ class ReportService
                 u.name as buyer_name, u.email as buyer_email,
                 (p.price * a.commission_rate / 100) as commission_amount
                 FROM properties p
-                LEFT JOIN associates a ON p.associate_id = a.id
+                LEFT JOIN users a ON p.associate_id = a.id
                 LEFT JOIN users u ON p.buyer_id = u.id
                 WHERE 1=1";
             
@@ -194,7 +194,7 @@ class ReportService
                 COALESCE(AVG(p.price), 0) as avg_property_price,
                 MAX(p.sold_date) as last_sale_date,
                 COALESCE(SUM(CASE WHEN p.sold_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END), 0) as sales_this_month
-                FROM associates a
+                FROM users a
                 LEFT JOIN properties p ON a.id = p.associate_id
                 WHERE 1=1";
             
@@ -405,7 +405,7 @@ class ReportService
                     AVG(rating) as avg_rating,
                     SUM(total_commissions) as total_commissions,
                     SUM(properties_sold) as total_properties_sold
-                FROM associates
+                FROM users
             ");
 
             // Financial statistics
@@ -432,7 +432,7 @@ class ReportService
             return [
                 'properties' => $propertyStats,
                 'users' => $userStats,
-                'associates' => $associateStats,
+                'users' => $associateStats,
                 'financial' => $financialStats,
                 'enquiries' => $enquiryStats
             ];

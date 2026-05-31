@@ -435,7 +435,7 @@
             <div class="row mb-5">
                 <div class="col-12 text-center">
                     <h2 class="display-5 fw-bold mb-4">What Our Clients Say</h2>
-                    <p class="lead text-muted">Real stories from satisfied customers</p>
+                    <p class="lead text-muted">Real stories from satisfied users</p>
                 </div>
             </div>
             <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">

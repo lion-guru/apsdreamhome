@@ -7,7 +7,7 @@ use Exception;
 
 /**
  * Multi-Level Commission Service
- * Handles commission calculation and distribution for associates
+ * Handles commission calculation and distribution for users
  */
 class CommissionService
 {
@@ -100,7 +100,7 @@ class CommissionService
      * Get upline hierarchy for an associate
      * @param int $associateId Starting associate ID
      * @param int $maxLevels Maximum levels to go up
-     * @return array Upline associates by level
+     * @return array Upline users by level
      */
     public function getUplineHierarchy($associateId, $maxLevels = 5)
     {

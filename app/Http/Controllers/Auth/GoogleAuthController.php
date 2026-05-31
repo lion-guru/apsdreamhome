@@ -141,7 +141,7 @@ class GoogleAuthController extends Controller
         }
 
         $googleUserData = $_SESSION['google_user_data'];
-        $companyReferralCode = 'APS2025COMP'; // Company referral code for new associates/agents
+        $companyReferralCode = 'APS2025COMP'; // Company referral code for new users/users
 
         include __DIR__ . '/../../../views/auth/google_role_selection.php';
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\AI\Agents\specialized;
+namespace App\Services\AI\users\specialized;
 
-use App\Services\AI\Agents\BaseAgent;
+use App\Services\AI\users\BaseAgent;
 use Exception;
 
 /**

@@ -119,9 +119,9 @@ $page_description = 'Customer Relationship Management';
                             </a>
                         </div>
                         <div class="col-md-3">
-                            <a href="<?php echo BASE_URL; ?>/admin/customers" class="btn btn-outline-success w-100 py-3">
+                            <a href="<?php echo BASE_URL; ?>/admin/users" class="btn btn-outline-success w-100 py-3">
                                 <i class="fas fa-user-check mb-2 d-block" style="font-size: 1.5rem;"></i>
-                                Manage Customers
+                                Manage users
                             </a>
                         </div>
                         <div class="col-md-3">

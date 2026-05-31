@@ -190,15 +190,15 @@ function getPropertiesByType($type)
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Get associates for dropdown
+// Get users for dropdown
 $associates_query = "SELECT id, full_name as name FROM mlm_agents WHERE status = 'active'";
 $associates_result = $conn->query($associates_query);
-$associates = $associates_result->fetch_all(MYSQLI_ASSOC);
+$users = $associates_result->fetch_all(MYSQLI_ASSOC);
 
-// Get customers for dropdown
+// Get users for dropdown
 $customers_query = "SELECT id, name FROM users WHERE role = 'customer' LIMIT 100";
 $customers_result = $conn->query($customers_query);
-$customers = $customers_result->fetch_all(MYSQLI_ASSOC);
+$users = $customers_result->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -765,7 +765,7 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
                             <label class="form-label">Associate *</label>
                             <select class="form-select" name="associate_id" required>
                                 <option value="">Select Associate</option>
-                                <?php foreach ($associates as $associate): ?>
+                                <?php foreach ($users as $associate): ?>
                                     <option value="<?php echo $associate['id']; ?>"><?php echo htmlspecialchars($associate['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -775,7 +775,7 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
                             <label class="form-label">Customer *</label>
                             <select class="form-select" name="customer_id" required>
                                 <option value="">Select Customer</option>
-                                <?php foreach ($customers as $customer): ?>
+                                <?php foreach ($users as $customer): ?>
                                     <option value="<?php echo $customer['id']; ?>"><?php echo htmlspecialchars($customer['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>

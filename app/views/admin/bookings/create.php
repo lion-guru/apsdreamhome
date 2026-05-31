@@ -61,7 +61,7 @@ $active_page = 'bookings';
                     <label for="customer_id" class="form-label">Select Customer *</label>
                     <select class="form-select" id="customer_id" name="customer_id">
                         <option value="">Select Customer</option>
-                        <?php foreach ($customers as $customer): ?>
+                        <?php foreach ($users as $customer): ?>
                             <option value="<?= $customer['id'] ?>">
                                 <?= htmlspecialchars($customer['name'] ?? '') ?> (<?= htmlspecialchars($customer['email'] ?? '') ?>)
                             </option>
@@ -104,7 +104,7 @@ $active_page = 'bookings';
                     </label>
                     <select class="form-select" id="new_customer_associate_id" name="associate_id">
                         <option value="">No Associate (Direct Booking)</option>
-                        <?php foreach ($associates as $associate): ?>
+                        <?php foreach ($users as $associate): ?>
                             <option value="<?= $associate['id'] ?>">
                                 <?= htmlspecialchars($associate['name']) ?>
                                 <?php if (!empty($associate['mlm_rank'])): ?>

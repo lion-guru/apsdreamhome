@@ -12,7 +12,7 @@ class VirtualTour extends UnifiedModel
     public static $table = 'virtual_tours';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'property_id',
         'tour_title',
         'tour_description',

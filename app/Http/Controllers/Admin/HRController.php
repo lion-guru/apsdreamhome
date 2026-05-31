@@ -18,13 +18,13 @@ class HRController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $totalEmployees = $this->db->fetch("SELECT COUNT(*) as c FROM employees WHERE status='active'")['c'] ?? 0;
+            $totalEmployees = $this->db->fetch("SELECT COUNT(*) as c FROM users WHERE status='active'")['c'] ?? 0;
             $totalUsers = $this->db->fetch("SELECT COUNT(*) as c FROM users WHERE role='employee' AND status='active'")['c'] ?? 0;
             $presentToday = $this->db->fetch("SELECT COUNT(*) as c FROM employee_attendance WHERE attendance_date=CURDATE() AND attendance_status='present'")['c'] ?? 0;
             $onLeave = $this->db->fetch("SELECT COUNT(*) as c FROM employee_leaves WHERE CURDATE() BETWEEN start_date AND end_date AND status='approved'")['c'] ?? 0;
             $pendingLeaves = $this->db->fetch("SELECT COUNT(*) as c FROM employee_leaves WHERE status='pending'")['c'] ?? 0;
             $attendanceRate = $totalEmployees > 0 ? round(($presentToday / $totalEmployees) * 100, 1) : 0;
-            $activeEmployees = $this->db->fetchAll("SELECT e.id, e.name, e.department, e.designation, e.status, u.email, u.phone FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status='active' ORDER BY e.name LIMIT 5");
+            $activeEmployees = $this->db->fetchAll("SELECT e.id, e.name, e.department, e.designation, e.status, u.email, u.phone FROM users e JOIN users u ON e.user_id = u.id WHERE e.status='active' ORDER BY e.name LIMIT 5");
         } catch (\Exception $e) {
             $totalEmployees = 0; $totalUsers = 0; $presentToday = 0; $onLeave = 0; $pendingLeaves = 0; $attendanceRate = 0; $activeEmployees = [];
         }
@@ -41,10 +41,10 @@ class HRController extends AdminController
     }
 
     // ──────────────────────────────────────────────
-    // EMPLOYEES
+    // users
     // ──────────────────────────────────────────────
 
-    public function employees()
+    public function users()
     {
         $this->requireAdmin();
         $search = $_GET['search'] ?? '';
@@ -59,16 +59,16 @@ class HRController extends AdminController
         if ($department) { $where .= " AND e.department=?"; $params[] = $department; }
         if ($status) { $where .= " AND e.status=?"; $params[] = $status; }
         try {
-            $total = $this->db->fetch("SELECT COUNT(*) as c FROM employees e JOIN users u ON e.user_id=u.id $where", $params)['c'] ?? 0;
-            $employees = $this->db->fetchAll("SELECT e.*, u.email, u.phone FROM employees e JOIN users u ON e.user_id=u.id $where ORDER BY e.id DESC LIMIT $perPage OFFSET $offset", $params);
-            $departments = $this->db->fetchAll("SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department!='' ORDER BY department");
+            $total = $this->db->fetch("SELECT COUNT(*) as c FROM users e JOIN users u ON e.user_id=u.id $where", $params)['c'] ?? 0;
+            $users = $this->db->fetchAll("SELECT e.*, u.email, u.phone FROM users e JOIN users u ON e.user_id=u.id $where ORDER BY e.id DESC LIMIT $perPage OFFSET $offset", $params);
+            $departments = $this->db->fetchAll("SELECT DISTINCT department FROM users WHERE department IS NOT NULL AND department!='' ORDER BY department");
         } catch (\Exception $e) {
-            $total = 0; $employees = []; $departments = [];
+            $total = 0; $users = []; $departments = [];
         }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
-        return $this->render('admin/hr/employees', [
-            'page_title' => 'Employees',
-            'employees' => $employees,
+        return $this->render('admin/hr/users', [
+            'page_title' => 'users',
+            'users' => $users,
             'departments' => $departments,
             'search' => $search,
             'department' => $department,
@@ -96,19 +96,19 @@ class HRController extends AdminController
         $salary = $_POST['salary'] ?? 0;
         $joinDate = $_POST['join_date'] ?? date('Y-m-d');
         $password = $_POST['password'] ?? 'employee@123';
-        if (!$name || !$email) { $this->setFlash('error', 'Name and Email are required'); header('Location: ' . BASE_URL . '/admin/hr/employees/create'); exit; }
+        if (!$name || !$email) { $this->setFlash('error', 'Name and Email are required'); header('Location: ' . BASE_URL . '/admin/hr/users/create'); exit; }
         try {
             $exists = $this->db->fetch("SELECT id FROM users WHERE email=?", [$email]);
-            if ($exists) { $this->setFlash('error', 'Email already exists'); header('Location: ' . BASE_URL . '/admin/hr/employees/create'); exit; }
+            if ($exists) { $this->setFlash('error', 'Email already exists'); header('Location: ' . BASE_URL . '/admin/hr/users/create'); exit; }
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             $this->db->execute("INSERT INTO users (name, email, phone, role, status, password, created_at) VALUES (?,?,?,'employee','active',?,NOW())", [$name, $email, $phone, $hashed]);
             $userId = $this->db->lastInsertId();
-            $this->db->execute("INSERT INTO employees (user_id, name, department, designation, salary, join_date, status, created_at) VALUES (?,?,?,?,?,?,'active',NOW())", [$userId, $name, $department, $designation, $salary, $joinDate]);
+            $this->db->execute("INSERT INTO users (user_id, name, department, designation, salary, join_date, status, created_at) VALUES (?,?,?,?,?,?,'active',NOW())", [$userId, $name, $department, $designation, $salary, $joinDate]);
             $this->setFlash('success', 'Employee created successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
-        header('Location: ' . BASE_URL . '/admin/hr/employees');
+        header('Location: ' . BASE_URL . '/admin/hr/users');
         exit;
     }
 
@@ -116,8 +116,8 @@ class HRController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $employee = $this->db->fetch("SELECT e.*, u.email, u.phone FROM employees e JOIN users u ON e.user_id=u.id WHERE e.id=?", [$id]);
-            if (!$employee) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/employees'); exit; }
+            $employee = $this->db->fetch("SELECT e.*, u.email, u.phone FROM users e JOIN users u ON e.user_id=u.id WHERE e.id=?", [$id]);
+            if (!$employee) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
         } catch (\Exception $e) { $employee = null; }
         return $this->render('admin/hr/employee_edit', ['page_title' => 'Edit Employee', 'employee' => $employee]);
     }
@@ -133,11 +133,11 @@ class HRController extends AdminController
         $salary = $_POST['salary'] ?? 0;
         $status = $_POST['status'] ?? 'active';
         $joinDate = $_POST['join_date'] ?? '';
-        if (!$name) { $this->setFlash('error', 'Name is required'); header('Location: ' . BASE_URL . "/admin/hr/employees/edit/$id"); exit; }
+        if (!$name) { $this->setFlash('error', 'Name is required'); header('Location: ' . BASE_URL . "/admin/hr/users/edit/$id"); exit; }
         try {
-            $emp = $this->db->fetch("SELECT user_id FROM employees WHERE id=?", [$id]);
-            if (!$emp) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/employees'); exit; }
-            $this->db->execute("UPDATE employees SET name=?, department=?, designation=?, salary=?, status=?, join_date=? WHERE id=?", [$name, $department, $designation, $salary, $status, $joinDate, $id]);
+            $emp = $this->db->fetch("SELECT user_id FROM users WHERE id=?", [$id]);
+            if (!$emp) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
+            $this->db->execute("UPDATE users SET name=?, department=?, designation=?, salary=?, status=?, join_date=? WHERE id=?", [$name, $department, $designation, $salary, $status, $joinDate, $id]);
             if ($emp['user_id']) {
                 $this->db->execute("UPDATE users SET name=?, email=?, phone=? WHERE id=?", [$name, $email, $phone, $emp['user_id']]);
             }
@@ -145,7 +145,7 @@ class HRController extends AdminController
         } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
-        header('Location: ' . BASE_URL . '/admin/hr/employees');
+        header('Location: ' . BASE_URL . '/admin/hr/users');
         exit;
     }
 
@@ -153,12 +153,12 @@ class HRController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $this->db->execute("UPDATE employees SET status='deleted' WHERE id=?", [$id]);
+            $this->db->execute("UPDATE users SET status='deleted' WHERE id=?", [$id]);
             $this->setFlash('success', 'Employee deleted');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
-        header('Location: ' . BASE_URL . '/admin/hr/employees');
+        header('Location: ' . BASE_URL . '/admin/hr/users');
         exit;
     }
 
@@ -166,8 +166,8 @@ class HRController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $employee = $this->db->fetch("SELECT e.*, u.email, u.phone, u.created_at as user_since FROM employees e JOIN users u ON e.user_id=u.id WHERE e.id=?", [$id]);
-            if (!$employee) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/employees'); exit; }
+            $employee = $this->db->fetch("SELECT e.*, u.email, u.phone, u.created_at as user_since FROM users e JOIN users u ON e.user_id=u.id WHERE e.id=?", [$id]);
+            if (!$employee) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
             $attendance = $this->db->fetchAll("SELECT * FROM employee_attendance WHERE employee_id=? ORDER BY attendance_date DESC LIMIT 10", [$employee['user_id']]);
             $leaves = $this->db->fetchAll("SELECT el.*, lt.name as leave_type_name FROM employee_leaves el LEFT JOIN leave_types lt ON el.leave_type_id=lt.id WHERE el.employee_id=? ORDER BY el.created_at DESC LIMIT 5", [$id]);
         } catch (\Exception $e) { $employee = null; $attendance = []; $leaves = []; }
@@ -197,13 +197,13 @@ class HRController extends AdminController
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_attendance a $where", $params)['c'] ?? 0;
             $records = $this->db->fetchAll("SELECT a.*, u.name as employee_name, u.email, u.phone FROM employee_attendance a JOIN users u ON a.employee_id=u.id $where ORDER BY u.name LIMIT $perPage OFFSET $offset", $params);
-            $employees = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN employees e ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
-        } catch (\Exception $e) { $total = 0; $records = []; $employees = []; }
+            $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN users e ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+        } catch (\Exception $e) { $total = 0; $records = []; $users = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/attendance', [
             'page_title' => 'Attendance - ' . $date,
             'records' => $records,
-            'employees' => $employees,
+            'users' => $users,
             'date' => $date,
             'status_filter' => $statusFilter,
             'page' => $page,
@@ -282,7 +282,7 @@ class HRController extends AdminController
             $leaves = $this->db->fetchAll("SELECT el.*, lt.name as leave_type_name, u.name as employee_name
                 FROM employee_leaves el
                 LEFT JOIN leave_types lt ON el.leave_type_id=lt.id
-                JOIN employees e ON el.employee_id=e.id
+                JOIN users e ON el.employee_id=e.id
                 JOIN users u ON e.user_id=u.id
                 $where ORDER BY el.created_at DESC LIMIT $perPage OFFSET $offset", $params);
         } catch (\Exception $e) { $total = 0; $leaves = []; }
@@ -380,7 +380,7 @@ class HRController extends AdminController
             $balances = $this->db->fetchAll("SELECT lb.*, lt.name as leave_type_name, u.name as employee_name
                 FROM employee_leave_balances lb
                 LEFT JOIN leave_types lt ON lb.leave_type_id=lt.id
-                JOIN employees e ON lb.employee_id=e.id
+                JOIN users e ON lb.employee_id=e.id
                 JOIN users u ON e.user_id=u.id
                 WHERE lb.year=? ORDER BY u.name, lt.name", [$year]);
         } catch (\Exception $e) { $balances = []; }
@@ -445,10 +445,10 @@ class HRController extends AdminController
             exit;
         }
         try {
-            $employees = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
             $shiftTypes = $this->db->fetchAll("SELECT * FROM shift_types WHERE is_active=1 ORDER BY name");
-        } catch (\Exception $e) { $employees = []; $shiftTypes = []; }
-        return $this->render('admin/hr/shift_schedule', ['page_title' => 'Assign Shift', 'employees' => $employees, 'shift_types' => $shiftTypes, 'mode' => 'assign']);
+        } catch (\Exception $e) { $users = []; $shiftTypes = []; }
+        return $this->render('admin/hr/shift_schedule', ['page_title' => 'Assign Shift', 'users' => $users, 'shift_types' => $shiftTypes, 'mode' => 'assign']);
     }
 
     public function shiftSchedule()
@@ -459,7 +459,7 @@ class HRController extends AdminController
             $schedule = $this->db->fetchAll("SELECT es.*, st.name as shift_name, u.name as employee_name
                 FROM employee_shifts es
                 LEFT JOIN shift_types st ON es.shift_type_id=st.id
-                JOIN employees e ON es.employee_id=e.id
+                JOIN users e ON es.employee_id=e.id
                 JOIN users u ON e.user_id=u.id
                 WHERE es.shift_date=? ORDER BY u.name", [$date]);
         } catch (\Exception $e) { $schedule = []; }
@@ -517,19 +517,19 @@ class HRController extends AdminController
             $reviews = $this->db->fetchAll("SELECT ek.*, k.name as kpi_name, u.name as employee_name
                 FROM employee_kpis ek
                 LEFT JOIN kpis k ON ek.kpi_id=k.id
-                JOIN employees e ON ek.employee_id=e.id
+                JOIN users e ON ek.employee_id=e.id
                 JOIN users u ON e.user_id=u.id
                 ORDER BY ek.created_at DESC LIMIT $perPage OFFSET $offset", []);
         } catch (\Exception $e) { $total = 0; $reviews = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         try {
-            $employees = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
             $kpis_list = $this->db->fetchAll("SELECT id, name FROM kpis WHERE is_active=1 ORDER BY name");
-        } catch (\Exception $e) { $employees = []; $kpis_list = []; }
+        } catch (\Exception $e) { $users = []; $kpis_list = []; }
         return $this->render('admin/hr/performance', [
             'page_title' => 'Performance Reviews',
             'reviews' => $reviews,
-            'employees' => $employees,
+            'users' => $users,
             'kpis_list' => $kpis_list,
             'page' => $page,
             'total_pages' => $totalPages,
@@ -576,12 +576,12 @@ class HRController extends AdminController
         } catch (\Exception $e) { $total = 0; $bonuses = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         try {
-            $employees = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN employees e ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
-        } catch (\Exception $e) { $employees = []; }
+            $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN users e ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+        } catch (\Exception $e) { $users = []; }
         return $this->render('admin/hr/bonuses', [
             'page_title' => 'Employee Bonuses',
             'bonuses' => $bonuses,
-            'employees' => $employees,
+            'users' => $users,
             'page' => $page,
             'total_pages' => $totalPages,
             'total' => $total,
@@ -626,12 +626,12 @@ class HRController extends AdminController
         } catch (\Exception $e) { $total = 0; $structures = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         try {
-            $employees = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN employees e ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
-        } catch (\Exception $e) { $employees = []; }
+            $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN users e ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+        } catch (\Exception $e) { $users = []; }
         return $this->render('admin/hr/salary_structure', [
             'page_title' => 'Salary Structures',
             'structures' => $structures,
-            'employees' => $employees,
+            'users' => $users,
             'page' => $page,
             'total_pages' => $totalPages,
             'total' => $total,
@@ -714,14 +714,14 @@ class HRController extends AdminController
         if ($empId) { $where .= " AND d.employee_id=?"; $params[] = $empId; }
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_documents d $where", $params)['c'] ?? 0;
-            $documents = $this->db->fetchAll("SELECT d.*, u.name as employee_name FROM employee_documents d JOIN employees e ON d.employee_id=e.id JOIN users u ON e.user_id=u.id $where ORDER BY d.uploaded_at DESC LIMIT $perPage OFFSET $offset", $params);
-            $employees = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
-        } catch (\Exception $e) { $total = 0; $documents = []; $employees = []; }
+            $documents = $this->db->fetchAll("SELECT d.*, u.name as employee_name FROM employee_documents d JOIN users e ON d.employee_id=e.id JOIN users u ON e.user_id=u.id $where ORDER BY d.uploaded_at DESC LIMIT $perPage OFFSET $offset", $params);
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+        } catch (\Exception $e) { $total = 0; $documents = []; $users = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/employee_documents', [
             'page_title' => 'Employee Documents',
             'documents' => $documents,
-            'employees' => $employees,
+            'users' => $users,
             'emp_id' => $empId,
             'page' => $page,
             'total_pages' => $totalPages,
@@ -765,7 +765,7 @@ class HRController extends AdminController
         $offset = ($page - 1) * $perPage;
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_activities")['c'] ?? 0;
-            $activities = $this->db->fetchAll("SELECT a.*, u.name as employee_name FROM employee_activities a JOIN employees e ON a.employee_id=e.id JOIN users u ON e.user_id=u.id ORDER BY a.created_at DESC LIMIT $perPage OFFSET $offset", []);
+            $activities = $this->db->fetchAll("SELECT a.*, u.name as employee_name FROM employee_activities a JOIN users e ON a.employee_id=e.id JOIN users u ON e.user_id=u.id ORDER BY a.created_at DESC LIMIT $perPage OFFSET $offset", []);
         } catch (\Exception $e) { $total = 0; $activities = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/activities', [
@@ -786,21 +786,21 @@ class HRController extends AdminController
         $this->requireAdmin();
         $empId = (int)($_GET['employee_id'] ?? 0);
         try {
-            $employees = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
             $report = null;
             $attendances = []; $leaves = []; $bonuses = [];
             if ($empId) {
-                $report = $this->db->fetch("SELECT e.*, u.email, u.phone, u.created_at as user_since FROM employees e JOIN users u ON e.user_id=u.id WHERE e.id=?", [$empId]);
+                $report = $this->db->fetch("SELECT e.*, u.email, u.phone, u.created_at as user_since FROM users e JOIN users u ON e.user_id=u.id WHERE e.id=?", [$empId]);
                 if ($report) {
                     $attendances = $this->db->fetchAll("SELECT attendance_date, attendance_status, check_in_time, check_out_time FROM employee_attendance WHERE employee_id=? ORDER BY attendance_date DESC LIMIT 30", [$report['user_id']]);
                     $leaves = $this->db->fetchAll("SELECT el.*, lt.name as leave_type_name FROM employee_leaves el LEFT JOIN leave_types lt ON el.leave_type_id=lt.id WHERE el.employee_id=? ORDER BY el.created_at DESC LIMIT 10", [$empId]);
                     $bonuses = $this->db->fetchAll("SELECT * FROM employee_bonuses WHERE employee_id=? ORDER BY created_at DESC LIMIT 10", [$report['user_id']]);
                 }
             }
-        } catch (\Exception $e) { $employees = []; $report = null; $attendances = []; $leaves = []; $bonuses = []; }
+        } catch (\Exception $e) { $users = []; $report = null; $attendances = []; $leaves = []; $bonuses = []; }
         return $this->render('admin/hr/employee_report', [
             'page_title' => $report ? 'Report: ' . $report['name'] : 'Employee Report',
-            'employees' => $employees,
+            'users' => $users,
             'report' => $report,
             'attendances' => $attendances,
             'leaves' => $leaves,

@@ -22,13 +22,13 @@
                         <?php $overview = $mlmData['network_overview'] ?? []; ?>
                         <div class="col-md-3">
                             <div class="border-start border-primary border-4 ps-3">
-                                <small class="text-muted">Total Associates</small>
+                                <small class="text-muted">Total users</small>
                                 <h4><?= number_format($overview['total_associates'] ?? 0) ?></h4>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="border-start border-success border-4 ps-3">
-                                <small class="text-muted">Active Associates</small>
+                                <small class="text-muted">Active users</small>
                                 <h4><?= number_format($overview['active_associates'] ?? 0) ?></h4>
                             </div>
                         </div>

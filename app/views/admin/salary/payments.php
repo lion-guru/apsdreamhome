@@ -19,8 +19,8 @@
                 </div>
                 <div class="col-auto">
                     <select name="employee_id" class="form-select">
-                        <option value="">All Employees</option>
-                        <?php foreach ($employees ?? [] as $e): ?>
+                        <option value="">All users</option>
+                        <?php foreach ($users ?? [] as $e): ?>
                         <option value="<?= $e['id'] ?>" <?= ($filter_employee ?? 0) == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -67,7 +67,7 @@
             <form method="post" action="<?= BASE_URL ?>/admin/salary/payments/bulk">
                 <div class="modal-header bg-secondary text-white"><h5 class="modal-title"><i class="fas fa-tasks me-1"></i>Bulk Process Payments</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
-                    <p>Generate pending payments for all employees with active salary structures.</p>
+                    <p>Generate pending payments for all users with active salary structures.</p>
                     <div class="row">
                         <div class="col-md-6 mb-3"><label class="form-label">Month</label>
                             <select name="month" class="form-select" required>

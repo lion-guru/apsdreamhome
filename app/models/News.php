@@ -9,7 +9,7 @@ class News extends UnifiedModel
     public static $table = 'news';
     public static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'date',
         'summary',

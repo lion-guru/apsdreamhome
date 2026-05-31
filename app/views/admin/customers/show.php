@@ -6,13 +6,13 @@
                 <h3 class="page-title"><i class="fas fa-user me-2"></i>Customer Details</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/customers">Customers</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/users">users</a></li>
                     <li class="breadcrumb-item active"><?= $customer['name'] ?? 'Customer' ?></li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/customers/edit/<?= $customer['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
-                <a href="/admin/customers" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                <a href="/admin/users/edit/<?= $customer['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+                <a href="/admin/users" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
             </div>
         </div>
     </div>

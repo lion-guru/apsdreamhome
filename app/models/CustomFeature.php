@@ -13,7 +13,7 @@ class CustomFeature extends Model
     protected static $table = 'custom_features';
     protected static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'feature_type',
         'property_id',
         'user_id',

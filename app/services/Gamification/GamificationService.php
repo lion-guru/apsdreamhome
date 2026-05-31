@@ -9,7 +9,7 @@ use App\Core\Database;
 
 /**
  * Gamification Service
- * Badges, achievements, leaderboards for associates and users
+ * Badges, achievements, leaderboards for users and users
  */
 class GamificationService
 {

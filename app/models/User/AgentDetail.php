@@ -8,7 +8,7 @@ class users extends Model
 {
     public static $table = 'users';
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'agent_license_number',
         'agent_experience_years',

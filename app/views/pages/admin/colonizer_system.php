@@ -9,7 +9,7 @@
  * Features:
  * - Land acquisition and farmer management
  * - Plot subdivision and numbering system
- * - MLM commission management for associates
+ * - MLM commission management for users
  * - Employee salary and payroll management
  * - Integration with existing real estate system
  */
@@ -408,7 +408,7 @@ class ColonizerManagementSystem {
             ],
             'database_tables' => [
                 'users', 'properties', 'property_types', 'property_images',
-                'bookings', 'payments', 'associates', 'commission_transactions',
+                'bookings', 'payments', 'users', 'commission_transactions',
                 'leads', 'email_templates', 'api_keys', 'async_tasks',
                 'task_queue', 'site_settings', 'farmer_profiles', 'farmer_land_holdings',
                 'farmer_transactions', 'farmer_loans', 'farmer_support_requests',

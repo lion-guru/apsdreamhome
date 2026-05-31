@@ -16,7 +16,7 @@
                         <option value="all" <?= ($type ?? 'all') === 'all' ? 'selected' : '' ?>>All</option>
                         <option value="property" <?= ($type ?? '') === 'property' ? 'selected' : '' ?>>Properties</option>
                         <option value="project" <?= ($type ?? '') === 'project' ? 'selected' : '' ?>>Projects</option>
-                        <option value="customer" <?= ($type ?? '') === 'customer' ? 'selected' : '' ?>>Customers</option>
+                        <option value="customer" <?= ($type ?? '') === 'customer' ? 'selected' : '' ?>>users</option>
                         <option value="lead" <?= ($type ?? '') === 'lead' ? 'selected' : '' ?>>Leads</option>
                     </select>
                 </div>

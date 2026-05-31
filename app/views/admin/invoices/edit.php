@@ -27,8 +27,8 @@
                         <label class="form-label">Customer <span class="text-danger">*</span></label>
                         <select name="customer_id" class="form-select" required>
                             <option value="">Select Customer</option>
-                            <?php if (!empty($customers)): ?>
-                                <?php foreach ($customers as $customer): ?>
+                            <?php if (!empty($users)): ?>
+                                <?php foreach ($users as $customer): ?>
                                     <option value="<?= $customer['id'] ?>" <?= ($invoice['customer_id'] == $customer['id']) ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($customer['name']) ?> (<?= htmlspecialchars($customer['email'] ?? '') ?>)
                                     </option>

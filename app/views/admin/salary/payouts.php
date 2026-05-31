@@ -11,7 +11,7 @@
                     <h6 class="mb-1"><?= htmlspecialchars($b['payout_batch_id'] ?? '') ?></h6>
                     <div class="d-flex justify-content-between">
                         <span>Total: <strong>₹<?= number_format($b['total_amount'] ?? 0, 2) ?></strong></span>
-                        <span>Employees: <?= (int)($b['total'] ?? 0) ?></span>
+                        <span>users: <?= (int)($b['total'] ?? 0) ?></span>
                     </div>
                     <div class="mt-2">
                         <span class="badge bg-success me-1"><?= (int)($b['processed_count'] ?? 0) ?> Processed</span>
@@ -85,7 +85,7 @@
                                 <td>
                                     <select name="employee_ids[]" class="form-select" required>
                                         <option value="">Select</option>
-                                        <?php foreach ($employees ?? [] as $e): ?>
+                                        <?php foreach ($users ?? [] as $e): ?>
                                         <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name']) ?></option>
                                         <?php endforeach; ?>
                                     </select>

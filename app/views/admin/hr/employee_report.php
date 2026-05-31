@@ -13,7 +13,7 @@ $report = $report ?? null;
                 <label class="form-label small">Employee</label>
                 <select name="employee_id" class="form-select" onchange="this.form.submit()">
                     <option value="">Select Employee</option>
-                    <?php foreach ($employees ?? [] as $emp): ?>
+                    <?php foreach ($users ?? [] as $emp): ?>
                         <option value="<?= $emp['id'] ?>" <?= ($emp_id ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name'] ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>

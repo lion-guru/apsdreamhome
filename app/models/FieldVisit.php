@@ -15,7 +15,7 @@ class FieldVisit extends Model
     protected static $table = 'visits';
     protected static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'associate_id',
         'customer_id',
         'lead_id',

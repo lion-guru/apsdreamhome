@@ -17,7 +17,7 @@
                 <div class="card-body text-center">
                     <div class="display-6 text-primary mb-2"><i class="fas fa-user-friends"></i></div>
                     <h3 class="fw-bold mb-1"><?= $totalEmployees ?? 0 ?></h3>
-                    <p class="text-muted mb-0">Total Employees</p>
+                    <p class="text-muted mb-0">Total users</p>
                 </div>
             </div>
         </div>

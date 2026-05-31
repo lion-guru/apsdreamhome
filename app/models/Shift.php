@@ -92,7 +92,7 @@ class Shift extends Model
                        st.color, e.name as employee_name, e.employee_code
                 FROM employee_shifts es
                 LEFT JOIN shift_types st ON es.shift_type_id = st.id
-                LEFT JOIN employees e ON es.employee_id = e.id
+                LEFT JOIN users e ON es.employee_id = e.id
                 WHERE es.shift_date = ? AND es.status != 'cancelled'
                 ORDER BY es.start_time ASC";
 
@@ -228,27 +228,27 @@ class Shift extends Model
         $currentDate = new DateTime($startDate);
         $endDateTime = new DateTime($endDate);
 
-        // Get employees for this schedule (if department-based, get all employees in department)
-        $employees = [];
+        // Get users for this schedule (if department-based, get all users in department)
+        $users = [];
         if ($schedule['department_id']) {
-            $employees = $db->query("SELECT id, name FROM employees WHERE department_id = ? AND status = 'active'",
+            $users = $db->query("SELECT id, name FROM users WHERE department_id = ? AND status = 'active'",
                                   [$schedule['department_id']])->fetchAll();
         } else {
-            // Get assigned employees for this schedule
+            // Get assigned users for this schedule
             $assignments = $db->query(
                 "SELECT DISTINCT e.id, e.name FROM shift_assignments sa
-                 LEFT JOIN employees e ON sa.employee_id = e.id
+                 LEFT JOIN users e ON sa.employee_id = e.id
                  WHERE sa.schedule_id = ?",
                 [$scheduleId]
             )->fetchAll();
-            $employees = $assignments;
+            $users = $assignments;
         }
 
         while ($currentDate <= $endDateTime) {
             $dayOfWeek = (int)$currentDate->format('w'); // 0 = Sunday, 6 = Saturday
 
             if (in_array($dayOfWeek, $daysOfWeek)) {
-                foreach ($employees as $employee) {
+                foreach ($users as $employee) {
                     // Check if shift already exists
                     $existing = $db->query(
                         "SELECT id FROM employee_shifts

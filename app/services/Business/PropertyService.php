@@ -80,7 +80,7 @@ class PropertyService
             // Get properties
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN associates a ON p.associate_id = a.id
+                    LEFT JOIN users a ON p.associate_id = a.id
                     WHERE $whereClause
                     ORDER BY p.created_at DESC
                     LIMIT ? OFFSET ?";
@@ -118,7 +118,7 @@ class PropertyService
         try {
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN associates a ON p.associate_id = a.id
+                    LEFT JOIN users a ON p.associate_id = a.id
                     WHERE p.id = ? AND p.status != 'deleted'";
 
             $property = $this->db->fetchOne($sql, [$id]);
@@ -374,7 +374,7 @@ class PropertyService
 
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN associates a ON p.associate_id = a.id
+                    LEFT JOIN users a ON p.associate_id = a.id
                     WHERE $whereClause
                     ORDER BY p.created_at DESC
                     LIMIT 50";

@@ -425,7 +425,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                     value="100000000" min="1000000" step="1000000" required>
                                                 <span class="input-group-text">₹</span>
                                             </div>
-                                            <small class="text-muted">Total sales across all associates</small>
+                                            <small class="text-muted">Total sales across all users</small>
                                         </div>
 
                                         <div class="mb-4">
@@ -469,7 +469,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 <div class="result-card text-center">
                                                     <i class="fas fa-users fa-2x text-primary mb-2"></i>
                                                     <h4><?php echo number_format($calculation_result['summary']['total_associates']); ?></h4>
-                                                    <small class="text-muted">Total Associates</small>
+                                                    <small class="text-muted">Total users</small>
                                                 </div>
                                             </div>
                                             <div class="col-6">
@@ -508,7 +508,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
 
                                             <?php foreach ($calculation_result['results'] as $level_name => $level_data): ?>
                                                 <div class="commission-breakdown">
-                                                    <h6><?php echo $level_name; ?> (<?php echo $level_data['num_associates']; ?> associates)</h6>
+                                                    <h6><?php echo $level_name; ?> (<?php echo $level_data['num_associates']; ?> users)</h6>
 
                                                     <div class="breakdown-row">
                                                         <span>Monthly Sales:</span>
@@ -660,21 +660,21 @@ if (isset($_GET['calculated']) && $calculation_result) {
                     <label class="form-label">Associate Level Distribution</label>
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="form-label">Entry Level Associates</label>
+                            <label class="form-label">Entry Level users</label>
                             <input type="number" class="form-control" name="associates_associate" value="50" min="0">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Mid Level Associates</label>
+                            <label class="form-label">Mid Level users</label>
                             <input type="number" class="form-control" name="associates_sr_associate" value="30" min="0">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="form-label">Senior Associates</label>
+                            <label class="form-label">Senior users</label>
                             <input type="number" class="form-control" name="associates_bdm" value="15" min="0">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Top Level Associates</label>
+                            <label class="form-label">Top Level users</label>
                             <input type="number" class="form-control" name="associates_sr_bdm" value="5" min="0">
                         </div>
                     </div>

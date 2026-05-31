@@ -295,7 +295,7 @@
                                 <?= htmlspecialchars($dept['department_head'] ?? 'N/A') ?>
                             </p>
                             <p class="mb-2">
-                                <strong>Total Employees:</strong>
+                                <strong>Total users:</strong>
                                 <?= $dept['total_employees'] ?? 0 ?>
                             </p>
                             <p class="mb-2">

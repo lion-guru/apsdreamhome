@@ -62,8 +62,8 @@ class ModelIntegration {
             
             // Check if tables exist and create if needed
             $tables = [
-                'users', 'properties', 'associates', 'customers', 'payments', 
-                'crm_leads', 'associate_mlm', 'property_favorites', 'admin', 'employees', 'chatbot_conversations',
+                'users', 'properties', 'users', 'users', 'payments', 
+                'crm_leads', 'associate_mlm', 'property_favorites', 'admin', 'users', 'chatbot_conversations',
                 'company_projects'
             ];
 

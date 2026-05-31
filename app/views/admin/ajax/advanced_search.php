@@ -94,7 +94,7 @@ try {
     switch ($module) {
         case 'users':
             $sortColumn = ($sortBy === 'date') ? 'u.created_at' : 'u.name';
-            $sql = "SELECT u.id as id, u.name as name, u.email as email, u.role as role, COALESCE(a.status, 'active') as status, u.created_at as created_at FROM users u LEFT JOIN associates a ON u.id = a.user_id $whereClause ORDER BY $sortColumn DESC LIMIT 20";
+            $sql = "SELECT u.id as id, u.name as name, u.email as email, u.role as role, COALESCE(a.status, 'active') as status, u.created_at as created_at FROM users u LEFT JOIN users a ON u.id = a.user_id $whereClause ORDER BY $sortColumn DESC LIMIT 20";
             break;
         case 'properties':
             $sortColumn = ($sortBy === 'date') ? 'created_at' : 'title';
@@ -115,7 +115,7 @@ try {
             if (in_array($currentRole, ['superadmin', 'manager'])) {
                 $userWhere = !empty($searchQuery) ? "WHERE (u.uname LIKE ? OR u.uemail LIKE ? OR u.job_role LIKE ?)" : "";
                 $userParams = !empty($searchQuery) ? ["%$searchQuery%", "%$searchQuery%", "%$searchQuery%"] : [];
-                $rows = $db->fetchAll("SELECT u.uid as id, u.uname as name, u.uemail as email, u.job_role as role, COALESCE(a.status, 'active') as status, u.join_date as created_at FROM user u LEFT JOIN associates a ON u.uid = a.user_id $userWhere ORDER BY u.join_date DESC LIMIT 5", $userParams);
+                $rows = $db->fetchAll("SELECT u.uid as id, u.uname as name, u.uemail as email, u.job_role as role, COALESCE(a.status, 'active') as status, u.join_date as created_at FROM user u LEFT JOIN users a ON u.uid = a.user_id $userWhere ORDER BY u.join_date DESC LIMIT 5", $userParams);
                 foreach ($rows as $row) {
                     $allResults[] = [
                         'title' => h($row['name']) . ' (' . h($row['role']) . ')',

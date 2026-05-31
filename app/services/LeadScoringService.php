@@ -299,21 +299,21 @@ class LeadScoringService
              WHERE ls.is_hot_lead = 1 AND l.assigned_to IS NULL"
         );
         
-        // Get available agents
-        $agents = $this->db->fetchAll(
+        // Get available users
+        $users = $this->db->fetchAll(
             "SELECT id FROM users WHERE role = 'agent' AND status = 'active'"
         );
         
-        if (empty($agents)) {
-            // Fallback to associates
-            $agents = $this->db->fetchAll(
+        if (empty($users)) {
+            // Fallback to users
+            $users = $this->db->fetchAll(
                 "SELECT id FROM users WHERE role = 'associate' AND status = 'active'"
             );
         }
         
-        if (empty($agents)) {
+        if (empty($users)) {
             // Fallback to admin
-            $agents = $this->db->fetchAll(
+            $users = $this->db->fetchAll(
                 "SELECT id FROM users WHERE role IN ('admin', 'super_admin') AND status = 'active'"
             );
         }
@@ -322,8 +322,8 @@ class LeadScoringService
         $agentIndex = 0;
         
         foreach ($hotLeads as $lead) {
-            if (!empty($agents)) {
-                $assignTo = $agents[$agentIndex % count($agents)]['id'];
+            if (!empty($users)) {
+                $assignTo = $users[$agentIndex % count($users)]['id'];
                 
                 $this->db->execute(
                     "UPDATE leads SET assigned_to = ?, priority = 'high' WHERE id = ?",

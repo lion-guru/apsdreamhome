@@ -60,8 +60,8 @@
                                 <label class="form-label"><?= h($mlSupport->translate('Customer')) ?></label>
                                 <select name="customer_id" class="form-select">
                                     <option value=""><?= h($mlSupport->translate('Select Customer (Optional)')) ?></option>
-                                    <?php if (!empty($customers)): ?>
-                                        <?php foreach ($customers as $customer): ?>
+                                    <?php if (!empty($users)): ?>
+                                        <?php foreach ($users as $customer): ?>
                                             <option value="<?= h($customer['id']) ?>"><?= h($customer['name']) ?></option>
                                         <?php endforeach; ?>
                                     <?php endif; ?>

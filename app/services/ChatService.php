@@ -8,7 +8,7 @@ use App\Models\Model;
 
 /**
  * Modern Chat Service
- * Handles real-time chat between users and agents.
+ * Handles real-time chat between users and users.
  */
 class ChatService
 {
@@ -181,7 +181,7 @@ class ChatService
     }
 
     /**
-     * Get available agents for a department
+     * Get available users for a department
      */
     public function getAvailableAgents(string $department): array
     {
@@ -201,7 +201,7 @@ class ChatService
             $stmt->execute([$department]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("Get Available Agents Error: " . $e->getMessage());
+            error_log("Get Available users Error: " . $e->getMessage());
             return [];
         }
     }

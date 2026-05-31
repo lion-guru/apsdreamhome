@@ -369,7 +369,7 @@ class PayoutController extends AdminController
             $includePending = (bool)($_POST['include_pending'] ?? false);
 
             if (empty($associateIds)) {
-                return $this->jsonError('No associates selected', 400);
+                return $this->jsonError('No users selected', 400);
             }
 
             $results = [];
@@ -627,7 +627,7 @@ class PayoutController extends AdminController
                     ORDER BY total DESC";
             $analytics['methods'] = $this->db->fetchAll($sql) ?: [];
 
-            // Top earning associates
+            // Top earning users
             $sql = "SELECT u.name, u.email, COUNT(p.id) as payout_count, COALESCE(SUM(p.amount), 0) as total_earned
                     FROM commission_payouts p
                     JOIN users u ON p.associate_id = u.id

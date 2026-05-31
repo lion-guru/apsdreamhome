@@ -46,7 +46,7 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
         try {
             $db = Database::getInstance()->getConnection();
             
-            $agents = $db->query("
+            $users = $db->query("
                 SELECT 
                     u.id, u.name, u.email,
                     (SELECT COUNT(*) FROM properties WHERE agent_id = u.id AND deleted_at IS NULL) as listings,
@@ -62,12 +62,12 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
             ")->fetchAll(\PDO::FETCH_ASSOC);
             
         } catch (\Exception $e) {
-            $agents = [];
+            $users = [];
         }
         
         $this->render('admin/reports/agent_performance', [
             'page_title' => 'Agent Performance Report',
-            'agents' => $agents,
+            'users' => $users,
         ]);
     }
     

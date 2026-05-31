@@ -7,7 +7,7 @@ use PDO;
 class Project extends Model
 {
     protected static $table = 'projects';
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'slug',
         'project_code',

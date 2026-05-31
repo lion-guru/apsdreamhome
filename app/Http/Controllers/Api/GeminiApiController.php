@@ -345,7 +345,7 @@ class GeminiApiController extends BaseController
         }
 
         if (strpos($msg, 'about') !== false || strpos($msg, 'company') !== false || strpos($msg, 'aps') !== false || strpos($msg, 'dream home') !== false || strpos($msg, 'who') !== false) {
-            return "🏢 **APS Dream Home**\n\nYour trusted real estate partner in Uttar Pradesh since 2010.\n\n✅ 5000+ Happy Customers\n✅ 50+ Projects Completed\n✅ 10+ Cities Covered\n✅ RERA Registered\n✅ Legal & Transparent\n\nWe deal in Residential, Commercial & Agricultural properties.\n\nHow can we help you today?";
+            return "🏢 **APS Dream Home**\n\nYour trusted real estate partner in Uttar Pradesh since 2010.\n\n✅ 5000+ Happy users\n✅ 50+ Projects Completed\n✅ 10+ Cities Covered\n✅ RERA Registered\n✅ Legal & Transparent\n\nWe deal in Residential, Commercial & Agricultural properties.\n\nHow can we help you today?";
         }
 
         if (strpos($msg, 'buy') !== false || strpos($msg, 'purchase') !== false || strpos($msg, 'kharidna') !== false || strpos($msg, 'book') !== false) {
@@ -389,7 +389,7 @@ class GeminiApiController extends BaseController
             if (strpos($msg, 'payment') !== false || strpos($msg, 'emi') !== false) {
                 return ['💳 Pay Now', '📄 Payment History', '🏦 EMI Status', '💰 Due Amount'];
             }
-            // Default for customers
+            // Default for users
             return ['📋 My Bookings', '💳 Pay EMI', '🏠 Browse Properties', '📞 Call Support'];
         }
 
@@ -403,7 +403,7 @@ class GeminiApiController extends BaseController
             if (strpos($msg, 'team') !== false || strpos($msg, 'downline') !== false) {
                 return ['👥 My Team', '📊 Team Performance', '➕ Add Member', '🌐 Genealogy'];
             }
-            // Default for associates
+            // Default for users
             return ['📊 My Leads', '💰 Commission', '👥 My Team', '📞 Support'];
         }
 
@@ -605,7 +605,7 @@ class GeminiApiController extends BaseController
     private function buildSystemPrompt(string $role, array $context): string
     {
         $basePrompt = "You are APS Property Assistant, a helpful real estate chatbot for APS Dream Home. ";
-        $basePrompt .= "You help customers with property inquiries in Gorakhpur, Lucknow, Kushinagar, and Varanasi. ";
+        $basePrompt .= "You help users with property inquiries in Gorakhpur, Lucknow, Kushinagar, and Varanasi. ";
         $basePrompt .= "Current projects: Suryoday Colony, Raghunath Nagri, Braj Radha Nagri (Gorakhpur), ";
         $basePrompt .= "Braj Radha Enclave (Lucknow), Buddh Bihar Colony (Kushinagar), Ganga Nagri (Varanasi). ";
         $basePrompt .= "Plot prices start from ₹4.5 Lakhs. ";
@@ -654,7 +654,7 @@ class GeminiApiController extends BaseController
                 $prompt = $basePrompt . "The user is a guest/public visitor. ";
                 $prompt .= "Help them discover properties, prices, locations, and services. ";
                 $prompt .= "Encourage them to register for personalized assistance. ";
-                $prompt .= "Be friendly and informative to convert them into customers.";
+                $prompt .= "Be friendly and informative to convert them into users.";
                 break;
         }
 

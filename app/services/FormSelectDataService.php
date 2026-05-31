@@ -14,7 +14,7 @@ use PDO;
 class FormSelectDataService
 {
     /**
-     * Get customers for select dropdown
+     * Get users for select dropdown
      * 
      * @param array $filters Optional filters (status, etc.)
      * @return array
@@ -48,7 +48,7 @@ class FormSelectDataService
     }
     
     /**
-     * Get associates for select dropdown
+     * Get users for select dropdown
      * 
      * @param array $filters Optional filters (status, etc.)
      * @return array
@@ -64,7 +64,7 @@ class FormSelectDataService
                 $where[] = "status = :status";
                 $params['status'] = $filters['status'];
             } else {
-                // Default to active associates
+                // Default to active users
                 $where[] = "status = 'active'";
             }
             
@@ -85,7 +85,7 @@ class FormSelectDataService
     }
     
     /**
-     * Get agents (admin, support, associate) for select dropdown
+     * Get users (admin, support, associate) for select dropdown
      * 
      * @param array $filters Optional filters (status, roles, etc.)
      * @return array
@@ -370,7 +370,7 @@ class FormSelectDataService
     }
     
     /**
-     * Get employees for select dropdown
+     * Get users for select dropdown
      * 
      * @param array $filters Optional filters (status, department, etc.)
      * @return array

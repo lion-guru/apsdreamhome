@@ -90,7 +90,7 @@ class EmployeeDashboardController extends BaseController
     {
         $query = "SELECT id, name, email, role, department, phone, address, 
                         hire_date, status, profile_image 
-                 FROM employees 
+                 FROM users 
                  WHERE id = ? AND status = 'active' LIMIT 1";
         
         return $this->db->fetchOne($query, [$this->employeeId]);
@@ -177,7 +177,7 @@ class EmployeeDashboardController extends BaseController
     {
         // Employee count by department
         $employeeCountQuery = "SELECT department, COUNT(*) as count
-                               FROM employees 
+                               FROM users 
                                WHERE status = 'active'
                                GROUP BY department";
         
@@ -200,7 +200,7 @@ class EmployeeDashboardController extends BaseController
         
         // Recent hires
         $recentHiresQuery = "SELECT name, position, hire_date
-                             FROM employees 
+                             FROM users 
                              WHERE hire_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
                              ORDER BY hire_date DESC
                              LIMIT 5";
@@ -502,7 +502,7 @@ class EmployeeDashboardController extends BaseController
     {
         $query = "SELECT m.*, s.name as sender_name
                   FROM messages m
-                  JOIN employees s ON m.sender_id = s.id
+                  JOIN users s ON m.sender_id = s.id
                   WHERE m.recipient_id = ?
                   AND m.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                   ORDER BY m.created_at DESC

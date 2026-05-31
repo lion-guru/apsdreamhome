@@ -652,7 +652,7 @@ class WhatsAppManager
 
     private function getCustomer($customerId)
     {
-        $sql = "SELECT * FROM customer_profiles WHERE id = ?";
+        $sql = "SELECT * FROM users WHERE id = ?";
         return $this->db->fetch($sql, [$customerId]);
     }
 
@@ -665,7 +665,7 @@ class WhatsAppManager
     private function getAssociate($associateId)
     {
         $sql = "SELECT a.*, u.name as name, u.phone as phone
-                FROM associates a
+                FROM users a
                 LEFT JOIN users u ON a.user_id = u.id
                 WHERE a.id = ?";
         return $this->db->fetch($sql, [$associateId]);

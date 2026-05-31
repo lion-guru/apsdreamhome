@@ -516,7 +516,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT cd.*, u.name as uploaded_by_name, c.name as customer_name FROM customer_documents cd LEFT JOIN users u ON cd.uploaded_by = u.id LEFT JOIN customers c ON cd.customer_id = c.id ORDER BY cd.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT cd.*, u.name as uploaded_by_name, c.name as customer_name FROM customer_documents cd LEFT JOIN users u ON cd.uploaded_by = u.id LEFT JOIN users c ON cd.customer_id = c.id ORDER BY cd.created_at DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $records = [];

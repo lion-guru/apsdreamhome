@@ -341,7 +341,7 @@ class SEOOptimizer
         if (isset($page_data['type'])) {
             switch ($page_data['type']) {
                 case 'property':
-                    $content .= "\n<p><strong>Looking for more properties?</strong> <a href=\"" . BASE_URL . "properties\">Browse all properties</a> or <a href=\"" . BASE_URL . "contact\">contact our agents</a> for personalized assistance.</p>";
+                    $content .= "\n<p><strong>Looking for more properties?</strong> <a href=\"" . BASE_URL . "properties\">Browse all properties</a> or <a href=\"" . BASE_URL . "contact\">contact our users</a> for personalized assistance.</p>";
                     break;
                 case 'homepage':
                     $content .= "\n<div class=\"text-center mt-4\"><a href=\"" . BASE_URL . "properties\" class=\"btn btn-primary btn-lg\">Explore Properties</a></div>";

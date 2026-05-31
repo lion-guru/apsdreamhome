@@ -482,7 +482,7 @@ class SalaryService
         try {
             $stats = [];
 
-            // Total employees with salary structure
+            // Total users with salary structure
             $result = $this->db->fetchOne(
                 "SELECT COUNT(DISTINCT employee_id) as total FROM employee_salary_structure WHERE is_active = TRUE"
             );

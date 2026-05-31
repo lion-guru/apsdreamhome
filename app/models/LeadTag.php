@@ -17,7 +17,7 @@ class LeadTag extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'color',
         'created_by',
@@ -29,7 +29,7 @@ class LeadTag extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'is_system' => 'boolean',
     ];
 

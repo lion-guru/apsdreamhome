@@ -11,7 +11,7 @@ use Exception;
  */
 class Employee extends Model
 {
-    protected static $table = 'employees';
+    protected static $table = 'users';
     // protected static $primaryKey = 'id'; // Inherited from Model
 
 
@@ -78,7 +78,7 @@ class Employee extends Model
     }
 
     /**
-     * Get all employees with filters
+     * Get all users with filters
      */
     public function getAllEmployees($filters = [])
     {
@@ -227,8 +227,8 @@ class Employee extends Model
         static::getDb()->beginTransaction();
 
         try {
-            // 1. Update employees table (Primary for phone, role_id, department_id, etc.)
-            // Also update name, email, phone, role in employees table to keep sync
+            // 1. Update users table (Primary for phone, role_id, department_id, etc.)
+            // Also update name, email, phone, role in users table to keep sync
             $employeeUpdates = [];
             $employeeParams = ['id' => $id];
 
@@ -322,11 +322,11 @@ class Employee extends Model
     }
 
     /**
-     * Assign role to employee (updates employees table and user_roles)
+     * Assign role to employee (updates users table and user_roles)
      */
     public function assignRole($employeeId, $roleId)
     {
-        // Update employees table
+        // Update users table
         $stmt = static::getDb()->prepare("UPDATE " . static::$table . " SET role_id = :role_id WHERE id = :id");
         $stmt->execute(['role_id' => $roleId, 'id' => $employeeId]);
 
@@ -391,7 +391,7 @@ class Employee extends Model
     }
 
     /**
-     * Get employees for admin with filters and pagination
+     * Get users for admin with filters and pagination
      */
     public static function getAdminEmployees($filters)
     {
@@ -423,7 +423,7 @@ class Employee extends Model
             $limit = (int)($filters['per_page'] ?? 10);
             $offset = (int)((($filters['page'] ?? 1) - 1) * $limit);
 
-            $sql = "SELECT * FROM employees {$where_clause} ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
+            $sql = "SELECT * FROM users {$where_clause} ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
 
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
@@ -435,13 +435,13 @@ class Employee extends Model
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log('Admin employees query error: ' . $e->getMessage());
+            error_log('Admin users query error: ' . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Get total employees count for pagination
+     * Get total users count for pagination
      */
     public static function getAdminTotalEmployees($filters)
     {
@@ -466,7 +466,7 @@ class Employee extends Model
 
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            $sql = "SELECT COUNT(*) FROM employees {$where_clause}";
+            $sql = "SELECT COUNT(*) FROM users {$where_clause}";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
@@ -475,7 +475,7 @@ class Employee extends Model
 
             return (int)$stmt->fetchColumn();
         } catch (Exception $e) {
-            error_log('Admin total employees query error: ' . $e->getMessage());
+            error_log('Admin total users query error: ' . $e->getMessage());
             return 0;
         }
     }

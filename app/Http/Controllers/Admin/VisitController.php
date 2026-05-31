@@ -51,8 +51,8 @@ class VisitController extends AdminController
                     'associate_id' => ''
                 ],
                 'properties' => [],
-                'customers' => [],
-                'associates' => [],
+                'users' => [],
+                'users' => [],
                 'stats' => [
                     'total_visits' => 0,
                     'pending_visits' => 0,
@@ -81,22 +81,22 @@ class VisitController extends AdminController
                 $properties = [];
             }
             try {
-                $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+                $users = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
             } catch (Exception $e) {
-                $customers = [];
+                $users = [];
             }
             try {
-                $associates = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
+                $users = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
             } catch (Exception $e) {
-                $associates = [];
+                $users = [];
             }
 
             $data = [
                 'page_title' => 'Schedule Visit - APS Dream Home',
                 'active_page' => 'visits',
                 'properties' => $properties,
-                'customers' => $customers,
-                'associates' => $associates
+                'users' => $users,
+                'users' => $users
             ];
 
             return $this->render('admin/visits/create', $data);
@@ -262,17 +262,17 @@ class VisitController extends AdminController
 
             // Get dropdown options using models/services
             $properties = \App\Models\Property::getForSelect(['id', 'title', 'location'], 'all');
-            $customers = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
-            $associates = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
+            $users = \App\Models\User::getCustomers('all', ['id', 'name', 'email']);
+            $users = \App\Models\User::getAgents('active', ['admin', 'associate', 'manager'], ['id', 'name', 'email']);
 
             $data = [
                 'page_title' => 'Edit Visit - APS Dream Home',
                 'active_page' => 'visits',
                 'visit' => $visit,
                 'properties' => $properties,
-                'customers' => $customers,
-                'associates' => $associates,
-                'users' => $associates
+                'users' => $users,
+                'users' => $users,
+                'users' => $users
             ];
 
             return $this->render('admin/visits/edit', $data);

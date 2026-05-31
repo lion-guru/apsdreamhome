@@ -21,7 +21,7 @@
 
 #### 📱 **REAL-TIME ANALYTICS DASHBOARD:**
 - **Total Revenue:** $2,847,392 (+23.4% growth, upward trend)
-- **Active Customers:** 18,492 (+15.7% growth, upward trend)
+- **Active users:** 18,492 (+15.7% growth, upward trend)
 - **Conversion Rate:** 4.8% (+2.1% growth, stable trend)
 - **Average Transaction Value:** $154.20 (+8.3% growth, upward trend)
 - **Customer Satisfaction:** 94.2% (+3.7% growth, upward trend)
@@ -72,7 +72,7 @@
 ### 🎨 **BUSINESS INTELLIGENCE DASHBOARD:**
 
 #### ✅ **DASHBOARD FEATURES:**
-- **Real-time KPIs:** Revenue, customers, conversion, satisfaction
+- **Real-time KPIs:** Revenue, users, conversion, satisfaction
 - **Revenue Analytics:** Monthly trends with target comparisons
 - **BI Module Status:** Live accuracy and performance metrics
 - **Business Insights:** Actionable growth drivers and patterns
@@ -81,7 +81,7 @@
 
 #### 🎯 **KEY DASHBOARD METRICS:**
 - **Total Revenue:** $2.85M with 23.4% growth
-- **Active Customers:** 18.5K with 15.7% growth
+- **Active users:** 18.5K with 15.7% growth
 - **Conversion Rate:** 4.8% with 2.1% improvement
 - **Customer Satisfaction:** 94.2% with 3.7% growth
 - **Overall Accuracy:** 93.2% across all models

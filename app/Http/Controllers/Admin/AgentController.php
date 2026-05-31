@@ -7,6 +7,6 @@ class AgentController extends AdminController
     public function index()
     {
         $this->requireAdmin();
-        return $this->render('admin/agents/index', []);
+        return $this->render('admin/users/index', []);
     }
 }

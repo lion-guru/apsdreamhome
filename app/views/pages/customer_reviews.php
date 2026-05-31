@@ -24,7 +24,7 @@ $reviews = [
             </div>
             <div class="text-center">
                 <div class="h2 fw-bold">950+</div>
-                <small>Happy Customers</small>
+                <small>Happy users</small>
             </div>
             <div class="text-center">
                 <div class="h2 fw-bold">98%</div>

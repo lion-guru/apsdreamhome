@@ -92,7 +92,7 @@ $page_description = 'Manage MLM commissions and payouts';
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted mb-1">Associates</h6>
+                            <h6 class="text-muted mb-1">users</h6>
                             <h3 class="mb-0">234</h3>
                         </div>
                     </div>

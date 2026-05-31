@@ -13,7 +13,7 @@
         </div>
     </div>
     <div class="row g-4 mb-4">
-        <div class="col-md-3"><div class="card bg-primary text-white border-0 shadow-sm"><div class="card-body"><h6>Total Associates</h6><h3 class="mb-0"><?= number_format($totalAssociates ?? 0) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-primary text-white border-0 shadow-sm"><div class="card-body"><h6>Total users</h6><h3 class="mb-0"><?= number_format($totalAssociates ?? 0) ?></h3></div></div></div>
         <div class="col-md-3"><div class="card bg-success text-white border-0 shadow-sm"><div class="card-body"><h6>Active This Month</h6><h3 class="mb-0"><?= number_format($activeAssociates ?? 0) ?></h3></div></div></div>
         <div class="col-md-3"><div class="card bg-warning text-white border-0 shadow-sm"><div class="card-body"><h6>Total Sales</h6><h3 class="mb-0">₹<?= number_format($totalSales ?? 0, 2) ?></h3></div></div></div>
         <div class="col-md-3"><div class="card bg-info text-white border-0 shadow-sm"><div class="card-body"><h6>Avg. Performance</h6><h3 class="mb-0"><?= number_format($avgPerformance ?? 0) ?>%</h3></div></div></div>
@@ -25,10 +25,10 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light"><tr><th class="ps-4">#</th><th>Name</th><th>Code</th><th>Sales This Month</th><th>Leads Generated</th><th>Conversion Rate</th><th class="text-end pe-4">Rating</th></tr></thead>
                     <tbody>
-                        <?php if (empty($associates)): ?>
+                        <?php if (empty($users)): ?>
                             <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-chart-simple fa-3x d-block mb-3"></i>No associate data available</td></tr>
                         <?php else: ?>
-                            <?php foreach ($associates as $i => $a): ?>
+                            <?php foreach ($users as $i => $a): ?>
                             <tr><td class="ps-4"><?= $i+1 ?></td><td><strong><?= $a['name'] ?></strong></td><td><?= $a['code'] ?? '-' ?></td><td>₹<?= number_format($a['sales'] ?? 0, 2) ?></td><td><?= $a['leads'] ?? 0 ?></td><td><span class="badge bg-<?= ($a['conversion'] ?? 0) > 50 ? 'success' : 'warning' ?>-subtle text-<?= ($a['conversion'] ?? 0) > 50 ? 'success' : 'warning' ?> rounded-pill px-3"><?= number_format($a['conversion'] ?? 0, 1) ?>%</span></td><td class="text-end pe-4"><?php for($s=1;$s<=5;$s++): ?><i class="fas fa-star<?= $s <= round(($a['rating'] ?? 0)/20) ? ' text-warning' : ' text-muted' ?>"></i><?php endfor; ?></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>

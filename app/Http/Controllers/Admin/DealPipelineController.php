@@ -50,7 +50,7 @@ class DealPipelineController extends BaseController
                         ELSE d.priority
                     END as priority_label
                     FROM deals d
-                    LEFT JOIN customers c ON d.customer_id = c.id
+                    LEFT JOIN users c ON d.customer_id = c.id
                     LEFT JOIN properties p ON d.property_id = p.id
                     WHERE d.status = 'active'
                     ORDER BY d.stage, d.priority DESC, d.created_at DESC";
@@ -107,8 +107,8 @@ class DealPipelineController extends BaseController
         try {
             $conn = $this->db->getConnection();
             
-            // Get customers for dropdown
-            $customers = $conn->query("SELECT id, name, email, phone FROM customers ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
+            // Get users for dropdown
+            $users = $conn->query("SELECT id, name, email, phone FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
             
             // Get properties for dropdown
             $properties = $conn->query("SELECT id, title, location, price FROM properties WHERE status = 'available' ORDER BY title ASC")->fetchAll(\PDO::FETCH_ASSOC);
@@ -118,7 +118,7 @@ class DealPipelineController extends BaseController
             
             $data = [
                 'page_title' => 'Create New Deal',
-                'customers' => $customers,
+                'users' => $users,
                 'properties' => $properties,
                 'users' => $users
             ];
@@ -206,7 +206,7 @@ class DealPipelineController extends BaseController
                         ELSE d.priority
                     END as priority_label
                     FROM deals d
-                    LEFT JOIN customers c ON d.customer_id = c.id
+                    LEFT JOIN users c ON d.customer_id = c.id
                     LEFT JOIN properties p ON d.property_id = p.id
                     LEFT JOIN users u ON d.assigned_to = u.id
                     WHERE d.id = ?";

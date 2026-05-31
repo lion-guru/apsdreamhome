@@ -16,7 +16,7 @@
                         <label class="form-label">Customer <span class="text-danger">*</span></label>
                         <select name="customer_id" class="form-select" required>
                             <option value="">Select Customer</option>
-                            <?php foreach ($customers as $c): ?>
+                            <?php foreach ($users as $c): ?>
                             <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['phone']) ?>)</option>
                             <?php endforeach; ?>
                         </select>

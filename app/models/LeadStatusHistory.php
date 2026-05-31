@@ -13,7 +13,7 @@ class LeadStatusHistory extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'lead_id',
         'status_id',
         'changed_by',
@@ -26,7 +26,7 @@ class LeadStatusHistory extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'changed_at' => 'datetime',
     ];
 

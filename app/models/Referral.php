@@ -11,7 +11,7 @@ namespace App\Models;
 class Referral extends Model {
     public static $table = 'referrals';
     
-    protected array $fillable = [
+    protected $fillable = [
         'referrer_id',
         'referred_email',
         'referral_code',

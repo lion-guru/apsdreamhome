@@ -22,7 +22,7 @@ class AssociateService
     }
 
     /**
-     * Get all associates with pagination
+     * Get all users with pagination
      */
     public function getAllAssociates($page = 1, $limit = 20, $filters = [])
     {
@@ -46,13 +46,13 @@ class AssociateService
 
             $whereClause = implode(' AND ', $where);
 
-            // Get associates
-            $associates = $this->database->fetchAll(
+            // Get users
+            $users = $this->database->fetchAll(
                 "SELECT a.*, 
                         COUNT(s.id) as sales_count,
                         SUM(s.sale_amount) as total_sales_amount,
                         SUM(s.commission_amount) as total_commission
-                 FROM associates a
+                 FROM users a
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed'
                  WHERE $whereClause
                  GROUP BY a.id
@@ -63,25 +63,25 @@ class AssociateService
 
             // Get total count
             $total = $this->database->fetchOne(
-                "SELECT COUNT(*) as count FROM associates a WHERE $whereClause",
+                "SELECT COUNT(*) as count FROM users a WHERE $whereClause",
                 $params
             )['count'];
 
             return [
-                'data' => $associates,
+                'data' => $users,
                 'total' => $total,
                 'per_page' => $limit,
                 'current_page' => $page,
                 'last_page' => ceil($total / $limit)
             ];
         } catch (\Exception $e) {
-            $this->logger->error('Failed to get associates', [
+            $this->logger->error('Failed to get users', [
                 'error' => $e->getMessage(),
                 'page' => $page,
                 'limit' => $limit
             ]);
 
-            throw new \Exception('Failed to retrieve associates');
+            throw new \Exception('Failed to retrieve users');
         }
     }
 
@@ -336,7 +336,7 @@ class AssociateService
                         SUM(s.commission_amount) as total_commission,
                         AVG(s.sale_amount) as avg_sale_amount,
                         MAX(s.created_at) as last_sale_date
-                 FROM associates a
+                 FROM users a
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed'
                  WHERE $whereClause
                  GROUP BY a.id
@@ -351,7 +351,7 @@ class AssociateService
                         COUNT(s.id) as total_sales,
                         SUM(s.sale_amount) as total_sales_amount,
                         SUM(s.commission_amount) as total_commission
-                 FROM associates a
+                 FROM users a
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed'
                  WHERE $whereClause",
                 $params
@@ -444,7 +444,7 @@ class AssociateService
                         SUM(s.sale_amount) as total_sales_amount,
                         SUM(s.commission_amount) as total_commission,
                         AVG(s.sale_amount) as avg_sale_amount
-                 FROM associates a
+                 FROM users a
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed' $dateCondition
                  WHERE a.status = 'active'
                  GROUP BY a.id
@@ -473,7 +473,7 @@ class AssociateService
     }
 
     /**
-     * Export associates data
+     * Export users data
      */
     public function exportAssociates($format = 'csv', $filters = [])
     {
@@ -489,11 +489,11 @@ class AssociateService
 
             $whereClause = implode(' AND ', $where);
 
-            $associates = $this->database->fetchAll(
+            $users = $this->database->fetchAll(
                 "SELECT a.*, 
                         COUNT(s.id) as sales_count,
                         SUM(s.sale_amount) as total_sales_amount
-                 FROM associates a
+                 FROM users a
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed'
                  WHERE $whereClause
                  GROUP BY a.id
@@ -529,7 +529,7 @@ class AssociateService
                 ]);
 
                 // Data
-                foreach ($associates as $associate) {
+                foreach ($users as $associate) {
                     fputcsv($handle, [
                         $associate['id'],
                         $associate['name'],
@@ -551,7 +551,7 @@ class AssociateService
                     'success' => true,
                     'file' => $filename,
                     'path' => $filepath,
-                    'count' => count($associates)
+                    'count' => count($users)
                 ];
             }
 
@@ -560,14 +560,14 @@ class AssociateService
                 'message' => 'Unsupported format'
             ];
         } catch (\Exception $e) {
-            $this->logger->error('Failed to export associates', [
+            $this->logger->error('Failed to export users', [
                 'error' => $e->getMessage(),
                 'format' => $format
             ]);
 
             return [
                 'success' => false,
-                'message' => 'Failed to export associates'
+                'message' => 'Failed to export users'
             ];
         }
     }

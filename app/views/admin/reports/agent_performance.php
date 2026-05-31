@@ -10,14 +10,14 @@
             </div>
         </div>
         <div class="card-body">
-            <?php if (!empty($agents)): ?>
+            <?php if (!empty($users)): ?>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead><tr>
                             <th>#</th><th>Agent Name</th><th>Listings</th><th>Inquiries</th><th>Deals Closed</th><th>Conversion</th><th>Revenue</th><th>Rating</th>
                         </tr></thead>
                         <tbody>
-                            <?php $i=1; foreach ($agents as $a): ?>
+                            <?php $i=1; foreach ($users as $a): ?>
                             <tr>
                                 <td><?= $i++ ?></td>
                                 <td><strong><?= htmlspecialchars($a['name'] ?? 'N/A') ?></strong><br><small class="text-muted"><?= htmlspecialchars($a['email'] ?? '') ?></small></td>
@@ -41,7 +41,7 @@
                 <div class="text-center py-5">
                     <i class="fas fa-users fa-3x text-muted mb-3"></i>
                     <h5 class="text-muted">No agent data available yet</h5>
-                    <p class="text-muted">Agent performance will appear here once agents start working on leads and deals.</p>
+                    <p class="text-muted">Agent performance will appear here once users start working on leads and deals.</p>
                 </div>
             <?php endif; ?>
         </div>

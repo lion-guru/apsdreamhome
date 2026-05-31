@@ -8,7 +8,7 @@ $rewards = $rewards ?? [];
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-2"><i class="fas fa-gift me-2"></i>Reward History</h1>
-            <p class="text-muted">View all rewards given to associates</p>
+            <p class="text-muted">View all rewards given to users</p>
         </div>
     </div>
 

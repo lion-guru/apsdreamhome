@@ -333,7 +333,7 @@ $base = BASE_URL;
 
         <div class="card-body">
             <div class="tagline-box">
-                <p><i class="fas fa-chart-line"></i> Join our associate network and earn commissions by referring customers</p>
+                <p><i class="fas fa-chart-line"></i> Join our associate network and earn commissions by referring users</p>
             </div>
 
             <?php if (!empty($errors)): ?>

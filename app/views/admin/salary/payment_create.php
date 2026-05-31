@@ -11,7 +11,7 @@
                         <label class="form-label">Employee</label>
                         <select name="employee_id" id="empSelect" class="form-select" required>
                             <option value="">Select Employee</option>
-                            <?php foreach ($employees ?? [] as $e): ?>
+                            <?php foreach ($users ?? [] as $e): ?>
                             <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name']) ?></option>
                             <?php endforeach; ?>
                         </select>

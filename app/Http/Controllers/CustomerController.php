@@ -36,7 +36,7 @@ class CustomerController
         // Set variables for shared view
         $userRole = 'customer';
         $profileUrl = BASE_URL . '/customer/profile';
-        $securityUrl = null; // Customers don't have security page yet
+        $securityUrl = null; // users don't have security page yet
         $canEdit = true;
 
         // Use unified shared profile view

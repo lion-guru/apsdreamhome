@@ -24,7 +24,7 @@ class DatabaseSeederController extends AdminController
     public function seedAll()
     {
         $results = [];
-        $results['associates'] = $this->seedAssociates();
+        $results['users'] = $this->seedAssociates();
         $results['commissions'] = $this->seedCommissions();
 
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -66,9 +66,9 @@ class DatabaseSeederController extends AdminController
                 }
                 $parentIds = $newParentIds;
             }
-            return "Successfully seeded $count associates (7 levels).";
+            return "Successfully seeded $count users (7 levels).";
         } catch (Exception $e) {
-            return "Error seeding associates: " . $e->getMessage();
+            return "Error seeding users: " . $e->getMessage();
         }
     }
 
@@ -109,11 +109,11 @@ class DatabaseSeederController extends AdminController
 
     private function insertAssociate($id, $name, $email, $phone, $parent_id, $commission_percent, $level, $status)
     {
-        $check = $this->db->prepare("SELECT id FROM associates WHERE id = :id");
+        $check = $this->db->prepare("SELECT id FROM users WHERE id = :id");
         $check->execute(['id' => $id]);
 
         if (!$check->fetch()) {
-            $stmt = $this->db->prepare("INSERT INTO associates (id, name, email, phone, parent_id, commission_percent, level, status) VALUES (:id, :name, :email, :phone, :parent_id, :commission_percent, :level, :status)");
+            $stmt = $this->db->prepare("INSERT INTO users (id, name, email, phone, parent_id, commission_percent, level, status) VALUES (:id, :name, :email, :phone, :parent_id, :commission_percent, :level, :status)");
             $stmt->execute([
                 'id' => $id,
                 'name' => $name,

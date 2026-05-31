@@ -91,7 +91,7 @@ class HRManagerController extends BaseController
                              SUM(CASE WHEN e.hire_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as new_hires,
                              AVG(e.performance_score) as avg_performance
                       FROM departments d
-                      LEFT JOIN employees e ON d.id = e.department_id
+                      LEFT JOIN users e ON d.id = e.department_id
                       GROUP BY d.id, d.name
                       ORDER BY total_employees DESC";
         
@@ -106,7 +106,7 @@ class HRManagerController extends BaseController
                             SUM(CASE WHEN hire_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as new_hires_this_month,
                             SUM(CASE WHEN hire_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END) as new_hires_this_quarter,
                             AVG(performance_score) as avg_performance_score
-                         FROM employees";
+                         FROM users";
         
         $overallStats = $this->db->fetchOne($overallQuery);
         
@@ -114,7 +114,7 @@ class HRManagerController extends BaseController
         $turnoverQuery = "SELECT 
                              (SUM(CASE WHEN status = 'terminated' AND termination_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END) / 
                               SUM(CASE WHEN hire_date <= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END)) * 100 as turnover_rate
-                          FROM employees";
+                          FROM users";
         
         $turnoverRate = $this->db->fetchOne($turnoverQuery);
         
@@ -147,7 +147,7 @@ class HRManagerController extends BaseController
     {
         $query = "SELECT pr.*, e.name as employee_name, e.department as employee_department
                  FROM performance_reviews pr
-                 JOIN employees e ON pr.employee_id = e.id
+                 JOIN users e ON pr.employee_id = e.id
                  WHERE pr.scheduled_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
                  AND pr.status = 'scheduled'
                  ORDER BY pr.scheduled_date ASC
@@ -271,7 +271,7 @@ class HRManagerController extends BaseController
     }
 
     /**
-     * Process payroll for employees
+     * Process payroll for users
      */
     public function processPayroll($month, $year)
     {
@@ -281,20 +281,20 @@ class HRManagerController extends BaseController
                 throw new Exception("Payroll for {$month}-{$year} has already been processed");
             }
             
-            // Get all active employees
+            // Get all active users
             $employeesQuery = "SELECT e.*, d.name as department_name,
                                       p.base_salary, p.allowances, p.deductions
-                               FROM employees e
+                               FROM users e
                                JOIN departments d ON e.department_id = d.id
                                JOIN payroll_settings p ON e.id = p.employee_id
                                WHERE e.status = 'active'";
             
-            $employees = $this->db->fetchAll($employeesQuery);
+            $users = $this->db->fetchAll($employeesQuery);
             
             $processedCount = 0;
             $totalAmount = 0;
             
-            foreach ($employees as $employee) {
+            foreach ($users as $employee) {
                 // Calculate salary components
                 $grossSalary = $this->calculateGrossSalary($employee);
                 $deductions = $this->calculateDeductions($employee, $grossSalary);
@@ -330,7 +330,7 @@ class HRManagerController extends BaseController
                 'success' => true,
                 'processed_employees' => $processedCount,
                 'total_amount' => $totalAmount,
-                'message' => "Payroll processed successfully for {$processedCount} employees"
+                'message' => "Payroll processed successfully for {$processedCount} users"
             ];
             
         } catch (Exception $e) {
@@ -401,7 +401,7 @@ class HRManagerController extends BaseController
     {
         try {
             // Validate employee
-            $employeeQuery = "SELECT name, department FROM employees WHERE id = ? AND status = 'active'";
+            $employeeQuery = "SELECT name, department FROM users WHERE id = ? AND status = 'active'";
             $employee = $this->db->fetchOne($employeeQuery, [$employeeId]);
             
             if (!$employee) {
@@ -496,7 +496,7 @@ class HRManagerController extends BaseController
         // Generate employee ID
         $employeeId = 'EMP' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
         
-        $query = "INSERT INTO employees (
+        $query = "INSERT INTO users (
                     employee_id, name, email, phone, position_id, department_id,
                     hire_date, status, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, CURDATE(), 'active', NOW())";

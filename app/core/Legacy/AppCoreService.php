@@ -435,7 +435,7 @@ class App
             return $this->loadController("Admin\\AdminControllerSimple", "users");
         } elseif ($uri === "/admin/leads") {
             return $this->loadController("Admin\\AdminControllerSimple", "leads");
-        } elseif ($uri === "/admin/customers") {
+        } elseif ($uri === "/admin/users") {
             return $this->loadController("Admin\\AdminControllerSimple", "index");
         } elseif ($uri === "/admin/settings") {
             return $this->loadController("Admin\\AdminControllerSimple", "settings");

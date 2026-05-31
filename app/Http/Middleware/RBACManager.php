@@ -380,10 +380,10 @@ class RBACManager
         'tax.manage' => 'Manage Tax',
 
         // HR
-        'employee.view.all' => 'View All Employees',
-        'employee.view.team' => 'View Team Employees',
-        'employee.add' => 'Add Employees',
-        'employee.edit' => 'Edit Employees',
+        'employee.view.all' => 'View All users',
+        'employee.view.team' => 'View Team users',
+        'employee.add' => 'Add users',
+        'employee.edit' => 'Edit users',
         'attendance.view' => 'View Attendance',
         'attendance.manage' => 'Manage Attendance',
         'leave.view' => 'View Leave',

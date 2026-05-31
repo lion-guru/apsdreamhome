@@ -874,7 +874,7 @@ class AdvancedSecurityController extends BaseController
         $training_programs = [
             'cybersecurity_basics' => [
                 'title' => 'Cybersecurity Fundamentals',
-                'audience' => 'All employees',
+                'audience' => 'All users',
                 'duration' => '4 hours',
                 'completion_rate' => '98%',
                 'assessment_score' => '4.7/5'

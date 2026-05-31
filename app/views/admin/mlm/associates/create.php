@@ -17,7 +17,7 @@
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Create Management - Complete MLM Associate System with 7 Levels
                     </div>
-                    <form method="POST" action="/admin/mlm/associates/create">
+                    <form method="POST" action="/admin/mlm/users/create">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <a href="/admin/mlm/associates" class="btn btn-secondary">
+                            <a href="/admin/mlm/users" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

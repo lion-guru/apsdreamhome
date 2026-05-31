@@ -18,7 +18,7 @@
                                 <option value="properties">Properties</option>
                                 <option value="leads">Leads</option>
                                 <option value="khatabook_sales">Khatabook / Sales Records</option>
-                                <option value="customers">Customers</option>
+                                <option value="users">users</option>
                                 <option value="users">Users</option>
                                 <option value="contacts">Contacts</option>
                             </select>

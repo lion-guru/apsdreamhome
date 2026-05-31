@@ -1,5 +1,5 @@
 <?php
-$associates = $associates ?? [];
+$users = $users ?? [];
 $progress_data = $progress_data ?? [];
 ?>
 <div class="container-fluid px-4">
@@ -21,7 +21,7 @@ $progress_data = $progress_data ?? [];
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($associates as $i => $a):
+                <?php foreach ($users as $i => $a):
                     $p = $progress_data[$i] ?? [];
                 ?>
                 <tr>

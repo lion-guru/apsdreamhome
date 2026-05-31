@@ -8,7 +8,7 @@ class ResellProperty extends Model
 {
     public static $table = 'resell_properties';
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'title',
         'property_type',

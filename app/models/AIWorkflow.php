@@ -11,7 +11,7 @@ namespace App\Models;
 class AIWorkflow extends Model {
     public static $table = 'ai_workflows';
     
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'description',
         'trigger_type',

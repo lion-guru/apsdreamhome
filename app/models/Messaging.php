@@ -603,7 +603,7 @@ class Messaging extends Model
     {
         $participants = [
             ['user_id' => $customerId, 'user_type' => 'customer', 'role' => 'owner'],
-            // Add support agents here based on your assignment logic
+            // Add support users here based on your assignment logic
             // For now, we'll add a default support user
         ];
 
@@ -700,9 +700,9 @@ class Messaging extends Model
             if ($criteria['user_type'] === 'customer') {
                 $query = "SELECT id as user_id, 'customer' as user_type FROM users WHERE 1=1";
             } elseif ($criteria['user_type'] === 'employee') {
-                $query = "SELECT id as user_id, 'employee' as user_type FROM employees WHERE status = 'active'";
+                $query = "SELECT id as user_id, 'employee' as user_type FROM users WHERE status = 'active'";
             } elseif ($criteria['user_type'] === 'associate') {
-                $query = "SELECT id as user_id, 'associate' as user_type FROM associates WHERE status = 'active'";
+                $query = "SELECT id as user_id, 'associate' as user_type FROM users WHERE status = 'active'";
             }
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\AI\Agents;
+namespace App\Services\AI\users;
 
 use App\Core\App;
 use App\Services\Legacy\PermissionManager;
@@ -9,7 +9,7 @@ use Exception;
 
 /**
  * Base AI Agent Class
- * Provides common functionality for all specialized agents.
+ * Provides common functionality for all specialized users.
  *
  * @property \App\Core\Database $db
  */

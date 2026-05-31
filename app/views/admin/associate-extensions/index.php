@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0"><i class="fas fa-user-plus me-2"></i>Associate Extensions</h1>
         <div>
-            <span class="badge bg-primary fs-6"><?= count($associates ?? []) ?> Associates</span>
+            <span class="badge bg-primary fs-6"><?= count($users ?? []) ?> users</span>
         </div>
     </div>
     <div class="card shadow-sm">
@@ -24,14 +24,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (empty($associates ?? [])): ?>
+                        <?php if (empty($users ?? [])): ?>
                             <tr><td colspan="10" class="text-center text-muted py-5">
                                 <i class="fas fa-user-plus fa-3x text-muted mb-3"></i>
-                                <h5>No Associates Found</h5>
+                                <h5>No users Found</h5>
                                 <p class="mb-3">No associate extension records exist yet.</p>
                             </td></tr>
                         <?php else: ?>
-                            <?php foreach ($associates as $a): ?>
+                            <?php foreach ($users as $a): ?>
                                 <tr>
                                     <td><?= $a['id'] ?? '' ?></td>
                                     <td><strong><?= htmlspecialchars($a['name'] ?? '') ?></strong></td>

@@ -11,16 +11,16 @@ class CRMController extends AdminController
         return $this->render('admin/crm/index', []);
     }
     
-    public function customers()
+    public function users()
     {
         $this->requireAdmin();
-        return $this->render('admin/crm/customers', []);
+        return $this->render('admin/crm/users', []);
     }
     
     public function createCustomer()
     {
         $this->requireAdmin();
-        return $this->render('admin/crm/customers/create', []);
+        return $this->render('admin/crm/users/create', []);
     }
     
     public function groups()

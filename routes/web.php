@@ -41,7 +41,7 @@ $router->get('/agent_dashboard', function () {
     $file = __DIR__ . '/../agent_dashboard.php';
     if (file_exists($file)) { include $file; }
 });
-$router->get('/agents', function () {
+$router->get('/users', function () {
     $file = __DIR__ . '/../agent_dashboard.php';
     if (file_exists($file)) { include $file; }
 });
@@ -841,9 +841,9 @@ $router->get('/admin/godmode/system-health', 'App\\Http\\Controllers\\Admin\\God
 
 // MLM Management Routes
 $router->get('/admin/mlm', 'App\Http\Controllers\Admin\MLMController@index');
-$router->get('/admin/mlm/associates', 'App\Http\Controllers\Admin\MLMController@associates');
-$router->get('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
-$router->post('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
+$router->get('/admin/mlm/users', 'App\Http\Controllers\Admin\MLMController@users');
+$router->get('/admin/mlm/users/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
+$router->post('/admin/mlm/users/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
 $router->get('/admin/mlm/commission', 'App\Http\Controllers\Admin\MLMController@commission');
 $router->get('/admin/mlm/network', 'App\Http\Controllers\Admin\MLMController@network');
 $router->get('/admin/mlm/payouts', 'App\Http\Controllers\Admin\MLMController@payouts');
@@ -1071,8 +1071,8 @@ require_once __DIR__ . '/admin_routes.php';
 $router->post('/admin/colonies/{id}/update', 'App\\Http\\Controllers\\Admin\\ColonyController@update');
 $router->post('/admin/colonies/{id}/destroy', 'App\\Http\\Controllers\\Admin\\ColonyController@destroy');
 
-// Employees Management
-$router->get('/admin/employees', 'App\\Http\\Controllers\\Admin\\HRMController@employeeList');
+// users Management
+$router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\HRMController@employeeList');
 
 // Commissions Management
 $router->get('/admin/commissions', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@commissionsList');
@@ -1105,15 +1105,15 @@ $router->post('/admin/invoices/delete/{id}', function($id) {
     exit;
 });
 $router->get('/admin/roles', 'App\\Http\\Controllers\\RoleBasedDashboardController@roles');
-$router->get('/admin/associates', function () {
-    header('Location: ' . BASE_URL . '/admin/mlm/associates');
+$router->get('/admin/users', function () {
+    header('Location: ' . BASE_URL . '/admin/mlm/users');
     exit;
 });
-$router->get('/admin/associates/create', function () {
-    header('Location: ' . BASE_URL . '/admin/mlm/associates/create');
+$router->get('/admin/users/create', function () {
+    header('Location: ' . BASE_URL . '/admin/mlm/users/create');
     exit;
 });
-$router->get('/admin/hrm/employees', 'App\\Http\\Controllers\\Admin\\HRMController@employees');
+$router->get('/admin/hrm/users', 'App\\Http\\Controllers\\Admin\\HRMController@users');
 
 // ============================================================
 // NEWLY ROUTED ADMIN CONTROLLERS
@@ -1641,11 +1641,11 @@ $router->get('/admin/telecalling/assign', 'App\\Http\\Controllers\\Employee\\Tel
 $router->get('/admin/telecalling/commissions', 'App\\Http\\Controllers\\Employee\\TelecallingController@commissions');
 $router->get('/admin/telecalling/approvals', 'App\\Http\\Controllers\\Employee\\TelecallingController@approvals');
 
-// CRM Customers
-$router->get('/admin/customers', 'App\\Http\\Controllers\\Admin\\CustomerController@index');
+// CRM users
+$router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\CustomerController@index');
 $router->get('/admin/crm', 'App\\Http\\Controllers\\Admin\\CRMController@index');
-$router->get('/admin/crm/customers', 'App\\Http\\Controllers\\Admin\\CRMController@customers');
-$router->get('/admin/crm/customers/create', 'App\\Http\\Controllers\\Admin\\CRMController@createCustomer');
+$router->get('/admin/crm/users', 'App\\Http\\Controllers\\Admin\\CRMController@users');
+$router->get('/admin/crm/users/create', 'App\\Http\\Controllers\\Admin\\CRMController@createCustomer');
 $router->get('/admin/crm/groups', 'App\\Http\\Controllers\\Admin\\CRMController@groups');
 $router->get('/admin/crm/followups', 'App\\Http\\Controllers\\Admin\\CRMController@followups');
 
@@ -1684,7 +1684,7 @@ $router->get('/admin/emi-calculator', 'App\\Http\\Controllers\\Admin\\EMIControl
 $router->get('/admin/loans', 'App\\Http\\Controllers\\Admin\\LoanController@index');
 
 // Users
-$router->get('/admin/agents', 'App\\Http\\Controllers\\Admin\\AgentController@index');
+$router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\AgentController@index');
 $router->get('/admin/builders', 'App\\Http\\Controllers\\Admin\\BuilderController@index');
 
 // Reports
@@ -1692,7 +1692,7 @@ $router->get('/admin/reports/financial', 'App\\Http\\Controllers\\Admin\\Reports
 
 // HRM
 $router->get('/admin/hrm', 'App\\Http\\Controllers\\Admin\\HRMController@index');
-$router->get('/admin/hrm/employees/create', 'App\\Http\\Controllers\\Admin\\HRMController@createEmployee');
+$router->get('/admin/hrm/users/create', 'App\\Http\\Controllers\\Admin\\HRMController@createEmployee');
 $router->get('/admin/hrm/attendance', 'App\\Http\\Controllers\\Admin\\HRMController@attendance');
 $router->get('/admin/hrm/leave', 'App\\Http\\Controllers\\Admin\\HRMController@leave');
 
@@ -1807,13 +1807,13 @@ $router->get('/admin/customer-lead/file-extractions', 'App\\Http\\Controllers\\A
 // HR MANAGEMENT SYSTEM (New System)
 // ═══════════════════════════════════════════════════
 $router->get('/admin/hr', 'App\\Http\\Controllers\\Admin\\HRController@index');
-$router->get('/admin/hr/employees', 'App\\Http\\Controllers\\Admin\\HRController@employees');
-$router->get('/admin/hr/employees/create', 'App\\Http\\Controllers\\Admin\\HRController@createEmployee');
-$router->post('/admin/hr/employees/store', 'App\\Http\\Controllers\\Admin\\HRController@storeEmployee');
-$router->get('/admin/hr/employees/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@editEmployee');
-$router->post('/admin/hr/employees/update/{id}', 'App\\Http\\Controllers\\Admin\\HRController@updateEmployee');
-$router->get('/admin/hr/employees/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@deleteEmployee');
-$router->get('/admin/hr/employees/view/{id}', 'App\\Http\\Controllers\\Admin\\HRController@viewEmployee');
+$router->get('/admin/hr/users', 'App\\Http\\Controllers\\Admin\\HRController@users');
+$router->get('/admin/hr/users/create', 'App\\Http\\Controllers\\Admin\\HRController@createEmployee');
+$router->post('/admin/hr/users/store', 'App\\Http\\Controllers\\Admin\\HRController@storeEmployee');
+$router->get('/admin/hr/users/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@editEmployee');
+$router->post('/admin/hr/users/update/{id}', 'App\\Http\\Controllers\\Admin\\HRController@updateEmployee');
+$router->get('/admin/hr/users/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@deleteEmployee');
+$router->get('/admin/hr/users/view/{id}', 'App\\Http\\Controllers\\Admin\\HRController@viewEmployee');
 $router->get('/admin/hr/attendance', 'App\\Http\\Controllers\\Admin\\HRController@attendance');
 $router->post('/admin/hr/attendance/mark', 'App\\Http\\Controllers\\Admin\\HRController@markAttendance');
 $router->get('/admin/hr/attendance/report', 'App\\Http\\Controllers\\Admin\\HRController@attendanceReport');
@@ -1916,8 +1916,8 @@ $router->get('/admin/ai-management/usage-analytics', 'App\\Http\\Controllers\\Ad
 // ═══════════════════════════════════════════════════
 $router->get('/admin/company/settings', 'App\\Http\\Controllers\\Admin\\CompanyController@settings');
 $router->post('/admin/company/settings', 'App\\Http\\Controllers\\Admin\\CompanyController@updateSettings');
-$router->get('/admin/company/employees', 'App\\Http\\Controllers\\Admin\\CompanyController@employees');
-$router->post('/admin/company/employees', 'App\\Http\\Controllers\\Admin\\CompanyController@addEmployee');
+$router->get('/admin/company/users', 'App\\Http\\Controllers\\Admin\\CompanyController@users');
+$router->post('/admin/company/users', 'App\\Http\\Controllers\\Admin\\CompanyController@addEmployee');
 
 // ═══════════════════════════════════════════════════
 // GST INVOICE MANAGEMENT
@@ -1961,22 +1961,22 @@ $router->get('/admin/training/enrollments/{id}', 'App\\Http\\Controllers\\Admin\
 $router->get('/admin/training/certificates', 'App\\Http\\Controllers\\Admin\\TrainingController@certificates');
 
 // ═══════════════════════════════════════════════════
-// VOICE AGENTS
+// VOICE users
 // ═══════════════════════════════════════════════════
-$router->get('/admin/voice-agents', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@dashboard');
-$router->get('/admin/voice-agents/dashboard', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@dashboard');
-$router->get('/admin/voice-agents/history', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@history');
-$router->get('/admin/voice-agents/schedule', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@schedule');
-$router->post('/admin/voice-agents/bulk-schedule', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@bulkSchedule');
-$router->post('/admin/voice-agents/auto-assign', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@autoAssign');
-$router->get('/admin/voice-agents/scripts', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@scripts');
-$router->get('/admin/voice-agents/extracted-leads', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@extractedLeads');
-$router->get('/admin/voice-agents/settings', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@settings');
-$router->get('/admin/voice-agents/oln-dashboard', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@olnDashboard');
-$router->post('/admin/voice-agents/cancel-schedule/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@cancelSchedule');
-$router->post('/admin/voice-agents/reschedule/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@rescheduleCall');
-$router->post('/admin/voice-agents/ajax/convert-lead', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxConvertLead');
-$router->get('/admin/voice-agents/ajax/lead-timeline/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxLeadTimeline');
+$router->get('/admin/voice-users', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@dashboard');
+$router->get('/admin/voice-users/dashboard', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@dashboard');
+$router->get('/admin/voice-users/history', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@history');
+$router->get('/admin/voice-users/schedule', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@schedule');
+$router->post('/admin/voice-users/bulk-schedule', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@bulkSchedule');
+$router->post('/admin/voice-users/auto-assign', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@autoAssign');
+$router->get('/admin/voice-users/scripts', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@scripts');
+$router->get('/admin/voice-users/extracted-leads', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@extractedLeads');
+$router->get('/admin/voice-users/settings', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@settings');
+$router->get('/admin/voice-users/oln-dashboard', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@olnDashboard');
+$router->post('/admin/voice-users/cancel-schedule/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@cancelSchedule');
+$router->post('/admin/voice-users/reschedule/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@rescheduleCall');
+$router->post('/admin/voice-users/ajax/convert-lead', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxConvertLead');
+$router->get('/admin/voice-users/ajax/lead-timeline/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxLeadTimeline');
 
 // ═══════════════════════════════════════════════════
 // FARMERS MANAGEMENT (Admin)
@@ -2297,7 +2297,7 @@ $router->get('/admin/marketing/marketplace', function () {
 $router->get('/admin/commission/agent-rates', function () {
     \App\Core\Middleware\AuthMiddleware::requireAdmin();
     $page_title = 'Agent Commission Rates';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Agent Commission Rates</h1><p class="text-muted">Configure commission rates for agents.</p></div>';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Agent Commission Rates</h1><p class="text-muted">Configure commission rates for users.</p></div>';
     include APP_PATH . '/views/layouts/admin.php';
 });
 $router->get('/admin/commission/associate/structure', function () {
@@ -2359,7 +2359,7 @@ $router->get('/admin/commission/telecaller/commissions', function () {
 $router->get('/admin/mlm/rank-criteria', function () {
     \App\Core\Middleware\AuthMiddleware::requireAdmin();
     $page_title = 'MLM Rank Criteria';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Rank Criteria</h1><p class="text-muted">Define rank advancement criteria for associates.</p></div>';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Rank Criteria</h1><p class="text-muted">Define rank advancement criteria for users.</p></div>';
     include APP_PATH . '/views/layouts/admin.php';
 });
 $router->get('/admin/mlm/upgrades', function () {
@@ -2371,13 +2371,13 @@ $router->get('/admin/mlm/upgrades', function () {
 $router->get('/admin/mlm/withdrawals', function () {
     \App\Core\Middleware\AuthMiddleware::requireAdmin();
     $page_title = 'MLM Withdrawals';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Withdrawals</h1><p class="text-muted">Manage withdrawal requests from associates.</p></div>';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Withdrawals</h1><p class="text-muted">Manage withdrawal requests from users.</p></div>';
     include APP_PATH . '/views/layouts/admin.php';
 });
 $router->get('/admin/mlm/rewards', function () {
     \App\Core\Middleware\AuthMiddleware::requireAdmin();
     $page_title = 'MLM Rewards';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Rewards</h1><p class="text-muted">Manage rewards and recognition for associates.</p></div>';
+    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Rewards</h1><p class="text-muted">Manage rewards and recognition for users.</p></div>';
     include APP_PATH . '/views/layouts/admin.php';
 });
 
@@ -2663,3 +2663,86 @@ $router->get('/admin/security/future-vision', 'App\\Http\\Controllers\\Tech\\Adv
 // LAND PLOTTING (Land\PlottingController)
 // ============================================================
 $router->get('/admin/plotting', 'App\\Http\\Controllers\\Land\\PlottingController@dashboard');
+
+// ============================================================
+// INVOICES (Admin\InvoiceController)
+// ============================================================
+$router->get('/admin/invoices/manage', 'App\\Http\\Controllers\\Admin\\InvoiceController@index');
+$router->get('/admin/invoices/manage/create', 'App\\Http\\Controllers\\Admin\\InvoiceController@create');
+$router->post('/admin/invoices/manage/store', 'App\\Http\\Controllers\\Admin\\InvoiceController@store');
+$router->get('/admin/invoices/manage/{id}', 'App\\Http\\Controllers\\Admin\\InvoiceController@show');
+$router->get('/admin/invoices/manage/{id}/edit', 'App\\Http\\Controllers\\Admin\\InvoiceController@edit');
+$router->post('/admin/invoices/manage/{id}/update', 'App\\Http\\Controllers\\Admin\\InvoiceController@update');
+$router->post('/admin/invoices/manage/{id}/delete', 'App\\Http\\Controllers\\Admin\\InvoiceController@delete');
+$router->post('/admin/invoices/manage/{id}/mark-paid', 'App\\Http\\Controllers\\Admin\\InvoiceController@markAsPaid');
+$router->post('/admin/invoices/manage/{id}/send', 'App\\Http\\Controllers\\Admin\\InvoiceController@sendInvoice');
+
+// ============================================================
+// API LEADS (Api\ApiLeadController)
+// ============================================================
+$router->get('/api/leads', 'App\\Http\\Controllers\\Api\\ApiLeadController@index');
+$router->post('/api/leads', 'App\\Http\\Controllers\\Api\\ApiLeadController@store');
+$router->get('/api/leads/{id}', 'App\\Http\\Controllers\\Api\\ApiLeadController@show');
+$router->put('/api/leads/{id}', 'App\\Http\\Controllers\\Api\\ApiLeadController@update');
+$router->delete('/api/leads/{id}', 'App\\Http\\Controllers\\Api\\ApiLeadController@destroy');
+$router->post('/api/leads/{id}/note', 'App\\Http\\Controllers\\Api\\ApiLeadController@addNote');
+$router->post('/api/leads/{id}/upload', 'App\\Http\\Controllers\\Api\\ApiLeadController@uploadFile');
+$router->put('/api/leads/{id}/status', 'App\\Http\\Controllers\\Api\\ApiLeadController@updateStatus');
+$router->put('/api/leads/{id}/assign', 'App\\Http\\Controllers\\Api\\ApiLeadController@assign');
+$router->post('/api/leads/bulk-assign', 'App\\Http\\Controllers\\Api\\ApiLeadController@bulkAssign');
+$router->get('/api/leads/stats', 'App\\Http\\Controllers\\Api\\ApiLeadController@getStats');
+$router->get('/api/leads/data/lookup', 'App\\Http\\Controllers\\Api\\ApiLeadController@getLookupData');
+
+// ============================================================
+// API KYC (Api\KYCController)
+// ============================================================
+$router->post('/api/kyc/verify-pan', 'App\\Http\\Controllers\\Api\\KYCController@verifyPAN');
+$router->post('/api/kyc/verify-aadhaar', 'App\\Http\\Controllers\\Api\\KYCController@verifyAadhaar');
+$router->get('/api/kyc/status', 'App\\Http\\Controllers\\Api\\KYCController@getStatus');
+
+// ============================================================
+// API SEO (Api\SeoController)
+// ============================================================
+$router->get('/api/seo/metadata', 'App\\Http\\Controllers\\Api\\SeoController@getMetadata');
+$router->post('/api/seo/update', 'App\\Http\\Controllers\\Api\\SeoController@update');
+
+// ============================================================
+// API COMMUNICATION (Api\CommunicationController)
+// ============================================================
+$router->get('/api/communication/whatsapp-webhook', 'App\\Http\\Controllers\\Api\\CommunicationController@whatsappWebhook');
+$router->post('/api/communication/whatsapp-webhook', 'App\\Http\\Controllers\\Api\\CommunicationController@whatsappWebhook');
+$router->post('/api/communication/send-email', 'App\\Http\\Controllers\\Api\\CommunicationController@sendEmail');
+$router->post('/api/communication/send-whatsapp', 'App\\Http\\Controllers\\Api\\CommunicationController@sendWhatsApp');
+
+// ============================================================
+// API REVIEWS (Api\ReviewController)
+// ============================================================
+$router->get('/api/reviews', 'App\\Http\\Controllers\\Api\\ReviewController@index');
+$router->post('/api/reviews', 'App\\Http\\Controllers\\Api\\ReviewController@store');
+
+// ============================================================
+// API FOLLOWUPS (Api\FollowupController)
+// ============================================================
+$router->post('/api/followups/run', 'App\\Http\\Controllers\\Api\\FollowupController@run');
+
+// ============================================================
+// API SMS (SMSController)
+// ============================================================
+$router->post('/api/sms/send-otp', 'App\\Http\\Controllers\\SMSController@sendOTP');
+$router->post('/api/sms/verify-otp', 'App\\Http\\Controllers\\SMSController@verifyOTP');
+
+// ============================================================
+// MISSING SIDEBAR ROUTES
+// ============================================================
+$router->get('/admin/customers', function () {
+    $c = new App\Http\Controllers\Admin\CRMController();
+    $c->index();
+});
+$router->get('/admin/hrm/employees', function () {
+    $c = new App\Http\Controllers\Admin\HRMController();
+    $c->employeeList();
+});
+$router->get('/admin/mlm/associates', function () {
+    $c = new App\Http\Controllers\Admin\MLMController();
+    $c->users();
+});

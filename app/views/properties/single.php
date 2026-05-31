@@ -462,7 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 include BASE_URL . 'app/views/includes/footer.php';
 
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\customers\property_details.php
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\users\property_details.php
 
 function updateStars(rating) {
             $('.rating-star').each(function() {

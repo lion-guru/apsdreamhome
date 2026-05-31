@@ -20,7 +20,7 @@ class TestimonialController extends BaseController
     {
         $this->render('testimonials/index', [
             'page_title' => 'Testimonials - APS Dream Home',
-            'page_description' => 'Read what our satisfied customers have to say about APS Dream Home',
+            'page_description' => 'Read what our satisfied users have to say about APS Dream Home',
             'testimonials' => [
                 [
                     'id' => 1,

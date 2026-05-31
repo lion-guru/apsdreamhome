@@ -262,8 +262,8 @@ class ChatService
                     ELSE 'System'
                 END as sender_name
                 FROM chat_messages m
-                LEFT JOIN users u ON m.sender_type = 'customer' AND u.id = (SELECT c.user_id FROM customers c WHERE c.id = m.sender_id)
-                LEFT JOIN associates a ON m.sender_id = a.id AND m.sender_type = 'agent'
+                LEFT JOIN users u ON m.sender_type = 'customer' AND u.id = (SELECT c.user_id FROM users c WHERE c.id = m.sender_id)
+                LEFT JOIN users a ON m.sender_id = a.id AND m.sender_type = 'agent'
                 WHERE m.conversation_id = ? 
                 " . ($beforeId ? "AND m.id < ?" : "") . "
                 ORDER BY m.id DESC
@@ -309,8 +309,8 @@ class ChatService
             END as other_party_phone,
             p.title as property_title
             FROM chat_conversations c
-            LEFT JOIN users u ON u.id = (SELECT cust.user_id FROM customers cust WHERE cust.id = c.customer_id)
-            LEFT JOIN associates a ON c.agent_id = a.id
+            LEFT JOIN users u ON u.id = (SELECT cust.user_id FROM users cust WHERE cust.id = c.customer_id)
+            LEFT JOIN users a ON c.agent_id = a.id
             LEFT JOIN properties p ON c.property_id = p.id
             WHERE c.{$column} = ? AND c.status = ?
             ORDER BY c.last_message_at DESC";

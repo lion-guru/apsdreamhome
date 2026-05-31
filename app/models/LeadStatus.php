@@ -15,7 +15,7 @@ class LeadStatus extends Model
      *
      * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'color',
         'is_default',
@@ -29,7 +29,7 @@ class LeadStatus extends Model
      *
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'is_default' => 'boolean',
         'is_active' => 'boolean',
         'sort_order' => 'integer',

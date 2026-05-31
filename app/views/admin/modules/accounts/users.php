@@ -87,7 +87,7 @@ $users = [
                     <li><a class="dropdown-item" href="#" onclick="filterUsers('active')">Active Users</a></li>
                     <li><a class="dropdown-item" href="#" onclick="filterUsers('inactive')">Inactive Users</a></li>
                     <li><a class="dropdown-item" href="#" onclick="filterUsers('client')">Clients Only</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="filterUsers('associate')">Associates Only</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="filterUsers('associate')">users Only</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="filterUsers('recent')">Recent Login (7 days)</a></li>
                 </ul>
@@ -123,7 +123,7 @@ $users = [
             </div>
             <div class="stat-content">
                 <h4><?php echo count(array_filter($users, fn($u) => $u['role'] === 'Associate')); ?></h4>
-                <p>Associates</p>
+                <p>users</p>
             </div>
         </div>
         

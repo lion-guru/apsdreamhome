@@ -5,7 +5,7 @@ namespace App\Models;
 class Property extends Model
 {
     protected static $table = 'properties';
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'description',
         'price',

@@ -11,7 +11,7 @@ namespace App\Models;
 class PropertyVisit extends Model {
     public static $table = 'property_visits';
     
-    protected array $fillable = [
+    protected $fillable = [
         'customer_id',
         'property_id',
         'associate_id',
@@ -44,7 +44,7 @@ class PropertyVisit extends Model {
             ])
             ->from(static::$table . ' as v')
             ->join('properties as p', 'v.property_id', '=', 'p.id')
-            ->join('customers as c', 'v.customer_id', '=', 'c.id')
+            ->join('users as c', 'v.customer_id', '=', 'c.id')
             ->join('users as u', 'c.user_id', '=', 'u.id')
             ->where('DATE(v.visit_date)', '=', \date('Y-m-d', \strtotime('+1 day')))
             ->where('v.status', 'confirmed')
@@ -64,7 +64,7 @@ class PropertyVisit extends Model {
             ])
             ->from(static::$table . ' as v')
             ->join('properties as p', 'v.property_id', '=', 'p.id')
-            ->join('customers as c', 'v.customer_id', '=', 'c.id')
+            ->join('users as c', 'v.customer_id', '=', 'c.id')
             ->join('users as u', 'c.user_id', '=', 'u.id')
             ->where('DATE(v.visit_date)', '=', \date('Y-m-d', \strtotime('-1 day')))
             ->where('v.status', 'completed')

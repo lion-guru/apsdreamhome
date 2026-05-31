@@ -10,7 +10,7 @@ class SupportTicket extends Model
 {
     protected static $table = 'support_tickets';
 
-    protected array $fillable = [
+    protected $fillable = [
         'ticket_number',
         'user_id',
         'subject',

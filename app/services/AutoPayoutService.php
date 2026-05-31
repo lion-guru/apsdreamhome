@@ -7,7 +7,7 @@ use Exception;
 
 /**
  * AutoPayoutService
- * Processes one-click bulk commission payouts for eligible agents.
+ * Processes one-click bulk commission payouts for eligible users.
  */
 class AutoPayoutService
 {
@@ -39,7 +39,7 @@ class AutoPayoutService
     }
 
     /**
-     * Get all agents with pending, unpaid commissions.
+     * Get all users with pending, unpaid commissions.
      */
     public function getPendingPayouts()
     {
@@ -94,14 +94,14 @@ class AutoPayoutService
             [$batchId]
         );
 
-        $this->logger->info("Auto payout processed: Batch #$batchId — $totalAgents agents, ₹$totalAmount");
+        $this->logger->info("Auto payout processed: Batch #$batchId — $totalAgents users, ₹$totalAmount");
 
         return [
             'success' => true,
             'batch_id' => $batchId,
             'total_agents' => $totalAgents,
             'total_amount' => $totalAmount,
-            'message' => "Payout processed successfully for $totalAgents agents totalling ₹$totalAmount"
+            'message' => "Payout processed successfully for $totalAgents users totalling ₹$totalAmount"
         ];
     }
 

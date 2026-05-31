@@ -8,7 +8,7 @@ use App\Core\UnifiedModel;
 
 class PropertyType extends UnifiedModel {
     public static $table = 'property_types';
-    protected array $fillable = ['name', 'description', 'purpose', 'icon', 'sort_order'];
+    protected $fillable = ['name', 'description', 'purpose', 'icon', 'sort_order'];
 
     public function getAllOrdered() {
         return static::query()

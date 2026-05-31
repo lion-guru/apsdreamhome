@@ -1,7 +1,7 @@
 <?php
 $ticket = $ticket ?? [];
-$customers = $customers ?? [];
-$agents = $agents ?? [];
+$users = $users ?? [];
+$users = $users ?? [];
 $page_title = $page_title ?? 'Edit Support Ticket';
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
@@ -24,7 +24,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Customer</label>
                             <select name="customer_id" class="form-select">
-                                <?php foreach ($customers as $customer): ?>
+                                <?php foreach ($users as $customer): ?>
                                     <option value="<?php echo $customer['id']; ?>" <?php echo ($ticket['customer_id'] ?? '') == $customer['id'] ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($customer['name'] . ' (' . $customer['email'] . ')'); ?>
                                     </option>
@@ -35,7 +35,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <label class="form-label">Assigned To</label>
                             <select name="assigned_agent_id" class="form-select">
                                 <option value="">Unassigned</option>
-                                <?php foreach ($agents as $agent): ?>
+                                <?php foreach ($users as $agent): ?>
                                     <option value="<?php echo $agent['id']; ?>" <?php echo ($ticket['assigned_agent_id'] ?? '') == $agent['id'] ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars(agent['name'] ?? ''); ?>
                                     </option>

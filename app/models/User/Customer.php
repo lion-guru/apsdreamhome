@@ -23,7 +23,7 @@ class Customer extends Model
     }
 
     /**
-     * Search customers for AJAX/Select2
+     * Search users for AJAX/Select2
      */
     public function searchCustomers($search = '', $limit = 10, $offset = 0)
     {
@@ -69,7 +69,7 @@ class Customer extends Model
     }
 
     /**
-     * Get all customers (used by Controller)
+     * Get all users (used by Controller)
      */
     public function getAllCustomers($search = '')
     {
@@ -78,7 +78,7 @@ class Customer extends Model
 
         $sql = "SELECT u.*, cp.phone as profile_phone, cp.city, cp.state 
                 FROM users u
-                LEFT JOIN customer_profiles cp ON u.id = cp.user_id
+                LEFT JOIN users cp ON u.id = cp.user_id
                 WHERE u.role = 'customer'";
 
         $params = [];
@@ -111,7 +111,7 @@ class Customer extends Model
                    (SELECT COUNT(*) FROM customer_favorites cf WHERE cf.customer_id = u.id) as total_favorites,
                    (SELECT COUNT(*) FROM customer_alerts ca WHERE ca.customer_id = u.id AND ca.status = 'active') as active_alerts
             FROM {static::$table} u
-            LEFT JOIN customer_profiles c ON u.id = c.user_id
+            LEFT JOIN users c ON u.id = c.user_id
             LEFT JOIN property_views pv ON u.id = pv.customer_id
             LEFT JOIN properties p ON pv.property_id = p.id
             LEFT JOIN bookings b ON u.id = b.customer_id
@@ -127,7 +127,7 @@ class Customer extends Model
     }
 
     /**
-     * Get customers for admin with filters and pagination
+     * Get users for admin with filters and pagination
      */
     public static function getAdminCustomers($filters)
     {
@@ -159,7 +159,7 @@ class Customer extends Model
 
             $sql = "SELECT u.*, cp.phone as profile_phone, cp.city 
                     FROM users u
-                    LEFT JOIN customer_profiles cp ON u.id = cp.user_id
+                    LEFT JOIN users cp ON u.id = cp.user_id
                     {$where_clause} 
                     {$order_clause} 
                     LIMIT :limit OFFSET :offset";
@@ -173,13 +173,13 @@ class Customer extends Model
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log('Admin customers query error: ' . $e->getMessage());
+            error_log('Admin users query error: ' . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Get total customers count for pagination
+     * Get total users count for pagination
      */
     public static function getAdminTotalCustomers($filters)
     {
@@ -214,7 +214,7 @@ class Customer extends Model
 
             return (int)($result['total'] ?? 0);
         } catch (\Exception $e) {
-            error_log('Admin total customers query error: ' . $e->getMessage());
+            error_log('Admin total users query error: ' . $e->getMessage());
             return 0;
         }
     }
@@ -227,7 +227,7 @@ class Customer extends Model
         $sql = "
             SELECT u.*, c.phone, c.address, c.city, c.state, c.pincode
             FROM {static::$table} u
-            LEFT JOIN customer_profiles c ON u.id = c.user_id
+            LEFT JOIN users c ON u.id = c.user_id
             WHERE u.email = :email AND u.role = 'customer' AND u.status = 'active'
         ";
 
@@ -278,11 +278,11 @@ class Customer extends Model
 
             $customerId = $this->db->lastInsertId();
 
-            // Insert into customer_profiles table
+            // Insert into users table
             $customerNumber = 'CUST' . date('Ymd') . rand(1000, 9999);
 
             $profileSql = "
-                INSERT INTO customer_profiles (
+                INSERT INTO users (
                     user_id, customer_number, phone, address, city, state, pincode, date_of_birth,
                     occupation, marital_status, anniversary_date, referral_source, created_at, updated_at
                 ) VALUES (
@@ -352,7 +352,7 @@ class Customer extends Model
                 $userStmt->execute($userParams);
             }
 
-            // Update customer_profiles table
+            // Update users table
             $profileData = [];
             $profileParams = ['user_id' => $customerId];
 
@@ -378,7 +378,7 @@ class Customer extends Model
 
             if (!empty($profileData)) {
                 $profileSql = "
-                    INSERT INTO customer_profiles (user_id, " . implode(', ', $profileFields) . ", created_at, updated_at)
+                    INSERT INTO users (user_id, " . implode(', ', $profileFields) . ", created_at, updated_at)
                     VALUES (:user_id, " . implode(', ', array_map(function ($field) {
                     return ':' . $field;
                 }, $profileFields)) . ", NOW(), NOW())
@@ -1171,7 +1171,7 @@ class Customer extends Model
     }
 
     /**
-     * Get customers for admin panel
+     * Get users for admin panel
      */
     public function getCustomersForAdmin($filters = [])
     {
@@ -1217,7 +1217,7 @@ class Customer extends Model
                    COUNT(DISTINCT pr.id) as total_reviews,
                    u.created_at as registration_date
             FROM {static::$table} u
-            LEFT JOIN customer_profiles c ON u.id = c.user_id
+            LEFT JOIN users c ON u.id = c.user_id
             LEFT JOIN property_views pv ON u.id = pv.customer_id
             LEFT JOIN customer_favorites cf ON u.id = cf.customer_id
             LEFT JOIN bookings b ON u.id = b.customer_id
@@ -1249,7 +1249,7 @@ class Customer extends Model
             }
 
             // Check if customer is already an associate
-            $existingAssociate = $this->db->prepare("SELECT associate_id FROM associates WHERE user_id = :user_id");
+            $existingAssociate = $this->db->prepare("SELECT associate_id FROM users WHERE user_id = :user_id");
             $existingAssociate->execute(['user_id' => $customerId]);
             if ($existingAssociate->fetch()) {
                 throw new \Exception('Customer is already an associate');
@@ -1273,7 +1273,7 @@ class Customer extends Model
             ];
 
             $sql = "
-                INSERT INTO associates (
+                INSERT INTO users (
                     user_id, sponsor_id, associate_code, level, status, joining_date,
                     kyc_status, bank_details, created_at, updated_at
                 ) VALUES (
@@ -1324,7 +1324,7 @@ class Customer extends Model
         do {
             $code = 'APS' . strtoupper(substr(md5(uniqid()), 0, 8));
 
-            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM associates WHERE associate_code = :code");
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM users WHERE associate_code = :code");
             $stmt->execute(['code' => $code]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
         } while ($result['count'] > 0);
@@ -1394,7 +1394,7 @@ class Customer extends Model
     }
 
     /**
-     * Get customers who are potential associates
+     * Get users who are potential users
      */
     public function getPotentialAssociates($filters = [])
     {
@@ -1439,7 +1439,7 @@ class Customer extends Model
                    COALESCE((SELECT COUNT(*) FROM property_views WHERE customer_id = u.id), 0) as total_views,
                    u.created_at as registration_date
             FROM {static::$table} u
-            LEFT JOIN customer_profiles c ON u.id = c.user_id
+            LEFT JOIN users c ON u.id = c.user_id
             {$whereClause}
             ORDER BY total_spent DESC, total_bookings DESC
             LIMIT {$offset}, {$limit}
@@ -1456,7 +1456,7 @@ class Customer extends Model
     public function sendAssociateInvitation($customerId, $sponsorId, $message = null)
     {
         // Check if customer is already an associate
-        $existingAssociate = $this->db->prepare("SELECT associate_id FROM associates WHERE user_id = :user_id");
+        $existingAssociate = $this->db->prepare("SELECT associate_id FROM users WHERE user_id = :user_id");
         $existingAssociate->execute(['user_id' => $customerId]);
         if ($existingAssociate->fetch()) {
             return [
@@ -1520,7 +1520,7 @@ class Customer extends Model
             SELECT ai.*, u.name as sponsor_name, u.email as sponsor_email,
                    a.associate_code as sponsor_code
             FROM associate_invitations ai
-            JOIN associates a ON ai.sponsor_id = a.associate_id
+            JOIN users a ON ai.sponsor_id = a.associate_id
             JOIN users u ON a.user_id = u.id
             WHERE ai.customer_id = :customer_id AND ai.status = 'pending'
             AND ai.expires_at > NOW()

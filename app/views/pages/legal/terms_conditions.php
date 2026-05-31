@@ -65,7 +65,7 @@ ob_start();
 
                         <section class="mb-5">
                             <h3 class="h4 fw-bold mb-3">6. Agent and Associate Services</h3>
-                            <p>Our network of real estate agents and associates are independent contractors. APS Dream Home acts as a platform connecting users with qualified professionals but is not responsible for the actions or representations of individual agents.</p>
+                            <p>Our network of real estate users and users are independent contractors. APS Dream Home acts as a platform connecting users with qualified professionals but is not responsible for the actions or representations of individual users.</p>
                         </section>
 
                         <section class="mb-5">

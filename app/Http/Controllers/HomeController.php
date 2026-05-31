@@ -186,7 +186,7 @@ class HomeController extends BaseController
     {
         $data = [
             'page_title' => 'Testimonials - APS Dream Home',
-            'page_description' => 'Read what our satisfied customers say about their experience with APS Dream Home.',
+            'page_description' => 'Read what our satisfied users say about their experience with APS Dream Home.',
             'testimonials' => $this->loadTestimonials()
         ];
 

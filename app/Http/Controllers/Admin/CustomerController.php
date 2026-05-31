@@ -26,7 +26,7 @@ class CustomerController extends AdminController
     }
 
     /**
-     * Search customers for Select2
+     * Search users for Select2
      */
     public function search()
     {
@@ -48,7 +48,7 @@ class CustomerController extends AdminController
     }
 
     /**
-     * Display a listing of the customers.
+     * Display a listing of the users.
      */
     public function index()
     {
@@ -97,12 +97,12 @@ class CustomerController extends AdminController
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
-            $customers = $stmt->fetchAll();
+            $users = $stmt->fetchAll();
 
             $data = [
-                'page_title' => 'Customers - APS Dream Home',
-                'active_page' => 'customers',
-                'customers' => $customers,
+                'page_title' => 'users - APS Dream Home',
+                'active_page' => 'users',
+                'users' => $users,
                 'total' => $total,
                 'page' => $page,
                 'per_page' => $perPage,
@@ -113,10 +113,10 @@ class CustomerController extends AdminController
                 ]
             ];
 
-            return $this->render('admin/customers/index', $data);
+            return $this->render('admin/users/index', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Customer Index error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load customers');
+            $this->setFlash('error', 'Failed to load users');
             return $this->redirect('admin/dashboard');
         }
     }
@@ -129,14 +129,14 @@ class CustomerController extends AdminController
         try {
             $data = [
                 'page_title' => 'Create Customer - APS Dream Home',
-                'active_page' => 'customers'
+                'active_page' => 'users'
             ];
 
-            return $this->render('admin/customers/create', $data);
+            return $this->render('admin/users/create', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Customer Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load customer form');
-            return $this->redirect('admin/customers');
+            return $this->redirect('admin/users');
         }
     }
 
@@ -233,7 +233,7 @@ class CustomerController extends AdminController
             $customerId = intval($id);
             if ($customerId <= 0) {
                 $this->setFlash('error', 'Invalid customer ID');
-                return $this->redirect('admin/customers');
+                return $this->redirect('admin/users');
             }
 
             // Get customer details
@@ -250,7 +250,7 @@ class CustomerController extends AdminController
 
             if (!$customer) {
                 $this->setFlash('error', 'Customer not found');
-                return $this->redirect('admin/customers');
+                return $this->redirect('admin/users');
             }
 
             // Get customer bookings
@@ -266,16 +266,16 @@ class CustomerController extends AdminController
 
             $data = [
                 'page_title' => 'Customer Details - APS Dream Home',
-                'active_page' => 'customers',
+                'active_page' => 'users',
                 'customer' => $customer,
                 'bookings' => $bookings
             ];
 
-            return $this->render('admin/customers/show', $data);
+            return $this->render('admin/users/show', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Customer Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load customer details');
-            return $this->redirect('admin/customers');
+            return $this->redirect('admin/users');
         }
     }
 
@@ -288,7 +288,7 @@ class CustomerController extends AdminController
             $customerId = intval($id);
             if ($customerId <= 0) {
                 $this->setFlash('error', 'Invalid customer ID');
-                return $this->redirect('admin/customers');
+                return $this->redirect('admin/users');
             }
 
             // Get customer details
@@ -299,20 +299,20 @@ class CustomerController extends AdminController
 
             if (!$customer) {
                 $this->setFlash('error', 'Customer not found');
-                return $this->redirect('admin/customers');
+                return $this->redirect('admin/users');
             }
 
             $data = [
                 'page_title' => 'Edit Customer - APS Dream Home',
-                'active_page' => 'customers',
+                'active_page' => 'users',
                 'customer' => $customer
             ];
 
-            return $this->render('admin/customers/edit', $data);
+            return $this->render('admin/users/edit', $data);
         } catch (Exception $e) {
             $this->loggingService->error("Customer Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load customer form');
-            return $this->redirect('admin/customers');
+            return $this->redirect('admin/users');
         }
     }
 
@@ -485,7 +485,7 @@ class CustomerController extends AdminController
     }
 
     /**
-     * Search customers helper method
+     * Search users helper method
      */
     private function searchCustomers(string $search, int $limit, int $offset): array
     {
@@ -516,7 +516,7 @@ class CustomerController extends AdminController
                 'total' => (int)$total
             ];
         } catch (Exception $e) {
-            $this->loggingService->error("Search Customers error: " . $e->getMessage());
+            $this->loggingService->error("Search users error: " . $e->getMessage());
             return ['items' => [], 'total' => 0];
         }
     }

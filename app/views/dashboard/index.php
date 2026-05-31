@@ -16,7 +16,7 @@ try {
     $stats['new_leads_today'] = $db->fetch("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()")['c'] ?? 0;
     $stats['total_associates'] = $db->fetch("SELECT COUNT(*) as c FROM users WHERE role IN ('associate','agent')")['c'] ?? 0;
     $stats['revenue_month'] = $db->fetch("SELECT COALESCE(SUM(amount),0) as c FROM payments WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")['c'] ?? 0;
-    $stats['total_employees'] = $db->fetch("SELECT COUNT(*) as c FROM employees")['c'] ?? 0;
+    $stats['total_employees'] = $db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0;
     $stats['pending_bookings'] = $db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
 } catch (\Exception $e) { /* silent */ }
 
@@ -68,7 +68,7 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
         <div class="stat-card">
             <div class="stat-icon info"><i class="fas fa-network-wired"></i></div>
             <div class="stat-content">
-                <div class="stat-label">Associates</div>
+                <div class="stat-label">users</div>
                 <div class="stat-value"><?php echo number_format($stats['total_associates']); ?></div>
             </div>
         </div>
@@ -90,7 +90,7 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
         <div class="stat-card">
             <div class="stat-icon primary"><i class="fas fa-user-tie"></i></div>
             <div class="stat-content">
-                <div class="stat-label">Employees</div>
+                <div class="stat-label">users</div>
                 <div class="stat-value"><?php echo number_format($stats['total_employees']); ?></div>
             </div>
         </div>

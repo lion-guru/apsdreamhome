@@ -32,7 +32,9 @@ class EmployeeController extends BaseController
         }
 
         // Include employee login view
-        require_once __DIR__ . '/../../../views/employees/login.php';
+        $loginView = __DIR__ . '/../../../views/employees/login.php';
+        if (file_exists($loginView)) { require_once $loginView; }
+        else { $this->render('auth/login'); }
     }
 
     /**
@@ -74,13 +76,17 @@ class EmployeeController extends BaseController
      */
     public function dashboard()
     {
-        $this->middleware('employee.auth');
+        if (!isset($_SESSION['employee_id'])) {
+            $this->redirect('/employee/login');
+        }
 
         $employeeId = $_SESSION['employee_id'];
         $dashboardData = $this->getEmployeeDashboardData($employeeId);
 
         // Include dashboard view
-        require_once __DIR__ . '/../../../views/employees/dashboard.php';
+        $dashboardView = __DIR__ . '/../../../views/employees/dashboard.php';
+        if (file_exists($dashboardView)) { require_once $dashboardView; }
+        else { echo "<h2>Employee Dashboard</h2><p>Welcome, employee #$employeeId</p>"; }
     }
 
     /**
@@ -414,7 +420,7 @@ class EmployeeController extends BaseController
     public function tasks()
     {
         $data = ['page_title' => 'My Tasks', 'page_description' => 'View and manage your tasks'];
-        $this->render('employees/tasks', $data);
+        $this->render('users/tasks', $data);
     }
 
     public function activities()
@@ -433,19 +439,19 @@ class EmployeeController extends BaseController
             'page_description' => 'Your recent activities',
             'activities' => $activities
         ];
-        $this->render('employees/activities', $data);
+        $this->render('users/activities', $data);
     }
 
     public function attendance()
     {
         $data = ['page_title' => 'Attendance', 'page_description' => 'Your attendance records'];
-        $this->render('employees/attendance', $data);
+        $this->render('users/attendance', $data);
     }
 
     public function performancePage()
     {
         $data = ['page_title' => 'Performance', 'page_description' => 'Your performance metrics'];
-        $this->render('employees/performance', $data);
+        $this->render('users/performance', $data);
     }
 
     public function salary()
@@ -464,7 +470,7 @@ class EmployeeController extends BaseController
             'page_description' => 'Your salary records',
             'salary_history' => $salary_history
         ];
-        $this->render('employees/salary_history', $data);
+        $this->render('users/salary_history', $data);
     }
 
     public function documents()
@@ -483,19 +489,19 @@ class EmployeeController extends BaseController
             'page_description' => 'Your documents',
             'documents' => $documents
         ];
-        $this->render('employees/documents', $data);
+        $this->render('users/documents', $data);
     }
 
     public function leaves()
     {
         $data = ['page_title' => 'Leaves', 'page_description' => 'Your leave records'];
-        $this->render('employees/leaves', $data);
+        $this->render('users/leaves', $data);
     }
 
     public function reporting()
     {
         $data = ['page_title' => 'Reporting', 'page_description' => 'Your reporting structure'];
-        $this->render('employees/reporting_structure', $data);
+        $this->render('users/reporting_structure', $data);
     }
 
     public function userProperties()
@@ -551,7 +557,7 @@ class EmployeeController extends BaseController
             'totalPages' => $totalPages,
             'total' => $total
         ];
-        $this->render('employees/user_properties', $data);
+        $this->render('users/user_properties', $data);
     }
 
     public function updatePropertyStatus()

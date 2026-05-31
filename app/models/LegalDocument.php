@@ -9,7 +9,7 @@ class LegalDocument extends UnifiedModel
     public static $table = 'legal_documents';
     public static $primaryKey = 'id';
     
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'description',
         'file_path',

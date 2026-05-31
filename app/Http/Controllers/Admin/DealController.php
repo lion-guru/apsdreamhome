@@ -92,11 +92,11 @@ class DealController extends BaseController
     public function create()
     {
         $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
-        $leads = []; $customers = []; $properties = []; $stages = []; $users = [];
+        $leads = []; $users = []; $properties = []; $stages = []; $users = [];
 
         try {
             $leads = $this->db->fetchAll("SELECT id, name, email, phone FROM leads WHERE status = 'open' ORDER BY created_at DESC LIMIT 50") ?: [];
-            $customers = $this->db->fetchAll("SELECT id, name, email, phone FROM customers ORDER BY created_at DESC LIMIT 50") ?: [];
+            $users = $this->db->fetchAll("SELECT id, name, email, phone FROM users ORDER BY created_at DESC LIMIT 50") ?: [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active' ORDER BY name ASC") ?: [];
             $stages = [['id' => 1, 'stage_name' => 'New'], ['id' => 2, 'stage_name' => 'Contacted'], ['id' => 3, 'stage_name' => 'Qualified'], ['id' => 4, 'stage_name' => 'Negotiation'], ['id' => 5, 'stage_name' => 'Closed Won']];
         } catch (\Exception $e) {
@@ -106,7 +106,7 @@ class DealController extends BaseController
         $data = [
             'pageTitle' => 'Create New Deal',
             'leads' => $leads,
-            'customers' => $customers,
+            'users' => $users,
             'properties' => $properties,
             'stages' => $stages,
             'users' => $users,
@@ -203,7 +203,7 @@ class DealController extends BaseController
                     creator.name as created_by_name
              FROM deals d
              LEFT JOIN deal_stages s ON d.deal_stage_id = s.id
-             LEFT JOIN customers c ON d.customer_id = c.id
+             LEFT JOIN users c ON d.customer_id = c.id
              LEFT JOIN leads l ON d.lead_id = l.id
              LEFT JOIN properties p ON d.property_id = p.id
              LEFT JOIN users u ON d.assigned_to = u.id
@@ -232,7 +232,7 @@ class DealController extends BaseController
         $contacts = $this->db->fetchAll(
             "SELECT dc.*, c.name, c.email, c.phone
              FROM deal_contacts dc
-             LEFT JOIN customers c ON dc.contact_id = c.id
+             LEFT JOIN users c ON dc.contact_id = c.id
              WHERE dc.deal_id = ?",
             [$dealId]
         );

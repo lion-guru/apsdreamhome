@@ -80,20 +80,20 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="text-center">
-                                <h4 class="text-primary"><?php echo number_format(floatval($team_stats['admin_users'] ?? 0) ?? 0); ?></h4>
+                                <h4 class="text-primary"><?php echo number_format(floatval($team_stats['users'] ?? 0) ?? 0); ?></h4>
                                 <p class="text-muted small">Admin Users</p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="text-center">
                                 <h4 class="text-info"><?php echo number_format(floatval($team_stats['associate_users'] ?? 0) ?? 0); ?></h4>
-                                <p class="text-muted small">Associates</p>
+                                <p class="text-muted small">users</p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="text-center">
                                 <h4 class="text-success"><?php echo number_format(floatval($team_stats['customer_users'] ?? 0) ?? 0); ?></h4>
-                                <p class="text-muted small">Customers</p>
+                                <p class="text-muted small">users</p>
                             </div>
                         </div>
                     </div>

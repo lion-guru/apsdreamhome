@@ -6,7 +6,7 @@ class ResellPropertyImage extends Model
 {
     public static $table = 'resell_property_images';
 
-    protected array $fillable = [
+    protected $fillable = [
         'property_id',
         'image_path'
     ];

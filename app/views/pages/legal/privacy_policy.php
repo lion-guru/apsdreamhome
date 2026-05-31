@@ -65,7 +65,7 @@ ob_start();
                                 <li><strong>Service Provision:</strong> To provide and maintain our real estate services</li>
                                 <li><strong>Personalization:</strong> To tailor property recommendations and user experience</li>
                                 <li><strong>Communication:</strong> To respond to inquiries and send relevant updates</li>
-                                <li><strong>Matching:</strong> To connect users with suitable properties and agents</li>
+                                <li><strong>Matching:</strong> To connect users with suitable properties and users</li>
                                 <li><strong>Analytics:</strong> To analyze usage patterns and improve our services</li>
                                 <li><strong>Legal Compliance:</strong> To comply with legal obligations and protect our rights</li>
                             </ul>
@@ -76,7 +76,7 @@ ob_start();
                             <p>We may share your information under specific circumstances:</p>
                             <div class="sharing-scenarios mt-3">
                                 <div class="scenario mb-3">
-                                    <h5 class="fw-bold text-success">With Property Agents</h5>
+                                    <h5 class="fw-bold text-success">With Property users</h5>
                                     <p>When you engage with our network of real estate professionals, we share relevant information to facilitate property transactions.</p>
                                 </div>
                                 <div class="scenario mb-3">

@@ -7,7 +7,7 @@ use PDO;
 
 /**
  * PropertySubmissionService
- * Handles property posts from agents and public users with commission split logic.
+ * Handles property posts from users and public users with commission split logic.
  */
 class PropertySubmissionService
 {

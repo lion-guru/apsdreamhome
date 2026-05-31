@@ -54,7 +54,7 @@ class SalesController extends AdminController
                         'status' => $status,
                         'associate_id' => $associateId
                     ],
-                    'associates' => []
+                    'users' => []
                 ];
                 return $this->render('admin/sales/index', $data);
             }
@@ -115,8 +115,8 @@ class SalesController extends AdminController
             $stmt->execute($params);
             $sales = $stmt->fetchAll();
 
-            // Get associates for filter
-            $associates = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
+            // Get users for filter
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
 
             $data = [
                 'page_title' => 'Sales Management - APS Dream Home',
@@ -131,7 +131,7 @@ class SalesController extends AdminController
                     'status' => $status,
                     'associate_id' => $associateId
                 ],
-                'associates' => $associates
+                'users' => $users
             ];
 
             return $this->render('admin/sales/index', $data);
@@ -148,21 +148,21 @@ class SalesController extends AdminController
     public function create()
     {
         try {
-            // Fetch associates with their names from users table
-            $associates = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
+            // Fetch users with their names from users table
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
 
             // Get available properties
             $properties = $this->db->fetchAll("SELECT id, title, price, location FROM properties WHERE status = 'available' ORDER BY title");
 
-            // Get customers
-            $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
+            // Get users
+            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
 
             $data = [
                 'page_title' => 'Create Sale - APS Dream Home',
                 'active_page' => 'sales',
-                'associates' => $associates,
+                'users' => $users,
                 'properties' => $properties,
-                'customers' => $customers
+                'users' => $users
             ];
 
             return $this->render('admin/sales/create', $data);
@@ -354,17 +354,17 @@ class SalesController extends AdminController
             }
 
             // Get dropdown options
-            $associates = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
             $properties = $this->db->fetchAll("SELECT id, title, price FROM properties ORDER BY title");
-            $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
 
             $data = [
                 'page_title' => 'Edit Sale - APS Dream Home',
                 'active_page' => 'sales',
                 'sale' => $sale,
-                'associates' => $associates,
+                'users' => $users,
                 'properties' => $properties,
-                'customers' => $customers
+                'users' => $users
             ];
 
             return $this->render('admin/sales/edit', $data);
@@ -590,7 +590,7 @@ class SalesController extends AdminController
                     ORDER BY date DESC";
             $analytics['trends'] = $this->db->fetchAll($sql) ?: [];
 
-            // Top performing associates
+            // Top performing users
             $sql = "SELECT u.name, u.email, COUNT(s.id) as sale_count, COALESCE(SUM(s.sale_amount), 0) as total_sales
                     FROM sales s
                     JOIN users u ON s.associate_id = u.id

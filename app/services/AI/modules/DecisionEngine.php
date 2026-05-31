@@ -31,10 +31,10 @@ class DecisionEngine {
 
     private function assignTask($input) {
         $taskType = $input['task_type'] ?? '';
-        $agents = $input['available_agents'] ?? [];
+        $users = $input['available_agents'] ?? [];
         
         // Simple logic: find agent with matching capability
-        foreach ($agents as $agent) {
+        foreach ($users as $agent) {
             $capabilities = \is_string($agent['capabilities']) ? \json_decode($agent['capabilities'], true) : $agent['capabilities'];
             if (\in_array($taskType, $capabilities)) {
                 return ['agent_id' => $agent['id'], 'confidence' => 0.9];

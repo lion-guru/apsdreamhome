@@ -131,7 +131,7 @@ class Performance extends Model
     {
         $sql = "SELECT pr.*, e.name as employee_name, e.employee_code, e.designation
                 FROM performance_reviews pr
-                LEFT JOIN employees e ON pr.employee_id = e.id
+                LEFT JOIN users e ON pr.employee_id = e.id
                 WHERE pr.reviewer_id = ? AND pr.status IN ('submitted', 'under_review')
                 ORDER BY pr.created_at ASC
                 LIMIT ? OFFSET ?";

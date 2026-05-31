@@ -14,7 +14,7 @@
                         <div class="mb-2"><label class="form-label">Level</label><input type="number" name="level" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Commission Rate %</label><input type="number" step="0.01" name="commission_rate" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Min Associates</label><input type="number" name="min_associates" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Min users</label><input type="number" name="min_associates" class="form-control" value="0"></div>
                         <div class="mb-2"><label class="form-label">Direct %</label><input type="number" step="0.01" name="direct_percentage" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Min Business (&#8377;)</label><input type="number" step="0.01" name="min_business" class="form-control" value="0"></div>
                         <div class="mb-2"><label class="form-label">Max Business (&#8377;)</label><input type="number" step="0.01" name="max_business" class="form-control"></div>

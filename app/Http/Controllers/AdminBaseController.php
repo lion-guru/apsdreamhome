@@ -268,7 +268,7 @@ class AdminBaseController extends BaseController
                 'permissions' => ['mlm.tree.view', 'commission.view'],
                 'items' => [
                     'network' => ['title' => 'Network Tree', 'url' => '/admin/mlm/tree', 'icon' => 'fas fa-project-diagram'],
-                    'associates' => ['title' => 'Associates', 'url' => '/admin/mlm/associates', 'icon' => 'fas fa-users'],
+                    'users' => ['title' => 'users', 'url' => '/admin/mlm/users', 'icon' => 'fas fa-users'],
                     'ranks' => ['title' => 'Ranks & Tiers', 'url' => '/admin/mlm/ranks', 'icon' => 'fas fa-medal'],
                     'commissions' => ['title' => 'Commissions', 'url' => '/admin/mlm/commissions', 'icon' => 'fas fa-percentage'],
                     'payouts' => ['title' => 'Payouts', 'url' => '/admin/mlm/payouts', 'icon' => 'fas fa-rupee-sign'],
@@ -285,7 +285,7 @@ class AdminBaseController extends BaseController
                     'leads' => ['title' => 'All Leads', 'url' => '/admin/leads', 'icon' => 'fas fa-user-friends'],
                     'pipeline' => ['title' => 'Pipeline', 'url' => '/admin/leads/pipeline', 'icon' => 'fas fa-filter'],
                     'followups' => ['title' => 'Follow-ups', 'url' => '/admin/leads/followups', 'icon' => 'fas fa-phone-alt'],
-                    'customers' => ['title' => 'Customers', 'url' => '/admin/customers', 'icon' => 'fas fa-user-check'],
+                    'users' => ['title' => 'users', 'url' => '/admin/users', 'icon' => 'fas fa-user-check'],
                     'campaigns' => ['title' => 'Campaigns', 'url' => '/admin/campaigns', 'icon' => 'fas fa-bullhorn'],
                 ]
             ],
@@ -326,7 +326,7 @@ class AdminBaseController extends BaseController
                 'icon' => 'fas fa-users-cog',
                 'permissions' => ['employee.view.all', 'employee.view.team'],
                 'items' => [
-                    'staff' => ['title' => 'Staff Members', 'url' => '/admin/employees', 'icon' => 'fas fa-user-friends'],
+                    'staff' => ['title' => 'Staff Members', 'url' => '/admin/users', 'icon' => 'fas fa-user-friends'],
                     'attendance' => ['title' => 'Attendance', 'url' => '/admin/attendance', 'icon' => 'fas fa-clock'],
                     'leaves' => ['title' => 'Leaves', 'url' => '/admin/leaves', 'icon' => 'fas fa-calendar-alt'],
                     'payroll' => ['title' => 'Payroll', 'url' => '/admin/payroll', 'icon' => 'fas fa-money-bill'],
@@ -446,7 +446,7 @@ class AdminBaseController extends BaseController
                 "SELECT COUNT(*) as count FROM leads WHERE DATE(created_at) = CURDATE()"
             )['count'] ?? 0;
             
-            // Total Associates
+            // Total users
             $stats['total_associates'] = $this->db->fetch(
                 "SELECT COUNT(*) as count FROM users WHERE role IN ('associate', 'agent')"
             )['count'] ?? 0;
@@ -461,8 +461,8 @@ class AdminBaseController extends BaseController
                 "SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
             )['total'] ?? 0;
             
-            // Employees
-            $stats['total_employees'] = $this->db->fetch("SELECT COUNT(*) as count FROM employees")['count'] ?? 0;
+            // users
+            $stats['total_employees'] = $this->db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
             
             // Pending Bookings
             $stats['pending_bookings'] = $this->db->fetch(

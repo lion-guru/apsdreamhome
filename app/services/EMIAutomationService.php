@@ -73,7 +73,7 @@ class EMIAutomationService
         $query = "SELECT ei.*, ep.customer_id, u.name as customer_name, u.email as customer_email, p.title as property_title
                   FROM emi_installments ei
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
-                  JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = ep.customer_id)
+                  JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = ep.customer_id)
                   JOIN properties p ON ep.property_id = p.id
                   WHERE ei.payment_status = 'overdue'
                   AND (ei.last_reminder_date IS NULL 
@@ -128,7 +128,7 @@ class EMIAutomationService
                          u.email as customer_email, p.title as property_title
                   FROM emi_installments ei
                   JOIN emi_plans ep ON ei.emi_plan_id = ep.id
-                  JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = ep.customer_id)
+                  JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = ep.customer_id)
                   JOIN properties p ON ep.property_id = p.id
                   WHERE ei.payment_status = 'pending'
                   AND ei.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
@@ -186,7 +186,7 @@ class EMIAutomationService
                          p.title as property_title
                   FROM emi_plans ep
                   JOIN emi_installments ei ON ep.id = ei.emi_plan_id
-                  JOIN users u ON u.id = (SELECT c.user_id FROM customers c WHERE c.id = ep.customer_id)
+                  JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = ep.customer_id)
                   JOIN properties p ON ep.property_id = p.id
                   WHERE ep.status = 'active'
                   AND ei.payment_status = 'overdue'

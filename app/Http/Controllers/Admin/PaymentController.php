@@ -467,7 +467,7 @@ class PaymentController extends AdminController
                     ORDER BY total DESC";
             $analytics['methods'] = $this->db->fetchAll($sql) ?: [];
 
-            // Top paying customers
+            // Top paying users
             $sql = "SELECT c.name, c.email, COUNT(p.id) as payment_count, COALESCE(SUM(p.amount), 0) as total_paid
                     FROM booking_payments p
                     JOIN bookings b ON p.booking_id = b.id

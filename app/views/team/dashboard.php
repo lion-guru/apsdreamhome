@@ -918,7 +918,7 @@
 
 
 
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\employees\dashboard.php
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\users\dashboard.php
 
 function markAttendance() {
     const modal = new bootstrap.Modal(document.getElementById('attendanceModal'));

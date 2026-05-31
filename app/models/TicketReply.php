@@ -10,7 +10,7 @@ class TicketReply extends Model
 {
     protected static $table = 'ticket_replies';
 
-    protected array $fillable = [
+    protected $fillable = [
         'ticket_id',
         'user_id',
         'message',

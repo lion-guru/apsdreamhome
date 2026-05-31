@@ -13,7 +13,7 @@ class Auth extends Model
     protected static $table = 'users';
     protected static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',

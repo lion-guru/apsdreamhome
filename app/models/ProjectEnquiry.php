@@ -6,7 +6,7 @@ class ProjectEnquiry extends Model
 {
     public static $table = 'project_enquiries';
 
-    protected array $fillable = [
+    protected $fillable = [
         'project_code',
         'name',
         'email',

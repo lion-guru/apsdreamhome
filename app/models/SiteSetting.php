@@ -9,7 +9,7 @@ class SiteSetting extends UnifiedModel
     public static $table = 'site_settings';
     public static $primaryKey = 'id';
 
-    protected array $fillable = [
+    protected $fillable = [
         'setting_name',
         'setting_value'
     ];

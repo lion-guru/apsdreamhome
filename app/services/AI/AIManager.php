@@ -11,7 +11,7 @@ use App\Services\AI\Modules\RecommendationEngine;
 use App\Services\AI\Modules\KnowledgeGraph;
 
 /**
- * Core AI Manager for Orchestrating Agents and Workflows
+ * Core AI Manager for Orchestrating users and Workflows
  */
 class AIManager
 {
@@ -52,7 +52,7 @@ class AIManager
 
         // Initialize Ecosystem to ensure tables exist
         $ecosystem = new AIEcosystemManager();
-        // Seed default tools and agents if they don't exist
+        // Seed default tools and users if they don't exist
         $ecosystem->populateOpenSourceTools();
         $ecosystem->seedAgents();
     }
@@ -281,13 +281,13 @@ class AIManager
     public function findBestAgentForTask($taskType)
     {
         $sql = "SELECT id, capabilities, status FROM ai_agents WHERE status IN ('active', 'idle')";
-        $agents = $this->db->fetchAll($sql);
+        $users = $this->db->fetchAll($sql);
 
-        if (empty($agents)) return null;
+        if (empty($users)) return null;
 
         $decision = $this->decide('smart_task_assignment', [
             'task_type' => $taskType,
-            'available_agents' => $agents
+            'available_agents' => $users
         ]);
 
         return $decision['agent_id'];
@@ -513,7 +513,7 @@ class AIManager
             $suggestions[] = [
                 'type' => 'resource_allocation',
                 'title' => 'High Agent Workload',
-                'description' => "{$res['count']} agents are currently busy. Consider scaling resources."
+                'description' => "{$res['count']} users are currently busy. Consider scaling resources."
             ];
         }
 

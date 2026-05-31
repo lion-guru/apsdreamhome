@@ -201,7 +201,7 @@ class EmailService
                         <li>🔍 <strong>Browse Properties:</strong> Explore our extensive collection of residential, commercial, and land properties</li>
                         <li>❤️ <strong>Save Favorites:</strong> Bookmark properties you love and track price changes</li>
                         <li>📧 <strong>Get Alerts:</strong> Receive notifications for new properties matching your preferences</li>
-                        <li>📞 <strong>Contact Agents:</strong> Directly inquire about properties you're interested in</li>
+                        <li>📞 <strong>Contact users:</strong> Directly inquire about properties you're interested in</li>
                         <li>👤 <strong>Manage Profile:</strong> Update your preferences and account information</li>
                     </ul>
 
@@ -371,7 +371,7 @@ class EmailService
                         <li>📈 <strong>Market Insights:</strong> Get valuable information about real estate trends and market analysis</li>
                         <li>💡 <strong>Investment Tips:</strong> Expert advice on property investment opportunities</li>
                         <li>🏆 <strong>Exclusive Offers:</strong> Special deals and discounts for our newsletter subscribers</li>
-                        <li>📊 <strong>Success Stories:</strong> Real stories from our satisfied customers</li>
+                        <li>📊 <strong>Success Stories:</strong> Real stories from our satisfied users</li>
                     </ul>
 
                     <p>We'll only send you valuable content and never spam your inbox. You can unsubscribe at any time.</p>

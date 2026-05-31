@@ -235,7 +235,7 @@ function getUsersData($db)
     $sql = "SELECT u.id as id, u.name as name, u.email as email, u.role as role,
                    COALESCE(a.status, 'active') as status, u.created_at as created_at
             FROM users u
-            LEFT JOIN associates a ON u.id = a.user_id
+            LEFT JOIN users a ON u.id = a.user_id
             $where
             ORDER BY u.created_at DESC
             LIMIT $limit OFFSET $offset";
@@ -369,7 +369,7 @@ function globalSearch($db, $currentRole)
 
     // Search in users - Restricted to superadmin/manager
     if (in_array($currentRole, ['superadmin', 'manager'])) {
-        $rows = $db->fetchAll("SELECT u.id as id, u.name as name, u.email as email, u.role as role, COALESCE(a.status, 'active') as status FROM users u LEFT JOIN associates a ON u.id = a.user_id WHERE u.name LIKE :search OR u.email LIKE :search OR u.role LIKE :search LIMIT 5", ['search' => $searchTerm]);
+        $rows = $db->fetchAll("SELECT u.id as id, u.name as name, u.email as email, u.role as role, COALESCE(a.status, 'active') as status FROM users u LEFT JOIN users a ON u.id = a.user_id WHERE u.name LIKE :search OR u.email LIKE :search OR u.role LIKE :search LIMIT 5", ['search' => $searchTerm]);
 
         foreach ($rows as $row) {
             $results[] = [
@@ -505,7 +505,7 @@ function exportStats($db, $format)
     $stats = [];
 
     // Get all statistics
-    $row = $db->fetch("SELECT COUNT(*) as total FROM user u LEFT JOIN associates a ON u.uid = a.user_id WHERE COALESCE(a.status, 'active') = 'active'");
+    $row = $db->fetch("SELECT COUNT(*) as total FROM user u LEFT JOIN users a ON u.uid = a.user_id WHERE COALESCE(a.status, 'active') = 'active'");
     $stats['users'] = $row['total'] ?? 0;
 
     $row = $db->fetch("SELECT COUNT(*) as total FROM properties WHERE status = 'active'");
@@ -539,7 +539,7 @@ function exportStats($db, $format)
  */
 function exportUsers($db, $format)
 {
-    $users = $db->fetchAll("SELECT u.uid as id, u.uname as name, u.uemail as email, u.job_role as role, COALESCE(a.status, 'active') as status, u.join_date as created_at FROM user u LEFT JOIN associates a ON u.uid = a.user_id ORDER BY u.join_date DESC");
+    $users = $db->fetchAll("SELECT u.uid as id, u.uname as name, u.uemail as email, u.job_role as role, COALESCE(a.status, 'active') as status, u.join_date as created_at FROM user u LEFT JOIN users a ON u.uid = a.user_id ORDER BY u.join_date DESC");
 
     if ($format === 'csv') {
         header('Content-Type: text/csv');
