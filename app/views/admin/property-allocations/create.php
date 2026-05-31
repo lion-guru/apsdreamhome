@@ -11,6 +11,7 @@
     <div class="card">
         <div class="card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/property-allocations/store">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Customer <span class="text-danger">*</span></label>

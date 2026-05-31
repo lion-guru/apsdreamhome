@@ -844,6 +844,8 @@ $router->get('/admin/mlm', 'App\Http\Controllers\Admin\MLMController@index');
 $router->get('/admin/mlm/users', 'App\Http\Controllers\Admin\MLMController@users');
 $router->get('/admin/mlm/users/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
 $router->post('/admin/mlm/users/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
+$router->get('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
+$router->post('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
 $router->get('/admin/mlm/commission', 'App\Http\Controllers\Admin\MLMController@commission');
 $router->get('/admin/mlm/network', 'App\Http\Controllers\Admin\MLMController@network');
 $router->get('/admin/mlm/payouts', 'App\Http\Controllers\Admin\MLMController@payouts');
@@ -1073,6 +1075,7 @@ $router->post('/admin/colonies/{id}/destroy', 'App\\Http\\Controllers\\Admin\\Co
 
 // users Management
 $router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\HRMController@employeeList');
+$router->get('/admin/employees', 'App\\Http\\Controllers\\Admin\\HRMController@employeeList');
 
 // Commissions Management
 $router->get('/admin/commissions', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@commissionsList');

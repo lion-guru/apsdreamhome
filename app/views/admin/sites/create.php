@@ -125,7 +125,7 @@ $active_page = 'sites';
                             <option value="">Select Manager</option>
                             <?php if (isset($managers)): ?>
                                 <?php foreach ($managers as $manager): ?>
-                                    <option value="<?= $manager['id'] ?>"><?= htmlspecialchars(manager['name'] ?? '') ?></option>
+                                    <option value="<?= $manager['id'] ?>"><?= htmlspecialchars($manager['name'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>

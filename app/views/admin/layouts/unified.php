@@ -251,6 +251,9 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
     <!-- Admin JS - FIXED PATH -->
     <script src="/apsdreamhome/assets/admin/js/admin.js"></script>
 
+    <!-- Admin Form Enhancer (SmartFormAutocomplete + validation) -->
+    <script src="<?php echo BASE_URL; ?>/assets/admin/js/admin-form-enhancer.js"></script>
+
     <?php if (!empty($extra_js)): ?>
         <script src="<?php echo $extra_js; ?>"></script>
     <?php endif; ?>

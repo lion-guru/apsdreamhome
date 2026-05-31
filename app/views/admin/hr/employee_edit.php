@@ -13,6 +13,7 @@ $e = $employee ?? [];
             <div class="alert alert-danger">Employee not found</div>
         <?php else: ?>
         <form method="POST" action="<?= BASE_URL ?>/admin/hr/users/update/<?= $e['id'] ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>

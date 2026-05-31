@@ -84,6 +84,7 @@ $page_title = $page_title ?? 'Attendance';
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="<?= BASE_URL ?>/admin/hr/attendance/mark">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-pen me-2"></i>Mark Attendance</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

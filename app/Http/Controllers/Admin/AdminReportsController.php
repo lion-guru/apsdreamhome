@@ -9,9 +9,9 @@ use App\Core\Database\Database;
  * Admin Reports Controller
  * Handles report generation for admin panel
  */
-class AdminReportsController extends BaseController
+class AdminReportsController extends AdminController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

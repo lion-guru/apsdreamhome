@@ -57,6 +57,7 @@ $page_title = $page_title ?? 'Performance Reviews';
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="<?= BASE_URL ?>/admin/hr/performance/store">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Add Performance Review</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -18,7 +18,13 @@ class TelecallingController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->layout = 'layouts/employee';
+        // Use admin layout when accessed via /admin/telecalling/ routes
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+        if (strpos($requestUri, '/admin/telecalling') !== false) {
+            $this->layout = 'layouts/admin';
+        } else {
+            $this->layout = 'layouts/employee';
+        }
         $this->db = Database::getInstance();
         $this->initializeEmployeeSession();
     }
@@ -34,8 +40,18 @@ class TelecallingController extends BaseController
 
         $this->employeeId = $_SESSION['employee_id'] ?? null;
 
-        // Allow both employee AND admin to access telecalling pages
-        $isAdmin = isset($_SESSION['admin_id']) || (isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin','super_admin','manager']));
+        // Detect admin/super-admin/manager session
+        $hasAdminSession = isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']);
+        $hasAdminRole = isset($_SESSION['admin_role']) && in_array($_SESSION['admin_role'], ['admin', 'super_admin', 'manager']);
+        $hasGenericRole = isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'super_admin', 'manager', 'employee', 'telecaller']);
+
+        $isAdmin = $hasAdminSession || $hasAdminRole || $hasGenericRole;
+
+        // If admin is accessing without employee_id, use their admin_id so DB queries still work
+        if (!$this->employeeId && $hasAdminSession) {
+            $this->employeeId = (int)$_SESSION['admin_id'];
+        }
+
         if (!$this->employeeId && !$isAdmin) {
             header('Location: ' . BASE_URL . '/employee/login');
             exit;

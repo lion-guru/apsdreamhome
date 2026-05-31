@@ -9,6 +9,7 @@ $page_title = $page_title ?? 'Add Employee';
 <div class="card border-0 shadow-sm">
     <div class="card-body">
         <form method="POST" action="<?= BASE_URL ?>/admin/hr/users/store">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>

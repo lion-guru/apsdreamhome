@@ -17,6 +17,7 @@
                     <?php endif; ?>
                     
                     <form method="POST" action="<?= BASE_URL ?>admin/plots" id="plotForm">
+                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                         <ul class="nav nav-tabs mb-3" id="plotTabs">
                             <li class="nav-item"><a class="nav-link active" href="#basic" data-bs-toggle="tab">Basic Info</a></li>
                             <li class="nav-item"><a class="nav-link" href="#dims" data-bs-toggle="tab">Dimensions & Area</a></li>
