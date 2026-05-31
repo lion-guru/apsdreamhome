@@ -1847,7 +1847,7 @@ All modified files pass syntax check
 
 ### Remaining Items
 - **Twilio/Vapi Integration** — Voice agent system stubbed, needs real credentials
-- **~220 empty tables** — Mostly logs/audit/event/experimental tables that populate naturally from app use
+- **~170 empty tables** — Mostly logs/audit/event/experimental tables that populate naturally from app use
 - **Email/SMS gateway** — Stubbed in config, needs provider setup
 - **6 experimental controllers** — Blockchain, IoT, Metaverse, Edge Computing, Sustainable Tech, PWA — not routed, DEBUG_MODE-gated
 - **AI routes (description-generator, suggestions)** — Fixed (removed broken auth middleware, fixed `type_name`→`type` column, added try/catch with defaults). Both now return HTTP 200.
@@ -1866,4 +1866,33 @@ All modified files pass syntax check
 
 ### E2E Test Results
 128/129 pass — 1 expected GodMode 403. Zero unexpected failures.
+
+## Session 2026-05-31 (Part 4): Feature Table Seeding — Communication, CRM, Finance, HR & Content
+
+### What Was Done
+1. **Created `scripts/seed_feature_tables_2.php`** — Comprehensive seed script mapping to actual DB schemas (columns verified via SHOW CREATE TABLE to avoid schema drift).
+2. **Seeded 55+ tables** across these domains:
+   - **Companies & Builders**: companies, builders, builder_details, investor_details
+   - **Auth/Social**: social_accounts (3 social login records)
+   - **HR/Payroll**: salaries (4), salary_records (5), salary_tracker (2), team (3), work_schedules (3)
+   - **Telecalling**: calling_scripts (4), telecaller_daily_tasks (3), telecaller_performance (3)
+   - **Communication**: email_queue (3), sms_queue (3), whatsapp_messages (3), whatsapp_campaigns (2), whatsapp_automation_config (1)
+   - **Notifications**: notification_queue (4), notification_feed (6), notification_campaigns (3)
+   - **Sales Pipeline**: pipeline_activities (5), pipeline_filters (3), campaign_members (3)
+   - **Forecasting**: forecast_results (3)
+   - **Content**: legal_pages (2 — privacy & terms; table ENUM restricts to these types)
+   - **Property**: property_feature_map (9)
+   - **Finance**: purchase_invoice_items (5), sales_invoice_items (3), tax_reminders (3), wallet_emi_transfers (2)
+   - **CRM**: customer_behavior_analysis (2), customer_journeys (2), customers_ledger (2), conversation_participants (6)
+   - **Document Mgmt**: file_tags (5), file_uploads (4), file_versions (2), file_shares (2), file_tag_relations (5)
+   - **Loyalty/MLM**: loyalty_transactions (6), points_transactions (4), reward_redemptions (3), associate_achievements (4), network_analytics (3)
+   - **Workflow**: workflow_actions (3), workflow_instances (3), task_dependencies (2), task_queue (4)
+   - **Training**: module_progress (4)
+   - **Performance**: performance_metrics (6), performance_analytics (5), performance_benchmarks (3), daily_metrics_summary (6)
+   - **Admin**: role_change_approvals (2)
+3. **Fixed schema mismatches** in 8 tables — JSON columns needing `UUID()` for UNIQUE keys (`email_queue.queue_id`, `notification_queue.notification_id`, `notification_feed.notification_id`), ENUM constraints (`legal_pages.page_type` only allows `terms`/`privacy`), and CHECK constraints (`customer_behavior_analysis.segmentation` requires valid JSON, not bare string).
+4. **Empty table count**: 220 → ~170 (~55 seeded this session)
+
+### E2E Test Results
+128/129 pass — 1 expected GodMode 403. Zero regressions.
 
