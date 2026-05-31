@@ -13,7 +13,7 @@ class CMDashboardController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        $this->db = App::database();
+        // $this->db is already set by BaseController::__construct()
     }
 
     /**
@@ -21,11 +21,6 @@ class CMDashboardController extends AdminController
      */
     public function index()
     {
-        // Start session if not started
-        if (session_status() === PHP_SESSION_NONE) {
-            @session_start();
-        }
-
         // Check admin authentication
         if (!isset($_SESSION['admin_id'])) {
             header('Location: ' . BASE_URL . '/admin/login');
@@ -41,14 +36,16 @@ class CMDashboardController extends AdminController
         // Get CM specific stats
         $stats = $this->getCMStats();
         $teamPerformance = $this->getTeamPerformance();
-        $recentActivities = $this->getRecentActivities();
+        $recentActivities = $this->getCmRecentActivities();
         $projectsOverview = $this->getProjectsOverview();
 
-        // Set page title
-        $page_title = 'CM Dashboard - APS Dream Home';
-
-        // Include view
-        require_once __DIR__ . '/../../../views/dashboard/cm_dashboard.php';
+        $this->render('dashboard/cm_dashboard', [
+            'page_title' => 'CM Dashboard - APS Dream Home',
+            'stats' => $stats,
+            'team_performance' => $teamPerformance,
+            'recent_activities' => $recentActivities,
+            'projects_overview' => $projectsOverview
+        ]);
     }
 
     /**
@@ -119,7 +116,7 @@ class CMDashboardController extends AdminController
     /**
      * Get recent activities
      */
-    private function getRecentActivities()
+    private function getCmRecentActivities()
     {
         try {
             $stmt = $this->db->prepare("

@@ -2472,3 +2472,57 @@ $router->post('/api/advanced/send-otp', 'App\\Http\\Controllers\\AdvancedFeature
 $router->post('/api/advanced/verify-otp', 'App\\Http\\Controllers\\AdvancedFeaturesController@verifyOTP');
 $router->post('/api/advanced/progressive-register', 'App\\Http\\Controllers\\AdvancedFeaturesController@progressiveRegister');
 $router->post('/api/advanced/webhook/campaign', 'App\\Http\\Controllers\\AdvancedFeaturesController@campaignWebhook');
+
+// ============================================================
+// REPORTS ENGINE (Reports\ReportController)
+// ============================================================
+$router->get('/admin/reports-engine', 'App\\Http\\Controllers\\Reports\\ReportController@dashboard');
+$router->get('/admin/reports-engine/generate', 'App\\Http\\Controllers\\Reports\\ReportController@generate');
+$router->post('/admin/reports-engine/create', 'App\\Http\\Controllers\\Reports\\ReportController@create');
+$router->get('/admin/reports-engine/scheduled', 'App\\Http\\Controllers\\Reports\\ReportController@scheduled');
+$router->get('/admin/reports-engine/schedule', 'App\\Http\\Controllers\\Reports\\ReportController@schedule');
+$router->post('/admin/reports-engine/store-schedule', 'App\\Http\\Controllers\\Reports\\ReportController@storeSchedule');
+$router->get('/admin/reports-engine/sales', 'App\\Http\\Controllers\\Reports\\ReportController@sales');
+$router->get('/admin/reports-engine/property', 'App\\Http\\Controllers\\Reports\\ReportController@property');
+$router->get('/admin/reports-engine/associate', 'App\\Http\\Controllers\\Reports\\ReportController@associate');
+$router->get('/admin/reports-engine/customer', 'App\\Http\\Controllers\\Reports\\ReportController@customer');
+$router->get('/admin/reports-engine/financial', 'App\\Http\\Controllers\\Reports\\ReportController@financial');
+
+// ============================================================
+// CM DASHBOARD (Admin\CMDashboardController)
+// ============================================================
+$router->get('/admin/cm-dashboard', 'Admin\\CMDashboardController@index');
+$router->get('/admin/cm-dashboard/team-analytics', 'Admin\\CMDashboardController@getTeamAnalytics');
+$router->get('/admin/cm-dashboard/performance-metrics', 'Admin\\CMDashboardController@getPerformanceMetrics');
+
+// ============================================================
+// TEAM MANAGEMENT (TeamManagementController)
+// ============================================================
+$router->get('/team', 'App\\Http\\Controllers\\TeamManagementController@index');
+$router->post('/team/add', 'App\\Http\\Controllers\\TeamManagementController@addTeamMember');
+$router->get('/team/member/{id}', 'App\\Http\\Controllers\\TeamManagementController@getTeamMember');
+$router->post('/team/member/{id}', 'App\\Http\\Controllers\\TeamManagementController@updateTeamMember');
+$router->delete('/team/member/{id}', 'App\\Http\\Controllers\\TeamManagementController@deleteTeamMember');
+$router->post('/team/message', 'App\\Http\\Controllers\\TeamManagementController@sendTeamMessage');
+$router->get('/team/messages', 'App\\Http\\Controllers\\TeamManagementController@getTeamMessages');
+
+// ============================================================
+// CRON JOBS (System\CronController)
+// ============================================================
+$router->get('/system/cron/daily', 'App\\Http\\Controllers\\System\\CronController@daily');
+
+// ============================================================
+// LOCALIZATION API (LocalizationController)
+// ============================================================
+$router->get('/api/localization/current', 'App\\Http\\Controllers\\LocalizationController@getCurrentLocale');
+$router->get('/api/localization/supported', 'App\\Http\\Controllers\\LocalizationController@getSupportedLocales');
+$router->get('/api/localization/translations', 'App\\Http\\Controllers\\LocalizationController@getTranslations');
+$router->post('/api/localization/set-locale', 'App\\Http\\Controllers\\LocalizationController@setLocale');
+$router->post('/api/localization/add-translation', 'App\\Http\\Controllers\\LocalizationController@addTranslation');
+$router->post('/api/localization/update-translation', 'App\\Http\\Controllers\\LocalizationController@updateTranslation');
+$router->post('/api/localization/delete-translation', 'App\\Http\\Controllers\\LocalizationController@deleteTranslation');
+$router->get('/api/localization/export', 'App\\Http\\Controllers\\LocalizationController@exportTranslations');
+$router->post('/api/localization/import', 'App\\Http\\Controllers\\LocalizationController@importTranslations');
+$router->post('/api/localization/add-locale', 'App\\Http\\Controllers\\LocalizationController@addLocale');
+$router->get('/admin/localization', 'App\\Http\\Controllers\\LocalizationController@management');
+$router->get('/admin/localization/editor', 'App\\Http\\Controllers\\LocalizationController@editor');
