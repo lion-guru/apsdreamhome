@@ -365,7 +365,7 @@ $router->post('/admin/leads/documents/{id}/delete', 'App\Http\Controllers\Admin\
 // Deal Tracking Routes
 $router->get('/admin/deals', 'App\Http\Controllers\Admin\DealController@index');
 $router->get('/admin/deals/kanban', 'App\Http\Controllers\Admin\DealController@kanban');
-$router->get('/admin/deals/create', 'App\Http\Controllers\Admin\DealController@createFromLead');
+$router->get('/admin/deals/create', 'App\Http\Controllers\Admin\DealController@create');
 $router->post('/admin/deals/store', 'App\Http\Controllers\Admin\DealController@store');
 $router->post('/admin/deals/{id}/stage', 'App\Http\Controllers\Admin\DealController@updateStage');
 
@@ -2742,8 +2742,8 @@ $router->get('/admin/customers', function () {
     $c->index();
 });
 $router->get('/admin/hrm/employees', function () {
-    $c = new App\Http\Controllers\Admin\HRMController();
-    $c->employeeList();
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome') . '/admin/hr/users');
+    exit;
 });
 $router->get('/admin/mlm/associates', function () {
     $c = new App\Http\Controllers\Admin\MLMController();
