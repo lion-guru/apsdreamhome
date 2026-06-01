@@ -1,7 +1,7 @@
 <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1 class="h3 mb-4">Available Plots</h1>
+                <h1 class="h3 mb-4"><?= __('plots_title') ?></h1>
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">

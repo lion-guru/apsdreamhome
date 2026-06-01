@@ -1022,4 +1022,354 @@ class PlotManagementController extends AdminController
         echo json_encode(['success' => true, 'data' => $history]);
         exit;
     }
+
+    /**
+     * Show plot booking form (GET) or process booking (POST)
+     */
+    public function book($id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            return $this->storeBooking($id);
+        }
+        try {
+            $plot = $this->db->fetchRow("SELECT p.*, c.name as colony_name, d.name as district_name, s.name as state_name,
+                u.name as current_owner_name, u.email as current_owner_email, u.phone as current_owner_phone
+                FROM plots p
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN states s ON d.state_id = s.id
+                LEFT JOIN users u ON p.customer_id = u.id
+                WHERE p.id = ?", [$id]);
+            if (!$plot) {
+                $this->setFlash('error', 'Plot not found');
+                return $this->redirect('/admin/plots');
+            }
+            $customers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent','associate') ORDER BY name");
+            $this->render('admin/plots/book', [
+                'page_title' => 'Book Plot',
+                'plot' => $plot,
+                'customers' => $customers ?: [],
+            ]);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Book plot view error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load booking page');
+            $this->redirect('/admin/plots');
+        }
+    }
+
+    /**
+     * Store a new booking from admin
+     */
+    public function storeBooking($id)
+    {
+        $this->requireAdmin();
+        try {
+            $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ?", [$id]);
+            if (!$plot) {
+                return $this->jsonError('Plot not found', 404);
+            }
+            if (!in_array($plot['status'], ['available', 'hold'])) {
+                return $this->jsonError('Plot is not available for booking (status: ' . $plot['status'] . ')', 400);
+            }
+
+            $customerId = intval($_POST['customer_id'] ?? 0);
+            $tokenAmount = floatval($_POST['token_amount'] ?? 0);
+            $bookingDate = $_POST['booking_date'] ?? date('Y-m-d');
+            $possessionDate = $_POST['possession_date'] ?? null;
+            $negotiatedPrice = floatval($_POST['negotiated_price'] ?? $plot['total_price']);
+            $paymentPlan = $_POST['payment_plan'] ?? 'Full Payment';
+            $notes = $_POST['notes'] ?? '';
+
+            if (!$customerId) {
+                return $this->jsonError('Customer is required', 400);
+            }
+
+            $this->db->beginTransaction();
+
+            try {
+                // Create booking in bookings table
+                $bookingId = $this->db->insert('bookings', [
+                    'plot_id' => $id,
+                    'colony_id' => $plot['colony_id'],
+                    'customer_id' => $customerId,
+                    'booking_date' => $bookingDate,
+                    'status' => 'pending',
+                    'payment_status' => 'pending',
+                    'total_amount' => $negotiatedPrice,
+                    'amount' => $tokenAmount,
+                    'negotiated_price' => $negotiatedPrice,
+                    'notes' => $notes . "\nPayment Plan: " . $paymentPlan,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+
+                // Also create in plot_allocations
+                try {
+                    $this->db->insert('plot_allocations', [
+                        'plot_id' => $id,
+                        'customer_id' => $customerId,
+                        'allocation_date' => $bookingDate,
+                        'total_plot_value' => $negotiatedPrice,
+                        'amount_paid' => $tokenAmount,
+                        'amount_pending' => $negotiatedPrice - $tokenAmount,
+                        'status' => 'booked',
+                        'notes' => $notes,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]);
+                } catch (\Exception $e) {
+                    $this->loggingService->error("plot_allocations insert skipped: " . $e->getMessage());
+                }
+
+                // Update plot status to booked
+                $this->db->execute("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ?, negotiated_price = ?, total_paid = ?, updated_at = NOW() WHERE id = ?",
+                    [$customerId, $bookingDate, $negotiatedPrice, $tokenAmount, $id]);
+
+                // Log status change
+                try {
+                    $this->db->insert('plot_status_log', [
+                        'plot_id' => $id, 'old_status' => $plot['status'], 'new_status' => 'booked',
+                        'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
+                    ]);
+                } catch (\Exception $e) {}
+
+                $this->db->commit();
+
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_booked', [
+                    'plot_id' => $id, 'customer_id' => $customerId, 'booking_id' => $bookingId
+                ]);
+
+                $this->setFlash('success', 'Plot booked successfully. Booking #' . $bookingId);
+                return $this->redirect('/admin/plots/' . $id);
+            } catch (\Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            $this->loggingService->error("Store Booking error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to create booking: ' . $e->getMessage());
+            return $this->redirect('/admin/plots/' . $id . '/book');
+        }
+    }
+
+    /**
+     * Show plot transfer form (GET) or process transfer (POST)
+     */
+    public function transfer($id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            return $this->transferPlot($id);
+        }
+        try {
+            $plot = $this->db->fetchRow("SELECT p.*, c.name as colony_name, d.name as district_name, s.name as state_name,
+                u.name as current_owner_name, u.email as current_owner_email, u.phone as current_owner_phone
+                FROM plots p
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN states s ON d.state_id = s.id
+                LEFT JOIN users u ON p.customer_id = u.id
+                WHERE p.id = ?", [$id]);
+            if (!$plot) {
+                $this->setFlash('error', 'Plot not found');
+                return $this->redirect('/admin/plots');
+            }
+            $customers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent','associate') ORDER BY name");
+            $this->render('admin/plots/transfer', [
+                'page_title' => 'Plot Transfer',
+                'plot' => $plot,
+                'customers' => $customers ?: [],
+            ]);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Transfer plot view error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load transfer page');
+            $this->redirect('/admin/plots');
+        }
+    }
+
+    /**
+     * Process plot ownership transfer
+     */
+    public function transferPlot($id)
+    {
+        $this->requireAdmin();
+        try {
+            $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ?", [$id]);
+            if (!$plot) {
+                return $this->jsonError('Plot not found', 404);
+            }
+
+            $newOwnerId = intval($_POST['new_owner_id'] ?? 0);
+            $transferReason = $_POST['transfer_reason'] ?? '';
+            $transferDate = $_POST['transfer_date'] ?? date('Y-m-d');
+            $transferAmount = floatval($_POST['transfer_amount'] ?? $plot['total_price']);
+            $transferFee = floatval($_POST['transfer_fee'] ?? 0);
+            $newStatus = $_POST['new_status'] ?? 'sold';
+            $documentRef = $_POST['document_ref'] ?? '';
+            $remarks = $_POST['remarks'] ?? '';
+
+            if (!$newOwnerId) {
+                return $this->jsonError('New owner is required', 400);
+            }
+            if (!$transferReason) {
+                return $this->jsonError('Transfer reason is required', 400);
+            }
+
+            $this->db->beginTransaction();
+
+            try {
+                // Ensure plot_transfers table exists
+                try {
+                    $this->db->execute("CREATE TABLE IF NOT EXISTS plot_transfers (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        plot_id INT NOT NULL,
+                        from_customer_id BIGINT NULL,
+                        to_customer_id BIGINT NOT NULL,
+                        transfer_date DATE NOT NULL,
+                        transfer_reason VARCHAR(255) NOT NULL,
+                        transfer_amount DECIMAL(15,2) DEFAULT 0,
+                        transfer_fee DECIMAL(15,2) DEFAULT 0,
+                        old_status VARCHAR(50) DEFAULT '',
+                        new_status VARCHAR(50) DEFAULT 'sold',
+                        document_ref VARCHAR(255) DEFAULT '',
+                        remarks TEXT,
+                        processed_by INT DEFAULT 0,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+                } catch (\Exception $e) {}
+
+                // Insert transfer record
+                $this->db->insert('plot_transfers', [
+                    'plot_id' => $id,
+                    'from_customer_id' => $plot['customer_id'],
+                    'to_customer_id' => $newOwnerId,
+                    'transfer_date' => $transferDate,
+                    'transfer_reason' => $transferReason,
+                    'transfer_amount' => $transferAmount,
+                    'transfer_fee' => $transferFee,
+                    'old_status' => $plot['status'],
+                    'new_status' => $newStatus,
+                    'document_ref' => $documentRef,
+                    'remarks' => $remarks,
+                    'processed_by' => $_SESSION['user_id'] ?? 1,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+
+                // Update plot ownership
+                $this->db->execute("UPDATE plots SET customer_id = ?, status = ?, sale_date = ?, updated_at = NOW() WHERE id = ?",
+                    [$newOwnerId, $newStatus, $transferDate, $id]);
+
+                // Log status change
+                try {
+                    $this->db->insert('plot_status_log', [
+                        'plot_id' => $id, 'old_status' => $plot['status'], 'new_status' => $newStatus,
+                        'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
+                    ]);
+                } catch (\Exception $e) {}
+
+                $this->db->commit();
+
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_transferred', [
+                    'plot_id' => $id, 'from' => $plot['customer_id'], 'to' => $newOwnerId
+                ]);
+
+                $this->setFlash('success', 'Plot transferred successfully');
+                return $this->redirect('/admin/plots/' . $id);
+            } catch (\Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            $this->loggingService->error("Transfer Plot error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to transfer plot: ' . $e->getMessage());
+            return $this->redirect('/admin/plots/' . $id . '/transfer');
+        }
+    }
+
+    /**
+     * Show plot availability dashboard
+     */
+    public function availability()
+    {
+        $this->requireAdmin();
+        try {
+            $colonyFilter = intval($_GET['colony_id'] ?? 0);
+            $statusFilter = $_GET['status'] ?? '';
+
+            $where = "WHERE p.is_active = 1 OR p.is_active IS NULL";
+            $params = [];
+            if ($colonyFilter > 0) {
+                $where .= " AND p.colony_id = ?";
+                $params[] = $colonyFilter;
+            }
+            if (!empty($statusFilter)) {
+                $where .= " AND p.status = ?";
+                $params[] = $statusFilter;
+            }
+
+            $plots = $this->db->fetchAll("SELECT p.*, c.name as colony_name
+                FROM plots p
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                $where
+                ORDER BY c.name, p.block, p.plot_number", $params) ?: [];
+
+            // Stats
+            $allPlots = $this->db->fetchAll("SELECT status FROM plots WHERE is_active = 1 OR is_active IS NULL") ?: [];
+            $stats = ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, 'reserved' => 0, 'total' => count($allPlots)];
+            foreach ($allPlots as $p) {
+                $s = $p['status'] ?? 'available';
+                if (isset($stats[$s])) $stats[$s]++;
+            }
+
+            $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name") ?: [];
+
+            $this->render('admin/plots/availability', [
+                'page_title' => 'Plot Availability',
+                'plots' => $plots,
+                'stats' => $stats,
+                'colonies' => $colonies,
+            ]);
+        } catch (\Exception $e) {
+            $this->loggingService->error("Availability view error: " . $e->getMessage());
+            $this->render('admin/plots/availability', [
+                'page_title' => 'Plot Availability',
+                'plots' => [],
+                'stats' => ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, 'total' => 0],
+                'colonies' => [],
+                'error' => 'Failed to load availability data',
+            ]);
+        }
+    }
+
+    /**
+     * JSON endpoint returning plot availability data for AJAX
+     */
+    public function availabilityData()
+    {
+        header('Content-Type: application/json');
+        try {
+            $colonyId = intval($_GET['colony_id'] ?? 0);
+
+            $where = "WHERE (p.is_active = 1 OR p.is_active IS NULL)";
+            $params = [];
+            if ($colonyId > 0) {
+                $where .= " AND p.colony_id = ?";
+                $params[] = $colonyId;
+            }
+
+            $plots = $this->db->fetchAll("SELECT p.id, p.plot_number, p.block, p.dimension_label, p.width_ft, p.length_ft,
+                p.area_sqft, p.price_per_sqft, p.total_price, p.status, p.facing, p.corner_plot, p.colony_id,
+                c.name as colony_name
+                FROM plots p
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                $where
+                ORDER BY c.name, p.block, p.plot_number", $params) ?: [];
+
+            echo json_encode(['success' => true, 'data' => $plots]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
 }

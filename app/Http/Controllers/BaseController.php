@@ -131,6 +131,11 @@ class BaseController
      */
     protected function render($view, $data = [])
     {
+        // Ensure translation helper is loaded before any view content
+        if (!function_exists('__')) {
+            require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
+        }
+
         // Start output buffering to prevent header issues
         ob_start();
 

@@ -1,0 +1,172 @@
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="<?= BASE_URL ?>/admin/vendors" class="text-decoration-none text-muted">
+                <i class="fas fa-arrow-left me-2"></i>Back to Vendors
+            </a>
+            <h1 class="h3 mt-2 mb-1">Edit Vendor</h1>
+            <p class="text-muted mb-0">Update vendor information</p>
+        </div>
+    </div>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show">
+            <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/vendors/update/<?= $vendor['id'] ?>">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+
+                        <h5 class="mb-3">Basic Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="vendor_name" class="form-label fw-semibold">Vendor Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vendor_name" name="vendor_name" value="<?= htmlspecialchars($vendor['vendor_name'] ?? '') ?>" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="vendor_type" class="form-label fw-semibold">Vendor Type</label>
+                                <select class="form-select" id="vendor_type" name="vendor_type">
+                                    <option value="contractor" <?= ($vendor['vendor_type'] ?? '') === 'contractor' ? 'selected' : '' ?>>Contractor</option>
+                                    <option value="supplier" <?= ($vendor['vendor_type'] ?? '') === 'supplier' ? 'selected' : '' ?>>Supplier</option>
+                                    <option value="service_provider" <?= ($vendor['vendor_type'] ?? '') === 'service_provider' ? 'selected' : '' ?>>Service Provider</option>
+                                    <option value="consultant" <?= ($vendor['vendor_type'] ?? '') === 'consultant' ? 'selected' : '' ?>>Consultant</option>
+                                    <option value="transport" <?= ($vendor['vendor_type'] ?? '') === 'transport' ? 'selected' : '' ?>>Transport</option>
+                                    <option value="other" <?= ($vendor['vendor_type'] ?? '') === 'other' ? 'selected' : '' ?>>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="contact_person" class="form-label fw-semibold">Contact Person</label>
+                                <input type="text" class="form-control" id="contact_person" name="contact_person" value="<?= htmlspecialchars($vendor['contact_person'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label fw-semibold">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone" value="<?= htmlspecialchars($vendor['phone'] ?? '') ?>">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="email" class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($vendor['email'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="status" class="form-label fw-semibold">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="active" <?= ($vendor['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
+                                    <option value="inactive" <?= ($vendor['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+                                    <option value="blacklisted" <?= ($vendor['status'] ?? '') === 'blacklisted' ? 'selected' : '' ?>>Blacklisted</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="rating" class="form-label fw-semibold">Rating (1-5)</label>
+                                <select class="form-select" id="rating" name="rating">
+                                    <?php $curRating = floatval($vendor['rating'] ?? 0); ?>
+                                    <?php for ($r = 0; $r <= 5; $r++): ?>
+                                        <option value="<?= $r ?>" <?= $curRating == $r ? 'selected' : '' ?>><?= $r ?> <?= $r === 1 ? 'Star' : ($r > 1 ? 'Stars' : '') ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label fw-semibold">Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="2"><?= htmlspecialchars($vendor['address'] ?? '') ?></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label fw-semibold">City</label>
+                                <input type="text" class="form-control" id="city" name="city" value="<?= htmlspecialchars($vendor['city'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="state" class="form-label fw-semibold">State</label>
+                                <input type="text" class="form-control" id="state" name="state" value="<?= htmlspecialchars($vendor['state'] ?? '') ?>">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h5 class="mb-3">Tax & Compliance</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="gst_number" class="form-label fw-semibold">GST Number</label>
+                                <input type="text" class="form-control" id="gst_number" name="gst_number" value="<?= htmlspecialchars($vendor['gst_number'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="pan_number" class="form-label fw-semibold">PAN Number</label>
+                                <input type="text" class="form-control" id="pan_number" name="pan_number" value="<?= htmlspecialchars($vendor['pan_number'] ?? '') ?>">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h5 class="mb-3">Bank Details</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="bank_name" class="form-label fw-semibold">Bank Name</label>
+                                <input type="text" class="form-control" id="bank_name" name="bank_name" value="<?= htmlspecialchars($vendor['bank_name'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="bank_account" class="form-label fw-semibold">Account Number</label>
+                                <input type="text" class="form-control" id="bank_account" name="bank_account" value="<?= htmlspecialchars($vendor['bank_account'] ?? '') ?>">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="ifsc_code" class="form-label fw-semibold">IFSC Code</label>
+                                <input type="text" class="form-control" id="ifsc_code" name="ifsc_code" value="<?= htmlspecialchars($vendor['ifsc_code'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="payment_terms" class="form-label fw-semibold">Payment Terms</label>
+                                <select class="form-select" id="payment_terms" name="payment_terms">
+                                    <option value="immediate" <?= ($vendor['payment_terms'] ?? '') === 'immediate' ? 'selected' : '' ?>>Immediate</option>
+                                    <option value="7_days" <?= ($vendor['payment_terms'] ?? '') === '7_days' ? 'selected' : '' ?>>7 Days</option>
+                                    <option value="15_days" <?= ($vendor['payment_terms'] ?? '') === '15_days' ? 'selected' : '' ?>>15 Days</option>
+                                    <option value="30_days" <?= ($vendor['payment_terms'] ?? '') === '30_days' ? 'selected' : '' ?>>30 Days</option>
+                                    <option value="45_days" <?= ($vendor['payment_terms'] ?? '') === '45_days' ? 'selected' : '' ?>>45 Days</option>
+                                    <option value="60_days" <?= ($vendor['payment_terms'] ?? '') === '60_days' ? 'selected' : '' ?>>60 Days</option>
+                                    <option value="90_days" <?= ($vendor['payment_terms'] ?? '') === '90_days' ? 'selected' : '' ?>>90 Days</option>
+                                    <option value="milestone" <?= ($vendor['payment_terms'] ?? '') === 'milestone' ? 'selected' : '' ?>>Milestone Based</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h5 class="mb-3">Contract Period</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="contract_start" class="form-label fw-semibold">Contract Start</label>
+                                <input type="date" class="form-control" id="contract_start" name="contract_start" value="<?= htmlspecialchars($vendor['contract_start'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="contract_end" class="form-label fw-semibold">Contract End</label>
+                                <input type="date" class="form-control" id="contract_end" name="contract_end" value="<?= htmlspecialchars($vendor['contract_end'] ?? '') ?>">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="notes" class="form-label fw-semibold">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"><?= htmlspecialchars($vendor['notes'] ?? '') ?></textarea>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Update Vendor</button>
+                            <a href="<?= BASE_URL ?>/admin/vendors" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

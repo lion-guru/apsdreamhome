@@ -3,6 +3,7 @@
 namespace App\Services\AI\VoiceAgents;
 
 use App\Services\AI\users\BaseAgent;
+use App\Services\Voice\VoiceCallService;
 use Exception;
 
 class PropertyInquiryAgent extends BaseAgent
@@ -46,6 +47,9 @@ class PropertyInquiryAgent extends BaseAgent
                     $input['budget'] ?? 0,
                     $input['timeline'] ?? ''
                 );
+                if ($result['qualified'] && $lead_id) {
+                    $this->scheduleFollowUpCall($lead_id, $input['phone'] ?? '');
+                }
                 break;
             case 'schedule_viewing':
                 $result = $this->scheduleViewing(
@@ -54,9 +58,15 @@ class PropertyInquiryAgent extends BaseAgent
                     $input['preferred_date'] ?? null,
                     $input['preferred_time'] ?? null
                 );
+                if ($result['success'] && $lead_id) {
+                    $this->scheduleConfirmationCall($lead_id, $input['phone'] ?? '', $result['visit_date'] ?? null);
+                }
                 break;
             case 'send_info':
                 $result = $this->sendPropertyInfo($lead_id, $property_id);
+                if ($lead_id) {
+                    $this->scheduleFollowUpCall($lead_id, $input['phone'] ?? '');
+                }
                 break;
             default:
                 $result = $this->handleError("Unknown action: $action");
@@ -64,6 +74,33 @@ class PropertyInquiryAgent extends BaseAgent
 
         $this->status = 'ready';
         return $result;
+    }
+
+    protected function scheduleFollowUpCall($leadId, $phone = '')
+    {
+        if (!$leadId) return;
+        try {
+            $followUpDate = date('Y-m-d', strtotime('+2 days'));
+            $agent = $this->db->fetch("SELECT agent_id FROM ai_calling_agents WHERE agent_type LIKE '%inquiry%' OR agent_id = 'agent_11' AND status = 'active' LIMIT 1");
+            $agentId = $agent['agent_id'] ?? 'agent_11';
+            $svc = new VoiceCallService();
+            $svc->scheduleCall($leadId, $phone, $agentId, $followUpDate, '11:00:00', 'property_inquiry_followup', 'medium');
+        } catch (\Exception $e) {
+        }
+    }
+
+    protected function scheduleConfirmationCall($leadId, $phone = '', $visitDate = null)
+    {
+        if (!$leadId || !$visitDate) return;
+        try {
+            $reminderDate = date('Y-m-d', strtotime($visitDate . ' -1 day'));
+            if ($reminderDate < date('Y-m-d')) return;
+            $agent = $this->db->fetch("SELECT agent_id FROM ai_calling_agents WHERE agent_type LIKE '%visit%' OR agent_id = 'agent_10' AND status = 'active' LIMIT 1");
+            $agentId = $agent['agent_id'] ?? 'agent_10';
+            $svc = new VoiceCallService();
+            $svc->scheduleCall($leadId, $phone, $agentId, $reminderDate, '10:00:00', 'site_visit_booking', 'high');
+        } catch (\Exception $e) {
+        }
     }
 
     public function getPropertyDetails($propertyId)

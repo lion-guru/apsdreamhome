@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 // Ensure proper HTML document structure (gated to prevent double output)
 if (!isset($GLOBALS['_html_doc_started'])) {
     $GLOBALS['_html_doc_started'] = true;
@@ -78,11 +79,11 @@ if (empty($allProjects)) {
 }
 
 $projectsSubmenu = [
-    ['label' => 'All Projects', 'url' => '/projects', 'icon' => 'fas fa-th-large']
+    ['label' => __('nav_all_projects'), 'url' => '/projects', 'icon' => 'fas fa-th-large']
 ];
 
 if (!empty($projectLocations)) {
-    $projectsSubmenu[] = ['label' => '── By Location ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true];
+    $projectsSubmenu[] = ['label' => __('nav_by_location'), 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true];
     foreach ($projectLocations as $loc) {
         $projectsSubmenu[] = [
             'label' => $loc['name'],
@@ -94,7 +95,7 @@ if (!empty($projectLocations)) {
 }
 
 if (!empty($allProjects)) {
-    $projectsSubmenu[] = ['label' => '── Colonies ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true];
+    $projectsSubmenu[] = ['label' => __('nav_colonies'), 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true];
     foreach (array_slice($allProjects, 0, 10) as $proj) {
         $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
         $projectsSubmenu[] = [
@@ -107,11 +108,11 @@ if (!empty($allProjects)) {
 
 // Build Plots submenu dynamically from colonies
 $plotsSubmenu = [
-    ['label' => 'All Plots', 'url' => '/plots', 'icon' => 'fas fa-th-large']
+    ['label' => __('nav_all_plots'), 'url' => '/plots', 'icon' => 'fas fa-th-large']
 ];
 
 if (!empty($allProjects)) {
-    $plotsSubmenu[] = ['label' => '── Browse by Colony ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true];
+    $plotsSubmenu[] = ['label' => __('nav_browse_colony'), 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true];
     foreach (array_slice($allProjects, 0, 10) as $proj) {
         $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
         $plotsSubmenu[] = [
@@ -124,13 +125,13 @@ if (!empty($allProjects)) {
 
 if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     $projectsSubmenu = [
-        ['label' => 'All Projects', 'url' => '/projects', 'icon' => 'fas fa-th-large'],
-        ['label' => '── By Location ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
+        ['label' => __('nav_all_projects'), 'url' => '/projects', 'icon' => 'fas fa-th-large'],
+        ['label' => __('nav_by_location'), 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
         ['label' => 'Gorakhpur', 'url' => '/projects?location=gorakhpur', 'icon' => 'fas fa-map-pin', 'badge' => '3'],
         ['label' => 'Lucknow', 'url' => '/projects?location=lucknow', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
         ['label' => 'Kushinagar', 'url' => '/projects?location=kushinagar', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
         ['label' => 'Varanasi', 'url' => '/projects?location=varanasi', 'icon' => 'fas fa-map-pin', 'badge' => '1'],
-        ['label' => '── Colonies ──', 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true],
+        ['label' => __('nav_colonies'), 'url' => '#', 'icon' => 'fas fa-building', 'disabled' => true],
         ['label' => 'Suryoday Colony', 'url' => '/colony/suryoday-colony', 'icon' => 'fas fa-home'],
         ['label' => 'Raghunath Nagri', 'url' => '/colony/raghunath-nagri', 'icon' => 'fas fa-building'],
         ['label' => 'Braj Radha Nagri', 'url' => '/colony/braj-radha-nagri', 'icon' => 'fas fa-city'],
@@ -157,25 +158,25 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                     $current_path = $current_path ?: '/';
 
                     $nav_items = [
-                        ['label' => 'Home', 'url' => '/', 'icon' => 'fas fa-home'],
+                        ['label' => __('home'), 'url' => '/', 'icon' => 'fas fa-home'],
                         [
-                            'label' => 'Properties',
+                            'label' => __('properties'),
                             'icon' => 'fas fa-building',
                             'submenu' => [
-                                ['label' => 'All Properties', 'url' => '/properties', 'icon' => 'fas fa-th-large'],
-                                ['label' => 'Buy Properties', 'url' => '/properties?listing=sale', 'icon' => 'fas fa-shopping-cart'],
-                                ['label' => 'Rent Properties', 'url' => '/properties?listing=rent', 'icon' => 'fas fa-key'],
-                                ['label' => 'Residential', 'url' => '/properties?type=residential', 'icon' => 'fas fa-home'],
-                                ['label' => 'Commercial', 'url' => '/properties?type=commercial', 'icon' => 'fas fa-building'],
-                                ['label' => 'Plot/Land', 'url' => '/properties?type=plot', 'icon' => 'fas fa-vector-square'],
+                                ['label' => __('nav_all_properties'), 'url' => '/properties', 'icon' => 'fas fa-th-large'],
+                                ['label' => __('nav_buy_properties'), 'url' => '/properties?listing=sale', 'icon' => 'fas fa-shopping-cart'],
+                                ['label' => __('nav_rent_properties'), 'url' => '/properties?listing=rent', 'icon' => 'fas fa-key'],
+                                ['label' => __('nav_residential'), 'url' => '/properties?type=residential', 'icon' => 'fas fa-home'],
+                                ['label' => __('nav_commercial'), 'url' => '/properties?type=commercial', 'icon' => 'fas fa-building'],
+                                ['label' => __('nav_plot_land'), 'url' => '/properties?type=plot', 'icon' => 'fas fa-vector-square'],
                             ]
                         ],
                         [
-                            'label' => 'Plots',
+                            'label' => __('nav_plots'),
                             'icon' => 'fas fa-vector-square',
                             'submenu' => $plotsSubmenu ?? [
-                                ['label' => 'All Plots', 'url' => '/plots', 'icon' => 'fas fa-th-large'],
-                                ['label' => '── By Colony ──', 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
+                                ['label' => __('nav_all_plots'), 'url' => '/plots', 'icon' => 'fas fa-th-large'],
+                                ['label' => __('nav_by_colony'), 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
                                 ['label' => 'Suryoday Colony', 'url' => '/colony/suryoday-colony/plots', 'icon' => 'fas fa-home', 'badge' => '287'],
                                 ['label' => 'Raghunath Nagri', 'url' => '/colony/raghunath-nagri/plots', 'icon' => 'fas fa-home', 'badge' => '130'],
                                 ['label' => 'Braj Radha Nagri', 'url' => '/colony/braj-radha-nagri/plots', 'icon' => 'fas fa-city'],
@@ -184,36 +185,36 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             ]
                         ],
                         [
-                            'label' => 'Projects',
+                            'label' => __('projects'),
                             'icon' => 'fas fa-project-diagram',
                             'submenu' => $projectsSubmenu
                         ],
                         [
-                            'label' => 'Services',
+                            'label' => __('services'),
                             'icon' => 'fas fa-concierge-bell',
                             'submenu' => [
-                                ['label' => 'All Services', 'url' => '/services', 'icon' => 'fas fa-concierge-bell'],
-                                ['label' => 'Home Loan', 'url' => '/financial-services', 'icon' => 'fas fa-hand-holding-usd'],
-                                ['label' => 'Legal Services', 'url' => '/legal/services', 'icon' => 'fas fa-gavel'],
-                                ['label' => 'Interior Design', 'url' => '/interior-design', 'icon' => 'fas fa-couch'],
-                                ['label' => 'Resell Property', 'url' => '/resell', 'icon' => 'fas fa-handshake'],
-                                ['label' => 'Documents', 'url' => '/documents', 'icon' => 'fas fa-folder-open'],
+                                ['label' => __('nav_all_services'), 'url' => '/services', 'icon' => 'fas fa-concierge-bell'],
+                                ['label' => __('nav_home_loan'), 'url' => '/financial-services', 'icon' => 'fas fa-hand-holding-usd'],
+                                ['label' => __('nav_legal_services'), 'url' => '/legal/services', 'icon' => 'fas fa-gavel'],
+                                ['label' => __('interior_design'), 'url' => '/interior-design', 'icon' => 'fas fa-couch'],
+                                ['label' => __('nav_resell_property'), 'url' => '/resell', 'icon' => 'fas fa-handshake'],
+                                ['label' => __('nav_documents'), 'url' => '/documents', 'icon' => 'fas fa-folder-open'],
                             ]
                         ],
                         [
-                            'label' => 'About',
+                            'label' => __('about_us'),
                             'icon' => 'fas fa-info-circle',
                             'submenu' => [
-                                ['label' => 'About Us', 'url' => '/about', 'icon' => 'fas fa-info-circle'],
-                                ['label' => 'Our Team', 'url' => '/team', 'icon' => 'fas fa-users'],
-                                ['label' => 'Careers', 'url' => '/careers', 'icon' => 'fas fa-briefcase'],
-                                ['label' => 'Testimonials', 'url' => '/testimonials', 'icon' => 'fas fa-comment-alt'],
-                                ['label' => 'Blog', 'url' => '/blog', 'icon' => 'fas fa-blog'],
-                                ['label' => 'FAQs', 'url' => '/faqs', 'icon' => 'fas fa-question-circle'],
+                                ['label' => __('about_us'), 'url' => '/about', 'icon' => 'fas fa-info-circle'],
+                                ['label' => __('nav_our_team'), 'url' => '/team', 'icon' => 'fas fa-users'],
+                                ['label' => __('nav_careers'), 'url' => '/careers', 'icon' => 'fas fa-briefcase'],
+                                ['label' => __('nav_testimonials'), 'url' => '/testimonials', 'icon' => 'fas fa-comment-alt'],
+                                ['label' => __('nav_blog'), 'url' => '/blog', 'icon' => 'fas fa-blog'],
+                                ['label' => __('nav_faqs'), 'url' => '/faqs', 'icon' => 'fas fa-question-circle'],
                             ]
                         ],
-                        ['label' => 'Contact', 'url' => '/contact', 'icon' => 'fas fa-phone'],
-                        ['label' => 'Post Property FREE', 'url' => '/list-property', 'icon' => 'fas fa-plus-circle', 'highlight' => true]
+                        ['label' => __('contact_us'), 'url' => '/contact', 'icon' => 'fas fa-phone'],
+                        ['label' => __('nav_post_property'), 'url' => '/list-property', 'icon' => 'fas fa-plus-circle', 'highlight' => true]
                     ];
 
                     foreach ($nav_items as $item) {
@@ -279,7 +280,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             $userIcon = 'fa-handshake';
                             $dashboardUrl = '/associate/dashboard';
                             $menuItems = [
-                                ['label' => 'Dashboard', 'url' => '/associate/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => __('dashboard'), 'url' => '/associate/dashboard', 'icon' => 'fa-tachometer-alt'],
                                 ['label' => 'Post Property', 'url' => '/associate/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
                                 ['label' => 'My Network', 'url' => '/associate/genealogy', 'icon' => 'fa-sitemap'],
                                 ['label' => 'My Leads', 'url' => '/associate/leads', 'icon' => 'fa-users'],
@@ -295,7 +296,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             $userIcon = 'fa-briefcase';
                             $dashboardUrl = '/agent/dashboard';
                             $menuItems = [
-                                ['label' => 'Dashboard', 'url' => '/agent/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => __('dashboard'), 'url' => '/agent/dashboard', 'icon' => 'fa-tachometer-alt'],
                                 ['label' => 'My Leads', 'url' => '/agent/leads', 'icon' => 'fa-users'],
                                 ['label' => 'Properties', 'url' => '/agent/properties', 'icon' => 'fa-building'],
                                 ['label' => 'Commissions', 'url' => '/agent/commissions', 'icon' => 'fa-money-bill-wave'],
@@ -308,7 +309,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             $userIcon = 'fa-user-tie';
                             $dashboardUrl = '/employee/dashboard';
                             $menuItems = [
-                                ['label' => 'Dashboard', 'url' => '/employee/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => __('dashboard'), 'url' => '/employee/dashboard', 'icon' => 'fa-tachometer-alt'],
                                 ['label' => 'My Tasks', 'url' => '/employee/tasks', 'icon' => 'fa-tasks'],
                                 ['label' => 'Attendance', 'url' => '/employee/attendance', 'icon' => 'fa-clock'],
                                 ['label' => 'Performance', 'url' => '/employee/performance-page', 'icon' => 'fa-chart-line'],
@@ -321,7 +322,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             $userIcon = 'fa-user-shield';
                             $dashboardUrl = '/admin/dashboard';
                             $menuItems = [
-                                ['label' => 'Admin Dashboard', 'url' => '/admin/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => __('dashboard'), 'url' => '/admin/dashboard', 'icon' => 'fa-tachometer-alt'],
                                 ['label' => 'Leads', 'url' => '/admin/leads', 'icon' => 'fa-users'],
                                 ['label' => 'Properties', 'url' => '/admin/properties', 'icon' => 'fa-building'],
                                 ['label' => 'God Mode', 'url' => '/admin/godmode', 'icon' => 'fa-crown'],
@@ -335,7 +336,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             $userIcon = 'fa-user';
                             $dashboardUrl = '/user/dashboard';
                             $menuItems = [
-                                ['label' => 'Dashboard', 'url' => '/user/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                ['label' => __('dashboard'), 'url' => '/user/dashboard', 'icon' => 'fa-tachometer-alt'],
                                 ['label' => 'My Bookings', 'url' => '/user/bookings', 'icon' => 'fa-file-contract'],
                                 ['label' => 'My Favorites', 'url' => '/dashboard/favorites', 'icon' => 'fa-heart'],
                                 ['label' => 'Post Property', 'url' => '/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
@@ -347,6 +348,12 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             $logoutUrl = '/user/logout';
                         }
                     ?>
+                        <li class="nav-item">
+                            <a href="<?php echo BASE_URL; ?>/user/notifications" class="nav-link position-relative" title="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span id="headerNotifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;display:none;">0</span>
+                            </a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle user-link" href="#" data-bs-toggle="dropdown">
                                 <i class="fas <?php echo $userIcon; ?> me-1"></i>
@@ -373,7 +380,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 </li>
                                 <li>
                                     <a class="dropdown-item text-danger" href="<?php echo BASE_URL . $logoutUrl; ?>">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        <i class="fas fa-sign-out-alt me-2"></i><?= __('logout') ?>
                                     </a>
                                 </li>
                             </ul>
@@ -381,7 +388,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                     <?php else: ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-plus me-1"></i>Register
+                                <i class="fas fa-user-plus me-1"></i><?= __('register') ?>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/register">
@@ -397,7 +404,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                                <i class="fas fa-sign-in-alt me-1"></i><?= __('login') ?>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/login">
@@ -408,6 +415,10 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                     </a></li>
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/login">
                                         <i class="fas fa-briefcase me-2"></i>Agent Login
+                                    </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/farmer/login">
+                                        <i class="fas fa-seedling me-2 text-success"></i>Farmer Login
                                     </a></li>
                             </ul>
                         </li>
@@ -421,7 +432,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                     </li>
                     <li class="nav-item ms-2 btn-compare">
                         <a href="<?php echo BASE_URL; ?>/compare" class="btn btn-outline-info btn-sm position-relative">
-                            <i class="fas fa-balance-scale"></i> Compare
+                            <i class="fas fa-balance-scale"></i> <?= __('compare') ?>
                             <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;font-size:10px;">0</span>
                         </a>
                     </li>
@@ -637,6 +648,17 @@ try {
 <script>
     window.BASE_URL = '<?php echo BASE_URL; ?>';
 
+    function updateHeaderNotifCount() {
+        var b = document.getElementById('headerNotifBadge');
+        if (!b) return;
+        <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id']): ?>
+        fetch(BASE_URL + '/api/user/notifications/unread-count').then(function(r){ return r.json(); }).then(function(d){
+            var c = d.count || 0;
+            b.textContent = c;
+            b.style.display = c > 0 ? 'inline' : 'none';
+        }).catch(function(){});
+        <?php endif; ?>
+    }
     document.addEventListener('DOMContentLoaded', function() {
         var header = document.getElementById('mainHeader');
         if (!header) return;
@@ -717,6 +739,10 @@ try {
                 menu.classList.toggle('show-mobile');
             }
         });
+
+        // Notification count polling
+        updateHeaderNotifCount();
+        setInterval(updateHeaderNotifCount, 30000);
 
         // Scroll effect
         var scrollTimer;

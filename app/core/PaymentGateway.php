@@ -13,11 +13,20 @@ class PaymentGateway {
 
     public function __construct() {
         $this->settings = $this->_getPaymentSettingsFromEnv();
+        $this->razorpay_key_id = $this->settings['razorpay_key_id'] ?? '';
+        $this->razorpay_key_secret = $this->settings['razorpay_key_secret'] ?? '';
     }
 
     private function _getPaymentSettingsFromEnv() {
         return [
-            'sandbox_mode' => env('PAYMENT_SANDBOX', true)
+            'sandbox_mode' => env('PAYMENT_SANDBOX', true),
+            'razorpay_key_id' => env('RAZORPAY_KEY_ID', ''),
+            'razorpay_key_secret' => env('RAZORPAY_KEY_SECRET', ''),
+            'currency' => env('PAYMENT_CURRENCY', 'INR'),
+            'payment_methods' => [
+                'razorpay' => env('RAZORPAY_KEY_ID') ? true : false,
+                'phonepe' => env('PHONEPE_MERCHANT_ID') ? true : false
+            ]
         ];
     }
 

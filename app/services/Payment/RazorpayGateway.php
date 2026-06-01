@@ -15,8 +15,8 @@ class RazorpayGateway implements PaymentGatewayInterface
 
     public function __construct(array $config = [])
     {
-        $this->apiKey = $config['api_key'] ?? $_ENV['RAZORPAY_API_KEY'] ?? '';
-        $this->apiSecret = $config['api_secret'] ?? $_ENV['RAZORPAY_API_SECRET'] ?? '';
+        $this->apiKey = $config['api_key'] ?? $_ENV['RAZORPAY_API_KEY'] ?? $_ENV['RAZORPAY_KEY_ID'] ?? '';
+        $this->apiSecret = $config['api_secret'] ?? $_ENV['RAZORPAY_API_SECRET'] ?? $_ENV['RAZORPAY_KEY_SECRET'] ?? '';
         $this->webhookSecret = $config['webhook_secret'] ?? $_ENV['RAZORPAY_WEBHOOK_SECRET'] ?? '';
         $this->isTestMode = $config['test_mode'] ?? ($_ENV['RAZORPAY_TEST_MODE'] ?? true);
     }

@@ -4,7 +4,7 @@
         <div class="row text-center">
             <div class="col-6 col-md-3 mb-2 mb-md-0">
                 <div class="fs-3 fw-bold">15+</div>
-                <div class="small opacity-75">Years Experience</div>
+                <div class="small opacity-75"><?= __('years_experience') ?></div>
             </div>
             <div class="col-6 col-md-3 mb-2 mb-md-0">
                 <div class="fs-3 fw-bold">500+</div>
@@ -27,14 +27,14 @@
         <!-- Newsletter Signup -->
         <div class="row mb-5 pb-4 border-bottom border-secondary">
             <div class="col-lg-6">
-                <h5 class="text-white mb-2"><i class="fas fa-envelope me-2"></i>Subscribe to Our Newsletter</h5>
-                <p class="text-light mb-0">Get latest property updates and exclusive offers delivered to your inbox</p>
+                <h5 class="text-white mb-2"><i class="fas fa-envelope me-2"></i><?= __('newsletter') ?></h5>
+                <p class="text-light mb-0"><?= __('newsletter_subtitle') ?></p>
             </div>
             <div class="col-lg-6">
                 <form action="<?php echo BASE_URL; ?>/subscribe" method="POST" class="d-flex gap-2" id="newsletterForm">
                     <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i> Subscribe
+                        <i class="fas fa-paper-plane"></i> <?= __('subscribe') ?>
                     </button>
                 </form>
                 <div id="newsletterMessage" class="mt-2" style="display: none;"></div>
@@ -74,32 +74,32 @@
 
             <!-- Quick Links -->
             <div class="col-lg-2 col-md-6 mb-4">
-                <h6 class="text-uppercase mb-3">Quick Links</h6>
+                <h6 class="text-uppercase mb-3"><?= __('quick_links') ?></h6>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/" class="text-light text-decoration-none">Home</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/properties" class="text-light text-decoration-none">Properties</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/company/projects" class="text-light text-decoration-none">Projects</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/about" class="text-light text-decoration-none">About Us</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/contact" class="text-light text-decoration-none">Contact</a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/" class="text-light text-decoration-none"><?= __('home') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/properties" class="text-light text-decoration-none"><?= __('properties') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/company/projects" class="text-light text-decoration-none"><?= __('projects') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/about" class="text-light text-decoration-none"><?= __('about_us') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/contact" class="text-light text-decoration-none"><?= __('contact_us') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/admin/login" class="text-light text-decoration-none">Admin</a></li>
                 </ul>
             </div>
 
             <!-- Services -->
             <div class="col-lg-3 col-md-6 mb-4">
-                <h6 class="text-uppercase mb-3">Our Services</h6>
+                <h6 class="text-uppercase mb-3"><?= __('our_services') ?></h6>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none">Property Sales</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none">Property Valuation</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/interior-design" class="text-light text-decoration-none">Interior Design</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/legal/services" class="text-light text-decoration-none">Legal Documentation</a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/resell" class="text-light text-decoration-none">Resell Properties</a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none"><?= __('property_sales') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none"><?= __('property_valuation') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/interior-design" class="text-light text-decoration-none"><?= __('interior_design') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/legal/services" class="text-light text-decoration-none"><?= __('legal_documentation') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/resell" class="text-light text-decoration-none"><?= __('resell_properties') ?></a></li>
                 </ul>
             </div>
 
             <!-- Contact Info -->
             <div class="col-lg-3 col-md-6 mb-4">
-                <h6 class="text-uppercase mb-3">Contact Info</h6>
+                <h6 class="text-uppercase mb-3"><?= __('contact_info') ?></h6>
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <i class="fas fa-map-marker-alt me-2 text-primary"></i>
@@ -129,11 +129,11 @@
         <div class="border-top border-secondary pt-4 mt-4">
             <div class="row">
                 <div class="col-md-6">
-                    <p class="mb-0 text-light">&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.</p>
+                    <p class="mb-0 text-light">&copy; <?php echo date('Y'); ?> APS Dream Home. <?= __('all_rights_reserved') ?></p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <a href="<?php echo BASE_URL; ?>/privacy" class="text-light me-3 text-decoration-none">Privacy Policy</a>
-                    <a href="<?php echo BASE_URL; ?>/legal/terms-conditions" class="text-light text-decoration-none">Terms of Service</a>
+                    <a href="<?php echo BASE_URL; ?>/privacy" class="text-light me-3 text-decoration-none"><?= __('privacy_policy') ?></a>
+                    <a href="<?php echo BASE_URL; ?>/legal/terms-conditions" class="text-light text-decoration-none"><?= __('terms_of_service') ?></a>
                 </div>
             </div>
         </div>

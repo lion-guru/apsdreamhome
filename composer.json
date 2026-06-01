@@ -12,6 +12,7 @@
         "ext-mysqli": "*",
         "ext-openssl": "*",
         "phpmailer/phpmailer": "^7.0",
+        "tecnickcom/tcpdf": "^6.11",
         "twilio/sdk": "^8.11"
     },
     "require-dev": {
