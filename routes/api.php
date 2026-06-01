@@ -152,3 +152,31 @@ $router->get('/api/voice-agent/extracted-leads', 'App\Http\Controllers\Api\Voice
 $router->post('/api/voice-agent/extracted-leads/convert/{id}', 'App\Http\Controllers\Api\VoiceAgentController@convertExtractedLead');
 $router->get('/api/voice-agent/stats', 'App\Http\Controllers\Api\VoiceAgentController@getStats');
 $router->get('/api/voice-agent/call-history', 'App\Http\Controllers\Api\VoiceAgentController@getCallHistory');
+
+// Gemini Chatbot API (separate from GeminiApiController)
+$router->post('/api/gemini/chatbot/message', 'Api\GeminiChatbotController@message');
+$router->get('/api/gemini/chatbot/history/{userId}', 'Api\GeminiChatbotController@history');
+$router->post('/api/gemini/chatbot/suggestions', 'Api\GeminiChatbotController@suggestions');
+$router->post('/api/gemini/chatbot/detect-intent', 'Api\GeminiChatbotController@detectIntent');
+$router->get('/api/gemini/chatbot/health', 'Api\GeminiChatbotController@health');
+
+// Social Sharing API
+$router->post('/api/sharing/generate', 'Api\SharingController@generate');
+$router->post('/api/sharing/track', 'Api\SharingController@trackClick');
+
+// Workflow API
+$router->get('/api/workflow', 'Api\WorkflowController@index');
+$router->get('/api/workflow/{id}', 'Api\WorkflowController@show');
+$router->post('/api/workflow', 'Api\WorkflowController@store');
+$router->put('/api/workflow/{id}', 'Api\WorkflowController@update');
+$router->delete('/api/workflow/{id}', 'Api\WorkflowController@destroy');
+
+// Async Task API
+$router->post('/api/async/process', 'App\Http\Controllers\Async\AsyncController@processNextTask');
+$router->get('/api/async/tasks', 'App\Http\Controllers\Async\AsyncController@getTasks');
+$router->post('/api/async/create', 'App\Http\Controllers\Async\AsyncController@createTaskAjax');
+$router->post('/api/async/cancel/{id}', 'App\Http\Controllers\Async\AsyncController@cancelTaskAjax');
+$router->post('/api/async/retry/{id}', 'App\Http\Controllers\Async\AsyncController@retryTaskAjax');
+
+// Work Distribution API
+$router->get('/api/work-distribution/analytics', 'App\Http\Controllers\Employee\WorkDistributionController@getDistributionAnalytics');
