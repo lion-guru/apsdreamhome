@@ -2608,3 +2608,85 @@ $router->post('/admin/whatsapp/settings', 'App\\Http\\Controllers\\Admin\\WhatsA
 $router->post('/admin/whatsapp/test', 'App\\Http\\Controllers\\Admin\\WhatsAppConfigController@testMessage');
 $router->get('/admin/whatsapp/templates', 'App\\Http\\Controllers\\Admin\\WhatsAppConfigController@templates');
 $router->post('/admin/whatsapp/templates/sync', 'App\\Http\\Controllers\\Admin\\WhatsAppConfigController@syncTemplates');
+
+// ============================================================
+// UNROUTED CONTROLLER INTEGRATION (Batch - June 2026)
+// ============================================================
+
+// --- Analytics\ReportController ---
+$router->get('/admin/analytics/reports', 'Analytics\\ReportController@index');
+$router->get('/admin/analytics/reports/sales', 'Analytics\\ReportController@sales');
+$router->get('/admin/analytics/reports/properties', 'Analytics\\ReportController@properties');
+$router->get('/admin/analytics/reports/user-activity', 'Analytics\\ReportController@userActivity');
+
+// --- Associate\AssociateController ---
+$router->get('/admin/associate/manage', 'Associate\\AssociateController@dashboard');
+$router->get('/admin/associate/manage/list', 'Associate\\AssociateController@index');
+$router->get('/admin/associate/manage/create', 'Associate\\AssociateController@create');
+$router->post('/admin/associate/manage/store', 'Associate\\AssociateController@store');
+$router->get('/admin/associate/manage/edit/{id}', 'Associate\\AssociateController@edit');
+$router->post('/admin/associate/manage/update/{id}', 'Associate\\AssociateController@update');
+$router->get('/admin/associate/manage/show/{id}', 'Associate\\AssociateController@show');
+$router->get('/admin/associate/manage/metrics/{id}', 'Associate\\AssociateController@metrics');
+$router->post('/admin/associate/manage/delete/{id}', 'Associate\\AssociateController@delete');
+$router->post('/admin/associate/manage/update-status/{id}', 'Associate\\AssociateController@updateStatus');
+
+// --- Business\AssociateController ---
+$router->get('/admin/business/associates', 'Business\\AssociateController@index');
+$router->get('/admin/business/associates/show/{id}', 'Business\\AssociateController@show');
+$router->get('/admin/business/associates/create', 'Business\\AssociateController@create');
+$router->post('/admin/business/associates/store', 'Business\\AssociateController@store');
+$router->get('/admin/business/associates/edit/{id}', 'Business\\AssociateController@edit');
+$router->post('/admin/business/associates/update/{id}', 'Business\\AssociateController@update');
+$router->post('/admin/business/associates/delete/{id}', 'Business\\AssociateController@destroy');
+$router->get('/admin/business/associates/performance', 'Business\\AssociateController@performanceReport');
+$router->post('/admin/business/associates/update-commission', 'Business\\AssociateController@updateCommissionRate');
+$router->get('/admin/business/associates/top-performers', 'Business\\AssociateController@getTopPerformers');
+$router->post('/admin/business/associates/export', 'Business\\AssociateController@exportAssociates');
+$router->get('/admin/business/associates/search', 'Business\\AssociateController@searchAssociates');
+$router->post('/admin/business/associates/activate/{id}', 'Business\\AssociateController@activate');
+$router->post('/admin/business/associates/deactivate/{id}', 'Business\\AssociateController@deactivate');
+
+// --- PerformanceController (root namespace) ---
+$router->get('/admin/system-perf', 'PerformanceController@dashboard');
+$router->get('/admin/system-perf/metrics', 'PerformanceController@getMetrics');
+$router->get('/admin/system-perf/system', 'PerformanceController@getSystemPerformance');
+$router->get('/admin/system-perf/database', 'PerformanceController@getDatabasePerformance');
+$router->get('/admin/system-perf/cache', 'PerformanceController@getCachePerformance');
+$router->post('/admin/system-perf/optimize', 'PerformanceController@optimize');
+$router->post('/admin/system-perf/clear-cache', 'PerformanceController@clearCache');
+$router->get('/admin/system-perf/report', 'PerformanceController@generateReport');
+$router->get('/admin/system-perf/alerts', 'PerformanceController@getAlerts');
+$router->get('/admin/system-perf/monitor', 'PerformanceController@monitor');
+$router->get('/admin/system-perf/trends', 'PerformanceController@getTrends');
+$router->post('/admin/system-perf/threshold', 'PerformanceController@setThreshold');
+$router->get('/admin/system-perf/settings', 'PerformanceController@getSettings');
+$router->post('/admin/system-perf/settings/update', 'PerformanceController@updateSettings');
+
+// --- SaaS\ProfessionalToolsController ---
+$router->get('/saas/tools/inventory', 'SaaS\\ProfessionalToolsController@inventory');
+$router->get('/saas/tools/workflow', 'SaaS\\ProfessionalToolsController@workflow');
+$router->get('/saas/tools/expenses', 'SaaS\\ProfessionalToolsController@expenses');
+$router->get('/saas/tools/labor', 'SaaS\\ProfessionalToolsController@labor');
+$router->get('/saas/tools/whatsapp', 'SaaS\\ProfessionalToolsController@whatsapp');
+$router->get('/saas/tools/referrals', 'SaaS\\ProfessionalToolsController@referrals');
+$router->get('/saas/tools/documents', 'SaaS\\ProfessionalToolsController@documents');
+
+// --- User\UserController ---
+$router->get('/user-management', 'User\\UserController@dashboard');
+$router->get('/user-management/users', 'User\\UserController@index');
+$router->get('/user-management/users/create', 'User\\UserController@create');
+$router->post('/user-management/users/store', 'User\\UserController@store');
+$router->get('/user-management/users/edit/{id}', 'User\\UserController@edit');
+$router->post('/user-management/users/update/{id}', 'User\\UserController@update');
+$router->get('/user-management/users/show/{id}', 'User\\UserController@show');
+$router->post('/user-management/users/delete/{id}', 'User\\UserController@delete');
+$router->get('/user-management/users/profile/{id}', 'User\\UserController@profile');
+$router->post('/user-management/users/profile/{id}', 'User\\UserController@updateProfile');
+$router->get('/user-management/users/change-password/{id}', 'User\\UserController@changePassword');
+$router->post('/user-management/users/update-password/{id}', 'User\\UserController@updatePassword');
+$router->post('/user-management/users/update-status/{id}', 'User\\UserController@updateStatus');
+$router->get('/user-management/users/role/{role}', 'User\\UserController@byRole');
+
+// --- AIAssistantController (root namespace) ---
+$router->get('/ai/assistant', 'AIAssistantController@index');

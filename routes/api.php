@@ -190,3 +190,19 @@ $router->post('/api/async/retry/{id}', 'App\Http\Controllers\Async\AsyncControll
 
 // Work Distribution API
 $router->get('/api/work-distribution/analytics', 'App\Http\Controllers\Employee\WorkDistributionController@getDistributionAnalytics');
+
+// ============================================================
+// NEW API ROUTES (Batch - June 2026)
+// ============================================================
+
+// --- Api\AuthController ---
+$router->post('/api/auth/login', 'Api\AuthController@login');
+$router->get('/api/auth/me', 'Api\AuthController@me');
+$router->post('/api/auth/refresh', 'Api\AuthController@refresh');
+$router->post('/api/auth/logout', 'Api\AuthController@logout');
+
+// --- Api\MonitorController ---
+$router->get('/api/monitor/status', 'Api\\MonitorController@status');
+$router->get('/api/monitor/health', 'Api\\MonitorController@health');
+$router->get('/api/monitor/performance', 'Api\\MonitorController@performance');
+$router->get('/api/monitor/errors', 'Api\\MonitorController@errors');

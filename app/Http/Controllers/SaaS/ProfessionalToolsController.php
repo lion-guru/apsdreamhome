@@ -10,12 +10,27 @@ use Exception;
 
 class ProfessionalToolsController extends BaseController
 {
-    protected $auth;
-
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('auth');
+    }
+
+    protected function getCurrentUser()
+    {
+        $userData = [];
+        if (isset($_SESSION['user_id'])) {
+            $userData['id'] = $_SESSION['user_id'];
+            $userData['uid'] = $_SESSION['user_id'];
+            $userData['name'] = $_SESSION['user_name'] ?? '';
+            $userData['email'] = $_SESSION['user_email'] ?? '';
+            $userData['role'] = $_SESSION['role'] ?? '';
+        } elseif (isset($_SESSION['admin_id'])) {
+            $userData['id'] = $_SESSION['admin_id'];
+            $userData['uid'] = $_SESSION['admin_id'];
+            $userData['name'] = $_SESSION['admin_name'] ?? '';
+            $userData['role'] = 'admin';
+        }
+        return $userData;
     }
 
     /**
@@ -23,12 +38,24 @@ class ProfessionalToolsController extends BaseController
      */
     public function inventory()
     {
-        $user = $this->auth->user();
+        $user = $this->getCurrentUser();
+        $projects = [];
+        $plots = [];
+        try {
+            if (class_exists('App\Models\Project')) {
+                $projects = $this->model('Project')->all(['where' => ['builder_id' => $user['uid'] ?? 0]]);
+            }
+            if (class_exists('App\Models\Plot')) {
+                $plots = $this->model('Plot')->all(['limit' => 20]);
+            }
+        } catch (\Throwable $e) {
+            error_log("ProfessionalToolsController::inventory - " . $e->getMessage());
+        }
         $data = [
             'page_title' => 'Inventory Management',
             'user' => $user,
-            'projects' => $this->model('Project')->all(['where' => ['builder_id' => $user->uid]]),
-            'plots' => $this->model('Plot')->all(['limit' => 20]) // Generic for now
+            'projects' => $projects,
+            'plots' => $plots
         ];
         return $this->render('saas/tools/inventory', $data);
     }
@@ -38,11 +65,10 @@ class ProfessionalToolsController extends BaseController
      */
     public function workflow()
     {
-        $user = $this->auth->user();
+        $user = $this->getCurrentUser();
         $data = [
             'page_title' => 'Construction Workflow',
             'user' => $user,
-            // Mock data for workflow steps
             'workflows' => [
                 ['id' => 1, 'name' => 'Foundation', 'status' => 'completed', 'progress' => 100],
                 ['id' => 2, 'name' => 'Framing', 'status' => 'in_progress', 'progress' => 45],
@@ -57,11 +83,11 @@ class ProfessionalToolsController extends BaseController
      */
     public function expenses()
     {
-        $user = $this->auth->user();
+        $user = $this->getCurrentUser();
         $data = [
             'page_title' => 'Expense Tracker',
             'user' => $user,
-            'expenses' => [] // Should connect to an Expense model if exists
+            'expenses' => []
         ];
         return $this->render('saas/tools/expenses', $data);
     }
@@ -71,7 +97,7 @@ class ProfessionalToolsController extends BaseController
      */
     public function labor()
     {
-        $user = $this->auth->user();
+        $user = $this->getCurrentUser();
         $data = [
             'page_title' => 'Labor Management',
             'user' => $user,
@@ -85,7 +111,7 @@ class ProfessionalToolsController extends BaseController
      */
     public function whatsapp()
     {
-        $user = $this->auth->user();
+        $user = $this->getCurrentUser();
         $data = [
             'page_title' => 'WhatsApp Marketing',
             'user' => $user,
@@ -102,11 +128,19 @@ class ProfessionalToolsController extends BaseController
      */
     public function referrals()
     {
-        $user = $this->auth->user();
+        $user = $this->getCurrentUser();
+        $referrals = [];
+        try {
+            if (class_exists('App\Models\Referral')) {
+                $referrals = $this->model('Referral')->all(['where' => ['referred_by' => $user['uid'] ?? 0]]);
+            }
+        } catch (\Throwable $e) {
+            error_log("ProfessionalToolsController::referrals - " . $e->getMessage());
+        }
         $data = [
             'page_title' => 'Referral Program',
             'user' => $user,
-            'referrals' => $this->model('Referral')->all(['where' => ['referred_by' => $user->uid]])
+            'referrals' => $referrals
         ];
         return $this->render('saas/tools/referrals', $data);
     }
@@ -116,7 +150,7 @@ class ProfessionalToolsController extends BaseController
      */
     public function documents()
     {
-        $user = $this->auth->user();
+        $user = $this->getCurrentUser();
         $data = [
             'page_title' => 'Document Vault',
             'user' => $user,

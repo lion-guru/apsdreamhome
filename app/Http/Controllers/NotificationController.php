@@ -56,53 +56,170 @@ class NotificationController extends AdminController
         $this->render('notification/preview', ['page_title' => 'Preview Template']);
     }
 
+    private function ensureSession()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
     public function getNotifications()
     {
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'notifications' => []]);
+        $this->ensureSession();
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM notification_feed WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
+            $stmt->execute([$userId]);
+            $notifications = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'notifications' => $notifications]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
         exit;
     }
 
     public function markAsRead()
     {
         header('Content-Type: application/json');
-        echo json_encode(['success' => true]);
+        $this->ensureSession();
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+        $id = $_POST['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['success' => false, 'message' => 'Missing notification id']);
+            exit;
+        }
+        try {
+            $stmt = $this->db->prepare("UPDATE notification_feed SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
+            $stmt->execute([$id, $userId]);
+            echo json_encode(['success' => true]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
         exit;
     }
 
     public function getUnreadCount()
     {
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'count' => 0]);
+        $this->ensureSession();
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM notification_feed WHERE user_id = ? AND is_read = 0");
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'count' => (int)($row['count'] ?? 0)]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
         exit;
     }
 
     public function getPopups()
     {
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'popups' => []]);
+        $this->ensureSession();
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM notification_feed WHERE user_id = ? AND is_important = 1 AND is_read = 0 ORDER BY created_at DESC LIMIT 10");
+            $stmt->execute([$userId]);
+            $popups = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'popups' => $popups]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
         exit;
     }
 
     public function dismissPopup()
     {
         header('Content-Type: application/json');
-        echo json_encode(['success' => true]);
+        $this->ensureSession();
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+        $id = $_POST['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['success' => false, 'message' => 'Missing popup id']);
+            exit;
+        }
+        try {
+            $stmt = $this->db->prepare("UPDATE notification_feed SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
+            $stmt->execute([$id, $userId]);
+            echo json_encode(['success' => true]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
         exit;
     }
 
     public function createNotification()
     {
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'message' => 'Notification created']);
+        $this->ensureSession();
+        if (!isset($_SESSION['admin_id']) && !isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+        $userId = $_POST['user_id'] ?? null;
+        $title = $_POST['title'] ?? '';
+        $message = $_POST['message'] ?? '';
+        $type = $_POST['type'] ?? 'info';
+        if (!$userId || empty($title)) {
+            echo json_encode(['success' => false, 'message' => 'Missing required fields (user_id, title)']);
+            exit;
+        }
+        try {
+            $stmt = $this->db->prepare("INSERT INTO notification_feed (notification_id, user_id, type, title, message, is_read) VALUES (?, ?, ?, ?, ?, 0)");
+            $stmt->execute([uniqid('notif_'), $userId, $type, $title, $message]);
+            echo json_encode(['success' => true, 'message' => 'Notification created']);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
         exit;
     }
 
     public function createPopup()
     {
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'message' => 'Popup created']);
+        $this->ensureSession();
+        if (!isset($_SESSION['admin_id']) && !isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+        $userId = $_POST['user_id'] ?? null;
+        $title = $_POST['title'] ?? '';
+        $message = $_POST['message'] ?? '';
+        $type = $_POST['type'] ?? 'info';
+        if (!$userId || empty($title)) {
+            echo json_encode(['success' => false, 'message' => 'Missing required fields (user_id, title)']);
+            exit;
+        }
+        try {
+            $stmt = $this->db->prepare("INSERT INTO notification_feed (notification_id, user_id, type, title, message, is_important, is_read) VALUES (?, ?, ?, ?, ?, 1, 0)");
+            $stmt->execute([uniqid('popup_'), $userId, $type, $title, $message]);
+            echo json_encode(['success' => true, 'message' => 'Popup created']);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
         exit;
     }
 }
-?>
