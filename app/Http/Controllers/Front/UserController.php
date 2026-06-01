@@ -131,6 +131,7 @@ class UserController extends BaseController
                 $referralEarnings = (float)($wallet['referral_earnings'] ?? 0);
             }
         } catch (\Exception $e) {
+                    error_log("UserController.php: " . $e->getMessage());
         }
 
         $data = [

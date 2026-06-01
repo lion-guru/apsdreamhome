@@ -287,7 +287,7 @@ class SystemDiagnosticController extends AdminController
             <div class="card">
                 <div class="header">
                     <h1>System Diagnostic</h1>
-                    <span class="status-badge <?php echo h($statusClass); ?>"><?php echo h($statusText); ?></span>
+                    <span class="status-badge <?php echo htmlspecialchars($statusClass); ?>"><?php echo htmlspecialchars($statusText); ?></span>
                 </div>
 
                 <?php if (!empty($this->criticalIssues)): ?>
@@ -295,7 +295,7 @@ class SystemDiagnosticController extends AdminController
                         <h2>Critical Issues</h2>
                         <ul>
                             <?php foreach ($this->criticalIssues as $issue): ?>
-                                <li><?php echo h($issue); ?></li>
+                                <li><?php echo htmlspecialchars($issue); ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
@@ -305,12 +305,12 @@ class SystemDiagnosticController extends AdminController
                     <section>
                         <h2>Environment</h2>
                         <div class="item <?php echo $this->report['php']['status'] ? 'ok' : 'fail'; ?>">
-                            <strong>PHP Version:</strong> <?php echo h($this->report['php']['version']); ?>
+                            <strong>PHP Version:</strong> <?php echo htmlspecialchars($this->report['php']['version']); ?>
                         </div>
                         <h3>Extensions</h3>
                         <?php foreach ($this->report['extensions'] as $ext => $loaded): ?>
                             <div class="item <?php echo $loaded ? 'ok' : 'fail'; ?>">
-                                <strong><?php echo h($ext); ?>:</strong> <?php echo $loaded ? 'Loaded' : 'Missing'; ?>
+                                <strong><?php echo htmlspecialchars($ext); ?>:</strong> <?php echo $loaded ? 'Loaded' : 'Missing'; ?>
                             </div>
                         <?php endforeach; ?>
                     </section>
@@ -324,7 +324,7 @@ class SystemDiagnosticController extends AdminController
                             <h3>Tables</h3>
                             <?php foreach ($this->report['database']['tables'] as $table => $exists): ?>
                                 <div class="item <?php echo $exists ? 'ok' : 'fail'; ?>">
-                                    <strong><?php echo h($table); ?>:</strong> <?php echo $exists ? 'Exists' : 'Missing'; ?>
+                                    <strong><?php echo htmlspecialchars($table); ?>:</strong> <?php echo $exists ? 'Exists' : 'Missing'; ?>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>

@@ -470,6 +470,7 @@ class PossessionController extends AdminController
         try {
             $this->db->query("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at) VALUES (?, ?, ?, ?, NOW())", [$bookingId, 'possession_' . $action, $details, $_SESSION['admin_id'] ?? null]);
         } catch (Exception $e) {
+                    error_log("PossessionController.php: " . $e->getMessage());
         }
     }
 

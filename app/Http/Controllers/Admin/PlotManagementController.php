@@ -902,6 +902,7 @@ class PlotManagementController extends AdminController
                     ]);
                 } catch (\Exception $e) {
                     // status log table may not exist, skip
+                            error_log("PlotManagementController.php: " . $e->getMessage());
                 }
             }
 
@@ -1132,7 +1133,9 @@ class PlotManagementController extends AdminController
                         'plot_id' => $id, 'old_status' => $plot['status'], 'new_status' => 'booked',
                         'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
                     ]);
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                            error_log("PlotManagementController.php: " . $e->getMessage());
+                }
 
                 $this->db->commit();
 
@@ -1237,7 +1240,9 @@ class PlotManagementController extends AdminController
                         processed_by INT DEFAULT 0,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                            error_log("PlotManagementController.php: " . $e->getMessage());
+                }
 
                 // Insert transfer record
                 $this->db->insert('plot_transfers', [
@@ -1266,7 +1271,9 @@ class PlotManagementController extends AdminController
                         'plot_id' => $id, 'old_status' => $plot['status'], 'new_status' => $newStatus,
                         'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
                     ]);
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                            error_log("PlotManagementController.php: " . $e->getMessage());
+                }
 
                 $this->db->commit();
 

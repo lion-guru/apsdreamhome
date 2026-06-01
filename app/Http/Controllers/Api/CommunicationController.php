@@ -167,6 +167,7 @@ class CommunicationController extends BaseApiController
             );
         } catch (\Exception $e) {
             // Silently fail if table doesn't exist
+                    error_log("CommunicationController.php: " . $e->getMessage());
         }
     }
 

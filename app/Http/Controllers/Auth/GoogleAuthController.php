@@ -12,9 +12,11 @@ class GoogleAuthController extends Controller
      */
     public function googleRedirect()
     {
-        $clientId = getenv('GOOGLE_CLIENT_ID');
+        // Ensure .env is loaded
+        \App\Core\ConfigService::getInstance();
+        $clientId = getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? '');
         $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
-        $redirectUri = $baseUrl . '/auth/google/callback';
+        $redirectUri = $baseUrl . '/google_callback.php';
 
         $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
             'client_id' => $clientId,
@@ -41,10 +43,12 @@ class GoogleAuthController extends Controller
             exit;
         }
 
-        $clientId = getenv('GOOGLE_CLIENT_ID');
-        $clientSecret = getenv('GOOGLE_CLIENT_SECRET');
+        // Ensure .env is loaded
+        \App\Core\ConfigService::getInstance();
+        $clientId = getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? '');
+        $clientSecret = getenv('GOOGLE_CLIENT_SECRET') ?: ($_ENV['GOOGLE_CLIENT_SECRET'] ?? '');
         $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
-        $redirectUri = $baseUrl . '/auth/google/callback';
+        $redirectUri = $baseUrl . '/google_callback.php';
 
         // Exchange code for access token
         $tokenUrl = 'https://oauth2.googleapis.com/token';
