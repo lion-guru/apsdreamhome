@@ -4,7 +4,7 @@ namespace App\Services\Async;
 
 use App\Core\Database;
 use App\Core\Logger;
-use App\Core\Config;
+use App\Core\Config\Config;
 
 /**
  * Async Task Service - APS Dream Home

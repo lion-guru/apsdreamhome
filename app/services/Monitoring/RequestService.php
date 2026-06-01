@@ -48,7 +48,7 @@ class RequestService
     {
         $this->database = \App\Core\Database::getInstance();
         $this->logger = new \App\Core\Logger();
-        $this->config = \App\Core\Config::getInstance();
+        $this->config = \App\Core\Config\Config::getInstance();
         $this->session = new \App\Core\Session();
         
         $this->loadConfiguration();

@@ -4,7 +4,7 @@ namespace App\Services\Marketing;
 
 use App\Core\Database;
 use App\Core\Logger;
-use App\Core\Config;
+use App\Core\Config\Config;
 
 /**
  * Marketing Automation Service - APS Dream Home

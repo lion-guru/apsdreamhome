@@ -166,4 +166,19 @@ class FinanceController extends AdminController
         $this->requireAdmin();
         return $this->render('admin/accounts/index', ['page_title' => 'Accounts']);
     }
+
+    public function deleteInvoice(int $id)
+    {
+        $this->requireAdmin();
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("UPDATE invoices SET status='cancelled' WHERE id=?");
+            $stmt->execute([$id]);
+            $this->flashMessage('Invoice cancelled', 'success');
+        } catch (\Exception $e) {
+            $this->flashMessage('Error: ' . $e->getMessage(), 'error');
+        }
+        header('Location: ' . BASE_URL . '/admin/invoices');
+        exit;
+    }
 }
