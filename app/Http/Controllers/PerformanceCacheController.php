@@ -14,6 +14,7 @@ class PerformanceCacheController extends BaseController
 
     public function __construct(PerformanceCacheService $cacheService = null)
     {
+        parent::__construct();
         $this->cacheService = $cacheService ?? new PerformanceCacheService();
     }
 

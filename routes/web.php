@@ -177,9 +177,7 @@ $router->get('/user/investments', 'Front\\PageController@userInvestments');
 $router->get('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->post('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->get('/plots-availability', 'Front\\PageController@plotsAvailability');
-$router->get('/faq', 'FAQController@index');
 $router->get('/map', 'MapController@index');
-$router->get('/gallery', 'GalleryController@index');
 $router->get('/gallery/{id}', 'GalleryController@project');
 
 // Free Tools
@@ -228,8 +226,8 @@ $router->post('/compare/delete/{id}', 'Property\CompareController@delete');
 $router->get('/projects', 'Front\\PageController@projects');
 $router->get('/company/projects', 'Front\\PageController@projects');
 $router->get('/projects/{slug}', 'Front\\PageController@projectDetails');
-$router->get('/projects/{location}', 'Front\\PageController@projectsByLocation');
 $router->get('/projects/budha-city', 'Front\\PageController@budhaCity');
+$router->get('/projects/{location}', 'Front\\PageController@projectsByLocation');
 
 // Dynamic Colony Pages (single-template, DB-driven)
 $router->get('/colony/{slug}', 'Front\\PageController@colonyDetail');
@@ -327,8 +325,8 @@ $router->get('/user/network', function () {
     include __DIR__ . '/../app/views/pages/user_network.php';
 });
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
-$router->get('/property/{id}', 'Front\\PageController@propertyDetails');
 $router->post('/property/review', 'Front\\PageController@reviewSubmit');
+$router->get('/property/{id}', 'Front\\PageController@propertyDetails');
 $router->get('/listing/{id}', 'Front\\PageController@userPropertyDetail');
 $router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
 $router->get('/dashboard', 'DashboardController@index');
@@ -1073,8 +1071,7 @@ require_once __DIR__ . '/admin_routes.php';
 $router->post('/admin/colonies/{id}/update', 'App\\Http\\Controllers\\Admin\\ColonyController@update');
 $router->post('/admin/colonies/{id}/destroy', 'App\\Http\\Controllers\\Admin\\ColonyController@destroy');
 
-// users Management
-$router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\HRMController@employeeList');
+// Employee Management
 $router->get('/admin/employees', 'App\\Http\\Controllers\\Admin\\HRMController@employeeList');
 
 // Commissions Management
@@ -1108,14 +1105,6 @@ $router->post('/admin/invoices/delete/{id}', function($id) {
     exit;
 });
 $router->get('/admin/roles', 'App\\Http\\Controllers\\RoleBasedDashboardController@roles');
-$router->get('/admin/users', function () {
-    header('Location: ' . BASE_URL . '/admin/mlm/users');
-    exit;
-});
-$router->get('/admin/users/create', function () {
-    header('Location: ' . BASE_URL . '/admin/mlm/users/create');
-    exit;
-});
 $router->get('/admin/hrm/users', 'App\\Http\\Controllers\\Admin\\HRMController@users');
 
 // ============================================================
@@ -1644,8 +1633,7 @@ $router->get('/admin/telecalling/assign', 'App\\Http\\Controllers\\Employee\\Tel
 $router->get('/admin/telecalling/commissions', 'App\\Http\\Controllers\\Employee\\TelecallingController@commissions');
 $router->get('/admin/telecalling/approvals', 'App\\Http\\Controllers\\Employee\\TelecallingController@approvals');
 
-// CRM users
-$router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\CustomerController@index');
+// CRM
 $router->get('/admin/crm', 'App\\Http\\Controllers\\Admin\\CRMController@index');
 $router->get('/admin/crm/users', 'App\\Http\\Controllers\\Admin\\CRMController@users');
 $router->get('/admin/crm/users/create', 'App\\Http\\Controllers\\Admin\\CRMController@createCustomer');
@@ -1686,8 +1674,6 @@ $router->get('/admin/testimonials/manage', 'App\\Http\\Controllers\\Admin\\Testi
 $router->get('/admin/emi-calculator', 'App\\Http\\Controllers\\Admin\\EMIController@calculator');
 $router->get('/admin/loans', 'App\\Http\\Controllers\\Admin\\LoanController@index');
 
-// Users
-$router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\AgentController@index');
 $router->get('/admin/builders', 'App\\Http\\Controllers\\Admin\\BuilderController@index');
 
 // Reports
@@ -2267,12 +2253,6 @@ $router->get('/admin/notification-management/settings', 'NotificationController@
 $router->get('/admin/notification-management/send-test', 'NotificationController@sendTest');
 $router->get('/admin/notification-management/preview/{id}', 'NotificationController@preview');
 
-// Redirect old /user/notifications to admin notification management
-$router->get('/user/notifications', function () {
-    header('Location: ' . BASE_URL . '/admin/notification-management');
-    exit;
-});
-
 // ============================================================
 // MISSING SIDEBAR MENU ROUTES (19 items from admin_menu_items table)
 // ============================================================
@@ -2501,7 +2481,8 @@ $router->get('/admin/cm-dashboard/performance-metrics', 'Admin\\CMDashboardContr
 // ============================================================
 // TEAM MANAGEMENT (TeamManagementController)
 // ============================================================
-$router->get('/team', 'App\\Http\\Controllers\\TeamManagementController@index');
+// NOTE: /team (GET) is also registered at line ~79 as Front\PageController@team (public page)
+// The TeamManagementController handles /team/* sub-routes below only
 $router->post('/team/add', 'App\\Http\\Controllers\\TeamManagementController@addTeamMember');
 $router->get('/team/member/{id}', 'App\\Http\\Controllers\\TeamManagementController@getTeamMember');
 $router->post('/team/member/{id}', 'App\\Http\\Controllers\\TeamManagementController@updateTeamMember');
@@ -2592,42 +2573,6 @@ $router->get('/payment/failed', 'App\\Http\\Controllers\\Payment\\PaymentGateway
 $router->get('/payment/history', 'App\\Http\\Controllers\\Payment\\PaymentGatewayController@paymentHistory');
 
 // ============================================================
-// ANALYTICS REPORTS (Analytics\ReportController)
-// ============================================================
-$router->get('/admin/analytics', 'App\\Http\\Controllers\\Analytics\\ReportController@index');
-$router->get('/admin/analytics/sales', 'App\\Http\\Controllers\\Analytics\\ReportController@sales');
-$router->get('/admin/analytics/properties', 'App\\Http\\Controllers\\Analytics\\ReportController@properties');
-$router->get('/admin/analytics/user-activity', 'App\\Http\\Controllers\\Analytics\\ReportController@userActivity');
-
-// ============================================================
-// ADVANCED ANALYTICS (Analytics\AdvancedAnalyticsController)
-// ============================================================
-$router->get('/admin/analytics/advanced', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@dashboard');
-$router->get('/admin/analytics/advanced/property', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@propertyAnalytics');
-$router->get('/admin/analytics/advanced/user', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@userAnalytics');
-$router->get('/admin/analytics/advanced/financial', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@financialAnalytics');
-$router->get('/admin/analytics/advanced/mlm', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@mlmAnalytics');
-$router->get('/admin/analytics/advanced/realtime', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@apiGetRealtimeData');
-
-// ============================================================
-// PERFORMANCE & CACHE (PerformanceController)
-// ============================================================
-$router->get('/admin/performance', 'App\\Http\\Controllers\\PerformanceController@dashboard');
-$router->get('/admin/performance/metrics', 'App\\Http\\Controllers\\PerformanceController@getMetrics');
-$router->get('/admin/performance/system', 'App\\Http\\Controllers\\PerformanceController@getSystemPerformance');
-$router->get('/admin/performance/database', 'App\\Http\\Controllers\\PerformanceController@getDatabasePerformance');
-$router->get('/admin/performance/cache', 'App\\Http\\Controllers\\PerformanceController@getCachePerformance');
-$router->post('/admin/performance/optimize', 'App\\Http\\Controllers\\PerformanceController@optimize');
-$router->post('/admin/performance/clear-cache', 'App\\Http\\Controllers\\PerformanceController@clearCache');
-$router->get('/admin/performance/report', 'App\\Http\\Controllers\\PerformanceController@generateReport');
-$router->get('/admin/performance/alerts', 'App\\Http\\Controllers\\PerformanceController@getAlerts');
-$router->get('/admin/performance/monitor', 'App\\Http\\Controllers\\PerformanceController@monitor');
-$router->get('/admin/performance/trends', 'App\\Http\\Controllers\\PerformanceController@getTrends');
-$router->post('/admin/performance/threshold', 'App\\Http\\Controllers\\PerformanceController@setThreshold');
-$router->get('/admin/performance/settings', 'App\\Http\\Controllers\\PerformanceController@getSettings');
-$router->post('/admin/performance/settings', 'App\\Http\\Controllers\\PerformanceController@updateSettings');
-
-// ============================================================
 // MEDIA CENTER (Communication\MediaController)
 // ============================================================
 $router->get('/admin/media-center', 'App\\Http\\Controllers\\Communication\\MediaController@index');
@@ -2639,28 +2584,6 @@ $router->get('/admin/media-center/search', 'App\\Http\\Controllers\\Communicatio
 $router->get('/admin/media-center/gallery/{id}', 'App\\Http\\Controllers\\Communication\\MediaController@getGallery');
 $router->post('/admin/media-center/gallery', 'App\\Http\\Controllers\\Communication\\MediaController@createGallery');
 $router->get('/admin/media-center/stats', 'App\\Http\\Controllers\\Communication\\MediaController@getStats');
-
-// ============================================================
-// ADVANCED SECURITY (Tech\AdvancedSecurityController)
-// ============================================================
-$router->get('/admin/security', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityDashboard');
-$router->get('/admin/security/quantum-cryptography', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@quantumCryptography');
-$router->get('/admin/security/zero-trust', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@zeroTrust');
-$router->get('/admin/security/blockchain', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@blockchainSecurity');
-$router->get('/admin/security/ai-security', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@aiSecurity');
-$router->get('/admin/security/mfa', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@mfaEnhancement');
-$router->get('/admin/security/privacy', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@dataPrivacy');
-$router->get('/admin/security/training', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityTraining');
-$router->get('/admin/security/research', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityResearch');
-$router->get('/admin/security/partnerships', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityPartnerships');
-$router->get('/admin/security/benchmarks', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@performanceBenchmarks');
-$router->get('/admin/security/roi-calculator', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@roiCalculator');
-$router->get('/admin/security/roadmap', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@securityRoadmap');
-$router->get('/admin/security/case-studies', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@caseStudies');
-$router->get('/admin/security/resources', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@resources');
-$router->get('/admin/security/innovation', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@innovation');
-$router->get('/admin/security/awards', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@awards');
-$router->get('/admin/security/future-vision', 'App\\Http\\Controllers\\Tech\\AdvancedSecurityController@futureVision');
 
 // ============================================================
 // LAND PLOTTING (Land\PlottingController)

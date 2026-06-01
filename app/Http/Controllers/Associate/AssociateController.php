@@ -16,6 +16,7 @@ class AssociateController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         $this->associateService = new AssociateService();
     }
 

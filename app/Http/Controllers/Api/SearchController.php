@@ -13,6 +13,7 @@ class SearchController extends BaseController {
     private $searchService;
     
     public function __construct() {
+        parent::__construct();
         $this->searchService = new AdvancedSearchService();
     }
     

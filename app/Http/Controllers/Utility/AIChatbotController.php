@@ -18,6 +18,7 @@ class AIChatbotController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         $this->chatbot = new \App\Models\AIChatbot();
     }
 

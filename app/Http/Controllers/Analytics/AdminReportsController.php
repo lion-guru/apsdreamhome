@@ -293,7 +293,7 @@ class AdminReportsController extends AdminController
     /**
      * Get recent activities for dashboard
      */
-    private function getRecentActivities()
+    public function getRecentActivities()
     {
         return [
             ['type' => 'inquiry', 'action' => 'new', 'title' => 'New property inquiry', 'time' => '2 hours ago', 'user' => 'John Doe'],

@@ -21,6 +21,7 @@ class PropertyController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = Database::getInstance()->getConnection();
         $this->agentAssignmentService = new AgentAssignmentService();
         $this->referralService = new ReferralService();
