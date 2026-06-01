@@ -288,6 +288,8 @@ $router->post('/user/profile', 'Front\\UserController@updateProfile');
 $router->get('/user/bank-details', 'Front\\UserController@bankDetails');
 $router->post('/user/bank-details/save', 'Front\\UserController@saveBankDetails');
 $router->get('/user/network', 'Front\\UserController@network');
+$router->get('/user/notification-settings', 'Front\\UserController@notificationSettings');
+$router->post('/user/notification-settings', 'Front\\UserController@updateNotificationSettings');
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->post('/property/review', 'Front\\PageController@reviewSubmit');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');

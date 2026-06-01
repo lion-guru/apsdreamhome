@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\BaseController;
 use App\Services\Payment\RazorpayGateway;
+use App\Services\Communication\NotificationService;
 use Exception;
 use PDO;
 
@@ -180,6 +181,19 @@ class PaymentGatewayController extends BaseController
 
                 // Process commission if payment is successful
                 $this->processCommission($transaction_id, $payment_data['plot_id']);
+
+                // Send payment notification
+                try {
+                    $notif = new NotificationService();
+                    $bookingStmt = $this->db->prepare("SELECT id FROM bookings WHERE plot_id = ? LIMIT 1");
+                    $bookingStmt->execute([$payment_data['plot_id']]);
+                    $booking = $bookingStmt->fetch(PDO::FETCH_ASSOC);
+                    if ($booking) {
+                        $notif->sendPaymentReceived($booking['id'], $payment_data['amount']);
+                    }
+                } catch (\Exception $e) {
+                    error_log("PaymentGatewayController: notification failed: " . $e->getMessage());
+                }
 
                 $this->setFlash('success', 'Payment processed successfully! Transaction ID: ' . $transaction_id);
                 $this->redirect(BASE_URL . 'payment/success');
