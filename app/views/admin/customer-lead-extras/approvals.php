@@ -1,5 +1,5 @@
 <?php
-@@session_start();
+// Session started by controller
 $page_title = 'Lead Assignment Approvals';
 $page_description = 'Manage lead assignment and reassignment approval requests';
 ?>

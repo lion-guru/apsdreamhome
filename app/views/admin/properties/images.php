@@ -7,7 +7,7 @@
 
 if (!defined('BASE_PATH')) {
     if (session_status() === PHP_SESSION_NONE) {
-        @session_start();
+        // Session started by controller
     }
 
     if (!isset($_SESSION['admin_id'])) {
@@ -357,9 +357,6 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
         color: #d1d5db;
     }
 </style>
-</head>
-
-<body>
 
     <div class="container-fluid">
         <div class="row">
@@ -573,7 +570,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         // Drag & Drop Upload
         const dropZone = document.getElementById('dropZone');
@@ -794,7 +791,3 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                 .catch(error => console.error('Error:', error));
         }
     </script>
-
-</body>
-
-</html>

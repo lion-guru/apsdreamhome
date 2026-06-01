@@ -2477,26 +2477,31 @@ class PageController extends BaseController
             foreach ($rows as $row) {
                 $amenities = [];
                 if (!empty($row['amenities'])) {
-                    $decoded = json_decode($row['amenities'], true);
-                    $amenities = is_array($decoded) ? $decoded : [];
+                    $amenitiesList = json_decode($row['amenities'], true);
+                    if (is_array($amenitiesList)) {
+                        foreach ($amenitiesList as $amenity) {
+                            $amenities[] = is_string($amenity) ? $amenity : ($amenity['name'] ?? '');
+                        }
+                    }
                 }
                 $highlights = [];
-                if (!empty($row['key_highlights'])) {
-                    $decoded = json_decode($row['key_highlights'], true);
-                    $highlights = is_array($decoded) ? $decoded : [];
+                if (!empty($row['highlights'])) {
+                    $highlightsList = json_decode($row['highlights'], true);
+                    if (is_array($highlightsList)) {
+                        foreach ($highlightsList as $highlight) {
+                            $highlights[] = is_string($highlight) ? $highlight : ($highlight['text'] ?? '');
+                        }
+                    }
                 }
                 $colonies[] = [
                     'id' => $row['id'],
                     'name' => $row['name'],
-                    'slug' => $row['slug'],
-                    'description' => $row['description'],
-                    'image' => $row['image_path'] ?? 'assets/images/colonies/placeholder.jpg',
-                    'location' => ($row['district_name'] ?? '') . ', ' . ($row['state_name'] ?? ''),
-                    'district_name' => $row['district_name'] ?? '',
-                    'total_area' => ($row['total_plots'] * 1200) . ' sqft',
-                    'available_plots' => $row['available_plots'] ?? 0,
-                    'starting_price' => '₹' . number_format(intval($row['starting_price'] ?? 0)),
-                    'completion_status' => $row['is_featured'] ? 'Featured' : 'Active',
+                    'slug' => $row['slug'] ?? '',
+                    'district_name' => $row['district_name'],
+                    'state_name' => $row['state_name'],
+                    'available_plots' => $row['total_plots'] ?? 0,
+                    'price_per_sqft' => $row['price_per_sqft'] ?? 0,
+                    'description' => $row['description'] ?? '',
                     'amenities' => $amenities,
                     'highlights' => $highlights,
                 ];
@@ -2512,5 +2517,68 @@ class PageController extends BaseController
             $colonyStats = ['total_colonies' => 0, 'total_area' => '0', 'total_plots' => 0, 'cities_covered' => 0];
         }
         $this->render('pages/colonies', ['colonies' => $colonies, 'colony_stats' => $colonyStats]);
+    }
+
+    /**
+     * Analytics page
+     */
+    public function analytics()
+    {
+        $this->render('pages/analytics', ['page_title' => 'Analytics']);
+    }
+
+    /**
+     * Calculator page
+     */
+    public function calc()
+    {
+        $this->render('pages/calc', ['page_title' => 'Calculator']);
+    }
+
+    /**
+     * Inquiry page
+     */
+    public function inquiry()
+    {
+        $this->render('pages/inquiry', ['page_title' => 'Contact Us / Inquiry']);
+    }
+
+    /**
+     * Become Associate page
+     */
+    public function becomeAssociate()
+    {
+        $isLoggedIn = !empty($_SESSION['user_id']);
+        $loggedInReferralCode = $isLoggedIn ? ($_SESSION['referral_code'] ?? '') : '';
+        $userName = $isLoggedIn ? ($_SESSION['user_name'] ?? '') : '';
+        $base = BASE_URL;
+        $this->render('pages/become_associate', [
+            'page_title' => 'Become an Associate',
+            'isLoggedIn' => $isLoggedIn,
+            'loggedInReferralCode' => $loggedInReferralCode,
+            'userName' => $userName,
+            'base' => $base
+        ]);
+    }
+
+    /**
+     * Location page by slug
+     */
+    public function location($slug = null)
+    {
+        $allowed = [
+            'gorakhpur-bohisawagar',
+            'gorakhpur-raghunath-nagri',
+            'gorakhpur-suryoday-colony',
+            'kushinagar-budha-city',
+            'lucknow-ram-nagri',
+            'varanasi-ganga-nagri'
+        ];
+        if (!in_array($slug, $allowed)) {
+            header('HTTP/1.0 404 Not Found');
+            $this->render('errors/404', ['page_title' => 'Page Not Found']);
+            return;
+        }
+        $this->render('locations/' . $slug, ['page_title' => ucwords(str_replace(['-', '/'], [' ', ' '], $slug))]);
     }
 }

@@ -1,11 +1,9 @@
 <?php
 // Admin Layout Management Interface
-@@session_start();
-
+// Session started by controller
 // Check if admin is logged in
 if (!isset($_SESSION['admin_id'])) {
-    header('Location: /admin/login');
-    exit;
+    header('Location: ' . BASE_URL . '/admin/login'); exit;
 }
 
 require_once __DIR__ . '/../../Services/LayoutManager.php';
@@ -30,23 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $layoutManager->updateLayoutSettings($settings);
     $_SESSION['success'] = 'Layout settings updated successfully!';
-    header('Location: /admin/layout-manager');
-    exit;
+    header('Location: ' . BASE_URL . '/admin/layout-manager'); exit;
 }
 
 // Get current settings
 $settings = $layoutManager->getLayoutSettings();
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout Manager - APS Dream Home Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    
     <style>
         .layout-preview {
             border: 2px dashed #007bff;
@@ -74,9 +64,7 @@ $settings = $layoutManager->getLayoutSettings();
             margin-bottom: 20px;
         }
     </style>
-</head>
 
-<body class="bg-light">
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -211,7 +199,7 @@ $settings = $layoutManager->getLayoutSettings();
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         let navCounter = <?php echo count($settings['navigation_items']); ?>;
 
@@ -274,6 +262,3 @@ $settings = $layoutManager->getLayoutSettings();
             }
         });
     </script>
-</body>
-
-</html>

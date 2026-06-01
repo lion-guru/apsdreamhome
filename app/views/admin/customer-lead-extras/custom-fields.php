@@ -1,5 +1,5 @@
 <?php
-@@session_start();
+// Session started by controller
 $page_title = 'Lead Custom Fields';
 $page_description = 'Manage custom fields for lead tracking';
 ?>

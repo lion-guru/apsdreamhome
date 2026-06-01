@@ -7,7 +7,7 @@
 
 if (!defined('BASE_PATH')) {
     if (session_status() === PHP_SESSION_NONE) {
-        @session_start();
+        // Session started by controller
     }
 
     if (!isset($_SESSION['admin_id'])) {

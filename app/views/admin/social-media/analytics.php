@@ -18,5 +18,4 @@ $page_heading = $page_heading ?? 'Social Analytics';
 ?>
 <?php
 
-
 ?>

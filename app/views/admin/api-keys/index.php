@@ -1,5 +1,5 @@
 <?php
-$extraHead = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">';
+$extraHead = '';
 $extraHead .= '<style>
 .api-key-card { transition: all 0.3s; }
 .api-key-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }

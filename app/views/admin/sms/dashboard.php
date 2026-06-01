@@ -7,14 +7,10 @@
 $base = BASE_URL;
 $page_title = "SMS Dashboard";
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title><?php echo $page_title; ?> | APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    
     <style>
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -34,8 +30,7 @@ $page_title = "SMS Dashboard";
         .status-error { background: #fee2e2; color: #991b1b; }
         .status-pending { background: #fef3c7; color: #92400e; }
     </style>
-</head>
-<body class="bg-light">
+
     <div class="container-fluid py-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -176,7 +171,7 @@ $page_title = "SMS Dashboard";
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         const baseUrl = '<?php echo $base; ?>';
         
@@ -293,5 +288,3 @@ $page_title = "SMS Dashboard";
             alert('SMS ID: ' + id);
         }
     </script>
-</body>
-</html>

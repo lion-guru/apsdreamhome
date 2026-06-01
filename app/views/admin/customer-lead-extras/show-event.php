@@ -1,5 +1,5 @@
 <?php
-@@session_start();
+// Session started by controller
 $page_title = 'Lead Event Details';
 $page_description = 'Detailed view of lead event';
 ?>
