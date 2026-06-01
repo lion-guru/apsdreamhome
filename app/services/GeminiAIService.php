@@ -51,6 +51,7 @@ class GeminiAIService
                 try {
                     $this->updateApiKey($fallbackKey);
                 } catch (\Exception $updateEx) {
+                            error_log("GeminiAIService.php: " . $updateEx->getMessage());
                 }
             }
 

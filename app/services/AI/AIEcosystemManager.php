@@ -92,6 +92,7 @@ class AIEcosystemManager {
             }
         } catch (Exception $e) {
             // Table might not exist yet, ignore
+                    error_log("AIEcosystemManager.php: " . $e->getMessage());
         }
 
         $queries = [

@@ -166,6 +166,7 @@ class TaskSchedulerService
             }
         } catch (\Exception $e) {
             // Table schema mismatch - skip seeding
+                    error_log("TaskSchedulerService.php: " . $e->getMessage());
         }
     }
     
@@ -476,6 +477,7 @@ class TaskSchedulerService
             $stmt->execute([$status, $taskId]);
         } catch (\Exception $e) {
             // Schema mismatch - skip
+                    error_log("TaskSchedulerService.php: " . $e->getMessage());
         }
     }
     
@@ -494,6 +496,7 @@ class TaskSchedulerService
             $stmt->execute([$status, $taskId]);
         } catch (\Exception $e) {
             // Schema mismatch - skip
+                    error_log("TaskSchedulerService.php: " . $e->getMessage());
         }
     }
     
@@ -514,6 +517,7 @@ class TaskSchedulerService
             $stmt->execute([$nextRun, $taskId]);
         } catch (\Exception $e) {
             // Schema mismatch - skip
+                    error_log("TaskSchedulerService.php: " . $e->getMessage());
         }
     }
     

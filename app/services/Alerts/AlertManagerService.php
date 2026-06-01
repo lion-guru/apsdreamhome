@@ -269,6 +269,7 @@ class AlertManagerService
             
         } catch (Exception $e) {
             // If table doesn't exist, return simulated value
+                    error_log("AlertManagerService.php: " . $e->getMessage());
         }
         
         return rand(0, 10) / 100; // 0-10%

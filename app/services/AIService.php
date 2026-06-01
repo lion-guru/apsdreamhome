@@ -66,6 +66,7 @@ class AIService
                 }
             } catch (Exception $e) {
                 // Fallback to mock
+                        error_log("AIService.php: " . $e->getMessage());
             }
         }
 

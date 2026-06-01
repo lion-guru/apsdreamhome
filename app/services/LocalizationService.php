@@ -48,6 +48,7 @@ class LocalizationService
                 }
             } catch (Exception $e) {
                 // Continue to other detection methods
+                        error_log("LocalizationService.php: " . $e->getMessage());
             }
         }
         
@@ -116,7 +117,7 @@ class LocalizationService
             
         } catch (Exception $e) {
             // Fallback to file-based translations only
-            $this->loadFromFile();
+                $this->loadFromFile();
         }
     }
     
@@ -229,10 +230,10 @@ class LocalizationService
     {
         $formats = [
             'en' => ['symbol' => '$', 'position' => 'before', 'decimal' => '.', 'thousands' => ','],
-            'hi' => ['symbol' => '₹', 'position' => 'before', 'decimal' => '.', 'thousands' => ','],
-            'es' => ['symbol' => '€', 'position' => 'after', 'decimal' => ',', 'thousands' => '.'],
-            'fr' => ['symbol' => '€', 'position' => 'after', 'decimal' => ',', 'thousands' => ' '],
-            'ar' => ['symbol' => 'ر.س', 'position' => 'before', 'decimal' => '.', 'thousands' => ',']
+            'hi' => ['symbol' => 'â‚¹', 'position' => 'before', 'decimal' => '.', 'thousands' => ','],
+            'es' => ['symbol' => 'â‚¬', 'position' => 'after', 'decimal' => ',', 'thousands' => '.'],
+            'fr' => ['symbol' => 'â‚¬', 'position' => 'after', 'decimal' => ',', 'thousands' => ' '],
+            'ar' => ['symbol' => 'Ø±.Ø³', 'position' => 'before', 'decimal' => '.', 'thousands' => ',']
         ];
         
         $format = $formats[$this->currentLocale] ?? $formats['en'];
@@ -275,7 +276,7 @@ class LocalizationService
             'hi' => ['short' => 'd/m/Y', 'medium' => 'd M Y', 'long' => 'd F Y', 'full' => 'l, d F Y'],
             'es' => ['short' => 'd/m/Y', 'medium' => 'd M Y', 'long' => 'd F Y', 'full' => 'l, d F Y'],
             'fr' => ['short' => 'd/m/Y', 'medium' => 'd M Y', 'long' => 'd F Y', 'full' => 'l d F Y'],
-            'ar' => ['short' => 'd/m/Y', 'medium' => 'd M Y', 'long' => 'd F Y', 'full' => 'l، d F Y']
+            'ar' => ['short' => 'd/m/Y', 'medium' => 'd M Y', 'long' => 'd F Y', 'full' => 'lØŒ d F Y']
         ];
         
         return $formats[$this->currentLocale][$format] ?? $formats['en'][$format];

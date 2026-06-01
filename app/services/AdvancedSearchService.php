@@ -235,6 +235,7 @@ class AdvancedSearchService {
                 $suggestions = array_merge($suggestions, $stmt->fetchAll(PDO::FETCH_ASSOC));
             } catch (Exception $e) {
                 // Table might not exist yet
+                        error_log("AdvancedSearchService.php: " . $e->getMessage());
             }
             
             return array_slice($suggestions, 0, $limit);
