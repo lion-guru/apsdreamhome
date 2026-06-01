@@ -140,7 +140,9 @@ class EmailSenderService
         try {
             $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM email_queue GROUP BY status");
             foreach ($rows as $r) $stats[$r['status']] = (int)$r['cnt'];
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+                    error_log("EmailSenderService.php: " . $e->getMessage());
+        }
         return $stats;
     }
 

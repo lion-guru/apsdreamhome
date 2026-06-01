@@ -197,12 +197,12 @@ class LoyaltyRewardsService
         
         // Rewards catalog
         $rewards = [
-            ['₹500 Cashback', 'Get ₹500 credited to your wallet', 500, 'cashback', 500],
-            ['₹1000 Cashback', 'Get ₹1000 credited to your wallet', 1000, 'cashback', 1000],
-            ['₹2000 Cashback', 'Get ₹2000 credited to your wallet', 2000, 'cashback', 2000],
+            ['â‚¹500 Cashback', 'Get â‚¹500 credited to your wallet', 500, 'cashback', 500],
+            ['â‚¹1000 Cashback', 'Get â‚¹1000 credited to your wallet', 1000, 'cashback', 1000],
+            ['â‚¹2000 Cashback', 'Get â‚¹2000 credited to your wallet', 2000, 'cashback', 2000],
             ['Free Site Visit', 'Complimentary site visit with transport', 200, 'service', 0],
             ['Legal Consultation', 'Free legal consultation for property', 500, 'service', 0],
-            ['Home Decor Voucher', '₹5000 home decor voucher', 2500, 'product', 5000],
+            ['Home Decor Voucher', 'â‚¹5000 home decor voucher', 2500, 'product', 5000],
             ['5% Booking Discount', 'Extra 5% off on next booking', 1000, 'discount', 5],
             ['10% Booking Discount', 'Extra 10% off on next booking', 2000, 'discount', 10],
             ['Priority Processing', 'Fast-track your booking process', 300, 'service', 0]
@@ -649,6 +649,7 @@ class LoyaltyRewardsService
             $redemptionData = $redemptionStmt->fetch(\PDO::FETCH_NUM);
         } catch (\Exception $e) {
             // Table or column may not exist yet
+                    error_log("LoyaltyRewardsService.php: " . $e->getMessage());
         }
         
         return [

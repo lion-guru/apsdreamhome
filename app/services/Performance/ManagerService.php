@@ -65,6 +65,7 @@ class PerformanceManager {
                     $db = $container->resolve('db_connection');
                 } catch (\Exception $e) {
                     // Fallback if container fails
+                            error_log("ManagerService.php: " . $e->getMessage());
                 }
             }
             
@@ -73,6 +74,7 @@ class PerformanceManager {
                     $db = \App\Core\App::database()->getConnection();
                 } catch (\Exception $e) {
                     // Final fallback
+                            error_log("ManagerService.php: " . $e->getMessage());
                 }
             }
             

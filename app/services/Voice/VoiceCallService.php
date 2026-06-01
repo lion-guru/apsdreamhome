@@ -424,6 +424,7 @@ class VoiceCallService
                 [$leadId, $type, $description]
             );
         } catch (\Exception $e) {
+                    error_log("VoiceCallService.php: " . $e->getMessage());
         }
     }
 }

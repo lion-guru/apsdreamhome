@@ -112,6 +112,7 @@ class EMIAutomationService
                 $this->db->prepare($updateQuery)->execute([$row['id']]);
             } catch (\Exception $e) {
                 // Column might not exist, ignore
+                        error_log("EMIAutomationService.php: " . $e->getMessage());
             }
         }
 
@@ -167,6 +168,7 @@ class EMIAutomationService
                 $this->db->prepare($updateQuery)->execute([$row['id']]);
             } catch (\Exception $e) {
                 // Column might not exist
+                        error_log("EMIAutomationService.php: " . $e->getMessage());
             }
         }
 

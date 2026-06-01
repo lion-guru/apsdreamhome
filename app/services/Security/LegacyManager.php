@@ -360,6 +360,7 @@ class SecurityManager {
                 $stmt->execute([$event, json_encode($data), $event_data['ip'], $event_data['user_agent']]);
             } catch (Exception $e) {
                 // Silent fail for database logging
+                        error_log("LegacyManager.php: " . $e->getMessage());
             }
         }
 

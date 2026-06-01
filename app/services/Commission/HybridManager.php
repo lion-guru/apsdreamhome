@@ -90,6 +90,7 @@ class HybridCommissionManager
             }
         } catch (\Exception $e) {
             // Column might already exist or table might be missing
+                    error_log("HybridManager.php: " . $e->getMessage());
         }
     }
 

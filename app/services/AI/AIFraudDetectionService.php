@@ -474,6 +474,7 @@ class AIFraudDetectionService
             
         } catch (\Exception $e) {
             // Silently fail
+                    error_log("AIFraudDetectionService.php: " . $e->getMessage());
         }
     }
     
@@ -506,6 +507,7 @@ class AIFraudDetectionService
             
         } catch (\Exception $e) {
             // Silently fail
+                    error_log("AIFraudDetectionService.php: " . $e->getMessage());
         }
     }
     

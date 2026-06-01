@@ -525,6 +525,7 @@ class AIRecommendationService
             
         } catch (\Exception $e) {
             // Silently fail for tracking
+                    error_log("AIRecommendationService.php: " . $e->getMessage());
         }
     }
     

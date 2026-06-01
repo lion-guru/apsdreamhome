@@ -164,6 +164,7 @@ class PerformanceMonitor {
                 }
             } catch (\Throwable $e) {
                 // Ignore errors
+                        error_log("MonitorService.php: " . $e->getMessage());
             }
         }
         return 0;
