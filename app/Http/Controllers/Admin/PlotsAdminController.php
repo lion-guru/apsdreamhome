@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-class PlotsAdminController extends \App\Http\Controllers\BaseController
+class PlotsAdminController extends AdminController
 {
     public function __construct()
     {

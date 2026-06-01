@@ -26,6 +26,7 @@ class RegistrationController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         $this->mlmReferralService = new ReferralService();
         $this->emailService = new EmailService();
         $this->recaptchaSecret = getenv('RECAPTCHA_SECRET_KEY') ?: 'recaptcha_secret_placeholder';

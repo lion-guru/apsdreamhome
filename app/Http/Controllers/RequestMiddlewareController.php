@@ -14,6 +14,7 @@ class RequestMiddlewareController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         $this->middlewareService = new RequestMiddlewareService();
     }
 

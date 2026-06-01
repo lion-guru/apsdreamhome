@@ -6,7 +6,7 @@ use App\Http\Controllers\BaseController;
 
 class VoiceAgentController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

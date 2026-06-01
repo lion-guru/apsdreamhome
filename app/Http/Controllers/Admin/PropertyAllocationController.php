@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 
 /**
  * Property Allocation Controller - Plot Allocation Management
  * Manages plot status, allocation to users, availability calendar
  */
-class PropertyAllocationController extends BaseController
+class PropertyAllocationController extends AdminController
 {
     protected $db;
 

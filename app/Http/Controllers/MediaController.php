@@ -15,6 +15,7 @@ class MediaController extends BaseController
 
     public function __construct(MediaService $mediaService)
     {
+        parent::__construct();
         $this->mediaService = $mediaService;
         $this->middleware('auth');
     }

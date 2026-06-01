@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Core\Database\Database;
 
-class GodModeController extends \App\Http\Controllers\BaseController
+class GodModeController extends AdminController
 {
     public function __construct()
     {

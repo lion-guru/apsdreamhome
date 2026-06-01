@@ -14,6 +14,7 @@ class LocationController extends Controller
     
     public function __construct()
     {
+        parent::__construct();
         $this->db = \App\Core\Database\Database::getInstance();
     }
     

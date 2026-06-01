@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 
 /**
  * Invoice Controller - Plot Booking Invoice Management
  * Generates and manages invoices for plot bookings, installments, and payments
  */
-class InvoiceController extends BaseController
+class InvoiceController extends AdminController
 {
     protected $db;
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use PDO;
 
@@ -10,7 +9,7 @@ use PDO;
  * Deal Controller - CRM Pipeline Management
  * Handles deals, pipeline stages, and deal activities
  */
-class DealController extends BaseController
+class DealController extends AdminController
 {
     public function __construct()
     {

@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 
 /**
  * Deal Pipeline Controller - Kanban Deal Management
  * Manages deals with Kanban board, drag-and-drop stages, timeline tracking
  */
-class DealPipelineController extends BaseController
+class DealPipelineController extends AdminController
 {
     protected $db;
 
