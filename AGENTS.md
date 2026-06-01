@@ -2034,3 +2034,44 @@ All modified files pass syntax check
 | E2E pass rate | 128/129 (99.2%) |
 | PHP error log | Clean (zero new errors)
 
+---
+
+## Session 2026-06-01: Deep Architecture Analysis & Controller Inheritance Fix (Part 15)
+
+### Deep Architecture Analysis
+Performed comprehensive analysis of 4 architectural layers:
+
+**1. Controller Inheritance (25 bugs found):**
+- **14 controllers missing `parent::__construct()`** — All extended BaseController but their constructors didn't call `parent::__construct()`, leaving `$this->db`, `$this->session`, CSRF protection uninitialized
+- **6 Admin\ controllers extending BaseController instead of AdminController** — Got public frontend layout instead of admin sidebar/header
+- **1 private `$db` conflict** — VoiceAgentController declared `private $db` while parent has `protected $db` (PHP 8.2 fatal)
+- **1 private method conflict** — AdminReportsController's `private getRecentActivities()` shadowing parent's public method
+- **Full inheritance chain mapped**: `BaseController → AdminController → 100+ admin controllers`
+
+**2. Route Structure (13 duplicates + 29 ordering conflicts found):**
+- **`/admin/users` registered 5 times** — Different controllers competing for same path
+- **11 duplicate routes removed** — /faq, /gallery, /admin/analytics (×2), /admin/users (×4), /user/notifications, /team
+- **29 static-after-parameterized conflicts** — Routes like `/projects/{location}` blocking `/projects/budha-city`
+- **77 closure routes** still bypass MVC layout system (migration needed)
+
+**3. View Architecture (121 security bypasses found):**
+- **67 admin views with `@session_start()`** — Self-managing sessions instead of controller auth
+- **54 admin views with `header('Location:')` redirects** — Doing own auth checks, bypassing `$this->requireAdmin()`
+- **5 self-contained HTML pages** — Have their own `<html><head><body>` instead of using admin layout
+
+**4. All Key Metrics:**
+| Metric | Value |
+|--------|-------|
+| Total routes (all files) | 1,777 |
+| GET routes | 1,253 |
+| POST routes | 497 |
+| Controller@method routes | 1,701 |
+| Closure routes | 77 |
+| Duplicate paths removed | 13 |
+| Controller inheritance bugs fixed | 25 |
+| Remaining: views with session_start() | 67 |
+| Remaining: views with header redirects | 54 |
+| Remaining: self-contained HTML views | 5 |
+| E2E pass rate | 128/129 |
+
+
