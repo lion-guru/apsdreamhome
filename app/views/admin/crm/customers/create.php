@@ -215,5 +215,4 @@ $page_heading = $page_heading ?? 'Agent Management';
 </div>
 <?php
 
-
 ?>

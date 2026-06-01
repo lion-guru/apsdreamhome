@@ -541,4 +541,157 @@ class AdminController extends BaseController
         $this->requireAdmin();
         return $this->render('admin/dev-tools/index', ['page_title' => 'Developer Tools']);
     }
+
+    /**
+     * Cache management page
+     */
+    public function cache()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/cache', ['page_title' => 'Cache Management']);
+    }
+
+    /**
+     * WhatsApp Integration
+     */
+    public function whatsappIntegration()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/whatsapp_integration', ['page_title' => 'WhatsApp Integration']);
+    }
+
+    /**
+     * WhatsApp Web (QR scan)
+     */
+    public function whatsappWeb()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/whatsapp-web/index', ['page_title' => 'WhatsApp Web']);
+    }
+
+    /**
+     * WhatsApp Web Manage (redirect to localhost:3001)
+     */
+    public function whatsappWebManage()
+    {
+        $this->requireAdmin();
+        header('Location: http://localhost:3001');
+        exit;
+    }
+
+    /**
+     * Render a stub/placeholder admin page.
+     */
+    public function renderStub($title, $message = 'This section is under development.')
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', [
+            'page_title' => $title,
+            'page_message' => $message
+        ]);
+    }
+
+    // --- Stub page methods for closure route conversion ---
+
+    public function marketingStrategies()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Marketing Strategies', 'page_message' => 'This section is under development.']);
+    }
+
+    public function marketingMarketplace()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Marketing Marketplace', 'page_message' => 'This section is under development.']);
+    }
+
+    public function agentCommissionRates()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Agent Commission Rates', 'page_message' => 'Configure commission rates for users.']);
+    }
+
+    public function associateCommissionStructure()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Associate Commission Structure', 'page_message' => 'This section is under development.']);
+    }
+
+    public function associateCommissionCalculations()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Associate Commission Calculations', 'page_message' => 'This section is under development.']);
+    }
+
+    public function commissionBonuses()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Commission Bonuses', 'page_message' => 'Manage bonus rules and payouts.']);
+    }
+
+    public function mlmCommissionLevels()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'MLM Commission Levels', 'page_message' => 'This section is under development.']);
+    }
+
+    public function mlmCommissionRecords()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'MLM Commission Records', 'page_message' => 'This section is under development.']);
+    }
+
+    public function mlmCommissionAnalytics()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'MLM Commission Analytics', 'page_message' => 'This section is under development.']);
+    }
+
+    public function dailyRevenue()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Daily Revenue', 'page_message' => 'View daily revenue breakdown.']);
+    }
+
+    public function telecallerCommissionRules()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Telecaller Commission Rules', 'page_message' => 'This section is under development.']);
+    }
+
+    public function telecallerCommissions()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'Telecaller Commissions', 'page_message' => 'This section is under development.']);
+    }
+
+    public function mlmRankCriteria()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'MLM Rank Criteria', 'page_message' => 'Define rank advancement criteria for users.']);
+    }
+
+    public function mlmUpgrades()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'MLM Upgrades', 'page_message' => 'View and manage associate rank upgrades.']);
+    }
+
+    public function mlmWithdrawals()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'MLM Withdrawals', 'page_message' => 'Manage withdrawal requests from users.']);
+    }
+
+    public function mlmRewards()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'MLM Rewards', 'page_message' => 'Manage rewards and recognition for users.']);
+    }
+
+    public function apiIntegrations()
+    {
+        $this->requireAdmin();
+        return $this->render('admin/stub_page', ['page_title' => 'API Integrations', 'page_message' => 'Manage third-party API integrations and webhooks.']);
+    }
 }

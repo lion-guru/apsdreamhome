@@ -1,5 +1,5 @@
 <?php
-$extraHead = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">';
+$extraHead = '';
 $extraHead .= '<style>
 .guide-card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px; }
 .step-card { border-left: 4px solid #0d6efd; background: #f8f9fa; padding: 15px 20px; margin-bottom: 10px; border-radius: 8px; }

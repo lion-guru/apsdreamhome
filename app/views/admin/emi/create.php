@@ -105,7 +105,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <?php endif; ?>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         // Auto-fill total amount when booking is selected
         document.querySelector('select[name="booking_id"]').addEventListener('change', function() {

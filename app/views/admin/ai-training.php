@@ -5,8 +5,7 @@
  * Admin can train the chatbot with new Q&A patterns
  */
 
-@@session_start();
-
+// Session started by controller
 // Check admin login
 if (!isset($_SESSION['admin_id'])) {
     header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/') . 'admin/login');
@@ -177,15 +176,9 @@ $categories = [
 ];
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot Training | APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    
     <style>
         :root {
             --primary: #667eea;
@@ -370,9 +363,7 @@ $categories = [
             font-size: 13px;
         }
     </style>
-</head>
 
-<body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-brand">
@@ -703,7 +694,7 @@ $categories = [
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         function fillTest(message) {
             document.getElementById('testInput').value = message;
@@ -763,6 +754,3 @@ $categories = [
             if (e.key === 'Enter') sendTestMessage();
         });
     </script>
-</body>
-
-</html>

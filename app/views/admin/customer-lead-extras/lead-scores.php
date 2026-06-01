@@ -1,5 +1,5 @@
 <?php
-@@session_start();
+// Session started by controller
 $page_title = 'AI Lead Scoring';
 $page_description = 'Monitor and manage AI-powered lead scores';
 ?>

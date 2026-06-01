@@ -120,9 +120,7 @@ function exportAsPDF($data) {
     header('Content-Disposition: attachment; filename="dashboard_report_' . date('Y-m-d_H-i-s') . '.html"');
 
     echo '<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard Report - ' . date('Y-m-d H:i:s') . '</title>
+
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
@@ -132,8 +130,7 @@ function exportAsPDF($data) {
         .section { margin: 30px 0; }
         .stats { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
     </style>
-</head>
-<body>
+
     <h1>APS Dream Home - Admin Dashboard Report</h1>
     <p><strong>Generated on:</strong> ' . date('Y-m-d H:i:s') . '</p>
 

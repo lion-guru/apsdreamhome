@@ -106,30 +106,7 @@ $router->get('/gallery', 'Front\\PageController@gallery');
 $router->get('/resell', 'Front\\PageController@resell');
 $router->get('/careers', 'Front\PageController@careers');
 $router->get('/coming-soon', 'Front\\PageController@comingSoon');
-$router->get('/become-associate', function () {
-    @session_start();
-    $referral_code = 'APS2025COMP';
-    $referrer_name = 'APS Dream Home';
-    try {
-        $db = \App\Core\Database\Database::getInstance();
-        $row = $db->fetchOne("SELECT referral_code, name FROM users WHERE referral_code = ? LIMIT 1", ['APS2025COMP']);
-        if ($row) {
-            $referral_code = $row['referral_code'];
-            $referrer_name = $row['name'];
-        } else {
-            $admin = $db->fetchOne("SELECT referral_code, name FROM users WHERE (user_type = 'admin' OR role = 'super_admin') AND referral_code IS NOT NULL AND referral_code != '' LIMIT 1");
-            if ($admin) {
-                $referral_code = $admin['referral_code'];
-                $referrer_name = $admin['name'];
-            }
-        }
-    } catch (\Exception $e) {}
-    $base = BASE_URL;
-    $isLoggedIn = !empty($_SESSION['user_id']);
-    $loggedInReferralCode = $isLoggedIn ? ($_SESSION['referral_code'] ?? '') : '';
-    $userName = $isLoggedIn ? ($_SESSION['user_name'] ?? '') : '';
-    include __DIR__ . '/../app/views/pages/become_associate.php';
-});
+$router->get('/become-associate', 'Front\\PageController@becomeAssociate');
 $router->get('/become_associate', function () {
     header('Location: ' . BASE_URL . '/become-associate', true, 301);
     exit;
@@ -212,8 +189,8 @@ $router->get('/careers/job/{id}', 'Front\\PageController@careerJobDetails');
 
 // Property Pages
 $router->get('/properties', 'Front\\PageController@properties');
-$router->get('/properties/{id}', 'Front\\PageController@propertyDetails');
 $router->get('/featured-properties', 'Front\PageController@featuredProperties');
+$router->get('/properties/{id}', 'Front\\PageController@propertyDetails');
 
 // Property Comparison Routes
 $router->get('/compare', 'Property\CompareController@index');
@@ -225,8 +202,8 @@ $router->post('/compare/delete/{id}', 'Property\CompareController@delete');
 // Project Pages
 $router->get('/projects', 'Front\\PageController@projects');
 $router->get('/company/projects', 'Front\\PageController@projects');
-$router->get('/projects/{slug}', 'Front\\PageController@projectDetails');
 $router->get('/projects/budha-city', 'Front\\PageController@budhaCity');
+$router->get('/projects/{slug}', 'Front\\PageController@projectDetails');
 $router->get('/projects/{location}', 'Front\\PageController@projectsByLocation');
 
 // Dynamic Colony Pages (single-template, DB-driven)
@@ -289,19 +266,9 @@ $router->get('/admin/api-keys/test/{id}', 'App\Http\Controllers\Admin\ApiKeyCont
 $router->get('/admin/ai-training', 'App\\Http\\Controllers\\Admin\\AdminAIController@training');
 
 // Admin WhatsApp Integration
-$router->get('/admin/whatsapp-integration', function () {
-    require_once __DIR__ . '/../app/views/admin/whatsapp_integration.php';
-});
-
-// Admin WhatsApp Web (QR scan - new)
-$router->get('/admin/whatsapp-web', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    require_once __DIR__ . '/../app/views/admin/whatsapp-web/index.php';
-});
-$router->get('/admin/whatsapp-web/manage', function () {
-    header('Location: http://localhost:3001');
-    exit;
-});
+$router->get('/admin/whatsapp-integration', 'App\\Http\\Controllers\\Admin\\AdminController@whatsappIntegration');
+$router->get('/admin/whatsapp-web', 'App\\Http\\Controllers\\Admin\\AdminController@whatsappWeb');
+$router->get('/admin/whatsapp-web/manage', 'App\\Http\\Controllers\\Admin\\AdminController@whatsappWebManage');
 
 // Missing frontend routes (from header/footer links)
 $router->get('/financial-services', 'Front\\PageController@financialServices');
@@ -321,9 +288,7 @@ $router->get('/user/profile', 'Front\\UserController@profile');
 $router->post('/user/profile', 'Front\\UserController@updateProfile');
 $router->get('/user/bank-details', 'Front\\UserController@bankDetails');
 $router->post('/user/bank-details/save', 'Front\\UserController@saveBankDetails');
-$router->get('/user/network', function () {
-    include __DIR__ . '/../app/views/pages/user_network.php';
-});
+$router->get('/user/network', 'Front\\UserController@network');
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->post('/property/review', 'Front\\PageController@reviewSubmit');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
@@ -574,11 +539,11 @@ $router->get('/api/dashboard/builder/materials', 'App\\Http\\Controllers\\RoleBa
 $router->get('/admin/properties', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@index');
 $router->get('/admin/properties/create', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@create');
 $router->post('/admin/properties', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@store');
+$router->get('/admin/properties/check-availability', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@checkAvailability');
 $router->get('/admin/properties/{id}', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@show');
 $router->get('/admin/properties/{id}/edit', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@edit');
 $router->post('/admin/properties/{id}/update', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@update');
 $router->post('/admin/properties/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@destroy');
-$router->get('/admin/properties/check-availability', 'App\\Http\\Controllers\\Admin\\PropertyManagementController@checkAvailability');
 
 // AI Aggregator Trigger Route
 $router->post('/admin/ai-aggregator/fetch', 'App\\Http\\Controllers\\Admin\\AIAggregatorController@triggerFetch');
@@ -636,12 +601,12 @@ $router->post('/admin/bookings/{id}/payment', 'App\\Http\\Controllers\\Admin\\Bo
 $router->get('/admin/sites', 'App\\Http\\Controllers\\Admin\\SiteController@index');
 $router->get('/admin/sites/create', 'App\\Http\\Controllers\\Admin\\SiteController@create');
 $router->post('/admin/sites', 'App\\Http\\Controllers\\Admin\\SiteController@store');
+$router->get('/admin/sites/inventory', 'App\\Http\\Controllers\\Admin\\SiteController@inventory');
 $router->get('/admin/sites/{id}', 'App\\Http\\Controllers\\Admin\\SiteController@show');
 $router->get('/admin/sites/{id}/edit', 'App\\Http\\Controllers\\Admin\\SiteController@edit');
 $router->post('/admin/sites/{id}/update', 'App\\Http\\Controllers\\Admin\\SiteController@update');
 $router->post('/admin/sites/{id}/destroy', 'App\\Http\\Controllers\\Admin\\SiteController@destroy');
 $router->get('/admin/inventory', 'App\\Http\\Controllers\\Admin\\SiteController@inventory');
-$router->get('/admin/sites/inventory', 'App\\Http\\Controllers\\Admin\\SiteController@inventory');
 
 // Admin Inquiries
 $router->get('/admin/inquiries', 'App\\Http\\Controllers\\Admin\\InquiryController@index');
@@ -653,13 +618,13 @@ $router->post('/admin/inquiries/delete/{id}', 'App\\Http\\Controllers\\Admin\\In
 $router->get('/admin/plots', 'App\\Http\\Controllers\\Admin\\PlotManagementController@index');
 $router->get('/admin/plots/create', 'App\\Http\\Controllers\\Admin\\PlotManagementController@create');
 $router->post('/admin/plots', 'App\\Http\\Controllers\\Admin\\PlotManagementController@store');
+$router->get('/admin/plots/check-availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@checkAvailability');
+$router->post('/admin/plots/bulk-price-update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@bulkPriceUpdate');
 $router->get('/admin/plots/{id}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@show');
 $router->get('/admin/plots/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotManagementController@edit');
 $router->post('/admin/plots/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@update');
 $router->post('/admin/plots/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PlotManagementController@destroy');
-$router->get('/admin/plots/check-availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@checkAvailability');
 $router->post('/admin/plots/{id}/update-status', 'App\\Http\\Controllers\\Admin\\PlotManagementController@updateStatus');
-$router->post('/admin/plots/bulk-price-update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@bulkPriceUpdate');
 $router->get('/admin/plots/api/price-history/{plotId}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@apiPriceHistory');
 
 // Admin Testimonials
@@ -907,13 +872,8 @@ $router->get('/colonies', 'Front\PageController@colonies');
 $router->get('/ai-chatbot', 'Front\PageController@aiChatbotPage');
 
 $router->get('/terms', 'App\\Http\\Controllers\\Front\\PageController@legalTermsPage');
-$router->get('/inquiry', function () {
-    include __DIR__ . '/../app/views/pages/inquiry.php';
-});
-$router->post('/inquiry', function () {
-    header('Location: /inquiry?success=1');
-    exit;
-});
+$router->get('/inquiry', 'Front\\PageController@inquiry');
+$router->post('/inquiry', 'Front\\PageController@inquiry');
 
 
 // Admin Analytics
@@ -1258,9 +1218,7 @@ $router->get('/admin/faqs', function() {
 $router->get('/admin/settings/company', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 
 // Admin Cache Clear
-$router->get('/admin/cache', function() {
-    require __DIR__ . '/../app/views/admin/cache.php';
-});
+$router->get('/admin/cache', 'App\\Http\\Controllers\\Admin\\AdminController@cache');
 
 // Admin Service Enquiries (alias for services)
 $router->get('/admin/services/enquiry', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
@@ -1354,11 +1312,11 @@ $router->get('/admin/land/create', 'App\\Http\\Controllers\\Admin\\LandControlle
 $router->post('/admin/land/store', 'App\\Http\\Controllers\\Admin\\LandController@store');
 $router->get('/admin/land/acquisitions', 'App\\Http\\Controllers\\Admin\\LandController@acquisitions');
 $router->get('/admin/land/records', 'App\\Http\\Controllers\\Admin\\LandController@records');
+$router->get('/admin/land/stats', 'App\\Http\\Controllers\\Admin\\LandController@getStats');
 $router->get('/admin/land/{id}', 'App\\Http\\Controllers\\Admin\\LandController@show');
 $router->get('/admin/land/{id}/edit', 'App\\Http\\Controllers\\Admin\\LandController@edit');
 $router->post('/admin/land/{id}/update', 'App\\Http\\Controllers\\Admin\\LandController@update');
 $router->post('/admin/land/{id}/destroy', 'App\\Http\\Controllers\\Admin\\LandController@destroy');
-$router->get('/admin/land/stats', 'App\\Http\\Controllers\\Admin\\LandController@getStats');
 
 // ============================================================
 // ADMIN LOYALTY PROGRAM
@@ -1473,13 +1431,8 @@ $router->get('/legal/privacy', 'Front\\PageController@legalPrivacy');
 $router->get('/legal/terms', 'Front\\PageController@legalTermsPage');
 
 // Standalone full-HTML pages
-$router->get('/analytics', function () {
-    include __DIR__ . '/../app/views/pages/analytics.php';
-});
-$router->get('/calc', function () {
-    // Note: calc.php references __DIR__ . '/init.php' (may need fixing)
-    include __DIR__ . '/../app/views/pages/calc.php';
-});
+$router->get('/analytics', 'Front\\PageController@analytics');
+$router->get('/calc', 'Front\\PageController@calc');
 
 // ============================================================
 // LOCATION PROJECT PAGES (added 2026-05-15)
@@ -1489,35 +1442,7 @@ $router->get('/calc', function () {
 // They render as content fragments. For full layout, route through
 // a controller using $this->render('locations/xxx') instead.
 
-$router->get('/locations/gorakhpur-bohisawagar', function () {
-    $projectName = 'Bohi Sawagar - Gorakhpur';
-    include __DIR__ . '/../app/views/locations/gorakhpur-bohisawagar.php';
-});
-$router->get('/locations/gorakhpur-raghunath-nagri', function () {
-    // Partial view: requires ASSETS_URL
-    if (!defined('ASSETS_URL')) define('ASSETS_URL', BASE_URL . '/assets/');
-    include __DIR__ . '/../app/views/locations/gorakhpur-raghunath-nagri.php';
-});
-$router->get('/locations/gorakhpur-suryoday-colony', function () {
-    // Partial view: requires ASSETS_URL
-    if (!defined('ASSETS_URL')) define('ASSETS_URL', BASE_URL . '/assets/');
-    include __DIR__ . '/../app/views/locations/gorakhpur-suryoday-colony.php';
-});
-$router->get('/locations/kushinagar-budha-city', function () {
-    // Uses its own layout via ob_start() + require layout
-    // Replaces missing init.php — helpers.php is already loaded from bootstrap
-    include __DIR__ . '/../app/views/locations/kushinagar-budha-city.php';
-});
-$router->get('/locations/lucknow-ram-nagri', function () {
-    // Uses its own layout via ob_start() + require layout
-    // Replaces missing init.php — helpers.php is already loaded from bootstrap
-    include __DIR__ . '/../app/views/locations/lucknow-ram-nagri.php';
-});
-$router->get('/locations/varanasi-ganga-nagri', function () {
-    // Partial view: requires ASSETS_URL
-    if (!defined('ASSETS_URL')) define('ASSETS_URL', BASE_URL . '/assets/');
-    include __DIR__ . '/../app/views/locations/varanasi-ganga-nagri.php';
-});
+$router->get('/locations/{slug}', 'Front\\PageController@location');
 
 // ====== Project Management ======
 $router->get('/admin/projects/manage', 'App\Http\Controllers\Admin\ProjectController@index');
@@ -2263,114 +2188,29 @@ $router->get('/admin/associate-extensions/show/{id}', 'App\\Http\\Controllers\\A
 $router->post('/admin/associate-extensions/update-points/{id}', 'App\\Http\\Controllers\\Admin\\AssociateExtensionController@updatePoints');
 
 // Marketing section
-$router->get('/admin/marketing/strategies', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Marketing Strategies';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Marketing Strategies</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/marketing/marketplace', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Marketing Marketplace';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Marketing Marketplace</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
+$router->get('/admin/marketing/strategies', 'App\\Http\\Controllers\\Admin\\AdminController@marketingStrategies');
+$router->get('/admin/marketing/marketplace', 'App\\Http\\Controllers\\Admin\\AdminController@marketingMarketplace');
 
 // Commission section (MLM)
-$router->get('/admin/commission/agent-rates', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Agent Commission Rates';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Agent Commission Rates</h1><p class="text-muted">Configure commission rates for users.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/associate/structure', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Associate Commission Structure';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Associate Commission Structure</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/associate/calculations', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Associate Commission Calculations';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Associate Commission Calculations</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/bonuses', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Commission Bonuses';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Commission Bonuses</h1><p class="text-muted">Manage bonus rules and payouts.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/mlm/levels', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'MLM Commission Levels';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Commission Levels</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/mlm/records', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'MLM Commission Records';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Commission Records</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/mlm/analytics', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'MLM Commission Analytics';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Commission Analytics</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/revenue/daily', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Daily Revenue';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Daily Revenue</h1><p class="text-muted">View daily revenue breakdown.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/telecaller/rules', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Telecaller Commission Rules';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Telecaller Commission Rules</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/commission/telecaller/commissions', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'Telecaller Commissions';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">Telecaller Commissions</h1><p class="text-muted">This section is under development.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
+$router->get('/admin/commission/agent-rates', 'App\\Http\\Controllers\\Admin\\AdminController@agentCommissionRates');
+$router->get('/admin/commission/associate/structure', 'App\\Http\\Controllers\\Admin\\AdminController@associateCommissionStructure');
+$router->get('/admin/commission/associate/calculations', 'App\\Http\\Controllers\\Admin\\AdminController@associateCommissionCalculations');
+$router->get('/admin/commission/bonuses', 'App\\Http\\Controllers\\Admin\\AdminController@commissionBonuses');
+$router->get('/admin/commission/mlm/levels', 'App\\Http\\Controllers\\Admin\\AdminController@mlmCommissionLevels');
+$router->get('/admin/commission/mlm/records', 'App\\Http\\Controllers\\Admin\\AdminController@mlmCommissionRecords');
+$router->get('/admin/commission/mlm/analytics', 'App\\Http\\Controllers\\Admin\\AdminController@mlmCommissionAnalytics');
+$router->get('/admin/commission/revenue/daily', 'App\\Http\\Controllers\\Admin\\AdminController@dailyRevenue');
+$router->get('/admin/commission/telecaller/rules', 'App\\Http\\Controllers\\Admin\\AdminController@telecallerCommissionRules');
+$router->get('/admin/commission/telecaller/commissions', 'App\\Http\\Controllers\\Admin\\AdminController@telecallerCommissions');
 
 // MLM section
-$router->get('/admin/mlm/rank-criteria', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'MLM Rank Criteria';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Rank Criteria</h1><p class="text-muted">Define rank advancement criteria for users.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/mlm/upgrades', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'MLM Upgrades';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Upgrades</h1><p class="text-muted">View and manage associate rank upgrades.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/mlm/withdrawals', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'MLM Withdrawals';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Withdrawals</h1><p class="text-muted">Manage withdrawal requests from users.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
-$router->get('/admin/mlm/rewards', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'MLM Rewards';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">MLM Rewards</h1><p class="text-muted">Manage rewards and recognition for users.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
+$router->get('/admin/mlm/rank-criteria', 'App\\Http\\Controllers\\Admin\\AdminController@mlmRankCriteria');
+$router->get('/admin/mlm/upgrades', 'App\\Http\\Controllers\\Admin\\AdminController@mlmUpgrades');
+$router->get('/admin/mlm/withdrawals', 'App\\Http\\Controllers\\Admin\\AdminController@mlmWithdrawals');
+$router->get('/admin/mlm/rewards', 'App\\Http\\Controllers\\Admin\\AdminController@mlmRewards');
 
 // Settings section (API)
-$router->get('/admin/api/integrations', function () {
-    \App\Core\Middleware\AuthMiddleware::requireAdmin();
-    $page_title = 'API Integrations';
-    $content = '<div class="container-fluid"><h1 class="h3 mb-4">API Integrations</h1><p class="text-muted">Manage third-party API integrations and webhooks.</p></div>';
-    include APP_PATH . '/views/layouts/admin.php';
-});
+$router->get('/admin/api/integrations', 'App\\Http\\Controllers\\Admin\\AdminController@apiIntegrations');
 $router->get('/admin/api/developers', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developers');
 $router->get('/admin/api/developers/create', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developersCreate');
 $router->post('/admin/api/developers/store', 'App\\Http\\Controllers\\Admin\\ApiIntegrationController@developersStore');
@@ -2559,9 +2399,9 @@ $router->post('/admin/marketing-automation/api/automation/trigger', 'App\\Http\\
 // PROPERTY WORKFLOW (Property\PropertyController)
 // ============================================================
 $router->get('/properties-workflow', 'App\\Http\\Controllers\\Property\\PropertyController@index');
+$router->any('/properties-workflow/sell', 'App\\Http\\Controllers\\Property\\PropertyController@sell');
 $router->get('/properties-workflow/{id}', 'App\\Http\\Controllers\\Property\\PropertyController@show');
 $router->any('/properties-workflow/{id}/buy', 'App\\Http\\Controllers\\Property\\PropertyController@buy');
-$router->any('/properties-workflow/sell', 'App\\Http\\Controllers\\Property\\PropertyController@sell');
 $router->any('/properties-workflow/{id}/schedule-visit', 'App\\Http\\Controllers\\Property\\PropertyController@scheduleVisit');
 
 // ============================================================
@@ -2660,15 +2500,9 @@ $router->post('/api/sms/verify-otp', 'App\\Http\\Controllers\\SMSController@veri
 // ============================================================
 // MISSING SIDEBAR ROUTES
 // ============================================================
-$router->get('/admin/customers', function () {
-    $c = new App\Http\Controllers\Admin\CRMController();
-    $c->index();
-});
+$router->get('/admin/customers', 'App\\Http\\Controllers\\Admin\\CRMController@index');
 $router->get('/admin/hrm/employees', function () {
     header('Location: ' . (defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome') . '/admin/hr/users');
     exit;
 });
-$router->get('/admin/mlm/associates', function () {
-    $c = new App\Http\Controllers\Admin\MLMController();
-    $c->users();
-});
+$router->get('/admin/mlm/associates', 'App\\Http\\Controllers\\Admin\\MLMController@users');

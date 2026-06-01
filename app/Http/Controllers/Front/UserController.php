@@ -386,4 +386,12 @@ class UserController extends BaseController
     {
         $this->profile();
     }
+
+    /**
+     * User network page
+     */
+    public function network()
+    {
+        $this->render('pages/user_network', ['page_title' => 'My Network']);
+    }
 }

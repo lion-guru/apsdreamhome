@@ -48,15 +48,9 @@ $roleDashboards = [
     ['name' => 'Agent', 'role' => 'agent', 'icon' => 'fa-headset', 'color' => 'success', 'url' => '/agent/dashboard'],
 ];
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Meta Dashboard | APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    
     <style>
         body {
             background: #f8f9fa;
@@ -120,9 +114,7 @@ $roleDashboards = [
             background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%);
         }
     </style>
-</head>
 
-<body>
     <!-- GOD MODE BADGE -->
     <div class="god-mode-badge">
         <i class="fas fa-crown me-2"></i>GOD MODE
@@ -549,7 +541,4 @@ $roleDashboards = [
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+    

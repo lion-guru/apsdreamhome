@@ -1,5 +1,5 @@
 <?php
-@@session_start();
+// Session started by controller
 $page_title = 'Edit Lead Score';
 $page_description = 'Manually adjust lead score';
 ?>

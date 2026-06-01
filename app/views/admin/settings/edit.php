@@ -148,7 +148,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </form>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         function resetSettings() {
             if (confirm('Are you sure you want to reset all settings to defaults?')) {

@@ -1,5 +1,5 @@
 <?php
-@@session_start();
+// Session started by controller
 $page_title = 'Customer Behavior Analysis';
 $page_description = 'Analyze customer behavior patterns and insights';
 ?>

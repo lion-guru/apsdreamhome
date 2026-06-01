@@ -1,5 +1,5 @@
 <?php
-@@session_start();
+// Session started by controller
 $page_title = 'Customer Journey Details';
 $page_description = 'Detailed view of customer journey';
 ?>

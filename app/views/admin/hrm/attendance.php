@@ -17,5 +17,4 @@ $page_heading = $page_heading ?? 'Attendance';
 </div>
 <?php
 
-
 ?>

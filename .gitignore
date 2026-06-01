@@ -162,3 +162,6 @@ playwright-report/
 /.agents/orchestrator_state.json
 /.windsurf/mcp_config.json
 
+
+# Backup files
+*.bak
