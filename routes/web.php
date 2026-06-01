@@ -875,6 +875,11 @@ $router->post('/inquiry', 'Front\\PageController@inquiry');
 
 // Admin Analytics
 $router->get('/admin/analytics', 'App\\Http\\Controllers\\Admin\\AnalyticsController@index');
+$router->get('/admin/analytics/associate-performance', 'App\\Http\\Controllers\\Admin\\AnalyticsController@associatePerformance');
+$router->get('/admin/analytics/sales', 'App\\Http\\Controllers\\Admin\\AnalyticsController@sales');
+$router->get('/admin/analytics/property', 'App\\Http\\Controllers\\Admin\\AnalyticsController@property');
+$router->get('/admin/analytics/financial', 'App\\Http\\Controllers\\Admin\\AnalyticsController@financial');
+$router->get('/admin/analytics/export', 'App\\Http\\Controllers\\Admin\\AnalyticsController@export');
 
 // Newsletter Subscribe
 $router->post('/subscribe', 'Api\NewsletterController@subscribe');
@@ -993,6 +998,13 @@ $router->get('/admin/support_tickets', 'App\\Http\\Controllers\\Admin\\SupportTi
 
 // Admin Media
 $router->get('/admin/media', 'App\\Http\\Controllers\\Admin\\MediaController@index');
+$router->get('/admin/media/create', 'App\\Http\\Controllers\\Admin\\MediaController@create');
+$router->post('/admin/media/store', 'App\\Http\\Controllers\\Admin\\MediaController@store');
+$router->get('/admin/media/show/{id}', 'App\\Http\\Controllers\\Admin\\MediaController@show');
+$router->get('/admin/media/edit/{id}', 'App\\Http\\Controllers\\Admin\\MediaController@edit');
+$router->post('/admin/media/update/{id}', 'App\\Http\\Controllers\\Admin\\MediaController@update');
+$router->post('/admin/media/destroy/{id}', 'App\\Http\\Controllers\\Admin\\MediaController@destroy');
+$router->get('/admin/media/stats', 'App\\Http\\Controllers\\Admin\\MediaController@getStats');
 
 // Admin Careers
 $router->get('/admin/careers', 'App\\Http\\Controllers\\Admin\\CareerController@index');
@@ -1656,6 +1668,11 @@ $router->get('/admin/mlm-realestate/cron', 'Admin\MLMRealEstateController@runCro
 
 // Language switcher
 $router->get('/language/set/{lang}', 'Front\\PageController@setLanguage');
+$router->get('/language/selector', 'App\\Http\\Controllers\\Utility\\LanguageController@languageSelector');
+
+// Admin Translations (Utility\LanguageController)
+$router->get('/admin/translations', 'App\\Http\\Controllers\\Utility\\LanguageController@adminTranslations');
+$router->post('/admin/translations', 'App\\Http\\Controllers\\Utility\\LanguageController@adminTranslations');
 
 // ============================================================
 // PWA (Progressive Web App)
@@ -2157,6 +2174,16 @@ $router->post('/admin/associate-extensions/update-points/{id}', 'App\\Http\\Cont
 // Marketing section
 $router->get('/admin/marketing/strategies', 'App\\Http\\Controllers\\Admin\\AdminController@marketingStrategies');
 $router->get('/admin/marketing/marketplace', 'App\\Http\\Controllers\\Admin\\AdminController@marketingMarketplace');
+
+// Admin Marketing Controller (Admin\MarketingController)
+$router->get('/admin/marketing/manage/strategies', 'App\\Http\\Controllers\\Admin\\MarketingController@strategies');
+$router->get('/admin/marketing/manage/strategies/create', 'App\\Http\\Controllers\\Admin\\MarketingController@createStrategy');
+$router->post('/admin/marketing/manage/strategies/store', 'App\\Http\\Controllers\\Admin\\MarketingController@storeStrategy');
+$router->get('/admin/marketing/manage/strategies/edit/{id}', 'App\\Http\\Controllers\\Admin\\MarketingController@editStrategy');
+$router->post('/admin/marketing/manage/strategies/update/{id}', 'App\\Http\\Controllers\\Admin\\MarketingController@updateStrategy');
+$router->post('/admin/marketing/manage/strategies/toggle/{id}', 'App\\Http\\Controllers\\Admin\\MarketingController@toggleStrategy');
+$router->get('/admin/marketing/manage/marketplace', 'App\\Http\\Controllers\\Admin\\MarketingController@marketplace');
+$router->post('/admin/marketing/manage/marketplace/store', 'App\\Http\\Controllers\\Admin\\MarketingController@storeMarketplace');
 
 // Commission section (MLM)
 $router->get('/admin/commission/agent-rates', 'App\\Http\\Controllers\\Admin\\AdminController@agentCommissionRates');
