@@ -7,7 +7,7 @@ $contactError = $contact_error ?? '';
 <?php if ($contactSuccess): ?>
     <div class="container mt-4">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>Thank you! Your message has been sent. We'll get back to you within 24 hours.
+            <i class="fas fa-check-circle me-2"></i><?php echo __('contact_success'); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     </div>
@@ -27,57 +27,57 @@ $contactError = $contact_error ?? '';
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <h1 class="display-4 fw-bold mb-4 animate-fade-in">Get In Touch</h1>
-                <p class="lead mb-4 animate-fade-in-delay">Have questions about our properties or services? We're here to help you find your dream home.</p>
+                <h1 class="display-4 fw-bold mb-4 animate-fade-in"><?php echo __('get_in_touch'); ?></h1>
+                <p class="lead mb-4 animate-fade-in-delay"><?php echo __('contact_subtitle'); ?></p>
                 <div class="d-flex flex-wrap gap-3 animate-fade-in-delay-2">
                     <a href="tel:+919277121112" class="btn btn-light btn-lg">
-                        <i class="fas fa-phone-alt me-2"></i>Call Now
+                        <i class="fas fa-phone-alt me-2"></i><?php echo __('call_now'); ?>
                     </a>
                     <a href="https://wa.me/919277121112" class="btn btn-success btn-lg" target="_blank">
-                        <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                        <i class="fab fa-whatsapp me-2"></i><?php echo __('whatsapp'); ?>
                     </a>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="card shadow-lg border-0">
                     <div class="card-header bg-primary text-white text-center py-3">
-                        <h4 class="mb-0"><i class="fas fa-envelope me-2"></i>Send Us a Message</h4>
+                        <h4 class="mb-0"><i class="fas fa-envelope me-2"></i><?php echo __('send_us_message'); ?></h4>
                     </div>
                     <div class="card-body p-4">
                         <form action="<?php echo BASE_URL; ?>/contact" method="POST">
                             <div class="mb-3">
-                                <label for="name" class="form-label fw-bold">Your Name *</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Enter your full name" required>
+                                <label for="name" class="form-label fw-bold"><?php echo __('your_name'); ?> *</label>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="<?php echo __('your_name_placeholder'); ?>" required>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label fw-bold">Email *</label>
+                                    <label for="email" class="form-label fw-bold"><?php echo __('email'); ?> *</label>
                                     <input type="email" name="email" id="email" class="form-control" placeholder="your@email.com" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="phone" class="form-label fw-bold">Phone *</label>
+                                    <label for="phone" class="form-label fw-bold"><?php echo __('phone'); ?> *</label>
                                     <input type="tel" name="phone" id="phone" class="form-control" placeholder="+91 XXXXXXXXXX" required>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="subject" class="form-label fw-bold">Subject *</label>
+                                <label for="subject" class="form-label fw-bold"><?php echo __('subject'); ?> *</label>
                                 <select name="subject" id="subject" class="form-select" required>
-                                    <option value="">Select a subject...</option>
-                                    <option value="buy">I want to Buy a Property</option>
-                                    <option value="sell">I want to Sell my Property</option>
-                                    <option value="rent">I want to Rent a Property</option>
-                                    <option value="loan">Home Loan Assistance</option>
-                                    <option value="legal">Legal Services</option>
-                                    <option value="interior">Interior Design</option>
-                                    <option value="general">General Inquiry</option>
+                                    <option value=""><?php echo __('select_subject'); ?></option>
+                                    <option value="buy"><?php echo __('subject_buy'); ?></option>
+                                    <option value="sell"><?php echo __('subject_sell'); ?></option>
+                                    <option value="rent"><?php echo __('subject_rent'); ?></option>
+                                    <option value="loan"><?php echo __('subject_loan'); ?></option>
+                                    <option value="legal"><?php echo __('subject_legal'); ?></option>
+                                    <option value="interior"><?php echo __('subject_interior'); ?></option>
+                                    <option value="general"><?php echo __('subject_general'); ?></option>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="message" class="form-label fw-bold">Message *</label>
-                                <textarea name="message" id="message" class="form-control" rows="4" placeholder="Tell us about your requirement..." required></textarea>
+                                <label for="message" class="form-label fw-bold"><?php echo __('message_label'); ?> *</label>
+                                <textarea name="message" id="message" class="form-control" rows="4" placeholder="<?php echo __('message_placeholder_contact'); ?>" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg w-100">
-                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                                <i class="fas fa-paper-plane me-2"></i><?php echo __('send_message'); ?>
                             </button>
                         </form>
                     </div>
@@ -116,7 +116,7 @@ $contactError = $contact_error ?? '';
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
-                <h2 class="mb-4">Frequently Asked Questions</h2>
+                <h2 class="mb-4"><?php echo __('faq_title'); ?></h2>
                 <div class="accordion" id="faqAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faq1">
@@ -171,7 +171,7 @@ $contactError = $contact_error ?? '';
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title">Office Locations</h3>
+                        <h3 class="card-title"><?php echo __('office_locations'); ?></h3>
                         <div class="office-location">
                             <h4>Head Office - Gorakhpur</h4>
                             <address>

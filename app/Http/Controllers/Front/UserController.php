@@ -504,6 +504,84 @@ class UserController extends BaseController
         ]);
     }
 
+    public function notificationSettings()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $stmt = $this->db->prepare("SELECT * FROM user_notification_preferences WHERE user_id = ?");
+        $stmt->execute([$user['id']]);
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $prefs = [];
+        foreach ($rows as $row) {
+            $type = $row['notification_type'];
+            $prefs[$type] = [
+                'email' => (bool)($row['email_enabled'] ?? true),
+                'sms' => (bool)($row['sms_enabled'] ?? false),
+                'whatsapp' => (bool)($row['whatsapp_enabled'] ?? false),
+                'push' => (bool)($row['push_enabled'] ?? true),
+                'in_app' => true,
+                'frequency' => $row['frequency'] ?? 'immediate',
+            ];
+        }
+
+        $flash_error = $_SESSION['flash_error'] ?? '';
+        $flash_success = $_SESSION['flash_success'] ?? '';
+        unset($_SESSION['flash_error'], $_SESSION['flash_success']);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user_notification_settings', [
+            'page_title' => 'Notification Settings - APS Dream Home',
+            'user' => $user,
+            'prefs' => $prefs,
+            'flash_error' => $flash_error,
+            'flash_success' => $flash_success,
+        ]);
+    }
+
+    public function updateNotificationSettings()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $channels = $_POST['channels'] ?? [];
+        $types = ['booking', 'payment', 'agreement', 'registry', 'possession', 'marketing'];
+
+        foreach ($types as $type) {
+            $typeChannels = $channels[$type] ?? [];
+            $email = in_array('email', $typeChannels) ? 1 : 0;
+            $sms = in_array('sms', $typeChannels) ? 1 : 0;
+            $whatsapp = in_array('whatsapp', $typeChannels) ? 1 : 0;
+            $push = in_array('push', $typeChannels) ? 1 : 0;
+
+            $stmt = $this->db->prepare("
+                INSERT INTO user_notification_preferences 
+                (user_id, user_type, notification_type, email_enabled, sms_enabled, whatsapp_enabled, push_enabled, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                ON DUPLICATE KEY UPDATE
+                email_enabled = VALUES(email_enabled),
+                sms_enabled = VALUES(sms_enabled),
+                whatsapp_enabled = VALUES(whatsapp_enabled),
+                push_enabled = VALUES(push_enabled),
+                updated_at = NOW()
+            ");
+            $stmt->execute([
+                $user['id'],
+                $user['role'] ?? 'customer',
+                $type,
+                $email,
+                $sms,
+                $whatsapp,
+                $push,
+            ]);
+        }
+
+        $_SESSION['flash_success'] = 'Notification preferences updated successfully!';
+        header('Location: ' . BASE_URL . '/user/notification-settings');
+        exit;
+    }
+
     public function updateProfile()
     {
         $this->profile();

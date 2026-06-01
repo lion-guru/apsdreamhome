@@ -365,7 +365,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                     </a>
                 </div>
                 <div class="mt-2">
-                    <small class="text-muted">We'll never post without your permission</small>
+                    <small class="text-muted"><?php echo __('never_post_without_permission'); ?></small>
                 </div>
             </div>
         </div>
