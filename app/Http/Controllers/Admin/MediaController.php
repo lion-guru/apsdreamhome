@@ -47,18 +47,18 @@ class MediaController extends AdminController
 
             // Apply filters
             if (!empty($search)) {
-                $sql .= " AND (m.original_name LIKE ? OR m.description LIKE ?)";
+                $sql .= " AND (m.original_filename LIKE ? OR m.filename LIKE ?)";
                 $searchParam = '%' . $search . '%';
                 $params[] = $searchParam;
                 $params[] = $searchParam;
             }
 
             if (!empty($type)) {
-                $sql .= " AND m.file_type = ?";
+                $sql .= " AND m.type = ?";
                 $params[] = $type;
             }
 
-            $sql .= " ORDER BY m.created_at DESC";
+            $sql .= " ORDER BY m.uploaded_at DESC";
 
             // Count total
             $countSql = str_replace("SELECT m.*, u.name as uploaded_by_name", "SELECT COUNT(DISTINCT m.id) as total", $sql);
@@ -76,7 +76,7 @@ class MediaController extends AdminController
             $media = $stmt->fetchAll();
 
             // Get file types for filter
-            $sql = "SELECT DISTINCT file_type, COUNT(*) as count FROM media GROUP BY file_type ORDER BY count DESC";
+            $sql = "SELECT DISTINCT type, COUNT(*) as count FROM media GROUP BY type ORDER BY count DESC";
             $fileTypes = $this->db->fetchAll($sql);
 
             $data = [
@@ -169,8 +169,8 @@ class MediaController extends AdminController
 
             // Insert media record
             $sql = "INSERT INTO media 
-                    (original_name, file_name, file_path, file_size, mime_type, file_type, description, uploaded_by, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                    (original_filename, filename, path, size, type, uploaded_by, uploaded_at)
+                    VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
@@ -178,9 +178,7 @@ class MediaController extends AdminController
                 $fileName,
                 $filePath,
                 $fileSize,
-                $mimeType,
                 $fileType,
-                CoreFunctionsServiceCustom::validateInput($description, 'string'),
                 $_SESSION['user_id'] ?? 0
             ]);
 
@@ -482,18 +480,18 @@ class MediaController extends AdminController
             $stats['total_files'] = (int)($result['total'] ?? 0);
 
             // Total storage used
-            $sql = "SELECT COALESCE(SUM(file_size), 0) as total FROM media";
+            $sql = "SELECT COALESCE(SUM(size), 0) as total FROM media";
             $result = $this->db->fetchOne($sql);
             $stats['total_storage'] = (int)($result['total'] ?? 0);
 
             // Files by type
-            $sql = "SELECT file_type, COUNT(*) as count FROM media GROUP BY file_type";
+            $sql = "SELECT type, COUNT(*) as count FROM media GROUP BY type";
             $stats['by_type'] = $this->db->fetchAll($sql) ?: [];
 
             // This month's uploads
             $sql = "SELECT COUNT(*) as total FROM media 
-                    WHERE MONTH(created_at) = MONTH(CURRENT_DATE) 
-                    AND YEAR(created_at) = YEAR(CURRENT_DATE)";
+                    WHERE MONTH(uploaded_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(uploaded_at) = YEAR(CURRENT_DATE)";
             $result = $this->db->fetchOne($sql);
             $stats['monthly_uploads'] = (int)($result['total'] ?? 0);
 
