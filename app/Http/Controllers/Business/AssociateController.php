@@ -25,8 +25,25 @@ class AssociateController
     /**
      * Show users list
      */
-    public function index($request)
+    private function buildRequest($routerParam = null): array
     {
+        $params = [];
+        if ($routerParam !== null && !is_array($routerParam)) {
+            $params = ['id' => $routerParam];
+        } elseif (is_array($routerParam) && isset($routerParam['params'])) {
+            $params = $routerParam['params'];
+        }
+        return [
+            'get' => $_GET,
+            'post' => $_POST,
+            'params' => $params,
+            'server' => $_SERVER
+        ];
+    }
+
+    public function index($request = null)
+    {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_associates')) {
             $_SESSION['errors'] = ['Access denied'];
@@ -66,8 +83,9 @@ class AssociateController
     /**
      * Show associate details
      */
-    public function show($request)
+    public function show($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_associates')) {
             $_SESSION['errors'] = ['Access denied'];
@@ -110,8 +128,9 @@ class AssociateController
     /**
      * Show create associate form
      */
-    public function create($request)
+    public function create($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('create_associates')) {
             $_SESSION['errors'] = ['Access denied'];
@@ -135,8 +154,9 @@ class AssociateController
     /**
      * Store new associate
      */
-    public function store($request)
+    public function store($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('create_associates')) {
             return [
@@ -172,8 +192,9 @@ class AssociateController
     /**
      * Show edit associate form
      */
-    public function edit($request)
+    public function edit($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
             $_SESSION['errors'] = ['Access denied'];
@@ -214,8 +235,9 @@ class AssociateController
     /**
      * Update associate
      */
-    public function update($request)
+    public function update($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
             return [
@@ -259,8 +281,9 @@ class AssociateController
     /**
      * Delete associate
      */
-    public function destroy($request)
+    public function destroy($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('delete_associates')) {
             return [
@@ -294,8 +317,9 @@ class AssociateController
     /**
      * Update commission rate (AJAX)
      */
-    public function updateCommissionRate($request)
+    public function updateCommissionRate($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
             return [
@@ -320,8 +344,9 @@ class AssociateController
     /**
      * Get performance report
      */
-    public function performanceReport($request)
+    public function performanceReport($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_reports')) {
             $_SESSION['errors'] = ['Access denied'];
@@ -360,8 +385,9 @@ class AssociateController
     /**
      * Get top performers (AJAX)
      */
-    public function getTopPerformers($request)
+    public function getTopPerformers($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_reports')) {
             return [
@@ -379,8 +405,9 @@ class AssociateController
     /**
      * Export users (AJAX)
      */
-    public function exportAssociates($request)
+    public function exportAssociates($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('export_data')) {
             return [
@@ -400,8 +427,9 @@ class AssociateController
     /**
      * Search users (AJAX)
      */
-    public function searchAssociates($request)
+    public function searchAssociates($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_associates')) {
             return [
@@ -440,8 +468,9 @@ class AssociateController
     /**
      * Activate associate
      */
-    public function activate($request)
+    public function activate($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
             return [
@@ -475,8 +504,9 @@ class AssociateController
     /**
      * Deactivate associate
      */
-    public function deactivate($request)
+    public function deactivate($request = null)
     {
+        $request = $this->buildRequest($request);
         // Check authentication
         if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
             return [

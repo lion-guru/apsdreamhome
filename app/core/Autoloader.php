@@ -177,6 +177,12 @@ $autoloader->addClassMap('ConsolidatedUser', APP_ROOT . '/app/Models/Consolidate
 $autoloader->addClassMap('ConsolidatedProperty', APP_ROOT . '/app/Models/ConsolidatedProperty.php');
 $autoloader->addClassMap('UnifiedModel', APP_ROOT . '/app/Core/UnifiedModel.php');
 
+// Register root-namespace controllers
+$autoloader->addClassMap('AIAssistantController', APP_ROOT . '/app/Http/Controllers/AI/AssistantController.php');
+
+// Register misnamed-file controllers
+$autoloader->addClassMap('App\Http\Controllers\Api\MonitorController', APP_ROOT . '/app/Http/Controllers/Api/MonitorApiController.php');
+
 // Register legacy managers for backward compatibility
 $autoloader->addClassMap('Cache', APP_ROOT . '/app/Core/Cache.php');
 $autoloader->addClassMap('UserManager', APP_ROOT . '/includes/managers.php');

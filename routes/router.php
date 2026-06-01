@@ -207,11 +207,17 @@ class Router
                     $controllerClass = "App\\Http\\Controllers\\Tech\\" . substr($controller, 5);
                     $controllerFile = __DIR__ . '/../app/Http/Controllers/Tech/' . substr(str_replace('\\', '/', $controller), 5) . '.php';
                 } else {
-                    $controllerClass = "App\\Http\\Controllers\\" . $controller;
-                    $controllerFile = __DIR__ . '/../app/Http/Controllers/' . str_replace('\\', '/', $controller) . '.php';
+                    // Try autoloader first (for classmap'd root-namespace controllers)
+                    if (class_exists($controller)) {
+                        $controllerClass = $controller;
+                        $controllerFile = null;
+                    } else {
+                        $controllerClass = "App\\Http\\Controllers\\" . $controller;
+                        $controllerFile = __DIR__ . '/../app/Http/Controllers/' . str_replace('\\', '/', $controller) . '.php';
+                    }
                 }
 
-                if (file_exists($controllerFile)) {
+                if ($controllerFile === null || file_exists($controllerFile)) {
                     try {
                         // Load base controllers first
                         $baseController = __DIR__ . '/../app/Http/Controllers/BaseController.php';
@@ -219,7 +225,9 @@ class Router
                         if (file_exists($baseController)) require_once $baseController;
                         if (file_exists($adminBaseController)) require_once $adminBaseController;
 
-                        require_once $controllerFile;
+                        if ($controllerFile !== null) {
+                            require_once $controllerFile;
+                        }
                         $controllerInstance = new $controllerClass();
 
                         if (!empty($params)) {

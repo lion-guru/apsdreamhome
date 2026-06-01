@@ -54,7 +54,7 @@ $land_holdings = $land_holdings ?? [];
                         };
                         ?>
                         <tr>
-                            <td><strong>#<?php echo htmlspecialchars($lh['plot_number'] ?? 'N/A'); ?></strong></td>
+                            <td><strong>#<?php echo htmlspecialchars($lh['khasra_number'] ?? 'N/A'); ?></strong></td>
                             <td><?php echo number_format($lh['area'] ?? 0, 2); ?></td>
                             <td><?php echo htmlspecialchars($lh['village'] ?? 'N/A'); ?></td>
                             <td><?php echo htmlspecialchars($lh['district'] ?? 'N/A'); ?></td>
