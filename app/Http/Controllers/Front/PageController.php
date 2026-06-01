@@ -2581,4 +2581,16 @@ class PageController extends BaseController
         }
         $this->render('locations/' . $slug, ['page_title' => ucwords(str_replace(['-', '/'], [' ', ' '], $slug))]);
     }
+
+    public function setLanguage(string $lang)
+    {
+        $allowed = ['en', 'hi'];
+        if (in_array($lang, $allowed)) {
+            $_SESSION['user_language'] = $lang;
+            setcookie('user_language', $lang, time() + 86400 * 30, '/');
+        }
+        $referer = $_SERVER['HTTP_REFERER'] ?? BASE_URL;
+        header('Location: ' . $referer);
+        exit;
+    }
 }

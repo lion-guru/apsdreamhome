@@ -118,6 +118,17 @@ class AdManagerController extends AdminController
         ]);
     }
 
+    public function trackClick(int $id)
+    {
+        try {
+            $svc = new \App\Services\AdManagerService();
+            $svc->incrementClicks($id);
+        } catch (\Exception $e) {}
+        $ref = $_SERVER['HTTP_REFERER'] ?? '/';
+        header('Location: ' . $ref);
+        exit;
+    }
+
     public function saveSettings()
     {
         $this->requireAdmin();

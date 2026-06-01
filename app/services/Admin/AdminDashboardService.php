@@ -4,7 +4,7 @@ namespace App\Services\Admin;
 
 use App\Core\Database;
 use App\Core\Logger;
-use App\Core\Config;
+use App\Core\Config\Config;
 
 /**
  * Admin Dashboard Service - APS Dream Home

@@ -11,6 +11,19 @@ class Config
     private static $config = [];
     private static $loaded = false;
 
+    private static $instance = null;
+
+    /**
+     * Get singleton instance
+     */
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     /**
      * Get configuration value
      */

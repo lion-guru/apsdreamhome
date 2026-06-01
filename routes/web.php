@@ -85,10 +85,7 @@ $router->get('/testimonials', 'Front\\PageController@testimonials');
 $router->get('/faq', 'Front\\PageController@faq');
 $router->get('/faqs', 'Front\\PageController@faqs');
 $router->get('/home', 'Front\\PageController@home');
-$router->get('/sitemap.xml', function () {
-    $controller = new \App\Http\Controllers\Api\SitemapController();
-    $controller->generate();
-});
+$router->get('/sitemap.xml', 'Api\\SitemapController@generate');
 $router->get('/robots.txt', function () {
     $file = __DIR__ . '/../robots.txt';
     if (file_exists($file)) {
@@ -1055,15 +1052,7 @@ $router->get('/admin/finance/reports', 'App\\Http\\Controllers\\Admin\\FinanceCo
 $router->get('/admin/invoices', 'App\\Http\\Controllers\\Admin\\FinanceController@invoices');
 $router->get('/admin/invoices/view/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@viewInvoice');
 $router->get('/admin/invoices/download/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@downloadInvoice');
-$router->post('/admin/invoices/delete/{id}', function($id) {
-    try {
-        $db = \App\Core\Database\Database::getInstance()->getConnection();
-        $stmt = $db->prepare("UPDATE invoices SET status='cancelled' WHERE id=?");
-        $stmt->execute([$id]);
-    } catch (\Exception $e) {}
-    header('Location: ' . BASE_URL . '/admin/invoices');
-    exit;
-});
+$router->post('/admin/invoices/delete/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@deleteInvoice');
 $router->get('/admin/roles', 'App\\Http\\Controllers\\RoleBasedDashboardController@roles');
 $router->get('/admin/hrm/users', 'App\\Http\\Controllers\\Admin\\HRMController@users');
 
@@ -1210,9 +1199,7 @@ $router->get('/admin/expenses/create', 'App\\Http\\Controllers\\Admin\\ExpensesC
 $router->get('/admin/expense', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
 
 // Admin FAQ
-$router->get('/admin/faqs', function() {
-    require __DIR__ . '/../app/views/admin/faqs.php';
-});
+$router->get('/admin/faqs', 'App\\Http\\Controllers\\Admin\\FaqController@index');
 
 // Admin Settings Company
 $router->get('/admin/settings/company', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
@@ -1574,15 +1561,7 @@ $router->post('/admin/ads/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerC
 $router->get('/admin/ads/delete/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@delete');
 
 // Ad click tracking
-$router->get('/ad-click/{id}', function($id) {
-    try {
-        $svc = new \App\Services\AdManagerService();
-        $svc->incrementClicks((int)$id);
-    } catch (\Exception $e) {}
-    $ref = $_SERVER['HTTP_REFERER'] ?? '/';
-    header('Location: ' . $ref);
-    exit;
-});
+$router->get('/ad-click/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@trackClick');
 
 // Ad settings
 $router->get('/admin/ads/settings', 'App\\Http\\Controllers\\Admin\\AdManagerController@settings');
@@ -1638,10 +1617,7 @@ $router->get('/admin/crm/support', 'App\\Http\\Controllers\\Admin\\CRMController
 // Customer Portal v2
 $router->get('/user/book-site-visit', 'Front\\UserController@bookSiteVisit');
 $router->post('/user/book-site-visit', 'Front\\UserController@bookSiteVisit');
-$router->get('/user/notifications', function() {
-    $c = new \App\Http\Controllers\NotificationController();
-    $c->index();
-});
+$router->get('/user/notifications', 'NotificationController@index');
 $router->get('/user/payments', function() {
     header('Location: ' . BASE_URL . '/payment/history');
     exit;
@@ -1679,16 +1655,7 @@ $router->get('/admin/mlm-realestate/salary/evaluate', 'Admin\MLMRealEstateContro
 $router->get('/admin/mlm-realestate/cron', 'Admin\MLMRealEstateController@runCron');
 
 // Language switcher
-$router->get('/language/set/{lang}', function($lang) {
-    $allowed = ['en', 'hi'];
-    if (in_array($lang, $allowed)) {
-        $_SESSION['user_language'] = $lang;
-        setcookie('user_language', $lang, time() + 86400 * 30, '/');
-    }
-    $referer = $_SERVER['HTTP_REFERER'] ?? BASE_URL;
-    header('Location: ' . $referer);
-    exit;
-});
+$router->get('/language/set/{lang}', 'Front\\PageController@setLanguage');
 
 // ============================================================
 // PWA (Progressive Web App)
