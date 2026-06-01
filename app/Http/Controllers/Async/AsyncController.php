@@ -25,7 +25,7 @@ class AsyncController
     /**
      * Show task dashboard
      */
-    public function dashboard($request)
+    public function dashboard($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -53,7 +53,7 @@ class AsyncController
     /**
      * Show tasks list
      */
-    public function tasks($request)
+    public function tasks($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -63,13 +63,13 @@ class AsyncController
         }
 
         $filters = [
-            'status' => $request['get']['status'] ?? null,
-            'task_type' => $request['get']['task_type'] ?? null,
-            'assigned_worker' => $request['get']['assigned_worker'] ?? null,
-            'priority' => $request['get']['priority'] ?? null
+            'status' => $_GET['status'] ?? null,
+            'task_type' => $_GET['task_type'] ?? null,
+            'assigned_worker' => $_GET['assigned_worker'] ?? null,
+            'priority' => $_GET['priority'] ?? null
         ];
 
-        $page = max(1, intval($request['get']['page'] ?? 1));
+        $page = max(1, intval($_GET['page'] ?? 1));
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
@@ -92,7 +92,7 @@ class AsyncController
     /**
      * Show create task form
      */
-    public function createTask($request)
+    public function createTask($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -124,7 +124,7 @@ class AsyncController
     /**
      * Handle create task
      */
-    public function handleCreateTask($request)
+    public function handleCreateTask($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -383,7 +383,7 @@ class AsyncController
     /**
      * Get tasks (AJAX)
      */
-    public function getTasks($request)
+    public function getTasks($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -409,7 +409,7 @@ class AsyncController
     /**
      * Get task status (AJAX)
      */
-    public function getTaskStatus($request)
+    public function getTaskStatus($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -434,7 +434,7 @@ class AsyncController
     /**
      * Get task statistics (AJAX)
      */
-    public function getTaskStats($request)
+    public function getTaskStats($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -450,7 +450,7 @@ class AsyncController
     /**
      * Create task (AJAX)
      */
-    public function createTaskAjax($request)
+    public function createTaskAjax($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -472,7 +472,7 @@ class AsyncController
     /**
      * Cancel task (AJAX)
      */
-    public function cancelTaskAjax($request)
+    public function cancelTaskAjax($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -497,7 +497,7 @@ class AsyncController
     /**
      * Retry task (AJAX)
      */
-    public function retryTaskAjax($request)
+    public function retryTaskAjax($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {
@@ -522,7 +522,7 @@ class AsyncController
     /**
      * Cleanup old tasks (AJAX)
      */
-    public function cleanupOldTasks($request)
+    public function cleanupOldTasks($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -540,7 +540,7 @@ class AsyncController
     /**
      * Worker endpoint for processing tasks
      */
-    public function worker($request)
+    public function worker($request = null)
     {
         // Check authentication
         if (!$this->authService->isAuthenticated()) {

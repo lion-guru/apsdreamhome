@@ -2473,3 +2473,9 @@ $router->get('/admin/hrm/employees', function () {
     exit;
 });
 $router->get('/admin/mlm/associates', 'App\\Http\\Controllers\\Admin\\MLMController@users');
+$router->get('/admin/agents', 'App\\Http\\Controllers\\Admin\\AgentController@index');
+$router->get('/admin/async', 'App\\Http\\Controllers\\Async\\AsyncController@dashboard');
+$router->get('/admin/async/tasks', 'App\\Http\\Controllers\\Async\\AsyncController@tasks');
+$router->get('/admin/async/create', 'App\\Http\\Controllers\\Async\\AsyncController@createTask');
+$router->post('/admin/async/create', 'App\\Http\\Controllers\\Async\\AsyncController@handleCreateTask');
+$router->get('/api/work-distribution/analytics', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@getDistributionAnalytics');
