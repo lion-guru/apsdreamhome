@@ -3,17 +3,17 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7 text-white">
-                <h1 class="display-4 fw-bold mb-3">Find Your <span class="text-warning">Dream Home</span></h1>
-                <p class="lead mb-4">Premium residential & commercial properties across India. Buy, Sell, Rent - All in one platform.</p>
+                <h1 class="display-4 fw-bold mb-3"><?= __('hero_title') ?></h1>
+                <p class="lead mb-4"><?= __('hero_subtitle') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-warning btn-lg">View Projects</a>
-                    <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-outline-light btn-lg">Post Property FREE</a>
+                    <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-warning btn-lg"><?= __('hero_cta') ?></a>
+                    <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-outline-light btn-lg"><?= __('nav_post_property') ?></a>
                 </div>
             </div>
             <div class="col-lg-5 mt-4 mt-lg-0">
                 <div class="card shadow-lg border-0">
                     <div class="card-header bg-primary text-white text-center py-3">
-                        <h5 class="mb-0"><i class="fas fa-search me-2"></i>Search Properties</h5>
+                        <h5 class="mb-0"><i class="fas fa-search me-2"></i><?= __('search') ?> <?= __('properties') ?></h5>
                     </div>
                     <div class="card-body p-4">
                         <form action="<?php echo BASE_URL; ?>/properties" method="GET">
@@ -56,7 +56,7 @@
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 btn-lg">
-                                <i class="fas fa-search me-2"></i>Search
+                                <i class="fas fa-search me-2"></i><?= __('search') ?>
                             </button>
                         </form>
                     </div>
@@ -74,7 +74,7 @@
                 <a href="<?php echo BASE_URL; ?>/properties?type=residential" class="text-decoration-none">
                     <div class="p-3 bg-white rounded shadow-sm">
                         <i class="fas fa-home fa-2x text-primary mb-2"></i>
-                        <h6>Residential</h6>
+                        <h6><?= __('nav_residential') ?></h6>
                     </div>
                 </a>
             </div>
@@ -82,7 +82,7 @@
                 <a href="<?php echo BASE_URL; ?>/properties?type=commercial" class="text-decoration-none">
                     <div class="p-3 bg-white rounded shadow-sm">
                         <i class="fas fa-store fa-2x text-success mb-2"></i>
-                        <h6>Commercial</h6>
+                        <h6><?= __('nav_commercial') ?></h6>
                     </div>
                 </a>
             </div>
@@ -90,7 +90,7 @@
                 <a href="<?php echo BASE_URL; ?>/properties?type=plot" class="text-decoration-none">
                     <div class="p-3 bg-white rounded shadow-sm">
                         <i class="fas fa-vector-square fa-2x text-warning mb-2"></i>
-                        <h6>Plots</h6>
+                        <h6><?= __('nav_plots') ?></h6>
                     </div>
                 </a>
             </div>
@@ -98,7 +98,7 @@
                 <a href="<?php echo BASE_URL; ?>/list-property" class="text-decoration-none">
                     <div class="p-3 bg-white rounded shadow-sm">
                         <i class="fas fa-plus-circle fa-2x text-info mb-2"></i>
-                        <h6>Post FREE</h6>
+                        <h6><?= __('nav_post_property') ?></h6>
                     </div>
                 </a>
             </div>
@@ -112,19 +112,19 @@
         <div class="row text-center">
             <div class="col-6 col-md-3 mb-4">
                 <div class="h2 text-primary mb-1"><?php echo $hero_stats['years_experience']; ?>+</div>
-                <p class="text-muted mb-0">Years Experience</p>
+                <p class="text-muted mb-0"><?= __('years_experience') ?></p>
             </div>
             <div class="col-6 col-md-3 mb-4">
                 <div class="h2 text-success mb-1"><?php echo $hero_stats['projects_completed']; ?>+</div>
-                <p class="text-muted mb-0">Projects Completed</p>
+                <p class="text-muted mb-0"><?= __('projects_completed') ?></p>
             </div>
             <div class="col-6 col-md-3 mb-4">
                 <div class="h2 text-info mb-1"><?php echo $hero_stats['happy_customers']; ?>+</div>
-                <p class="text-muted mb-0">Happy users</p>
+                <p class="text-muted mb-0"><?= __('happy_clients') ?></p>
             </div>
             <div class="col-6 col-md-3 mb-4">
                 <div class="h2 text-warning mb-1"><?php echo $hero_stats['awards_won']; ?></div>
-                <p class="text-muted mb-0">Awards Won</p>
+                <p class="text-muted mb-0"><?= __('awards_won') ?></p>
             </div>
         </div>
     </div>
@@ -134,8 +134,8 @@
 <section class="py-5" style="background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold text-white">Home Loan EMI Calculator</h2>
-            <p class="lead text-white-50">Calculate your monthly EMI instantly — <strong>EMI Kitna Banega?</strong></p>
+            <h2 class="display-6 fw-bold text-white"><?= __('emi_calculator') ?></h2>
+            <p class="lead text-white-50"><?= __('emi_subtitle') ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-10">
@@ -220,8 +220,8 @@ calcEMI();
 <section class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">Our Projects</h2>
-            <p class="text-muted">Explore our premium projects across Uttar Pradesh</p>
+            <h2 class="display-6 fw-bold"><?= __('section_our_projects') ?></h2>
+            <p class="text-muted"><?= __('projects_subtitle') ?></p>
         </div>
         <div class="row">
             <?php
@@ -246,11 +246,12 @@ calcEMI();
                             <h5 class="card-title fw-bold"><?= $project['title'] ?></h5>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?= $project['city'] ?></p>
                             <p class="h5 text-primary mb-3"><?= $project['price'] ?></p>
-                            <a href="<?php echo BASE_URL; ?>/colony/<?= $project['slug'] ?>" class="btn btn-outline-primary btn-sm">View Details</a>
+                            <a href="<?php echo BASE_URL; ?>/colony/<?= $project['slug'] ?>" class="btn btn-outline-primary btn-sm"><?= __('view_details') ?></a>
                         </div>
                     </div>
                 </div>
-            <?php endforeach; else: ?>
+            <?php endforeach; ?>
+        <?php else: ?>
                 <?php foreach (array_slice($featured_properties, 0, 4) as $project): 
                     $slug = $project['slug'] ?? strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project['title']));
                     $imgPath = '/assets/images/projects/';
@@ -276,7 +277,7 @@ calcEMI();
                             <h5 class="card-title fw-bold"><?php echo htmlspecialchars($project['title']); ?></h5>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($project['city']); ?></p>
                             <p class="h5 text-primary mb-3"><?php echo $project['price']; ?></p>
-                            <a href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>" class="btn btn-outline-primary btn-sm">View Details</a>
+                            <a href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>" class="btn btn-outline-primary btn-sm"><?= __('view_details') ?></a>
                         </div>
                     </div>
                 </div>
@@ -284,7 +285,7 @@ calcEMI();
             <?php endif; ?>
         </div>
         <div class="text-center mt-4">
-            <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-primary btn-lg">View All Projects</a>
+            <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-primary btn-lg"><?= __('nav_all_projects') ?></a>
         </div>
     </div>
 </section>
@@ -294,8 +295,8 @@ calcEMI();
     <div class="container">
         <div class="text-center mb-5">
             <span class="badge bg-primary px-3 py-2 mb-3">Our Expertise</span>
-            <h2 class="display-6 fw-bold">Complete Real Estate Services</h2>
-            <p class="text-muted lead">Ek hi roof ke neeche — har property solution!</p>
+            <h2 class="display-6 fw-bold"><?= __('our_services') ?></h2>
+            <p class="text-muted lead"><?= __('services_tagline') ?></p>
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
@@ -532,7 +533,7 @@ function openServiceModal(service) {
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <h2 class="display-6 fw-bold mb-4">Why Choose APS Dream Home?</h2>
+                <h2 class="display-6 fw-bold mb-4"><?= __('section_why_choose_us') ?></h2>
                 <div class="d-flex mb-3">
                     <div class="flex-shrink-0">
                         <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
@@ -540,8 +541,8 @@ function openServiceModal(service) {
                         </div>
                     </div>
                     <div class="ms-3">
-                        <h6 class="mb-1">15+ Years Experience</h6>
-                        <p class="text-muted mb-0 small">Trusted name in UP real estate since 2010</p>
+                        <h6 class="mb-1"><?= __('why_choose_15_years') ?></h6>
+                        <p class="text-muted mb-0 small"><?= __('why_choose_15_years_desc') ?></p>
                     </div>
                 </div>
                 <div class="d-flex mb-3">
@@ -551,8 +552,8 @@ function openServiceModal(service) {
                         </div>
                     </div>
                     <div class="ms-3">
-                        <h6 class="mb-1">RERA Verified Projects</h6>
-                        <p class="text-muted mb-0 small">All properties legally approved</p>
+                        <h6 class="mb-1"><?= __('why_choose_rera') ?></h6>
+                        <p class="text-muted mb-0 small"><?= __('why_choose_rera_desc') ?></p>
                     </div>
                 </div>
                 <div class="d-flex mb-3">
@@ -562,8 +563,8 @@ function openServiceModal(service) {
                         </div>
                     </div>
                     <div class="ms-3">
-                        <h6 class="mb-1">Transparent Dealings</h6>
-                        <p class="text-muted mb-0 small">No hidden charges, clear documentation</p>
+                        <h6 class="mb-1"><?= __('why_choose_transparent') ?></h6>
+                        <p class="text-muted mb-0 small"><?= __('why_choose_transparent_desc') ?></p>
                     </div>
                 </div>
                 <div class="d-flex">
@@ -573,8 +574,8 @@ function openServiceModal(service) {
                         </div>
                     </div>
                     <div class="ms-3">
-                        <h6 class="mb-1">24/7 Support</h6>
-                        <p class="text-muted mb-0 small">Always here to help you</p>
+                        <h6 class="mb-1"><?= __('why_choose_support') ?></h6>
+                        <p class="text-muted mb-0 small"><?= __('why_choose_support_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -582,11 +583,11 @@ function openServiceModal(service) {
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-4 text-center">
                         <i class="fas fa-headset fa-4x text-primary mb-4"></i>
-                        <h4>Need Help?</h4>
-                        <p class="text-muted mb-4">Our team is ready to assist you</p>
+                        <h4><?= __('need_help') ?></h4>
+                        <p class="text-muted mb-4"><?= __('need_help_desc') ?></p>
                         <div class="d-grid gap-3">
                             <a href="tel:+919277121112" class="btn btn-success btn-lg">
-                                <i class="fas fa-phone me-2"></i>Call: +91 92771 21112
+                                <i class="fas fa-phone me-2"></i><?= __('call_now') ?>
                             </a>
                             <a href="https://wa.me/919277121112" target="_blank" class="btn btn-outline-success btn-lg">
                                 <i class="fab fa-whatsapp me-2"></i>WhatsApp
@@ -1232,7 +1233,7 @@ function mCalcVal() {
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">What users Say</h2>
+            <h2 class="display-6 fw-bold"><?= __('testimonials_title') ?></h2>
         </div>
         <div class="row">
             <div class="col-md-4 mb-4">
@@ -1465,8 +1466,8 @@ function mCalcVal() {
 <!-- CTA -->
 <section class="py-5 text-white text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container">
-        <h2 class="display-6 fw-bold mb-3">Ready to Find Your Dream Home?</h2>
-        <p class="lead mb-4">Contact us today and let us help you find the perfect property</p>
+        <h2 class="display-6 fw-bold mb-3"><?= __('cta_title') ?></h2>
+        <p class="lead mb-4"><?= __('cta_subtitle') ?></p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="tel:+919277121112" class="btn btn-warning btn-lg">
                 <i class="fas fa-phone me-2"></i>Call Now

@@ -48,6 +48,16 @@ $router->get('/api/locations/district/{id}', 'Api\LocationApiController@byDistri
 $router->post('/api/notification', 'Api\NotificationController@create');
 
 
+// Payment Gateway API Routes
+$router->post('/api/payment/phonepe/initiate', 'Api\PaymentGatewayController@initiatePhonePe');
+$router->get('/api/payment/phonepe/verify/{transactionId}', 'Api\PaymentGatewayController@verifyPhonePe');
+$router->post('/api/payment/phonepe/webhook', 'Api\PaymentGatewayController@phonePeWebhook');
+$router->post('/api/payment/gpay/initiate', 'Api\PaymentGatewayController@initiateGPay');
+$router->post('/api/payment/upi/qrcode', 'Api\PaymentGatewayController@generateQRCode');
+$router->post('/api/payment/upi/callback', 'Api\PaymentGatewayController@upiCallback');
+$router->get('/api/payment/status/{orderId}', 'Api\PaymentGatewayController@getStatus');
+$router->get('/api/payment/methods', 'Api\PaymentGatewayController@getPaymentMethods');
+
 // AI Assistant API Routes
 $router->post('/api/assistant/chat', 'AIAssistantController@chat');
 $router->post('/api/v2/mobile/ai/parse-lead', 'AIAssistantController@parseLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');

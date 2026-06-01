@@ -4,8 +4,8 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
-            <li class="breadcrumb-item active">Properties</li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>"><?= __('home') ?></a></li>
+            <li class="breadcrumb-item active"><?= __('properties') ?></li>
         </ol>
     </nav>
 
@@ -13,9 +13,9 @@
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="display-6 fw-bold text-primary">
-                <i class="fas fa-building me-2"></i>Properties
+                <i class="fas fa-building me-2"></i><?= __('properties') ?>
             </h1>
-            <p class="text-muted"><?php echo number_format($total); ?> properties found</p>
+            <p class="text-muted"><?php echo number_format($total); ?> <?= __('properties_found') ?></p>
         </div>
     </div>
 
@@ -24,13 +24,13 @@
         <div class="card-body">
             <form method="GET" action="<?php echo BASE_URL; ?>/properties" class="row g-3">
                 <div class="col-md-3">
-                    <label for="q" class="form-label"><i class="fas fa-search"></i> Search</label>
-                    <input type="text" class="form-control" id="q" name="q" placeholder="Keyword, location..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                    <label for="q" class="form-label"><i class="fas fa-search"></i> <?= __('search') ?></label>
+                    <input type="text" class="form-control" id="q" name="q" placeholder="<?= __('search_placeholder') ?>" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
-                    <label for="type" class="form-label">Property Type</label>
+                    <label for="type" class="form-label"><?= __('filter_type') ?></label>
                     <select class="form-select" id="type" name="type">
-                        <option value="">All Types</option>
+                        <option value=""><?= __('all_types') ?></option>
                         <option value="plot" <?php echo $type === 'plot' ? 'selected' : ''; ?>>Plot</option>
                         <option value="house" <?php echo $type === 'house' ? 'selected' : ''; ?>>House</option>
                         <option value="flat" <?php echo $type === 'flat' ? 'selected' : ''; ?>>Flat/Apartment</option>
@@ -38,17 +38,17 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="listing" class="form-label">Listing Type</label>
+                    <label for="listing" class="form-label"><?= __('filter_listing') ?></label>
                     <select class="form-select" id="listing" name="listing">
-                        <option value="">Buy & Rent</option>
+                        <option value=""><?= __('buy') ?> & <?= __('rent') ?></option>
                         <option value="sell" <?php echo $listingType === 'sell' ? 'selected' : ''; ?>>For Sale</option>
                         <option value="rent" <?php echo $listingType === 'rent' ? 'selected' : ''; ?>>For Rent</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="location" class="form-label">Location</label>
+                    <label for="location" class="form-label"><?= __('filter_location') ?></label>
                     <select class="form-select" id="location" name="location">
-                        <option value="">All Locations</option>
+                        <option value=""><?= __('all_locations') ?></option>
                         <?php foreach ($locations as $loc): ?>
                             <option value="<?php echo htmlspecialchars($loc); ?>" <?php echo $location === $loc ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($loc); ?>
@@ -57,15 +57,15 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="sort" class="form-label">Sort By</label>
+                    <label for="sort" class="form-label"><?= __('filter_sort') ?></label>
                     <select class="form-select" id="sort" name="sort">
-                        <option value="newest" <?php echo $sortBy === 'newest' ? 'selected' : ''; ?>>Newest First</option>
-                        <option value="price_low" <?php echo $sortBy === 'price_low' ? 'selected' : ''; ?>>Price: Low to High</option>
-                        <option value="price_high" <?php echo $sortBy === 'price_high' ? 'selected' : ''; ?>>Price: High to Low</option>
+                        <option value="newest" <?php echo $sortBy === 'newest' ? 'selected' : ''; ?>><?= __('newest_first') ?></option>
+                        <option value="price_low" <?php echo $sortBy === 'price_low' ? 'selected' : ''; ?>><?= __('price_low_high') ?></option>
+                        <option value="price_high" <?php echo $sortBy === 'price_high' ? 'selected' : ''; ?>><?= __('price_high_low') ?></option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="min_price" class="form-label">Min Price (₹)</label>
+                    <label for="min_price" class="form-label"><?= __('min_price') ?> (₹)</label>
                     <select class="form-select" id="min_price" name="min_price">
                         <option value="">No Min</option>
                         <option value="100000" <?php echo ($minPrice ?? 0) == 100000 ? 'selected' : ''; ?>>₹1 Lakh</option>
@@ -76,7 +76,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="max_price" class="form-label">Max Price (₹)</label>
+                    <label for="max_price" class="form-label"><?= __('max_price') ?> (₹)</label>
                     <select class="form-select" id="max_price" name="max_price">
                         <option value="">No Max</option>
                         <option value="500000" <?php echo ($maxPrice ?? 0) == 500000 ? 'selected' : ''; ?>>₹5 Lakhs</option>
@@ -88,9 +88,9 @@
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Search
+                        <i class="fas fa-search"></i> <?= __('search') ?>
                     </button>
-                    <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary">Clear Filters</a>
+                    <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary"><?= __('clear_filters') ?></a>
                 </div>
             </form>
         </div>
@@ -151,10 +151,10 @@
                                     <?php endif; ?>
                                 </div>
                                 <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-phone"></i> Enquire
+                                    <i class="fas fa-phone"></i> <?= __('enquire') ?>
                                 </a>
                                 <button class="btn btn-sm btn-outline-info add-to-compare" data-id="<?= $property['id'] ?? '' ?>" onclick="addToCompare(this)">
-                                    <i class="fas fa-balance-scale me-1"></i> Compare
+                                    <i class="fas fa-balance-scale me-1"></i> <?= __('compare') ?>
                                 </button>
                             </div>
                         </div>
@@ -166,9 +166,9 @@
                 <div class="card">
                     <div class="card-body text-center py-5">
                         <i class="fas fa-search fa-4x text-muted mb-3"></i>
-                        <h5 class="text-muted">No properties found</h5>
-                        <p class="text-muted">Try adjusting your filters or check back later.</p>
-                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-primary">View All Properties</a>
+                        <h5 class="text-muted"><?= __('no_properties') ?></h5>
+                        <p class="text-muted"><?= __('no_results_tip') ?></p>
+                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-primary"><?= __('view_all') ?> <?= __('properties') ?></a>
                     </div>
                 </div>
             </div>
@@ -182,7 +182,7 @@
                 <?php if ($page > 1): ?>
                     <li class="page-item">
                         <a class="page-link" href="?page=<?php echo $page - 1; ?>&type=<?php echo urlencode($type); ?>&listing=<?php echo urlencode($listingType); ?>&location=<?php echo urlencode($location); ?>&sort=<?php echo urlencode($sortBy); ?>">
-                            Previous
+                            <?= __('previous') ?>
                         </a>
                     </li>
                 <?php endif; ?>
@@ -200,7 +200,7 @@
                 <?php if ($page < $totalPages): ?>
                     <li class="page-item">
                         <a class="page-link" href="?page=<?php echo $page + 1; ?>&type=<?php echo urlencode($type); ?>&listing=<?php echo urlencode($listingType); ?>&location=<?php echo urlencode($location); ?>&sort=<?php echo urlencode($sortBy); ?>">
-                            Next
+                            <?= __('next') ?>
                         </a>
                     </li>
                 <?php endif; ?>

@@ -281,6 +281,8 @@ $router->get('/user/dashboard', 'Front\\UserController@dashboard');
 $router->get('/user/properties', 'Front\\UserController@myProperties');
 $router->get('/user/bookings', 'Front\\UserController@userBookings');
 $router->get('/user/inquiries', 'Front\\UserController@myInquiries');
+$router->get('/user/tickets', 'Front\\UserController@myTickets');
+$router->post('/user/tickets/create', 'Front\\UserController@createTicket');
 $router->get('/user/profile', 'Front\\UserController@profile');
 $router->post('/user/profile', 'Front\\UserController@updateProfile');
 $router->get('/user/bank-details', 'Front\\UserController@bankDetails');
@@ -408,6 +410,18 @@ $router->get('/farmers/{id}', 'User\\FarmerController@show');
 $router->get('/farmers/{id}/edit', 'User\\FarmerController@edit');
 $router->post('/farmers/{id}/update', 'User\\FarmerController@update');
 $router->post('/farmers/{id}/delete', 'User\\FarmerController@delete');
+
+// Farmer Self-Service Portal
+$router->get('/farmer/login', 'Auth\\FarmerAuthController@loginForm');
+$router->post('/farmer/login', 'Auth\\FarmerAuthController@login');
+$router->get('/farmer/logout', 'Auth\\FarmerAuthController@logout');
+$router->get('/farmer/dashboard', 'Front\\FarmerDashboardController@dashboard');
+$router->get('/farmer/land-holdings', 'Front\\FarmerDashboardController@landHoldings');
+$router->get('/farmer/payments', 'Front\\FarmerDashboardController@payments');
+$router->get('/farmer/agreements', 'Front\\FarmerDashboardController@agreements');
+$router->get('/farmer/agreements/download/{id}', 'Front\\FarmerDashboardController@agreementDownload');
+$router->get('/farmer/profile', 'Front\\FarmerDashboardController@profile');
+$router->post('/farmer/profile', 'Front\\FarmerDashboardController@updateProfile');
 
 // Employee Auth
 $router->get('/employee/login', 'Employee\\EmployeeController@login');
@@ -594,6 +608,13 @@ $router->post('/admin/bookings/{id}/update', 'App\\Http\\Controllers\\Admin\\Boo
 $router->post('/admin/bookings/{id}/destroy', 'App\\Http\\Controllers\\Admin\\BookingController@destroy');
 $router->post('/admin/bookings/{id}/payment', 'App\\Http\\Controllers\\Admin\\BookingController@processPayment');
 
+// Admin Agreements
+$router->get('/admin/agreements', 'App\\Http\\Controllers\\Admin\\AgreementController@index');
+$router->get('/admin/agreements/generate/{id}/{type}', 'App\\Http\\Controllers\\Admin\\AgreementController@generate');
+$router->get('/admin/agreements/download/{id}', 'App\\Http\\Controllers\\Admin\\AgreementController@download');
+$router->get('/admin/agreements/preview/{id}/{type}', 'App\\Http\\Controllers\\Admin\\AgreementController@preview');
+$router->post('/admin/agreements/send/{id}', 'App\\Http\\Controllers\\Admin\\AgreementController@sendToCustomer');
+
 // Admin Sites
 $router->get('/admin/sites', 'App\\Http\\Controllers\\Admin\\SiteController@index');
 $router->get('/admin/sites/create', 'App\\Http\\Controllers\\Admin\\SiteController@create');
@@ -617,11 +638,17 @@ $router->get('/admin/plots/create', 'App\\Http\\Controllers\\Admin\\PlotManageme
 $router->post('/admin/plots', 'App\\Http\\Controllers\\Admin\\PlotManagementController@store');
 $router->get('/admin/plots/check-availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@checkAvailability');
 $router->post('/admin/plots/bulk-price-update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@bulkPriceUpdate');
+$router->get('/admin/plots/availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@availability');
+$router->get('/admin/plots/availability-data', 'App\\Http\\Controllers\\Admin\\PlotManagementController@availabilityData');
 $router->get('/admin/plots/{id}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@show');
 $router->get('/admin/plots/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotManagementController@edit');
 $router->post('/admin/plots/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@update');
 $router->post('/admin/plots/{id}/destroy', 'App\\Http\\Controllers\\Admin\\PlotManagementController@destroy');
 $router->post('/admin/plots/{id}/update-status', 'App\\Http\\Controllers\\Admin\\PlotManagementController@updateStatus');
+$router->get('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@book');
+$router->post('/admin/plots/{id}/book', 'App\\Http\\Controllers\\Admin\\PlotManagementController@storeBooking');
+$router->get('/admin/plots/{id}/transfer', 'App\\Http\\Controllers\\Admin\\PlotManagementController@transfer');
+$router->post('/admin/plots/{id}/transfer', 'App\\Http\\Controllers\\Admin\\PlotManagementController@transferPlot');
 $router->get('/admin/plots/api/price-history/{plotId}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@apiPriceHistory');
 
 // Admin Testimonials
@@ -768,6 +795,7 @@ $router->get('/ai-assistant', 'SmartAIController@assistantPage');
 $router->get('/api/notifications', 'NotificationController@getNotifications');
 $router->post('/api/notifications/mark-read', 'NotificationController@markAsRead');
 $router->get('/api/notifications/unread-count', 'NotificationController@getUnreadCount');
+$router->get('/api/user/notifications/unread-count', 'Front\\UserController@apiUnreadCount');
 $router->get('/api/popups', 'NotificationController@getPopups');
 $router->post('/api/popups/dismiss', 'NotificationController@dismissPopup');
 $router->post('/admin/notifications/create', 'NotificationController@createNotification');
@@ -1225,10 +1253,31 @@ $router->get('/admin/services/enquiry', 'App\\Http\\Controllers\\Admin\\Expenses
 // Admin Activity Log
 $router->get('/admin/activity-log', 'App\\Http\\Controllers\\Admin\\ActivityLogController@index');
 
+// Admin Vendor Management
+$router->get('/admin/vendors', 'App\\Http\\Controllers\\Admin\\VendorController@index');
+$router->get('/admin/vendors/create', 'App\\Http\\Controllers\\Admin\\VendorController@create');
+$router->post('/admin/vendors/store', 'App\\Http\\Controllers\\Admin\\VendorController@store');
+$router->get('/admin/vendors/show/{id}', 'App\\Http\\Controllers\\Admin\\VendorController@show');
+$router->get('/admin/vendors/edit/{id}', 'App\\Http\\Controllers\\Admin\\VendorController@edit');
+$router->post('/admin/vendors/update/{id}', 'App\\Http\\Controllers\\Admin\\VendorController@update');
+$router->post('/admin/vendors/delete/{id}', 'App\\Http\\Controllers\\Admin\\VendorController@delete');
+$router->get('/admin/vendors/contracts/{id}', 'App\\Http\\Controllers\\Admin\\VendorController@contracts');
+
 // Admin Settings Sub-pages
 $router->get('/admin/settings/payment', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 $router->get('/admin/settings/email', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 $router->get('/admin/settings/sms', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+
+// ============================================================
+// ADMIN COMMUNICATION (Email & SMS Queue)
+// ============================================================
+
+$router->get('/admin/communication/queue', 'App\\Http\\Controllers\\Admin\\CommunicationController@queue');
+$router->post('/admin/communication/process-queue', 'App\\Http\\Controllers\\Admin\\CommunicationController@processQueue');
+$router->get('/admin/communication/test-email', 'App\\Http\\Controllers\\Admin\\CommunicationController@testEmail');
+$router->post('/admin/communication/test-email', 'App\\Http\\Controllers\\Admin\\CommunicationController@sendTestEmail');
+$router->get('/admin/communication/test-sms', 'App\\Http\\Controllers\\Admin\\CommunicationController@testSms');
+$router->post('/admin/communication/test-sms', 'App\\Http\\Controllers\\Admin\\CommunicationController@sendTestSms');
 
 // ============================================================
 // CUSTOM FEATURES CONTROLLER ROUTES
@@ -1629,7 +1678,9 @@ $router->get('/admin/crm/support', 'App\\Http\\Controllers\\Admin\\CRMController
 // Customer Portal v2
 $router->get('/user/book-site-visit', 'Front\\UserController@bookSiteVisit');
 $router->post('/user/book-site-visit', 'Front\\UserController@bookSiteVisit');
-$router->get('/user/notifications', 'NotificationController@index');
+$router->get('/user/notifications', 'Front\\UserController@notifications');
+$router->post('/user/notifications/read-all', 'Front\\UserController@markAllNotificationsRead');
+$router->post('/user/notifications/{id}/read', 'Front\\UserController@markNotificationRead');
 $router->get('/user/payments', function() {
     header('Location: ' . BASE_URL . '/payment/history');
     exit;
@@ -1875,6 +1926,19 @@ $router->post('/admin/voice-users/cancel-schedule/{id}', 'App\\Http\\Controllers
 $router->post('/admin/voice-users/reschedule/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@rescheduleCall');
 $router->post('/admin/voice-users/ajax/convert-lead', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxConvertLead');
 $router->get('/admin/voice-users/ajax/lead-timeline/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxLeadTimeline');
+
+// ═══════════════════════════════════════════════════
+// VOICE CALL SCHEDULER (Admin)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/voice-scheduler', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@index');
+$router->get('/admin/voice-scheduler/schedule', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@schedule');
+$router->post('/admin/voice-scheduler/store', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@store');
+$router->get('/admin/voice-scheduler/calls', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@calls');
+$router->get('/admin/voice-scheduler/calls/{id}', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@callDetail');
+$router->post('/admin/voice-scheduler/process', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@processQueue');
+$router->get('/admin/voice-scheduler/analytics', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@analytics');
+$router->post('/admin/voice-scheduler/reschedule', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@rescheduleCall');
+$router->post('/admin/voice-scheduler/cancel', 'App\\Http\\Controllers\\Admin\\VoiceCallSchedulerController@cancelSchedule');
 
 // ═══════════════════════════════════════════════════
 // FARMERS MANAGEMENT (Admin)
@@ -2506,3 +2570,41 @@ $router->get('/admin/async/tasks', 'App\\Http\\Controllers\\Async\\AsyncControll
 $router->get('/admin/async/create', 'App\\Http\\Controllers\\Async\\AsyncController@createTask');
 $router->post('/admin/async/create', 'App\\Http\\Controllers\\Async\\AsyncController@handleCreateTask');
 $router->get('/api/work-distribution/analytics', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@getDistributionAnalytics');
+
+// ============================================================
+// POSSESSION HANDOVER (Admin\PossessionController)
+// ============================================================
+$router->get('/admin/possession', 'App\\Http\\Controllers\\Admin\\PossessionController@index');
+$router->get('/admin/possession/dashboard', 'App\\Http\\Controllers\\Admin\\PossessionController@dashboard');
+$router->get('/admin/possession/show/{id}', 'App\\Http\\Controllers\\Admin\\PossessionController@show');
+$router->get('/admin/possession/checklist/{id}', 'App\\Http\\Controllers\\Admin\\PossessionController@checklist');
+$router->post('/admin/possession/checklist/{id}/add', 'App\\Http\\Controllers\\Admin\\PossessionController@addChecklistItem');
+$router->post('/admin/possession/checklist/{id}/complete', 'App\\Http\\Controllers\\Admin\\PossessionController@completeChecklistItem');
+$router->post('/admin/possession/{id}/schedule', 'App\\Http\\Controllers\\Admin\\PossessionController@scheduleHandover');
+$router->post('/admin/possession/{id}/handover', 'App\\Http\\Controllers\\Admin\\PossessionController@markHandedOver');
+$router->get('/admin/possession/letter/{id}', 'App\\Http\\Controllers\\Admin\\PossessionController@generateLetter');
+$router->get('/admin/possession/defects/{id}', 'App\\Http\\Controllers\\Admin\\PossessionController@defectReports');
+$router->post('/admin/possession/defects/{id}/report', 'App\\Http\\Controllers\\Admin\\PossessionController@reportDefect');
+$router->post('/admin/possession/defects/resolve/{defectId}', 'App\\Http\\Controllers\\Admin\\PossessionController@resolveDefect');
+
+// ============================================================
+// REGISTRY WORKFLOW (Admin\RegistryController)
+// ============================================================
+$router->get('/admin/registry', 'App\\Http\\Controllers\\Admin\\RegistryController@index');
+$router->get('/admin/registry/history/{bookingId}', 'App\\Http\\Controllers\\Admin\\RegistryController@history');
+$router->get('/admin/registry/show/{id}', 'App\\Http\\Controllers\\Admin\\RegistryController@show');
+$router->get('/admin/registry/certificate/{id}', 'App\\Http\\Controllers\\Admin\\RegistryController@generateCertificate');
+$router->post('/admin/registry/{id}/documents', 'App\\Http\\Controllers\\Admin\\RegistryController@updateDocuments');
+$router->post('/admin/registry/{id}/stamp-duty', 'App\\Http\\Controllers\\Admin\\RegistryController@updateStampDuty');
+$router->post('/admin/registry/{id}/appointment', 'App\\Http\\Controllers\\Admin\\RegistryController@scheduleAppointment');
+$router->post('/admin/registry/{id}/register', 'App\\Http\\Controllers\\Admin\\RegistryController@markRegistered');
+$router->post('/admin/registry/{id}/mutation', 'App\\Http\\Controllers\\Admin\\RegistryController@updateMutation');
+
+// ============================================================
+// WHATSAPP CONFIG (Admin\WhatsAppConfigController)
+// ============================================================
+$router->get('/admin/whatsapp/settings', 'App\\Http\\Controllers\\Admin\\WhatsAppConfigController@settings');
+$router->post('/admin/whatsapp/settings', 'App\\Http\\Controllers\\Admin\\WhatsAppConfigController@saveSettings');
+$router->post('/admin/whatsapp/test', 'App\\Http\\Controllers\\Admin\\WhatsAppConfigController@testMessage');
+$router->get('/admin/whatsapp/templates', 'App\\Http\\Controllers\\Admin\\WhatsAppConfigController@templates');
+$router->post('/admin/whatsapp/templates/sync', 'App\\Http\\Controllers\\Admin\\WhatsAppConfigController@syncTemplates');

@@ -3,6 +3,7 @@
 namespace App\Services\AI\VoiceAgents;
 
 use App\Services\AI\users\BaseAgent;
+use App\Services\Voice\VoiceCallService;
 use Exception;
 
 class LeadFollowUpAgent extends BaseAgent
@@ -225,21 +226,30 @@ class LeadFollowUpAgent extends BaseAgent
         }
 
         $existing = $this->db->fetch(
-            "SELECT id FROM ai_calling_schedule WHERE lead_id = ? AND status = 'pending'",
+            "SELECT id FROM ai_calling_schedule WHERE lead_id = ? AND status IN ('pending','processing')",
             [$leadId]
         );
 
         if (!$existing) {
-            $this->db->insert('ai_calling_schedule', [
-                'lead_id' => $leadId,
-                'phone' => '',
-                'scheduled_date' => $recommendedDate,
-                'scheduled_time' => '10:00',
-                'priority' => 'medium',
-                'status' => 'pending',
-                'script_template' => 'follow_up_call',
-                'max_attempts' => 3
-            ]);
+            try {
+                $lead = $this->db->fetch("SELECT phone, status FROM leads WHERE id = ?", [$leadId]);
+                $voiceSvc = new VoiceCallService();
+                $agent = $this->db->fetch(
+                    "SELECT agent_id FROM ai_calling_agents WHERE agent_type LIKE '%follow%' OR agent_id = 'agent_12' AND status = 'active' LIMIT 1"
+                );
+                $agentId = $agent['agent_id'] ?? 'agent_12';
+                $phone = $lead['phone'] ?? '';
+                $script = $this->getScriptTemplateForStatus($lead['status'] ?? 'new');
+                $priority = in_array($lead['status'] ?? '', ['qualified', 'negotiation']) ? 'high' : 'medium';
+                $voiceSvc->scheduleCall($leadId, $phone, $agentId, $recommendedDate, '10:00:00', $script, $priority);
+            } catch (\Exception $e) {
+                error_log('LeadFollowUpAgent::scheduleNextFollowUp VoiceCallService error: ' . $e->getMessage());
+                $this->db->insert('ai_calling_schedule', [
+                    'lead_id' => $leadId, 'phone' => '', 'scheduled_date' => $recommendedDate,
+                    'scheduled_time' => '10:00', 'priority' => 'medium', 'status' => 'pending',
+                    'script_template' => 'follow_up_call', 'max_attempts' => 3
+                ]);
+            }
         } else {
             $this->db->execute(
                 "UPDATE ai_calling_schedule SET scheduled_date = ?, updated_at = NOW() WHERE id = ?",
@@ -262,6 +272,19 @@ class LeadFollowUpAgent extends BaseAgent
             'scheduled_date' => $recommendedDate,
             'message' => "Next follow-up scheduled for $recommendedDate"
         ];
+    }
+
+    protected function getScriptTemplateForStatus($status)
+    {
+        $map = [
+            'new' => 'follow_up_new_lead',
+            'contacted' => 'follow_up_contacted',
+            'qualified' => 'follow_up_qualified',
+            'proposal' => 'follow_up_proposal',
+            'negotiation' => 'follow_up_negotiation',
+            'nurture' => 'follow_up_nurture',
+        ];
+        return $map[$status] ?? 'follow_up_call';
     }
 
     public function logCallAttempt($leadId, $result, $notes = '')

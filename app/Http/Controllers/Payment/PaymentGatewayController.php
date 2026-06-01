@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\BaseController;
+use App\Services\Payment\RazorpayGateway;
 use Exception;
 use PDO;
 
@@ -219,17 +220,31 @@ class PaymentGatewayController extends BaseController
     }
 
     /**
-     * Process Razorpay payment
+     * Process Razorpay payment via RazorpayGateway service
      */
     private function processRazorpayPayment($payment_data, $transaction_id)
     {
-        // Razorpay integration code
-        // This would integrate with actual Razorpay API
-        return [
-            'success' => true,
-            'gateway_transaction_id' => 'rzp_' . rand(100000000, 999999999),
-            'message' => 'Payment processed successfully'
-        ];
+        $razorpay = new RazorpayGateway([
+            'api_key' => env('RAZORPAY_KEY_ID', ''),
+            'api_secret' => env('RAZORPAY_KEY_SECRET', ''),
+            'webhook_secret' => env('RAZORPAY_WEBHOOK_SECRET', ''),
+            'test_mode' => env('PAYMENT_SANDBOX', true)
+        ]);
+
+        if (!$razorpay->isConfigured()) {
+            return ['success' => false, 'error' => 'Razorpay not configured. Missing API keys.'];
+        }
+
+        $result = $razorpay->initiatePayment([
+            'amount' => floatval($payment_data['amount']),
+            'receipt' => $transaction_id,
+            'description' => ($payment_data['payment_type'] ?? 'Payment') . ' - APS Dream Home',
+            'customer_name' => $payment_data['customer_name'] ?? '',
+            'customer_email' => $payment_data['customer_email'] ?? '',
+            'customer_phone' => $payment_data['customer_phone'] ?? ''
+        ]);
+
+        return $result;
     }
 
     /**

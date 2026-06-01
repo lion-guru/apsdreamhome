@@ -3,11 +3,12 @@ $page_title = $page_title ?? 'My Dashboard';
 $current_page = 'dashboard';
 
 // Data from controller (with safe fallbacks)
-$stats = $stats ?? ['total_properties' => 0, 'active_inquiries' => 0, 'total_bookings' => 0, 'total_inquiries' => 0];
+$stats = $stats ?? ['total_properties' => 0, 'active_inquiries' => 0, 'total_bookings' => 0, 'total_inquiries' => 0, 'total_tickets' => 0, 'open_tickets' => 0];
 $properties = $properties ?? [];
 $inquiries = $inquiries ?? [];
 $bookings = $bookings ?? [];
 $user = $user ?? [];
+$userDocuments = $userDocuments ?? [];
 ?>
 
 <!-- Welcome Banner -->
@@ -57,6 +58,13 @@ $user = $user ?? [];
             <div class="stat-label">Total Inquiries</div>
         </div>
     </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-icon red"><i class="fas fa-headset"></i></div>
+            <div class="stat-value"><?php echo $stats['open_tickets']; ?><small class="text-muted fs-6">/<?php echo $stats['total_tickets']; ?></small></div>
+            <div class="stat-label">Open Tickets</div>
+        </div>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -82,6 +90,7 @@ $user = $user ?? [];
                                 <th>Token Paid</th>
                                 <th>Status</th>
                                 <th>Date</th>
+                                <th>Documents</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -119,11 +128,19 @@ $user = $user ?? [];
                                 </td>
                                 <td><?= date('M d, Y', strtotime($b['created_at'] ?? $b['booking_date'] ?? 'now')) ?></td>
                                 <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/receipt" class="btn btn-outline-secondary btn-sm" title="Download Receipt"><i class="fas fa-print me-1"></i>Receipt</a>
+                                        <?php if ($bStatus === 'confirmed' || $bStatus === 'completed'): ?>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" title="Download Allotment Letter" onclick="alert('Allotment letter will be available soon.')"><i class="fas fa-file-alt me-1"></i>Allotment</button>
+                                        <button type="button" class="btn btn-outline-success btn-sm" title="Download Agreement" onclick="alert('Sale agreement will be available soon.')"><i class="fas fa-file-contract me-1"></i>Agreement</button>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                                <td>
                                     <?php if ($bStatus === 'pending' && $tokenRequired > $tokenPaid): ?>
-                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/pay" class="btn btn-success btn-sm"><i class="fas fa-credit-card me-1"></i>Pay Token</a>
+                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/pay" class="btn btn-success btn-sm w-100 mb-1"><i class="fas fa-credit-card me-1"></i>Pay Token</a>
                                     <?php endif; ?>
-                                    <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/confirmation" class="btn btn-outline-info btn-sm"><i class="fas fa-eye"></i></a>
-                                    <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/receipt" class="btn btn-outline-secondary btn-sm"><i class="fas fa-print"></i></a>
+                                    <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/confirmation" class="btn btn-outline-info btn-sm w-100"><i class="fas fa-eye"></i> View</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -254,6 +271,52 @@ $user = $user ?? [];
         </div>
     </div>
 
+        <!-- My Documents -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-folder-open text-warning me-2"></i>My Documents</h5>
+                <a href="<?= BASE_URL ?>/user/documents" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <?php if (empty($userDocuments)): ?>
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-file-upload fa-3x mb-3"></i>
+                        <p>No documents uploaded yet. Upload your KYC documents.</p>
+                        <a href="<?= BASE_URL ?>/user/documents" class="btn btn-primary btn-sm">Upload Documents</a>
+                    </div>
+                <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr><th>Document</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($userDocuments as $doc): ?>
+                            <tr>
+                                <td><?= htmlspecialchars(ucfirst($doc['document_type'] ?? 'Other')) ?> <?= !empty($doc['document_number']) ? '<small class="text-muted">(' . htmlspecialchars($doc['document_number']) . ')</small>' : '' ?></td>
+                                <td><span class="badge bg-info"><?= htmlspecialchars(strtoupper($doc['file_type'] ?? 'N/A')) ?></span></td>
+                                <td>
+                                    <?php $vStatus = $doc['verification_status'] ?? 'pending'; ?>
+                                    <span class="badge bg-<?= $vStatus === 'verified' ? 'success' : ($vStatus === 'rejected' ? 'danger' : 'warning') ?>">
+                                        <?= ucfirst($vStatus) ?>
+                                    </span>
+                                </td>
+                                <td><small><?= date('d M Y', strtotime($doc['created_at'] ?? 'now')) ?></small></td>
+                                <td>
+                                    <?php if (!empty($doc['file_path'])): ?>
+                                        <a href="<?= BASE_URL . htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fas fa-download"></i></a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Right Column -->
     <div class="col-lg-4">
         <?php if (!empty($referral_code)): ?>
@@ -325,6 +388,9 @@ $user = $user ?? [];
                     </a>
                     <a href="<?= BASE_URL ?>/user/book-site-visit" class="btn btn-outline-info">
                         <i class="fas fa-calendar-check me-1"></i> Book Site Visit
+                    </a>
+                    <a href="<?= BASE_URL ?>/user/tickets" class="btn btn-outline-warning">
+                        <i class="fas fa-headset me-1"></i> My Tickets
                     </a>
                 </div>
             </div>
@@ -401,6 +467,7 @@ $user = $user ?? [];
 .stat-icon.green { background:rgba(16,185,129,0.1); color:#10b981; }
 .stat-icon.orange { background:rgba(245,158,11,0.1); color:#f59e0b; }
 .stat-icon.purple { background:rgba(139,92,246,0.1); color:#8b5cf6; }
+.stat-icon.red { background:rgba(239,68,68,0.1); color:#ef4444; }
 .stat-value { font-size:1.75rem; font-weight:700; color:#1e293b; margin-bottom:5px; }
 .stat-label { font-size:0.875rem; color:#64748b; }
 .property-card { transition:all 0.2s ease; }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
+use App\Services\Communication\NotificationService;
 
 class UserController extends BaseController
 {
@@ -70,9 +71,9 @@ class UserController extends BaseController
             LEFT JOIN colonies c ON p.colony_id = c.id
             LEFT JOIN plots p2 ON b.plot_id = p2.id
             LEFT JOIN colonies c2 ON p2.colony_id = c2.id
-            WHERE b.customer_id = ?
+            WHERE b.user_id = ? OR b.customer_id = ?
             ORDER BY b.created_at DESC
-        ", [$user['id']]);
+        ", [$user['id'], $user['id']]);
 
         // Recent payments
         try {
@@ -83,6 +84,34 @@ class UserController extends BaseController
         } catch (\Exception $e) {
             $recentPayments = [];
         }
+
+        // User documents (KYC)
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM user_documents WHERE user_id = ? ORDER BY created_at DESC");
+            $stmt->execute([$user['id']]);
+            $userDocuments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $userDocuments = [];
+        }
+
+        // Support tickets count
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM support_tickets WHERE user_id = ?");
+            $stmt->execute([$user['id']]);
+            $ticketStats = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $totalTickets = (int)($ticketStats['cnt'] ?? 0);
+
+            $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM support_tickets WHERE user_id = ? AND status NOT IN ('resolved','closed')");
+            $stmt->execute([$user['id']]);
+            $openTicketsRow = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $openTickets = (int)($openTicketsRow['cnt'] ?? 0);
+        } catch (\Exception $e) {
+            $totalTickets = 0;
+            $openTickets = 0;
+        }
+
+        $notifService = new NotificationService();
+        $unreadNotifCount = $notifService->getUnreadCount($user['id']);
 
         $referralCode = $user['referral_code'] ?? '';
         $referralCount = 0;
@@ -111,11 +140,14 @@ class UserController extends BaseController
             'properties' => $properties,
             'inquiries' => $inquiries,
             'bookings' => $bookings,
+            'userDocuments' => $userDocuments,
             'stats' => [
                 'total_properties' => count($properties),
                 'active_inquiries' => count(array_filter($inquiries, fn($i) => ($i['status'] ?? '') !== 'closed')),
                 'total_bookings' => count($bookings),
                 'total_inquiries' => count($inquiries),
+                'total_tickets' => $totalTickets,
+                'open_tickets' => $openTickets,
             ],
             'recentPayments' => $recentPayments,
             'registered' => isset($_GET['registered']),
@@ -124,6 +156,7 @@ class UserController extends BaseController
             'referral_link' => $referralLink,
             'referral_count' => $referralCount,
             'referral_earnings' => $referralEarnings,
+            'unread_notifications' => $unreadNotifCount,
         ];
 
         $this->layout = 'layouts/customer';
@@ -197,6 +230,95 @@ class UserController extends BaseController
 
         $this->layout = 'layouts/customer';
         $this->render('pages/user_inquiries', $data);
+    }
+
+    public function myTickets()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        try {
+            $stmt = $this->db->prepare("
+                SELECT t.*, 
+                       (SELECT message FROM support_ticket_replies WHERE ticket_id = t.id ORDER BY created_at DESC LIMIT 1) as last_reply,
+                       (SELECT created_at FROM support_ticket_replies WHERE ticket_id = t.id ORDER BY created_at DESC LIMIT 1) as last_reply_at
+                FROM support_tickets t 
+                WHERE t.user_id = ? 
+                ORDER BY t.created_at DESC
+            ");
+            $stmt->execute([$user['id']]);
+            $tickets = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Fetch replies for each ticket
+            foreach ($tickets as &$ticket) {
+                $stmt = $this->db->prepare("SELECT r.*, u.name as user_name FROM support_ticket_replies r LEFT JOIN users u ON r.user_id = u.id WHERE r.ticket_id = ? ORDER BY r.created_at ASC");
+                $stmt->execute([$ticket['id']]);
+                $ticket['replies'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
+            unset($ticket);
+
+            // Fetch bookings for dropdown
+            $bookings = $this->db->fetchAll("
+                SELECT b.id, b.booking_number, COALESCE(p.plot_number, p2.plot_number) as plot_number,
+                       COALESCE(c.name, c2.name) as colony_name, b.status
+                FROM bookings b
+                LEFT JOIN plots p ON b.property_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN plots p2 ON b.plot_id = p2.id
+                LEFT JOIN colonies c2 ON p2.colony_id = c2.id
+                WHERE (b.user_id = ? OR b.customer_id = ?) AND b.status NOT IN ('cancelled')
+                ORDER BY b.created_at DESC
+            ", [$user['id'], $user['id']]);
+        } catch (\Exception $e) {
+            $tickets = [];
+            $bookings = [];
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user_tickets', [
+            'page_title' => 'My Support Tickets - APS Dream Home',
+            'user' => $user,
+            'tickets' => $tickets,
+            'bookings' => $bookings,
+        ]);
+    }
+
+    public function createTicket()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $subject = trim($_POST['subject'] ?? '');
+        $priority = trim($_POST['priority'] ?? 'medium');
+        $message = trim($_POST['message'] ?? '');
+        $bookingId = !empty($_POST['booking_id']) ? (int)$_POST['booking_id'] : null;
+
+        if (empty($subject) || empty($message)) {
+            $_SESSION['flash_error'] = 'Subject and message are required.';
+            header('Location: ' . BASE_URL . '/user/tickets');
+            exit;
+        }
+
+        if (!in_array($priority, ['low', 'medium', 'high'])) {
+            $priority = 'medium';
+        }
+
+        try {
+            $stmt = $this->db->prepare("INSERT INTO support_tickets (user_id, subject, message, priority, booking_id, status, category, created_at) VALUES (?, ?, ?, ?, ?, 'open', 'general', NOW())");
+            $stmt->execute([$user['id'], $subject, $message, $priority, $bookingId]);
+            $ticketId = $this->db->lastInsertId();
+
+            // Add initial message as reply
+            $stmt = $this->db->prepare("INSERT INTO support_ticket_replies (ticket_id, user_id, message, is_admin) VALUES (?, ?, ?, 0)");
+            $stmt->execute([$ticketId, $user['id'], $message]);
+
+            $_SESSION['flash_success'] = 'Support ticket created successfully!';
+        } catch (\Exception $e) {
+            $_SESSION['flash_error'] = 'Failed to create ticket. Please try again.';
+        }
+
+        header('Location: ' . BASE_URL . '/user/tickets');
+        exit;
     }
 
     public function profile()
@@ -393,5 +515,64 @@ class UserController extends BaseController
     public function network()
     {
         $this->render('pages/user_network', ['page_title' => 'My Network']);
+    }
+
+    public function notifications()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $notifService = new NotificationService();
+        $notifications = $notifService->getCustomerNotifications($user['id']);
+        $unreadCount = $notifService->getUnreadCount($user['id']);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user_notifications', [
+            'page_title' => 'Notifications - APS Dream Home',
+            'user' => $user,
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount,
+        ]);
+    }
+
+    public function markNotificationRead($notificationId)
+    {
+        $this->requireCustomerLogin();
+
+        $notifService = new NotificationService();
+        $notifService->markAsRead($notificationId);
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    public function markAllNotificationsRead()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $notifService = new NotificationService();
+        $notifService->markAllAsRead($user['id']);
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    public function apiUnreadCount()
+    {
+        $count = 0;
+        if (!empty($_SESSION['user_id'])) {
+            try {
+                $notifService = new NotificationService();
+                $count = $notifService->getUnreadCount($_SESSION['user_id']);
+            } catch (\Exception $e) {
+                error_log("UserController::apiUnreadCount: " . $e->getMessage());
+            }
+        }
+        header('Content-Type: application/json');
+        echo json_encode(['count' => $count]);
+        exit;
     }
 }
