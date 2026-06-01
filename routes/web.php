@@ -696,6 +696,10 @@ $router->post('/admin/news/{id}/delete', 'App\\Http\\Controllers\\Admin\\NewsCon
 // Admin Blog Management
 $router->get('/admin/blog', 'App\\Http\\Controllers\\Admin\\BlogController@index');
 $router->get('/admin/blog/create', 'App\\Http\\Controllers\\Admin\\BlogController@create');
+$router->post('/admin/blog/store', 'App\\Http\\Controllers\\Admin\\BlogController@store');
+$router->get('/admin/blog/{id}/edit', 'App\\Http\\Controllers\\Admin\\BlogController@edit');
+$router->post('/admin/blog/{id}/update', 'App\\Http\\Controllers\\Admin\\BlogController@update');
+$router->post('/admin/blog/{id}/destroy', 'App\\Http\\Controllers\\Admin\\BlogController@destroy');
 
 // Admin Campaigns
 $router->get('/admin/campaigns', 'App\\Http\\Controllers\\Admin\\CampaignController@index');
@@ -1001,6 +1005,11 @@ $router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\CommissionAdminCo
 
 // Admin Payments
 $router->get('/admin/payments', 'App\\Http\\Controllers\\Admin\\PaymentController@index');
+$router->get('/admin/payments/show/{id}', 'App\\Http\\Controllers\\Admin\\PaymentController@show');
+$router->post('/admin/payments/process/{id}', 'App\\Http\\Controllers\\Admin\\PaymentController@processPayment');
+$router->post('/admin/payments/refund/{id}', 'App\\Http\\Controllers\\Admin\\PaymentController@refundPayment');
+$router->get('/admin/payments/dashboard-stats', 'App\\Http\\Controllers\\Admin\\PaymentController@dashboardStats');
+$router->get('/admin/payments/export', 'App\\Http\\Controllers\\Admin\\PaymentController@export');
 
 // Admin EMI
 $router->get('/admin/emi', 'App\\Http\\Controllers\\Admin\\EMIController@index');
@@ -1242,6 +1251,12 @@ $router->get('/admin/expense', 'App\\Http\\Controllers\\Admin\\ExpensesControlle
 
 // Admin FAQ
 $router->get('/admin/faqs', 'App\\Http\\Controllers\\Admin\\FaqController@index');
+$router->get('/admin/faqs/create', 'App\\Http\\Controllers\\Admin\\FaqController@create');
+$router->post('/admin/faqs/store', 'App\\Http\\Controllers\\Admin\\FaqController@store');
+$router->get('/admin/faqs/{id}', 'App\\Http\\Controllers\\Admin\\FaqController@show');
+$router->get('/admin/faqs/{id}/edit', 'App\\Http\\Controllers\\Admin\\FaqController@edit');
+$router->post('/admin/faqs/{id}/update', 'App\\Http\\Controllers\\Admin\\FaqController@update');
+$router->get('/admin/faqs/{id}/delete', 'App\\Http\\Controllers\\Admin\\FaqController@delete');
 
 // Admin Settings Company
 $router->get('/admin/settings/company', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
@@ -1545,6 +1560,11 @@ $router->get('/admin/sms-campaigns', 'App\\Http\\Controllers\\Admin\\CampaignCon
 $router->get('/admin/whatsapp-broadcast', 'App\\Http\\Controllers\\Admin\\CampaignController@whatsappBroadcast');
 $router->post('/admin/whatsapp-broadcast', 'App\\Http\\Controllers\\Admin\\CampaignController@whatsappBroadcast');
 $router->get('/admin/referrals', 'App\\Http\\Controllers\\Admin\\ReferralController@index');
+$router->get('/admin/referrals/create', 'App\\Http\\Controllers\\Admin\\ReferralController@create');
+$router->post('/admin/referrals/store', 'App\\Http\\Controllers\\Admin\\ReferralController@store');
+$router->get('/admin/referrals/{id}', 'App\\Http\\Controllers\\Admin\\ReferralController@show');
+$router->post('/admin/referrals/{id}/approve', 'App\\Http\\Controllers\\Admin\\ReferralController@approve');
+$router->post('/admin/referrals/{id}/reject', 'App\\Http\\Controllers\\Admin\\ReferralController@reject');
 $router->get('/admin/social-media', 'App\\Http\\Controllers\\Admin\\SocialMediaController@index');
 
 // News Categories
@@ -2299,13 +2319,7 @@ $router->post('/admin/knowledge-base-new/{id}/update', 'App\\Http\\Controllers\\
 $router->post('/admin/knowledge-base-new/{id}/delete', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@delete');
 
 // Admin FAQs (Controller-based)
-$router->get('/admin/faqs-new', 'App\\Http\\Controllers\\Admin\\FaqController@index');
-$router->get('/admin/faqs-new/create', 'App\\Http\\Controllers\\Admin\\FaqController@create');
-$router->post('/admin/faqs-new/store', 'App\\Http\\Controllers\\Admin\\FaqController@store');
-$router->get('/admin/faqs-new/{id}', 'App\\Http\\Controllers\\Admin\\FaqController@show');
-$router->get('/admin/faqs-new/{id}/edit', 'App\\Http\\Controllers\\Admin\\FaqController@edit');
-$router->post('/admin/faqs-new/{id}/update', 'App\\Http\\Controllers\\Admin\\FaqController@update');
-$router->post('/admin/faqs-new/{id}/delete', 'App\\Http\\Controllers\\Admin\\FaqController@delete');
+
 
 // Admin Testimonials (Additional routes)
 $router->get('/admin/testimonials-new', 'App\\Http\\Controllers\\Admin\\TestimonialController@index');
@@ -2690,5 +2704,76 @@ $router->post('/user-management/users/update-password/{id}', 'User\\UserControll
 $router->post('/user-management/users/update-status/{id}', 'User\\UserController@updateStatus');
 $router->get('/user-management/users/role/{role}', 'User\\UserController@byRole');
 
+// ============================================================
+// NOTIFICATION MANAGEMENT (Controllers\NotificationController)
+// ============================================================
+$router->get('/admin/notifications/manage', 'App\\Http\\Controllers\\NotificationController@index');
+$router->get('/admin/notifications/manage/templates', 'App\\Http\\Controllers\\NotificationController@templates');
+$router->get('/admin/notifications/manage/templates/create', 'App\\Http\\Controllers\\NotificationController@createTemplate');
+$router->get('/admin/notifications/manage/templates/edit/{id}', 'App\\Http\\Controllers\\NotificationController@editTemplate');
+$router->get('/admin/notifications/manage/email-logs', 'App\\Http\\Controllers\\NotificationController@emailLogs');
+$router->get('/admin/notifications/manage/sms-logs', 'App\\Http\\Controllers\\NotificationController@smsLogs');
+$router->get('/admin/notifications/manage/settings', 'App\\Http\\Controllers\\NotificationController@settings');
+$router->get('/admin/notifications/manage/send-test', 'App\\Http\\Controllers\\NotificationController@sendTest');
+$router->get('/admin/notifications/manage/preview', 'App\\Http\\Controllers\\NotificationController@preview');
+$router->post('/admin/notifications/manage/api/get-notifications', 'App\\Http\\Controllers\\NotificationController@getNotifications');
+$router->post('/admin/notifications/manage/api/mark-read', 'App\\Http\\Controllers\\NotificationController@markAsRead');
+$router->post('/admin/notifications/manage/api/unread-count', 'App\\Http\\Controllers\\NotificationController@getUnreadCount');
+$router->post('/admin/notifications/manage/api/get-popups', 'App\\Http\\Controllers\\NotificationController@getPopups');
+$router->post('/admin/notifications/manage/api/dismiss-popup', 'App\\Http\\Controllers\\NotificationController@dismissPopup');
+$router->post('/admin/notifications/manage/api/create', 'App\\Http\\Controllers\\NotificationController@createNotification');
+$router->post('/admin/notifications/manage/api/create-popup', 'App\\Http\\Controllers\\NotificationController@createPopup');
+
+// ============================================================
+// EVENT MANAGEMENT (Controllers\EventController -- Event Bus)
+// ============================================================
+$router->get('/admin/events/dashboard', 'App\\Http\\Controllers\\EventController@dashboard');
+$router->post('/admin/events/publish', 'App\\Http\\Controllers\\EventController@publish');
+$router->post('/admin/events/subscribe', 'App\\Http\\Controllers\\EventController@subscribe');
+$router->post('/admin/events/unsubscribe', 'App\\Http\\Controllers\\EventController@unsubscribe');
+$router->get('/admin/events/subscriptions', 'App\\Http\\Controllers\\EventController@getSubscriptions');
+$router->post('/admin/events/clear-subscriptions', 'App\\Http\\Controllers\\EventController@clearSubscriptions');
+$router->get('/admin/events/statistics', 'App\\Http\\Controllers\\EventController@statistics');
+$router->get('/admin/events/recent', 'App\\Http\\Controllers\\EventController@recentEvents');
+$router->post('/admin/events/bulk-publish', 'App\\Http\\Controllers\\EventController@bulkPublish');
+
+// ============================================================
+// EVENTS CRUD (Admin\EventController)
+// ============================================================
+$router->get('/admin/events/list', 'App\\Http\\Controllers\\Admin\\EventController@index');
+$router->get('/admin/events/list/create', 'App\\Http\\Controllers\\Admin\\EventController@create');
+$router->post('/admin/events/list/store', 'App\\Http\\Controllers\\Admin\\EventController@store');
+$router->get('/admin/events/list/{id}', 'App\\Http\\Controllers\\Admin\\EventController@show');
+$router->get('/admin/events/list/{id}/edit', 'App\\Http\\Controllers\\Admin\\EventController@edit');
+$router->post('/admin/events/list/{id}/update', 'App\\Http\\Controllers\\Admin\\EventController@update');
+$router->post('/admin/events/list/{id}/destroy', 'App\\Http\\Controllers\\Admin\\EventController@destroy');
+
+// ============================================================
+// PUBLIC FRONTEND PAGES (New Front Controllers)
+// ============================================================
+$router->get('/faq-list', 'App\\Http\\Controllers\\Front\\FAQController@index');
+$router->get('/faq-list/{id}', 'App\\Http\\Controllers\\Front\\FAQController@show');
+$router->get('/event-calendar', 'App\\Http\\Controllers\\Front\\EventController@index');
+$router->get('/event-calendar/{id}', 'App\\Http\\Controllers\\Front\\EventController@show');
+$router->get('/blog-articles', 'App\\Http\\Controllers\\Front\\BlogController@index');
+$router->get('/blog-articles/{slug}', 'App\\Http\\Controllers\\Front\\BlogController@show');
+$router->get('/photo-gallery', 'App\\Http\\Controllers\\Front\\GalleryController@index');
+$router->get('/photo-gallery/{id}', 'App\\Http\\Controllers\\Front\\GalleryController@show');
+
 // --- AIAssistantController (root namespace) ---
 $router->get('/ai/assistant', 'AIAssistantController@index');
+
+// ============================================================
+// ADMIN DIAGNOSTIC & ALERTS
+// ============================================================
+$router->get('/admin/diagnostic', 'Utility\\SystemDiagnosticController@index');
+$router->get('/admin/alerts', 'Utility\\AlertController@index');
+$router->post('/admin/alerts/create', 'Utility\\AlertController@createAlert');
+$router->get('/admin/alerts/{id}', 'Utility\\AlertController@getAlert');
+$router->post('/admin/alerts/{id}/update', 'Utility\\AlertController@updateAlert');
+$router->post('/admin/alerts/{id}/delete', 'Utility\\AlertController@deleteAlert');
+$router->post('/admin/alerts/{id}/acknowledge', 'Utility\\AlertController@acknowledgeAlert');
+$router->post('/admin/alerts/{id}/dismiss', 'Utility\\AlertController@dismissAlert');
+$router->get('/admin/alerts/escalations', 'Utility\\AlertController@getEscalations');
+$router->post('/admin/alerts/escalations/process', 'Utility\\AlertController@processEscalations');
+$router->get('/admin/alerts/stats', 'Utility\\AlertController@getStats');

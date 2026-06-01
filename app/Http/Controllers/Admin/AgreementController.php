@@ -215,6 +215,7 @@ class AgreementController extends AdminController
                     $stmt = $this->db->prepare("INSERT INTO email_queue (recipient_email, subject, body, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
                     $stmt->execute([$customerEmail, $subject, $message]);
                 } catch (\Exception $e) {
+                            error_log("AgreementController.php: " . $e->getMessage());
                 }
             }
 
@@ -224,6 +225,7 @@ class AgreementController extends AdminController
                     $stmt = $this->db->prepare("INSERT INTO sms_queue (recipient_phone, message, status, created_at) VALUES (?, ?, 'pending', NOW())");
                     $stmt->execute([$customerPhone, $smsText]);
                 } catch (\Exception $e) {
+                            error_log("AgreementController.php: " . $e->getMessage());
                 }
             }
 

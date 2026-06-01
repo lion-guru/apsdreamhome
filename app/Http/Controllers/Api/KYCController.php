@@ -177,6 +177,7 @@ class KYCController extends BaseApiController
             error_log("KYC Attempt: Type={$type}, User={$userId}, Success={$success}");
         } catch (\Exception $e) {
             // Silent fail - don't break the flow
+                    error_log("KYCController.php: " . $e->getMessage());
         }
     }
 

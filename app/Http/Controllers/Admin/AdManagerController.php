@@ -123,7 +123,9 @@ class AdManagerController extends AdminController
         try {
             $svc = new \App\Services\AdManagerService();
             $svc->incrementClicks($id);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+                    error_log("AdManagerController.php: " . $e->getMessage());
+        }
         $ref = $_SERVER['HTTP_REFERER'] ?? '/';
         header('Location: ' . $ref);
         exit;

@@ -54,7 +54,7 @@ class PageController extends BaseController
                     'title' => $project->site_name,
                     'location' => ($project->district ?? '') . ', ' . ($project->state ?? ''),
                     'city' => $project->district ?? '',
-                    'price' => 'Starting from ₹5.5 Lakhs',
+                    'price' => 'Starting from â‚¹5.5 Lakhs',
                     'slug' => $slug,
                     'type' => ucfirst($project->site_type ?? 'Residential'),
                     'status' => ($project->status === 'active') ? 'Available' : 'Completed',
@@ -119,6 +119,7 @@ class PageController extends BaseController
                         ]);
                     } catch (\Exception $e) {
                         // WhatsApp notification is best-effort
+                                error_log("PageController.php: " . $e->getMessage());
                     }
                 } catch (\Exception $e) {
                     $error = 'Failed to submit. Please try again or call us directly.';
@@ -202,7 +203,8 @@ class PageController extends BaseController
                     ->execute([$leadId, $serviceId]);
 
                 echo json_encode(['success' => true, 'message' => 'Thank you! We will contact you shortly.']);
-            } else {
+                    error_log("PageController.php: " . $e->getMessage());
+        } else {
                 error_log("Service interest error: " . $e->getMessage());
                 echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again.']);
             }
@@ -304,6 +306,7 @@ class PageController extends BaseController
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             // Table doesn't exist or error, use sample data
+                    error_log("PageController.php: " . $e->getMessage());
         }
 
         // If no properties in DB, use sample data
@@ -367,7 +370,7 @@ class PageController extends BaseController
                 'address' => 'Gorakhpur, Uttar Pradesh',
                 'location' => 'Gorakhpur',
                 'price' => 750000,
-                'price_display' => '₹7.5 Lakhs',
+                'price_display' => 'â‚¹7.5 Lakhs',
                 'price_num' => 750000,
                 'image' => 'suyoday.jpg',
                 'property_type' => 'plot',
@@ -385,7 +388,7 @@ class PageController extends BaseController
                 'address' => 'Gorakhpur, Uttar Pradesh',
                 'location' => 'Gorakhpur',
                 'price' => 850000,
-                'price_display' => '₹8.5 Lakhs',
+                'price_display' => 'â‚¹8.5 Lakhs',
                 'price_num' => 850000,
                 'image' => 'raghunat.jpg',
                 'property_type' => 'plot',
@@ -403,7 +406,7 @@ class PageController extends BaseController
                 'address' => 'Gorakhpur, Uttar Pradesh',
                 'location' => 'Gorakhpur',
                 'price' => 650000,
-                'price_display' => '₹6.5 Lakhs',
+                'price_display' => 'â‚¹6.5 Lakhs',
                 'price_num' => 650000,
                 'image' => 'brajradha.jpg',
                 'property_type' => 'plot',
@@ -421,7 +424,7 @@ class PageController extends BaseController
                 'address' => 'Kushinagar, Uttar Pradesh',
                 'location' => 'Kushinagar',
                 'price' => 550000,
-                'price_display' => '₹5.5 Lakhs',
+                'price_display' => 'â‚¹5.5 Lakhs',
                 'price_num' => 550000,
                 'image' => 'budhbihar.jpg',
                 'property_type' => 'plot',
@@ -439,7 +442,7 @@ class PageController extends BaseController
                 'address' => 'Lucknow, Uttar Pradesh',
                 'location' => 'Lucknow',
                 'price' => 1200000,
-                'price_display' => '₹12 Lakhs',
+                'price_display' => 'â‚¹12 Lakhs',
                 'price_num' => 1200000,
                 'image' => 'awadhpuri.jpg',
                 'property_type' => 'plot',
@@ -457,7 +460,7 @@ class PageController extends BaseController
                 'address' => 'Gorakhpur, Uttar Pradesh',
                 'location' => 'Gorakhpur',
                 'price' => 2500000,
-                'price_display' => '₹25 Lakhs',
+                'price_display' => 'â‚¹25 Lakhs',
                 'price_num' => 2500000,
                 'image' => 'commercial.jpg',
                 'property_type' => 'shop',
@@ -1022,12 +1025,12 @@ class PageController extends BaseController
 
         try {
             $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'project', 'pending', 'medium', NOW())");
-            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ₹{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
+            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: â‚¹{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
 
             // Also save to service_interests if table exists
             try {
                 $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
-                $sStmt->execute([$this->db->lastInsertId(), "Budget: ₹{$budget}, Location: {$location}, Type: {$project_type}"]);
+                $sStmt->execute([$this->db->lastInsertId(), "Budget: â‚¹{$budget}, Location: {$location}, Type: {$project_type}"]);
             } catch (\Exception $e) { error_log('PageController constructionInquiry service interests: ' . $e->getMessage()); }
 
             $_SESSION['flash_success'] = 'Thank you! We will contact you shortly regarding your construction project.';
@@ -2037,7 +2040,8 @@ class PageController extends BaseController
                         ]);
                         $propertyId = $this->db->lastInsertId();
                         $savedToUserProperties = true;
-                    }
+                            error_log("PageController.php: " . $e1->getMessage());
+                }
                 }
 
                 // Also save to inquiries for CRM tracking
@@ -2352,7 +2356,9 @@ class PageController extends BaseController
         // Increment download count
         try {
             $this->db->query("UPDATE document_gallery SET downloads_count = downloads_count + 1 WHERE id = ?", [$id]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+                    error_log("PageController.php: " . $e->getMessage());
+        }
 
         $filePath = __DIR__ . '/../../../../assets/' . $doc['file_path'];
         if (!file_exists($filePath)) {
@@ -2410,7 +2416,9 @@ class PageController extends BaseController
         // Increment view count
         try {
             $this->db->query("UPDATE user_properties SET views = views + 1 WHERE id = ?", [$id]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+                    error_log("PageController.php: " . $e->getMessage());
+        }
 
         $data = [
             'page_title' => ($property['name'] ?? 'Property') . ' - APS Dream Home',

@@ -234,6 +234,7 @@ class VoiceCallSchedulerController extends AdminController
                 "SELECT interest_level, COUNT(*) as count FROM ai_call_extracted_leads GROUP BY interest_level"
             );
         } catch (\Exception $e) {
+                    error_log("VoiceCallSchedulerController.php: " . $e->getMessage());
         }
 
         return $this->render('admin/voice-scheduler/analytics', [

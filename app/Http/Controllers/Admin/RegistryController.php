@@ -150,10 +150,10 @@ class RegistryController extends AdminController
             $notes = $_POST['notes'] ?? '';
 
             $stmt = $this->db->prepare("UPDATE bookings SET stamp_duty_amount = ?, registration_fees = ?, registry_status = 'stamp_duty_pending', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ?");
-            $note = "\n[" . date('Y-m-d H:i') . "] Stamp duty: ₹$stampDuty, Reg fees: ₹$regFees. " . $notes;
+            $note = "\n[" . date('Y-m-d H:i') . "] Stamp duty: â‚¹$stampDuty, Reg fees: â‚¹$regFees. " . $notes;
             $stmt->execute([$stampDuty, $regFees, $note, $id]);
 
-            $this->logRegistryActivity($id, 'stamp_duty_recorded', "Stamp Duty: ₹$stampDuty, Registration Fees: ₹$regFees. $notes");
+            $this->logRegistryActivity($id, 'stamp_duty_recorded', "Stamp Duty: â‚¹$stampDuty, Registration Fees: â‚¹$regFees. $notes");
 
             $this->setFlash('success', 'Stamp duty details recorded successfully');
             $this->redirect('/admin/registry/show/' . $id);
@@ -360,6 +360,7 @@ class RegistryController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at) VALUES (?, ?, ?, ?, NOW())");
             $stmt->execute([$bookingId, $action, $details, $_SESSION['admin_id'] ?? null]);
         } catch (Exception $e) {
+                    error_log("RegistryController.php: " . $e->getMessage());
         }
     }
 
