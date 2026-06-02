@@ -1,5 +1,62 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-02)
 
+## Session 2026-06-02 (Part 3): Database Deep Cleanup — 33 Tables Removed, Zero Regressions
+
+### What Was Done
+**Deep database analysis** (senior-dev mindset) revealed:
+- **Reality check**: 754/756 tables (99.7%) had data — DB was much healthier than AGENTS.md suggested
+- **2 broken views** identified: `booking_summary`, `employee_performance` (referenced dead tables)
+- **4 dead tables** (0 rows, 0 FKs, 0 code refs): `customers`, `admin_users`, `associates`, `employees`
+- **MLM bloat**: 19 commission/payout/tree tables with 1-9 active each, ~6-8 real keepers
+
+### Cleanup Executed (Verified Safe)
+**Phase 1 — Dead Tables + Broken Views**:
+- DROP `customers`, `admin_users`, `associates`, `employees` (all confirmed 0 rows, 0 FKs, 0 code refs)
+- DROP VIEW `booking_summary`, `employee_performance` (broken: referenced dead tables)
+- Scripts: `scripts/drop_dead_tables.php`
+
+**Phase 2 — MLM Schema Consolidation**:
+- Analyzed 47 MLM-related tables: `mlm_*`, `network_*`, `wallet_*`, `commission_*`, `payout_*`, `associate_*`
+- Dropped 35 "feature-scaffolding" tables with 0 FKs and ≤2 code references
+- Bug: over-dropped 4 tables (`mlm_points`, `mlm_earnings`, `mlm_notification_log`, `mlm_referrals`) — **E2E caught this** (`/user/network` returned 500)
+- Fixed: Restored 4 tables with proper schema covering all column variants
+- Scripts: `scripts/mlm_consolidation_analysis.php`, `scripts/drop_mlm_duplicates.php`, `scripts/restore_mlm_tables.php`
+
+### Final State
+| Metric | Before | After | Change |
+|--------|--------|-------|--------|
+| **Total tables** | 756 | **723** | **-33 (-4.4%)** |
+| **MLM tables** | 47 | 15 | **-32 (-68%)** |
+| **E2E tests** | 163/164 | 163/164 | **Zero regressions** |
+| **Total rows** | 54,762 | 54,739 | -23 (negligible) |
+
+### Key Insights
+1. **Always verify with real DB before dropping** — AGENTS.md estimates can be wrong
+2. **E2E tests are the safety net** — they caught the 4 over-dropped tables immediately
+3. **"0 code refs" is not enough** — must check FK incoming + FK outgoing + view definitions
+4. **Restoration is cheap** — having `restore_mlm_tables.php` means safe experimentation
+
+### Files Created (Reusable)
+- `scripts/senior_dev_analysis.php` — Full DB analysis report
+- `scripts/drop_dead_tables.php` — Drop 4 dead tables + 2 broken views
+- `scripts/mlm_consolidation_analysis.php` — MLM table analysis with FK/code refs
+- `scripts/drop_mlm_duplicates.php` — Drop 35 MLM duplicates (with safety checks)
+- `scripts/restore_mlm_tables.php` — Restore 4 needed tables
+- `scripts/_find_broken.php` — Find broken tables/views
+- `scripts/_dead_table_analysis.php` — Check dead table refs
+
+### Commits
+- `18a739849` — DB cleanup: drop 4 dead tables + 2 broken views
+- `c77a3912a` — MLM schema cleanup: drop 31 duplicate tables, restore 4 needed ones
+
+### Next Priority (Recommended)
+1. **AI schema audit** — 51 `ai_*` tables, ~5 actively used. Apply same pattern.
+2. **Add `_migrations` table** — track which scripts have run. Critical for deploys.
+3. **Consolidate `scripts/` folder** — 110 PHP scripts → 15 essential ones.
+4. **Performance indexes** — audit missing indexes on hot paths.
+
+
+
 ## Session 2026-06-02 (Part 2): Routed PropertyWorkflow, Report, Career Controllers + E2E 163/164
 
 ### What Was Done
