@@ -23,6 +23,11 @@ const sidebar_urls = [
   '/admin/expenses','/admin/expenses/create','/admin/activity-log',
   '/admin/settings/payment','/admin/settings/email','/admin/settings/sms',
   '/admin/inventory',
+  '/admin/ceo-dashboard', '/admin/cfo-dashboard', '/admin/builder-dashboard',
+  '/admin/agent-dashboard', '/admin/cm-dashboard',
+  '/admin/financial-reports', '/admin/voice-agents',
+  '/admin/deal-pipeline', '/admin/property-allocations',
+  '/admin/associate-extensions', '/admin/loans', '/admin/backups',
 ];
 
 const colony_site_plot_urls = [
@@ -118,7 +123,7 @@ async function run() {
 
     // STEP 4: Dynamic ID-based routes
     console.log('\n--- Step 4: Dynamic ID Routes (sites, plots, farmers) ---');
-    for (const path of ['/admin/sites/1', '/admin/sites/1/edit', '/admin/plots/1', '/admin/plots/1/edit', '/farmers/1', '/farmers/1/edit']) {
+    for (const path of ['/admin/sites/1', '/admin/sites/1/edit', '/admin/plots/1', '/admin/plots/1/edit', '/admin/bookings/1', '/farmers/1', '/farmers/1/edit']) {
       try {
         const response = await page.goto(`${BASE}${path}`, { waitUntil: 'load', timeout: 15000 });
         const status = response.status();
@@ -160,6 +165,20 @@ async function run() {
       { path: '/sip-vs-realestate', name: 'SIP vs Real Estate' },
       { path: '/capital-gains-calculator', name: 'Capital Gains Calculator' },
       { path: '/gst-calculator', name: 'GST Calculator' },
+      // Content pages
+      { path: '/blog', name: 'Blog' },
+      { path: '/news', name: 'News' },
+      { path: '/faq', name: 'FAQ' },
+      // Role dashboards
+      { path: '/admin/ceo-dashboard', name: 'CEO Dashboard' },
+      { path: '/admin/cfo-dashboard', name: 'CFO Dashboard' },
+      { path: '/admin/builder-dashboard', name: 'Builder Dashboard' },
+      { path: '/admin/agent-dashboard', name: 'Agent Dashboard' },
+      // Additional public routes
+      { path: '/compare', name: 'Property Compare' },
+      { path: '/user/bank-details', name: 'User Bank Details' },
+      { path: '/user/notification-settings', name: 'Notification Settings' },
+      { path: '/user/notifications', name: 'User Notifications' },
 
     ];
     for (const { path, name } of publicPages) {
@@ -188,7 +207,8 @@ await page.fill('input[name="password"]', 'Test@123');
 
     if (custLoggedIn) {
       const custPages = [
-        '/user/dashboard', '/user/properties', '/user/inquiries', '/user/profile'
+        '/user/dashboard', '/user/properties', '/user/inquiries', '/user/profile',
+        '/user/favorites', '/user/saved-searches', '/user/network'
       ];
       for (const path of custPages) {
         try {

@@ -389,6 +389,9 @@ $userDocuments = $userDocuments ?? [];
                     <a href="<?= BASE_URL ?>/user/book-site-visit" class="btn btn-outline-info">
                         <i class="fas fa-calendar-check me-1"></i> Book Site Visit
                     </a>
+                    <a href="<?= BASE_URL ?>/user/saved-searches" class="btn btn-outline-secondary">
+                        <i class="fas fa-search me-2"></i>Saved Searches
+                    </a>
                     <a href="<?= BASE_URL ?>/user/tickets" class="btn btn-outline-warning">
                         <i class="fas fa-headset me-1"></i> My Tickets
                     </a>

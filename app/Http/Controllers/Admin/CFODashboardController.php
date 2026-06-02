@@ -27,16 +27,15 @@ class CFODashboardController extends AdminController
     public function index()
     {
         try {
-            // Get financial overview
-            $financial_overview = $this->db->fetchOne(
-                "SELECT 
-                    COALESCE(SUM(CASE WHEN status = 'completed' THEN amount END), 0) as total_revenue,
-                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as total_transactions,
-                    COALESCE(SUM(CASE WHEN status = 'pending' THEN amount END), 0) as pending_revenue,
-                    COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_transactions
-                FROM booking_payments
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
-            );
+            // Get financial overview (booking_payments has no status column)
+            try {
+                $bp_revenue = $this->db->fetchOne(
+                    "SELECT COALESCE(SUM(payment_amount), 0) as total, COUNT(*) as count
+                     FROM booking_payments WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                );
+            } catch (Exception $e) {
+                $bp_revenue = ['total' => 0, 'count' => 0];
+            }
 
             // Get expense statistics
             $expense_stats = $this->db->fetchOne(
@@ -51,36 +50,56 @@ class CFODashboardController extends AdminController
             // Get commission statistics
             $commission_stats = $this->db->fetchOne(
                 "SELECT 
-                    COALESCE(SUM(amount), 0) as total_commissions,
+                    COALESCE(SUM(CASE WHEN status = 'paid' THEN amount END), 0) as total_commissions,
                     COUNT(*) as total_commission_transactions,
                     COALESCE(AVG(amount), 0) as avg_commission
                 FROM commissions
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
             );
 
-            // Get profit analysis
-            $profit_analysis = $this->db->fetchOne(
-                "SELECT 
-                    (COALESCE(SUM(CASE WHEN bp.status = 'completed' THEN bp.amount END), 0) - 
-                     COALESCE(SUM(CASE WHEN e.status = 'completed' THEN e.amount END), 0) - 
-                     COALESCE(SUM(CASE WHEN c.status = 'completed' THEN c.amount END), 0)) as net_profit,
-                    COALESCE(SUM(CASE WHEN bp.status = 'completed' THEN bp.amount END), 0) as gross_revenue,
-                    COALESCE(SUM(CASE WHEN e.status = 'completed' THEN e.amount END), 0) as total_expenses_paid,
-                    COALESCE(SUM(CASE WHEN c.status = 'completed' THEN c.amount END), 0) as total_commissions_paid
-                FROM booking_payments bp
-                LEFT JOIN expenses e ON 1=1
-                LEFT JOIN commissions c ON 1=1
-                WHERE bp.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                  OR e.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                  OR c.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
-            );
+            // Get profit analysis (separate queries to avoid Cartesian product)
+            try {
+                $bp_sum = $this->db->fetchOne(
+                    "SELECT COALESCE(SUM(payment_amount), 0) as total
+                     FROM booking_payments WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                );
+            } catch (Exception $e) { $bp_sum = ['total' => 0]; }
+
+            try {
+                $exp_sum = $this->db->fetchOne(
+                    "SELECT COALESCE(SUM(amount), 0) as total
+                     FROM expenses WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                );
+            } catch (Exception $e) { $exp_sum = ['total' => 0]; }
+
+            try {
+                $comm_sum = $this->db->fetchOne(
+                    "SELECT COALESCE(SUM(CASE WHEN status = 'paid' THEN amount END), 0) as total
+                     FROM commissions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                );
+            } catch (Exception $e) { $comm_sum = ['total' => 0]; }
+
+            $profit_analysis = [
+                'net_profit' => $bp_sum['total'] - $exp_sum['total'] - $comm_sum['total'],
+                'gross_revenue' => $bp_sum['total'],
+                'total_expenses_paid' => $exp_sum['total'],
+                'total_commissions_paid' => $comm_sum['total']
+            ];
 
             // Get recent financial activities
             $activities = $this->db->fetchAll(
-                "SELECT * FROM financial_activities 
-                ORDER BY created_at DESC 
-                LIMIT 10"
+                "SELECT id, activity_type as type, description, created_at
+                 FROM activity_logs_unified 
+                 ORDER BY created_at DESC 
+                 LIMIT 10"
             );
+
+            $financial_overview = [
+                'total_revenue' => $bp_revenue['total'],
+                'total_transactions' => $bp_revenue['count'],
+                'pending_revenue' => 0,
+                'pending_transactions' => 0
+            ];
 
             $this->data = [
                 'page_title' => 'CFO Dashboard',
@@ -108,12 +127,12 @@ class CFODashboardController extends AdminController
         try {
             $analytics = $this->db->query(
                 "SELECT 
-                    DATE(created_at) as date,
-                    SUM(CASE WHEN status = 'completed' THEN amount END) as daily_revenue,
-                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as daily_transactions
+                    DATE(payment_date) as date,
+                    SUM(payment_amount) as daily_revenue,
+                    COUNT(*) as daily_transactions
                 FROM booking_payments
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                GROUP BY DATE(created_at)
+                WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY DATE(payment_date)
                 ORDER BY date DESC"
             )->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {

@@ -139,7 +139,7 @@ class AdminLoyaltyController extends AdminController
                 $_SESSION['success'] = "Added $points points to member";
             }
             
-            header('Location: /admin/loyalty/members');
+            redirect('/admin/loyalty/members');
             exit;
         }
     }
@@ -216,7 +216,7 @@ class AdminLoyaltyController extends AdminController
                 $_SESSION['success'] = 'Reward created successfully';
             }
             
-            header('Location: /admin/loyalty/rewards');
+            redirect('/admin/loyalty/rewards');
             exit;
         }
         
@@ -278,7 +278,7 @@ class AdminLoyaltyController extends AdminController
             $stmt->execute([$status, $id]);
             
             $_SESSION['success'] = 'Redemption status updated';
-            header('Location: /admin/loyalty/redemptions');
+            redirect('/admin/loyalty/redemptions');
             exit;
         }
     }

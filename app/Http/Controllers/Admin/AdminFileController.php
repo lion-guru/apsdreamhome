@@ -67,7 +67,7 @@ class AdminFileController extends AdminController
                 $_SESSION['error'] = $result['error'];
             }
             
-            header('Location: /admin/files');
+            redirect('/admin/files');
             exit;
         }
         
@@ -85,7 +85,7 @@ class AdminFileController extends AdminController
         
         if (!$file) {
             $_SESSION['error'] = 'File not found';
-            header('Location: /admin/files');
+            redirect('/admin/files');
             exit;
         }
         
@@ -124,7 +124,7 @@ class AdminFileController extends AdminController
         }
         
         $_SESSION['error'] = 'File not found or access denied';
-        header('Location: /admin/files');
+        redirect('/admin/files');
         exit;
     }
     
@@ -141,7 +141,7 @@ class AdminFileController extends AdminController
             $_SESSION['error'] = $result['error'];
         }
         
-        header('Location: /admin/files');
+        redirect('/admin/files');
         exit;
     }
     
@@ -165,7 +165,7 @@ class AdminFileController extends AdminController
                 $_SESSION['error'] = $result['error'];
             }
             
-            header('Location: /admin/files/details/' . $uuid);
+            redirect('/admin/files/details/' . $uuid);
             exit;
         }
     }

@@ -144,79 +144,54 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Revenue Chart
+        // Revenue Chart - Load via AJAX
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        const revenueData = <?php echo json_encode(array_map(function ($item) {
-                                return ['date' => $item['date'] ?? date('Y-m-d'), 'revenue' => $item['daily_revenue'] ?? ($item['revenue'] ?? 0)];
-                            }, array_fill(0, 30, ['date' => date('Y-m-d'), 'revenue' => 0]))); ?>;
-
-        new Chart(revenueCtx, {
+        const revenueChart = new Chart(revenueCtx, {
             type: 'line',
-            data: {
-                labels: revenueData.map(item => item.date),
-                datasets: [{
-                    label: 'Daily Revenue',
-                    data: revenueData.map(item => item.revenue),
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    tension: 0.1
-                }]
-            },
+            data: { labels: [], datasets: [{
+                label: 'Daily Revenue', data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.1
+            }]},
             options: {
                 responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '₹' + value.toLocaleString();
-                            }
-                        }
-                    }
-                }
+                plugins: { legend: { display: true, position: 'top' } },
+                scales: { y: { beginAtZero: true, ticks: { callback: function(v) { return '₹' + v.toLocaleString(); } } } }
             }
         });
 
-        // Expense Chart
+        fetch('<?php echo BASE_URL; ?>/admin/cfo-dashboard/financial')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    revenueChart.data.labels = data.data.map(item => item.date).reverse();
+                    revenueChart.data.datasets[0].data = data.data.map(item => item.daily_revenue).reverse();
+                    revenueChart.update();
+                }
+            }).catch(() => {});
+
+        // Expense Chart - Load via AJAX
         const expenseCtx = document.getElementById('expenseChart').getContext('2d');
-        const expenseData = <?php echo json_encode([
-                                ['category' => 'Operations', 'amount' => 0],
-                                ['category' => 'Marketing', 'amount' => 0],
-                                ['category' => 'Salaries', 'amount' => 0],
-                                ['category' => 'Utilities', 'amount' => 0],
-                                ['category' => 'Other', 'amount' => 0]
-                            ]); ?>;
-
-        new Chart(expenseCtx, {
+        const expenseChart = new Chart(expenseCtx, {
             type: 'doughnut',
-            data: {
-                labels: expenseData.map(item => item.category),
-                datasets: [{
-                    data: expenseData.map(item => item.amount),
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.8)',
-                        'rgba(54, 162, 235, 0.8)',
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(75, 192, 192, 0.8)',
-                        'rgba(153, 102, 255, 0.8)'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
+            data: { labels: [], datasets: [{ data: [], backgroundColor: [
+                'rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)', 'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)'
+            ]}]},
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
         });
+
+        fetch('<?php echo BASE_URL; ?>/admin/cfo-dashboard/expenses')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    expenseChart.data.labels = data.data.map(item => item.category);
+                    expenseChart.data.datasets[0].data = data.data.map(item => item.total_amount);
+                    expenseChart.update();
+                }
+            }).catch(() => {});
     });
 </script>
 

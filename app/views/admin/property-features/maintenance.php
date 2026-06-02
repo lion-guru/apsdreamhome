@@ -1,4 +1,4 @@
-<?php @@session_start(); if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin')) { header("Location: " . BASE_URL . "/admin/login"); exit(); } $page_title = 'Property Maintenance'; ?>
+<?php $page_title = 'Property Maintenance'; ?>
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">

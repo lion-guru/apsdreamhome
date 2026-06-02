@@ -38,9 +38,11 @@ class AdvancedSecurityController extends BaseController
         ];
 
         $this->data['page_title'] = 'Advanced Security Dashboard - ' . APP_NAME;
-        $this->data['security_data'] = $security_data;
+        $this->data['security_stats'] = $security_data['security_metrics'] ?? [];
+        $this->data['recent_threats'] = $security_data['threat_intelligence'] ?? [];
 
         $this->render('admin/security_dashboard');
+
     }
 
     /**
@@ -79,9 +81,10 @@ class AdvancedSecurityController extends BaseController
         ];
 
         $this->data['page_title'] = 'Advanced Threat Detection - ' . APP_NAME;
-        $this->data['threat_data'] = $threat_data;
+        $this->data['threats'] = $threat_data['real_time_threats'] ?? [];
 
         $this->render('admin/threat_detection');
+
     }
 
     /**
@@ -1018,7 +1021,7 @@ class AdvancedSecurityController extends BaseController
         ];
 
         $this->data['page_title'] = 'Security Compliance & Auditing - ' . APP_NAME;
-        $this->data['compliance_data'] = $compliance_data;
+        $this->data['audit_logs'] = $compliance_data['security_audits'] ?? [];
 
         $this->render('admin/compliance_auditing');
     }
@@ -1125,7 +1128,7 @@ class AdvancedSecurityController extends BaseController
         ];
 
         $this->data['page_title'] = 'Security Incident Response - ' . APP_NAME;
-        $this->data['incident_data'] = $incident_data;
+        $this->data['incidents'] = $incident_data['recent_incidents'] ?? [];
 
         $this->render('admin/incident_response');
     }

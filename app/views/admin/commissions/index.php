@@ -3,13 +3,6 @@
 /**
  * Commissions Management - APS Dream Home Admin
  */
-
-// Session started by controller
-if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin')) {
-    header("Location: " . BASE_URL . "/admin/login");
-    exit();
-}
-
 $page_title = 'Commissions Management';
 $page_description = 'Manage MLM commissions and payouts';
 

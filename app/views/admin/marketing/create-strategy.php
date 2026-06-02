@@ -3,13 +3,6 @@
 /**
  * Create Marketing Strategy - APS Dream Home Admin
  */
-
-// Session started by controller
-if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin')) {
-    header("Location: " . BASE_URL . "/admin/login");
-    exit();
-}
-
 $page_title = 'Create Strategy';
 $page_description = 'Create a new marketing strategy';
 

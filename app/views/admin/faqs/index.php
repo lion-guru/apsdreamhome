@@ -27,7 +27,7 @@
                                     <td><?php echo $faq['id']; ?></td>
                                     <td><?php echo htmlspecialchars(substr($faq['question'], 0, 50)) . (strlen($faq['question']) > 50 ? '...' : ''); ?></td>
                                     <td><?php echo htmlspecialchars($faq['category'] ?? '-'); ?></td>
-                                    <td><?php echo $faq['sort_order']; ?></td>
+                                    <td><?php echo $faq['display_order']; ?></td>
                                     <td>
                                         <?php if ($faq['status'] == 'active'): ?>
                                             <span class="badge bg-success">Active</span>

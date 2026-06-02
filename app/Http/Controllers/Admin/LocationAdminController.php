@@ -30,7 +30,7 @@ class LocationAdminController extends AdminController
 
             if (empty($name) || empty($code)) {
                 $_SESSION['error'] = 'All fields are required';
-                header('Location: /admin/locations/states/create');
+                redirect('/admin/locations/states/create');
                 return;
             }
 
@@ -39,11 +39,11 @@ class LocationAdminController extends AdminController
                 $stmt->execute([$name, $code]);
 
                 $_SESSION['success'] = 'State created successfully';
-                header('Location: /admin/locations/states');
+                redirect('/admin/locations/states');
                 return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'State already exists or error occurred';
-                header('Location: /admin/locations/states/create');
+                redirect('/admin/locations/states/create');
                 return;
             }
         }
@@ -61,7 +61,7 @@ class LocationAdminController extends AdminController
 
         if (!$state) {
             $_SESSION['error'] = 'State not found';
-            header('Location: /admin/locations/states');
+            redirect('/admin/locations/states');
             return;
         }
 
@@ -72,7 +72,7 @@ class LocationAdminController extends AdminController
 
             if (empty($name) || empty($code)) {
                 $_SESSION['error'] = 'All fields are required';
-                header("Location: /admin/locations/states/edit/$id");
+                redirect("/admin/locations/states/edit/$id");
                 return;
             }
 
@@ -81,11 +81,11 @@ class LocationAdminController extends AdminController
                 $stmt->execute([$name, $code, $is_active, $id]);
 
                 $_SESSION['success'] = 'State updated successfully';
-                header('Location: /admin/locations/states');
+                redirect('/admin/locations/states');
                 return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'State already exists or error occurred';
-                header("Location: /admin/locations/states/edit/$id");
+                redirect("/admin/locations/states/edit/$id");
                 return;
             }
         }
@@ -106,7 +106,7 @@ class LocationAdminController extends AdminController
             $_SESSION['error'] = 'Cannot delete state - it has associated districts';
         }
 
-        header('Location: /admin/locations/states');
+        redirect('/admin/locations/states');
         return;
     }
 
@@ -159,7 +159,7 @@ class LocationAdminController extends AdminController
 
             if (empty($state_id) || empty($name) || empty($code)) {
                 $_SESSION['error'] = 'All fields are required';
-                header('Location: /admin/locations/districts/create');
+                redirect('/admin/locations/districts/create');
                 return;
             }
 
@@ -168,11 +168,11 @@ class LocationAdminController extends AdminController
                 $stmt->execute([$state_id, $name, $code]);
 
                 $_SESSION['success'] = 'District created successfully';
-                header('Location: /admin/locations/districts');
+                redirect('/admin/locations/districts');
                 return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'District already exists or error occurred';
-                header('Location: /admin/locations/districts/create');
+                redirect('/admin/locations/districts/create');
                 return;
             }
         }
@@ -190,7 +190,7 @@ class LocationAdminController extends AdminController
 
         if (!$district) {
             $_SESSION['error'] = 'District not found';
-            header('Location: /admin/locations/districts');
+            redirect('/admin/locations/districts');
             return;
         }
 
@@ -204,7 +204,7 @@ class LocationAdminController extends AdminController
 
             if (empty($state_id) || empty($name) || empty($code)) {
                 $_SESSION['error'] = 'All fields are required';
-                header("Location: /admin/locations/districts/edit/$id");
+                redirect("/admin/locations/districts/edit/$id");
                 return;
             }
 
@@ -213,11 +213,11 @@ class LocationAdminController extends AdminController
                 $stmt->execute([$state_id, $name, $code, $is_active, $id]);
 
                 $_SESSION['success'] = 'District updated successfully';
-                header('Location: /admin/locations/districts');
+                redirect('/admin/locations/districts');
                 return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'District already exists or error occurred';
-                header("Location: /admin/locations/districts/edit/$id");
+                redirect("/admin/locations/districts/edit/$id");
                 return;
             }
         }
@@ -238,7 +238,7 @@ class LocationAdminController extends AdminController
             $_SESSION['error'] = 'Cannot delete district - it has associated colonies';
         }
 
-        header('Location: /admin/locations/districts');
+        redirect('/admin/locations/districts');
         return;
     }
 
@@ -309,7 +309,7 @@ class LocationAdminController extends AdminController
 
             if (empty($district_id) || empty($name)) {
                 $_SESSION['error'] = 'District and Colony Name are required';
-                header('Location: /admin/locations/colonies/create');
+                redirect('/admin/locations/colonies/create');
                 return;
             }
 
@@ -318,11 +318,11 @@ class LocationAdminController extends AdminController
                 $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured]);
 
                 $_SESSION['success'] = 'Colony created successfully';
-                header('Location: /admin/locations/colonies');
+                redirect('/admin/locations/colonies');
                 return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'Colony already exists or error occurred';
-                header('Location: /admin/locations/colonies/create');
+                redirect('/admin/locations/colonies/create');
                 return;
             }
         }
@@ -340,7 +340,7 @@ class LocationAdminController extends AdminController
 
         if (!$colony) {
             $_SESSION['error'] = 'Colony not found';
-            header('Location: /admin/locations/colonies');
+            redirect('/admin/locations/colonies');
             return;
         }
 
@@ -363,7 +363,7 @@ class LocationAdminController extends AdminController
 
             if (empty($district_id) || empty($name)) {
                 $_SESSION['error'] = 'District and Colony Name are required';
-                header("Location: /admin/locations/colonies/edit/$id");
+                redirect("/admin/locations/colonies/edit/$id");
                 return;
             }
 
@@ -372,11 +372,11 @@ class LocationAdminController extends AdminController
                 $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured, $is_active, $id]);
 
                 $_SESSION['success'] = 'Colony updated successfully';
-                header('Location: /admin/locations/colonies');
+                redirect('/admin/locations/colonies');
                 return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'Colony already exists or error occurred';
-                header("Location: /admin/locations/colonies/edit/$id");
+                redirect("/admin/locations/colonies/edit/$id");
                 return;
             }
         }
@@ -397,7 +397,7 @@ class LocationAdminController extends AdminController
             $_SESSION['error'] = 'Cannot delete colony - it may have associated data';
         }
 
-        header('Location: /admin/locations/colonies');
+        redirect('/admin/locations/colonies');
         return;
     }
 

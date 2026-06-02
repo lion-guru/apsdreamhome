@@ -13,12 +13,12 @@ class PlotsAdminController extends AdminController
     private function checkAuth()
     {
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
-            header('Location: /admin/login');
+            redirect('/admin/login');
             return;
         }
 
         if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'employee') {
-            header('Location: /admin/login');
+            redirect('/admin/login');
             return;
         }
     }
@@ -110,7 +110,7 @@ class PlotsAdminController extends AdminController
 
             if (empty($colony_id) || empty($plot_number) || empty($area_sqft) || empty($price_per_sqft)) {
                 $_SESSION['error'] = 'Required fields: Colony, Plot Number, Area, and Price per Sqft';
-                header('Location: /admin/plots/create');
+                redirect('/admin/plots/create');
                 return;
             }
 
@@ -120,11 +120,11 @@ class PlotsAdminController extends AdminController
                 $stmt->execute([$colony_id, $plot_number, $block, $sector, $plot_type, $area_sqft, $area_sqm, $frontage_ft, $depth_ft, $price_per_sqft, $total_price, $status, $description, $features, $facing, $corner_plot, $park_facing, $road_width_ft, $latitude, $longitude, $image_path, $documents_path, $is_featured]);
 
                 $_SESSION['success'] = 'Plot created successfully';
-                header('Location: /admin/plots');
+                redirect('/admin/plots');
                 return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'Plot already exists or error occurred: ' . $e->getMessage();
-                header('Location: /admin/plots/create');
+                redirect('/admin/plots/create');
                 return;
             }
         }
@@ -143,7 +143,7 @@ class PlotsAdminController extends AdminController
 
         if (!$plot) {
             $_SESSION['error'] = 'Plot not found';
-            header('Location: /admin/plots');
+            redirect('/admin/plots');
             return;
         }
 
@@ -184,7 +184,7 @@ class PlotsAdminController extends AdminController
 
             if (empty($colony_id) || empty($plot_number) || empty($area_sqft) || empty($price_per_sqft)) {
                 $_SESSION['error'] = 'Required fields: Colony, Plot Number, Area, and Price per Sqft';
-                header("Location: /admin/plots/edit/$id");
+                redirect("/admin/plots/edit/$id");
                 return;
             }
 
@@ -201,11 +201,11 @@ class PlotsAdminController extends AdminController
                 }
 
                 $_SESSION['success'] = 'Plot updated successfully';
-                header('Location: /admin/plots');
+                redirect('/admin/plots');
                 return;
             } catch (\PDOException $e) {
                 $_SESSION['error'] = 'Plot already exists or error occurred: ' . $e->getMessage();
-                header("Location: /admin/plots/edit/$id");
+                redirect("/admin/plots/edit/$id");
                 return;
             }
         }
@@ -227,7 +227,7 @@ class PlotsAdminController extends AdminController
             $_SESSION['error'] = 'Cannot delete plot - it may have associated data';
         }
 
-        header('Location: /admin/plots');
+        redirect('/admin/plots');
         return;
     }
 
@@ -284,7 +284,7 @@ class PlotsAdminController extends AdminController
 
         if (!$plot) {
             $_SESSION['error'] = 'Plot not found';
-            header('Location: /admin/plots');
+            redirect('/admin/plots');
             return;
         }
 

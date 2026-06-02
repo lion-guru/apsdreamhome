@@ -80,20 +80,20 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="text-center">
-                                <h4 class="text-primary"><?php echo number_format(floatval($team_stats['users'] ?? 0) ?? 0); ?></h4>
-                                <p class="text-muted small">Admin Users</p>
+                                <h4 class="text-primary"><?php echo number_format(floatval($team_stats['users'] ?? 0)); ?></h4>
+                                <p class="text-muted small">Admins</p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="text-center">
-                                <h4 class="text-info"><?php echo number_format(floatval($team_stats['associate_users'] ?? 0) ?? 0); ?></h4>
-                                <p class="text-muted small">users</p>
+                                <h4 class="text-info"><?php echo number_format(floatval($team_stats['associate_users'] ?? 0)); ?></h4>
+                                <p class="text-muted small">Associates</p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="text-center">
-                                <h4 class="text-success"><?php echo number_format(floatval($team_stats['customer_users'] ?? 0) ?? 0); ?></h4>
-                                <p class="text-muted small">users</p>
+                                <h4 class="text-success"><?php echo number_format(floatval($team_stats['customer_users'] ?? 0)); ?></h4>
+                                <p class="text-muted small">Customers</p>
                             </div>
                         </div>
                     </div>
@@ -135,19 +135,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Revenue Chart
+        // Revenue Chart - Load via AJAX
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        const revenueData = <?php echo json_encode(array_map(function ($item) {
-                                return ['date' => $item['date'], 'revenue' => $item['daily_revenue'] ?? 0];
-                            }, array_fill(0, 30, ['date' => date('Y-m-d'), 'daily_revenue' => 0]))); ?>;
-
-        new Chart(revenueCtx, {
+        const revenueChart = new Chart(revenueCtx, {
             type: 'line',
             data: {
-                labels: revenueData.map(item => item.date),
+                labels: [],
                 datasets: [{
                     label: 'Daily Revenue',
-                    data: revenueData.map(item => item.revenue),
+                    data: [],
                     borderColor: 'rgb(75, 192, 192)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     tension: 0.1
@@ -156,23 +152,28 @@
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    }
+                    legend: { display: true, position: 'top' }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: function(value) {
-                                return '₹' + value.toLocaleString();
-                            }
+                            callback: function(value) { return '₹' + value.toLocaleString(); }
                         }
                     }
                 }
             }
         });
+
+        fetch('<?php echo BASE_URL; ?>/admin/ceo-dashboard/revenue')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    revenueChart.data.labels = data.data.map(item => item.date).reverse();
+                    revenueChart.data.datasets[0].data = data.data.map(item => item.daily_revenue).reverse();
+                    revenueChart.update();
+                }
+            }).catch(() => {});
 
         // Property Status Chart
         const propertyCtx = document.getElementById('propertyChart').getContext('2d');

@@ -1,22 +1,34 @@
 <?php
-namespace App\Http\Controllers\Admin;
-use App\Http\Controllers\Admin\AdminController;
-class BlogController extends AdminController {
-    public function __construct() { parent::__construct(); }
 
-    public function index() {
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Admin\AdminController;
+
+class BlogController extends AdminController
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function index()
+    {
         try {
             $stmt = $this->db->query("SELECT * FROM blog_posts ORDER BY created_at DESC");
-            $posts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) { $posts = []; }
-        $this->render("admin/blog/index", ['page_title' => 'Blog Management', 'posts' => $posts]);
+            $blogs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $blogs = [];
+        }
+        $this->render("admin/blogs/index", ['page_title' => 'Blog Management', 'blogs' => $blogs]);
     }
 
-    public function create() {
-        $this->render("admin/blog/create", ['page_title' => 'Create Blog Post']);
+    public function create()
+    {
+        $this->render("admin/blogs/create", ['page_title' => 'Create Blog Post']);
     }
 
-    public function store() {
+    public function store()
+    {
         $title = $_POST['title'] ?? '';
         $content = $_POST['content'] ?? '';
         $status = $_POST['status'] ?? 'draft';
@@ -29,20 +41,28 @@ class BlogController extends AdminController {
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
-        $this->redirect('/admin/blog');
+        $this->redirect('/admin/blogs');
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         try {
             $stmt = $this->db->prepare("SELECT * FROM blog_posts WHERE id = ?");
             $stmt->execute([$id]);
-            $post = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) { $post = null; }
-        if (!$post) { $_SESSION['error'] = 'Post not found'; $this->redirect('/admin/blog'); return; }
-        $this->render("admin/blog/edit", ['page_title' => 'Edit Blog Post', 'post' => $post]);
+            $blog = $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $blog = null;
+        }
+        if (!$blog) {
+            $_SESSION['error'] = 'Post not found';
+            $this->redirect('/admin/blogs');
+            return;
+        }
+        $this->render("admin/blogs/edit", ['page_title' => 'Edit Blog Post', 'blog' => $blog]);
     }
 
-    public function update($id) {
+    public function update($id)
+    {
         $title = $_POST['title'] ?? '';
         $content = $_POST['content'] ?? '';
         $status = $_POST['status'] ?? 'draft';
@@ -53,10 +73,11 @@ class BlogController extends AdminController {
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
-        $this->redirect('/admin/blog');
+        $this->redirect('/admin/blogs');
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         try {
             $stmt = $this->db->prepare("DELETE FROM blog_posts WHERE id = ?");
             $stmt->execute([$id]);
@@ -64,6 +85,6 @@ class BlogController extends AdminController {
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
-        $this->redirect('/admin/blog');
+        $this->redirect('/admin/blogs');
     }
 }

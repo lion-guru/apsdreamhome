@@ -11,7 +11,7 @@
             </div>
         </div>
     </div>
-    <?php $analyticsData = $analytics ?? $analytics_data ?? []; ?>
+    <?php $analyticsData = $analytics ?? $analytics_data ?? ['overview' => [], 'revenue' => [], 'properties' => [], 'users' => []]; ?>
     <?php if (!empty($analyticsData)): ?>
     <div class="row g-4">
         <div class="col-12">

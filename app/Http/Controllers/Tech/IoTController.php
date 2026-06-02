@@ -650,6 +650,8 @@ class IoTController extends BaseController
 
         $this->data['page_title'] = 'IoT Analytics - ' . APP_NAME;
         $this->data['analytics'] = $analytics_data;
+        $this->data['devices'] = $analytics_data['device_stats'] ?? [];
+        $this->data['telemetry'] = $analytics_data;
 
         $this->render('admin/iot_analytics');
     }

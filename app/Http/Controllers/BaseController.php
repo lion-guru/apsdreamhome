@@ -59,7 +59,6 @@ class BaseController
                     $this->mlSupport = \App\Services\Localization\LocalizationService::getInstance();
                 } catch (\Throwable $e) {
                     // LocalizationService requires deps not available - skip silently
-                            error_log("BaseController.php: " . $e->getMessage());
                 }
             }
         }
@@ -530,8 +529,7 @@ class BaseController
     {
         if (!$this->isAdmin()) {
             $_SESSION['error_message'] = 'Admin access required';
-            header('Location: /admin/login');
-            exit();
+            $this->redirect('/admin/login');
         }
     }
 

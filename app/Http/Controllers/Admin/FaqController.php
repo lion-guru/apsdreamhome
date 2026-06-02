@@ -25,7 +25,7 @@ class FaqController extends AdminController
     public function index()
     {
         try {
-            $stmt = $this->db->query("SELECT * FROM faqs ORDER BY sort_order ASC, created_at DESC");
+            $stmt = $this->db->query("SELECT * FROM faqs ORDER BY display_order ASC, created_at DESC");
             $faqs = $stmt->fetchAll();
         } catch (\Exception $e) {
             $faqs = [];
@@ -58,20 +58,20 @@ class FaqController extends AdminController
             'question' => $_POST['question'] ?? '',
             'answer' => $_POST['answer'] ?? '',
             'category' => $_POST['category'] ?? 'General',
-            'sort_order' => $_POST['sort_order'] ?? 0,
+            'display_order' => $_POST['display_order'] ?? 0,
             'status' => $_POST['status'] ?? 'active',
             'created_at' => date('Y-m-d H:i:s')
         ];
 
         try {
-            $sql = "INSERT INTO faqs (question, answer, category, sort_order, status, created_at) 
+            $sql = "INSERT INTO faqs (question, answer, category, display_order, status, created_at) 
                     VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 $data['question'],
                 $data['answer'],
                 $data['category'],
-                $data['sort_order'],
+                $data['display_order'],
                 $data['status'],
                 $data['created_at']
             ]);
@@ -151,20 +151,20 @@ class FaqController extends AdminController
             'question' => $_POST['question'] ?? '',
             'answer' => $_POST['answer'] ?? '',
             'category' => $_POST['category'] ?? 'General',
-            'sort_order' => $_POST['sort_order'] ?? 0,
+            'display_order' => $_POST['display_order'] ?? 0,
             'status' => $_POST['status'] ?? 'active'
         ];
 
         try {
             $sql = "UPDATE faqs 
-                    SET question = ?, answer = ?, category = ?, sort_order = ?, status = ? 
+                    SET question = ?, answer = ?, category = ?, display_order = ?, status = ? 
                     WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 $data['question'],
                 $data['answer'],
                 $data['category'],
-                $data['sort_order'],
+                $data['display_order'],
                 $data['status'],
                 $id
             ]);

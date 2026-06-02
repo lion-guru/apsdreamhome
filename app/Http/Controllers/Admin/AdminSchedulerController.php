@@ -48,7 +48,7 @@ class AdminSchedulerController extends AdminController
         
         if (!$task) {
             $_SESSION['error'] = 'Task not found';
-            header('Location: /admin/scheduler');
+            redirect('/admin/scheduler');
             exit;
         }
         
@@ -79,7 +79,7 @@ class AdminSchedulerController extends AdminController
             
             if (empty($name) || empty($command) || empty($schedule)) {
                 $_SESSION['error'] = 'Name, command and schedule are required';
-                header('Location: /admin/scheduler/create');
+                redirect('/admin/scheduler/create');
                 exit;
             }
             
@@ -91,10 +91,10 @@ class AdminSchedulerController extends AdminController
             
             if ($result['success']) {
                 $_SESSION['success'] = 'Task created successfully';
-                header('Location: /admin/scheduler');
+                redirect('/admin/scheduler');
             } else {
                 $_SESSION['error'] = $result['error'];
-                header('Location: /admin/scheduler/create');
+                redirect('/admin/scheduler/create');
             }
             exit;
         }
@@ -118,7 +118,7 @@ class AdminSchedulerController extends AdminController
         
         if (!$task) {
             $_SESSION['error'] = 'Task not found';
-            header('Location: /admin/scheduler');
+            redirect('/admin/scheduler');
             exit;
         }
         
@@ -136,10 +136,10 @@ class AdminSchedulerController extends AdminController
             
             if ($result['success']) {
                 $_SESSION['success'] = 'Task updated successfully';
-                header('Location: /admin/scheduler');
+                redirect('/admin/scheduler');
             } else {
                 $_SESSION['error'] = $result['error'];
-                header('Location: /admin/scheduler/edit/' . $taskId);
+                redirect('/admin/scheduler/edit/' . $taskId);
             }
             exit;
         }
@@ -157,7 +157,7 @@ class AdminSchedulerController extends AdminController
     {
         $this->schedulerService->deleteTask($taskId);
         $_SESSION['success'] = 'Task deleted successfully';
-        header('Location: /admin/scheduler');
+        redirect('/admin/scheduler');
         exit;
     }
     
@@ -174,7 +174,7 @@ class AdminSchedulerController extends AdminController
             $_SESSION['error'] = 'Task execution failed: ' . ($result['error'] ?? 'Unknown error');
         }
         
-        header('Location: /admin/scheduler/task/' . $taskId);
+        redirect('/admin/scheduler/task/' . $taskId);
         exit;
     }
     
@@ -251,7 +251,7 @@ class AdminSchedulerController extends AdminController
         $deleted = $this->schedulerService->cleanupLogs($days);
         
         $_SESSION['success'] = "Cleaned up $deleted old log entries";
-        header('Location: /admin/scheduler/logs');
+        redirect('/admin/scheduler/logs');
         exit;
     }
 }

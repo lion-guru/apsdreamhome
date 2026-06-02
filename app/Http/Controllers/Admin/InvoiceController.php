@@ -136,11 +136,11 @@ class InvoiceController extends AdminController
                 $installmentNumber, $totalInstallments
             ]);
             
-            header('Location: /admin/invoices?success=Invoice created successfully');
+            redirect('/admin/invoices?success=Invoice created successfully');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/invoices/create?error=' . urlencode($e->getMessage()));
+            redirect('/admin/invoices/create?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -177,7 +177,7 @@ class InvoiceController extends AdminController
             $invoice = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             if (!$invoice) {
-                header('Location: /admin/invoices?error=Invoice not found');
+                redirect('/admin/invoices?error=Invoice not found');
                 exit;
             }
             
@@ -195,7 +195,7 @@ class InvoiceController extends AdminController
             return $this->render('admin.invoices.show', $data);
             
         } catch (\Exception $e) {
-            header('Location: /admin/invoices?error=' . urlencode($e->getMessage()));
+            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -222,7 +222,7 @@ class InvoiceController extends AdminController
             $invoice = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             if (!$invoice) {
-                header('Location: /admin/invoices?error=Invoice not found');
+                redirect('/admin/invoices?error=Invoice not found');
                 exit;
             }
             
@@ -240,7 +240,7 @@ class InvoiceController extends AdminController
             return $this->render('admin.invoices.edit', $data);
             
         } catch (\Exception $e) {
-            header('Location: /admin/invoices?error=' . urlencode($e->getMessage()));
+            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -271,11 +271,11 @@ class InvoiceController extends AdminController
             $stmt = $conn->prepare($sql);
             $stmt->execute([$invoiceNumber, $customerId, $propertyId, $amount, $dueDate, $description, $status, $id]);
             
-            header('Location: /admin/invoices?success=Invoice updated successfully');
+            redirect('/admin/invoices?success=Invoice updated successfully');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/invoices/' . $id . '/edit?error=' . urlencode($e->getMessage()));
+            redirect('/admin/invoices/' . $id . '/edit?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -296,11 +296,11 @@ class InvoiceController extends AdminController
             // Delete invoice
             $conn->prepare("DELETE FROM invoices WHERE id = ?")->execute([$id]);
             
-            header('Location: /admin/invoices?success=Invoice deleted successfully');
+            redirect('/admin/invoices?success=Invoice deleted successfully');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/invoices?error=' . urlencode($e->getMessage()));
+            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -327,11 +327,11 @@ class InvoiceController extends AdminController
                           VALUES (?, ?, ?, NOW(), 'cash', 'completed', NOW())";
             $conn->prepare($paymentSql)->execute([$id, $invoiceData['customer_id'], $invoiceData['amount']]);
             
-            header('Location: /admin/invoices?success=Invoice marked as paid');
+            redirect('/admin/invoices?success=Invoice marked as paid');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/invoices?error=' . urlencode($e->getMessage()));
+            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -352,11 +352,11 @@ class InvoiceController extends AdminController
             // Here you would integrate with email service to send invoice
             // For now, we'll just update the status
             
-            header('Location: /admin/invoices?success=Invoice sent successfully');
+            redirect('/admin/invoices?success=Invoice sent successfully');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/invoices?error=' . urlencode($e->getMessage()));
+            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
             exit;
         }
     }

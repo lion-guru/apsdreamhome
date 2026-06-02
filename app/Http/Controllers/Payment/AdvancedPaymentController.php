@@ -603,6 +603,7 @@ class AdvancedPaymentController extends BaseController
             $this->data['payment_trends'] = $payment_trends;
             $this->data['payment_methods'] = $payment_methods;
             $this->data['gateway_performance'] = $gateway_performance;
+            $this->data['payment_stats'] = ['total_revenue' => 0, 'monthly' => $payment_trends ?? []];
 
             $this->render('admin/payment_analytics');
         } catch (Exception $e) {

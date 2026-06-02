@@ -38,22 +38,16 @@
 
     <!-- Performance Chart -->
     <div class="row mb-4">
-        <div class="col-12">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-chart-bar me-2"></i>Performance (Last 7 Days)</h5>
-                    <h5 class="mb-0">My Sales Performance</h5>
+                    <h5><i class="fas fa-chart-bar me-2"></i>Sales Performance (Last 7 Days)</h5>
                 </div>
-                <div class="card-body" style="height: 300px; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
-                    <div class="text-center text-muted">
-                        <i class="fas fa-chart-line fa-3x mb-3"></i>
-                        <p>Performance Visualization (Integration Pending)</p>
-                    </div>
+                <div class="card-body">
+                    <canvas id="performanceChart" width="400" height="150"></canvas>
                 </div>
             </div>
         </div>
-
-        <!-- Network Activity -->
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white">
@@ -61,14 +55,13 @@
                 </div>
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush small">
-                        <?php if (empty($my_network['recent_activity'])): ?>
+                        <?php if (empty($activities)): ?>
                             <li class="list-group-item text-center py-4 text-muted">No recent activity</li>
                         <?php else: ?>
-                            <?php foreach ($my_network['recent_activity'] as $activity): ?>
+                            <?php foreach ($activities as $activity): ?>
                                 <li class="list-group-item">
-                                    <strong><?php echo $activity['associate_name']; ?></strong>
-                                    <span class="text-muted"><?php echo $activity['action']; ?></span>
-                                    <div class="text-end mt-1"><small><?php echo $activity['date']; ?></small></div>
+                                    <strong><?php echo htmlspecialchars($activity['activity_type'] ?? $activity['description'] ?? ''); ?></strong>
+                                    <div class="text-end mt-1"><small><?php echo date('M d, Y H:i', strtotime($activity['created_at'] ?? 'now')); ?></small></div>
                                 </li>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -78,5 +71,39 @@
         </div>
     </div>
 </div>
+
+<!-- Charts Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+        const perfData = <?php echo json_encode($performance ?? []); ?>;
+
+        new Chart(perfCtx, {
+            type: 'bar',
+            data: {
+                labels: perfData.map(item => item.date).reverse(),
+                datasets: [{
+                    label: 'Daily Commission (₹)',
+                    data: perfData.map(item => item.daily_commission).reverse(),
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 1
+                }, {
+                    label: 'Sales Count',
+                    data: perfData.map(item => item.sales_count).reverse(),
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: true, position: 'top' } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    });
+</script>
 
 <?php  ?>

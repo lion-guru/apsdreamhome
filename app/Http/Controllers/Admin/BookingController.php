@@ -132,9 +132,46 @@ class BookingController extends AdminController
             );
             $stmt->execute([$id]);
             $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
-            return $this->render('admin/bookings/show', ['booking' => $booking]);
+
+            $payments = [];
+            $total_paid = 0;
+            $commissions = [];
+            $total_commission = 0;
+            try {
+                $pStmt = $this->db->prepare("SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at DESC");
+                $pStmt->execute([$id]);
+                $payments = $pStmt->fetchAll(\PDO::FETCH_ASSOC);
+                foreach ($payments as $pmt) {
+                    if (($pmt['status'] ?? '') === 'completed') {
+                        $total_paid += floatval($pmt['amount'] ?? 0);
+                    }
+                }
+            } catch (\Exception $e) {}
+            try {
+                $cStmt = $this->db->prepare("SELECT * FROM commissions WHERE booking_id = ? ORDER BY created_at DESC");
+                $cStmt->execute([$id]);
+                $commissions = $cStmt->fetchAll(\PDO::FETCH_ASSOC);
+                foreach ($commissions as $cm) {
+                    $total_commission += floatval($cm['amount'] ?? 0);
+                }
+            } catch (\Exception $e) {}
+
+            return $this->render('admin/bookings/show', [
+                'booking' => $booking,
+                'payments' => $payments,
+                'total_paid' => $total_paid,
+                'commissions' => $commissions,
+                'total_commission' => $total_commission
+            ]);
         } catch (Exception $e) {
-            return $this->render('admin/bookings/show', ['booking' => null, 'error' => $e->getMessage()]);
+            return $this->render('admin/bookings/show', [
+                'booking' => null,
+                'payments' => [],
+                'total_paid' => 0,
+                'commissions' => [],
+                'total_commission' => 0,
+                'error' => $e->getMessage()
+            ]);
         }
     }
 

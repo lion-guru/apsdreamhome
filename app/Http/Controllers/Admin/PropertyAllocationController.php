@@ -135,11 +135,11 @@ class PropertyAllocationController extends AdminController
             // Update property status to booked
             $conn->prepare("UPDATE properties SET status = 'booked' WHERE id = ?")->execute([$propertyId]);
             
-            header('Location: /admin/property-allocations?success=Property allocated successfully');
+            redirect('/admin/property-allocations?success=Property allocated successfully');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/property-allocations/create?error=' . urlencode($e->getMessage()));
+            redirect('/admin/property-allocations/create?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -174,7 +174,7 @@ class PropertyAllocationController extends AdminController
             $allocation = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             if (!$allocation) {
-                header('Location: /admin/property-allocations?error=Allocation not found');
+                redirect('/admin/property-allocations?error=Allocation not found');
                 exit;
             }
             
@@ -192,7 +192,7 @@ class PropertyAllocationController extends AdminController
             return $this->render('admin.property-allocations.show', $data);
             
         } catch (\Exception $e) {
-            header('Location: /admin/property-allocations?error=' . urlencode($e->getMessage()));
+            redirect('/admin/property-allocations?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -216,11 +216,11 @@ class PropertyAllocationController extends AdminController
                     WHERE pa.id = ?";
             $conn->prepare($sql)->execute([$id]);
             
-            header('Location: /admin/property-allocations?success=Property allocation confirmed');
+            redirect('/admin/property-allocations?success=Property allocation confirmed');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/property-allocations?error=' . urlencode($e->getMessage()));
+            redirect('/admin/property-allocations?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -248,11 +248,11 @@ class PropertyAllocationController extends AdminController
                 $conn->prepare("UPDATE properties SET status = 'available' WHERE id = ?")->execute([$property['property_id']]);
             }
             
-            header('Location: /admin/property-allocations?success=Property allocation cancelled');
+            redirect('/admin/property-allocations?success=Property allocation cancelled');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/property-allocations?error=' . urlencode($e->getMessage()));
+            redirect('/admin/property-allocations?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
