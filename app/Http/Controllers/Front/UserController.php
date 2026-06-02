@@ -654,4 +654,75 @@ class UserController extends BaseController
         echo json_encode(['count' => $count]);
         exit;
     }
+
+    public function favorites()
+    {
+        $this->requireCustomerLogin();
+        $userId = $_SESSION['user_id'];
+        try {
+            $favorites = $this->db->fetchAll(
+                "SELECT p.*, f.created_at as favorited_at
+                 FROM favorites f
+                 JOIN user_properties p ON f.property_id = p.id
+                 WHERE f.user_id = ?
+                 ORDER BY f.created_at DESC",
+                [$userId]
+            );
+        } catch (\Exception $e) {
+            $favorites = [];
+        }
+        $this->render('pages/user_favorites', [
+            'page_title' => 'My Favorites',
+            'favorites' => $favorites
+        ]);
+    }
+
+    public function savedSearches()
+    {
+        $this->requireCustomerLogin();
+        $userId = $_SESSION['user_id'];
+        try {
+            $searches = $this->db->fetchAll(
+                "SELECT * FROM saved_searches WHERE user_id = ? ORDER BY created_at DESC",
+                [$userId]
+            );
+        } catch (\Exception $e) {
+            $searches = [];
+        }
+        $this->render('pages/user_saved_searches', [
+            'page_title' => 'Saved Searches',
+            'searches' => $searches
+        ]);
+    }
+
+    public function saveSearch()
+    {
+        $this->requireCustomerLogin();
+        $userId = $_SESSION['user_id'];
+        $name = $_POST['name'] ?? 'Untitled Search';
+        $params = $_POST['params'] ?? '{}';
+        try {
+            $this->db->query(
+                "INSERT INTO saved_searches (user_id, name, search_params, created_at) VALUES (?, ?, ?, NOW())",
+                [$userId, $name, $params]
+            );
+            $this->setFlash('success', 'Search saved successfully!');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to save search');
+        }
+        $this->redirect('/user/saved-searches');
+    }
+
+    public function deleteSavedSearch($id)
+    {
+        $this->requireCustomerLogin();
+        $userId = $_SESSION['user_id'];
+        try {
+            $this->db->query(
+                "DELETE FROM saved_searches WHERE id = ? AND user_id = ?",
+                [$id, $userId]
+            );
+        } catch (\Exception $e) {}
+        $this->redirect('/user/saved-searches');
+    }
 }

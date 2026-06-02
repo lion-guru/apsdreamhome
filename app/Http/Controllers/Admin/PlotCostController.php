@@ -51,7 +51,7 @@ class PlotCostController extends AdminController
         
         if (!$colony) {
             $_SESSION['error'] = 'Colony not found';
-            header('Location: /admin/plot-costs');
+            redirect('/admin/plot-costs');
             exit;
         }
         
@@ -103,7 +103,7 @@ class PlotCostController extends AdminController
     public function addCost()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /admin/plot-costs');
+            redirect('/admin/plot-costs');
             exit;
         }
         
@@ -116,7 +116,7 @@ class PlotCostController extends AdminController
         
         if (!$colonyId || !$costType || $amount <= 0) {
             $_SESSION['error'] = 'Please fill all required fields';
-            header('Location: /admin/plot-costs/colony/' . $colonyId);
+            redirect('/admin/plot-costs/colony/' . $colonyId);
             exit;
         }
         
@@ -128,7 +128,7 @@ class PlotCostController extends AdminController
         );
         
         $_SESSION['success'] = 'Cost added successfully!';
-        header('Location: /admin/plot-costs/colony/' . $colonyId);
+        redirect('/admin/plot-costs/colony/' . $colonyId);
         exit;
     }
     
@@ -138,7 +138,7 @@ class PlotCostController extends AdminController
     public function calculateAll()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /admin/plot-costs');
+            redirect('/admin/plot-costs');
             exit;
         }
         
@@ -147,7 +147,7 @@ class PlotCostController extends AdminController
         
         if (!$colonyId) {
             $_SESSION['error'] = 'Invalid colony';
-            header('Location: /admin/plot-costs');
+            redirect('/admin/plot-costs');
             exit;
         }
         
@@ -157,7 +157,7 @@ class PlotCostController extends AdminController
         $updated = $service->updateAllPlotPrices($colonyId, $marginPercent);
         
         $_SESSION['success'] = "Updated $updated plot prices with $marginPercent% margin!";
-        header('Location: /admin/plot-costs/colony/' . $colonyId);
+        redirect('/admin/plot-costs/colony/' . $colonyId);
         exit;
     }
     
@@ -173,7 +173,7 @@ class PlotCostController extends AdminController
         
         if (!$report) {
             $_SESSION['error'] = 'Colony not found';
-            header('Location: /admin/plot-costs');
+            redirect('/admin/plot-costs');
             exit;
         }
         

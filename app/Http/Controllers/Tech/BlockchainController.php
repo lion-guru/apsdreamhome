@@ -137,6 +137,8 @@ class BlockchainController extends BaseController
         $this->data['page_title'] = 'Blockchain Network Management - ' . APP_NAME;
         $this->data['network_stats'] = $network_stats;
         $this->data['pending_verifications'] = $pending_verifications;
+        $this->data['chain_status'] = $network_stats;
+        $this->data['blocks'] = $pending_verifications;
 
         $this->render('admin/blockchain_management');
     }

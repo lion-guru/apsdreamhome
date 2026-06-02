@@ -2,9 +2,7 @@
     "mcpServers": {
         "mysql": {
             "command": "node",
-            "args": [
-                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@f4ww4z\\mcp-mysql-server\\dist\\index.js"
-            ],
+            "args": ["C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@f4ww4z\\mcp-mysql-server\\build\\index.js"],
             "env": {
                 "MYSQL_HOST": "127.0.0.1",
                 "MYSQL_PORT": "3307",
@@ -22,24 +20,33 @@
         },
         "memory": {
             "command": "node",
-            "args": [
-                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@modelcontextprotocol\\server-memory\\dist\\index.js"
-            ]
+            "args": ["C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@modelcontextprotocol\\server-memory\\dist\\index.js"]
+        },
+        "git": {
+            "command": "node",
+            "args": ["C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@cyanheads\\git-mcp-server\\dist\\index.js"],
+            "env": {
+                "GIT_REPO_PATH": "C:\\xampp\\htdocs\\apsdreamhome",
+                "ALLOWED_DIRECTORIES": "C:\\xampp\\htdocs\\apsdreamhome"
+            }
         },
         "playwright": {
             "command": "node",
-            "args": [
-                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@playwright\\mcp\\dist\\index.js"
-            ],
-            "env": {
-                "PLAYWRIGHT_BROWSERS_PATH": "0"
-            }
+            "args": ["C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@playwright\\mcp\\index.js"],
+            "env": { "PLAYWRIGHT_BROWSERS_PATH": "0" }
         },
         "sequential-thinking": {
             "command": "node",
-            "args": [
-                "C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@modelcontextprotocol\\server-sequential-thinking\\dist\\index.js"
-            ]
+            "args": ["C:\\xampp\\htdocs\\apsdreamhome\\node_modules\\@modelcontextprotocol\\server-sequential-thinking\\dist\\index.js"]
+        },
+        "ollama": {
+            "command": "node",
+            "args": ["C:\\xampp\\htdocs\\apsdreamhome\\mcp-ollama-server.js"],
+            "env": {
+                "OLLAMA_URL": "http://localhost:11434",
+                "OLLAMA_MODEL": "qwen2.5-coder:1.5b",
+                "OLLAMA_SMART_MODEL": "qwen2.5-coder:1.5b"
+            }
         }
     }
 }

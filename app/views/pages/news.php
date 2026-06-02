@@ -1,45 +1,10 @@
-<style>
-.news-hero {
-    padding: 60px 0;
-    background-size: cover;
-    background-position: center;
-    color: #fff;
-}
-.news-card {
-    transition: transform .3s ease, box-shadow .3s ease;
-}
-.news-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,.1);
-}
-.news-img-cover {
-    height: 200px;
-    object-fit: cover;
-}
-</style>
-<?php
-
-$pagination = $pagination ?? []; $categories = $categories ?? [];
-// app/views/pages/news.php
-$pagination = $pagination ?? ['current_category' => 'all', 'current_page' => 1, 'total_pages' => 1];
-$categories = $categories ?? [];
-?>
-
 <!-- Hero Section -->
-<section class="news-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-2.jpg') ?>');">
+<section class="news-hero-section text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-2.jpg') ?>'); background-size: cover; background-position: center;">
     <div class="container">
-        <h1 class="display-4 fw-bold">News & Updates</h1>
-        <p class="lead mb-4">Stay informed with the latest real estate news and market trends.</p>
         <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <form class="search-form" id="newsSearch" action="<?= BASE_URL ?>/news" method="GET">
-                    <div class="input-group">
-                        <input type="text" name="q" class="form-control" placeholder="Search news..." id="searchInput" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
+            <div class="col-lg-8 text-center">
+                <h1 class="display-4 fw-bold mb-4">Latest News</h1>
+                <p class="lead mb-4">Stay informed with the latest updates, announcements, and achievements from APS Dream Home</p>
             </div>
         </div>
     </div>
@@ -74,12 +39,10 @@ $categories = $categories ?? [];
         <div class="row mb-4">
             <div class="col-12">
                 <div class="news-filter text-center">
-                    <a href="<?= BASE_URL ?>/news" class="btn <?= ($pagination['current_category'] ?? 'all') === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
-                        All News
-                    </a>
+                    <a href="<?= BASE_URL ?>/news" class="btn btn-primary me-2 mb-2">All News</a>
                     <?php foreach ($categories as $cat): ?>
                         <a href="<?= BASE_URL ?>/news?category=<?= urlencode($cat) ?>"
-                            class="btn <?= ($pagination['current_category'] ?? 'all') === $cat ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                            class="btn btn-outline-primary me-2 mb-2">
                             <?= htmlspecialchars(ucwords($cat)) ?>
                         </a>
                     <?php endforeach; ?>
@@ -95,9 +58,6 @@ $categories = $categories ?? [];
                         <i class="far fa-newspaper fa-3x text-muted mb-3"></i>
                         <h3>No news found</h3>
                         <p class="text-muted">There are no news items to display at this time.</p>
-                        <?php if (($pagination['current_category'] ?? 'all') !== 'all'): ?>
-                            <a href="<?= BASE_URL ?>/news" class="btn btn-primary mt-3">View All News</a>
-                        <?php endif; ?>
                     </div>
                 </div>
             <?php else: ?>
@@ -106,71 +66,39 @@ $categories = $categories ?? [];
                         <article class="news-card h-100 shadow-sm rounded overflow-hidden bg-white">
                             <div class="news-image position-relative">
                                 <?php
-                                $imagePath = !empty($news->image) ? $news->image : 'assets/images/property-placeholder.jpg';
+                                $imagePath = !empty($news['image']) ? $news['image'] : 'assets/images/property-placeholder.jpg';
                                 $imageUrl = get_asset_url($imagePath);
                                 ?>
                                 <img src="<?= $imageUrl ?>"
-                                    alt="<?= htmlspecialchars($news->title) ?>"
-                                    class="img-fluid news-img-cover">
+                                    alt="<?= htmlspecialchars($news['title'] ?? '') ?>"
+                                    class="img-fluid w-100" style="height:200px;object-fit:cover;">
+                                <?php if (!empty($news['category'])): ?>
                                 <div class="news-category position-absolute top-0 start-0 m-3">
-                                    <span class="badge bg-primary"><?= htmlspecialchars($news->category) ?></span>
+                                    <span class="badge bg-primary"><?= htmlspecialchars($news['category']) ?></span>
                                 </div>
+                                <?php endif; ?>
                             </div>
                             <div class="news-content p-4">
                                 <h3 class="news-title h5 mb-3">
-                                    <a href="<?= BASE_URL ?>/news/view/<?= htmlspecialchars($news->id) ?>" class="text-decoration-none text-dark">
-                                        <?= htmlspecialchars($news->title) ?>
+                                    <a href="<?= BASE_URL ?>/news/view/<?= htmlspecialchars($news['id'] ?? '') ?>" class="text-decoration-none text-dark stretched-link">
+                                        <?= htmlspecialchars($news['title'] ?? '') ?>
                                     </a>
                                 </h3>
                                 <div class="news-meta text-muted small mb-3">
                                     <span class="news-date me-3">
                                         <i class="far fa-calendar-alt me-1"></i>
-                                        <?= date('M d, Y', strtotime($news->created_at)) ?>
+                                        <?= date('M d, Y', strtotime($news['created_at'] ?? $news['date'] ?? 'now')) ?>
                                     </span>
                                 </div>
                                 <p class="news-excerpt text-muted mb-4">
-                                    <?= htmlspecialchars(substr(strip_tags($news->summary ?? $news->content), 0, 150)) ?>...
+                                    <?= htmlspecialchars(mb_substr(strip_tags($news['summary'] ?? $news['content'] ?? ''), 0, 150)) ?>...
                                 </p>
-                                <a href="<?= BASE_URL ?>/news/view/<?= htmlspecialchars($news->id) ?>" class="btn btn-outline-primary btn-sm stretched-link">
-                                    Read More
-                                    <i class="fas fa-arrow-right ms-2"></i>
-                                a>
                             </div>
                         </article>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
-
-        <!-- Pagination -->
-        <?php if (($pagination['total_pages'] ?? 1) > 1): ?>
-            <nav class="mt-5">
-                <ul class="pagination justify-content-center">
-                    <!-- Previous Page -->
-                    <li class="page-item <?= ($pagination['current_page'] ?? 1) <= 1 ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= ($pagination['current_page'] ?? 1) - 1 ?>&category=<?= urlencode($pagination['current_category'] ?? 'all') ?>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-
-                    <!-- Page Numbers -->
-                    <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
-                        <li class="page-item <?= $i == $pagination['current_page'] ? 'active' : '' ?>">
-                            <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>&category=<?= urlencode($pagination['current_category']) ?>">
-                                <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>
-                            </a>
-                        </li>
-                    <?php endfor; ?>
-
-                    <!-- Next Page -->
-                    <li class="page-item <?= $pagination['current_page'] >= $pagination['total_pages'] ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= BASE_URL ?>/news?page=<?= $pagination['current_page'] + 1 ?>&category=<?= urlencode($pagination['current_category']) ?>" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        <?php endif; ?>
 
         <!-- Newsletter CTA -->
         <div class="newsletter-cta text-center mt-5 py-5 bg-light rounded-3">

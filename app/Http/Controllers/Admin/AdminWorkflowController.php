@@ -109,7 +109,7 @@ class AdminWorkflowController extends AdminController
             
             if ($id) {
                 $this->flashMessage('Workflow created successfully', 'success');
-                header('Location: /admin/workflows/' . $id . '/steps');
+                redirect('/admin/workflows/' . $id . '/steps');
                 exit;
             } else {
                 $this->flashMessage('Failed to create workflow', 'error');
@@ -142,7 +142,7 @@ class AdminWorkflowController extends AdminController
             );
             
             $this->flashMessage('Step added successfully', 'success');
-            header("Location: /admin/workflows/{$workflowId}/steps");
+            redirect("/admin/workflows/{$workflowId}/steps");
             exit;
         }
         
@@ -436,7 +436,7 @@ class AdminWorkflowController extends AdminController
         }
         
         $this->flashMessage($result['error'] ?? 'Export failed', 'error');
-        header('Location: /admin/import-export');
+        redirect('/admin/import-export');
         exit;
     }
     
@@ -457,7 +457,7 @@ class AdminWorkflowController extends AdminController
         }
         
         $this->flashMessage('Template not found', 'error');
-        header('Location: /admin/import-export');
+        redirect('/admin/import-export');
         exit;
     }
     
@@ -493,7 +493,7 @@ class AdminWorkflowController extends AdminController
             $this->flashMessage('Backup failed: ' . $result['error'], 'error');
         }
         
-        header('Location: /admin/backups');
+        redirect('/admin/backups');
         exit;
     }
     
@@ -515,7 +515,7 @@ class AdminWorkflowController extends AdminController
         }
         
         $this->flashMessage('Backup file not found', 'error');
-        header('Location: /admin/backups');
+        redirect('/admin/backups');
         exit;
     }
     
@@ -608,7 +608,7 @@ class AdminWorkflowController extends AdminController
             exit;
         }
         
-        header('Location: /admin/api-docs');
+        redirect('/admin/api-docs');
         exit;
     }
     
@@ -618,7 +618,7 @@ class AdminWorkflowController extends AdminController
     private function checkAdminAuth()
     {
         if (empty($_SESSION['admin_id'])) {
-            header('Location: /admin/login');
+            redirect('/admin/login');
             exit;
         }
     }

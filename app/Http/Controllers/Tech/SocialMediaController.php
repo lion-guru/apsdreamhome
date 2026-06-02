@@ -157,6 +157,7 @@ class SocialMediaController extends BaseController
 
         $this->data['page_title'] = 'Social Media Analytics - ' . APP_NAME;
         $this->data['analytics'] = $analytics_data;
+        $this->data['social_stats'] = $analytics_data;
 
         $this->render('admin/social_analytics');
     }

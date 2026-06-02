@@ -102,12 +102,12 @@ class CEODashboardController extends AdminController
         try {
             $analytics = $this->db->fetchAll(
                 "SELECT 
-                    DATE(created_at) as date,
-                    SUM(CASE WHEN status = 'completed' THEN amount END) as daily_revenue,
-                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as daily_transactions
+                    DATE(payment_date) as date,
+                    SUM(payment_amount) as daily_revenue,
+                    COUNT(*) as daily_transactions
                 FROM booking_payments
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                GROUP BY DATE(created_at)
+                WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY DATE(payment_date)
                 ORDER BY date DESC"
             );
         } catch (Exception $e) {
@@ -129,9 +129,9 @@ class CEODashboardController extends AdminController
                     u.role,
                     COUNT(*) as user_count,
                     COUNT(CASE WHEN u.status = 'active' THEN 1 END) as active_count,
-                    COALESCE(AVG(CASE WHEN c.status = 'completed' THEN c.amount END), 0) as avg_performance
+                    COALESCE(AVG(CASE WHEN c.status = 'paid' THEN c.amount END), 0) as avg_performance
                 FROM users u
-                LEFT JOIN commissions c ON u.id = c.agent_id 
+                LEFT JOIN commissions c ON u.id = c.user_id 
                     AND c.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 GROUP BY u.role
                 ORDER BY user_count DESC"

@@ -1,11 +1,4 @@
 <?php
-
-// Session started by controller
-if (!isset($_SESSION['admin_id']) && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin')) {
-    header("Location: " . BASE_URL . "/admin/login");
-    exit();
-}
-
 $transactions = $transactions ?? [];
 $banks = $banks ?? [];
 $page_title = 'Bank Reconciliation';

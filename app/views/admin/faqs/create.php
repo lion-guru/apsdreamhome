@@ -32,7 +32,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Sort Order</label>
-                                    <input type="number" name="sort_order" class="form-control" value="0">
+                                    <input type="number" name="display_order" class="form-control" value="0">
                                 </div>
                             </div>
                             <div class="col-md-4">

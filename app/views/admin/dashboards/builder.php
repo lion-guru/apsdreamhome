@@ -141,45 +141,34 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Construction Chart
+        // Construction Chart - Load via AJAX
         const constructionCtx = document.getElementById('constructionChart').getContext('2d');
-        const constructionData = <?php echo json_encode(array_map(function ($item) {
-                                        return ['date' => $item['date'], 'projects' => $item['projects_started'], 'completed' => $item['projects_completed']];
-                                    }, array_fill(0, 30, ['date' => date('Y-m-d'), 'projects' => 0, 'completed' => 0]))); ?>;
-
-        new Chart(constructionCtx, {
+        const constructionChart = new Chart(constructionCtx, {
             type: 'line',
-            data: {
-                labels: constructionData.map(item => item.date),
-                datasets: [{
-                    label: 'Projects Started',
-                    data: constructionData.map(item => item.projects),
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    tension: 0.1
-                }, {
-                    label: 'Projects Completed',
-                    data: constructionData.map(item => item.completed),
-                    borderColor: 'rgb(54, 162, 235)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            data: { labels: [], datasets: [{
+                label: 'Projects Started', data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.1
+            }, {
+                label: 'Projects Completed', data: [],
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.1
+            }]},
+            options: { responsive: true, plugins: { legend: { display: true, position: 'top' } }, scales: { y: { beginAtZero: true } } }
         });
+
+        fetch('<?php echo BASE_URL; ?>/admin/builder-dashboard/construction')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    constructionChart.data.labels = data.data.map(item => item.date).reverse();
+                    constructionChart.data.datasets[0].data = data.data.map(item => item.projects_started).reverse();
+                    constructionChart.data.datasets[1].data = data.data.map(item => item.projects_completed).reverse();
+                    constructionChart.update();
+                }
+            }).catch(() => {});
 
         // Workforce Chart
         const workforceCtx = document.getElementById('workforceChart').getContext('2d');
@@ -189,27 +178,15 @@
                 labels: ['Masons', 'Carpenters', 'Electricians', 'Others'],
                 datasets: [{
                     data: [
-                        <?php echo $workforce_stats['masons'] ?? 0; ?>,
-                        <?php echo $workforce_stats['carpenters'] ?? 0; ?>,
-                        <?php echo $workforce_stats['electricians'] ?? 0; ?>,
-                        <?php echo ($workforce_stats['total_workers'] ?? 0) - ($workforce_stats['masons'] ?? 0) - ($workforce_stats['carpenters'] ?? 0) - ($workforce_stats['electricians'] ?? 0); ?>
+                        <?php echo intval($workforce_stats['masons'] ?? 0); ?>,
+                        <?php echo intval($workforce_stats['carpenters'] ?? 0); ?>,
+                        <?php echo intval($workforce_stats['electricians'] ?? 0); ?>,
+                        <?php echo max(0, intval($workforce_stats['total_workers'] ?? 0) - intval($workforce_stats['masons'] ?? 0) - intval($workforce_stats['carpenters'] ?? 0) - intval($workforce_stats['electricians'] ?? 0)); ?>
                     ],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.8)',
-                        'rgba(54, 162, 235, 0.8)',
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(75, 192, 192, 0.8)'
-                    ]
+                    backgroundColor: ['rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)', 'rgba(255, 206, 86, 0.8)', 'rgba(75, 192, 192, 0.8)']
                 }]
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
         });
     });
 </script>

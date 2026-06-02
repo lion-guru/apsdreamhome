@@ -33,7 +33,7 @@
                         </tr>
                         <tr>
                             <th>Sort Order</th>
-                            <td><?php echo $faq['sort_order']; ?></td>
+                            <td><?php echo $faq['display_order']; ?></td>
                         </tr>
                         <tr>
                             <th>Status</th>

@@ -128,7 +128,7 @@ $extraHead = '<style>
                 </div>
 
                 <div class="progress mb-3">
-                    <?php $payment_percentage = ($total_paid / $booking['total_amount']) * 100; ?>
+                    <?php $payment_percentage = ($booking['total_amount'] > 0) ? ($total_paid / $booking['total_amount']) * 100 : 0; ?>
                     <div class="progress-bar" role="progressbar"
                         style="width: <?= min($payment_percentage, 100) ?>%"
                         aria-valuenow="<?= $payment_percentage ?>"

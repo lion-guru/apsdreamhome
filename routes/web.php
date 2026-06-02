@@ -31,31 +31,45 @@ if (file_exists(__DIR__ . '/../app/Http/Controllers/Admin/GodModeController.php'
 // Agent System Routes
 $router->get('/auto_orchestrator', function () {
     $file = __DIR__ . '/../auto_orchestrator.php';
-    if (file_exists($file)) { include $file; }
+    if (file_exists($file)) {
+        include $file;
+    }
 });
 $router->get('/orchestrator', function () {
     $file = __DIR__ . '/../auto_orchestrator.php';
-    if (file_exists($file)) { include $file; }
+    if (file_exists($file)) {
+        include $file;
+    }
 });
 $router->get('/agent_dashboard', function () {
     $file = __DIR__ . '/../agent_dashboard.php';
-    if (file_exists($file)) { include $file; }
+    if (file_exists($file)) {
+        include $file;
+    }
 });
 $router->get('/users', function () {
     $file = __DIR__ . '/../agent_dashboard.php';
-    if (file_exists($file)) { include $file; }
+    if (file_exists($file)) {
+        include $file;
+    }
 });
 $router->get('/project_health_check', function () {
     $file = __DIR__ . '/../project_health_check.php';
-    if (file_exists($file)) { include $file; }
+    if (file_exists($file)) {
+        include $file;
+    }
 });
 $router->get('/project_health', function () {
     $file = __DIR__ . '/../project_health_check.php';
-    if (file_exists($file)) { include $file; }
+    if (file_exists($file)) {
+        include $file;
+    }
 });
 $router->get('/health', function () {
     $file = __DIR__ . '/../project_health_check.php';
-    if (file_exists($file)) { include $file; }
+    if (file_exists($file)) {
+        include $file;
+    }
 });
 
 // Home
@@ -97,8 +111,8 @@ $router->get('/robots.txt', function () {
 $router->get('/sitemap', 'Front\\PageController@sitemap');
 $router->get('/privacy', 'Front\\PageController@privacy');
 $router->get('/news', 'Front\\PageController@news');
-$router->get('/blog', 'Front\\PageController@blog');
-$router->get('/blog/{slug}', 'Front\\PageController@blogPost');
+$router->get('/blog', 'App\\Http\\Controllers\\Front\\BlogController@index');
+$router->get('/blog/{slug}', 'App\\Http\\Controllers\\Front\\BlogController@show');
 $router->get('/gallery', 'Front\\PageController@gallery');
 $router->get('/resell', 'Front\\PageController@resell');
 $router->get('/careers', 'Front\PageController@careers');
@@ -126,7 +140,7 @@ $router->get('/auth/facebook', 'Auth\FacebookAuthController@redirectToProvider')
 $router->get('/auth/facebook/callback', 'Auth\FacebookAuthController@callback');
 
 // LinkedIn Auth
-$router->get('/auth/linkedin', function() {
+$router->get('/auth/linkedin', function () {
     $_SESSION['error'] = 'LinkedIn login coming soon. Use Google or Facebook.';
     header('Location: ' . BASE_URL . '/login');
     exit;
@@ -290,6 +304,10 @@ $router->post('/user/bank-details/save', 'Front\\UserController@saveBankDetails'
 $router->get('/user/network', 'Front\\UserController@network');
 $router->get('/user/notification-settings', 'Front\\UserController@notificationSettings');
 $router->post('/user/notification-settings', 'Front\\UserController@updateNotificationSettings');
+$router->get('/user/favorites', 'Front\\UserController@favorites');
+$router->get('/user/saved-searches', 'Front\\UserController@savedSearches');
+$router->post('/user/saved-searches/save', 'Front\\UserController@saveSearch');
+$router->get('/user/saved-searches/delete/{id}', 'Front\\UserController@deleteSavedSearch');
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->post('/property/review', 'Front\\PageController@reviewSubmit');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
@@ -1368,6 +1386,10 @@ $router->get('/admin/builder-dashboard', 'App\\Http\\Controllers\\Admin\\Builder
 $router->get('/admin/builder-dashboard/construction', 'App\\Http\\Controllers\\Admin\\BuilderDashboardController@getConstructionAnalytics');
 $router->get('/admin/builder-dashboard/materials', 'App\\Http\\Controllers\\Admin\\BuilderDashboardController@getMaterialStatus');
 
+$router->get('/admin/agent-dashboard', 'App\\Http\\Controllers\\Admin\\AgentDashboardController@index');
+$router->get('/admin/agent-dashboard/performance', 'App\\Http\\Controllers\\Admin\\AgentDashboardController@getPerformanceData');
+$router->get('/admin/agent-dashboard/network', 'App\\Http\\Controllers\\Admin\\AgentDashboardController@getNetworkTree');
+
 // ============================================================
 // ADMIN LAND MANAGEMENT
 // ============================================================
@@ -1471,16 +1493,46 @@ $router->post('/admin/ajax/save-content', 'App\\Http\\Controllers\\Admin\\AjaxCo
 // which renders role-appropriate stats via admin.php canonical layout
 // ============================================================
 
-$router->get('/admin/dashboard/accounting', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/cm', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/coo', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/director', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/finance', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/hr', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/it', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/marketing', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/operations', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
-$router->get('/admin/dashboard/superadmin', function () { header('Location: ' . BASE_URL . '/admin/dashboard'); exit; });
+$router->get('/admin/dashboard/accounting', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/cm', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/coo', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/director', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/finance', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/hr', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/it', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/marketing', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/operations', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
+$router->get('/admin/dashboard/superadmin', function () {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
 
 // ============================================================
 // ORPHANED PUBLIC PAGE ROUTES (added 2026-05-15)
@@ -1703,7 +1755,7 @@ $router->post('/user/book-site-visit', 'Front\\UserController@bookSiteVisit');
 $router->get('/user/notifications', 'Front\\UserController@notifications');
 $router->post('/user/notifications/read-all', 'Front\\UserController@markAllNotificationsRead');
 $router->post('/user/notifications/{id}/read', 'Front\\UserController@markNotificationRead');
-$router->get('/user/payments', function() {
+$router->get('/user/payments', function () {
     header('Location: ' . BASE_URL . '/payment/history');
     exit;
 });
@@ -1788,6 +1840,7 @@ $router->get('/admin/hr/users/view/{id}', 'App\\Http\\Controllers\\Admin\\HRCont
 $router->get('/admin/hr/attendance', 'App\\Http\\Controllers\\Admin\\HRController@attendance');
 $router->post('/admin/hr/attendance/mark', 'App\\Http\\Controllers\\Admin\\HRController@markAttendance');
 $router->get('/admin/hr/attendance/report', 'App\\Http\\Controllers\\Admin\\HRController@attendanceReport');
+$router->get('/admin/hr/leave', 'App\\Http\\Controllers\\Admin\\HRController@leaves');
 $router->get('/admin/hr/leaves', 'App\\Http\\Controllers\\Admin\\HRController@leaves');
 $router->post('/admin/hr/leaves/store', 'App\\Http\\Controllers\\Admin\\HRController@storeLeave');
 $router->get('/admin/hr/leaves/approve/{id}', 'App\\Http\\Controllers\\Admin\\HRController@approveLeave');
@@ -1932,6 +1985,11 @@ $router->get('/admin/training/enrollments/{id}', 'App\\Http\\Controllers\\Admin\
 $router->get('/admin/training/certificates', 'App\\Http\\Controllers\\Admin\\TrainingController@certificates');
 
 // ═══════════════════════════════════════════════════
+// FINANCIAL REPORTS
+// ═══════════════════════════════════════════════════
+$router->get('/admin/financial-reports', 'App\\Http\\Controllers\\Admin\\Reports\\FinancialReportController@index');
+
+// ═══════════════════════════════════════════════════
 // VOICE users
 // ═══════════════════════════════════════════════════
 $router->get('/admin/voice-users', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@dashboard');
@@ -1948,6 +2006,15 @@ $router->post('/admin/voice-users/cancel-schedule/{id}', 'App\\Http\\Controllers
 $router->post('/admin/voice-users/reschedule/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@rescheduleCall');
 $router->post('/admin/voice-users/ajax/convert-lead', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxConvertLead');
 $router->get('/admin/voice-users/ajax/lead-timeline/{id}', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@ajaxLeadTimeline');
+
+// Voice Agents aliases (same as voice-users)
+$router->get('/admin/voice-agents', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@dashboard');
+$router->get('/admin/voice-agents/history', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@history');
+$router->get('/admin/voice-agents/schedule', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@schedule');
+$router->get('/admin/voice-agents/scripts', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@scripts');
+$router->get('/admin/voice-agents/extracted-leads', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@extractedLeads');
+$router->get('/admin/voice-agents/settings', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@settings');
+$router->get('/admin/voice-agents/oln', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@olnDashboard');
 
 // ═══════════════════════════════════════════════════
 // VOICE CALL SCHEDULER (Admin)
@@ -2048,6 +2115,12 @@ $router->get('/admin/marketplace', 'App\\Http\\Controllers\\Admin\\AdminMarketpl
 $router->get('/admin/compliance', 'App\\Http\\Controllers\\Admin\\AdminComplianceController@index');
 $router->get('/admin/developer', 'App\\Http\\Controllers\\Admin\\AdminDeveloperController@index');
 $router->get('/admin/analytics/advanced', 'App\\Http\\Controllers\\Admin\\AnalyticsController@advanced');
+$router->get('/admin/advanced-analytics', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@dashboard');
+$router->get('/admin/advanced-analytics/property', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@propertyAnalytics');
+$router->get('/admin/advanced-analytics/users', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@userAnalytics');
+$router->get('/admin/advanced-analytics/financial', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@financialAnalytics');
+$router->get('/admin/advanced-analytics/mlm', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@mlmAnalytics');
+$router->get('/admin/advanced-analytics/realtime', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@apiGetRealtimeData');
 $router->get('/admin/performance', 'App\\Http\\Controllers\\Admin\\AdminPerformanceController@index');
 $router->get('/admin/security', 'App\\Http\\Controllers\\Admin\\AdminSecurityController@index');
 
@@ -2056,39 +2129,39 @@ $router->get('/admin/security', 'App\\Http\\Controllers\\Admin\\AdminSecurityCon
 // ============================================================
 
 // /admin/workflow (no s) -> /admin/workflows
-$router->get('/admin/workflow', function() {
+$router->get('/admin/workflow', function () {
     header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/workflows');
     exit;
 });
-$router->get('/admin/workflow/approvals', function() {
+$router->get('/admin/workflow/approvals', function () {
     header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/workflows/pending');
     exit;
 });
-$router->get('/admin/workflow/reports', function() {
+$router->get('/admin/workflow/reports', function () {
     header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/workflows');
     exit;
 });
 
 // /admin/schedule/weekly-view -> /admin/schedule/weekly
-$router->get('/admin/schedule/weekly-view', function() {
+$router->get('/admin/schedule/weekly-view', function () {
     header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/schedule/weekly');
     exit;
 });
 
 // /admin/customer-leads -> /admin/customer-lead dashboard
-$router->get('/admin/customer-leads', function() {
+$router->get('/admin/customer-leads', function () {
     header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/customer-lead/behavior');
     exit;
 });
 
 // /admin/farmers -> /farmers (public)
-$router->get('/admin/farmers', function() {
+$router->get('/admin/farmers', function () {
     header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/farmers');
     exit;
 });
 
 // Training courses redirect (sidebar link alias)
-$router->get('/admin/training/courses', function() {
+$router->get('/admin/training/courses', function () {
     $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
     header('Location: ' . $base . '/admin/training');
     exit;
@@ -2318,7 +2391,6 @@ $router->get('/admin/knowledge-base-new/{id}/edit', 'App\\Http\\Controllers\\Adm
 $router->post('/admin/knowledge-base-new/{id}/update', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@update');
 $router->post('/admin/knowledge-base-new/{id}/delete', 'App\\Http\\Controllers\\Admin\\KnowledgeBaseController@delete');
 
-// Admin FAQs (Controller-based)
 
 
 // Admin Testimonials (Additional routes)
@@ -2755,8 +2827,6 @@ $router->get('/faq-list', 'App\\Http\\Controllers\\Front\\FAQController@index');
 $router->get('/faq-list/{id}', 'App\\Http\\Controllers\\Front\\FAQController@show');
 $router->get('/event-calendar', 'App\\Http\\Controllers\\Front\\EventController@index');
 $router->get('/event-calendar/{id}', 'App\\Http\\Controllers\\Front\\EventController@show');
-$router->get('/blog-articles', 'App\\Http\\Controllers\\Front\\BlogController@index');
-$router->get('/blog-articles/{slug}', 'App\\Http\\Controllers\\Front\\BlogController@show');
 $router->get('/photo-gallery', 'App\\Http\\Controllers\\Front\\GalleryController@index');
 $router->get('/photo-gallery/{id}', 'App\\Http\\Controllers\\Front\\GalleryController@show');
 
@@ -2777,3 +2847,11 @@ $router->post('/admin/alerts/{id}/dismiss', 'Utility\\AlertController@dismissAle
 $router->get('/admin/alerts/escalations', 'Utility\\AlertController@getEscalations');
 $router->post('/admin/alerts/escalations/process', 'Utility\\AlertController@processEscalations');
 $router->get('/admin/alerts/stats', 'Utility\\AlertController@getStats');
+
+// ============================================================
+// SOCIAL MEDIA (Tech namespace)
+// ============================================================
+$router->get('/social-share/{id}', 'Tech\\SocialMediaController@shareProperty');
+$router->post('/social-generate-post', 'Tech\\SocialMediaController@generatePost');
+$router->get('/social-callback/{provider}', 'Tech\\SocialMediaController@socialCallback');
+$router->get('/admin/social-analytics', 'Tech\\SocialMediaController@socialAnalytics');

@@ -42,7 +42,8 @@ class EdgeComputingController extends BaseController
         ];
 
         $this->data['page_title'] = 'Edge Computing Dashboard - ' . APP_NAME;
-        $this->data['edge_data'] = $edge_data;
+        $this->data['edge_nodes'] = $edge_data['edge_nodes'] ?? [];
+        $this->data['status'] = $edge_data['status'] ?? 'online';
 
         $this->render('admin/edge_dashboard');
     }
@@ -129,7 +130,7 @@ class EdgeComputingController extends BaseController
         ];
 
         $this->data['page_title'] = 'Distributed Computing Network - ' . APP_NAME;
-        $this->data['network_data'] = $network_data;
+        $this->data['networks'] = $network_data['network_topology'] ?? [];
 
         $this->render('admin/distributed_network');
     }

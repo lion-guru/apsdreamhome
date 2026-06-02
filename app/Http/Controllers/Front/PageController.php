@@ -760,47 +760,21 @@ class PageController extends BaseController
     // News
     public function news()
     {
-        $news_items = [
-            (object)[
-                'id' => 1,
-                'title' => 'Grand Opening of Suyoday Colony',
-                'summary' => 'APS Dream Home is proud to announce the grand opening of Suyoday Colony, our latest residential project in Gorakhpur. The opening ceremony will be held on April 15, 2024.',
-                'image' => 'assets/images/news/news-1.jpg',
-                'category' => 'Project Launch',
-                'created_at' => '2024-03-20'
-            ],
-            (object)[
-                'id' => 2,
-                'title' => 'APS Dream Home Wins "Best Real Estate Developer" Award',
-                'summary' => 'We are honored to receive the "Best Real Estate Developer" award for the year 2023. This award is a testament to our commitment to quality and customer satisfaction.',
-                'image' => 'assets/images/news/news-2.jpg',
-                'category' => 'Company News',
-                'created_at' => '2024-03-18'
-            ],
-            (object)[
-                'id' => 3,
-                'title' => 'New Commercial Project Announced in Lucknow',
-                'summary' => 'APS Dream Home is excited to announce a new commercial project in the heart of Lucknow. The project will feature state-of-the-art office spaces and retail outlets.',
-                'image' => 'assets/images/news/news-3.jpg',
-                'category' => 'Project Launch',
-                'created_at' => '2024-03-15'
-            ],
-        ];
+        try {
+            $news_items = $this->db->fetchAll(
+                "SELECT * FROM news WHERE status = 'published' ORDER BY created_at DESC"
+            );
+        } catch (\Exception $e) {
+            $news_items = [];
+        }
 
         $categories = ['Project Launch', 'Company News', 'Market Updates'];
-
-        $pagination = [
-            'current_page' => 1,
-            'total_pages' => 1,
-            'current_category' => 'all'
-        ];
 
         $data = [
             'page_title' => 'News - APS Dream Home',
             'page_description' => 'Latest news and updates from APS Dream Home',
             'news_items' => $news_items,
             'categories' => $categories,
-            'pagination' => $pagination,
             'breadcrumbs' => [
                 ['title' => 'Home', 'url' => '/'],
                 ['title' => 'News', 'url' => '']

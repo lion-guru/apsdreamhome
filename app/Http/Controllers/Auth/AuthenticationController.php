@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Services\Auth\AuthenticationService;
+use App\Services\Auth\PasswordOtpService;
 
 /**
  * Custom Authentication Controller - APS Dream Home
@@ -12,11 +13,13 @@ use App\Services\Auth\AuthenticationService;
 class AuthenticationController
 {
     private $authService;
+    private $otpService;
     private $viewRenderer;
 
     public function __construct()
     {
         $this->authService = new AuthenticationService();
+        $this->otpService = new PasswordOtpService();
         $this->viewRenderer = new \App\Core\View();
     }
 
@@ -275,21 +278,10 @@ class AuthenticationController
             return;
         }
 
-        // Validate token and get user
-        $user = $this->getUserByResetToken($token);
-        if (!$user) {
-            $_SESSION['errors'] = ['Invalid or expired reset token'];
-            $this->redirect('/login');
-            return;
-        }
-
-        // Change password
-        $result = $this->authService->changePassword($user['id'], '', $password);
+        // Use OTP service which handles token-based reset
+        $result = $this->otpService->resetPasswordWithToken($token, $password);
 
         if ($result['success']) {
-            // Clear reset token
-            $this->clearResetToken($user['id']);
-
             $_SESSION['success'] = 'Password reset successful. Please login with your new password.';
             $this->redirect('/login');
         } else {
@@ -297,6 +289,109 @@ class AuthenticationController
             $_SESSION['old'] = $_POST;
             $this->redirect('/reset-password?token=' . $token);
         }
+    }
+
+    /**
+     * Send OTP for forgot password (AJAX)
+     */
+    public function sendForgotOtp()
+    {
+        header('Content-Type: application/json');
+
+        $email = $_POST['email'] ?? '';
+        if (empty($email)) {
+            echo json_encode(['success' => false, 'message' => 'Email is required']);
+            exit;
+        }
+
+        $result = $this->otpService->sendOtp($email, 'password_reset');
+        // Don't reveal if email exists - return generic success
+        if (isset($result['silent']) && $result['silent']) {
+            echo json_encode(['success' => true, 'message' => 'If an account exists with this email, an OTP has been sent.']);
+            exit;
+        }
+        echo json_encode($result);
+        exit;
+    }
+
+    /**
+     * Verify OTP and issue reset token (AJAX)
+     */
+    public function verifyForgotOtp()
+    {
+        header('Content-Type: application/json');
+
+        $email = $_POST['email'] ?? '';
+        $otp = $_POST['otp'] ?? '';
+
+        $result = $this->otpService->verifyOtp($email, $otp, 'password_reset');
+
+        if ($result['success']) {
+            // Stash reset token in session so reset-password page can use it
+            $_SESSION['reset_token'] = $result['reset_token'];
+            $_SESSION['reset_email'] = $email;
+        }
+
+        echo json_encode($result);
+        exit;
+    }
+
+    /**
+     * Send OTP for change password (logged-in user, AJAX)
+     */
+    public function sendChangePasswordOtp()
+    {
+        header('Content-Type: application/json');
+
+        if (!$this->authService->isAuthenticated()) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+
+        $user = $this->authService->getCurrentUser();
+        $result = $this->otpService->sendOtp($user['email'], 'change_password');
+
+        echo json_encode($result);
+        exit;
+    }
+
+    /**
+     * Verify change-password OTP and change password (AJAX)
+     */
+    public function verifyChangePasswordOtp()
+    {
+        header('Content-Type: application/json');
+
+        if (!$this->authService->isAuthenticated()) {
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+
+        $user = $this->authService->getCurrentUser();
+        $otp = $_POST['otp'] ?? '';
+        $newPassword = $_POST['new_password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+        $currentPassword = $_POST['current_password'] ?? '';
+
+        if ($newPassword !== $confirmPassword) {
+            echo json_encode(['success' => false, 'message' => 'Passwords do not match']);
+            exit;
+        }
+        if (strlen($newPassword) < 6) {
+            echo json_encode(['success' => false, 'message' => 'Password must be at least 6 characters']);
+            exit;
+        }
+
+        $verify = $this->otpService->verifyOtp($user['email'], $otp, 'change_password');
+        if (!$verify['success']) {
+            echo json_encode($verify);
+            exit;
+        }
+
+        // OTP verified - now change password (skip current password check since OTP = identity proof)
+        $result = $this->authService->changePassword($user['id'], $currentPassword, $newPassword);
+        echo json_encode($result);
+        exit;
     }
 
     /**

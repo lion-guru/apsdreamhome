@@ -151,11 +151,11 @@ class DealPipelineController extends AdminController
                 $expectedCloseDate, $probability, $stageId
             ]);
             
-            header('Location: /admin/deal-pipeline?success=Deal created successfully');
+            redirect('/admin/deal-pipeline?success=Deal created successfully');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/deal-pipeline/create?error=' . urlencode($e->getMessage()));
+            redirect('/admin/deal-pipeline/create?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -190,7 +190,7 @@ class DealPipelineController extends AdminController
             $deal = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             if (!$deal) {
-                header('Location: /admin/deal-pipeline?error=Deal not found');
+                redirect('/admin/deal-pipeline?error=Deal not found');
                 exit;
             }
             
@@ -208,7 +208,7 @@ class DealPipelineController extends AdminController
             return $this->render('admin/deal-pipeline/show', $data);
             
         } catch (\Exception $e) {
-            header('Location: /admin/deal-pipeline?error=' . urlencode($e->getMessage()));
+            redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -227,7 +227,7 @@ class DealPipelineController extends AdminController
             // Validate stage
             $validStages = ['lead', 'qualified', 'site_visit', 'negotiation', 'booking', 'agreement', 'closed_won', 'closed_lost'];
             if (!in_array($newStage, $validStages)) {
-                header('Location: /admin/deal-pipeline?error=Invalid stage');
+                redirect('/admin/deal-pipeline?error=Invalid stage');
                 exit;
             }
             
@@ -244,11 +244,11 @@ class DealPipelineController extends AdminController
                           VALUES (?, 'stage_change', ?, ?, NOW())";
             $conn->prepare($historySql)->execute([$id, $currentStage, $newStage]);
             
-            header('Location: /admin/deal-pipeline?success=Deal stage updated');
+            redirect('/admin/deal-pipeline?success=Deal stage updated');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/deal-pipeline?error=' . urlencode($e->getMessage()));
+            redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -266,18 +266,18 @@ class DealPipelineController extends AdminController
             
             // Validate probability
             if ($probability < 0 || $probability > 100) {
-                header('Location: /admin/deal-pipeline?error=Invalid probability value');
+                redirect('/admin/deal-pipeline?error=Invalid probability value');
                 exit;
             }
             
             // Update deal probability
             $conn->prepare("UPDATE deals SET probability = ?, updated_at = NOW() WHERE id = ?")->execute([$probability, $id]);
             
-            header('Location: /admin/deal-pipeline?success=Deal probability updated');
+            redirect('/admin/deal-pipeline?success=Deal probability updated');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/deal-pipeline?error=' . urlencode($e->getMessage()));
+            redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -304,11 +304,11 @@ class DealPipelineController extends AdminController
                           VALUES (?, 'deal_won', ?, 'closed_won', NOW())";
             $conn->prepare($historySql)->execute([$id, $dealData['stage_id'] ?? '']);
             
-            header('Location: /admin/deal-pipeline?success=Deal marked as won');
+            redirect('/admin/deal-pipeline?success=Deal marked as won');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/deal-pipeline?error=' . urlencode($e->getMessage()));
+            redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -335,11 +335,11 @@ class DealPipelineController extends AdminController
                           VALUES (?, 'deal_lost', ?, 'closed_lost', NOW())";
             $conn->prepare($historySql)->execute([$id, $currentStage]);
             
-            header('Location: /admin/deal-pipeline?success=Deal marked as lost');
+            redirect('/admin/deal-pipeline?success=Deal marked as lost');
             exit;
             
         } catch (\Exception $e) {
-            header('Location: /admin/deal-pipeline?error=' . urlencode($e->getMessage()));
+            redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
@@ -359,7 +359,7 @@ class DealPipelineController extends AdminController
             $dealData = $deal->fetch(\PDO::FETCH_ASSOC);
             
             if (!$dealData) {
-                header('Location: /admin/deal-pipeline?error=Deal not found');
+                redirect('/admin/deal-pipeline?error=Deal not found');
                 exit;
             }
             
@@ -377,7 +377,7 @@ class DealPipelineController extends AdminController
             return $this->render('admin/deal-pipeline/timeline', $data);
             
         } catch (\Exception $e) {
-            header('Location: /admin/deal-pipeline?error=' . urlencode($e->getMessage()));
+            redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
     }

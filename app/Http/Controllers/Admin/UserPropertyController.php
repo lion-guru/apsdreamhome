@@ -83,7 +83,7 @@ class UserPropertyController extends AdminController
         $property = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$property) {
-            header('Location: /admin/user-properties?error=not_found');
+            redirect('/admin/user-properties?error=not_found');
             exit;
         }
 
@@ -98,7 +98,7 @@ class UserPropertyController extends AdminController
     public function action()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /admin/user-properties');
+            redirect('/admin/user-properties');
             exit;
         }
 
@@ -107,7 +107,7 @@ class UserPropertyController extends AdminController
         $adminNotes = trim($_POST['admin_notes'] ?? '');
 
         if (!$id || !in_array($action, ['approve', 'reject', 'verify', 'mark_sold'])) {
-            header('Location: /admin/user-properties?error=invalid');
+            redirect('/admin/user-properties?error=invalid');
             exit;
         }
 
@@ -178,7 +178,7 @@ class UserPropertyController extends AdminController
             error_log("Property notification error: " . $e->getMessage());
         }
 
-        header('Location: /admin/user-properties?success=updated');
+        redirect('/admin/user-properties?success=updated');
         exit;
     }
 
