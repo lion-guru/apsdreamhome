@@ -1,31 +1,51 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-02)
 
-## Session 2026-06-02: Routed 4 More Controllers — PropertyWorkflow, Report, Career (40+ routes)
+## Session 2026-06-02 (Part 2): Routed PropertyWorkflow, Report, Career Controllers + E2E 163/164
 
 ### What Was Done
-1. **Routed 4 controllers (40+ new routes)**:
-   - **PropertyWorkflowController** (`/property-workflow/*`) — Full buy/sell workflow, 6 methods (index, show, buy, sell, scheduleVisit). Fixed: `private $db` → untyped `protected`, `private getCurrentUser()` → `protected`, wrapped service constructors in try/catch. **All routes HTTP 200 ✅**
-   - **Admin\ReportController** (`/admin/report-center`) — Simple reports index. Returns 302 (auth redirect) as expected ✅
-   - **Career\CareerController** (`/admin/careers/manage/*`) — 16 methods: applications, jobs, stats, resume download, export. Fixed: all methods had `$request` param (incompatible with router) → made optional. **All routes HTTP 200 ✅**
-   - **Agent\MainController** — Already routed via separate controllers (`AgentDashboardController`, `AgentAuthController`). No new routes needed.
+1. **Routed 3 controllers (30+ new routes)**:
+   - **PropertyWorkflowController** (`/property-workflow/*`) — Buy/sell workflow: index, show/{id}, buy/{id}, sell, scheduleVisit. Fixed: `private $db` → untyped `protected`, `private getCurrentUser()` → `protected`, service constructors wrapped in try/catch. Class renamed from `PropertyController` to `PropertyWorkflowController` (name conflict). **All 5 routes HTTP 200 ✅**
+   - **Admin\ReportController** (`/admin/report-center`) — Simple reports index. Returns 302 (auth redirect) ✅
+   - **Career\CareerController** (16 methods, 10+ routes under `/careers/*` + `/admin/careers/manage/*`) — Fixed: all `($request)` → `($request=null)`, `redirect()` now uses `BASE_URL` (was hardcoded `/login` → `http://localhost/login` wrong), replaced `isAdmin()` with `isAuthenticatedOrAdmin()` that also checks `$_SESSION['admin_id']`/`$_SESSION['user_role']`. **All admin routes HTTP 200 when logged in ✅**
 
-2. **2 controllers skipped** (require DI container not available):
+2. **2 controllers skipped** (require DI container):
    - `Payroll\SalaryController` — constructor requires `SalaryService` + `LoggerInterface`
    - `Backup\BackupIntegrityController` — constructor requires `BackupIntegrityService` + `LoggerInterface`
 
-### Files Modified
-- `routes/web.php` — Added 22 new routes (property-workflow: 5, report-center: 1, careers manage: 9)
-- `app/Http/Controllers/Property/PropertyWorkflowController.php` — Fixed `$db` access level, `getCurrentUser()` access level, service constructor try/catch, class renamed from `PropertyController` to `PropertyWorkflowController` (name conflict with existing `Property\PropertyController`)
-- `app/Http/Controllers/Career/CareerController.php` — All `($request)` → `($request = null)` for router compatibility
-- `app/Http/Controllers/Backup/BackupIntegrityController.php` — Constructor params made optional (null-safe), routes removed since DI services unavailable
-- `app/Http/Controllers/Payroll/SalaryController.php` — Constructor params made optional (null-safe), routes removed since DI services unavailable
+3. **Full controller scan completed** — 309 controllers scanned: 287 routed (269 web.php + 18 api.php), 22 unrouted. Only meaningful find was `Admin\AdminDashboardController` (28 methods, but all functionality duplicated by existing `AdminController`, `CEODashboardController`, `CFODashboardController`, etc.).
 
-### Key Metrics
-- E2E: 155/156 pass (1 expected GodMode 403) — zero regressions
-- New routes verified: 200/302 on all 22 new routes
-- Error log: Clean (no new PHP errors after fixes)
-- Remaining unrouted meaningful controllers: 0 (all routed or skipped for DI dependencies)
-- Remaining unrouted controllers (all experimental/skip): TestController, ErrorTestController, DatabaseSeederController, AdvancedAIController, AIChatbotController (Utility/ namespace)
+### Files Modified
+- `routes/web.php` — Added ~30 routes (property-workflow: 5, report-center: 1, careers frontend: 4, careers manage admin: 9)
+- `app/Http/Controllers/Property/PropertyWorkflowController.php` — Access level fixes, class rename, try/catch on service constructors
+- `app/Http/Controllers/Career/CareerController.php` — All `($request)` → `($request = null)`, `redirect()` now prepends `BASE_URL`, replaced `isAdmin()` with `isAuthenticatedOrAdmin()` that checks both customer + admin sessions
+- `app/Http/Controllers/Backup/BackupIntegrityController.php` — Constructor params made optional (null-safe), routes removed
+- `app/Http/Controllers/Payroll/SalaryController.php` — Constructor params made optional (null-safe), routes removed
+- `testing/visual_tests/E2E_MASTER_TEST.mjs` — Expanded from 156→164 checks
+
+### Key Metrics  
+- E2E: 163/164 pass (1 expected GodMode 403) — zero regressions  
+- 30+ new routes verified: 200/302 on all (CareerController: needed auth fix first)  
+- Error log: Clean  
+- Remaining unrouted controllers: 0 meaningful — all 15 are duplicates, experimental, or misplaced files
+
+### Final Controller Audit (15 Unrouted — All Resolved)
+| Controller | Status | Reason |
+|-----------|--------|--------|
+| AdminDashboardController | DUPLICATE | Covered by AdminController + 6 role dashboards (CEO, CFO, etc.) |
+| HomeController | DUPLICATE | All 11 methods covered by PageController (80+ methods) |
+| CustomerDashboardController | DUPLICATE | Covered by UserController::dashboard() |
+| ResellController | DUPLICATE | Covered by PageController@resell + ResellPropertiesAdminController |
+| EmployeeAuthController | DUPLICATE | Covered by EmployeeController (30+ methods, routed) |
+| UnifiedAuthController | SKIP | Needs MVC refactoring; existing auth works |
+| RequestController | NO-ROUTE | Security risk — exposes middleware stack as HTTP |
+| AdvancedSecurityController | EXPERIMENTAL | 1697 lines of mock data (quantum crypto, zero trust) |
+| AdvancedAIController | SKIP | Overlaps existing AI; uses non-standard renderView() |
+| BackupIntegrityController | BLOCKED | Needs DI container + facade rewrite |
+| DatabaseSeederController | DEV-ONLY | CLI scripts already exist in scripts/ |
+| ErrorTestController | DEV-ONLY | Intentionally throws errors — production hazard |
+| BankingController (Api/) | DELETED | Corrupt file — BookingController in wrong namespace |
+| TestController (Utility/) | DELETED | Zero value — 2 methods serving 1 hardcoded PDF |
+| Analytics/ReportService | MOVED | Not a controller — moved to app/Services/Reports/ |
 
 ---
 
