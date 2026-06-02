@@ -27,7 +27,7 @@ class CareerController
     /**
      * Show careers page
      */
-    public function index($request)
+    public function index($request = null)
     {
         $data = [
             'title' => 'Careers - APS Dream Home',
@@ -44,7 +44,7 @@ class CareerController
     /**
      * Show job application form
      */
-    public function apply($request)
+    public function apply($request = null)
     {
         $position = $request['get']['position'] ?? '';
 
@@ -65,7 +65,7 @@ class CareerController
     /**
      * Submit job application
      */
-    public function submitApplication($request)
+    public function submitApplication($request = null)
     {
         $data = [
             'full_name' => trim($request['post']['full_name'] ?? ''),
@@ -96,7 +96,7 @@ class CareerController
     /**
      * Show thank you page
      */
-    public function thankYou($request)
+    public function thankYou($request = null)
     {
         $data = [
             'title' => 'Application Submitted - APS Dream Home',
@@ -112,7 +112,7 @@ class CareerController
     /**
      * Show admin applications list
      */
-    public function applications($request)
+    public function applications($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -153,7 +153,7 @@ class CareerController
     /**
      * Show application details
      */
-    public function applicationDetails($request)
+    public function applicationDetails($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -195,7 +195,7 @@ class CareerController
     /**
      * Update application status
      */
-    public function updateStatus($request)
+    public function updateStatus($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -232,7 +232,7 @@ class CareerController
     /**
      * Delete application
      */
-    public function deleteApplication($request)
+    public function deleteApplication($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -267,7 +267,7 @@ class CareerController
     /**
      * Get application statistics (AJAX)
      */
-    public function getApplicationStats($request)
+    public function getApplicationStats($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -283,7 +283,7 @@ class CareerController
     /**
      * Get applications (AJAX)
      */
-    public function getApplications($request)
+    public function getApplications($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -307,7 +307,7 @@ class CareerController
     /**
      * Get available positions (AJAX)
      */
-    public function getAvailablePositions($request)
+    public function getAvailablePositions($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -323,7 +323,7 @@ class CareerController
     /**
      * Download resume file
      */
-    public function downloadResume($request)
+    public function downloadResume($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
@@ -380,7 +380,7 @@ class CareerController
     /**
      * Export applications (AJAX)
      */
-    public function exportApplications($request)
+    public function exportApplications($request = null)
     {
         // Check authentication and admin access
         if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {

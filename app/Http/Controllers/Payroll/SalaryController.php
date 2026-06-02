@@ -7,13 +7,13 @@ use Psr\Log\LoggerInterface;
 
 class SalaryController
 {
-    private SalaryService $salaryService;
-    private LoggerInterface $logger;
+    private $salaryService;
+    private $logger;
 
-    public function __construct(SalaryService $salaryService, LoggerInterface $logger)
+    public function __construct($salaryService = null, $logger = null)
     {
         $this->salaryService = $salaryService;
-        $this->logger = $logger;
+        $this->logger = $logger ?: new class { public function error($m) {} public function info($m) {} public function warning($m) {} };
     }
 
     /**

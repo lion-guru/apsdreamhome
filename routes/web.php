@@ -2855,3 +2855,31 @@ $router->get('/social-share/{id}', 'Tech\\SocialMediaController@shareProperty');
 $router->post('/social-generate-post', 'Tech\\SocialMediaController@generatePost');
 $router->get('/social-callback/{provider}', 'Tech\\SocialMediaController@socialCallback');
 $router->get('/admin/social-analytics', 'Tech\\SocialMediaController@socialAnalytics');
+
+// ============================================================
+// NEWLY ROUTED CONTROLLERS (from unrouted scan)
+// ============================================================
+
+// Property Workflow (Property\PropertyWorkflowController)
+$router->get('/property-workflow', 'Property\\PropertyWorkflowController@index');
+$router->get('/property-workflow/show/{id}', 'Property\\PropertyWorkflowController@show');
+$router->get('/property-workflow/buy/{id}', 'Property\\PropertyWorkflowController@buy');
+$router->get('/property-workflow/sell', 'Property\\PropertyWorkflowController@sell');
+$router->get('/property-workflow/schedule-visit/{id}', 'Property\\PropertyWorkflowController@scheduleVisit');
+
+// Admin Report Center (Admin\ReportController)
+$router->get('/admin/report-center', 'Admin\\ReportController@index');
+
+// Careers Management (Career\CareerController)
+$router->get('/admin/careers/manage', 'Career\\CareerController@index');
+$router->get('/admin/careers/manage/jobs', 'Career\\CareerController@getAvailablePositions');
+$router->get('/admin/careers/manage/applications', 'Career\\CareerController@applications');
+$router->get('/admin/careers/manage/applications/{id}', 'Career\\CareerController@applicationDetails');
+$router->get('/admin/careers/manage/applications/{id}/resume', 'Career\\CareerController@downloadResume');
+$router->post('/admin/careers/manage/applications/{id}/status', 'Career\\CareerController@updateStatus');
+$router->post('/admin/careers/manage/applications/{id}/delete', 'Career\\CareerController@deleteApplication');
+$router->get('/admin/careers/manage/stats', 'Career\\CareerController@getApplicationStats');
+$router->post('/admin/careers/manage/export', 'Career\\CareerController@exportApplications');
+
+
+
