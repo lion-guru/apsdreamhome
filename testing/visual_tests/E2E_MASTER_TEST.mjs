@@ -28,6 +28,9 @@ const sidebar_urls = [
   '/admin/financial-reports', '/admin/voice-agents',
   '/admin/deal-pipeline', '/admin/property-allocations',
   '/admin/associate-extensions', '/admin/loans', '/admin/backups',
+  '/admin/careers/manage', '/admin/careers/manage/jobs',
+  '/admin/careers/manage/applications', '/admin/careers/manage/stats',
+  '/admin/report-center',
 ];
 
 const colony_site_plot_urls = [

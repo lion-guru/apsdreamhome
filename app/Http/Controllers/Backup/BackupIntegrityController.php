@@ -7,13 +7,13 @@ use Psr\Log\LoggerInterface;
 
 class BackupIntegrityController
 {
-    private BackupIntegrityService $backupIntegrityService;
-    private LoggerInterface $logger;
+    private $backupIntegrityService;
+    private $logger;
 
-    public function __construct(BackupIntegrityService $backupIntegrityService, LoggerInterface $logger)
+    public function __construct($backupIntegrityService = null, $logger = null)
     {
         $this->backupIntegrityService = $backupIntegrityService;
-        $this->logger = $logger;
+        $this->logger = $logger ?: new class { public function error($m) {} public function info($m) {} public function warning($m) {} };
     }
 
     /**

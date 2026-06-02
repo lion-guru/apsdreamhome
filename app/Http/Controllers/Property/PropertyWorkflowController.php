@@ -7,24 +7,35 @@ use App\Core\Database;
 use App\Services\AgentAssignmentService;
 use App\Services\ReferralService;
 use Exception;
-use PDO;
 
 /**
- * Enhanced PropertyController
- * Complete Property Buy/Sell workflow for all user types
+ * Enhanced Property Workflow Controller
+ * Property Buy/Sell workflow for all user types
  */
-class PropertyController extends BaseController
+class PropertyWorkflowController extends BaseController
 {
-    private PDO $db;
-    private AgentAssignmentService $agentAssignmentService;
-    private ReferralService $referralService;
+    protected $db;
+    protected $agentAssignmentService;
+    protected $referralService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->db = Database::getInstance()->getConnection();
-        $this->agentAssignmentService = new AgentAssignmentService();
-        $this->referralService = new ReferralService();
+        try {
+            $this->db = Database::getInstance()->getConnection();
+        } catch (\Throwable $e) {
+            $this->db = null;
+        }
+        try {
+            $this->agentAssignmentService = new AgentAssignmentService();
+        } catch (\Throwable $e) {
+            $this->agentAssignmentService = null;
+        }
+        try {
+            $this->referralService = new ReferralService();
+        } catch (\Throwable $e) {
+            $this->referralService = null;
+        }
     }
 
     /**
@@ -464,7 +475,7 @@ class PropertyController extends BaseController
         return $stmt->fetchAll();
     }
 
-    private function getCurrentUser(): ?array
+    protected function getCurrentUser(): ?array
     {
         if (!isset($_SESSION['user_id'])) {
             return null;
