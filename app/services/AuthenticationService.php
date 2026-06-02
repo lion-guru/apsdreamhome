@@ -377,9 +377,12 @@ class AuthenticationService
             $resetLink = (defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome') . '/reset-password?token=' . $token;
             error_log("PASSWORD RESET LINK for {$email}: {$resetLink}");
 
-            // TODO: Send actual email via EmailService when SMTP is configured
-            // $emailService = new \App\Services\Communication\EmailService();
-            // $emailService->sendPasswordResetEmail($email, $token);
+            try {
+                $emailService = new \App\Services\Communication\EmailService();
+                $emailService->sendPasswordResetEmail($email, $token);
+            } catch (\Exception $e) {
+                error_log("Failed to send password reset email: " . $e->getMessage());
+            }
 
             // Log admin action
             CoreFunctionsServiceCustom::logAdminAction([
