@@ -113,7 +113,12 @@ class LeadFollowUpService
 
         error_log("Lead email sent to $email: $subject");
 
-        // TODO: Integrate with actual email service
+        try {
+            $emailService = new \App\Services\Communication\EmailService();
+            $emailService->send($email, $subject, nl2br($message));
+        } catch (\Exception $e) {
+            error_log("Failed to send lead email to $email: " . $e->getMessage());
+        }
     }
 
     /**
@@ -129,7 +134,14 @@ class LeadFollowUpService
 
         error_log("Lead SMS sent to $phone: $message");
 
-        // TODO: Integrate with actual SMS gateway
+        try {
+            if (class_exists('\\App\\Services\\Communication\\SmsService')) {
+                $smsService = new \App\Services\Communication\SmsService();
+                $smsService->send($phone, $message);
+            }
+        } catch (\Exception $e) {
+            error_log("Failed to send lead SMS to $phone: " . $e->getMessage());
+        }
     }
 
     /**
