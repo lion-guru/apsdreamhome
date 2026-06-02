@@ -115,7 +115,7 @@ class CareerController
     public function applications($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             $_SESSION['errors'] = ['Access denied'];
             $this->redirect('/login');
             return;
@@ -156,7 +156,7 @@ class CareerController
     public function applicationDetails($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             $_SESSION['errors'] = ['Access denied'];
             $this->redirect('/login');
             return;
@@ -198,7 +198,7 @@ class CareerController
     public function updateStatus($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             return [
                 'success' => false,
                 'message' => 'Access denied'
@@ -235,7 +235,7 @@ class CareerController
     public function deleteApplication($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             return [
                 'success' => false,
                 'message' => 'Access denied'
@@ -270,7 +270,7 @@ class CareerController
     public function getApplicationStats($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             return [
                 'success' => false,
                 'message' => 'Access denied'
@@ -286,7 +286,7 @@ class CareerController
     public function getApplications($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             return [
                 'success' => false,
                 'message' => 'Access denied'
@@ -310,7 +310,7 @@ class CareerController
     public function getAvailablePositions($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             return [
                 'success' => false,
                 'message' => 'Access denied'
@@ -326,7 +326,7 @@ class CareerController
     public function downloadResume($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             $_SESSION['errors'] = ['Access denied'];
             $this->redirect('/login');
             return;
@@ -383,7 +383,7 @@ class CareerController
     public function exportApplications($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->isAuthenticatedOrAdmin()) {
             return [
                 'success' => false,
                 'message' => 'Access denied'
@@ -469,9 +469,15 @@ class CareerController
     /**
      * Check if user is admin
      */
-    private function isAdmin($user)
+    private function isAuthenticatedOrAdmin()
     {
-        return $user && ($user['role'] === 'admin' || $user['role'] === 'super_admin');
+        if ($this->authService->isAuthenticated()) {
+            return true;
+        }
+        if (isset($_SESSION['admin_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin')) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -480,9 +486,15 @@ class CareerController
     private function redirect($url)
     {
         if (!headers_sent()) {
+            if (defined('BASE_URL') && strpos($url, 'http') !== 0) {
+                $url = rtrim(BASE_URL, '/') . '/' . ltrim($url, '/');
+            }
             header("Location: $url");
             exit;
         } else {
+            if (defined('BASE_URL') && strpos($url, 'http') !== 0) {
+                $url = rtrim(BASE_URL, '/') . '/' . ltrim($url, '/');
+            }
             echo '<script>window.location.href = "' . $url . '";</script>';
             exit;
         }

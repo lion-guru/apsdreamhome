@@ -182,6 +182,10 @@ async function run() {
       { path: '/user/bank-details', name: 'User Bank Details' },
       { path: '/user/notification-settings', name: 'Notification Settings' },
       { path: '/user/notifications', name: 'User Notifications' },
+      // Newly routed
+      { path: '/property-workflow', name: 'Property Workflow' },
+      { path: '/careers', name: 'Careers' },
+      { path: '/careers/apply', name: 'Careers Apply' },
 
     ];
     for (const { path, name } of publicPages) {

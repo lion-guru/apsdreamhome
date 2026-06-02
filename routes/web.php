@@ -2871,7 +2871,11 @@ $router->get('/property-workflow/schedule-visit/{id}', 'Property\\PropertyWorkfl
 $router->get('/admin/report-center', 'Admin\\ReportController@index');
 
 // Careers Management (Career\CareerController)
-$router->get('/admin/careers/manage', 'Career\\CareerController@index');
+$router->get('/careers', 'Career\\CareerController@index');
+$router->get('/careers/apply', 'Career\\CareerController@apply');
+$router->post('/careers/apply', 'Career\\CareerController@submitApplication');
+$router->get('/careers/thank-you', 'Career\\CareerController@thankYou');
+$router->get('/admin/careers/manage', 'Career\\CareerController@applications');
 $router->get('/admin/careers/manage/jobs', 'Career\\CareerController@getAvailablePositions');
 $router->get('/admin/careers/manage/applications', 'Career\\CareerController@applications');
 $router->get('/admin/careers/manage/applications/{id}', 'Career\\CareerController@applicationDetails');
