@@ -30,6 +30,21 @@
 | **E2E tests** | 163/164 | 163/164 | **Zero regressions** |
 | **Total rows** | 54,762 | 54,739 | -23 (negligible) |
 
+### Phase 3: AI Schema Cleanup (3-pass safety)
+Applied same analysis pattern to 51 `ai_*` / `voice_*` / `chat_*` tables with **3-tier safety**:
+- **ZERO-REF pass**: 8 tables with 0 code refs (always safe to drop)
+- **ONE-REF pass**: 14 tables with 1 code ref (verified all refs in try/catch)
+- **TWO-REF pass**: 1 safe table (ai_generated_content, 0 unprotected refs)
+- **Skipped 8 2-ref tables**: All have unprotected SQL refs (would break code)
+- Scripts: `scripts/ai_schema_audit.php`, `scripts/drop_ai_zero_refs.php`, `scripts/drop_ai_one_ref.php`, `scripts/_check_2ref.php`, `scripts/drop_ai_2ref_safe.php`
+
+### Final State (Post-AI Cleanup)
+| Metric | Before | After | Change |
+|--------|--------|-------|--------|
+| **Total tables** | 756 | **700** | **-56 (-7.4%)** |
+| **AI tables** | 53 | 30 | **-23 (-43%)** |
+| **E2E tests** | 163/164 | 163/164 | **Zero regressions** |
+
 ### Key Insights
 1. **Always verify with real DB before dropping** — AGENTS.md estimates can be wrong
 2. **E2E tests are the safety net** — they caught the 4 over-dropped tables immediately
@@ -48,12 +63,13 @@
 ### Commits
 - `18a739849` — DB cleanup: drop 4 dead tables + 2 broken views
 - `c77a3912a` — MLM schema cleanup: drop 31 duplicate tables, restore 4 needed ones
+- `0ea88637b` — AI schema cleanup: drop 23 feature-scaffolding tables (3-pass safety)
 
 ### Next Priority (Recommended)
-1. **AI schema audit** — 51 `ai_*` tables, ~5 actively used. Apply same pattern.
-2. **Add `_migrations` table** — track which scripts have run. Critical for deploys.
-3. **Consolidate `scripts/` folder** — 110 PHP scripts → 15 essential ones.
-4. **Performance indexes** — audit missing indexes on hot paths.
+1. **Add `_migrations` table** — track which scripts have run. Critical for deploys.
+2. **Consolidate `scripts/` folder** — 110 PHP scripts → 15 essential ones.
+3. **Performance indexes** — audit missing indexes on hot paths.
+4. **Voice AI consolidation** — 7 voice/AI calling tables → 2.
 
 
 
