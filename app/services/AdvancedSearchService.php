@@ -248,15 +248,7 @@ class AdvancedSearchService {
     public function saveSearchHistory($userId, $searchTerm, $filters = []) {
         try {
             // Create search_history table if it doesn't exist
-            $this->db->exec("CREATE TABLE IF NOT EXISTS search_history (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT,
-                search_term VARCHAR(255),
-                filters TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_user_id (user_id),
-                INDEX idx_search_term (search_term)
-            )");
+            $this->db->exec("");
             
             $stmt = $this->db->prepare("INSERT INTO search_history (user_id, search_term, filters) VALUES (?, ?, ?)");
             $stmt->execute([$userId, $searchTerm, json_encode($filters)]);

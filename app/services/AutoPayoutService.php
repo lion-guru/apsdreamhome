@@ -23,18 +23,7 @@ class AutoPayoutService
 
     private function ensureTableExists()
     {
-        $sql = "CREATE TABLE IF NOT EXISTS mlm_payout_batches (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            initiated_by INT NOT NULL,
-            total_agents INT DEFAULT 0,
-            total_amount DECIMAL(15, 2) DEFAULT 0,
-            status ENUM('processing', 'completed', 'failed') DEFAULT 'processing',
-            remarks TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            completed_at DATETIME NULL,
-            INDEX idx_status (status),
-            INDEX idx_initiated_by (initiated_by)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+        $sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
         $this->db->query($sql);
     }
 

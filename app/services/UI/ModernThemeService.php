@@ -86,53 +86,13 @@ class ModernThemeService
         $pdo = $this->database->getConnection();
         
         // User preferences table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS user_theme_preferences (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('admin', 'employee', 'associate', 'customer') DEFAULT 'admin',
-            theme_preset VARCHAR(20) DEFAULT 'light',
-            is_dark_mode TINYINT(1) DEFAULT 0,
-            sidebar_collapsed TINYINT(1) DEFAULT 0,
-            compact_mode TINYINT(1) DEFAULT 0,
-            custom_colors JSON NULL,
-            font_size ENUM('small', 'normal', 'large') DEFAULT 'normal',
-            animations_enabled TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_user (user_id, user_type)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Quick actions table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS user_quick_actions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('admin', 'employee', 'associate', 'customer') DEFAULT 'admin',
-            action_name VARCHAR(50) NOT NULL,
-            action_icon VARCHAR(50) NULL,
-            action_url VARCHAR(255) NOT NULL,
-            display_order INT DEFAULT 0,
-            is_active TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id, user_type),
-            INDEX idx_order (display_order)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Dashboard widgets
-        $pdo->exec("CREATE TABLE IF NOT EXISTS user_dashboard_widgets (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('admin', 'employee', 'associate', 'customer') DEFAULT 'admin',
-            widget_type VARCHAR(50) NOT NULL,
-            widget_title VARCHAR(100) NULL,
-            widget_config JSON NULL,
-            position_x INT DEFAULT 0,
-            position_y INT DEFAULT 0,
-            width INT DEFAULT 4,
-            height INT DEFAULT 4,
-            is_visible TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id, user_type)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

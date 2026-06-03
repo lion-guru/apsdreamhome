@@ -431,50 +431,11 @@ class AlertEscalationService
     private function initializeEscalationTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS alerts (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                type VARCHAR(100) NOT NULL,
-                message TEXT NOT NULL,
-                data JSON,
-                severity INT NOT NULL DEFAULT 1,
-                status ENUM('pending', 'escalated', 'resolved', 'dismissed') DEFAULT 'pending',
-                resolution TEXT,
-                dismissal_reason TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                resolved_at TIMESTAMP NULL,
-                dismissed_at TIMESTAMP NULL,
-                INDEX idx_type (type),
-                INDEX idx_severity (severity),
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS alert_escalations (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                alert_id INT NOT NULL,
-                escalation_level INT NOT NULL,
-                escalated_to VARCHAR(255),
-                escalation_reason TEXT,
-                status ENUM('pending', 'escalated', 'resolved', 'dismissed') DEFAULT 'pending',
-                next_escalation_at TIMESTAMP,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (alert_id) REFERENCES alerts(id) ON DELETE CASCADE,
-                INDEX idx_alert_id (alert_id),
-                INDEX idx_status (status),
-                INDEX idx_next_escalation (next_escalation_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS escalation_rules (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                conditions JSON NOT NULL,
-                actions JSON NOT NULL,
-                enabled BOOLEAN DEFAULT 1,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_enabled (enabled)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

@@ -35,62 +35,11 @@ class PlottingService
     {
         try {
             // Land acquisitions table
-            $sql = "CREATE TABLE IF NOT EXISTS land_acquisitions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                acquisition_number VARCHAR(50) NOT NULL UNIQUE,
-                farmer_id INT,
-                land_area DECIMAL(10,2) NOT NULL,
-                land_area_unit VARCHAR(20) DEFAULT 'sqft',
-                location VARCHAR(255) NOT NULL,
-                village VARCHAR(100),
-                tehsil VARCHAR(100),
-                district VARCHAR(100),
-                state VARCHAR(100),
-                acquisition_date DATE NOT NULL,
-                acquisition_cost DECIMAL(15,2),
-                payment_status ENUM('pending','partial','completed') DEFAULT 'pending',
-                land_type ENUM('agricultural','residential','commercial','industrial') DEFAULT 'agricultural',
-                soil_type VARCHAR(100),
-                water_source VARCHAR(100),
-                electricity_available BOOLEAN DEFAULT FALSE,
-                road_access BOOLEAN DEFAULT FALSE,
-                documents JSON,
-                remarks TEXT,
-                status ENUM('active','sold','under_development','inactive') DEFAULT 'active',
-                created_by BIGINT(20) UNSIGNED,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (farmer_id) REFERENCES farmer_profiles(id) ON DELETE SET NULL,
-                FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-            )";
+            $sql = "";
             $this->database->query($sql);
 
             // Plots table
-            $sql = "CREATE TABLE IF NOT EXISTS plots (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                plot_number VARCHAR(50) NOT NULL,
-                land_acquisition_id INT NOT NULL,
-                plot_area DECIMAL(10,2) NOT NULL,
-                plot_area_unit VARCHAR(20) DEFAULT 'sqft',
-                plot_type ENUM('residential','commercial','industrial','mixed') DEFAULT 'residential',
-                dimensions_length DECIMAL(8,2),
-                dimensions_width DECIMAL(8,2),
-                corner_plot BOOLEAN DEFAULT FALSE,
-                park_facing BOOLEAN DEFAULT FALSE,
-                road_facing BOOLEAN DEFAULT FALSE,
-                status ENUM('available','booked','sold','blocked','cancelled') DEFAULT 'available',
-                current_price DECIMAL(15,2),
-                base_price DECIMAL(15,2),
-                plc_amount DECIMAL(15,2) DEFAULT 0,
-                other_charges DECIMAL(15,2) DEFAULT 0,
-                total_price DECIMAL(15,2),
-                remarks TEXT,
-                created_by BIGINT(20) UNSIGNED,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (land_acquisition_id) REFERENCES land_acquisitions(id) ON DELETE CASCADE,
-                FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-            )";
+            $sql = "";
             $this->database->query($sql);
 
             // Plot bookings table

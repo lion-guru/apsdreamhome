@@ -39,45 +39,12 @@ class WhatsAppManager
     private function createWhatsAppTables()
     {
         // WhatsApp messages table
-        $sql = "CREATE TABLE IF NOT EXISTS whatsapp_messages (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            message_id VARCHAR(100) NOT NULL UNIQUE,
-            recipient_phone VARCHAR(20) NOT NULL,
-            recipient_name VARCHAR(100),
-            message_type ENUM('template','text','image','document','audio','video','location') DEFAULT 'text',
-            template_name VARCHAR(100),
-            message_content TEXT,
-            media_url VARCHAR(500),
-            media_caption TEXT,
-            status ENUM('sent','delivered','read','failed','pending') DEFAULT 'pending',
-            sent_at TIMESTAMP NULL,
-            delivered_at TIMESTAMP NULL,
-            read_at TIMESTAMP NULL,
-            error_message TEXT,
-            response_data JSON,
-            created_by INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-        )";
+        $sql = "";
 
         $this->db->execute($sql);
 
         // WhatsApp templates table
-        $sql = "CREATE TABLE IF NOT EXISTS whatsapp_templates (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            template_name VARCHAR(100) NOT NULL UNIQUE,
-            template_id VARCHAR(100),
-            category ENUM('MARKETING','UTILITY','AUTHENTICATION') DEFAULT 'UTILITY',
-            language VARCHAR(10) DEFAULT 'en',
-            status ENUM('APPROVED','PENDING','REJECTED','PAUSED') DEFAULT 'PENDING',
-            components JSON,
-            variables JSON,
-            created_by INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-        )";
+        $sql = "";
 
         $this->db->execute($sql);
 

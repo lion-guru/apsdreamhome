@@ -30,47 +30,13 @@ class JWTAuthService
         $pdo = $this->database->getConnection();
         
         // API tokens table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS api_tokens (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'associate', 'agent', 'admin') NOT NULL,
-            token VARCHAR(500) NOT NULL,
-            refresh_token VARCHAR(500) NULL,
-            device_info JSON NULL,
-            ip_address VARCHAR(45) NULL,
-            last_used_at TIMESTAMP NULL,
-            expires_at TIMESTAMP NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_token (token),
-            INDEX idx_user (user_id, user_type),
-            INDEX idx_expires (expires_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Push notification tokens
-        $pdo->exec("CREATE TABLE IF NOT EXISTS push_tokens (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'associate', 'agent', 'admin') NOT NULL,
-            device_token VARCHAR(255) NOT NULL,
-            platform ENUM('android', 'ios') NOT NULL,
-            device_id VARCHAR(100) NULL,
-            is_active TINYINT(1) DEFAULT 1,
-            last_used_at TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_device (user_id, user_type, device_id),
-            INDEX idx_user (user_id, user_type)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // API rate limiting
-        $pdo->exec("CREATE TABLE IF NOT EXISTS api_rate_limits (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            identifier VARCHAR(100) NOT NULL,
-            endpoint VARCHAR(100) NOT NULL,
-            request_count INT DEFAULT 1,
-            window_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_window (identifier, endpoint, window_start),
-            INDEX idx_identifier (identifier)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

@@ -460,19 +460,7 @@ class SecurityService
     private function createSecurityTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS security_logs (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event_type VARCHAR(50) NOT NULL,
-                level INT NOT NULL,
-                ip_address VARCHAR(45),
-                user_agent TEXT,
-                user_id INT,
-                event_data JSON,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_event_type (event_type),
-                INDEX idx_level (level),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
             "CREATE TABLE IF NOT EXISTS rate_limits (
                 id INT AUTO_INCREMENT PRIMARY KEY,

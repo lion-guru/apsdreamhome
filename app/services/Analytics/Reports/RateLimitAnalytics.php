@@ -67,37 +67,12 @@ class RateLimitAnalytics {
     private function ensureTables() {
         // Rate limit events table
         $this->db->execute("
-            CREATE TABLE IF NOT EXISTS rate_limit_events (
-                id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                api_key_id VARCHAR(36) NOT NULL,
-                endpoint VARCHAR(255) NOT NULL,
-                requests INT NOT NULL,
-                limit_value INT NOT NULL,
-                window_size INT NOT NULL,
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_api_key (api_key_id),
-                INDEX idx_endpoint (endpoint),
-                INDEX idx_timestamp (timestamp)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         ");
 
         // Rate limit violations table
         $this->db->execute("
-            CREATE TABLE IF NOT EXISTS rate_limit_violations (
-                id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                api_key_id VARCHAR(36) NOT NULL,
-                endpoint VARCHAR(255) NOT NULL,
-                requests INT NOT NULL,
-                limit_value INT NOT NULL,
-                ip_address VARCHAR(45) NOT NULL,
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                action_taken VARCHAR(50) NULL,
-                resolved BOOLEAN DEFAULT FALSE,
-                resolution_notes TEXT NULL,
-                INDEX idx_api_key (api_key_id),
-                INDEX idx_endpoint (endpoint),
-                INDEX idx_timestamp (timestamp)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         ");
     }
 

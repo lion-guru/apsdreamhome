@@ -32,20 +32,7 @@ class LocalizationService
         $pdo = $this->database->getConnection();
         
         // Supported locales
-        $pdo->exec("CREATE TABLE IF NOT EXISTS supported_locales (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            code VARCHAR(5) NOT NULL UNIQUE,
-            name VARCHAR(50) NOT NULL,
-            native_name VARCHAR(50) NOT NULL,
-            is_rtl TINYINT(1) DEFAULT 0,
-            is_active TINYINT(1) DEFAULT 1,
-            is_default TINYINT(1) DEFAULT 0,
-            sort_order INT DEFAULT 0,
-            flag_icon VARCHAR(20) NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_active (is_active),
-            INDEX idx_default (is_default)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Translations
         $pdo->exec("CREATE TABLE IF NOT EXISTS translations (
@@ -63,20 +50,7 @@ class LocalizationService
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // User preferences
-        $pdo->exec("CREATE TABLE IF NOT EXISTS user_locale_preferences (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'associate', 'agent', 'admin') NOT NULL,
-            locale VARCHAR(5) NOT NULL,
-            timezone VARCHAR(50) DEFAULT 'Asia/Kolkata',
-            date_format VARCHAR(20) DEFAULT 'd M Y',
-            time_format VARCHAR(20) DEFAULT 'h:i A',
-            currency_code VARCHAR(3) DEFAULT 'INR',
-            number_format VARCHAR(10) DEFAULT 'en_IN',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_user (user_id, user_type)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Seed default locales
         $this->seedLocales();

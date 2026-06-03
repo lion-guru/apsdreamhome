@@ -398,21 +398,7 @@ class EventMonitorService
     private function initializeMonitoringTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS event_logs (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event_name VARCHAR(255) NOT NULL,
-                event_data JSON,
-                severity INT DEFAULT 1,
-                status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
-                error_message TEXT,
-                execution_time_ms DECIMAL(10,2),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_event_name (event_name),
-                INDEX idx_severity (severity),
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
             "CREATE TABLE IF NOT EXISTS security_events (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -427,18 +413,7 @@ class EventMonitorService
                 INDEX idx_created_at (created_at)
             )",
             
-            "CREATE TABLE IF NOT EXISTS security_alerts (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                alert_type VARCHAR(100) NOT NULL,
-                message TEXT,
-                alert_data JSON,
-                severity INT NOT NULL,
-                status ENUM('active', 'resolved', 'dismissed') DEFAULT 'active',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                resolved_at TIMESTAMP NULL,
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

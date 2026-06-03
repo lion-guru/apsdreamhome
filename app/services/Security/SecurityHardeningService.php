@@ -379,33 +379,9 @@ class SecurityHardeningService
                 INDEX idx_enabled (enabled)
             )",
             
-            "CREATE TABLE IF NOT EXISTS security_incidents (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                incident_type VARCHAR(100) NOT NULL,
-                description TEXT,
-                incident_data JSON,
-                severity INT NOT NULL DEFAULT 2,
-                ip_address VARCHAR(45),
-                user_agent TEXT,
-                resolved BOOLEAN DEFAULT FALSE,
-                resolved_at TIMESTAMP NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_type (incident_type),
-                INDEX idx_severity (severity),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS blocked_ips (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                ip_address VARCHAR(45) NOT NULL,
-                reason TEXT,
-                expires_at TIMESTAMP NOT NULL,
-                created_by VARCHAR(255),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                UNIQUE KEY unique_ip (ip_address),
-                INDEX idx_expires_at (expires_at)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

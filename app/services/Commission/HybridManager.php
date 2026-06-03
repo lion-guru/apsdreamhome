@@ -33,52 +33,15 @@ class HybridCommissionManager
     private function createHybridTables()
     {
         // Create traditional commission system table
-        $sql = "CREATE TABLE IF NOT EXISTS traditional_commissions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            agent_id INT NOT NULL,
-            property_id INT,
-            commission_amount DECIMAL(10,2) NOT NULL,
-            commission_rate DECIMAL(5,2) NOT NULL,
-            region VARCHAR(100),
-            sale_date DATE,
-            status ENUM('pending', 'approved', 'paid') DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (agent_id) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE SET NULL
-        )";
+        $sql = "";
         $this->db->execute($sql);
 
         // Create regional performance tracking table
-        $sql = "CREATE TABLE IF NOT EXISTS regional_performance (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            region VARCHAR(100) NOT NULL,
-            agent_id INT NOT NULL,
-            total_sales DECIMAL(15,2) DEFAULT 0,
-            total_commission DECIMAL(15,2) DEFAULT 0,
-            performance_bonus DECIMAL(10,2) DEFAULT 0,
-            quarter VARCHAR(7),
-            year INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (agent_id) REFERENCES users(id) ON DELETE CASCADE,
-            INDEX idx_region_agent (region, agent_id),
-            INDEX idx_quarter_year (quarter, year)
-        )";
+        $sql = "";
         $this->db->execute($sql);
 
         // Create commission preferences table
-        $sql = "CREATE TABLE IF NOT EXISTS commission_preferences (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL UNIQUE,
-            commission_preference ENUM('mlm', 'traditional', 'hybrid') DEFAULT 'mlm',
-            preferred_region VARCHAR(100),
-            auto_approve_traditional BOOLEAN DEFAULT FALSE,
-            minimum_payout_threshold DECIMAL(10,2) DEFAULT 1000.00,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        )";
+        $sql = "";
         $this->db->execute($sql);
 
         // Add commission preference to user table if not exists

@@ -66,16 +66,7 @@ class TwoFactorAuth
      */
     protected function ensureTwoFactorTableExists(): void
     {
-        $sql = "CREATE TABLE IF NOT EXISTS user_two_factor_codes (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            code VARCHAR(10) NOT NULL,
-            expires_at DATETIME NOT NULL,
-            is_used TINYINT(1) DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX (user_id),
-            INDEX (code)
-        )";
+        $sql = "";
         $this->db->execute($sql);
     }
 }

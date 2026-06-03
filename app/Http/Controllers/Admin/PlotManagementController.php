@@ -1224,22 +1224,7 @@ class PlotManagementController extends AdminController
             try {
                 // Ensure plot_transfers table exists
                 try {
-                    $this->db->execute("CREATE TABLE IF NOT EXISTS plot_transfers (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        plot_id INT NOT NULL,
-                        from_customer_id BIGINT NULL,
-                        to_customer_id BIGINT NOT NULL,
-                        transfer_date DATE NOT NULL,
-                        transfer_reason VARCHAR(255) NOT NULL,
-                        transfer_amount DECIMAL(15,2) DEFAULT 0,
-                        transfer_fee DECIMAL(15,2) DEFAULT 0,
-                        old_status VARCHAR(50) DEFAULT '',
-                        new_status VARCHAR(50) DEFAULT 'sold',
-                        document_ref VARCHAR(255) DEFAULT '',
-                        remarks TEXT,
-                        processed_by INT DEFAULT 0,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+                    $this->db->execute("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
                 } catch (\Exception $e) {
                             error_log("PlotManagementController.php: " . $e->getMessage());
                 }

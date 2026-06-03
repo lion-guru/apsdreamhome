@@ -37,21 +37,7 @@ class MLMIncentiveService
 
     private function ensureTableExists()
     {
-        $sql = "CREATE TABLE IF NOT EXISTS mlm_monthly_incentives (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            month INT NOT NULL,
-            year INT NOT NULL,
-            rank_at_time VARCHAR(50),
-            target_business DECIMAL(15,2),
-            achieved_business DECIMAL(15,2),
-            incentive_amount DECIMAL(15,2),
-            status ENUM('pending', 'approved', 'paid', 'failed') DEFAULT 'pending',
-            remarks TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY user_month_year (user_id, month, year)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+        $sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
         
         $this->db->query($sql);
     }

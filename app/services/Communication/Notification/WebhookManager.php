@@ -87,33 +87,10 @@ class WebhookManager
     private function ensureWebhookTable()
     {
         $this->db->execute("
-            CREATE TABLE IF NOT EXISTS webhooks (
-                id VARCHAR(36) PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
-                url VARCHAR(255) NOT NULL,
-                secret VARCHAR(255) NOT NULL,
-                events JSON NOT NULL,
-                headers JSON,
-                enabled BOOLEAN DEFAULT TRUE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )
-        ");
+            ");
 
         $this->db->execute("
-            CREATE TABLE IF NOT EXISTS webhook_logs (
-                id VARCHAR(36) PRIMARY KEY,
-                webhook_id VARCHAR(36) NOT NULL,
-                event_type VARCHAR(50) NOT NULL,
-                payload JSON NOT NULL,
-                response_code INT,
-                response_body TEXT,
-                status ENUM('success', 'failed', 'retrying') NOT NULL,
-                retry_count INT DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (webhook_id) REFERENCES webhooks(id) ON DELETE CASCADE
-            )
-        ");
+            ");
     }
 
     /**

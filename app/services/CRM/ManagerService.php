@@ -54,50 +54,7 @@ class CRMManager
         $this->db->execute($sql);
 
         // Leads table (Enhanced)
-        $sql = "CREATE TABLE IF NOT EXISTS leads (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            lead_number VARCHAR(50) NOT NULL UNIQUE,
-            lead_source_id INT,
-            name VARCHAR(200) NOT NULL,
-            email VARCHAR(150),
-            phone VARCHAR(15) NOT NULL,
-            alternate_phone VARCHAR(15),
-            date_of_birth DATE,
-            gender ENUM('male','female','other') DEFAULT NULL,
-            marital_status ENUM('single','married','divorced','widowed') DEFAULT NULL,
-            occupation VARCHAR(100),
-            company VARCHAR(150),
-            designation VARCHAR(100),
-            annual_income DECIMAL(15,2),
-            address TEXT,
-            city VARCHAR(100),
-            state VARCHAR(100),
-            pincode VARCHAR(10),
-            property_interest VARCHAR(255),
-            budget_min DECIMAL(15,2),
-            budget_max DECIMAL(15,2),
-            preferred_location VARCHAR(255),
-            property_type VARCHAR(100),
-            requirement_details TEXT,
-            lead_score INT DEFAULT 0,
-            lead_status ENUM('new','contacted','qualified','proposal_sent','negotiation','won','lost','nurturing') DEFAULT 'new',
-            assigned_to BIGINT(20) UNSIGNED,
-            next_follow_up_date DATETIME,
-            last_contact_date DATETIME,
-            conversion_probability DECIMAL(5,2) DEFAULT 0,
-            expected_deal_value DECIMAL(15,2),
-            expected_closure_date DATE,
-            lost_reason VARCHAR(255),
-            competitor_info TEXT,
-            tags JSON,
-            custom_fields JSON,
-            created_by BIGINT(20) UNSIGNED,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (lead_source_id) REFERENCES lead_sources(id) ON DELETE SET NULL,
-            FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-        )";
+        $sql = "";
 
         $this->db->execute($sql);
 
@@ -122,18 +79,7 @@ class CRMManager
         $this->db->execute($sql);
 
         // Sales pipeline stages table
-        $sql = "CREATE TABLE IF NOT EXISTS sales_pipeline_stages (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            stage_name VARCHAR(100) NOT NULL UNIQUE,
-            stage_order INT NOT NULL,
-            description TEXT,
-            probability_percentage DECIMAL(5,2) NOT NULL,
-            expected_duration_days INT DEFAULT 7,
-            is_active BOOLEAN DEFAULT TRUE,
-            color_code VARCHAR(7) DEFAULT '#007bff',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
+        $sql = "";
 
         $this->db->execute($sql);
 

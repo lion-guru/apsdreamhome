@@ -485,54 +485,9 @@ class FarmerService
     private function initializeFarmerTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS farmers (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                full_name VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL UNIQUE,
-                phone VARCHAR(50),
-                address TEXT,
-                region VARCHAR(100),
-                district VARCHAR(100),
-                state VARCHAR(100),
-                pin_code VARCHAR(10),
-                aadhaar_number VARCHAR(12),
-                pan_number VARCHAR(10),
-                bank_account_number VARCHAR(50),
-                bank_ifsc VARCHAR(20),
-                status ENUM('active', 'inactive', 'suspended', 'blacklisted') DEFAULT 'active',
-                status_reason TEXT,
-                total_commission DECIMAL(15,2) DEFAULT 0.00,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_email (email),
-                INDEX idx_phone (phone),
-                INDEX idx_status (status),
-                INDEX idx_region (region),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS land_allocations (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                farmer_id INT NOT NULL,
-                plot_id VARCHAR(100) NOT NULL,
-                survey_number VARCHAR(100),
-                size_acres DECIMAL(10,2) NOT NULL,
-                land_type VARCHAR(100),
-                location TEXT,
-                coordinates VARCHAR(255),
-                allocation_date DATE NOT NULL,
-                expiry_date DATE,
-                status ENUM('pending', 'approved', 'rejected', 'transferred', 'revoked') DEFAULT 'pending',
-                allocation_amount DECIMAL(15,2),
-                commission_rate DECIMAL(5,2),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (farmer_id) REFERENCES farmers(id) ON DELETE CASCADE,
-                INDEX idx_farmer_id (farmer_id),
-                INDEX idx_plot_id (plot_id),
-                INDEX idx_status (status),
-                INDEX idx_allocation_date (allocation_date)
-            )",
+            "",
             
             "CREATE TABLE IF NOT EXISTS farmer_commissions (
                 id INT AUTO_INCREMENT PRIMARY KEY,

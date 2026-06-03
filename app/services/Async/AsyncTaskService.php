@@ -45,24 +45,7 @@ class AsyncTaskService
     {
         try {
             // Tasks table
-            $sql = "CREATE TABLE IF NOT EXISTS async_tasks (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                task_name VARCHAR(255) NOT NULL,
-                task_type VARCHAR(100) NOT NULL,
-                parameters JSON,
-                priority INT DEFAULT 2,
-                status VARCHAR(20) DEFAULT 'pending',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                started_at TIMESTAMP NULL,
-                completed_at TIMESTAMP NULL,
-                result JSON,
-                error_message TEXT,
-                retry_count INT DEFAULT 0,
-                max_retries INT DEFAULT 3,
-                progress_percentage INT DEFAULT 0,
-                assigned_worker VARCHAR(100)
-            )";
+            $sql = "";
             $this->database->query($sql);
 
             // Task queue table

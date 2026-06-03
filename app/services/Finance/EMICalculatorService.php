@@ -37,102 +37,22 @@ class EMICalculatorService
         $pdo = $this->database->getConnection();
         
         // EMI calculations history
-        $pdo->exec("CREATE TABLE IF NOT EXISTS emi_calculations (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NULL,
-            property_id INT NULL,
-            principal_amount DECIMAL(15,2) NOT NULL,
-            interest_rate DECIMAL(5,2) NOT NULL,
-            tenure_years INT NOT NULL,
-            emi_amount DECIMAL(15,2) NOT NULL,
-            total_interest DECIMAL(15,2) NOT NULL,
-            total_payment DECIMAL(15,2) NOT NULL,
-            bank_code VARCHAR(20) NULL,
-            calculation_data JSON NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id),
-            INDEX idx_property (property_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Payment plans
-        $pdo->exec("CREATE TABLE IF NOT EXISTS payment_plans (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NOT NULL,
-            plan_name VARCHAR(100) NOT NULL,
-            plan_type ENUM('construction', 'possession', 'custom') NOT NULL,
-            total_amount DECIMAL(15,2) NOT NULL,
-            down_payment_percent DECIMAL(5,2) DEFAULT 20,
-            number_of_installments INT NOT NULL,
-            installment_frequency ENUM('monthly', 'quarterly', 'milestone') DEFAULT 'milestone',
-            interest_applicable TINYINT(1) DEFAULT 0,
-            interest_rate DECIMAL(5,2) NULL,
-            description TEXT NULL,
-            is_active TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_property (property_id),
-            INDEX idx_active (is_active)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Payment plan milestones
-        $pdo->exec("CREATE TABLE IF NOT EXISTS payment_plan_milestones (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            plan_id INT NOT NULL,
-            milestone_order INT NOT NULL,
-            milestone_name VARCHAR(100) NOT NULL,
-            percentage DECIMAL(5,2) NOT NULL,
-            amount DECIMAL(15,2) NOT NULL,
-            due_date DATE NULL,
-            description TEXT NULL,
-            FOREIGN KEY (plan_id) REFERENCES payment_plans(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Buyer payment schedules
-        $pdo->exec("CREATE TABLE IF NOT EXISTS buyer_payment_schedules (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            property_id INT NOT NULL,
-            payment_plan_id INT NOT NULL,
-            total_amount DECIMAL(15,2) NOT NULL,
-            paid_amount DECIMAL(15,2) DEFAULT 0,
-            remaining_amount DECIMAL(15,2) NOT NULL,
-            status ENUM('active', 'completed', 'cancelled') DEFAULT 'active',
-            started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            completed_at TIMESTAMP NULL,
-            INDEX idx_user (user_id),
-            INDEX idx_property (property_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Installment details
-        $pdo->exec("CREATE TABLE IF NOT EXISTS payment_installments (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            schedule_id INT NOT NULL,
-            installment_number INT NOT NULL,
-            milestone_id INT NULL,
-            amount DECIMAL(15,2) NOT NULL,
-            due_date DATE NOT NULL,
-            paid_amount DECIMAL(15,2) DEFAULT 0,
-            paid_date DATE NULL,
-            status ENUM('pending', 'partial', 'paid', 'overdue') DEFAULT 'pending',
-            late_fee DECIMAL(10,2) DEFAULT 0,
-            notes TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_schedule (schedule_id),
-            INDEX idx_status (status)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Bank interest rates
-        $pdo->exec("CREATE TABLE IF NOT EXISTS bank_interest_rates (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            bank_code VARCHAR(20) NOT NULL UNIQUE,
-            bank_name VARCHAR(100) NOT NULL,
-            rate DECIMAL(5,2) NOT NULL,
-            max_tenure INT DEFAULT 30,
-            processing_fee_percent DECIMAL(5,2) DEFAULT 0.5,
-            min_loan_amount DECIMAL(15,2) DEFAULT 100000,
-            max_loan_amount DECIMAL(15,2) DEFAULT 100000000,
-            is_active TINYINT(1) DEFAULT 1,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Seed default rates
         $this->seedBankRates();

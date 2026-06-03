@@ -29,48 +29,13 @@ class MapService
         $pdo = $this->database->getConnection();
         
         // Property coordinates
-        $pdo->exec("CREATE TABLE IF NOT EXISTS property_coordinates (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NOT NULL,
-            latitude DECIMAL(10, 8) NOT NULL,
-            longitude DECIMAL(11, 8) NOT NULL,
-            address_formatted VARCHAR(255) NULL,
-            accuracy VARCHAR(20) NULL,
-            geocoded_at TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_property (property_id),
-            INDEX idx_coordinates (latitude, longitude),
-            INDEX idx_location (latitude, longitude, property_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Nearby places of interest
-        $pdo->exec("CREATE TABLE IF NOT EXISTS nearby_places (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NOT NULL,
-            place_type ENUM('school', 'hospital', 'market', 'mall', 'restaurant', 'bank', 'atm', 'park', 'temple', 'mosque', 'church', 'transit') NOT NULL,
-            place_name VARCHAR(100) NOT NULL,
-            distance_meters INT NOT NULL,
-            rating DECIMAL(2,1) NULL,
-            place_id VARCHAR(100) NULL,
-            latitude DECIMAL(10, 8) NULL,
-            longitude DECIMAL(11, 8) NULL,
-            walk_time_minutes INT NULL,
-            drive_time_minutes INT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_property (property_id),
-            INDEX idx_type (place_type),
-            INDEX idx_distance (property_id, distance_meters)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Map cache
-        $pdo->exec("CREATE TABLE IF NOT EXISTS map_cache (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            cache_key VARCHAR(100) NOT NULL UNIQUE,
-            response_data JSON NOT NULL,
-            expires_at TIMESTAMP NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_expires (expires_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

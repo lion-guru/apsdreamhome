@@ -49,51 +49,15 @@ class TestingFrameworkService
     {
         try {
             // Test results table
-            $sql = "CREATE TABLE IF NOT EXISTS test_results (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                test_suite VARCHAR(100) NOT NULL,
-                test_name VARCHAR(200) NOT NULL,
-                test_class VARCHAR(200),
-                status ENUM('passed', 'failed', 'skipped', 'error') NOT NULL,
-                execution_time DECIMAL(10,3) NOT NULL,
-                memory_usage DECIMAL(10,2),
-                error_message TEXT,
-                assertion_count INT DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_test_suite (test_suite),
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )";
+            $sql = "";
             $this->database->execute($sql);
 
             // Test coverage table
-            $sql = "CREATE TABLE IF NOT EXISTS test_coverage (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                test_run_id INT NOT NULL,
-                file_path VARCHAR(500) NOT NULL,
-                lines_covered TEXT,
-                lines_total INT,
-                coverage_percentage DECIMAL(5,2),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_test_run_id (test_run_id),
-                INDEX idx_file_path (file_path)
-            )";
+            $sql = "";
             $this->database->execute($sql);
 
             // Performance benchmarks table
-            $sql = "CREATE TABLE IF NOT EXISTS performance_benchmarks (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                test_name VARCHAR(200) NOT NULL,
-                metric_type VARCHAR(50) NOT NULL,
-                metric_value DECIMAL(10,3) NOT NULL,
-                baseline_value DECIMAL(10,3),
-                improvement_percentage DECIMAL(5,2),
-                test_date DATE NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_test_name (test_name),
-                INDEX idx_metric_type (metric_type),
-                INDEX idx_test_date (test_date)
-            )";
+            $sql = "";
             $this->database->execute($sql);
         } catch (Exception $e) {
             $this->logger->log("Error creating testing tables: " . $e->getMessage(), 'error', 'testing');

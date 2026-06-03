@@ -28,71 +28,19 @@ class QueueService
         $pdo = $this->database->getConnection();
         
         // Jobs table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS queue_jobs (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            queue VARCHAR(50) NOT NULL DEFAULT 'default',
-            job_class VARCHAR(255) NOT NULL,
-            job_data JSON NOT NULL,
-            attempts INT DEFAULT 0,
-            max_attempts INT DEFAULT 3,
-            reserved_at TIMESTAMP NULL,
-            available_at TIMESTAMP NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_queue_reserved (queue, reserved_at, available_at),
-            INDEX idx_available (available_at),
-            INDEX idx_attempts (attempts, max_attempts)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Failed jobs table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS failed_jobs (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            queue VARCHAR(50) NOT NULL,
-            job_class VARCHAR(255) NOT NULL,
-            job_data JSON NOT NULL,
-            exception TEXT NOT NULL,
-            failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_queue (queue),
-            INDEX idx_failed (failed_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Job batches (for batch processing)
-        $pdo->exec("CREATE TABLE IF NOT EXISTS job_batches (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            batch_id VARCHAR(50) NOT NULL UNIQUE,
-            total_jobs INT NOT NULL,
-            pending_jobs INT NOT NULL,
-            failed_jobs INT DEFAULT 0,
-            processed_jobs INT DEFAULT 0,
-            options JSON NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            finished_at TIMESTAMP NULL,
-            cancelled_at TIMESTAMP NULL,
-            INDEX idx_batch (batch_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Batch jobs
-        $pdo->exec("CREATE TABLE IF NOT EXISTS batch_jobs (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            batch_id VARCHAR(50) NOT NULL,
-            job_id BIGINT NOT NULL,
-            status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
-            INDEX idx_batch (batch_id),
-            INDEX idx_status (status)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Queue workers table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS queue_workers (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            worker_id VARCHAR(100) NOT NULL UNIQUE,
-            queue VARCHAR(50) NOT NULL,
-            process_id INT NOT NULL,
-            started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            last_seen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            jobs_processed INT DEFAULT 0,
-            is_active TINYINT(1) DEFAULT 1,
-            INDEX idx_queue (queue),
-            INDEX idx_active (is_active)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

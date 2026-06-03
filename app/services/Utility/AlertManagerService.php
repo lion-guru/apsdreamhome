@@ -537,41 +537,9 @@ class AlertManagerService
     private function initializeAlertTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS alerts (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                type VARCHAR(50) NOT NULL,
-                message TEXT NOT NULL,
-                data JSON,
-                priority INT NOT NULL DEFAULT 2,
-                status ENUM('pending', 'sent', 'failed', 'acknowledged') DEFAULT 'pending',
-                acknowledged_by VARCHAR(255),
-                acknowledged_at TIMESTAMP NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_type (type),
-                INDEX idx_priority (priority),
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS alert_queue (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                alert_id INT NOT NULL,
-                channel VARCHAR(50) NOT NULL,
-                recipient VARCHAR(255),
-                message TEXT NOT NULL,
-                priority INT NOT NULL DEFAULT 2,
-                status ENUM('pending', 'sent', 'failed') DEFAULT 'pending',
-                error_message TEXT,
-                retry_count INT DEFAULT 0,
-                last_retry_at TIMESTAMP NULL,
-                sent_at TIMESTAMP NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (alert_id) REFERENCES alerts(id) ON DELETE CASCADE,
-                INDEX idx_status (status),
-                INDEX idx_priority (priority),
-                INDEX idx_created_at (created_at)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

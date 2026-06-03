@@ -460,34 +460,9 @@ class EventDispatcherService
     private function initializeEventTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS event_logs (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event_name VARCHAR(255) NOT NULL,
-                event_data JSON,
-                event_id VARCHAR(255),
-                status ENUM('pending', 'processing', 'completed', 'failed', 'stopped') DEFAULT 'pending',
-                error_message TEXT,
-                execution_time_ms DECIMAL(10,2),
-                listeners_executed INT DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_event_name (event_name),
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS event_queue (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event_name VARCHAR(255) NOT NULL,
-                event_data JSON,
-                options JSON,
-                status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
-                error_message TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                processed_at TIMESTAMP NULL,
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

@@ -155,30 +155,9 @@ class SecurityPolicyService
     private function initializePolicyTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS security_policies (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                domain VARCHAR(50) NOT NULL,
-                name VARCHAR(255) NOT NULL,
-                rules JSON NOT NULL,
-                mode ENUM('strict', 'balanced', 'permissive') DEFAULT 'balanced',
-                enabled BOOLEAN DEFAULT TRUE,
-                created_by VARCHAR(255),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_domain (domain),
-                INDEX idx_enabled (enabled)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS policy_violations (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                policy_id INT NOT NULL,
-                violation_type VARCHAR(100),
-                description TEXT,
-                severity INT DEFAULT 2,
-                resolved BOOLEAN DEFAULT FALSE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (policy_id) REFERENCES security_policies(id) ON DELETE CASCADE
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

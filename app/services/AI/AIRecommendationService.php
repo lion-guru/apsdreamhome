@@ -24,57 +24,13 @@ class AIRecommendationService
         $pdo = $this->database->getConnection();
         
         // User preferences for recommendations
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_user_preferences (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'associate', 'agent') DEFAULT 'customer',
-            preferred_locations JSON NULL,
-            preferred_property_types JSON NULL,
-            budget_min DECIMAL(15,2) NULL,
-            budget_max DECIMAL(15,2) NULL,
-            preferred_amenities JSON NULL,
-            must_have_features JSON NULL,
-            family_size INT NULL,
-            purpose ENUM('investment', 'self_use', 'rental') NULL,
-            urgency_level ENUM('low', 'medium', 'high') DEFAULT 'medium',
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_user (user_id, user_type),
-            INDEX idx_user (user_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Recommendation history
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_recommendations (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type VARCHAR(20) DEFAULT 'customer',
-            property_id INT NOT NULL,
-            recommendation_score DECIMAL(5,2) NOT NULL,
-            recommendation_reason JSON NULL,
-            algorithm_used VARCHAR(50) NULL,
-            user_feedback ENUM('liked', 'disliked', 'viewed', 'ignored', 'booked') DEFAULT 'viewed',
-            feedback_timestamp TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id),
-            INDEX idx_property (property_id),
-            INDEX idx_score (recommendation_score)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // User behavior tracking
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_user_behavior (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            action_type ENUM('search', 'view', 'save', 'share', 'inquiry', 'visit', 'booking') NOT NULL,
-            property_id INT NULL,
-            search_keywords JSON NULL,
-            filters_used JSON NULL,
-            time_spent_seconds INT NULL,
-            session_id VARCHAR(100) NULL,
-            device_type VARCHAR(50) NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id),
-            INDEX idx_action (action_type),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

@@ -39,102 +39,19 @@ class FileManagerService
         $pdo = $this->database->getConnection();
         
         // Files table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS files (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            uuid VARCHAR(36) NOT NULL UNIQUE,
-            original_name VARCHAR(255) NOT NULL,
-            file_name VARCHAR(255) NOT NULL,
-            file_path VARCHAR(500) NOT NULL,
-            file_type VARCHAR(50) NOT NULL,
-            file_category ENUM('property', 'user', 'document', 'payment', 'general') DEFAULT 'general',
-            mime_type VARCHAR(100) NULL,
-            extension VARCHAR(10) NULL,
-            size_bytes BIGINT NOT NULL,
-            checksum VARCHAR(64) NULL,
-            uploaded_by INT NULL,
-            uploaded_by_type ENUM('customer', 'associate', 'agent', 'admin') NULL,
-            entity_type VARCHAR(50) NULL,
-            entity_id INT NULL,
-            is_public TINYINT(1) DEFAULT 0,
-            is_versioned TINYINT(1) DEFAULT 0,
-            version_number INT DEFAULT 1,
-            parent_file_id BIGINT NULL,
-            metadata JSON NULL,
-            description TEXT NULL,
-            tags JSON NULL,
-            download_count INT DEFAULT 0,
-            last_downloaded_at TIMESTAMP NULL,
-            expires_at TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_uuid (uuid),
-            INDEX idx_category (file_category),
-            INDEX idx_entity (entity_type, entity_id),
-            INDEX idx_uploaded (uploaded_by, uploaded_by_type),
-            INDEX idx_type (file_type),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // File versions
-        $pdo->exec("CREATE TABLE IF NOT EXISTS file_versions (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            file_id BIGINT NOT NULL,
-            version_number INT NOT NULL,
-            file_name VARCHAR(255) NOT NULL,
-            file_path VARCHAR(500) NOT NULL,
-            size_bytes BIGINT NOT NULL,
-            checksum VARCHAR(64) NULL,
-            created_by INT NULL,
-            change_notes TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_version (file_id, version_number),
-            INDEX idx_file (file_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // File shares
-        $pdo->exec("CREATE TABLE IF NOT EXISTS file_shares (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            file_id BIGINT NOT NULL,
-            shared_by INT NOT NULL,
-            shared_with_email VARCHAR(255) NULL,
-            shared_with_user_id INT NULL,
-            share_token VARCHAR(64) NOT NULL,
-            permissions ENUM('view', 'download', 'edit') DEFAULT 'view',
-            password_hash VARCHAR(255) NULL,
-            expires_at TIMESTAMP NULL,
-            access_count INT DEFAULT 0,
-            last_accessed_at TIMESTAMP NULL,
-            is_active TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_token (share_token),
-            INDEX idx_file (file_id),
-            INDEX idx_active (is_active)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // File access logs
-        $pdo->exec("CREATE TABLE IF NOT EXISTS file_access_logs (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            file_id BIGINT NOT NULL,
-            user_id INT NULL,
-            user_type VARCHAR(20) NULL,
-            action ENUM('view', 'download', 'upload', 'delete', 'share', 'version') NOT NULL,
-            ip_address VARCHAR(45) NULL,
-            user_agent TEXT NULL,
-            success TINYINT(1) DEFAULT 1,
-            error_message TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_file (file_id),
-            INDEX idx_action (action),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // File tags
-        $pdo->exec("CREATE TABLE IF NOT EXISTS file_tags (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(50) NOT NULL UNIQUE,
-            color VARCHAR(7) DEFAULT '#6c757d',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // File-tag relationship
         $pdo->exec("CREATE TABLE IF NOT EXISTS file_tag_relations (

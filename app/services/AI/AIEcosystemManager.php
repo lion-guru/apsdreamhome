@@ -100,58 +100,12 @@ class AIEcosystemManager {
         }
 
         $queries = [
-            "CREATE TABLE IF NOT EXISTS ai_ecosystem_tools (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) UNIQUE,
-                category ENUM('data_processing', 'model_training', 'analysis', 'visualization', 'automation'),
-                source_url VARCHAR(255),
-                status ENUM('active', 'maintenance', 'deprecated') DEFAULT 'active',
-                capabilities JSON,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
-            "CREATE TABLE IF NOT EXISTS ai_data_pipelines (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255),
-                tool_id INT,
-                config JSON,
-                status ENUM('idle', 'running', 'completed', 'failed') DEFAULT 'idle',
-                last_run TIMESTAMP NULL,
-                FOREIGN KEY (tool_id) REFERENCES ai_ecosystem_tools(id)
-            )",
-            "CREATE TABLE IF NOT EXISTS ai_training_sessions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                model_name VARCHAR(255),
-                dataset_info JSON,
-                accuracy FLOAT,
-                status ENUM('queued', 'training', 'ready') DEFAULT 'queued',
-                completed_at TIMESTAMP NULL
-            )",
-            "CREATE TABLE IF NOT EXISTS ai_audit_log (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                action VARCHAR(100),
-                details JSON,
-                status VARCHAR(20),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
-            "CREATE TABLE IF NOT EXISTS ai_user_suggestions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NULL,
-                category ENUM('website', 'software', 'company', 'other') DEFAULT 'other',
-                suggestion TEXT,
-                sentiment ENUM('positive', 'neutral', 'negative') DEFAULT 'neutral',
-                priority ENUM('low', 'medium', 'high') DEFAULT 'low',
-                status ENUM('pending', 'reviewed', 'implemented', 'rejected') DEFAULT 'pending',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
-            "CREATE TABLE IF NOT EXISTS ai_agents (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100) UNIQUE,
-                type VARCHAR(50),
-                capabilities JSON,
-                status ENUM('active', 'idle', 'busy', 'offline') DEFAULT 'idle',
-                current_workload INT DEFAULT 0,
-                last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "CREATE TABLE IF NOT EXISTS ai_chat_history (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 conversation_id INT NULL,
@@ -163,50 +117,12 @@ class AIEcosystemManager {
                 confidence_score FLOAT DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )",
-            "CREATE TABLE IF NOT EXISTS ai_learning_data (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NULL,
-                property_id INT,
-                action_type VARCHAR(50),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
-            "CREATE TABLE IF NOT EXISTS user_search_history (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NULL,
-                search_query TEXT,
-                filters JSON NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
+            "",
+            "",
             "ALTER TABLE chat_sessions ADD COLUMN IF NOT EXISTS last_sentiment ENUM('positive', 'neutral', 'negative') DEFAULT 'neutral' AFTER session_status",
-            "CREATE TABLE IF NOT EXISTS ai_knowledge_graph (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                entity_type VARCHAR(50),
-                entity_value VARCHAR(255),
-                confidence FLOAT DEFAULT 1.0,
-                related_to_user INT NULL,
-                metadata JSON NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE KEY entity_user (entity_type, entity_value, related_to_user)
-            )",
-            "CREATE TABLE IF NOT EXISTS ai_workflows (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100) UNIQUE,
-                description TEXT,
-                nodes JSON,
-                is_active BOOLEAN DEFAULT TRUE,
-                last_run TIMESTAMP NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
-            "CREATE TABLE IF NOT EXISTS workflow_executions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                workflow_id INT,
-                status ENUM('running', 'success', 'failed') DEFAULT 'running',
-                execution_log JSON,
-                context JSON,
-                duration_ms INT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (workflow_id) REFERENCES ai_workflows(id)
-            )"
+            "",
+            "",
+            ""
         ];
         foreach ($queries as $q) {
             try {
