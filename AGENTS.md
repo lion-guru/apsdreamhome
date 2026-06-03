@@ -5,9 +5,12 @@
 ### Final State
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
-| **Total tables** | 756 | **471** | **-285 (-37.7%)** |
+| **Total tables** | 756 | **470** | **-286 (-37.8%)** |
 | **E2E tests** | 163/164 | 163/164 | **Zero regressions** |
 | **Total rows** | 54,762 | ~40K | -14K (mostly fake seed data) |
+| **Performance indexes** | 66 | **78** | **+12 (hot paths)** |
+| **Scripts** | 145 | 24 in root | 121 archived in `_archive/` |
+| **Voice AI tables** | 6 | 5 | -1 (logs merged into sessions) |
 
 ### Cleanup Phases Executed (11 Phases)
 | Phase | Tables Dropped | Strategy |
@@ -45,11 +48,21 @@
 - `scripts/deep_domain_audit.php` — Full DB analysis
 - `scripts/_check_key_tables.php` — Schema inspection helper
 - `scripts/_bank_schema.php` — Bank table comparator
+- `scripts/create_migrations_table.php` — Init _migrations tracking table
+- `scripts/track_migration.php` — Mark a script as applied
+- `scripts/view_migrations.php` — View migration history
+- `scripts/audit_indexes.php` — Audit missing performance indexes
+- `scripts/apply_missing_indexes.php` — Apply missing indexes
+- `scripts/consolidate_voice_logs.php` — Backup voice logs (intermediate)
+- `scripts/consolidate_voice_logs_complete.php` — Complete voice AI consolidation
 
 ### Commits This Session
 - `0ea88637b` — AI schema cleanup (23 tables)
 - (Phases 4-10 consolidated in 5 commits)
-- Final: 756 → 471 tables
+- Voice AI consolidation: 6 → 5 tables
+- _migrations table + 12 missing performance indexes
+- scripts/ folder: 145 → 24 essential
+- Final: 756 → 470 tables
 
 ### **PAUSED** — Aggressive Drops Stopped Per User Request
 Remaining 285 dead tables would require either:
@@ -59,11 +72,11 @@ Remaining 285 dead tables would require either:
 **Decision**: Stop at 471 tables. The 37.7% reduction is excellent. Remaining items are low-value features with at least 1 working code reference — keeping them is safe.
 
 ### Next Priority (Recommended, when user wants to resume)
-1. **Add `_migrations` table** — track which scripts have run. Critical for deploys.
-2. **Consolidate `scripts/` folder** — 50+ cleanup scripts → 15 essential ones.
-3. **Performance indexes** — audit missing indexes on hot paths.
-4. **Voice AI consolidation** — 7 voice/AI calling tables → 2.
-5. **Unified polymorphic tables** (user_addresses, user_bank_details, user_kyc) — polymorphic shared design.
+1. **Unified polymorphic tables** (user_addresses, user_bank_details, user_kyc) — polymorphic shared design.
+2. **Voice AI phase 2** — merge `ai_calling_schedule` into `ai_call_sessions` (more risky, 42 refs).
+3. **Polymorphic notifications** — `notifications` + `notification_queue` + `email_queue` + `sms_queue` → 1 polymorphic table.
+4. **Property/plot merge** — `plots` (194) + `inventory_plots` (417) + `plot_master` (77) → 1 canonical.
+5. **Document consolidation** — 7 document tables (business_, customer_, employee_, farmer_, user_, property_) → 1 polymorphic.
 
 ---
 
