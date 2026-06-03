@@ -192,7 +192,7 @@ class AuthMiddleware {
             echo json_encode(['error' => $message]);
             exit;
         }
-        header('Location: /login');
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
         exit;
     }
 }

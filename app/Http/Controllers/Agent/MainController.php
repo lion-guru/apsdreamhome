@@ -125,7 +125,7 @@ class AgentController extends BaseController
     public function logout()
     {
         session_destroy();
-        header("Location: /login");
+        header("Location: " . (defined('BASE_URL') ? BASE_URL : '') . "/login");
         exit();
     }
 }

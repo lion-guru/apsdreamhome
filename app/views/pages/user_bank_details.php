@@ -7,7 +7,7 @@
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['flash_error'] = 'Please login first';
-    header('Location: /login?redirect=/user/bank-details');
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login?redirect=/user/bank-details');
     exit;
 }
 

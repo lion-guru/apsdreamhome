@@ -159,7 +159,7 @@ class AuthMiddleware
                 echo json_encode(['error' => 'Employee authentication required']);
                 exit;
             }
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
     }
@@ -176,7 +176,7 @@ class AuthMiddleware
                 echo json_encode(['error' => 'Customer authentication required']);
                 exit;
             }
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
     }
@@ -193,7 +193,7 @@ class AuthMiddleware
                 echo json_encode(['error' => 'Associate authentication required']);
                 exit;
             }
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
     }
@@ -212,7 +212,7 @@ class AuthMiddleware
                 echo json_encode(['error' => 'Authentication required']);
                 exit;
             }
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
     }

@@ -290,7 +290,7 @@ function customerAuth()
             echo json_encode(['error' => 'Customer authentication required']);
             exit;
         }
-        header('Location: /login');
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
         exit;
     }
 }
@@ -305,7 +305,7 @@ function associateAuth()
             echo json_encode(['error' => 'Associate authentication required']);
             exit;
         }
-        header('Location: /login');
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
         exit;
     }
 }
@@ -324,7 +324,7 @@ function auth()
             echo json_encode(['error' => 'Authentication required']);
             exit;
         }
-        header('Location: /login');
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
         exit;
     }
 }
