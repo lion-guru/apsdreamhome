@@ -44,21 +44,7 @@ class PerformanceMonitoringService
             $this->database->execute($sql);
 
             // Performance alerts
-            $sql = "CREATE TABLE IF NOT EXISTS performance_alerts (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                alert_type VARCHAR(50) NOT NULL,
-                alert_message TEXT NOT NULL,
-                current_value DECIMAL(10,2) NOT NULL,
-                threshold_value DECIMAL(10,2) NOT NULL,
-                severity ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
-                resolved BOOLEAN DEFAULT FALSE,
-                resolved_at TIMESTAMP NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_alert_type (alert_type),
-                INDEX idx_severity (severity),
-                INDEX idx_resolved (resolved),
-                INDEX idx_created_at (created_at)
-            )";
+            $sql = "";
             $this->database->execute($sql);
         } catch (Exception $e) {
             $this->logger->logUserActivity(0, "performance_table_creation_error", ["error" => $e->getMessage()]);

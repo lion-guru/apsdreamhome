@@ -236,21 +236,7 @@ class EventService
 
             // Event queue table
             $this->db->execute("
-                CREATE TABLE IF NOT EXISTS event_queue (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    event_id VARCHAR(36) NOT NULL,
-                    event_name VARCHAR(255) NOT NULL,
-                    event_data TEXT,
-                    event_type VARCHAR(50) NOT NULL,
-                    priority INT DEFAULT 2,
-                    processed BOOLEAN DEFAULT FALSE,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    processed_at TIMESTAMP NULL,
-                    INDEX idx_processed (processed),
-                    INDEX idx_priority (priority),
-                    INDEX idx_created_at (created_at)
-                )
-            ");
+                ");
 
             error_log("Event tables created/verified");
         } catch (\Exception $e) {

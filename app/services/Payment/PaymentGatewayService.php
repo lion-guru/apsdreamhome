@@ -67,20 +67,7 @@ class PaymentGatewayService
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Webhook logs
-        $pdo->exec("CREATE TABLE IF NOT EXISTS payment_webhook_logs (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            gateway VARCHAR(20) NOT NULL,
-            event_type VARCHAR(100) NOT NULL,
-            payload JSON NOT NULL,
-            signature VARCHAR(255) NULL,
-            is_valid TINYINT(1) DEFAULT 0,
-            processed TINYINT(1) DEFAULT 0,
-            processed_at TIMESTAMP NULL,
-            error_message TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_gateway (gateway),
-            INDEX idx_processed (processed)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

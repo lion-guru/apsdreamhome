@@ -54,14 +54,7 @@ class FileManagerService
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // File-tag relationship
-        $pdo->exec("CREATE TABLE IF NOT EXISTS file_tag_relations (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            file_id BIGINT NOT NULL,
-            tag_id INT NOT NULL,
-            UNIQUE KEY unique_relation (file_id, tag_id),
-            INDEX idx_file (file_id),
-            INDEX idx_tag (tag_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

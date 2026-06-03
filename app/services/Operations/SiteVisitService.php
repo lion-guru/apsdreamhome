@@ -41,17 +41,7 @@ class SiteVisitService
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Visit analytics
-        $pdo->exec("CREATE TABLE IF NOT EXISTS visit_analytics (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NOT NULL,
-            visit_date DATE NOT NULL,
-            total_visits INT DEFAULT 0,
-            completed_visits INT DEFAULT 0,
-            cancelled_visits INT DEFAULT 0,
-            avg_rating DECIMAL(2,1) NULL,
-            conversion_count INT DEFAULT 0,
-            UNIQUE KEY unique_date (property_id, visit_date)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

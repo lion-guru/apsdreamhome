@@ -181,16 +181,7 @@ function createLeadsTable($pdo)
     $pdo->exec($create_sql);
 
     // Create lead logs table
-    $create_logs_sql = "CREATE TABLE IF NOT EXISTS lead_logs (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        lead_id INT NOT NULL,
-        action VARCHAR(50) NOT NULL,
-        details TEXT,
-        created_at DATETIME NOT NULL,
-        FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE,
-        INDEX idx_lead_id (lead_id),
-        INDEX idx_action (action)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    $create_logs_sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
     $pdo->exec($create_logs_sql);
 }

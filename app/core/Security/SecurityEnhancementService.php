@@ -57,35 +57,11 @@ class SecurityEnhancementService
             $this->database->execute($sql);
 
             // Rate limiting table
-            $sql = "CREATE TABLE IF NOT EXISTS rate_limits (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                ip_address VARCHAR(45) NOT NULL,
-                request_type VARCHAR(50) NOT NULL,
-                request_count INT DEFAULT 1,
-                window_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                window_duration INT DEFAULT 300, -- 5 minutes
-                blocked BOOLEAN DEFAULT FALSE,
-                INDEX idx_ip_type (ip_address, request_type),
-                INDEX idx_window_start (window_start)
-            )";
+            $sql = "";
             $this->database->execute($sql);
 
             // Vulnerability scans
-            $sql = "CREATE TABLE IF NOT EXISTS vulnerability_scans (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                scan_type VARCHAR(50) NOT NULL,
-                target VARCHAR(255),
-                vulnerability_type VARCHAR(100),
-                severity ENUM('low', 'medium', 'high', 'critical'),
-                description TEXT,
-                recommendation TEXT,
-                status ENUM('open', 'fixed', 'ignored') DEFAULT 'open',
-                discovered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                fixed_at TIMESTAMP NULL,
-                INDEX idx_scan_type (scan_type),
-                INDEX idx_severity (severity),
-                INDEX idx_status (status)
-            )";
+            $sql = "";
             $this->database->execute($sql);
         } catch (Exception $e) {
             $this->logger->log("Error creating security tables: " . $e->getMessage(), 'error', 'security');

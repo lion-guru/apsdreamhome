@@ -59,22 +59,7 @@ class CRMManager
         $this->db->execute($sql);
 
         // Lead activities table
-        $sql = "CREATE TABLE IF NOT EXISTS lead_activities (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            lead_id INT NOT NULL,
-            activity_type ENUM('call','email','meeting','site_visit','follow_up','note','demo','quote_sent','negotiation','closed') NOT NULL,
-            activity_date DATETIME NOT NULL,
-            subject VARCHAR(255),
-            description TEXT,
-            duration INT DEFAULT 0, -- in minutes
-            outcome ENUM('positive','neutral','negative','no_response') DEFAULT 'neutral',
-            next_action VARCHAR(255),
-            next_action_date DATETIME,
-            created_by INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-        )";
+        $sql = "";
 
         $this->db->execute($sql);
 
@@ -114,61 +99,7 @@ class CRMManager
         $this->db->execute($sql);
 
         // Customer profiles table
-        $sql = "CREATE TABLE IF NOT EXISTS users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            customer_number VARCHAR(50) NOT NULL UNIQUE,
-            user_id INT,
-            lead_id INT,
-            name VARCHAR(100) NOT NULL,
-            email VARCHAR(150),
-            phone VARCHAR(15) NOT NULL,
-            alternate_phone VARCHAR(15),
-            date_of_birth DATE,
-            gender ENUM('male','female','other') DEFAULT NULL,
-            marital_status ENUM('single','married','divorced','widowed') DEFAULT NULL,
-            occupation VARCHAR(100),
-            company VARCHAR(150),
-            designation VARCHAR(100),
-            annual_income DECIMAL(15,2),
-            credit_score ENUM('excellent','good','fair','poor') DEFAULT 'fair',            address TEXT,
-            city VARCHAR(100),
-            state VARCHAR(100),
-            pincode VARCHAR(10),
-            customer_type ENUM('individual','business','investor','developer') DEFAULT 'individual',
-            customer_status ENUM('active','inactive','vip','blacklisted') DEFAULT 'active',
-            total_purchases DECIMAL(15,2) DEFAULT 0,
-            total_purchase_value DECIMAL(15,2) DEFAULT 0,
-            last_purchase_date DATE,
-            preferred_communication ENUM('email','phone','sms','whatsapp') DEFAULT 'email',
-            tags JSON,
-            custom_fields JSON,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
-            FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE SET NULL
-        )";
-
-        $this->db->execute($sql);
-
-        // Customer interactions table
-        $sql = "CREATE TABLE IF NOT EXISTS customer_interactions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            customer_id INT NOT NULL,
-            interaction_type ENUM('call','email','meeting','site_visit','support_ticket','complaint','feedback','payment','other') NOT NULL,
-            interaction_date DATETIME NOT NULL,
-            subject VARCHAR(255),
-            description TEXT,
-            interaction_outcome ENUM('resolved','pending','escalated','satisfied','dissatisfied') DEFAULT 'pending',
-            satisfaction_rating INT DEFAULT 0, -- 1-5 scale
-            follow_up_required BOOLEAN DEFAULT FALSE,
-            follow_up_date DATETIME,
-            assigned_to INT,
-            created_by INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-        )";
+        $sql = "";
 
         $this->db->execute($sql);
 
@@ -193,24 +124,6 @@ class CRMManager
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-        )";
-
-        $this->db->execute($sql);
-
-        // Communication templates table
-        $sql = "CREATE TABLE IF NOT EXISTS communication_templates (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            template_name VARCHAR(100) NOT NULL UNIQUE,
-            template_type ENUM('email','sms','whatsapp','call_script') NOT NULL,
-            category ENUM('lead_nurturing','follow_up','promotion','support','feedback','other') DEFAULT 'other',
-            subject VARCHAR(255),
-            message_body TEXT NOT NULL,
-            variables JSON,
-            is_active BOOLEAN DEFAULT TRUE,
-            created_by INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 

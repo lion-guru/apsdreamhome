@@ -367,17 +367,7 @@ class SecurityHardeningService
     private function initializeSecurityTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS security_rules (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                rule_type VARCHAR(100) NOT NULL,
-                rule_name VARCHAR(255) NOT NULL,
-                rule_config JSON,
-                enabled BOOLEAN DEFAULT TRUE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_type (rule_type),
-                INDEX idx_enabled (enabled)
-            )",
+            "",
             
             "",
             

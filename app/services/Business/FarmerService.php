@@ -489,38 +489,9 @@ class FarmerService
             
             "",
             
-            "CREATE TABLE IF NOT EXISTS farmer_commissions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                farmer_id INT NOT NULL,
-                commission_type ENUM('land_sale', 'crop_sale', 'service', 'referral') NOT NULL,
-                amount DECIMAL(15,2) NOT NULL,
-                commission_rate DECIMAL(5,2),
-                reference_id VARCHAR(100),
-                reference_data JSON,
-                status ENUM('pending', 'approved', 'paid', 'rejected') DEFAULT 'pending',
-                payment_date TIMESTAMP NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (farmer_id) REFERENCES farmers(id) ON DELETE CASCADE,
-                INDEX idx_farmer_id (farmer_id),
-                INDEX idx_commission_type (commission_type),
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS farmer_activities (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                farmer_id INT NOT NULL,
-                activity_type VARCHAR(100) NOT NULL,
-                description TEXT,
-                data JSON,
-                created_by VARCHAR(255),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (farmer_id) REFERENCES farmers(id) ON DELETE CASCADE,
-                INDEX idx_farmer_id (farmer_id),
-                INDEX idx_activity_type (activity_type),
-                INDEX idx_created_at (created_at)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {
