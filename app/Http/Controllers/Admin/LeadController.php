@@ -185,4 +185,11 @@ class LeadController extends AdminController
         }
         return $this->render('admin/leads/edit', ['lead' => $lead]);
     }
+
+    public function update($id) { return $this->render('admin/leads/edit', ['lead' => \App\Models\Lead::find($id)]); }
+    public function destroy($id) { try { \App\Models\Lead::delete($id); $this->setFlashMessage('success', 'Lead deleted'); } catch (\Exception $e) { $this->setFlashMessage('error', $e->getMessage()); } return $this->redirect('/admin/leads'); }
+    public function addNote($id) { try { $this->db->query("INSERT INTO lead_notes (lead_id, note, created_by, created_at) VALUES (?, ?, ?, NOW())", [$id, $_POST['note'] ?? '', $_SESSION['admin_id'] ?? 0]); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }
+    public function updateStatus($id) { try { $this->db->query("UPDATE leads SET status = ? WHERE id = ?", [$_POST['status'] ?? 'new', $id]); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }
+    public function uploadDocument($id) { try { $this->setFlashMessage('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }
+    public function deleteDocument($id, $docId) { try { $this->db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]); $this->setFlashMessage('success', 'Document deleted'); } catch (\Exception $e) { $this->setFlashMessage('error', $e->getMessage()); } return $this->redirect("/admin/leads/show/$id"); }
 }

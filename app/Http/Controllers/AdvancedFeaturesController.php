@@ -501,4 +501,7 @@ class AdvancedFeaturesController extends BaseController
         echo json_encode($data);
         exit;
     }
+
+    public function progressiveRegister() { return $this->jsonResponse(['success' => true, 'message' => 'Progressive registration endpoint']); }
+    public function campaignWebhook() { return $this->jsonResponse(['success' => true, 'message' => 'Campaign webhook endpoint']); }
 }

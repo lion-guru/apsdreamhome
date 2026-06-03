@@ -205,4 +205,6 @@ class TestimonialController extends AdminController
         header('Location: ' . BASE_URL . '/admin/testimonials');
         exit;
     }
+
+    public function manage() { return $this->render('admin/testimonials/index'); }
 }
