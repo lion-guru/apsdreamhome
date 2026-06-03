@@ -39,7 +39,7 @@ class GoogleAuthController extends Controller
 
         if (!$code) {
             $_SESSION['error'] = 'Authorization failed';
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
 
@@ -65,7 +65,7 @@ class GoogleAuthController extends Controller
 
         if (!isset($tokenData['access_token'])) {
             $_SESSION['error'] = 'Failed to get access token';
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
 
@@ -80,7 +80,7 @@ class GoogleAuthController extends Controller
 
         if (!isset($userData['email'])) {
             $_SESSION['error'] = 'Failed to get user information';
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
 
@@ -140,7 +140,7 @@ class GoogleAuthController extends Controller
         @session_start();
 
         if (!isset($_SESSION['google_user_data'])) {
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
 

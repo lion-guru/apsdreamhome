@@ -283,7 +283,7 @@ class AuthService
     public function requireAuth(): ?array
     {
         if (!$this->isLoggedIn()) {
-            header('Location: /login');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
         

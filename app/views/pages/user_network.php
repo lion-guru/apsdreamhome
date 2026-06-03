@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['flash_error'] = 'Please login first';
-    header('Location: /login?redirect=/user/network');
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login?redirect=/user/network');
     exit;
 }
 

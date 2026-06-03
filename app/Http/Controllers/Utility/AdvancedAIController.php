@@ -142,7 +142,7 @@ class AdvancedAIController extends BaseController
                 $this->setFlashMessage('error', $training_result['error']);
             }
 
-            header('Location: /admin/ai/model-training');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/ai/model-training');
         }
 
         $model_stats = $this->getModelStatistics();
