@@ -49,7 +49,11 @@ class ReferralService
         $dryRun = !empty($options['dry_run']);
         $batchReference = $summary['batch_reference'];
 
-        $auditStmt = $this->conn->prepare("INSERT INTO mlm_import_audit (batch_reference, user_id, sponsor_user_id, referral_code, status, message, payload, processed_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        try {
+            $auditStmt = $this->conn->prepare("INSERT INTO mlm_import_audit (batch_reference, user_id, sponsor_user_id, referral_code, status, message, payload, processed_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $updateProfileStmt = $this->conn->prepare("UPDATE mlm_profiles SET sponsor_user_id = ?, sponsor_code = ?, updated_at = NOW() WHERE user_id = ?");
 
         foreach ($records as $record) {

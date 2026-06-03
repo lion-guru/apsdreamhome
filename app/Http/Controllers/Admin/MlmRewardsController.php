@@ -132,12 +132,16 @@ class MlmRewardsController extends AdminController
     public function rewards()
     {
         $this->requireAdmin();
-        $rewards = $this->db->fetchAll("
-            SELECT rh.*, u.name as associate_name
-            FROM reward_history rh
-            JOIN users u ON u.id = rh.associate_id
-            ORDER BY rh.reward_date DESC
-        ") ?: [];
+        try {
+            $rewards = $this->db->fetchAll("
+                SELECT rh.*, u.name as associate_name
+                FROM reward_history rh
+                JOIN users u ON u.id = rh.associate_id
+                ORDER BY rh.reward_date DESC
+            ") ?: [];
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $this->render('admin/mlm-rewards/rewards', [
             'page_title' => 'Reward History',

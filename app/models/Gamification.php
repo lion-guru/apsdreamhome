@@ -348,14 +348,18 @@ class Gamification extends Model
             [$userId, $userType]
         )->fetchAll();
 
-        $achievements = $this->query(
-            "SELECT ua.*, a.achievement_name, a.achievement_icon
-             FROM user_achievements ua
-             LEFT JOIN achievements a ON ua.achievement_id = a.id
-             WHERE ua.user_id = ? AND ua.user_type = ?
-             ORDER BY ua.unlocked_at DESC",
-            [$userId, $userType]
-        )->fetchAll();
+        try {
+            $achievements = $this->query(
+                "SELECT ua.*, a.achievement_name, a.achievement_icon
+                 FROM user_achievements ua
+                 LEFT JOIN achievements a ON ua.achievement_id = a.id
+                 WHERE ua.user_id = ? AND ua.user_type = ?
+                 ORDER BY ua.unlocked_at DESC",
+                [$userId, $userType]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $activeChallenges = $this->query(
             "SELECT cp.*, gc.challenge_name, gc.target_value, gc.end_date

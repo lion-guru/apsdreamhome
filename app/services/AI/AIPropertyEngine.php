@@ -228,14 +228,18 @@ class AIPropertyRecommendationEngine {
             $score += min(10, $similarViews * 2);
         }
 
-        // Check saved properties in same area
-        $sql = "
-            SELECT COUNT(*) as count
-            FROM saved_properties sp
-            JOIN properties p ON sp.property_id = p.id
-            WHERE sp.user_id = ?
-            AND p.city_id = ?
-        ";
+        try {
+            // Check saved properties in same area
+            $sql = "
+                SELECT COUNT(*) as count
+                FROM saved_properties sp
+                JOIN properties p ON sp.property_id = p.id
+                WHERE sp.user_id = ?
+                AND p.city_id = ?
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $savedInArea = $this->db->fetchColumn($sql, [$userId, $property['city_id']]);
 
         if ($savedInArea > 0) {

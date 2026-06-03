@@ -186,11 +186,15 @@ class NotificationService
 
     public function getSMSLogs($limit = 50, $offset = 0)
     {
-        $stmt = $this->db->prepare("SELECT sl.*, st.template_name 
-                                     FROM notifications_unified sl 
-                                     LEFT JOIN sms_templates st ON sl.template_id = st.id 
-                                     ORDER BY sl.created_at DESC 
-                                     LIMIT ? OFFSET ?");
+        try {
+            $stmt = $this->db->prepare("SELECT sl.*, st.template_name 
+                                         FROM notifications_unified sl 
+                                         LEFT JOIN sms_templates st ON sl.template_id = st.id 
+                                         ORDER BY sl.created_at DESC 
+                                         LIMIT ? OFFSET ?");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$limit, $offset]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

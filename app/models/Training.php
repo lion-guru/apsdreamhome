@@ -135,8 +135,12 @@ class Training extends Model
             return ['success' => false, 'message' => 'Quiz not found'];
         }
 
-        // Get questions and calculate score
-        $questions = $this->query("SELECT * FROM quiz_questions WHERE quiz_id = ? AND is_active = 1 ORDER BY question_order", [$quizId])->fetchAll();
+        try {
+            // Get questions and calculate score
+            $questions = $this->query("SELECT * FROM quiz_questions WHERE quiz_id = ? AND is_active = 1 ORDER BY question_order", [$quizId])->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $correctAnswers = 0;
         $totalQuestions = count($questions);

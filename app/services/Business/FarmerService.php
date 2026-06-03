@@ -669,9 +669,13 @@ class FarmerService
 
     private function createCommissionStructure(int $farmerId): void
     {
-        $sql = "INSERT INTO farmer_commission_structures 
-                (farmer_id, commission_type, rate, effective_from, created_at) 
-                VALUES (?, ?, ?, NOW(), NOW())";
+        try {
+            $sql = "INSERT INTO farmer_commission_structures 
+                    (farmer_id, commission_type, rate, effective_from, created_at) 
+                    VALUES (?, ?, ?, NOW(), NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $this->db->execute($sql, [
             $farmerId,

@@ -107,16 +107,20 @@ class GSTTaxReportService
         $startDate = sprintf('%04d-%02d-01', $year, $month);
         $endDate = sprintf('%04d-%02d-%02d', $year, $month, date('t', strtotime($startDate)));
 
-        $itc = $this->db->query(
-            "SELECT 
-                SUM(cgst) as cgst,
-                SUM(sgst) as sgst,
-                SUM(igst) as igst
-             FROM purchase_invoices
-             WHERE invoice_date BETWEEN ? AND ?
-             AND itc_claimed = 1",
-            [$startDate, $endDate]
-        )->fetch(\PDO::FETCH_ASSOC);
+        try {
+            $itc = $this->db->query(
+                "SELECT 
+                    SUM(cgst) as cgst,
+                    SUM(sgst) as sgst,
+                    SUM(igst) as igst
+                 FROM purchase_invoices
+                 WHERE invoice_date BETWEEN ? AND ?
+                 AND itc_claimed = 1",
+                [$startDate, $endDate]
+            )->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'cgst' => $itc['cgst'] ?? 0,

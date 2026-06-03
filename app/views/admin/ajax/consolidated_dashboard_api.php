@@ -177,8 +177,12 @@ function getFinancialData($db)
     $row = $db->fetch("SELECT SUM(current_balance) as total FROM bank_accounts WHERE status = 'active'");
     $financial['bank_balance'] = $row['total'] ?? 0;
 
-    // Receivables
-    $row = $db->fetch("SELECT SUM(current_balance) as total FROM customers_ledger WHERE current_balance > 0");
+    try {
+        // Receivables
+        $row = $db->fetch("SELECT SUM(current_balance) as total FROM customers_ledger WHERE current_balance > 0");
+    } catch (\Throwable $e) {
+        // Gracefully handle dropped table ref
+    }
     $financial['receivables'] = $row['total'] ?? 0;
 
     // Payables

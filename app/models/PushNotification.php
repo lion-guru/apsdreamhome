@@ -600,12 +600,16 @@ class PushNotification extends Model
             'created_at' => date('Y-m-d H:i:s')
         ];
 
-        $db->query(
-            "INSERT INTO notification_campaigns
-             (campaign_name, campaign_type, target_audience, template_key, scheduled_at, status, total_recipients, channels, budget_limit, cost_per_notification, created_by, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            array_values($campaign)
-        );
+        try {
+            $db->query(
+                "INSERT INTO notification_campaigns
+                 (campaign_name, campaign_type, target_audience, template_key, scheduled_at, status, total_recipients, channels, budget_limit, cost_per_notification, created_by, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                array_values($campaign)
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'success' => true,

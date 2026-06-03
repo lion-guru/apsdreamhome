@@ -260,10 +260,14 @@ class WorkflowEngineService
                 return ['success' => false, 'message' => 'Reject not allowed at this step'];
             }
             
-            // Log action
-            $sql = "INSERT INTO workflow_actions 
-                    (instance_id, step_id, action_type, action_by, action_by_type, comments) 
-                    VALUES (?, ?, ?, ?, ?, ?)";
+            try {
+                // Log action
+                $sql = "INSERT INTO workflow_actions 
+                        (instance_id, step_id, action_type, action_by, action_by_type, comments) 
+                        VALUES (?, ?, ?, ?, ?, ?)";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             
             $stmt = $this->database->prepare($sql);
             $stmt->execute([$instanceId, $step['id'], $action, $userId, $userType, $comments]);

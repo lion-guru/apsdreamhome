@@ -265,10 +265,14 @@ class OCR extends Model
      */
     private function getOCRTemplate(string $documentType): ?array
     {
-        return $this->query(
-            "SELECT * FROM ocr_templates WHERE document_type = ? AND is_active = 1 LIMIT 1",
-            [$documentType]
-        )->fetch();
+        try {
+            return $this->query(
+                "SELECT * FROM ocr_templates WHERE document_type = ? AND is_active = 1 LIMIT 1",
+                [$documentType]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**

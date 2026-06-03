@@ -510,12 +510,16 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        $query = "
-            SELECT lfe.*, u.name as created_by_name
-            FROM lead_file_extractions lfe
-            LEFT JOIN users u ON lfe.created_by = u.id
-            ORDER BY lfe.created_at DESC
-        ";
+        try {
+            $query = "
+                SELECT lfe.*, u.name as created_by_name
+                FROM lead_file_extractions lfe
+                LEFT JOIN users u ON lfe.created_by = u.id
+                ORDER BY lfe.created_at DESC
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $fileExtractions = $this->db->query($query)->fetchAll();
         
         return $this->render('admin/customer-lead-extras/file-extractions', [

@@ -413,11 +413,15 @@ class Performance extends Model
      */
     public function getReviewFeedback(int $reviewId): array
     {
-        $sql = "SELECT pf.*, a.auser as feedback_by_name
-                FROM performance_feedback pf
-                LEFT JOIN admin a ON pf.feedback_by = a.aid
-                WHERE pf.review_id = ?
-                ORDER BY pf.created_at DESC";
+        try {
+            $sql = "SELECT pf.*, a.auser as feedback_by_name
+                    FROM performance_feedback pf
+                    LEFT JOIN admin a ON pf.feedback_by = a.aid
+                    WHERE pf.review_id = ?
+                    ORDER BY pf.created_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $db = Database::getInstance();
         $stmt = $db->prepare($sql);

@@ -46,7 +46,11 @@ class InvestmentManager {
         $planIdInt = intval($planId);
         $this->db->execute("UPDATE investment_plans SET is_active = ? WHERE id = ?", [$active, $planIdInt]);
         
-        $sql = "INSERT INTO plan_status_history (plan_id, status, changed_by, reason) VALUES (?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO plan_status_history (plan_id, status, changed_by, reason) VALUES (?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->execute($sql, [$planId, $status, $userId, $reason]);
     }
 

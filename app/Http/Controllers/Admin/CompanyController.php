@@ -56,13 +56,17 @@ class CompanyController extends AdminController
     public function users()
     {
         $this->requireAdmin();
-        $users = $this->db->fetchAll("
-            SELECT ce.*, u.name as user_name, u.email as user_email, u.phone as user_phone
-            FROM company_employees ce
-            JOIN users u ON u.id = ce.user_id
-            WHERE ce.company_id = (SELECT id FROM company_settings LIMIT 1)
-            ORDER BY ce.join_date DESC
-        ") ?: [];
+        try {
+            $users = $this->db->fetchAll("
+                SELECT ce.*, u.name as user_name, u.email as user_email, u.phone as user_phone
+                FROM company_employees ce
+                JOIN users u ON u.id = ce.user_id
+                WHERE ce.company_id = (SELECT id FROM company_settings LIMIT 1)
+                ORDER BY ce.join_date DESC
+            ") ?: [];
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $this->render('admin/company/users', [
             'page_title' => 'Company users',

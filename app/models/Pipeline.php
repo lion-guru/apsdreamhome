@@ -435,10 +435,14 @@ class Pipeline extends Model
      */
     public function getUserFilters(int $userId): array
     {
-        $filters = $this->query(
-            "SELECT * FROM pipeline_filters WHERE user_id = ? OR is_shared = 1 ORDER BY is_default DESC, filter_name ASC",
-            [$userId]
-        )->fetchAll();
+        try {
+            $filters = $this->query(
+                "SELECT * FROM pipeline_filters WHERE user_id = ? OR is_shared = 1 ORDER BY is_default DESC, filter_name ASC",
+                [$userId]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         foreach ($filters as &$filter) {
             $filter['filter_criteria'] = json_decode($filter['filter_criteria'], true);

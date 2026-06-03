@@ -293,8 +293,12 @@ class PlotsAdminController extends AdminController
         $stmt->execute([$id]);
         $history = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // Get plot images
-        $stmt = $this->db->prepare("SELECT * FROM plot_images WHERE plot_id = ? AND is_active = 1 ORDER BY sort_order, created_at");
+        try {
+            // Get plot images
+            $stmt = $this->db->prepare("SELECT * FROM plot_images WHERE plot_id = ? AND is_active = 1 ORDER BY sort_order, created_at");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$id]);
         $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 

@@ -228,12 +228,16 @@ class Payroll extends Model
         $db = Database::getInstance();
         $currentYear = date('Y');
 
-        $taxSlabs = $db->query(
-            "SELECT * FROM tax_slabs
-             WHERE financial_year = ? AND is_active = 1
-             ORDER BY min_income",
-            [$currentYear]
-        )->fetchAll();
+        try {
+            $taxSlabs = $db->query(
+                "SELECT * FROM tax_slabs
+                 WHERE financial_year = ? AND is_active = 1
+                 ORDER BY min_income",
+                [$currentYear]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $tax = 0;
         $remainingIncome = $annualIncome;

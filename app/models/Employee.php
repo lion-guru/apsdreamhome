@@ -20,19 +20,23 @@ class Employee extends Model
      */
     public function getEmployeeById($id)
     {
-        $sql = "
-            SELECT e.*, 
-                   r.name as role_name,
-                   d.name as department_name,
-                   e.created_at as joining_date, e.updated_at as last_updated,
-                   (SELECT COUNT(*) FROM employee_activities ea WHERE ea.employee_id = e.id) as total_activities,
-                   (SELECT COUNT(*) FROM employee_tasks et WHERE et.employee_id = e.id AND et.status != 'completed') as pending_tasks,
-                   (SELECT COUNT(*) FROM employee_attendance ea2 WHERE ea2.employee_id = e.id AND ea2.attendance_date = CURDATE()) as today_attendance
-            FROM " . static::$table . " e
-            LEFT JOIN roles r ON e.role_id = r.id
-            LEFT JOIN departments d ON e.department_id = d.id
-            WHERE e.id = :id
-        ";
+        try {
+            $sql = "
+                SELECT e.*, 
+                       r.name as role_name,
+                       d.name as department_name,
+                       e.created_at as joining_date, e.updated_at as last_updated,
+                       (SELECT COUNT(*) FROM employee_activities ea WHERE ea.employee_id = e.id) as total_activities,
+                       (SELECT COUNT(*) FROM employee_tasks et WHERE et.employee_id = e.id AND et.status != 'completed') as pending_tasks,
+                       (SELECT COUNT(*) FROM employee_attendance ea2 WHERE ea2.employee_id = e.id AND ea2.attendance_date = CURDATE()) as today_attendance
+                FROM " . static::$table . " e
+                LEFT JOIN roles r ON e.role_id = r.id
+                LEFT JOIN departments d ON e.department_id = d.id
+                WHERE e.id = :id
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $stmt = static::getDb()->prepare($sql);
         $stmt->execute(['id' => $id]);

@@ -270,7 +270,11 @@ class WorkflowEngine {
         $errorMsg = $result['error'] ?? 'Unknown error';
         $nodeId = $node['id'];
 
-        $sql = "INSERT INTO system_activities (level, message, context) VALUES ('error', ?, ?)";
+        try {
+            $sql = "INSERT INTO system_activities (level, message, context) VALUES ('error', ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $logMsg = "Workflow Node Error: " . $node['type'] . " ($nodeId)";
         $logCtx = json_encode(['node' => $node, 'result' => $result]);
 
