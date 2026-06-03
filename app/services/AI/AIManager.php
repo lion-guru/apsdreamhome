@@ -1,581 +1,423 @@
 <?php
+/**
+ * AIManager - Central AI orchestration service
+ * Self-learning, self-hosted, no external API
+ * Coordinates: PatternLearner, IntentDetector, RecommendationEngine, LeadScorer, PricePredictor
+ */
 
 namespace App\Services\AI;
 
-use Exception;
-use App\Services\AI\Modules\NLPProcessor;
-use App\Services\AI\Modules\DataAnalyst;
-use App\Services\AI\Modules\DecisionEngine;
-use App\Services\AI\Modules\CodeAssistant;
-use App\Services\AI\Modules\RecommendationEngine;
-use App\Services\AI\Modules\KnowledgeGraph;
+use PDO;
+use App\Services\AI\PatternLearner;
+use App\Services\AI\IntentDetector;
+use App\Services\AI\RecommendationEngine;
+use App\Services\AI\LeadScorer;
+use App\Services\AI\PricePredictor;
 
-/**
- * Core AI Manager for Orchestrating users and Workflows
- */
 class AIManager
 {
-    private $db;
-    private $active_agents = [];
-    private $encryption_key = 'APS_AI_SECURE_KEY_2026';
-    private $current_mode = 'assistant'; // Default mode: assistant or leader
+    private PDO $db;
+    private PatternLearner $learner;
+    private IntentDetector $intents;
+    private RecommendationEngine $recommender;
+    private LeadScorer $scorer;
+    private PricePredictor $predictor;
 
-    // Modules
-    /** @var NLPProcessor */
-    private $nlp;
-    /** @var DataAnalyst */
-    private $analyst;
-    /** @var DecisionEngine */
-    private $decider;
-    /** @var CodeAssistant */
-    private $coder;
-    /** @var RecommendationEngine */
-    private $recommender;
-    /** @var KnowledgeGraph */
-    private $kg;
-    private $workflowEngine;
-    private $gemini;
-
-    public function __construct()
+    public function __construct(PDO $db)
     {
-        $this->db = \App\Core\Database\Database::getInstance();
+        $this->db = $db;
+        $this->learner = new PatternLearner($db);
+        $this->intents = new IntentDetector($db);
+        $this->recommender = new RecommendationEngine($db);
+        $this->scorer = new LeadScorer($db);
+        $this->predictor = new PricePredictor($db);
+    }
 
-        // Modules are autoloaded via PSR-4
-        $this->nlp = new NLPProcessor();
-        $this->analyst = new DataAnalyst();
-        $this->decider = new DecisionEngine();
-        $this->coder = new CodeAssistant();
-        $this->recommender = new RecommendationEngine();
-        $this->kg = new KnowledgeGraph();
-        $this->workflowEngine = new WorkflowEngine($this);
-        $this->gemini = new \App\Services\GeminiService();
+    public function getPatternLearner(): PatternLearner { return $this->learner; }
+    public function getIntentDetector(): IntentDetector { return $this->intents; }
+    public function getRecommender(): RecommendationEngine { return $this->recommender; }
+    public function getScorer(): LeadScorer { return $this->scorer; }
+    public function getPredictor(): PricePredictor { return $this->predictor; }
 
-        // Initialize Ecosystem to ensure tables exist
-        $ecosystem = new AIEcosystemManager();
-        // Seed default tools and users if they don't exist
-        $ecosystem->populateOpenSourceTools();
-        $ecosystem->seedAgents();
+    /**
+     * Process a chat message: detect intent, generate response
+     */
+    public function processChat(string $sessionId, ?int $userId, string $message, string $channel = 'web'): array
+    {
+        // 1. Get/create session
+        $session = $this->getOrCreateSession($sessionId, $userId, $channel);
+
+        // 2. Detect intent
+        $detection = $this->intents->detect($message);
+
+        // 3. Save user message
+        $this->saveMessage($sessionId, 'user', $message, $detection);
+
+        // 4. Generate response based on intent
+        $response = $this->generateResponse($detection, $message, $userId);
+
+        // 5. Save bot response
+        $this->saveMessage($sessionId, 'bot', $response['text'], $detection, $response['response_time_ms'] ?? 0);
+
+        // 6. Log learning
+        $this->learner->record('chat', $userId, $sessionId, [
+            'message' => $message,
+            'intent' => $detection['intent']
+        ], [
+            'response' => $response['text']
+        ], ['channel' => $channel], $response['confidence'] > 0.7 ? 5 : 3);
+
+        return $response;
     }
 
     /**
-     * Handle User Suggestions & Feedback
+     * Get recommendations for user
      */
-    public function recordSuggestion($text, $userId = null)
+    public function getRecommendations(int $userId, int $limit = 10): array
     {
-        $analysis = $this->nlp->analyze($text);
-
-        // Categorize based on keywords
-        $category = 'other';
-        $suggestion_text = strtolower($text);
-        if (strpos($suggestion_text, 'website') !== false || strpos($suggestion_text, 'ui') !== false || strpos($suggestion_text, 'design') !== false) {
-            $category = 'website';
-        } elseif (strpos($suggestion_text, 'software') !== false || strpos($suggestion_text, 'feature') !== false || strpos($suggestion_text, 'system') !== false) {
-            $category = 'software';
-        } elseif (strpos($suggestion_text, 'company') !== false || strpos($suggestion_text, 'service') !== false || strpos($suggestion_text, 'staff') !== false) {
-            $category = 'company';
-        }
-
-        $priority = 'low';
-        $priority_score = 0.2;
-
-        if ($analysis['sentiment']['label'] === 'negative') {
-            $priority = 'high';
-            $priority_score = 0.8;
-        } elseif ($analysis['complexity'] === 'high') {
-            $priority = 'high';
-            $priority_score = 0.7;
-        } elseif ($analysis['is_strategic']) {
-            $priority = 'medium';
-            $priority_score = 0.6;
-        } elseif ($analysis['sentiment']['label'] === 'positive') {
-            $priority_score = 0.1; // Low priority for praise
-        }
-
-        try {
-            $sql = "INSERT INTO ai_user_suggestions (user_id, category, suggestion, sentiment, priority, priority_score) VALUES (?, ?, ?, ?, ?, ?)";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        $sentiment = $analysis['sentiment']['label'];
-
-        $this->db->execute($sql, [$userId, $category, $text, $sentiment, $priority, $priority_score]);
-
-        $this->auditLog('suggestion_recorded', [
-            'category' => $category,
-            'priority' => $priority,
-            'sentiment' => $sentiment
-        ], 'info');
-
-        return [
-            'status' => 'success',
-            'category' => $category,
-            'priority' => $priority
-        ];
-    }
-
-    public function getSystemHealth()
-    {
-        require_once __DIR__ . '/AIHealthMonitor.php';
-        $monitor = new AIHealthMonitor();
-        return $monitor->getFullReport();
+        // Update profile from recent behavior first
+        $this->recommender->updateProfileFromBehavior($userId);
+        return $this->recommender->recommend($userId, $limit);
     }
 
     /**
-     * Analyze a lead message for strategic value and prioritization
+     * Score a lead
      */
-    public function analyzeLead($text)
+    public function scoreLead(int $leadId): array
     {
-        $analysis = $this->nlp->analyze($text);
+        return $this->scorer->score($leadId);
+    }
 
-        // Enhance strategic detection based on entities (e.g., high value)
-        if (!$analysis['is_strategic'] && !empty($analysis['entities']['monetary'])) {
-            foreach ($analysis['entities']['monetary'] as $money) {
-                if (stripos($money, 'cr') !== false || stripos($money, 'crore') !== false) {
-                    $analysis['is_strategic'] = true;
-                    break;
-                }
-            }
-        }
+    /**
+     * Predict property price
+     */
+    public function predictPrice(string $type, ?int $districtId = null, ?int $area = null, int $bedrooms = 0, int $bathrooms = 0): array
+    {
+        return $this->predictor->predict($type, $districtId, $area, $bedrooms, $bathrooms);
+    }
 
-        // Get prioritization from decision engine
-        $prioritization = $this->decider->evaluate('lead_prioritization', [
-            'budget' => !empty($analysis['entities']['monetary']) ? 10000000 : 0, // Simplified for now
-            'timeline' => (strpos(strtolower($text), 'urgent') !== false) ? 'immediate' : 'normal',
-            'verified' => true
+    /**
+     * Track user behavior
+     */
+    public function track(int $userId, string $action, ?string $pageUrl = null, ?string $targetType = null, ?int $targetId = null, array $metadata = [], ?string $sessionId = null, int $durationMs = 0): void
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO user_behavior_tracking
+            (user_id, session_id, page_url, action_type, target_type, target_id, metadata, duration_ms)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([
+            $userId,
+            $sessionId,
+            $pageUrl,
+            $action,
+            $targetType,
+            $targetId,
+            json_encode($metadata),
+            $durationMs
         ]);
-
-        // Adjust score to match final_health_check.php expectation (> 150)
-        // The check expects score > 150, so let's multiply by 200
-        $analysis['prioritization'] = [
-            'score' => $prioritization['score'] * 200,
-            'priority_level' => $prioritization['priority']
-        ];
-
-        return $analysis;
     }
 
     /**
-     * Get UI Components for AI Dashboard
+     * Detect anomalies
      */
-    public function getDashboardComponents()
+    public function detectAnomalies(string $entityType, int $entityId, array $data): array
     {
-        require_once __DIR__ . '/AIDashboardController.php';
-        $controller = new AIDashboardController();
-        return $controller->getDashboardData();
-    }
+        $anomalies = [];
 
-    /**
-     * Record User Interaction with Property (for Knowledge Graph)
-     */
-    public function recordInteraction($userId, $propertyId, $actionType)
-    {
-        try {
-            $sql = "INSERT INTO ai_user_interactions (user_id, property_id, action_type) VALUES (?, ?, ?)";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        $this->db->execute($sql, [$userId, $propertyId, $actionType]);
-
-        // Update Knowledge Graph asynchronously/on-the-fly
-        $propertySql = "SELECT * FROM properties WHERE id = ?";
-        $property = $this->db->fetch($propertySql, [$propertyId]);
-
-        if ($property) {
-            $this->kg->recordRelationship($userId, 'property_type', $property['property_type_id']);
-            $this->kg->recordRelationship($userId, 'location', $property['location']);
-            $this->kg->recordRelationship($userId, 'monetary', $property['price']);
+        // Price anomaly: price way above/below average
+        if ($entityType === 'property' && isset($data['price'])) {
+            $avg = $this->getAveragePrice($data['property_type'] ?? null, $data['district_id'] ?? null);
+            if ($avg > 0) {
+                $ratio = $data['price'] / $avg;
+                if ($ratio > 2.0 || $ratio < 0.5) {
+                    $anomalies[] = [
+                        'type' => 'price_outlier',
+                        'severity' => abs(log($ratio)) > 1 ? 'high' : 'medium',
+                        'description' => "Price ₹{$data['price']} is " . round($ratio, 2) . "x the average ₹" . round($avg, 0)
+                    ];
+                }
+            }
         }
 
-        return true;
-    }
-
-    /**
-     * Execute a workflow by name
-     */
-    public function executeWorkflowByName($name, $data = [])
-    {
-        $sql = "SELECT id FROM ai_workflows WHERE name = ? AND status = 'active'";
-        $res = $this->db->fetch($sql, [$name]);
-        $workflowId = $res ? $res['id'] : null;
-
-        if ($workflowId) {
-            return $this->workflowEngine->execute($workflowId, $data);
-        }
-        return false;
-    }
-
-    /**
-     * Self-Evolution Logic: Analyze system performance and user feedback
-     * to suggest improvements for the AI ecosystem.
-     */
-    public function generateEvolutionInsights()
-    {
-        $insights = [];
-
-        try {
-            // 1. Analyze User Suggestions Trends
-            $suggestions = $this->db->fetchAll("
-                SELECT category, COUNT(*) as count, AVG(priority_score) as avg_priority
-                FROM ai_user_suggestions
-                WHERE status = 'pending'
-                GROUP BY category
-                ORDER BY avg_priority DESC
+        // Lead anomaly: too many inquiries from same source in short time
+        if ($entityType === 'lead' && isset($data['phone'])) {
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) FROM leads
+                WHERE phone = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
             ");
-
-            foreach ($suggestions as $sug) {
-                if ($sug['count'] > 5) {
-                    $insights[] = [
-                        'type' => 'feature_request',
-                        'priority' => $sug['avg_priority'] > 0.7 ? 'high' : 'medium',
-                        'message' => "High volume of user feedback for {$sug['category']}. Consider prioritizing feature development in this area.",
-                        'data' => $sug
-                    ];
-                }
-            }
-
-            // 2. Analyze Health Trends
-            require_once __DIR__ . '/AIHealthMonitor.php';
-            $healthMonitor = new AIHealthMonitor();
-            $healthReport = $healthMonitor->checkHealth();
-            if (!empty($healthReport['alerts'])) {
-                foreach ($healthReport['alerts'] as $alert) {
-                    $insights[] = [
-                        'type' => 'system_optimization',
-                        'priority' => 'high',
-                        'message' => "Predictive health monitor detected potential failure: {$alert['message']}. Optimization recommended.",
-                        'data' => $alert
-                    ];
-                }
-            }
-
-            // 3. Performance Analysis (Smart Task Assignment)
-            $res = $this->db->fetch("SELECT COUNT(*) as count FROM ai_agents WHERE status = 'busy'");
-            $busyAgents = $res['count'] ?? 0;
-
-            if ($busyAgents > 3) {
-                $insights[] = [
-                    'type' => 'scaling',
-                    'priority' => 'medium',
-                    'message' => "High agent workload detected. Consider spawning more specialized agent instances or optimizing task routing.",
-                    'data' => ['busy_count' => $busyAgents]
+            $stmt->execute([$data['phone']]);
+            $recent = (int)$stmt->fetchColumn();
+            if ($recent > 5) {
+                $anomalies[] = [
+                    'type' => 'rapid_inquiry',
+                    'severity' => 'high',
+                    'description' => "$recent inquiries from same phone in last hour"
                 ];
             }
-        } catch (Exception $e) {
-            error_log("Evolution Insights Error: " . $e->getMessage());
         }
 
-        return $insights;
-    }
-
-    /**
-     * Advanced Data Analysis
-     */
-    public function analyze($source, $params = [])
-    {
-        return $this->analyst->analyzeData($source, $params);
-    }
-
-    /**
-     * Advanced Decision Making
-     */
-    public function decide($type, $input)
-    {
-        return $this->decider->evaluate($type, $input);
-    }
-
-    /**
-     * Smart Agent Discovery
-     */
-    public function findBestAgentForTask($taskType)
-    {
-        $sql = "SELECT id, capabilities, status FROM ai_agents WHERE status IN ('active', 'idle')";
-        $users = $this->db->fetchAll($sql);
-
-        if (empty($users)) return null;
-
-        $decision = $this->decide('smart_task_assignment', [
-            'task_type' => $taskType,
-            'available_agents' => $users
-        ]);
-
-        return $decision['agent_id'];
-    }
-
-    /**
-     * Execute a task for an AI agent
-     * Routes to the appropriate module based on task type
-     */
-    public function executeTask($agentId, $taskType, $inputData)
-    {
-        $start_time = microtime(true);
-        $result = ['status' => 'error', 'data' => null, 'message' => 'Unknown task type'];
-
-        try {
-            switch ($taskType) {
-                case 'initiate_call':
-                case 'voice_call':
-                    $script_type = $inputData['script_type'] ?? 'intro';
-                    $script = $this->db->fetch(
-                        "SELECT * FROM ai_call_scripts WHERE script_code LIKE ? OR script_name LIKE ? LIMIT 1",
-                        ["%$script_type%", "%$script_type%"]
-                    );
-                    $result = [
-                        'status' => 'success',
-                        'data' => [
-                            'script' => $script ?: null,
-                            'lead_id' => $inputData['lead_id'] ?? null,
-                            'phone' => $inputData['phone'] ?? '',
-                            'action' => 'initiate_call'
-                        ],
-                        'message' => 'Call initiation prepared'
-                    ];
-                    break;
-
-                case 'analyze_response':
-                    $transcript = $inputData['transcript'] ?? '';
-                    $analysis = $this->nlp->analyze($transcript);
-                    $intent = $analysis['intent']['name'] ?? 'unknown';
-                    $sentiment = $analysis['sentiment']['label'] ?? 'neutral';
-                    $result = [
-                        'status' => 'success',
-                        'data' => [
-                            'intent' => $intent,
-                            'sentiment' => $sentiment,
-                            'confidence' => $analysis['intent']['confidence'] ?? 0,
-                            'entities' => $analysis['entities'] ?? [],
-                            'is_strategic' => $analysis['is_strategic'] ?? false
-                        ],
-                        'message' => "Intent: $intent, Sentiment: $sentiment"
-                    ];
-                    break;
-
-                case 'schedule_followup':
-                    $lead_id = $inputData['lead_id'] ?? null;
-                    $recommendation = $inputData['recommendation'] ?? [];
-                    $delay_days = is_array($recommendation) ? ($recommendation['delay_days'] ?? 3) : 3;
-                    $follow_up_date = date('Y-m-d', strtotime("+$delay_days days"));
-                    if ($lead_id) {
-                        $this->db->execute(
-                            "UPDATE leads SET next_activity_date = ? WHERE id = ?",
-                            [$follow_up_date . ' 10:00:00', $lead_id]
-                        );
-                    }
-                    $result = [
-                        'status' => 'success',
-                        'data' => [
-                            'lead_id' => $lead_id,
-                            'follow_up_date' => $follow_up_date,
-                            'delay_days' => $delay_days
-                        ],
-                        'message' => "Follow-up scheduled for $follow_up_date"
-                    ];
-                    break;
-
-                case 'transcript_analysis':
-                    $transcript = $inputData['transcript'] ?? '';
-                    $analysis = $this->nlp->analyze($transcript);
-                    $decision = $this->decider->evaluate('call_outcome', [
-                        'transcript' => $transcript,
-                        'sentiment' => $analysis['sentiment']['label'] ?? 'neutral',
-                        'complexity' => $analysis['complexity'] ?? 'low'
-                    ]);
-                    $result = [
-                        'status' => 'success',
-                        'data' => [
-                            'transcript_length' => strlen($transcript),
-                            'summary' => substr($transcript, 0, 500),
-                            'sentiment' => $analysis['sentiment']['label'] ?? 'neutral',
-                            'key_points' => $analysis['entities'] ?? [],
-                            'recommendation' => $decision['recommendation'] ?? 'no_action'
-                        ],
-                        'message' => 'Transcript analyzed'
-                    ];
-                    break;
-
-                default:
-                    $result = [
-                        'status' => 'error',
-                        'data' => null,
-                        'message' => "Unknown task type: $taskType"
-                    ];
-            }
-        } catch (Exception $e) {
-            $result = [
-                'status' => 'error',
-                'data' => null,
-                'message' => $e->getMessage()
-            ];
-        }
-
-        $execution_time = round((microtime(true) - $start_time) * 1000);
-
-        $this->logAgentActivity(
-            $agentId,
-            null,
-            $taskType,
-            $inputData,
-            $result,
-            $execution_time,
-            $result['status'],
-            $result['status'] === 'error' ? $result['message'] : null
-        );
-
-        $this->auditLog('task_execution', [
-            'agent_id' => $agentId,
-            'task_type' => $taskType,
-            'status' => $result['status']
-        ], $result['status'] === 'error' ? 'error' : 'info');
-
-        return $result;
-    }
-
-    /**
-     * Strategic Audit Log
-     * Tracks critical AI decisions for transparency and compliance
-     */
-    public function auditLog($action, $details, $status = 'info')
-    {
-        $sql = "INSERT INTO ai_audit_log (action, details, status, created_at) VALUES (?, ?, ?, NOW())";
-        $details_json = is_array($details) ? json_encode($details) : $details;
-
-        return $this->db->execute($sql, [$action, $details_json, $status]);
-    }
-
-    /**
-     * Set the agent operation mode
-     * modes: assistant (executes tasks), leader (strategic planning)
-     */
-    public function setMode($mode, $reason = 'Manual switch')
-    {
-        if (in_array($mode, ['assistant', 'leader'])) {
-            $old_mode = $this->current_mode;
-            $this->current_mode = $mode;
-
-            // Log mode transition
-            $this->auditLog('mode_transition', [
-                'from' => $old_mode,
-                'to' => $mode,
-                'reason' => $reason
-            ], 'critical');
-
-            $this->logAgentActivity(
-                null,
-                null,
-                'mode_transition',
-                ['from' => $old_mode, 'to' => $mode, 'reason' => $reason],
-                ['status' => 'switched'],
-                0,
-                'success',
-                null
-            );
-            return true;
-        }
-        return false;
-    }
-
-    public function getMode()
-    {
-        return $this->current_mode;
-    }
-
-    public function getAgentByName($name)
-    {
-        $sql = "SELECT * FROM ai_agents WHERE name = ? AND status = 'active'";
-        $res = $this->db->fetch($sql, [$name]);
-        return $res;
-    }
-
-    /**
-     * Get Proactive Suggestions for Dashboard
-     */
-    public function getProactiveSuggestions($userId)
-    {
-        $suggestions = [];
-
-        // 1. Check for high-intent leads that haven't been followed up
-        if ($this->current_mode === 'leader') {
-            $suggestions = $this->db->fetchAll("
-                SELECT 'lead_followup' as type, id as reference_id, name as title, 'High intent lead needs immediate followup' as description
-                FROM leads
-                WHERE lead_score > 80 AND status = 'new'
-                LIMIT 3
+        // Save anomalies
+        foreach ($anomalies as $a) {
+            $ins = $this->db->prepare("
+                INSERT INTO ai_anomalies (entity_type, entity_id, anomaly_type, severity, description, data_snapshot)
+                VALUES (?, ?, ?, ?, ?, ?)
             ");
+            $ins->execute([
+                $entityType,
+                $entityId,
+                $a['type'],
+                $a['severity'],
+                $a['description'],
+                json_encode($data)
+            ]);
         }
 
-        // 2. Check system health
-        require_once __DIR__ . '/AIHealthMonitor.php';
-        $healthMonitor = new AIHealthMonitor();
-        $health = $healthMonitor->checkHealth();
+        return $anomalies;
+    }
 
-        if ($health['status'] === 'warning') {
-            $suggestions[] = [
-                'type' => 'system_maintenance',
-                'title' => 'System Health Warning',
-                'description' => $health['message']
-            ];
+    private function getAveragePrice(?string $type, ?int $districtId): float
+    {
+        $sql = "SELECT AVG(price) FROM user_properties WHERE price > 0";
+        $params = [];
+        if ($type) { $sql .= " AND property_type = ?"; $params[] = $type; }
+        if ($districtId) { $sql .= " AND district_id = ?"; $params[] = $districtId; }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (float)$stmt->fetchColumn();
+    }
+
+    private function getOrCreateSession(string $sessionId, ?int $userId, string $channel): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM ai_chat_sessions WHERE session_id = ?");
+        $stmt->execute([$sessionId]);
+        $session = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$session) {
+            $ins = $this->db->prepare("INSERT INTO ai_chat_sessions (session_id, user_id, channel) VALUES (?, ?, ?)");
+            $ins->execute([$sessionId, $userId, $channel]);
+            $session = ['session_id' => $sessionId, 'user_id' => $userId, 'channel' => $channel];
         }
+        return $session;
+    }
 
-        // 3. Agent workload check
-        $res = $this->db->fetch("SELECT COUNT(*) as count FROM ai_agents WHERE status = 'busy'");
-        if ($res && $res['count'] > 5) {
-            $suggestions[] = [
-                'type' => 'resource_allocation',
-                'title' => 'High Agent Workload',
-                'description' => "{$res['count']} users are currently busy. Consider scaling resources."
-            ];
-        }
-
-        return $suggestions;
+    private function saveMessage(string $sessionId, string $sender, string $message, array $detection, int $responseTimeMs = 0): void
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO ai_chat_messages (session_id, sender, message, detected_intent, confidence, response_time_ms)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([
+            $sessionId,
+            $sender,
+            $message,
+            $detection['intent'] ?? null,
+            $detection['confidence'] ?? 0,
+            $responseTimeMs
+        ]);
     }
 
     /**
-     * Context-aware mode transition
-     * Automatically switches mode based on task complexity or context
+     * Generate response based on detected intent
+     * Uses templates + learned patterns
      */
-    private function autoTransitionMode($task_type, $input_data)
+    private function generateResponse(array $detection, string $message, ?int $userId): array
     {
-        $text_to_analyze = $task_type . ' ' . (isset($input_data['content']) ? $input_data['content'] : '');
-        $analysis = $this->nlp->analyze($text_to_analyze);
+        $start = microtime(true);
+        $intent = $detection['intent'];
+        $lang = $detection['language'];
 
-        if ($analysis['is_strategic'] || $analysis['complexity'] === 'high') {
-            if ($this->current_mode !== 'leader') {
-                $this->setMode('leader', "Auto-escalation: Complex/Strategic task detected ($task_type)");
+        $templates = $this->getResponseTemplates($lang);
+
+        if (isset($templates[$intent])) {
+            $candidates = $templates[$intent];
+            $text = $candidates[array_rand($candidates)];
+            $responseTime = (int)((microtime(true) - $start) * 1000);
+
+            // Add personalized follow-up for buy/rent intents
+            if (in_array($intent, ['buy_property', 'rent_property']) && $userId) {
+                $recs = $this->recommender->recommend($userId, 3);
+                if (!empty($recs)) {
+                    $text .= "\n\nBased on your interest, here are some options:\n";
+                    foreach ($recs as $r) {
+                        $name = $r['item']['title'] ?? $r['item']['name'] ?? 'Property #' . $r['item']['id'];
+                        $text .= "- $name\n";
+                    }
+                }
+            }
+
+            return ['text' => $text, 'intent' => $intent, 'response_time_ms' => $responseTime, 'confidence' => $detection['confidence']];
+        }
+
+        // Fallback
+        $fallback = $lang === 'hi'
+            ? "मैं आपकी मदद करना चाहता हूं। कृपया बताएं कि आप property खरीदना, बेचना, या किराए पर लेना चाहते हैं?"
+            : "I'd love to help! Are you looking to buy, sell, or rent a property?";
+
+        return ['text' => $fallback, 'intent' => 'unknown', 'response_time_ms' => (int)((microtime(true) - $start) * 1000), 'confidence' => 0.0];
+    }
+
+    private function getResponseTemplates(string $lang): array
+    {
+        if ($lang === 'hi') {
+            return [
+                'buy_property' => [
+                    "बहुत बढ़िया! मैं आपको perfect property ढूंढने में मदद करूंगा। आपकी budget और preferred location क्या है?",
+                    "Property खरीदना एक अच्छा निवेश है! क्या आप plot, flat, या house देख रहे हैं?"
+                ],
+                'sell_property' => [
+                    "अपनी property बेचने के लिए हमारी team आपकी मदद करेगी। कृपया property details share करें।",
+                    "हम आपकी property को सही buyer तक पहुंचाएंगे। Location और price बताएं?"
+                ],
+                'rent_property' => [
+                    "किराए के लिए कई options हैं। आप किस area में देख रहे हैं?",
+                    "Rental property के लिए budget और location बताएं, मैं best options दिखाता हूं।"
+                ],
+                'site_visit' => [
+                    "Site visit schedule करने के लिए मुझे property ID और आपकी preferred date बताएं।",
+                    "जी बिल्कुल! कौन सी property देखनी है? मैं visit book कर देता हूं।"
+                ],
+                'price_inquiry' => [
+                    "Pricing हमारी सबसे competitive है! किस area में property देख रहे हैं?",
+                    "हमारी pricing बाज़ार के अनुसार है। Specific property का नाम बताएं तो details देता हूं।"
+                ],
+                'loan' => [
+                    "Home loan के लिए हम SBI, HDFC, ICICI जैसे बैंकों से tie-up रखते हैं। आपकी monthly income क्या है?",
+                    "Loan हमारे verified partners के through मिलता है। मैं आपको best rate दिलवाता हूं।"
+                ],
+                'legal_help' => [
+                    "Legal services में registry, agreement, mutation सब शामिल है। आपको किसकी जरूरत है?",
+                    "हमारी team expert legal advice देती है। अपनी जरूरत बताएं।"
+                ],
+                'greeting' => [
+                    "नमस्ते! APS Dream Home में आपका स्वागत है। मैं आपकी कैसे मदद कर सकता हूं?",
+                    "नमस्कार जी! कृपया बताएं आप property के बारे में क्या जानना चाहते हैं?"
+                ],
+                'thanks' => [
+                    "आपका स्वागत है! कोई और सवाल हो तो ज़रूर पूछें।",
+                    "धन्यवाद! APS Dream Home आपकी service में हमेशा तत्पर है।"
+                ],
+                'goodbye' => [
+                    "फिर मिलेंगे! अच्छा दिन हो।",
+                    "अलविदा! जब भी ज़रूरत हो, हमसे संपर्क करें।"
+                ]
+            ];
+        }
+
+        return [
+            'buy_property' => [
+                "Great choice! Buying property is a wonderful investment. What's your budget and preferred location?",
+                "I'd love to help you find the perfect property! Are you looking for a plot, flat, or house?"
+            ],
+            'sell_property' => [
+                "We can definitely help you sell your property. Please share some details about it.",
+                "Our team will help you get the best price. What's the property location and your expected price?"
+            ],
+            'rent_property' => [
+                "We have many rental options. Which area are you looking at?",
+                "What's your budget and preferred location? I'll show you the best matches."
+            ],
+            'site_visit' => [
+                "Sure! Please share the property ID and your preferred date for the visit.",
+                "I can schedule that right away. Which property would you like to see?"
+            ],
+            'price_inquiry' => [
+                "Our pricing is very competitive! Which area are you interested in?",
+                "Pricing varies by location and property type. Share a specific property name for details."
+            ],
+            'loan' => [
+                "We have partnerships with SBI, HDFC, ICICI and more. What's your monthly income?",
+                "I'll get you the best loan rate. Are you a first-time buyer or upgrading?"
+            ],
+            'legal_help' => [
+                "Our legal services include registry, agreement, mutation, and more. What do you need?",
+                "We have expert legal advisors. Tell me more about your requirement."
+            ],
+            'greeting' => [
+                "Hello! Welcome to APS Dream Home. How can I help you today?",
+                "Hi there! What are you looking for - buy, sell, or rent?"
+            ],
+            'thanks' => [
+                "You're welcome! Feel free to ask anything else.",
+                "Glad to help! APS Dream Home is always here for you."
+            ],
+            'goodbye' => [
+                "Goodbye! Have a great day!",
+                "See you again! Reach out anytime."
+            ]
+        ];
+    }
+
+    /**
+     * Self-retrain: called from cron
+     * Updates all AI components
+     */
+    public function retrain(): array
+    {
+        $results = [];
+
+        // 1. Update user profiles from behavior
+        $stmt = $this->db->query("SELECT user_id FROM user_behavior_tracking WHERE tracked_at > DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY user_id LIMIT 100");
+        $profileCount = 0;
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $this->recommender->updateProfileFromBehavior((int)$row['user_id']);
+            $profileCount++;
+        }
+        $results['profiles_updated'] = $profileCount;
+
+        // 2. Re-score all leads
+        $results['leads_scored'] = $this->scorer->scoreAllUnscored(200);
+
+        // 3. Retrain intent patterns
+        $results['patterns_retrained'] = $this->learner->retrain();
+
+        // 4. Retrain price models
+        $types = ['plot', 'house', 'flat', 'shop', 'farmhouse'];
+        $priceModels = 0;
+        foreach ($types as $type) {
+            $this->predictor->predict($type);
+            $priceModels++;
+        }
+        $results['price_models_trained'] = $priceModels;
+
+        return $results;
+    }
+
+    /**
+     * Get AI dashboard stats
+     */
+    public function getStats(): array
+    {
+        $stats = [];
+
+        $tables = [
+            'learning_events' => 'ai_learning_data',
+            'intent_patterns' => 'ai_intent_patterns',
+            'user_profiles' => 'ai_user_profiles',
+            'recommendations' => 'ai_recommendations',
+            'lead_scores' => 'ai_lead_scores',
+            'anomalies' => 'ai_anomalies',
+            'price_models' => 'ai_price_models',
+            'chat_sessions' => 'ai_chat_sessions',
+            'chat_messages' => 'ai_chat_messages',
+            'behavior_tracked' => 'user_behavior_tracking'
+        ];
+
+        foreach ($tables as $key => $t) {
+            try {
+                $stats[$key] = (int)$this->db->query("SELECT COUNT(*) FROM $t")->fetchColumn();
+            } catch (Exception $e) {
+                $stats[$key] = 0;
             }
         }
-    }
 
-    /**
-     * Centralized logging for all AI Agent activities
-     */
-    public function logAgentActivity($agent_id, $workflow_id, $task_type, $input_data, $output_data, $execution_time_ms, $status, $error_message = null)
-    {
-        $sql = "INSERT INTO ai_agent_logs (agent_id, workflow_id, task_type, input_data, output_data, execution_time_ms, status, error_message)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        // Recent activity
+        $stmt = $this->db->query("SELECT COUNT(*) FROM ai_learning_data WHERE learned_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+        $stats['learnings_24h'] = (int)$stmt->fetchColumn();
 
-        $input_str = is_array($input_data) ? json_encode($input_data) : $input_data;
-        $output_str = is_array($output_data) ? json_encode($output_data) : $output_data;
-        $time = intval($execution_time_ms);
-        $agent_id = $agent_id ? intval($agent_id) : null;
-        $workflow_id = $workflow_id ? intval($workflow_id) : null;
+        $stmt = $this->db->query("SELECT COUNT(*) FROM ai_chat_sessions WHERE started_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+        $stats['chat_sessions_24h'] = (int)$stmt->fetchColumn();
 
-        return $this->db->execute($sql, [$agent_id, $workflow_id, $task_type, $input_str, $output_str, $time, $status, $error_message]);
-    }
-
-    public function getAgentsByStatus($status)
-    {
-        $sql = "SELECT * FROM ai_agents WHERE status = ?";
-        return $this->db->fetchAll($sql, [$status]);
-    }
-
-    public function getAgentById($id)
-    {
-        $sql = "SELECT * FROM ai_agents WHERE id = ?";
-        return $this->db->fetch($sql, [$id]);
-    }
-
-    public function updateAgentStatus($id, $status)
-    {
-        $sql = "UPDATE ai_agents SET status = ?, last_active = NOW() WHERE id = ?";
-        return $this->db->execute($sql, [$status, $id]);
+        return $stats;
     }
 }

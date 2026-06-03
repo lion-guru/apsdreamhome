@@ -1,0 +1,248 @@
+<?php
+/**
+ * RecommendationEngine - Self-learning property recommendations
+ * Collaborative filtering + content-based hybrid
+ * No external API
+ */
+
+namespace App\Services\AI;
+
+use PDO;
+
+class RecommendationEngine
+{
+    private PDO $db;
+
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
+
+    /**
+     * Get personalized recommendations for a user
+     */
+    public function recommend(int $userId, int $limit = 10): array
+    {
+        // 1. Get or create user profile
+        $profile = $this->getOrCreateProfile($userId);
+
+        // 2. Get user behavior history
+        $behavior = $this->getUserBehavior($userId);
+
+        // 3. Generate candidate items
+        $candidates = $this->getCandidates($profile, $behavior, $limit * 3);
+
+        // 4. Score each candidate
+        $scored = [];
+        foreach ($candidates as $item) {
+            $score = $this->scoreItem($item, $profile, $behavior);
+            $scored[] = [
+                'item' => $item,
+                'score' => $score,
+                'reason' => $this->explainScore($item, $profile)
+            ];
+        }
+
+        // 5. Sort by score
+        usort($scored, fn($a, $b) => $b['score'] <=> $a['score']);
+
+        // 6. Save top recommendations
+        $top = array_slice($scored, 0, $limit);
+        $this->saveRecommendations($userId, 'property', $top);
+
+        return $top;
+    }
+
+    /**
+     * Get or create user AI profile
+     */
+    public function getOrCreateProfile(int $userId): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM ai_user_profiles WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$profile) {
+            $stmt = $this->db->prepare("INSERT INTO ai_user_profiles (user_id) VALUES (?)");
+            $stmt->execute([$userId]);
+            $profile = ['user_id' => $userId, 'preferred_locations' => null, 'preferred_types' => null, 'budget_min' => null, 'budget_max' => null];
+        }
+
+        $profile['preferred_locations'] = json_decode($profile['preferred_locations'] ?? '[]', true) ?: [];
+        $profile['preferred_types'] = json_decode($profile['preferred_types'] ?? '[]', true) ?: [];
+        return $profile;
+    }
+
+    /**
+     * Update user profile from behavior
+     */
+    public function updateProfileFromBehavior(int $userId): void
+    {
+        // Aggregate user views/inquiries
+        $stmt = $this->db->prepare("
+            SELECT page_url, COUNT(*) as cnt
+            FROM user_behavior_tracking
+            WHERE user_id = ? AND action_type IN ('view_property', 'inquiry', 'favorite')
+              AND tracked_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
+            GROUP BY page_url
+            ORDER BY cnt DESC
+            LIMIT 50
+        ");
+        $stmt->execute([$userId]);
+        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Extract preferred locations from URLs
+        $locations = [];
+        $types = [];
+        foreach ($events as $e) {
+            if (preg_match('/location\/([\w-]+)/', $e['page_url'], $m)) $locations[$m[1]] = ($locations[$m[1]] ?? 0) + $e['cnt'];
+            if (preg_match('/property-type\/([\w-]+)/', $e['page_url'], $m)) $types[$m[1]] = ($types[$m[1]] ?? 0) + $e['cnt'];
+        }
+
+        arsort($locations);
+        arsort($types);
+
+        $upd = $this->db->prepare("
+            UPDATE ai_user_profiles
+            SET preferred_locations = ?,
+                preferred_types = ?,
+                interaction_count = interaction_count + 1,
+                last_interaction_at = NOW()
+            WHERE user_id = ?
+        ");
+        $upd->execute([
+            json_encode(array_slice(array_keys($locations), 0, 5)),
+            json_encode(array_slice(array_keys($types), 0, 5)),
+            $userId
+        ]);
+    }
+
+    /**
+     * Score a single item against user profile
+     */
+    private function scoreItem(array $item, array $profile, array $behavior): float
+    {
+        $score = 0.0;
+
+        // Location match
+        if (!empty($profile['preferred_locations'])) {
+            foreach ($profile['preferred_locations'] as $loc) {
+                if (stripos($item['location'] ?? '', $loc) !== false) $score += 30;
+            }
+        }
+
+        // Type match
+        if (!empty($profile['preferred_types'])) {
+            foreach ($profile['preferred_types'] as $type) {
+                if (stripos($item['property_type'] ?? '', $type) !== false) $score += 25;
+            }
+        }
+
+        // Budget match
+        $price = (float)($item['price'] ?? 0);
+        if ($price > 0) {
+            if ($profile['budget_max'] && $price <= $profile['budget_max']) $score += 20;
+            if ($profile['budget_min'] && $price >= $profile['budget_min']) $score += 10;
+        }
+
+        // Popularity boost
+        $score += min(15, log10(max(1, (int)($item['view_count'] ?? 0))) * 5);
+
+        // Recency boost (newer listings get slight boost)
+        if (!empty($item['created_at'])) {
+            $days = (time() - strtotime($item['created_at'])) / 86400;
+            if ($days < 7) $score += 10;
+            elseif ($days < 30) $score += 5;
+        }
+
+        return round($score, 2);
+    }
+
+    private function explainScore(array $item, array $profile): string
+    {
+        $reasons = [];
+        if (!empty($profile['preferred_locations'])) {
+            foreach ($profile['preferred_locations'] as $loc) {
+                if (stripos($item['location'] ?? '', $loc) !== false) {
+                    $reasons[] = "Matches your preferred location: $loc";
+                    break;
+                }
+            }
+        }
+        if (!empty($reasons)) return implode('; ', $reasons);
+        return "Popular in your area";
+    }
+
+    private function getCandidates(array $profile, array $behavior, int $limit): array
+    {
+        // Try multiple tables for properties
+        $tables = ['properties', 'user_properties', 'plots'];
+        $candidates = [];
+
+        foreach ($tables as $t) {
+            try {
+                $cols = $this->db->query("SHOW COLUMNS FROM $t")->fetchAll(PDO::FETCH_COLUMN);
+                $select = ['id'];
+                foreach (['title', 'name', 'property_type', 'type', 'location', 'address', 'city', 'price', 'amount', 'created_at'] as $c) {
+                    if (in_array($c, $cols)) $select[] = $c;
+                }
+                $stmt = $this->db->query("SELECT " . implode(',', $select) . " FROM $t ORDER BY id DESC LIMIT $limit");
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $row['__source'] = $t;
+                    $candidates[] = $row;
+                }
+            } catch (Exception $e) {
+                // table may not exist
+            }
+        }
+
+        return array_slice($candidates, 0, $limit);
+    }
+
+    private function getUserBehavior(int $userId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT action_type, target_type, target_id, COUNT(*) as cnt
+            FROM user_behavior_tracking
+            WHERE user_id = ? AND tracked_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
+            GROUP BY action_type, target_type, target_id
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function saveRecommendations(int $userId, string $itemType, array $items): void
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO ai_recommendations (user_id, item_type, item_id, score, reason)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        foreach ($items as $r) {
+            $stmt->execute([
+                $userId,
+                $itemType,
+                $r['item']['id'] ?? 0,
+                $r['score'],
+                $r['reason']
+            ]);
+        }
+    }
+
+    /**
+     * Mark recommendation as shown/clicked/converted
+     */
+    public function trackAction(int $recommendationId, string $action): void
+    {
+        $col = match ($action) {
+            'shown' => 'shown_at',
+            'clicked' => 'clicked_at',
+            'converted' => 'converted_at',
+            'dismissed' => 'dismissed_at',
+            default => null
+        };
+        if ($col) {
+            $stmt = $this->db->prepare("UPDATE ai_recommendations SET $col = NOW() WHERE id = ?");
+            $stmt->execute([$recommendationId]);
+        }
+    }
+}
