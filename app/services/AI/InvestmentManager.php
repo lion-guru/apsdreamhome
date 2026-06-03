@@ -30,7 +30,11 @@ class InvestmentManager {
         $doc = $data['document_path'] ?? null;
 
         if ($id) {
-            $sql = "UPDATE investment_plans SET name=?, description=?, min_amount=?, expected_roi_percentage=?, duration_months=?, plan_type=?, start_date=?, end_date=?, document_path=? WHERE id=?";
+            try {
+                $sql = "UPDATE investment_plans SET name=?, description=?, min_amount=?, expected_roi_percentage=?, duration_months=?, plan_type=?, start_date=?, end_date=?, document_path=? WHERE id=?";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             return $this->db->execute($sql, [$name, $desc, $min, $roi, $duration, $type, $start, $end, $doc, $id]);
         } else {
             $sql = "INSERT INTO investment_plans (name, description, min_amount, expected_roi_percentage, duration_months, plan_type, start_date, end_date, document_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -84,7 +88,11 @@ class InvestmentManager {
      * Get Active Plans for Bot Response
      */
     public function getActivePlans() {
-        $sql = "SELECT * FROM investment_plans WHERE is_active = 1 AND (end_date IS NULL OR end_date >= CURDATE())";
+        try {
+            $sql = "SELECT * FROM investment_plans WHERE is_active = 1 AND (end_date IS NULL OR end_date >= CURDATE())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->fetchAll($sql);
     }
 }

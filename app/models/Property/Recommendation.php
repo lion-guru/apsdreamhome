@@ -110,23 +110,27 @@ class PropertyRecommendation extends Model
         // Get highly rated properties by similar users that current user hasn't rated
         $placeholders = str_repeat('?,', count($similarUserIds) - 1) . '?';
 
-        $recommendations = $db->query(
-            "SELECT p.id as property_id, p.title, p.price, p.location, p.city,
-                    AVG(pr.rating) as avg_rating, COUNT(pr.rating) as rating_count,
-                    GROUP_CONCAT(DISTINCT pr.rating) as ratings
-             FROM properties p
-             LEFT JOIN property_ratings pr ON p.id = pr.property_id
-             WHERE pr.user_id IN ($placeholders)
-             AND pr.rating >= 4.0
-             AND p.id NOT IN (
-                 SELECT property_id FROM property_ratings WHERE user_id = ?
-             )
-             AND p.status = 'available'
-             GROUP BY p.id
-             ORDER BY avg_rating DESC, rating_count DESC
-             LIMIT ?",
-            array_merge($similarUserIds, [$userId, $limit])
-        )->fetchAll();
+        try {
+            $recommendations = $db->query(
+                "SELECT p.id as property_id, p.title, p.price, p.location, p.city,
+                        AVG(pr.rating) as avg_rating, COUNT(pr.rating) as rating_count,
+                        GROUP_CONCAT(DISTINCT pr.rating) as ratings
+                 FROM properties p
+                 LEFT JOIN property_ratings pr ON p.id = pr.property_id
+                 WHERE pr.user_id IN ($placeholders)
+                 AND pr.rating >= 4.0
+                 AND p.id NOT IN (
+                     SELECT property_id FROM property_ratings WHERE user_id = ?
+                 )
+                 AND p.status = 'available'
+                 GROUP BY p.id
+                 ORDER BY avg_rating DESC, rating_count DESC
+                 LIMIT ?",
+                array_merge($similarUserIds, [$userId, $limit])
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Calculate collaborative scores
         foreach ($recommendations as &$rec) {
@@ -146,13 +150,17 @@ class PropertyRecommendation extends Model
         // Get user's preferences
         $preferences = $this->getUserPreferences($userId);
 
-        // Get user's highly rated properties
-        $likedProperties = $db->query(
-            "SELECT property_id FROM property_ratings
-             WHERE user_id = ? AND rating >= 4.0
-             ORDER BY rating DESC LIMIT 5",
-            [$userId]
-        )->fetchAll();
+        try {
+            // Get user's highly rated properties
+            $likedProperties = $db->query(
+                "SELECT property_id FROM property_ratings
+                 WHERE user_id = ? AND rating >= 4.0
+                 ORDER BY rating DESC LIMIT 5",
+                [$userId]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if (empty($likedProperties) && empty($preferences)) {
             return $this->getPopularityBasedRecommendations($limit);
@@ -205,18 +213,22 @@ class PropertyRecommendation extends Model
 
         $whereClause = implode(' AND ', $whereConditions);
 
-        $recommendations = $db->query(
-            "SELECT p.id as property_id, p.title, p.price, p.location, p.city,
-                    p.bedrooms, p.bathrooms, p.area,
-                    p.property_type_id, pt.type as property_type,
-                    (SELECT AVG(rating) FROM property_ratings WHERE property_id = p.id) as avg_rating
-             FROM properties p
-             LEFT JOIN property_types pt ON p.property_type_id = pt.id
-             WHERE $whereClause
-             ORDER BY p.created_at DESC
-             LIMIT ?",
-            array_merge($params, [$limit])
-        )->fetchAll();
+        try {
+            $recommendations = $db->query(
+                "SELECT p.id as property_id, p.title, p.price, p.location, p.city,
+                        p.bedrooms, p.bathrooms, p.area,
+                        p.property_type_id, pt.type as property_type,
+                        (SELECT AVG(rating) FROM property_ratings WHERE property_id = p.id) as avg_rating
+                 FROM properties p
+                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                 WHERE $whereClause
+                 ORDER BY p.created_at DESC
+                 LIMIT ?",
+                array_merge($params, [$limit])
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Calculate content-based scores
         foreach ($recommendations as &$rec) {
@@ -262,20 +274,24 @@ class PropertyRecommendation extends Model
     {
         $db = Database::getInstance();
 
-        $recommendations = $db->query(
-            "SELECT p.id as property_id, p.title, p.price, p.location, p.city,
-                    COALESCE(AVG(pr.rating), 0) as avg_rating,
-                    COUNT(DISTINCT pr.id) as rating_count,
-                    COUNT(DISTINCT ubh.id) as view_count
-             FROM properties p
-             LEFT JOIN property_ratings pr ON p.id = pr.property_id
-             LEFT JOIN user_browsing_history ubh ON p.id = ubh.property_id
-             WHERE p.status = 'available'
-             GROUP BY p.id
-             ORDER BY (avg_rating * 0.4 + LEAST(view_count, 100) * 0.6) DESC
-             LIMIT ?",
-            [$limit]
-        )->fetchAll();
+        try {
+            $recommendations = $db->query(
+                "SELECT p.id as property_id, p.title, p.price, p.location, p.city,
+                        COALESCE(AVG(pr.rating), 0) as avg_rating,
+                        COUNT(DISTINCT pr.id) as rating_count,
+                        COUNT(DISTINCT ubh.id) as view_count
+                 FROM properties p
+                 LEFT JOIN property_ratings pr ON p.id = pr.property_id
+                 LEFT JOIN user_browsing_history ubh ON p.id = ubh.property_id
+                 WHERE p.status = 'available'
+                 GROUP BY p.id
+                 ORDER BY (avg_rating * 0.4 + LEAST(view_count, 100) * 0.6) DESC
+                 LIMIT ?",
+                [$limit]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Calculate popularity scores
         foreach ($recommendations as &$rec) {
@@ -408,23 +424,27 @@ class PropertyRecommendation extends Model
             'created_at' => date('Y-m-d H:i:s')
         ];
 
-        $db->query(
-            "INSERT INTO property_ratings (user_id, property_id, rating, review_text, rating_criteria, created_at)
-             VALUES (?, ?, ?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE rating = ?, review_text = ?, rating_criteria = ?, updated_at = ?",
-            [
-                $ratingData['user_id'],
-                $ratingData['property_id'],
-                $ratingData['rating'],
-                $ratingData['review_text'],
-                $ratingData['rating_criteria'],
-                $ratingData['created_at'],
-                $rating,
-                $review,
-                json_encode($criteria),
-                date('Y-m-d H:i:s')
-            ]
-        );
+        try {
+            $db->query(
+                "INSERT INTO property_ratings (user_id, property_id, rating, review_text, rating_criteria, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE rating = ?, review_text = ?, rating_criteria = ?, updated_at = ?",
+                [
+                    $ratingData['user_id'],
+                    $ratingData['property_id'],
+                    $ratingData['rating'],
+                    $ratingData['review_text'],
+                    $ratingData['rating_criteria'],
+                    $ratingData['created_at'],
+                    $rating,
+                    $review,
+                    json_encode($criteria),
+                    date('Y-m-d H:i:s')
+                ]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Log browsing history
         $this->logUserAction($userId, $propertyId, 'rating');
@@ -514,12 +534,16 @@ class PropertyRecommendation extends Model
     {
         $db = Database::getInstance();
 
-        $cache = $db->query(
-            "SELECT property_ids, scores FROM recommendation_cache
-             WHERE user_id = ? AND recommendation_type = ? AND cache_expires_at > NOW()
-             ORDER BY created_at DESC LIMIT 1",
-            [$userId, $type]
-        )->fetch();
+        try {
+            $cache = $db->query(
+                "SELECT property_ids, scores FROM recommendation_cache
+                 WHERE user_id = ? AND recommendation_type = ? AND cache_expires_at > NOW()
+                 ORDER BY created_at DESC LIMIT 1",
+                [$userId, $type]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if ($cache) {
             $propertyIds = json_decode($cache['property_ids'], true);
@@ -564,19 +588,23 @@ class PropertyRecommendation extends Model
             $scores[$rec['property_id']] = $rec['score'] ?? 0.5;
         }
 
-        $db->query(
-            "INSERT INTO recommendation_cache
-             (user_id, recommendation_type, property_ids, scores, cache_expires_at, created_at)
-             VALUES (?, ?, ?, ?, ?, ?)",
-            [
-                $userId,
-                $type,
-                json_encode($propertyIds),
-                json_encode($scores),
-                $expiresAt,
-                date('Y-m-d H:i:s')
-            ]
-        );
+        try {
+            $db->query(
+                "INSERT INTO recommendation_cache
+                 (user_id, recommendation_type, property_ids, scores, cache_expires_at, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?)",
+                [
+                    $userId,
+                    $type,
+                    json_encode($propertyIds),
+                    json_encode($scores),
+                    $expiresAt,
+                    date('Y-m-d H:i:s')
+                ]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**

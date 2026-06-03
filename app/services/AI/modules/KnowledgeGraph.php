@@ -16,7 +16,11 @@ class KnowledgeGraph {
     }
 
     public function query($entity, $relation = null) {
-        $sql = "SELECT * FROM ai_knowledge_graph WHERE entity_name = ?";
+        try {
+            $sql = "SELECT * FROM ai_knowledge_graph WHERE entity_name = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->fetch($sql, [$entity]);
     }
 

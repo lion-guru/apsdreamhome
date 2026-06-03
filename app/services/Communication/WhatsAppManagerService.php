@@ -514,10 +514,14 @@ class WhatsAppManager
      */
     public function createWhatsAppCampaign($campaignData)
     {
-        $sql = "INSERT INTO whatsapp_campaigns
-                (campaign_name, campaign_type, template_name, message_content, media_url,
-                 status, total_recipients, created_by)
-                VALUES (?, ?, ?, ?, ?, 'draft', ?, ?)";
+        try {
+            $sql = "INSERT INTO whatsapp_campaigns
+                    (campaign_name, campaign_type, template_name, message_content, media_url,
+                     status, total_recipients, created_by)
+                    VALUES (?, ?, ?, ?, ?, 'draft', ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $params = [
             $campaignData['campaign_name'],
@@ -544,7 +548,11 @@ class WhatsAppManager
      */
     public function getWhatsAppCampaigns($filters = [])
     {
-        $sql = "SELECT * FROM whatsapp_campaigns WHERE 1=1";
+        try {
+            $sql = "SELECT * FROM whatsapp_campaigns WHERE 1=1";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $params = [];
 
         if (!empty($filters['status'])) {
@@ -567,7 +575,11 @@ class WhatsAppManager
      */
     private function getWhatsAppCampaign($campaignId)
     {
-        $sql = "SELECT * FROM whatsapp_campaigns WHERE id = ?";
+        try {
+            $sql = "SELECT * FROM whatsapp_campaigns WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->fetch($sql, [$campaignId]);
     }
 
@@ -693,14 +705,18 @@ class WhatsAppManager
             FROM whatsapp_messages";
         $dashboard['message_stats'] = $this->db->fetch($sql);
 
-        // Campaign statistics
-        $sql = "SELECT
-            COUNT(*) as total_campaigns,
-            SUM(sent_count) as total_sent,
-            SUM(delivered_count) as total_delivered,
-            SUM(read_count) as total_read,
-            AVG(CASE WHEN sent_count > 0 THEN (read_count / sent_count) * 100 END) as avg_read_rate
-            FROM whatsapp_campaigns";
+        try {
+            // Campaign statistics
+            $sql = "SELECT
+                COUNT(*) as total_campaigns,
+                SUM(sent_count) as total_sent,
+                SUM(delivered_count) as total_delivered,
+                SUM(read_count) as total_read,
+                AVG(CASE WHEN sent_count > 0 THEN (read_count / sent_count) * 100 END) as avg_read_rate
+                FROM whatsapp_campaigns";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $dashboard['campaign_stats'] = $this->db->fetch($sql);
 
         // Recent messages

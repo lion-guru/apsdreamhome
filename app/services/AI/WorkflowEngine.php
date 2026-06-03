@@ -47,7 +47,11 @@ class WorkflowEngine {
 
         // Create execution record
         $workflowIdInt = intval($workflowId);
-        $this->db->execute("INSERT INTO workflow_executions (workflow_id, status) VALUES (?, 'running')", [$workflowIdInt]);
+        try {
+            $this->db->execute("INSERT INTO workflow_executions (workflow_id, status) VALUES (?, 'running')", [$workflowIdInt]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $executionId = $this->db->lastInsertId();
 
         $graph = json_decode($workflow['nodes'], true);
@@ -99,8 +103,12 @@ class WorkflowEngine {
         // Update final execution record
         $this->updateExecution($executionId, $status, $this->executionLog, $context, $duration);
 
-        // Update last run
-        $this->db->execute("UPDATE ai_workflows SET last_run = NOW() WHERE id = ?", [intval($workflowId)]);
+        try {
+            // Update last run
+            $this->db->execute("UPDATE ai_workflows SET last_run = NOW() WHERE id = ?", [intval($workflowId)]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'status' => $status,

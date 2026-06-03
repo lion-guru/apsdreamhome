@@ -452,8 +452,12 @@ class FarmerService
                 'total_acres' => 0
             ];
 
-            // Commission statistics
-            $commissionSql = "SELECT COUNT(*) as total_commissions, SUM(amount) as total_amount FROM farmer_commissions WHERE status = 'paid'";
+            try {
+                // Commission statistics
+                $commissionSql = "SELECT COUNT(*) as total_commissions, SUM(amount) as total_amount FROM farmer_commissions WHERE status = 'paid'";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $commissionStats = $this->db->fetchOne($commissionSql);
             $stats['commissions'] = $commissionStats ?? [
                 'total_commissions' => 0,
@@ -783,13 +787,21 @@ class FarmerService
 
     private function getFarmerCommissions(int $farmerId): array
     {
-        $sql = "SELECT * FROM farmer_commissions WHERE farmer_id = ? ORDER BY created_at DESC";
+        try {
+            $sql = "SELECT * FROM farmer_commissions WHERE farmer_id = ? ORDER BY created_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->fetchAll($sql, [$farmerId]);
     }
 
     private function getFarmerActivities(int $farmerId): array
     {
-        $sql = "SELECT * FROM farmer_activities WHERE farmer_id = ? ORDER BY created_at DESC";
+        try {
+            $sql = "SELECT * FROM farmer_activities WHERE farmer_id = ? ORDER BY created_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->fetchAll($sql, [$farmerId]);
     }
 
@@ -811,8 +823,12 @@ class FarmerService
 
     private function logFarmerActivity(int $farmerId, string $type, string $description, string $data = ''): void
     {
-        $sql = "INSERT INTO farmer_activities (farmer_id, activity_type, description, data, created_by, created_at) 
-                VALUES (?, ?, ?, ?, 'system', NOW())";
+        try {
+            $sql = "INSERT INTO farmer_activities (farmer_id, activity_type, description, data, created_by, created_at) 
+                    VALUES (?, ?, ?, ?, 'system', NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $this->db->execute($sql, [
             $farmerId,
@@ -866,9 +882,13 @@ class FarmerService
 
     private function createCommissionRecord(int $farmerId, string $type, float $amount, array $data): string
     {
-        $sql = "INSERT INTO farmer_commissions 
-                (farmer_id, commission_type, amount, commission_rate, reference_id, reference_data, status, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
+        try {
+            $sql = "INSERT INTO farmer_commissions 
+                    (farmer_id, commission_type, amount, commission_rate, reference_id, reference_data, status, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $this->db->execute($sql, [
             $farmerId,
@@ -884,14 +904,18 @@ class FarmerService
 
     private function updateFarmerTotalCommission(int $farmerId): void
     {
-        $sql = "UPDATE farmers f 
-                SET total_commission = (
-                    SELECT COALESCE(SUM(amount), 0) 
-                    FROM farmer_commissions 
-                    WHERE farmer_id = ? AND status = 'paid'
-                ),
-                updated_at = NOW()
-                WHERE f.id = ?";
+        try {
+            $sql = "UPDATE farmers f 
+                    SET total_commission = (
+                        SELECT COALESCE(SUM(amount), 0) 
+                        FROM farmer_commissions 
+                        WHERE farmer_id = ? AND status = 'paid'
+                    ),
+                    updated_at = NOW()
+                    WHERE f.id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $this->db->execute($sql, [$farmerId, $farmerId]);
     }
@@ -908,11 +932,15 @@ class FarmerService
 
     private function getRecentActivities(array $filters): array
     {
-        $sql = "SELECT fa.*, f.full_name, f.email 
-                FROM farmer_activities fa 
-                JOIN farmers f ON fa.farmer_id = f.id 
-                ORDER BY fa.created_at DESC 
-                LIMIT 20";
+        try {
+            $sql = "SELECT fa.*, f.full_name, f.email 
+                    FROM farmer_activities fa 
+                    JOIN farmers f ON fa.farmer_id = f.id 
+                    ORDER BY fa.created_at DESC 
+                    LIMIT 20";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         return $this->db->fetchAll($sql);
     }

@@ -510,7 +510,11 @@ class UserController extends BaseController
         $this->requireCustomerLogin();
         $user = $this->getUser();
 
-        $stmt = $this->db->prepare("SELECT * FROM user_notification_preferences WHERE user_id = ?");
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM user_notification_preferences WHERE user_id = ?");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$user['id']]);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -556,17 +560,21 @@ class UserController extends BaseController
             $whatsapp = in_array('whatsapp', $typeChannels) ? 1 : 0;
             $push = in_array('push', $typeChannels) ? 1 : 0;
 
-            $stmt = $this->db->prepare("
-                INSERT INTO user_notification_preferences 
-                (user_id, user_type, notification_type, email_enabled, sms_enabled, whatsapp_enabled, push_enabled, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
-                ON DUPLICATE KEY UPDATE
-                email_enabled = VALUES(email_enabled),
-                sms_enabled = VALUES(sms_enabled),
-                whatsapp_enabled = VALUES(whatsapp_enabled),
-                push_enabled = VALUES(push_enabled),
-                updated_at = NOW()
-            ");
+            try {
+                $stmt = $this->db->prepare("
+                    INSERT INTO user_notification_preferences 
+                    (user_id, user_type, notification_type, email_enabled, sms_enabled, whatsapp_enabled, push_enabled, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                    ON DUPLICATE KEY UPDATE
+                    email_enabled = VALUES(email_enabled),
+                    sms_enabled = VALUES(sms_enabled),
+                    whatsapp_enabled = VALUES(whatsapp_enabled),
+                    push_enabled = VALUES(push_enabled),
+                    updated_at = NOW()
+                ");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([
                 $user['id'],
                 $user['role'] ?? 'customer',

@@ -85,13 +85,17 @@ try {
     echo "\n≡ƒôè TESTING DASHBOARD DATA INTEGRITY\n";
     echo "-" . str_repeat("-", 40) . "\n";
     
-    $dashboardQueries = [
-        "SELECT COUNT(*) as count FROM bookings" => "Total Bookings",
-        "SELECT SUM(COALESCE(amount, 0)) as sum FROM bookings WHERE status='confirmed'" => "Confirmed Sales",
-        "SELECT COUNT(*) as count FROM plots WHERE status='available'" => "Available Inventory",
-        "SELECT SUM(COALESCE(commission_amount, 0)) as sum FROM commission_transactions" => "Total Commissions",
-        "SELECT SUM(COALESCE(amount, 0)) as sum FROM expenses" => "Total Expenses"
-    ];
+    try {
+        $dashboardQueries = [
+            "SELECT COUNT(*) as count FROM bookings" => "Total Bookings",
+            "SELECT SUM(COALESCE(amount, 0)) as sum FROM bookings WHERE status='confirmed'" => "Confirmed Sales",
+            "SELECT COUNT(*) as count FROM plots WHERE status='available'" => "Available Inventory",
+            "SELECT SUM(COALESCE(commission_amount, 0)) as sum FROM commission_transactions" => "Total Commissions",
+            "SELECT SUM(COALESCE(amount, 0)) as sum FROM expenses" => "Total Expenses"
+        ];
+    } catch (\Throwable $e) {
+        // Gracefully handle dropped table ref
+    }
     
     foreach ($dashboardQueries as $query => $label) {
         try {

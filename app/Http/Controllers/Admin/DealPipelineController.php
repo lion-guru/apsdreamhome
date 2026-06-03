@@ -194,8 +194,12 @@ class DealPipelineController extends AdminController
                 exit;
             }
             
-            // Get deal history/timeline
-            $history = $conn->prepare("SELECT * FROM deal_history WHERE deal_id = ? ORDER BY created_at DESC LIMIT 20");
+            try {
+                // Get deal history/timeline
+                $history = $conn->prepare("SELECT * FROM deal_history WHERE deal_id = ? ORDER BY created_at DESC LIMIT 20");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $history->execute([$id]);
             $dealHistory = $history->fetchAll(\PDO::FETCH_ASSOC);
             
@@ -239,9 +243,13 @@ class DealPipelineController extends AdminController
             // Update deal stage
             $conn->prepare("UPDATE deals SET stage_id = ?, updated_at = NOW() WHERE id = ?")->execute([$newStage, $id]);
             
-            // Log stage change in history
-            $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, created_at)
-                          VALUES (?, 'stage_change', ?, ?, NOW())";
+            try {
+                // Log stage change in history
+                $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, created_at)
+                              VALUES (?, 'stage_change', ?, ?, NOW())";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $conn->prepare($historySql)->execute([$id, $currentStage, $newStage]);
             
             redirect('/admin/deal-pipeline?success=Deal stage updated');

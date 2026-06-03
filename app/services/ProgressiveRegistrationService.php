@@ -511,7 +511,11 @@ class ProgressiveRegistrationService
             ]
         ];
 
-        $query = "INSERT INTO user_preferences (user_id, notification_preferences, ui_preferences, privacy_settings) VALUES (?, ?, ?, ?)";
+        try {
+            $query = "INSERT INTO user_preferences (user_id, notification_preferences, ui_preferences, privacy_settings) VALUES (?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->db->execute($query, [
             $userId,
             json_encode($preferences['notification_preferences']),

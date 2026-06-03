@@ -361,9 +361,13 @@ class ReportBuilderService
      */
     public function saveReport(string $name, string $type, array $config, int $userId): int
     {
-        $sql = "INSERT INTO saved_reports 
-                (report_name, report_type, data_source, filters, columns, chart_type, created_by) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO saved_reports 
+                    (report_name, report_type, data_source, filters, columns, chart_type, created_by) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([
@@ -384,9 +388,13 @@ class ReportBuilderService
      */
     public function getSavedReports(int $userId): array
     {
-        $sql = "SELECT * FROM saved_reports 
-                WHERE (created_by = ? OR is_public = 1) AND is_active = 1 
-                ORDER BY created_at DESC";
+        try {
+            $sql = "SELECT * FROM saved_reports 
+                    WHERE (created_by = ? OR is_public = 1) AND is_active = 1 
+                    ORDER BY created_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$userId]);
@@ -407,9 +415,13 @@ class ReportBuilderService
     public function scheduleReport(int $reportId, string $frequency, 
                                   ?int $day = null, ?string $time = null): bool
     {
-        $sql = "UPDATE saved_reports 
-                SET schedule_frequency = ?, schedule_day = ?, schedule_time = ? 
-                WHERE id = ?";
+        try {
+            $sql = "UPDATE saved_reports 
+                    SET schedule_frequency = ?, schedule_day = ?, schedule_time = ? 
+                    WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         return $stmt->execute([$frequency, $day, $time, $reportId]);

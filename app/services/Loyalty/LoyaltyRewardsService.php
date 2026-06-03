@@ -165,9 +165,13 @@ class LoyaltyRewardsService
             ['diamond', 'exclusive', 'Exclusive Previews', 'Early access to new projects', 'priority']
         ];
         
-        $stmt = $this->database->prepare("INSERT IGNORE INTO tier_benefits 
-            (tier_name, benefit_type, benefit_name, benefit_description, benefit_value)
-            VALUES (?, ?, ?, ?, ?)");
+        try {
+            $stmt = $this->database->prepare("INSERT IGNORE INTO tier_benefits 
+                (tier_name, benefit_type, benefit_name, benefit_description, benefit_value)
+                VALUES (?, ?, ?, ?, ?)");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         foreach ($benefits as $benefit) {
             $stmt->execute($benefit);
@@ -412,7 +416,11 @@ class LoyaltyRewardsService
      */
     private function getTierBenefits(string $tier): array
     {
-        $sql = "SELECT * FROM tier_benefits WHERE tier_name = ? AND is_active = 1 ORDER BY sort_order";
+        try {
+            $sql = "SELECT * FROM tier_benefits WHERE tier_name = ? AND is_active = 1 ORDER BY sort_order";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$tier]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);

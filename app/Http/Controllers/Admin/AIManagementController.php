@@ -188,13 +188,17 @@ class AIManagementController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $entries = $this->db->fetchAll("
-                SELECT c.*, u.name as user_name, u.email as user_email
-                FROM ai_context_memory c
-                LEFT JOIN users u ON c.user_id = u.id
-                ORDER BY c.created_at DESC
-                LIMIT 100
-            ") ?: [];
+            try {
+                $entries = $this->db->fetchAll("
+                    SELECT c.*, u.name as user_name, u.email as user_email
+                    FROM ai_context_memory c
+                    LEFT JOIN users u ON c.user_id = u.id
+                    ORDER BY c.created_at DESC
+                    LIMIT 100
+                ") ?: [];
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         } catch (\Exception $e) {
             $entries = [];
         }

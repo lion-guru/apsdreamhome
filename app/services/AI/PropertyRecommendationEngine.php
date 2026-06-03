@@ -76,7 +76,11 @@ class PropertyRecommendationEngine
      */
     private function getUserPreferences(int $userId): array
     {
-        $sql = "SELECT * FROM user_preferences WHERE user_id = ?";
+        try {
+            $sql = "SELECT * FROM user_preferences WHERE user_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -305,19 +309,23 @@ class PropertyRecommendationEngine
      */
     public function updateUserPreferences(int $userId, array $preferences): bool
     {
-        $sql = "INSERT INTO user_preferences (user_id, preferred_locations, price_min, price_max, 
-                                              property_types, bedrooms_min, bathrooms_min, amenities, purpose, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-                ON DUPLICATE KEY UPDATE 
-                    preferred_locations = VALUES(preferred_locations),
-                    price_min = VALUES(price_min),
-                    price_max = VALUES(price_max),
-                    property_types = VALUES(property_types),
-                    bedrooms_min = VALUES(bedrooms_min),
-                    bathrooms_min = VALUES(bathrooms_min),
-                    amenities = VALUES(amenities),
-                    purpose = VALUES(purpose),
-                    updated_at = NOW()";
+        try {
+            $sql = "INSERT INTO user_preferences (user_id, preferred_locations, price_min, price_max, 
+                                                  property_types, bedrooms_min, bathrooms_min, amenities, purpose, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                    ON DUPLICATE KEY UPDATE 
+                        preferred_locations = VALUES(preferred_locations),
+                        price_min = VALUES(price_min),
+                        price_max = VALUES(price_max),
+                        property_types = VALUES(property_types),
+                        bedrooms_min = VALUES(bedrooms_min),
+                        bathrooms_min = VALUES(bathrooms_min),
+                        amenities = VALUES(amenities),
+                        purpose = VALUES(purpose),
+                        updated_at = NOW()";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $params = [
             $userId,

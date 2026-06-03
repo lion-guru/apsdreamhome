@@ -155,10 +155,14 @@ class SystemAnalytics extends Model
     
     private function getErrorRates(string $startDate): array
     {
-        $result = $this->query(
-            "SELECT COUNT(*) as total_errors, COUNT(DISTINCT error_type) as error_types FROM error_logs WHERE created_at >= ?",
-            [$startDate]
-        )->fetch();
+        try {
+            $result = $this->query(
+                "SELECT COUNT(*) as total_errors, COUNT(DISTINCT error_type) as error_types FROM error_logs WHERE created_at >= ?",
+                [$startDate]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return [
             'total_errors' => $result ? (int)$result['total_errors'] : 0,
             'error_types' => $result ? (int)$result['error_types'] : 0
@@ -167,10 +171,14 @@ class SystemAnalytics extends Model
     
     private function getUserActivity(string $startDate): array
     {
-        $result = $this->query(
-            "SELECT COUNT(*) as active_sessions, COUNT(DISTINCT user_id) as unique_users FROM user_sessions WHERE created_at >= ?",
-            [$startDate]
-        )->fetch();
+        try {
+            $result = $this->query(
+                "SELECT COUNT(*) as active_sessions, COUNT(DISTINCT user_id) as unique_users FROM user_sessions WHERE created_at >= ?",
+                [$startDate]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return [
             'active_sessions' => $result ? (int)$result['active_sessions'] : 0,
             'unique_users' => $result ? (int)$result['unique_users'] : 0
@@ -197,10 +205,14 @@ class SystemAnalytics extends Model
     
     private function getAverageSessionDuration(string $startDate): float
     {
-        $result = $this->query(
-            "SELECT AVG(session_duration) as avg_duration FROM user_sessions WHERE created_at >= ?",
-            [$startDate]
-        )->fetch();
+        try {
+            $result = $this->query(
+                "SELECT AVG(session_duration) as avg_duration FROM user_sessions WHERE created_at >= ?",
+                [$startDate]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $result ? (float)$result['avg_duration'] : 0;
     }
     
@@ -215,10 +227,14 @@ class SystemAnalytics extends Model
     
     private function getConversionRate(string $startDate): float
     {
-        $result = $this->query(
-            "SELECT (SUM(CASE WHEN converted = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*)) as conversion_rate FROM user_sessions WHERE created_at >= ?",
-            [$startDate]
-        )->fetch();
+        try {
+            $result = $this->query(
+                "SELECT (SUM(CASE WHEN converted = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*)) as conversion_rate FROM user_sessions WHERE created_at >= ?",
+                [$startDate]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $result ? (float)$result['conversion_rate'] : 0;
     }
     

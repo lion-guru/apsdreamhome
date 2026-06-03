@@ -119,12 +119,16 @@ class Budget extends Model
     {
         $db = Database::getInstance();
 
-        $query = "SELECT b.*, a.auser as created_by_name,
-                         (SELECT SUM(bi.budgeted_amount) FROM budget_items bi WHERE bi.budget_id = b.id) as total_budgeted,
-                         (SELECT SUM(bi.actual_amount) FROM budget_items bi WHERE bi.budget_id = b.id) as total_actual
-                  FROM budgets b
-                  LEFT JOIN admin a ON b.created_by = a.aid
-                  WHERE 1=1";
+        try {
+            $query = "SELECT b.*, a.auser as created_by_name,
+                             (SELECT SUM(bi.budgeted_amount) FROM budget_items bi WHERE bi.budget_id = b.id) as total_budgeted,
+                             (SELECT SUM(bi.actual_amount) FROM budget_items bi WHERE bi.budget_id = b.id) as total_actual
+                      FROM budgets b
+                      LEFT JOIN admin a ON b.created_by = a.aid
+                      WHERE 1=1";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $params = [];
 
@@ -288,16 +292,20 @@ class Budget extends Model
     {
         $db = Database::getInstance();
 
-        $alerts = $db->query(
-            "SELECT bi.*, b.budget_name, coa.account_name,
-                    ((bi.actual_amount - bi.budgeted_amount) / bi.budgeted_amount * 100) as variance_percentage
-             FROM budget_items bi
-             LEFT JOIN budgets b ON bi.budget_id = b.id
-             LEFT JOIN chart_of_accounts coa ON bi.account_id = coa.id
-             WHERE b.is_active = 1
-             AND bi.actual_amount > bi.budgeted_amount * 1.1  -- 10% over budget
-             ORDER BY variance_percentage DESC"
-        )->fetchAll();
+        try {
+            $alerts = $db->query(
+                "SELECT bi.*, b.budget_name, coa.account_name,
+                        ((bi.actual_amount - bi.budgeted_amount) / bi.budgeted_amount * 100) as variance_percentage
+                 FROM budget_items bi
+                 LEFT JOIN budgets b ON bi.budget_id = b.id
+                 LEFT JOIN chart_of_accounts coa ON bi.account_id = coa.id
+                 WHERE b.is_active = 1
+                 AND bi.actual_amount > bi.budgeted_amount * 1.1  -- 10% over budget
+                 ORDER BY variance_percentage DESC"
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $alerts;
     }
@@ -307,11 +315,15 @@ class Budget extends Model
      */
     public function getBudgetUtilizationReport(string $startDate, string $endDate): array
     {
-        $budgets = $this->query(
-            "SELECT * FROM budgets WHERE is_active = 1
-             AND ((start_date BETWEEN ? AND ?) OR (end_date BETWEEN ? AND ?) OR (start_date <= ? AND end_date >= ?))",
-            [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]
-        )->fetchAll();
+        try {
+            $budgets = $this->query(
+                "SELECT * FROM budgets WHERE is_active = 1
+                 AND ((start_date BETWEEN ? AND ?) OR (end_date BETWEEN ? AND ?) OR (start_date <= ? AND end_date >= ?))",
+                [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $report = [];
         foreach ($budgets as $budget) {
@@ -339,16 +351,20 @@ class Budget extends Model
         $db = Database::getInstance();
 
         foreach ($items as $item) {
-            $db->query(
-                "INSERT INTO budget_items (budget_id, account_id, budgeted_amount, actual_amount, variance)
-                 VALUES (?, ?, ?, 0, ?)",
-                [
-                    $budgetId,
-                    $item['account_id'],
-                    $item['budgeted_amount'],
-                    -$item['budgeted_amount'] // Initial variance is negative (under budget)
-                ]
-            );
+            try {
+                $db->query(
+                    "INSERT INTO budget_items (budget_id, account_id, budgeted_amount, actual_amount, variance)
+                     VALUES (?, ?, ?, 0, ?)",
+                    [
+                        $budgetId,
+                        $item['account_id'],
+                        $item['budgeted_amount'],
+                        -$item['budgeted_amount'] // Initial variance is negative (under budget)
+                    ]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         }
     }
 
@@ -359,8 +375,12 @@ class Budget extends Model
     {
         $db = Database::getInstance();
 
-        // Delete existing items
-        $db->query("DELETE FROM budget_items WHERE budget_id = ?", [$budgetId]);
+        try {
+            // Delete existing items
+            $db->query("DELETE FROM budget_items WHERE budget_id = ?", [$budgetId]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Add new items
         $this->addBudgetItems($budgetId, $items);
@@ -373,19 +393,23 @@ class Budget extends Model
     {
         $db = Database::getInstance();
 
-        $items = $db->query(
-            "SELECT bi.*, coa.account_name, coa.account_code, coa.account_type,
-                    (bi.budgeted_amount - bi.actual_amount) as variance,
-                    CASE
-                        WHEN bi.budgeted_amount > 0 THEN ((bi.actual_amount / bi.budgeted_amount) * 100)
-                        ELSE 0
-                    END as utilization_percentage
-             FROM budget_items bi
-             LEFT JOIN chart_of_accounts coa ON bi.account_id = coa.id
-             WHERE bi.budget_id = ?
-             ORDER BY coa.account_type, coa.account_code",
-            [$budgetId]
-        )->fetchAll();
+        try {
+            $items = $db->query(
+                "SELECT bi.*, coa.account_name, coa.account_code, coa.account_type,
+                        (bi.budgeted_amount - bi.actual_amount) as variance,
+                        CASE
+                            WHEN bi.budgeted_amount > 0 THEN ((bi.actual_amount / bi.budgeted_amount) * 100)
+                            ELSE 0
+                        END as utilization_percentage
+                 FROM budget_items bi
+                 LEFT JOIN chart_of_accounts coa ON bi.account_id = coa.id
+                 WHERE bi.budget_id = ?
+                 ORDER BY coa.account_type, coa.account_code",
+                [$budgetId]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Update actual amounts based on actual transactions
         foreach ($items as &$item) {

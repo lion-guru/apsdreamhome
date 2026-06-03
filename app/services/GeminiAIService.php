@@ -337,16 +337,20 @@ Requirements:
     private function logApiRequest(string $url, array $data, string $response, int $httpCode): void
     {
         try {
-            $this->db->execute(
-                'INSERT INTO ai_api_logs (service, endpoint, request_data, response_data, status_code, created_at) VALUES (?, ?, ?, ?, ?, NOW())',
-                [
-                    'gemini',
-                    $url,
-                    json_encode($data),
-                    substr($response, 0, 1000), // Limit response size
-                    $httpCode
-                ]
-            );
+            try {
+                $this->db->execute(
+                    'INSERT INTO ai_api_logs (service, endpoint, request_data, response_data, status_code, created_at) VALUES (?, ?, ?, ?, ?, NOW())',
+                    [
+                        'gemini',
+                        $url,
+                        json_encode($data),
+                        substr($response, 0, 1000), // Limit response size
+                        $httpCode
+                    ]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         } catch (\Exception $e) {
             error_log('Failed to log API request: ' . $e->getMessage());
         }
@@ -366,10 +370,14 @@ Requirements:
     public function getUsageStats(): array
     {
         try {
-            $today = $this->db->fetchAll(
-                'SELECT COUNT(*) as requests_today FROM ai_api_logs WHERE service = ? AND DATE(created_at) = CURDATE()',
-                ['gemini']
-            );
+            try {
+                $today = $this->db->fetchAll(
+                    'SELECT COUNT(*) as requests_today FROM ai_api_logs WHERE service = ? AND DATE(created_at) = CURDATE()',
+                    ['gemini']
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             $thisMonth = $this->db->fetchAll(
                 'SELECT COUNT(*) as requests_this_month FROM ai_api_logs WHERE service = ? AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())',

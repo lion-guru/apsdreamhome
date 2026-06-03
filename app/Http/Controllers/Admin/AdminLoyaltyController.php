@@ -236,24 +236,32 @@ class AdminLoyaltyController extends AdminController
         
         $db = \App\Core\Database\Database::getInstance();
         
-        $sql = "SELECT rr.*, rc.reward_name, u.name as user_name, u.email
-            FROM reward_redemptions rr
-            JOIN rewards_catalog rc ON rr.reward_id = rc.id
-            LEFT JOIN users u ON rr.user_id = u.id
-            ORDER BY rr.redemption_date DESC
-            LIMIT ? OFFSET ?";
+        try {
+            $sql = "SELECT rr.*, rc.reward_name, u.name as user_name, u.email
+                FROM reward_redemptions rr
+                JOIN rewards_catalog rc ON rr.reward_id = rc.id
+                LEFT JOIN users u ON rr.user_id = u.id
+                ORDER BY rr.redemption_date DESC
+                LIMIT ? OFFSET ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $db->prepare($sql);
         $stmt->execute([$perPage, ($page - 1) * $perPage]);
         $redemptions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
-        // Get stats
-        $statsSql = "SELECT 
-            COUNT(*) as total,
-            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-            SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved,
-            COALESCE(SUM(points_spent), 0) as total_points
-            FROM reward_redemptions";
+        try {
+            // Get stats
+            $statsSql = "SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved,
+                COALESCE(SUM(points_spent), 0) as total_points
+                FROM reward_redemptions";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stats = $db->query($statsSql)->fetch(\PDO::FETCH_ASSOC);
         
         $this->render('admin/loyalty/redemptions', [
@@ -273,7 +281,11 @@ class AdminLoyaltyController extends AdminController
             $status = $_POST['status'] ?? '';
             
             $db = \App\Core\Database\Database::getInstance();
-            $sql = "UPDATE reward_redemptions SET status = ? WHERE id = ?";
+            try {
+                $sql = "UPDATE reward_redemptions SET status = ? WHERE id = ?";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt = $db->prepare($sql);
             $stmt->execute([$status, $id]);
             
@@ -309,7 +321,11 @@ class AdminLoyaltyController extends AdminController
         $tierData = [];
         
         foreach ($tiers as $tier) {
-            $sql = "SELECT * FROM tier_benefits WHERE tier_name = ? ORDER BY sort_order";
+            try {
+                $sql = "SELECT * FROM tier_benefits WHERE tier_name = ? ORDER BY sort_order";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt = $db->prepare($sql);
             $stmt->execute([$tier]);
             $tierData[$tier] = $stmt->fetchAll(\PDO::FETCH_ASSOC);

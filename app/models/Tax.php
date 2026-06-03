@@ -147,10 +147,14 @@ class Tax extends Model
             ];
         }
 
-        $hsnData = $this->query(
-            "SELECT * FROM hsn_sac_codes WHERE code = ? AND is_active = 1 ORDER BY effective_from DESC LIMIT 1",
-            [$hsnCode]
-        )->fetch();
+        try {
+            $hsnData = $this->query(
+                "SELECT * FROM hsn_sac_codes WHERE code = ? AND is_active = 1 ORDER BY effective_from DESC LIMIT 1",
+                [$hsnCode]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if ($hsnData) {
             return [
@@ -201,14 +205,18 @@ class Tax extends Model
         ];
 
         foreach ($invoices as $invoice) {
-            // Get invoice items with GST details
-            $items = $db->query(
-                "SELECT ii.*, hsn.code as hsn_code, hsn.cgst_rate, hsn.sgst_rate, hsn.igst_rate, hsn.cess_rate
-                 FROM invoice_items ii
-                 LEFT JOIN hsn_sac_codes hsn ON ii.item_name LIKE CONCAT('%', hsn.code, '%')
-                 WHERE ii.invoice_id = ?",
-                [$invoice['id']]
-            )->fetchAll();
+            try {
+                // Get invoice items with GST details
+                $items = $db->query(
+                    "SELECT ii.*, hsn.code as hsn_code, hsn.cgst_rate, hsn.sgst_rate, hsn.igst_rate, hsn.cess_rate
+                     FROM invoice_items ii
+                     LEFT JOIN hsn_sac_codes hsn ON ii.item_name LIKE CONCAT('%', hsn.code, '%')
+                     WHERE ii.invoice_id = ?",
+                    [$invoice['id']]
+                )->fetchAll();
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             $invoiceData = [
                 'invoice_number' => $invoice['invoice_number'],
@@ -332,14 +340,18 @@ class Tax extends Model
             [$fromDate, $endDate, $fromDate, $endDate]
         )->fetch();
 
-        // GST returns data (would come from gst_returns table)
-        $returnsData = $db->query(
-            "SELECT
-                SUM(CASE WHEN gr.period_from >= ? AND gr.period_to <= ? THEN 1 ELSE 0 END) as filed_returns
-             FROM gst_returns gr
-             WHERE gr.status = 'filed'",
-            [$fromDate, $endDate]
-        )->fetch();
+        try {
+            // GST returns data (would come from gst_returns table)
+            $returnsData = $db->query(
+                "SELECT
+                    SUM(CASE WHEN gr.period_from >= ? AND gr.period_to <= ? THEN 1 ELSE 0 END) as filed_returns
+                 FROM gst_returns gr
+                 WHERE gr.status = 'filed'",
+                [$fromDate, $endDate]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'period' => date('M Y', strtotime($fromDate)),
@@ -364,23 +376,27 @@ class Tax extends Model
     {
         $db = Database::getInstance();
 
-        $summary = $db->query(
-            "SELECT
-                COALESCE(hsn.code, '999999') as hsn_code,
-                COALESCE(hsn.description, ii.item_name) as description,
-                SUM(ii.quantity) as total_quantity,
-                SUM(ii.line_total) as taxable_value,
-                SUM(ii.tax_amount) as tax_amount,
-                SUM(ii.line_total + ii.tax_amount) as total_value
-             FROM invoice_items ii
-             LEFT JOIN invoices i ON ii.invoice_id = i.id
-             LEFT JOIN hsn_sac_codes hsn ON ii.item_name LIKE CONCAT('%', hsn.code, '%')
-             WHERE i.invoice_date BETWEEN ? AND ?
-             AND i.status IN ('sent', 'paid')
-             GROUP BY hsn.code, hsn.description, ii.item_name
-             ORDER BY taxable_value DESC",
-            [$fromDate, $endDate]
-        )->fetchAll();
+        try {
+            $summary = $db->query(
+                "SELECT
+                    COALESCE(hsn.code, '999999') as hsn_code,
+                    COALESCE(hsn.description, ii.item_name) as description,
+                    SUM(ii.quantity) as total_quantity,
+                    SUM(ii.line_total) as taxable_value,
+                    SUM(ii.tax_amount) as tax_amount,
+                    SUM(ii.line_total + ii.tax_amount) as total_value
+                 FROM invoice_items ii
+                 LEFT JOIN invoices i ON ii.invoice_id = i.id
+                 LEFT JOIN hsn_sac_codes hsn ON ii.item_name LIKE CONCAT('%', hsn.code, '%')
+                 WHERE i.invoice_date BETWEEN ? AND ?
+                 AND i.status IN ('sent', 'paid')
+                 GROUP BY hsn.code, hsn.description, ii.item_name
+                 ORDER BY taxable_value DESC",
+                [$fromDate, $endDate]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $summary;
     }

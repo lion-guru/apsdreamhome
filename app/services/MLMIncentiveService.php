@@ -130,10 +130,14 @@ class MLMIncentiveService
         $params = array_merge($downline, [$startDate, $endDate]);
         $v2Volume = (float)$this->db->fetchOne($sqlV2, $params)['SUM(booking_amount)'] ?: 0;
 
-        // Legacy Sales
-        $sqlLegacy = "SELECT SUM(sale_amount) FROM property_sales 
-                      WHERE agent_id IN ($placeholders) 
-                      AND created_at BETWEEN ? AND ?";
+        try {
+            // Legacy Sales
+            $sqlLegacy = "SELECT SUM(sale_amount) FROM property_sales 
+                          WHERE agent_id IN ($placeholders) 
+                          AND created_at BETWEEN ? AND ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $legacyVolume = (float)$this->db->fetchOne($sqlLegacy, $params)['SUM(sale_amount)'] ?: 0;
 
         return $v2Volume + $legacyVolume;

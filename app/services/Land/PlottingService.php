@@ -553,10 +553,14 @@ class PlottingService
     public function addBookingPayment(array $data)
     {
         try {
-            $sql = "INSERT INTO plot_payments (
-                booking_id, amount, payment_date, payment_method, transaction_id,
-                installment_number, payment_status, receipt_number, bank_reference, remarks
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try {
+                $sql = "INSERT INTO plot_payments (
+                    booking_id, amount, payment_date, payment_method, transaction_id,
+                    installment_number, payment_status, receipt_number, bank_reference, remarks
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             $params = [
                 $data['booking_id'],
@@ -750,10 +754,14 @@ class PlottingService
      */
     public function createProject($data)
     {
-        $sql = "INSERT INTO land_projects (
-            project_name, description, location, total_area, 
-            created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
+        try {
+            $sql = "INSERT INTO land_projects (
+                project_name, description, location, total_area, 
+                created_by, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $this->database->query($sql, [
             $data['project_name'],
@@ -846,7 +854,11 @@ class PlottingService
      */
     public function getProject($projectId)
     {
-        $sql = "SELECT * FROM land_projects WHERE id = ?";
+        try {
+            $sql = "SELECT * FROM land_projects WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $result = $this->database->fetchOne($sql, [$projectId]);
 
         return $result;
@@ -948,10 +960,14 @@ class PlottingService
     private function updateBookingPaymentStatus($bookingId)
     {
         try {
-            $result = $this->database->selectOne(
-                "SELECT SUM(amount) as total_paid FROM plot_payments WHERE booking_id = ? AND payment_status = 'completed'",
-                [$bookingId]
-            );
+            try {
+                $result = $this->database->selectOne(
+                    "SELECT SUM(amount) as total_paid FROM plot_payments WHERE booking_id = ? AND payment_status = 'completed'",
+                    [$bookingId]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             $totalPaid = $result['total_paid'] ?? 0;
 

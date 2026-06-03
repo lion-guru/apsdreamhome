@@ -388,7 +388,11 @@ class MarketingAutomationService
     public function getCampaigns($filters = [], $limit = 50, $offset = 0)
     {
         try {
-            $sql = "SELECT * FROM marketing_campaigns WHERE 1=1";
+            try {
+                $sql = "SELECT * FROM marketing_campaigns WHERE 1=1";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $params = [];
             
             if (!empty($filters['type'])) {
@@ -725,11 +729,15 @@ class MarketingAutomationService
      */
     private function getTopCampaigns()
     {
-        $sql = "SELECT name, sent_count, opened_count, clicked_count, converted_count
-                FROM marketing_campaigns
-                WHERE status = 'completed'
-                ORDER BY converted_count DESC
-                LIMIT 5";
+        try {
+            $sql = "SELECT name, sent_count, opened_count, clicked_count, converted_count
+                    FROM marketing_campaigns
+                    WHERE status = 'completed'
+                    ORDER BY converted_count DESC
+                    LIMIT 5";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->database->select($sql);
     }
     

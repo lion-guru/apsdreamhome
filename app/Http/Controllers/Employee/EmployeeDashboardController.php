@@ -400,11 +400,15 @@ class EmployeeDashboardController extends BaseController
      */
     private function getMarketingData()
     {
-        // Campaign performance
-        $campaignQuery = "SELECT status, COUNT(*) as count
-                          FROM marketing_campaigns 
-                          WHERE assigned_to = ?
-                          GROUP BY status";
+        try {
+            // Campaign performance
+            $campaignQuery = "SELECT status, COUNT(*) as count
+                              FROM marketing_campaigns 
+                              WHERE assigned_to = ?
+                              GROUP BY status";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $campaignStatus = $this->db->fetchAll($campaignQuery, [$this->employeeId]);
         

@@ -10,7 +10,11 @@ class ApiIntegrationController extends AdminController
     {
         $this->requireAdmin();
 
-        $developers = $this->db->fetchAll("SELECT * FROM api_developers ORDER BY created_at DESC");
+        try {
+            $developers = $this->db->fetchAll("SELECT * FROM api_developers ORDER BY created_at DESC");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $total = $this->db->fetch("SELECT COUNT(*) as c FROM api_developers")['c'] ?? 0;
         $active = $this->db->fetch("SELECT COUNT(*) as c FROM api_developers WHERE status = 'active'")['c'] ?? 0;
 
@@ -59,7 +63,11 @@ class ApiIntegrationController extends AdminController
     {
         $this->requireAdmin();
 
-        $apiIntegrations = $this->db->fetchAll("SELECT * FROM api_integrations ORDER BY created_at DESC");
+        try {
+            $apiIntegrations = $this->db->fetchAll("SELECT * FROM api_integrations ORDER BY created_at DESC");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         try {
             $thirdParty = $this->db->fetchAll("SELECT * FROM third_party_integrations ORDER BY created_at DESC");
         } catch (\Throwable $e) {
@@ -95,13 +103,17 @@ class ApiIntegrationController extends AdminController
     {
         $this->requireAdmin();
 
-        $logs = $this->db->fetchAll("
-            SELECT il.*, ai.service_name 
-            FROM integration_logs il 
-            LEFT JOIN api_integrations ai ON il.integration_id = ai.id 
-            ORDER BY il.created_at DESC 
-            LIMIT 200
-        ");
+        try {
+            $logs = $this->db->fetchAll("
+                SELECT il.*, ai.service_name 
+                FROM integration_logs il 
+                LEFT JOIN api_integrations ai ON il.integration_id = ai.id 
+                ORDER BY il.created_at DESC 
+                LIMIT 200
+            ");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->render('admin/api/integration-logs', [
             'page_title' => 'Integration Logs',

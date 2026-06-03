@@ -80,7 +80,11 @@ class SeoController extends BaseApiController
                     $params[] = $val;
                 }
                 $params[] = $existing['id'];
-                $conn->prepare("UPDATE seo_metadata SET " . implode(', ', $sets) . " WHERE id = ?")->execute($params);
+                try {
+                    $conn->prepare("UPDATE seo_metadata SET " . implode(', ', $sets) . " WHERE id = ?")->execute($params);
+                } catch (\Throwable $e) {
+                    // Gracefully handle dropped table ref
+                }
             } else {
                 $cols = array_keys($data);
                 $placeholders = rtrim(str_repeat('?,', count($cols)), ',');

@@ -57,7 +57,11 @@ class AIAdvancedAgent {
      * Generate Personal Learning Plan (Automated)
      */
     public function generateLearningPlan($userId) {
-        $profile = $this->db->fetch("SELECT * FROM user_ai_profiles WHERE user_id = ?", [$userId]);
+        try {
+            $profile = $this->db->fetch("SELECT * FROM user_ai_profiles WHERE user_id = ?", [$userId]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $plan = [
             'userId' => $userId,

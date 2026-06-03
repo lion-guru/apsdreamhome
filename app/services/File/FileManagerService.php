@@ -254,14 +254,18 @@ class FileManagerService
      */
     public function getFile(string $uuid, ?int $userId = null, ?string $userType = null): ?array
     {
-        $sql = "SELECT f.*, 
-            GROUP_CONCAT(t.name) as tag_names,
-            GROUP_CONCAT(t.color) as tag_colors
-            FROM files f
-            LEFT JOIN file_tag_relations ftr ON f.id = ftr.file_id
-            LEFT JOIN file_tags t ON ftr.tag_id = t.id
-            WHERE f.uuid = ?
-            GROUP BY f.id";
+        try {
+            $sql = "SELECT f.*, 
+                GROUP_CONCAT(t.name) as tag_names,
+                GROUP_CONCAT(t.color) as tag_colors
+                FROM files f
+                LEFT JOIN file_tag_relations ftr ON f.id = ftr.file_id
+                LEFT JOIN file_tags t ON ftr.tag_id = t.id
+                WHERE f.uuid = ?
+                GROUP BY f.id";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$uuid]);
@@ -403,7 +407,11 @@ class FileManagerService
      */
     public function getVersions(int $fileId): array
     {
-        $sql = "SELECT * FROM file_versions WHERE file_id = ? ORDER BY version_number DESC";
+        try {
+            $sql = "SELECT * FROM file_versions WHERE file_id = ? ORDER BY version_number DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$fileId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -616,9 +624,13 @@ class FileManagerService
      */
     private function logAccess(int $fileId, string $action, ?int $userId, ?string $userType): void
     {
-        $sql = "INSERT INTO file_access_logs 
-            (file_id, user_id, user_type, action, ip_address, user_agent)
-            VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO file_access_logs 
+                (file_id, user_id, user_type, action, ip_address, user_agent)
+                VALUES (?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([
@@ -637,8 +649,12 @@ class FileManagerService
     private function addTagsToFile(int $fileId, array $tags): void
     {
         foreach ($tags as $tagName) {
-            // Get or create tag
-            $tagSql = "SELECT id FROM file_tags WHERE name = ?";
+            try {
+                // Get or create tag
+                $tagSql = "SELECT id FROM file_tags WHERE name = ?";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $tagStmt = $this->database->prepare($tagSql);
             $tagStmt->execute([$tagName]);
             $tag = $tagStmt->fetch(\PDO::FETCH_ASSOC);
@@ -674,9 +690,13 @@ class FileManagerService
      */
     private function saveCurrentAsVersion(array $file): void
     {
-        $sql = "INSERT INTO file_versions 
-            (file_id, version_number, file_name, file_path, size_bytes, checksum, change_notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO file_versions 
+                (file_id, version_number, file_name, file_path, size_bytes, checksum, change_notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([
@@ -709,7 +729,11 @@ class FileManagerService
      */
     private function deleteVersions(int $fileId): void
     {
-        $sql = "SELECT * FROM file_versions WHERE file_id = ?";
+        try {
+            $sql = "SELECT * FROM file_versions WHERE file_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$fileId]);
         $versions = $stmt->fetchAll(\PDO::FETCH_ASSOC);

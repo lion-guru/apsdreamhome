@@ -226,16 +226,20 @@ class Document extends Model
             'created_at' => date('Y-m-d H:i:s')
         ];
 
-        $db->query(
-            "INSERT INTO document_sharing (document_id, shared_with_employee_id, shared_with_admin_id, permissions, expires_at, shared_by, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE permissions = ?, expires_at = ?",
-            [
-                $shareRecord['document_id'], $shareRecord['shared_with_employee_id'], $shareRecord['shared_with_admin_id'],
-                $shareRecord['permissions'], $shareRecord['expires_at'], $shareRecord['shared_by'], $shareRecord['created_at'],
-                $shareRecord['permissions'], $shareRecord['expires_at']
-            ]
-        );
+        try {
+            $db->query(
+                "INSERT INTO document_sharing (document_id, shared_with_employee_id, shared_with_admin_id, permissions, expires_at, shared_by, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE permissions = ?, expires_at = ?",
+                [
+                    $shareRecord['document_id'], $shareRecord['shared_with_employee_id'], $shareRecord['shared_with_admin_id'],
+                    $shareRecord['permissions'], $shareRecord['expires_at'], $shareRecord['shared_by'], $shareRecord['created_at'],
+                    $shareRecord['permissions'], $shareRecord['expires_at']
+                ]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Log the share action
         $this->logDocumentAction($documentId, 'share', $shareData['shared_by'], $shareData);

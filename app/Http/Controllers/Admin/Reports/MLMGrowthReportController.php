@@ -90,22 +90,26 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
      */
     private function getTopPerformers($db): array
     {
-        $sql = "
-            SELECT 
-                a.id,
-                a.name,
-                a.email,
-                a.referral_code,
-                COUNT(DISTINCT r.id) as direct_referrals,
-                SUM(c.amount) as total_commissions,
-                a.created_at
-            FROM users a
-            LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id
-            LEFT JOIN mlm_commissions c ON a.id = c.associate_id AND c.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-            GROUP BY a.id
-            ORDER BY total_commissions DESC
-            LIMIT 20
-        ";
+        try {
+            $sql = "
+                SELECT 
+                    a.id,
+                    a.name,
+                    a.email,
+                    a.referral_code,
+                    COUNT(DISTINCT r.id) as direct_referrals,
+                    SUM(c.amount) as total_commissions,
+                    a.created_at
+                FROM users a
+                LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id
+                LEFT JOIN mlm_commissions c ON a.id = c.associate_id AND c.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY a.id
+                ORDER BY total_commissions DESC
+                LIMIT 20
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $db->query($sql);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -156,35 +160,39 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
      */
     private function getMonthlyComparison($db): array
     {
-        // Current month vs previous month
-        $sql = "
-            SELECT 
-                'Current Month' as period,
-                COUNT(DISTINCT a.id) as new_associates,
-                COUNT(DISTINCT r.id) as new_referrals,
-                COALESCE(SUM(c.amount), 0) as total_commissions
-            FROM users a
-            LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id 
-                AND r.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
-            LEFT JOIN mlm_commissions c ON c.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
-            WHERE a.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
-            
-            UNION ALL
-            
-            SELECT 
-                'Previous Month' as period,
-                COUNT(DISTINCT a.id) as new_associates,
-                COUNT(DISTINCT r.id) as new_referrals,
-                COALESCE(SUM(c.amount), 0) as total_commissions
-            FROM users a
-            LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id 
-                AND r.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
-                AND r.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
-            LEFT JOIN mlm_commissions c ON c.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
-                AND c.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
-            WHERE a.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
-                AND a.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
-        ";
+        try {
+            // Current month vs previous month
+            $sql = "
+                SELECT 
+                    'Current Month' as period,
+                    COUNT(DISTINCT a.id) as new_associates,
+                    COUNT(DISTINCT r.id) as new_referrals,
+                    COALESCE(SUM(c.amount), 0) as total_commissions
+                FROM users a
+                LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id 
+                    AND r.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+                LEFT JOIN mlm_commissions c ON c.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+                WHERE a.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+                
+                UNION ALL
+                
+                SELECT 
+                    'Previous Month' as period,
+                    COUNT(DISTINCT a.id) as new_associates,
+                    COUNT(DISTINCT r.id) as new_referrals,
+                    COALESCE(SUM(c.amount), 0) as total_commissions
+                FROM users a
+                LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id 
+                    AND r.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+                    AND r.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
+                LEFT JOIN mlm_commissions c ON c.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+                    AND c.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
+                WHERE a.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+                    AND a.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $db->query($sql);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);

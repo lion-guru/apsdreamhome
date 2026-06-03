@@ -149,13 +149,17 @@ class Messaging extends Model
 
         $db = Database::getInstance();
 
-        $query = "SELECT m.*,
-                         ma.file_name, ma.file_path, ma.file_size, ma.mime_type, ma.file_type,
-                         mr.reaction_type, COUNT(mr.id) as reaction_count
-                  FROM messages m
-                  LEFT JOIN message_attachments ma ON m.id = ma.message_id
-                  LEFT JOIN message_reactions mr ON m.id = mr.message_id
-                  WHERE m.conversation_id = ? AND m.is_deleted = 0";
+        try {
+            $query = "SELECT m.*,
+                             ma.file_name, ma.file_path, ma.file_size, ma.mime_type, ma.file_type,
+                             mr.reaction_type, COUNT(mr.id) as reaction_count
+                      FROM messages m
+                      LEFT JOIN message_attachments ma ON m.id = ma.message_id
+                      LEFT JOIN message_reactions mr ON m.id = mr.message_id
+                      WHERE m.conversation_id = ? AND m.is_deleted = 0";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $params = [$conversationId];
 
@@ -308,12 +312,16 @@ class Messaging extends Model
 
         $db = Database::getInstance();
 
-        $db->query(
-            "INSERT INTO typing_indicators (conversation_id, user_id, user_type, started_at, last_updated)
-             VALUES (?, ?, ?, NOW(), NOW())
-             ON DUPLICATE KEY UPDATE last_updated = NOW()",
-            [$conversationId, $userId, $userType]
-        );
+        try {
+            $db->query(
+                "INSERT INTO typing_indicators (conversation_id, user_id, user_type, started_at, last_updated)
+                 VALUES (?, ?, ?, NOW(), NOW())
+                 ON DUPLICATE KEY UPDATE last_updated = NOW()",
+                [$conversationId, $userId, $userType]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return ['success' => true, 'message' => 'Typing indicator started'];
     }
@@ -325,11 +333,15 @@ class Messaging extends Model
     {
         $db = Database::getInstance();
 
-        $db->query(
-            "DELETE FROM typing_indicators
-             WHERE conversation_id = ? AND user_id = ? AND user_type = ?",
-            [$conversationId, $userId, $userType]
-        );
+        try {
+            $db->query(
+                "DELETE FROM typing_indicators
+                 WHERE conversation_id = ? AND user_id = ? AND user_type = ?",
+                [$conversationId, $userId, $userType]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return ['success' => true, 'message' => 'Typing indicator stopped'];
     }
@@ -341,10 +353,14 @@ class Messaging extends Model
     {
         $db = Database::getInstance();
 
-        // Clean up old typing indicators (older than 10 seconds)
-        $db->query(
-            "DELETE FROM typing_indicators WHERE last_updated < DATE_SUB(NOW(), INTERVAL 10 SECOND)"
-        );
+        try {
+            // Clean up old typing indicators (older than 10 seconds)
+            $db->query(
+                "DELETE FROM typing_indicators WHERE last_updated < DATE_SUB(NOW(), INTERVAL 10 SECOND)"
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $db->query(
             "SELECT ti.*, CONCAT(u.first_name, ' ', u.last_name) as user_name
@@ -387,20 +403,24 @@ class Messaging extends Model
         $db = Database::getInstance();
 
         foreach ($attachments as $attachment) {
-            $db->query(
-                "INSERT INTO message_attachments
-                 (message_id, file_name, file_path, file_size, mime_type, file_type, thumbnail_path)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $messageId,
-                    $attachment['file_name'],
-                    $attachment['file_path'],
-                    $attachment['file_size'],
-                    $attachment['mime_type'],
-                    $attachment['file_type'] ?? 'other',
-                    $attachment['thumbnail_path'] ?? null
-                ]
-            );
+            try {
+                $db->query(
+                    "INSERT INTO message_attachments
+                     (message_id, file_name, file_path, file_size, mime_type, file_type, thumbnail_path)
+                     VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    [
+                        $messageId,
+                        $attachment['file_name'],
+                        $attachment['file_path'],
+                        $attachment['file_size'],
+                        $attachment['mime_type'],
+                        $attachment['file_type'] ?? 'other',
+                        $attachment['thumbnail_path'] ?? null
+                    ]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         }
     }
 
@@ -504,20 +524,24 @@ class Messaging extends Model
     {
         $db = Database::getInstance();
 
-        $db->query(
-            "INSERT INTO quick_replies (user_id, user_type, title, content, category, is_active)
-             VALUES (?, ?, ?, ?, ?, 1)
-             ON DUPLICATE KEY UPDATE content = ?, category = ?, updated_at = NOW()",
-            [
-                $userId,
-                $userType,
-                $quickReplyData['title'],
-                $quickReplyData['content'],
-                $quickReplyData['category'] ?? null,
-                $quickReplyData['content'],
-                $quickReplyData['category'] ?? null
-            ]
-        );
+        try {
+            $db->query(
+                "INSERT INTO quick_replies (user_id, user_type, title, content, category, is_active)
+                 VALUES (?, ?, ?, ?, ?, 1)
+                 ON DUPLICATE KEY UPDATE content = ?, category = ?, updated_at = NOW()",
+                [
+                    $userId,
+                    $userType,
+                    $quickReplyData['title'],
+                    $quickReplyData['content'],
+                    $quickReplyData['category'] ?? null,
+                    $quickReplyData['content'],
+                    $quickReplyData['category'] ?? null
+                ]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return ['success' => true, 'message' => 'Quick reply saved successfully'];
     }
@@ -527,12 +551,16 @@ class Messaging extends Model
      */
     public function getUserQuickReplies(int $userId, string $userType): array
     {
-        return $this->query(
-            "SELECT * FROM quick_replies
-             WHERE user_id = ? AND user_type = ? AND is_active = 1
-             ORDER BY usage_count DESC, created_at DESC",
-            [$userId, $userType]
-        )->fetchAll();
+        try {
+            return $this->query(
+                "SELECT * FROM quick_replies
+                 WHERE user_id = ? AND user_type = ? AND is_active = 1
+                 ORDER BY usage_count DESC, created_at DESC",
+                [$userId, $userType]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**

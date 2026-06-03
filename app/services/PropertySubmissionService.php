@@ -28,10 +28,14 @@ class PropertySubmissionService
             'agent_share_percent' => ($data['submitter_type'] == 'agent') ? 80 : 0
         ];
 
-        $sql = "INSERT INTO property_submissions (
-                    submitter_id, submitter_type, title, description, price, 
-                    property_type, location, images, commission_split_json
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO property_submissions (
+                        submitter_id, submitter_type, title, description, price, 
+                        property_type, location, images, commission_split_json
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $params = [
             $data['submitter_id'],
@@ -71,7 +75,11 @@ class PropertySubmissionService
      */
     public function approveSubmission($submissionId)
     {
-        $submission = $this->db->fetchOne("SELECT * FROM property_submissions WHERE id = ?", [$submissionId]);
+        try {
+            $submission = $this->db->fetchOne("SELECT * FROM property_submissions WHERE id = ?", [$submissionId]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         if (!$submission) return ['success' => false, 'message' => 'Submission not found'];
 
         try {

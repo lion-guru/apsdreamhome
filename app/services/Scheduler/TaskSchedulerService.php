@@ -374,8 +374,12 @@ class TaskSchedulerService
      */
     public function deleteTask(int $taskId): bool
     {
-        // Delete dependencies first
-        $depSql = "DELETE FROM task_dependencies WHERE task_id = ? OR depends_on_task_id = ?";
+        try {
+            // Delete dependencies first
+            $depSql = "DELETE FROM task_dependencies WHERE task_id = ? OR depends_on_task_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $depStmt = $this->database->prepare($depSql);
         $depStmt->execute([$taskId, $taskId]);
         
@@ -429,7 +433,11 @@ class TaskSchedulerService
      */
     public function addDependency(int $taskId, int $dependsOnTaskId): bool
     {
-        $sql = "INSERT IGNORE INTO task_dependencies (task_id, depends_on_task_id) VALUES (?, ?)";
+        try {
+            $sql = "INSERT IGNORE INTO task_dependencies (task_id, depends_on_task_id) VALUES (?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         return $stmt->execute([$taskId, $dependsOnTaskId]);
     }
@@ -449,7 +457,11 @@ class TaskSchedulerService
      */
     private function getDependencies(int $taskId): array
     {
-        $sql = "SELECT * FROM task_dependencies WHERE task_id = ?";
+        try {
+            $sql = "SELECT * FROM task_dependencies WHERE task_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$taskId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);

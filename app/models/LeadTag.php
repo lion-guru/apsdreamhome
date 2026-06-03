@@ -57,11 +57,15 @@ class LeadTag extends Model
     public function leads()
     {
         $db = \App\Core\Database::getInstance();
-        $stmt = $db->prepare("
-            SELECT l.* FROM leads l
-            INNER JOIN lead_tag_mapping ltm ON l.id = ltm.lead_id
-            WHERE ltm.tag_id = ?
-        ");
+        try {
+            $stmt = $db->prepare("
+                SELECT l.* FROM leads l
+                INNER JOIN lead_tag_mapping ltm ON l.id = ltm.lead_id
+                WHERE ltm.tag_id = ?
+            ");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$this->id]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 

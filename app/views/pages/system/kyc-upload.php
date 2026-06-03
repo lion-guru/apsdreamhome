@@ -65,11 +65,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (empty($upload_errors)) {
             $db = \App\Core\App::database();
-            $insert_query = "INSERT INTO kyc_verification
-                (associate_id, aadhar_doc, pan_doc, address_doc, status, submitted_at)
-                VALUES (?, ?, ?, ?, 'Pending', NOW())
-                ON DUPLICATE KEY UPDATE
-                aadhar_doc = ?, pan_doc = ?, address_doc = ?, status = 'Pending', submitted_at = NOW()";
+            try {
+                $insert_query = "INSERT INTO kyc_verification
+                    (associate_id, aadhar_doc, pan_doc, address_doc, status, submitted_at)
+                    VALUES (?, ?, ?, ?, 'Pending', NOW())
+                    ON DUPLICATE KEY UPDATE
+                    aadhar_doc = ?, pan_doc = ?, address_doc = ?, status = 'Pending', submitted_at = NOW()";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             $success = $db->execute($insert_query, [
                 $associate_id,

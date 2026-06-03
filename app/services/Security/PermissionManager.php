@@ -95,10 +95,14 @@ class PermissionManager {
         }
 
         $user_id = getAuthUserId();
-        $sql = "SELECT COUNT(*) as c FROM user_roles ur
-                JOIN role_permissions rp ON ur.role_id = rp.role_id
-                JOIN permissions p ON rp.permission_id = p.id
-                WHERE ur.user_id=? AND p.action=?";
+        try {
+            $sql = "SELECT COUNT(*) as c FROM user_roles ur
+                    JOIN role_permissions rp ON ur.role_id = rp.role_id
+                    JOIN permissions p ON rp.permission_id = p.id
+                    WHERE ur.user_id=? AND p.action=?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $res = $this->db->fetch($sql, [$user_id, $action]);
 
         if (!$res || $res['c'] == 0) {

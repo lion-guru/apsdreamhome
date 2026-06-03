@@ -75,7 +75,11 @@ class AIEcosystemManager {
             ])
         ];
 
-        $sql = "INSERT IGNORE INTO ai_workflows (name, description, nodes) VALUES (?, ?, ?)";
+        try {
+            $sql = "INSERT IGNORE INTO ai_workflows (name, description, nodes) VALUES (?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->db->execute($sql, [$urgentWorkflow['name'], $urgentWorkflow['description'], $urgentWorkflow['nodes']]);
     }
 
@@ -261,7 +265,11 @@ class AIEcosystemManager {
             $url = $tool[2];
             $caps = json_encode($tool[3]);
 
-            $sql = "INSERT IGNORE INTO ai_ecosystem_tools (name, category, source_url, capabilities) VALUES (?, ?, ?, ?)";
+            try {
+                $sql = "INSERT IGNORE INTO ai_ecosystem_tools (name, category, source_url, capabilities) VALUES (?, ?, ?, ?)";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $this->db->execute($sql, [$name, $category, $url, $caps]);
         }
     }

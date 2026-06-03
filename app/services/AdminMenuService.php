@@ -113,11 +113,15 @@ class AdminMenuService
      */
     private function getCustomUserPermissions(int $userId): array
     {
-        $query = "
-            SELECT menu_item_id, can_view, can_create, can_edit, can_delete
-            FROM admin_user_menu_permissions
-            WHERE user_id = ?
-        ";
+        try {
+            $query = "
+                SELECT menu_item_id, can_view, can_create, can_edit, can_delete
+                FROM admin_user_menu_permissions
+                WHERE user_id = ?
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $permissions = $this->db->fetchAll($query, [$userId]);
 
         $result = [];
@@ -184,11 +188,15 @@ class AdminMenuService
 
         // Check custom user permission (can override role permission)
         if ($userId) {
-            $customQuery = "
-                SELECT can_view 
-                FROM admin_user_menu_permissions 
-                WHERE user_id = ? AND menu_item_id = ?
-            ";
+            try {
+                $customQuery = "
+                    SELECT can_view 
+                    FROM admin_user_menu_permissions 
+                    WHERE user_id = ? AND menu_item_id = ?
+                ";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $customPermission = $this->db->fetch($customQuery, [$userId, $menuItemId]);
 
             if ($customPermission) {
@@ -204,17 +212,21 @@ class AdminMenuService
      */
     public function grantUserPermission(int $userId, int $menuItemId, array $permissions): bool
     {
-        $query = "
-            INSERT INTO admin_user_menu_permissions 
-            (user_id, menu_item_id, can_view, can_create, can_edit, can_delete, granted_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-            can_view = VALUES(can_view),
-            can_create = VALUES(can_create),
-            can_edit = VALUES(can_edit),
-            can_delete = VALUES(can_delete),
-            granted_by = VALUES(granted_by)
-        ";
+        try {
+            $query = "
+                INSERT INTO admin_user_menu_permissions 
+                (user_id, menu_item_id, can_view, can_create, can_edit, can_delete, granted_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                can_view = VALUES(can_view),
+                can_create = VALUES(can_create),
+                can_edit = VALUES(can_edit),
+                can_delete = VALUES(can_delete),
+                granted_by = VALUES(granted_by)
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         try {
             $this->db->query($query, [
@@ -239,7 +251,11 @@ class AdminMenuService
      */
     public function revokeUserPermission(int $userId, int $menuItemId): bool
     {
-        $query = "DELETE FROM admin_user_menu_permissions WHERE user_id = ? AND menu_item_id = ?";
+        try {
+            $query = "DELETE FROM admin_user_menu_permissions WHERE user_id = ? AND menu_item_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         try {
             $this->db->query($query, [$userId, $menuItemId]);

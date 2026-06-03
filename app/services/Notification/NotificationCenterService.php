@@ -229,9 +229,13 @@ class NotificationCenterService
             ]
         ];
         
-        $sql = "INSERT IGNORE INTO notification_templates 
-            (type, name, description, title_template, message_template, data_schema, default_channels, default_priority, is_system)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+        try {
+            $sql = "INSERT IGNORE INTO notification_templates 
+                (type, name, description, title_template, message_template, data_schema, default_channels, default_priority, is_system)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         foreach ($templates as $template) {
@@ -501,7 +505,11 @@ class NotificationCenterService
      */
     private function getTemplate(string $type): ?array
     {
-        $sql = "SELECT * FROM notification_templates WHERE type = ? AND is_active = 1";
+        try {
+            $sql = "SELECT * FROM notification_templates WHERE type = ? AND is_active = 1";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$type]);
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;

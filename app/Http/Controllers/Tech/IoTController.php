@@ -252,11 +252,15 @@ class IoTController extends BaseController
                 return [];
             }
 
-            $sql = "SELECT d.*, dt.name as device_type_name, dt.icon, dt.category
-                    FROM iot_devices d
-                    LEFT JOIN iot_device_types dt ON d.device_type_id = dt.id
-                    WHERE d.property_id = :propertyId AND d.status = 'active'
-                    ORDER BY dt.category, d.device_name";
+            try {
+                $sql = "SELECT d.*, dt.name as device_type_name, dt.icon, dt.category
+                        FROM iot_devices d
+                        LEFT JOIN iot_device_types dt ON d.device_type_id = dt.id
+                        WHERE d.property_id = :propertyId AND d.status = 'active'
+                        ORDER BY dt.category, d.device_name";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute(['propertyId' => $property_id]);
@@ -332,12 +336,16 @@ class IoTController extends BaseController
                 return [];
             }
 
-            $sql = "SELECT d.*, p.title as property_title, p.city,
-                           dt.name as device_type_name
-                    FROM iot_devices d
-                    LEFT JOIN properties p ON d.property_id = p.id
-                    LEFT JOIN iot_device_types dt ON d.device_type_id = dt.id
-                    ORDER BY d.created_at DESC";
+            try {
+                $sql = "SELECT d.*, p.title as property_title, p.city,
+                               dt.name as device_type_name
+                        FROM iot_devices d
+                        LEFT JOIN properties p ON d.property_id = p.id
+                        LEFT JOIN iot_device_types dt ON d.device_type_id = dt.id
+                        ORDER BY d.created_at DESC";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();

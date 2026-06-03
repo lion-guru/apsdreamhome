@@ -406,14 +406,18 @@ class EMICalculatorService
      */
     public function getPropertyPaymentPlans(int $propertyId): array
     {
-        $sql = "SELECT pp.*, 
-            COUNT(ppm.id) as milestone_count,
-            SUM(ppm.amount) as milestones_total
-            FROM payment_plans pp
-            LEFT JOIN payment_plan_milestones ppm ON pp.id = ppm.plan_id
-            WHERE pp.property_id = ? AND pp.is_active = 1
-            GROUP BY pp.id
-            ORDER BY pp.created_at DESC";
+        try {
+            $sql = "SELECT pp.*, 
+                COUNT(ppm.id) as milestone_count,
+                SUM(ppm.amount) as milestones_total
+                FROM payment_plans pp
+                LEFT JOIN payment_plan_milestones ppm ON pp.id = ppm.plan_id
+                WHERE pp.property_id = ? AND pp.is_active = 1
+                GROUP BY pp.id
+                ORDER BY pp.created_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$propertyId]);
@@ -427,8 +431,12 @@ class EMICalculatorService
     public function enrollInPlan(int $userId, int $propertyId, int $planId): array
     {
         try {
-            // Get plan details
-            $planSql = "SELECT * FROM payment_plans WHERE id = ?";
+            try {
+                // Get plan details
+                $planSql = "SELECT * FROM payment_plans WHERE id = ?";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $planStmt = $this->database->prepare($planSql);
             $planStmt->execute([$planId]);
             $plan = $planStmt->fetch(\PDO::FETCH_ASSOC);

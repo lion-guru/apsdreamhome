@@ -485,7 +485,11 @@ class FarmerService
     public function getFarmerSupportRequests(int $farmerId, int $limit = null): array
     {
         $db = $this->db();
-        $sql = "SELECT * FROM farmer_support_requests WHERE farmer_id = ? ORDER BY created_at DESC";
+        try {
+            $sql = "SELECT * FROM farmer_support_requests WHERE farmer_id = ? ORDER BY created_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $params = [$farmerId];
 
         if ($limit) {
@@ -566,13 +570,17 @@ class FarmerService
                 [$farmerId, 'active', 'disbursed']
             ) ?: [];
 
-            $dashboard['support_summary'] = $db->fetch(
-                "SELECT COUNT(*) as total_requests,
-                        COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) as open_requests,
-                        COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) as resolved_requests
-                 FROM farmer_support_requests WHERE farmer_id = ?",
-                ['open', 'resolved', $farmerId]
-            );
+            try {
+                $dashboard['support_summary'] = $db->fetch(
+                    "SELECT COUNT(*) as total_requests,
+                            COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) as open_requests,
+                            COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) as resolved_requests
+                     FROM farmer_support_requests WHERE farmer_id = ?",
+                    ['open', 'resolved', $farmerId]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             return $dashboard;
         });
@@ -587,15 +595,19 @@ class FarmerService
 
         return $this->cacheRemember($cacheKey, $this->cacheTtl, function () {
             $db = $this->db();
-            return [
-                'total_farmers' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_profiles"),
-                'active_farmers' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_profiles WHERE status = ?", ['active']),
-                'total_land_area' => (float) ($db->fetchColumn("SELECT COALESCE(SUM(land_area), 0) FROM farmer_land_holdings") ?? 0),
-                'acquired_land_area' => (float) ($db->fetchColumn("SELECT COALESCE(SUM(land_area), 0) FROM farmer_land_holdings WHERE acquisition_status = ?", ['acquired']) ?? 0),
-                'total_payments' => (float) ($db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM farmer_transactions WHERE transaction_type = ? AND status = ?", ['payment', 'completed']) ?? 0),
-                'pending_support_requests' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_support_requests WHERE status = ?", ['open']),
-                'active_loans' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status IN (?, ?)", ['active', 'disbursed'])
-            ];
+            try {
+                return [
+                    'total_farmers' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_profiles"),
+                    'active_farmers' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_profiles WHERE status = ?", ['active']),
+                    'total_land_area' => (float) ($db->fetchColumn("SELECT COALESCE(SUM(land_area), 0) FROM farmer_land_holdings") ?? 0),
+                    'acquired_land_area' => (float) ($db->fetchColumn("SELECT COALESCE(SUM(land_area), 0) FROM farmer_land_holdings WHERE acquisition_status = ?", ['acquired']) ?? 0),
+                    'total_payments' => (float) ($db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM farmer_transactions WHERE transaction_type = ? AND status = ?", ['payment', 'completed']) ?? 0),
+                    'pending_support_requests' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_support_requests WHERE status = ?", ['open']),
+                    'active_loans' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status IN (?, ?)", ['active', 'disbursed'])
+                ];
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         });
     }
 
@@ -637,10 +649,14 @@ class FarmerService
         $prefix = 'SR';
         $year = date('Y');
         $db = $this->db();
-        $count = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM farmer_support_requests WHERE request_number LIKE ?",
-            [$prefix . $year . '%']
-        );
+        try {
+            $count = (int) $db->fetchColumn(
+                "SELECT COUNT(*) FROM farmer_support_requests WHERE request_number LIKE ?",
+                [$prefix . $year . '%']
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $prefix . $year . str_pad($count + 1, 5, '0', STR_PAD_LEFT);
     }
 

@@ -329,7 +329,11 @@ class RegistryController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $activities = $this->db->prepare("SELECT * FROM registry_activity_log WHERE booking_id = ? ORDER BY created_at DESC");
+            try {
+                $activities = $this->db->prepare("SELECT * FROM registry_activity_log WHERE booking_id = ? ORDER BY created_at DESC");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $activities->execute([$bookingId]);
             $activities = $activities->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -357,7 +361,11 @@ class RegistryController extends AdminController
     public function logRegistryActivity($bookingId, $action, $details = '')
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at) VALUES (?, ?, ?, ?, NOW())");
+            try {
+                $stmt = $this->db->prepare("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at) VALUES (?, ?, ?, ?, NOW())");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$bookingId, $action, $details, $_SESSION['admin_id'] ?? null]);
         } catch (Exception $e) {
                     error_log("RegistryController.php: " . $e->getMessage());

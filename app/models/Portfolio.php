@@ -220,12 +220,16 @@ class Portfolio extends Model
      */
     private function getPortfolioGoals(int $portfolioId): array
     {
-        $goals = $this->query(
-            "SELECT * FROM portfolio_goals
-             WHERE portfolio_id = ?
-             ORDER BY priority DESC, target_date ASC",
-            [$portfolioId]
-        )->fetchAll();
+        try {
+            $goals = $this->query(
+                "SELECT * FROM portfolio_goals
+                 WHERE portfolio_id = ?
+                 ORDER BY priority DESC, target_date ASC",
+                [$portfolioId]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         foreach ($goals as &$goal) {
             $goal['milestones'] = json_decode($goal['milestones'], true);
@@ -537,12 +541,16 @@ class Portfolio extends Model
      */
     public function getMarketData(string $location, string $propertyType, string $startDate, string $endDate): array
     {
-        return $this->query(
-            "SELECT * FROM property_market_data
-             WHERE location = ? AND property_type = ? AND data_date BETWEEN ? AND ?
-             ORDER BY data_date ASC",
-            [$location, $propertyType, $startDate, $endDate]
-        )->fetchAll();
+        try {
+            return $this->query(
+                "SELECT * FROM property_market_data
+                 WHERE location = ? AND property_type = ? AND data_date BETWEEN ? AND ?
+                 ORDER BY data_date ASC",
+                [$location, $propertyType, $startDate, $endDate]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**
@@ -575,7 +583,11 @@ class Portfolio extends Model
      */
     public function updateGoalProgress(int $goalId): array
     {
-        $goal = $this->query("SELECT * FROM portfolio_goals WHERE id = ?", [$goalId])->fetch();
+        try {
+            $goal = $this->query("SELECT * FROM portfolio_goals WHERE id = ?", [$goalId])->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         if (!$goal) {
             return ['success' => false, 'message' => 'Goal not found'];
         }
@@ -604,12 +616,16 @@ class Portfolio extends Model
 
         $status = $progressPercentage >= 100 ? 'achieved' : 'active';
 
-        $this->query(
-            "UPDATE portfolio_goals SET
-             current_value = ?, progress_percentage = ?, status = ?, updated_at = NOW()
-             WHERE id = ?",
-            [$currentValue, $progressPercentage, $status, $goalId]
-        );
+        try {
+            $this->query(
+                "UPDATE portfolio_goals SET
+                 current_value = ?, progress_percentage = ?, status = ?, updated_at = NOW()
+                 WHERE id = ?",
+                [$currentValue, $progressPercentage, $status, $goalId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'success' => true,

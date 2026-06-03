@@ -97,7 +97,11 @@ class BookingComplianceService
         $installments = ($mode === 'EMI') ? 60 : 24;
         $monthlyAmount = round($remainingAmount / $installments, 2);
 
-        $stmt = $this->db->prepare("INSERT INTO plot_emi_schedule (booking_id, installment_number, due_date, amount, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())");
+        try {
+            $stmt = $this->db->prepare("INSERT INTO plot_emi_schedule (booking_id, installment_number, due_date, amount, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         for ($i = 1; $i <= $installments; $i++) {
             $dueDate = date('Y-m-d', strtotime($startDate . " + $i months"));
@@ -168,7 +172,11 @@ class BookingComplianceService
                 $this->db->prepare("UPDATE bookings SET payment_status = 'partial' WHERE id = ?")->execute([$bookingId]);
             }
 
-            $stmt = $this->db->prepare("INSERT INTO plot_payments (booking_id, amount, payment_mode, payment_date, created_at) VALUES (?, ?, ?, CURDATE(), NOW())");
+            try {
+                $stmt = $this->db->prepare("INSERT INTO plot_payments (booking_id, amount, payment_mode, payment_date, created_at) VALUES (?, ?, ?, CURDATE(), NOW())");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$bookingId, $amount, $mode]);
 
             $this->db->commit();
@@ -202,7 +210,11 @@ class BookingComplianceService
         $paidAmount = (float)$booking['amount'];
         $tokenPercent = $totalAmount > 0 ? round($paidAmount * 100 / $totalAmount, 2) : 0;
 
-        $stmt = $this->db->prepare("SELECT COUNT(*) as emis, SUM(CASE WHEN status='paid' THEN 1 ELSE 0 END) as paid_emis FROM plot_emi_schedule WHERE booking_id = ?");
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as emis, SUM(CASE WHEN status='paid' THEN 1 ELSE 0 END) as paid_emis FROM plot_emi_schedule WHERE booking_id = ?");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$bookingId]);
         $emiStatus = $stmt->fetch(\PDO::FETCH_ASSOC);
 

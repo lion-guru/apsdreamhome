@@ -55,15 +55,19 @@ class WalletController extends BaseController
             [$userId]
         );
 
-        // Get referral earnings summary
-        $referralStats = $this->db->fetchOne(
-            "SELECT 
-                COUNT(*) as total_referrals,
-                SUM(reward_amount) as total_referral_earnings
-            FROM referral_rewards 
-            WHERE referrer_id = ? AND status = 'credited'",
-            [$userId]
-        );
+        try {
+            // Get referral earnings summary
+            $referralStats = $this->db->fetchOne(
+                "SELECT 
+                    COUNT(*) as total_referrals,
+                    SUM(reward_amount) as total_referral_earnings
+                FROM referral_rewards 
+                WHERE referrer_id = ? AND status = 'credited'",
+                [$userId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Get wallet configuration
         $config = $this->db->fetchAll("SELECT * FROM wallet_configuration");
@@ -477,15 +481,19 @@ class WalletController extends BaseController
 
         $userId = $_SESSION['user_id'];
 
-        // Get direct referrals
-        $directReferrals = $this->db->fetchAll(
-            "SELECT u.*, rr.reward_amount, rr.created_at as referral_date 
-            FROM users u 
-            LEFT JOIN referral_rewards rr ON u.id = rr.referred_id AND rr.referrer_id = ?
-            WHERE u.referred_by = ? 
-            ORDER BY u.created_at DESC",
-            [$userId, $userId]
-        );
+        try {
+            // Get direct referrals
+            $directReferrals = $this->db->fetchAll(
+                "SELECT u.*, rr.reward_amount, rr.created_at as referral_date 
+                FROM users u 
+                LEFT JOIN referral_rewards rr ON u.id = rr.referred_id AND rr.referrer_id = ?
+                WHERE u.referred_by = ? 
+                ORDER BY u.created_at DESC",
+                [$userId, $userId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Get referral earnings
         $referralEarnings = $this->db->fetchOne(
@@ -620,8 +628,12 @@ class WalletController extends BaseController
             [$associateId, $associateId, $associateId]
         );
 
-        // Get wallet configuration
-        $config = $this->db->fetchAll("SELECT * FROM wallet_configuration");
+        try {
+            // Get wallet configuration
+            $config = $this->db->fetchAll("SELECT * FROM wallet_configuration");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $walletConfig = [];
         foreach ($config as $item) {
             $walletConfig[$item['config_key']] = $item['config_value'];

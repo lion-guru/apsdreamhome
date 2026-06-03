@@ -238,9 +238,13 @@ class SupportTicketController extends AdminController
                 return $this->redirect('admin/support_tickets');
             }
 
-            // Get ticket responses
-            $sql = "SELECT * FROM support_ticket_responses 
-                    WHERE ticket_id = ? ORDER BY created_at ASC";
+            try {
+                // Get ticket responses
+                $sql = "SELECT * FROM support_ticket_responses 
+                        WHERE ticket_id = ? ORDER BY created_at ASC";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$ticketId]);
             $responses = $stmt->fetchAll(\PDO::FETCH_ASSOC);

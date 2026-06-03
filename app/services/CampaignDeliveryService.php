@@ -319,7 +319,11 @@ class CampaignDeliveryService
      */
     private function createDeliveryRecord($campaignId, $userId, $deliveryType)
     {
-        $query = "INSERT INTO campaign_deliveries (campaign_id, user_id, delivery_type, status, sent_at) VALUES (?, ?, ?, 'pending', NOW())";
+        try {
+            $query = "INSERT INTO campaign_deliveries (campaign_id, user_id, delivery_type, status, sent_at) VALUES (?, ?, ?, 'pending', NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->db->execute($query, [$campaignId, $userId, $deliveryType]);
         return $this->db->getLastInsertId();
     }
@@ -356,14 +360,18 @@ class CampaignDeliveryService
      */
     public function getCampaignStats($campaignId)
     {
-        $query = "SELECT 
-                    delivery_type,
-                    status,
-                    COUNT(*) as count
-                FROM campaign_deliveries 
-                WHERE campaign_id = ?
-                GROUP BY delivery_type, status
-                ORDER BY delivery_type, status";
+        try {
+            $query = "SELECT 
+                        delivery_type,
+                        status,
+                        COUNT(*) as count
+                    FROM campaign_deliveries 
+                    WHERE campaign_id = ?
+                    GROUP BY delivery_type, status
+                    ORDER BY delivery_type, status";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         return $this->db->fetchAll($query, [$campaignId]);
     }
@@ -389,7 +397,11 @@ class CampaignDeliveryService
                 return false;
         }
 
-        $query = "UPDATE campaign_deliveries SET {$timestampField} = NOW(), status = ? WHERE id = ?";
+        try {
+            $query = "UPDATE campaign_deliveries SET {$timestampField} = NOW(), status = ? WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $status = 'sent';
         if ($action === 'converted') {
@@ -416,19 +428,23 @@ class CampaignDeliveryService
             $params = [$startDate, $endDate];
         }
 
-        $query = "SELECT 
-                    c.name as campaign_name,
-                    cd.delivery_type,
-                    cd.status,
-                    COUNT(*) as count,
-                    AVG(CASE WHEN cd.opened_at IS NOT NULL THEN 1 ELSE 0 END) as open_rate,
-                    AVG(CASE WHEN cd.clicked_at IS NOT NULL THEN 1 ELSE 0 END) as click_rate,
-                    AVG(CASE WHEN cd.converted_at IS NOT NULL THEN 1 ELSE 0 END) as conversion_rate
-                FROM campaign_deliveries cd
-                JOIN campaigns c ON cd.campaign_id = c.campaign_id
-                $dateCondition
-                GROUP BY c.campaign_id, cd.delivery_type, cd.status
-                ORDER BY c.name, cd.delivery_type";
+        try {
+            $query = "SELECT 
+                        c.name as campaign_name,
+                        cd.delivery_type,
+                        cd.status,
+                        COUNT(*) as count,
+                        AVG(CASE WHEN cd.opened_at IS NOT NULL THEN 1 ELSE 0 END) as open_rate,
+                        AVG(CASE WHEN cd.clicked_at IS NOT NULL THEN 1 ELSE 0 END) as click_rate,
+                        AVG(CASE WHEN cd.converted_at IS NOT NULL THEN 1 ELSE 0 END) as conversion_rate
+                    FROM campaign_deliveries cd
+                    JOIN campaigns c ON cd.campaign_id = c.campaign_id
+                    $dateCondition
+                    GROUP BY c.campaign_id, cd.delivery_type, cd.status
+                    ORDER BY c.name, cd.delivery_type";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         return $this->db->fetchAll($query, $params);
     }

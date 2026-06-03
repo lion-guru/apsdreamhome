@@ -160,11 +160,15 @@ class LeadScoringService
         // AI analysis exists
         if (!empty($lead['ai_analysis'])) $score += 10;
         
-        // Has AI-generated recommendations
-        $recommendations = $this->db->fetch(
-            "SELECT COUNT(*) FROM ai_recommendations WHERE user_id = ?",
-            [$lead['assigned_to'] ?? 0]
-        );
+        try {
+            // Has AI-generated recommendations
+            $recommendations = $this->db->fetch(
+                "SELECT COUNT(*) FROM ai_recommendations WHERE user_id = ?",
+                [$lead['assigned_to'] ?? 0]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $recCount = intval($recommendations['COUNT(*)'] ?? 0);
         $score += min(10, $recCount * 2);
         

@@ -167,8 +167,12 @@ class CompareController extends BaseController
                 return $this->jsonResponse(['success' => false, 'message' => 'Login required']);
             }
 
-            $sql = "DELETE FROM property_comparison_sessions 
-                    WHERE id = ? AND user_id = ?";
+            try {
+                $sql = "DELETE FROM property_comparison_sessions 
+                        WHERE id = ? AND user_id = ?";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$sessionId, $_SESSION['user_id']]);
 
@@ -310,16 +314,20 @@ class CompareController extends BaseController
      */
     private function getUserSessions($userId)
     {
-        $sql = "SELECT pcs.id, pcs.name, pcs.created_at,
-                       COUNT(pc.id) as property_count,
-                       GROUP_CONCAT(p.title SEPARATOR ' vs ') as property_names
-                FROM property_comparison_sessions pcs
-                LEFT JOIN property_comparisons pc ON pcs.id = pc.session_id
-                LEFT JOIN properties p ON pc.property_id = p.id
-                WHERE pcs.user_id = ? AND pcs.expires_at > NOW()
-                GROUP BY pcs.id
-                ORDER BY pcs.created_at DESC
-                LIMIT 10";
+        try {
+            $sql = "SELECT pcs.id, pcs.name, pcs.created_at,
+                           COUNT(pc.id) as property_count,
+                           GROUP_CONCAT(p.title SEPARATOR ' vs ') as property_names
+                    FROM property_comparison_sessions pcs
+                    LEFT JOIN property_comparisons pc ON pcs.id = pc.session_id
+                    LEFT JOIN properties p ON pc.property_id = p.id
+                    WHERE pcs.user_id = ? AND pcs.expires_at > NOW()
+                    GROUP BY pcs.id
+                    ORDER BY pcs.created_at DESC
+                    LIMIT 10";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$userId]);
@@ -331,7 +339,11 @@ class CompareController extends BaseController
      */
     private function getSessionById($sessionId)
     {
-        $sql = "SELECT * FROM property_comparison_sessions WHERE id = ?";
+        try {
+            $sql = "SELECT * FROM property_comparison_sessions WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$sessionId]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);

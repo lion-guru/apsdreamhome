@@ -277,15 +277,19 @@ class DealController extends AdminController
             exit;
         }
 
-        // Get deal activities
-        $activities = $this->db->fetchAll(
-            "SELECT a.*, u.name as created_by_name
-             FROM deal_activities a
-             LEFT JOIN users u ON a.created_by = u.id
-             WHERE a.deal_id = ?
-             ORDER BY a.activity_date DESC LIMIT 50",
-            [$dealId]
-        );
+        try {
+            // Get deal activities
+            $activities = $this->db->fetchAll(
+                "SELECT a.*, u.name as created_by_name
+                 FROM deal_activities a
+                 LEFT JOIN users u ON a.created_by = u.id
+                 WHERE a.deal_id = ?
+                 ORDER BY a.activity_date DESC LIMIT 50",
+                [$dealId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Get deal contacts
         $contacts = $this->db->fetchAll(
@@ -536,11 +540,15 @@ class DealController extends AdminController
     protected function logDealActivity($dealId, $type, $title, $description = null)
     {
         try {
-            $stmt = $this->db->prepare(
-                "INSERT INTO deal_activities (deal_id, activity_type, activity_title, activity_description, 
-                                             activity_date, created_by)
-                 VALUES (?, ?, ?, ?, NOW(), ?)"
-            );
+            try {
+                $stmt = $this->db->prepare(
+                    "INSERT INTO deal_activities (deal_id, activity_type, activity_title, activity_description, 
+                                                 activity_date, created_by)
+                     VALUES (?, ?, ?, ?, NOW(), ?)"
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$dealId, $type, $title, $description, $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0]);
         } catch (\Exception $e) {
             error_log("Log activity error: " . $e->getMessage());

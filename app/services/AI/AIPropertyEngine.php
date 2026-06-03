@@ -114,8 +114,12 @@ class AIPropertyRecommendationEngine {
     private function getUserPreferences($userId) {
         $preferences = [];
 
-        // Get explicit preferences
-        $sql = "SELECT * FROM user_preferences WHERE user_id = ?";
+        try {
+            // Get explicit preferences
+            $sql = "SELECT * FROM user_preferences WHERE user_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $explicitPrefs = $this->db->fetch($sql, [$userId]);
 
         if ($explicitPrefs) {
@@ -279,11 +283,15 @@ class AIPropertyRecommendationEngine {
 
         // Agent reputation
         if (!empty($property['agent_id'])) {
-            $sql = "
-                SELECT AVG(rating) as avg_rating, COUNT(*) as review_count
-                FROM agent_reviews
-                WHERE agent_id = ?
-            ";
+            try {
+                $sql = "
+                    SELECT AVG(rating) as avg_rating, COUNT(*) as review_count
+                    FROM agent_reviews
+                    WHERE agent_id = ?
+                ";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $agentStats = $this->db->fetch($sql, [$property['agent_id']]);
 
             if ($agentStats && $agentStats['review_count'] > 0) {

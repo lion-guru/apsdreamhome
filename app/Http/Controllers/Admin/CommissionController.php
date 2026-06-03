@@ -339,7 +339,11 @@ class CommissionController extends AdminController
     private function getCalculationRules(): array
     {
         try {
-            $sql = "SELECT * FROM commission_calculation_rules WHERE is_active = 1 ORDER BY priority";
+            try {
+                $sql = "SELECT * FROM commission_calculation_rules WHERE is_active = 1 ORDER BY priority";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             return $this->db->fetchAll($sql) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Calculation Rules error: " . $e->getMessage());
@@ -412,9 +416,13 @@ class CommissionController extends AdminController
     private function getCommissionRate(string $rule, string $rank): float
     {
         try {
-            $sql = "SELECT rate_percentage 
-                    FROM commission_calculation_rules 
-                    WHERE rule_name = ? AND mlm_rank = ? AND is_active = 1";
+            try {
+                $sql = "SELECT rate_percentage 
+                        FROM commission_calculation_rules 
+                        WHERE rule_name = ? AND mlm_rank = ? AND is_active = 1";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$rule, $rank]);
             $result = $stmt->fetch();

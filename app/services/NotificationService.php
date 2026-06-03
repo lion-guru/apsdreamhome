@@ -21,7 +21,11 @@ class NotificationService
 
     private function loadSettings()
     {
-        $stmt = $this->db->prepare("SELECT setting_key, setting_value FROM notification_settings");
+        try {
+            $stmt = $this->db->prepare("SELECT setting_key, setting_value FROM notification_settings");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute();
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

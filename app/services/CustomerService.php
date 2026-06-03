@@ -88,7 +88,11 @@
 
     public function addToWishlist($customerId, $propertyType, $propertyId, $notes = "")
     {
-        $stmt = $this->db->prepare("INSERT IGNORE INTO customer_wishlist (customer_id, property_type, property_id, notes) VALUES (?, ?, ?, ?)");
+        try {
+            $stmt = $this->db->prepare("INSERT IGNORE INTO customer_wishlist (customer_id, property_type, property_id, notes) VALUES (?, ?, ?, ?)");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $stmt->execute([$customerId, $propertyType, $propertyId, $notes]);
     }
 
@@ -107,10 +111,14 @@
 
     public function createInquiry($data)
     {
-        $stmt = $this->db->prepare("INSERT INTO customer_inquiries (
-            customer_id, inquiry_type, property_type, property_id, subject, message,
-            contact_name, contact_email, contact_phone, status, priority, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        try {
+            $stmt = $this->db->prepare("INSERT INTO customer_inquiries (
+                customer_id, inquiry_type, property_type, property_id, subject, message,
+                contact_name, contact_email, contact_phone, status, priority, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $stmt->execute([
             $data["customer_id"] ?? null,
@@ -129,7 +137,11 @@
 
     public function getInquiries($customerId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM customer_inquiries WHERE customer_id = ? ORDER BY created_at DESC");
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM customer_inquiries WHERE customer_id = ? ORDER BY created_at DESC");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$customerId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }

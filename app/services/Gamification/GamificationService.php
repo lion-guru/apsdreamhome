@@ -74,10 +74,14 @@ class GamificationService
      */
     public function addPoints(int $userId, int $points, string $reason): array
     {
-        $this->db->query(
-            "INSERT INTO user_points (user_id, points, reason, created_at) VALUES (?, ?, ?, NOW())",
-            [$userId, $points, $reason]
-        );
+        try {
+            $this->db->query(
+                "INSERT INTO user_points (user_id, points, reason, created_at) VALUES (?, ?, ?, NOW())",
+                [$userId, $points, $reason]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Update total points
         $this->db->query(

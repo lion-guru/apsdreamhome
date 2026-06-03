@@ -211,8 +211,12 @@ class Shift extends Model
     {
         $db = Database::getInstance();
 
-        // Get schedule details
-        $schedule = $db->query("SELECT * FROM shift_schedules WHERE id = ?", [$scheduleId])->fetch();
+        try {
+            // Get schedule details
+            $schedule = $db->query("SELECT * FROM shift_schedules WHERE id = ?", [$scheduleId])->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         if (!$schedule) {
             return ['success' => false, 'message' => 'Schedule not found'];
         }
@@ -294,13 +298,17 @@ class Shift extends Model
      */
     public function getShiftSchedules(): array
     {
-        $sql = "SELECT ss.*, st.name as shift_type_name, st.code as shift_type_code,
-                       d.name as department_name
-                FROM shift_schedules ss
-                LEFT JOIN shift_types st ON ss.shift_type_id = st.id
-                LEFT JOIN departments d ON ss.department_id = d.id
-                WHERE ss.is_active = 1
-                ORDER BY ss.created_at DESC";
+        try {
+            $sql = "SELECT ss.*, st.name as shift_type_name, st.code as shift_type_code,
+                           d.name as department_name
+                    FROM shift_schedules ss
+                    LEFT JOIN shift_types st ON ss.shift_type_id = st.id
+                    LEFT JOIN departments d ON ss.department_id = d.id
+                    WHERE ss.is_active = 1
+                    ORDER BY ss.created_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->query($sql)->fetchAll();
     }

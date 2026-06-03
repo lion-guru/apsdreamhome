@@ -79,18 +79,22 @@ function getRecentSales($associate_id)
     global $conn;
 
     try {
-        $query = "SELECT
-                    hcr.*,
-                    p.property_name,
-                    p.property_type,
-                    p.location,
-                    u.name as customer_name
-                 FROM hybrid_commission_records hcr
-                 LEFT JOIN real_estate_properties p ON hcr.property_id = p.id
-                 LEFT JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = hcr.customer_id)
-                 WHERE hcr.associate_id = ?
-                 ORDER BY hcr.created_at DESC
-                 LIMIT 10";
+        try {
+            $query = "SELECT
+                        hcr.*,
+                        p.property_name,
+                        p.property_type,
+                        p.location,
+                        u.name as customer_name
+                     FROM hybrid_commission_records hcr
+                     LEFT JOIN real_estate_properties p ON hcr.property_id = p.id
+                     LEFT JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = hcr.customer_id)
+                     WHERE hcr.associate_id = ?
+                     ORDER BY hcr.created_at DESC
+                     LIMIT 10";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $stmt = $conn->prepare($query);
 

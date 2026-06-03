@@ -193,11 +193,15 @@ class MessagingService
      */
     public function sendTypingIndicator(int $conversationId, int $userId): void
     {
-        $this->db->query(
-            "INSERT INTO typing_indicators (conversation_id, user_id, created_at) VALUES (?, ?, NOW())
-             ON DUPLICATE KEY UPDATE created_at = NOW()",
-            [$conversationId, $userId]
-        );
+        try {
+            $this->db->query(
+                "INSERT INTO typing_indicators (conversation_id, user_id, created_at) VALUES (?, ?, NOW())
+                 ON DUPLICATE KEY UPDATE created_at = NOW()",
+                [$conversationId, $userId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**

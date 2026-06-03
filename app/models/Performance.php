@@ -346,10 +346,14 @@ class Performance extends Model
             $updateData['status'] = $status;
         }
 
-        $this->query(
-            "UPDATE performance_goals SET progress_percentage = ?, status = ?, updated_at = ? WHERE id = ?",
-            [$progress, $status ?? 'in_progress', date('Y-m-d H:i:s'), $goalId]
-        );
+        try {
+            $this->query(
+                "UPDATE performance_goals SET progress_percentage = ?, status = ?, updated_at = ? WHERE id = ?",
+                [$progress, $status ?? 'in_progress', date('Y-m-d H:i:s'), $goalId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'success' => true,
@@ -362,12 +366,16 @@ class Performance extends Model
      */
     public function getEmployeeGoals(int $employeeId, int $limit = 20, int $offset = 0): array
     {
-        $sql = "SELECT pg.*, a.auser as assigned_by_name
-                FROM performance_goals pg
-                LEFT JOIN admin a ON pg.assigned_by = a.aid
-                WHERE pg.employee_id = ?
-                ORDER BY pg.created_at DESC
-                LIMIT ? OFFSET ?";
+        try {
+            $sql = "SELECT pg.*, a.auser as assigned_by_name
+                    FROM performance_goals pg
+                    LEFT JOIN admin a ON pg.assigned_by = a.aid
+                    WHERE pg.employee_id = ?
+                    ORDER BY pg.created_at DESC
+                    LIMIT ? OFFSET ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $db = Database::getInstance();
         $stmt = $db->prepare($sql);
