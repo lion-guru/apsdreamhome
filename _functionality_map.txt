@@ -1,0 +1,458 @@
+﻿=== FUNCTIONALITY MAPPING RESULTS ===
+Total dropped: 601
+Survived/migrated to existing table: 44
+Partial mapping (similar concept in different table): 109
+MISSING (functionality not implemented): 275
+Unmapped: 173
+
+=== MISSING FUNCTIONALITY (where to implement) ===
+  accounting_settings                             9 cols     3 rows  | 
+  addresses                                      16 cols     5 rows  | 
+  admin_dashboard_stats                           9 cols     0 rows  | dashboard cache
+  admin_user_menu_permissions                    13 cols     0 rows  | 
+  agent_commission_rates                          8 cols    21 rows  | agent rate table
+  ai_ecosystem_tools                              8 cols    82 rows  | 82 rows - likely test data
+  ai_implementation_guides                        9 cols   100 rows  | 100 rows test data
+  ai_tools_directory                             12 cols  1000 rows  | 1000 rows of test data
+  alert_triggers                                 10 cols     0 rows  | 
+  analytics_alerts                               21 cols     0 rows  | 
+  analytics_conversions                          15 cols     0 rows  | 
+  analytics_dashboards                           18 cols     2 rows  | 
+  analytics_summary                              12 cols     0 rows  | 
+  api_analytics                                  12 cols     1 rows  | 
+  api_logs                                       12 cols     0 rows  | 
+  api_request_logs                                7 cols     0 rows  | 
+  app_store                                       7 cols     0 rows  | 
+  ar_vr_tours                                     7 cols     0 rows  | 
+  area_amenities                                 13 cols     0 rows  | 
+  associate_commission_calculations              11 cols     6 rows  | calculation history
+  associate_commission_structure                 10 cols     5 rows  | per-associate rates
+  attendance_settings                             8 cols    11 rows  | settings table
+  audit_log_archive                              10 cols     0 rows  | 
+  audit_schedules                                 8 cols     0 rows  | 
+  automated_triggers                             16 cols     0 rows  | 
+  automation_triggers                            14 cols     0 rows  | 
+  booking_logs                                    9 cols     0 rows  | booking event log
+  budget_planning                                20 cols     0 rows  | 
+  budgets                                        12 cols     0 rows  | 
+  builder_details                                 8 cols     0 rows  | 
+  builder_payments                               21 cols     0 rows  | 
+  builders                                       24 cols     0 rows  | or builders SURVIVED
+  campaign_deliveries                            19 cols     8 rows  | 
+  campaign_members                               12 cols     0 rows  | 
+  cash_flow_projections                          18 cols     0 rows  | 
+  challenge_participants                         14 cols     0 rows  | 
+  chatbot_fallback                                6 cols     0 rows  | 
+  chatbot_training_data                           9 cols     0 rows  | training data
+  commission_calculation_rules                    7 cols    10 rows  | calculation engine config
+  commission_preferences                          9 cols    36 rows  | per-user commission config
+  commission_rules                               23 cols     1 rows  | rule engine
+  communication_logs                             19 cols     0 rows  | 
+  communications                                 12 cols     0 rows  | parallel comms system
+  companies                                       7 cols     0 rows  | or companies SURVIVED
+  company_projects                               16 cols     0 rows  | 
+  company_property_levels                        13 cols     7 rows  | 
+  comparison_analytics                           15 cols     0 rows  | 
+  comparison_criteria                            15 cols    20 rows  | 
+  components                                     10 cols     0 rows  | 
+  content_backups                                 7 cols     0 rows  | 
+  conversion_analytics                           10 cols     0 rows  | 
+  custom_features                                13 cols     0 rows  | 
+  customer_behavior_analysis                     10 cols     0 rows  | behavior tracking
+  customer_journeys                               8 cols     0 rows  | customer lifecycle
+  customer_summary                               15 cols     0 rows  | summary view
+  customers_ledger                               25 cols     0 rows  | customer account ledger
+  daily_activity_tracker                         16 cols     1 rows  | 
+  daily_metrics_summary                          14 cols     0 rows  | 
+  data_change_log                                 9 cols     0 rows  | 
+  data_stream_events                              5 cols     0 rows  | 
+  department_assignments                          7 cols     0 rows  | 
+  department_budgets                              9 cols     0 rows  | 
+  document_classification                        11 cols     0 rows  | auto-classification
+  document_reviews                                6 cols     0 rows  | 
+  dynamic_footers                                18 cols     2 rows  | 
+  dynamic_headers                                19 cols     2 rows  | 
+  email_config                                    6 cols     9 rows  | 
+  email_tracking                                 22 cols     0 rows  | open/click tracking
+  email_verifications                             8 cols     0 rows  | email verification tokens
+  emi_calculator_history                         12 cols     0 rows  | 
+  employee_activities                            10 cols     0 rows  | 
+  employee_advances                              22 cols     0 rows  | salary advance
+  employee_bonuses                               21 cols     0 rows  | bonus tracking
+  employee_reporting                              9 cols     4 rows  | 
+  failed_login_attempts                           4 cols     0 rows  | 
+  farmer_activities                              16 cols     0 rows  | 
+  farmer_commission_structures                   16 cols     0 rows  | 
+  farmer_commissions                             17 cols     0 rows  | 
+  farmer_support_requests                        20 cols     0 rows  | 
+  farmers_legacy                                  6 cols     0 rows  | 
+  file_access_logs                               13 cols     0 rows  | 
+  financial_integration_log                      13 cols     0 rows  | 
+  foreclosure_logs                               14 cols     0 rows  | 
+  funding_investors                              13 cols     5 rows  | 
+  gamification_challenges                        23 cols     0 rows  | 
+  gata_master                                     7 cols     0 rows  | legacy land records
+  gst_returns                                    16 cols     0 rows  | 
+  gst_settings                                   17 cols     1 rows  | 
+  heatmap_data                                   12 cols     0 rows  | 
+  hybrid_commission_plans                        16 cols     0 rows  | 
+  hybrid_commission_records                      17 cols     0 rows  | hybrid model
+  image_categories                                8 cols     5 rows  | 
+  import_jobs                                    16 cols     0 rows  | 
+  incomplete_registrations                       22 cols     0 rows  | 
+  integration_activity_logs                       7 cols     1 rows  | 
+  integration_logs                               10 cols     0 rows  | 
+  integration_settings                           17 cols     1 rows  | 
+  integrations                                    8 cols     0 rows  | 
+  interaction_routing                            10 cols     0 rows  | 
+  inventory_log                                  11 cols     0 rows  | 
+  investment_plans                               19 cols     3 rows  | 
+  investor_details                                8 cols     0 rows  | 
+  iot_device_events                               6 cols     0 rows  | 
+  iot_devices                                    10 cols     0 rows  | 
+  jwt_blacklist                                   6 cols     0 rows  | 
+  kisaan_land_management                         21 cols     0 rows  | 
+  kissan_master                                  15 cols     0 rows  | 
+  land_management_activities                      7 cols     0 rows  | 
+  land_projects                                  18 cols     0 rows  | 
+  languages                                      10 cols    15 rows  | 
+  layout_settings                                 5 cols     1 rows  | 
+  layout_templates                               10 cols     0 rows  | 
+  lead_assignment_approvals                      17 cols     0 rows  | approval workflow
+  lead_custom_field_values                        8 cols     0 rows  | 
+  lead_custom_fields                             17 cols     0 rows  | dynamic fields
+  lead_export_logs                               11 cols     0 rows  | export audit
+  leaderboard_entries                            12 cols     0 rows  | 
+  leaderboards                                   14 cols     4 rows  | gamification leaderboard
+  learning_paths                                 16 cols     0 rows  | 
+  legal_activities                                6 cols     0 rows  | 
+  legal_deadlines                                 8 cols     0 rows  | 
+  legal_disputes                                 12 cols     0 rows  | 
+  load_test_metrics                              12 cols     0 rows  | 
+  loan_emi_schedule                              20 cols     0 rows  | 
+  market_analytics_summary                       20 cols     0 rows  | 
+  marketing_analytics                             9 cols     0 rows  | 
+  marketing_automations                           9 cols     0 rows  | 
+  marketing_strategies                            9 cols     0 rows  | 
+  marketplace_apps                                6 cols     0 rows  | 
+  mcp_config_history                              8 cols     0 rows  | 
+  mcp_data                                        8 cols     0 rows  | 
+  mcp_logs                                        7 cols    12 rows  | 
+  mcp_server_configs                             10 cols    12 rows  | 
+  mcp_servers                                    12 cols    12 rows  | 
+  message_reactions                               9 cols     0 rows  | 
+  mlm_commission_agreements                      12 cols     0 rows  | contract terms
+  mlm_rank_rates                                  6 cols     7 rows  | rank-based rate table
+  mobile_app_analytics                           16 cols    10 rows  | 
+  mobile_app_keys                                13 cols     3 rows  | 
+  mobile_app_settings                            11 cols     0 rows  | 
+  mobile_app_tokens                              15 cols     0 rows  | 
+  mobile_devices                                  6 cols     0 rows  | 
+  mobile_users                                   14 cols     2 rows  | 
+  mortgage_inquiries                             22 cols     0 rows  | 
+  newsletter_schedules                            6 cols     0 rows  | 
+  notification_settings                          12 cols    18 rows  | user prefs
+  notification_templates                          9 cols    64 rows  | template master
+  ocr_extracted_fields                           15 cols     0 rows  | OCR data extraction
+  ocr_processing_queue                           14 cols     0 rows  | 
+  ocr_templates                                  14 cols     3 rows  | 
+  page_templates                                 16 cols     0 rows  | 
+  partner_certification                           7 cols     0 rows  | 
+  partner_rewards                                 6 cols     0 rows  | 
+  payment_gateway_config                          6 cols     0 rows  | 
+  payment_history                                 8 cols     0 rows  | 
+  payment_orders                                 25 cols     0 rows  | 
+  payment_plans                                  26 cols     2 rows  | 
+  payment_receipts                                7 cols     0 rows  | 
+  payment_settings                               12 cols    22 rows  | 
+  payment_summary                                16 cols     0 rows  | 
+  payroll_entries                                31 cols     0 rows  | payroll run details
+  performance_analytics                           8 cols     0 rows  | 
+  performance_benchmarks                         10 cols     0 rows  | 
+  performance_goals                              16 cols     0 rows  | 
+  performance_logs                               11 cols     0 rows  | 
+  permissions                                     3 cols    13 rows  | cleaned up
+  personalized_learning_plans                    10 cols    24 rows  | 
+  pipeline_analytics                             14 cols     0 rows  | 
+  pipeline_filters                               11 cols     0 rows  | 
+  plan_status_history                             7 cols     0 rows  | 
+  popup_dismissals                                9 cols     0 rows  | 
+  popups                                         17 cols     9 rows  | 
+  portfolio_analytics                            20 cols     0 rows  | 
+  portfolio_goals                                18 cols     0 rows  | 
+  predictive_models                              18 cols     1 rows  | 
+  progressive_registrations                      12 cols     4 rows  | step-by-step registration
+  project_gallery                                 7 cols     0 rows  | 
+  property_ai_tags                                8 cols     0 rows  | AI-tagged property features
+  property_analytics                             10 cols     0 rows  | property-level analytics
+  property_market_data                           19 cols     0 rows  | market intelligence
+  property_portfolios                            20 cols     2 rows  | buyer portfolio
+  property_valuations                            10 cols     5 rows  | valuation history
+  purchase_invoice_items                         12 cols     0 rows  | 
+  purchase_invoices                              23 cols     0 rows  | 
+  push_notifications                             14 cols     0 rows  | 
+  push_subscriptions                             17 cols     0 rows  | 
+  quick_actions_log                              16 cols     0 rows  | 
+  quick_replies                                  13 cols     0 rows  | 
+  quiz_questions                                 14 cols     0 rows  | 
+  realtime_notifications                         17 cols     3 rows  | websocket push
+  recommendation_cache                           10 cols     0 rows  | 
+  recommendation_settings                        11 cols    11 rows  | 
+  recurring_transactions                         26 cols     0 rows  | 
+  regional_performance                           11 cols     0 rows  | 
+  remember_tokens                                 9 cols     0 rows  | 
+  rent_payments                                  12 cols     0 rows  | 
+  resale_commissions                              7 cols     0 rows  | resale-specific
+  resell_commission_structure                     9 cols     0 rows  | 
+  resell_properties                              58 cols     1 rows  | resale-specific listing
+  retained_earnings                               8 cols     0 rows  | 
+  revenue_commission_daily                        8 cols     0 rows  | daily revenue commission
+  reward_history                                 10 cols     0 rows  | 
+  role_change_approvals                          14 cols     0 rows  | 
+  role_menus                                     16 cols   370 rows  | 
+  role_permissions                               10 cols    23 rows  | 
+  saas_instances                                  7 cols     0 rows  | 
+  salary_contracts                               15 cols     4 rows  | 
+  salary_history                                  9 cols     4 rows  | 
+  salary_plans                                    9 cols     5 rows  | 
+  sales_data                                     24 cols    12 rows  | 
+  sales_funnel                                    9 cols     0 rows  | 
+  saved_comparisons                              15 cols     0 rows  | 
+  saved_properties                                8 cols     0 rows  | 
+  seasonality_patterns                           13 cols     0 rows  | 
+  security_blacklist                              9 cols     0 rows  | 
+  security_rate_limits                            9 cols     0 rows  | 
+  security_sessions                              11 cols     0 rows  | 
+  seo_metadata                                   14 cols     0 rows  | 
+  smart_contracts                                 9 cols     0 rows  | 
+  sms_config                                      6 cols     6 rows  | 
+  sms_templates                                  15 cols     3 rows  | 
+  social_media_links                              7 cols     3 rows  | 
+  special_offers                                 15 cols     2 rows  | 
+  sponsor_running_no                              1 cols     0 rows  | sponsor counter
+  sync_log                                       11 cols     0 rows  | 
+  sync_mappings                                   8 cols     0 rows  | 
+  system_analytics_metrics                       22 cols     0 rows  | 
+  system_health                                   9 cols     0 rows  | 
+  system_health_logs                             11 cols     0 rows  | 
+  system_metrics                                 15 cols     0 rows  | 
+  system_settings                                 9 cols    10 rows  | 
+  system_status                                   3 cols     0 rows  | 
+  task_executions                                 8 cols     0 rows  | 
+  task_queue                                      5 cols     0 rows  | 
+  tax_reminders                                   7 cols     0 rows  | 
+  tax_slabs                                      11 cols     4 rows  | 
+  tax_types                                       7 cols     0 rows  | 
+  telecaller_commission_rules                    12 cols     4 rows  | 
+  telecaller_commissions                         19 cols     0 rows  | telecaller-specific
+  telecaller_daily_tasks                         17 cols     0 rows  | telecaller workflow not implemented
+  telecaller_performance                         15 cols     0 rows  | no performance dashboard for telecaller
+  third_party_integrations                        5 cols     0 rows  | 
+  todays_highlights                              14 cols     4 rows  | 
+  traditional_commissions                        12 cols     0 rows  | 
+  traffic_stats                                  12 cols     1 rows  | 
+  training_analytics                             14 cols     0 rows  | 
+  training_certificates                           6 cols     0 rows  | 
+  training_quiz_results                           9 cols     0 rows  | 
+  training_quizzes                                9 cols     0 rows  | 
+  two_factor_tokens                               8 cols     0 rows  | 
+  typing_indicators                               9 cols     0 rows  | chat feature
+  upload_audit_log                               13 cols     0 rows  | 
+  user_addresses                                 18 cols     2 rows  | 
+  user_ai_profiles                                7 cols     0 rows  | 
+  user_analytics                                 12 cols     0 rows  | 
+  user_behavior_analytics                        18 cols     0 rows  | 
+  user_behavior_tracking                         14 cols     0 rows  | 
+  user_browsing_history                          15 cols     0 rows  | 
+  user_dashboard_configs                         14 cols     0 rows  | 
+  user_engagement                                 7 cols     0 rows  | 
+  user_payment_methods                           20 cols     0 rows  | 
+  user_permissions                                9 cols     0 rows  | 
+  user_preferences                                9 cols     0 rows  | 
+  user_role_permissions                           9 cols    29 rows  | 
+  user_search_history                             6 cols     0 rows  | 
+  user_sessions                                   8 cols     0 rows  | 
+  user_similarity                                10 cols     0 rows  | 
+  virtual_tour_assets                            10 cols     0 rows  | 
+  visitor_sessions                               18 cols     1 rows  | session tracking
+  wallet_configuration                            7 cols    17 rows  | 
+  webhook_events                                  9 cols     0 rows  | 
+  webhooks                                        8 cols     0 rows  | 
+  websocket_channels                              6 cols     0 rows  | 
+  whatsapp_lead_shares                           12 cols     1 rows  | 
+  workflow_automations                            8 cols     1 rows  | 
+
+=== UNMAPPED TABLES ===
+  accounting_payments                            25 cols     0 rows
+  acquisition_stakeholders                        8 cols     0 rows
+  acquisition_timeline                            6 cols     0 rows
+  agent_details                                   8 cols     0 rows
+  ai_agent_logs                                  13 cols    31 rows
+  ai_agent_personality                           11 cols     1 rows
+  ai_agent_state                                  7 cols     0 rows
+  ai_api_logs                                    14 cols   123 rows
+  ai_bot_performance                              8 cols     4 rows
+  ai_bot_policies                                 6 cols     4 rows
+  ai_config                                       7 cols     2 rows
+  ai_configuration                                8 cols     8 rows
+  ai_context_memory                              10 cols     0 rows
+  ai_data_pipelines                               7 cols     0 rows
+  ai_generated_content                           16 cols     0 rows
+  ai_integrations                                 6 cols     0 rows
+  ai_interaction_logs                            10 cols     4 rows
+  ai_interactions                                13 cols     0 rows
+  ai_jobs                                        18 cols     1 rows
+  ai_lead_agent_jobs                             19 cols     1 rows
+  ai_lead_scores                                  6 cols     0 rows
+  ai_learning_data                                7 cols     0 rows
+  ai_logs                                         8 cols     0 rows
+  ai_recommendations_test                         8 cols    14 rows
+  ai_training_sessions                            6 cols     0 rows
+  ai_usage_analytics                             14 cols     0 rows
+  ai_user_interactions                           12 cols     0 rows
+  ai_user_learning_progress                       8 cols     0 rows
+  ai_user_suggestions                            10 cols    99 rows
+  ai_workflow_patterns                            8 cols     0 rows
+  api_developers                                  9 cols     0 rows
+  api_rate_limits                                 3 cols     0 rows
+  api_sandbox                                     8 cols     0 rows
+  api_tokens                                      7 cols     0 rows
+  api_usage                                       6 cols     0 rows
+  associate_achievements                          6 cols     0 rows
+  associate_appointments                         15 cols     0 rows
+  associate_badges                                7 cols     0 rows
+  associate_details                              10 cols     0 rows
+  associate_field_visits                         12 cols     0 rows
+  associate_levels                               15 cols    10 rows
+  associate_messages                              9 cols     0 rows
+  associate_mlm                                  19 cols     0 rows
+  associate_points                                8 cols     0 rows
+  associate_team_members                         11 cols     3 rows
+  associate_teams                                10 cols     6 rows
+  associate_training_modules                      6 cols     0 rows
+  associates                                      9 cols     1 rows
+  associates_backup                              10 cols     0 rows
+  attendance                                     10 cols     0 rows
+  attendance_logs                                11 cols     0 rows
+  audit_access_log                                7 cols     0 rows
+  backup_records                                  8 cols     0 rows
+  bank_branches                                  17 cols    30 rows
+  bank_reconciliation                            17 cols     0 rows
+  bank_transactions                              21 cols     0 rows
+  banking_audit_logs                             12 cols     0 rows
+  banking_details                                14 cols     0 rows
+  cache_entries                                  17 cols     0 rows
+  cache_tags                                      7 cols     0 rows
+  calling_scripts                                 6 cols     0 rows
+  city                                            5 cols    11 rows
+  commission_bonuses                              8 cols     0 rows
+  commission_calculations                        31 cols     0 rows
+  construction_projects                          27 cols     0 rows
+  contact_backup                                 12 cols     0 rows
+  contact_requests                               18 cols     2 rows
+  contacts                                       16 cols     8 rows
+  customer_preferences                            9 cols    10 rows
+  customer_profiles                              35 cols     7 rows
+  dashboard_widgets                              16 cols     7 rows
+  document_signatures                            18 cols     0 rows
+  downloads                                      11 cols     4 rows
+  emi                                            12 cols     0 rows
+  emi_schedules                                  18 cols     0 rows
+  employee_salaries                              19 cols     0 rows
+  employees                                      39 cols    10 rows
+  enquiries                                      15 cols     0 rows
+  financial_periods                              12 cols     0 rows
+  financial_reports                              14 cols     0 rows
+  financial_years                                16 cols     0 rows
+  global_payments                                 9 cols     0 rows
+  gst_invoices                                   19 cols     0 rows
+  gst_records                                    27 cols     0 rows
+  hsn_sac_codes                                  16 cols     5 rows
+  kyc_details                                    12 cols     0 rows
+  kyc_documents                                   9 cols     0 rows
+  kyc_verification                               12 cols     0 rows
+  lead_file_extractions                          10 cols     0 rows
+  lead_scoring_history                           14 cols    10 rows
+  lead_scoring_rules                             20 cols    10 rows
+  leave_requests                                 21 cols     0 rows
+  leaves                                         13 cols     0 rows
+  load_test_results                              19 cols     0 rows
+  login_attempts                                  8 cols     0 rows
+  login_history                                   4 cols     0 rows
+  login_logs                                      7 cols     0 rows
+  market_trends                                  14 cols     0 rows
+  mlm_advanced_analytics                          9 cols     0 rows
+  mlm_commission_analytics                       14 cols     0 rows
+  mlm_commission_ledger_legacy                    7 cols     0 rows
+  mlm_commission_records                         14 cols     0 rows
+  mlm_commission_targets                         16 cols     0 rows
+  mlm_payout_batch_items                         12 cols     0 rows
+  mlm_payout_batches                             11 cols     0 rows
+  mlm_payout_requests                             9 cols     0 rows
+  mlm_performance                                15 cols     5 rows
+  mlm_plan_levels                                14 cols     0 rows
+  mlm_plans                                      10 cols     1 rows
+  mlm_points_transactions                        11 cols     0 rows
+  mlm_rank_advancements                          12 cols     5 rows
+  mlm_rank_criteria                               7 cols     0 rows
+  mlm_rank_upgrades                               6 cols     0 rows
+  mlm_rewards_recognition                        13 cols     7 rows
+  mlm_salary_plans                                7 cols     7 rows
+  mlm_special_bonuses                            15 cols     7 rows
+  mlm_training_progress                           7 cols     1 rows
+  mlm_tree                                        8 cols     1 rows
+  mlm_withdrawal_requests                        15 cols     0 rows
+  network_analytics                              17 cols     0 rows
+  notification_history                           21 cols     0 rows
+  notification_logs                               8 cols     0 rows
+  password_resets                                 9 cols     0 rows
+  payment_logs                                    9 cols     0 rows
+  performance_cache                              14 cols     0 rows
+  pincodes                                       11 cols  10007 rows
+  plot_payments                                  16 cols     0 rows
+  plot_status_history                             8 cols     0 rows
+  plotting                                       20 cols     0 rows
+  plotting_budgets                               25 cols     0 rows
+  project_amenities                               5 cols     0 rows
+  project_categories                              6 cols     0 rows
+  project_category_relations                      6 cols     0 rows
+  project_enquiries                              16 cols     3 rows
+  project_images                                 13 cols     4 rows
+  project_progress                               12 cols     0 rows
+  project_status_history                          9 cols     0 rows
+  property_comparison_sessions                   18 cols     0 rows
+  property_similarity                            10 cols     0 rows
+  quiz_attempts                                  16 cols     0 rows
+  rank_achievements                              16 cols     0 rows
+  referral_rewards                               15 cols     1 rows
+  remember_me_tokens                              6 cols     5 rows
+  rental_properties                               7 cols     0 rows
+  report_executions                              15 cols     0 rows
+  rera_requests                                  12 cols     0 rows
+  resale_properties                               7 cols     0 rows
+  resell_plots                                   18 cols     0 rows
+  salaries                                        9 cols     0 rows
+  salary_advances                                17 cols     0 rows
+  salary_notifications                           16 cols     0 rows
+  sales_invoice_items                            12 cols     0 rows
+  sales_invoices                                 23 cols     0 rows
+  schema_migrations                               5 cols    20 rows
+  scoring_thresholds                             16 cols     6 rows
+  services                                        8 cols     6 rows
+  site_master                                     8 cols     0 rows
+  sms_logs                                       21 cols     0 rows
+  sms_otp_logs                                   11 cols     0 rows
+  state                                           4 cols     8 rows
+  suppliers                                      27 cols     0 rows
+  table_name                                      3 cols     0 rows
+  team_hierarchy                                  8 cols     0 rows
+  tour_templates                                 14 cols     3 rows
+  user_backup                                    15 cols     0 rows
+  user_notification_preferences                  16 cols     0 rows
+  user_points                                    18 cols     0 rows
+  user_property_preferences                      19 cols     0 rows
+  user_social_accounts                           14 cols     0 rows
+  visual_test_suites                             11 cols     5 rows
+  voice_assistant_config                          5 cols     0 rows
+  wallet_emi_transfers                           12 cols     0 rows
+  work_schedules                                  7 cols     0 rows

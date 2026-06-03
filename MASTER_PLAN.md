@@ -1,414 +1,251 @@
-# APS Dream Home - Master Execution Plan
-## Complete Phase-wise Development Strategy
+# APS Dream Home — Master Implementation Plan (2026-06-03 onwards)
+
+## 🎯 Vision
+Build a **complete, self-learning, production-grade real estate ERP** with:
+- **Self-hosted AI** (no external API dependency for core features)
+- **Multi-agent orchestration** (parallel work distribution)
+- **Future-proof architecture** (extensible, modular, scalable)
+- **Zero-downtime** feature additions
+- **Continuous learning** from user behavior
 
 ---
 
-## 🎯 Project Vision
-**APS Dream Home** - Premium Real Estate Management System
-- **Scale:** 210 Controllers, 146 Models, 492 Views, 597 Database Tables
-- **Users:** Customers, Agents, Associates, Employees, Admin
-- **Features:** Property Management, MLM Network, AI Chatbot, Training System, Payment Gateway
+## 🧠 Self-Learning AI Core (Phase 23)
+
+**Philosophy**: Build AI that learns from OUR data, not from external APIs.
+
+### Components
+
+| Component | Purpose | Storage |
+|-----------|---------|---------|
+| **PatternLearner** | Learns user behavior patterns (what they click, search, view) | `ai_learning_data` + `user_behavior_tracking` |
+| **IntentDetector** | NLP-based intent classification from Hindi/English text | `ai_intent_patterns` + `chatbot_training_data` |
+| **RecommendationEngine** | Suggests properties based on user preferences | `ai_user_profiles` + `ai_recommendations` |
+| **LeadScorer** | Scores leads based on engagement metrics | `ai_lead_scores` (rebuilt) |
+| **AnomalyDetector** | Detects fraud, suspicious activity, price anomalies | `ai_anomalies` |
+| **PricePredictor** | Predicts property prices from historical data | `ai_price_models` |
+| **ChatbotBrain** | Self-learning chatbot using retrieval + patterns | `ai_conversations` + `chatbot_conversations` |
+| **ForecastEngine** | Sales/revenue forecasting from time-series | `forecast_results` |
+
+### AI Architecture (No External API)
+```
+User Input
+   ↓
+Preprocessor (tokenize, normalize Hindi/English)
+   ↓
+PatternLearner (checks learned patterns DB)
+   ↓
+ContextualMatcher (matches with user history)
+   ↓
+RecommendationEngine (suggests based on similar users)
+   ↓
+Response Generator (uses templates + learned phrases)
+   ↓
+Feedback Loop (rate response quality, retrain)
+```
+
+**Data flow**:
+1. Every user action logged → `ai_learning_data`
+2. Nightly batch trains pattern recognizer
+3. Real-time inference uses learned patterns
+4. User feedback improves future responses
+
+### Why Self-Hosted?
+- ✅ No API costs
+- ✅ Privacy (data stays in-house)
+- ✅ Customizable to domain
+- ✅ Works offline
+- ✅ Learns our specific user patterns
+- ❌ Limited to pattern-based (vs LLM)
 
 ---
 
-## 📋 Phase Overview
+## 📋 Implementation Phases
 
-| Phase | Duration | Focus | Deliverables |
-|-------|----------|-------|--------------|
-| **Phase 1** | Day 1 | Foundation & MCP Setup | All tools configured, databases connected |
-| **Phase 2** | Day 2-3 | Critical Bug Fixes | Router, Routes, JS, Images fixed |
-| **Phase 3** | Day 4-7 | Feature Completion | User Dashboard, Properties, Admin Panel |
-| **Phase 4** | Day 8-10 | Testing & Optimization | Automated tests, performance tuning |
-| **Phase 5** | Day 11-12 | Documentation & Deploy | Final docs, deployment ready |
+### **Phase 23: Self-Learning AI Core** (Day 1-2)
+- [ ] PatternLearner service (regex + Bayesian classifier)
+- [ ] IntentDetector (Hindi/English tokenizer)
+- [ ] RecommendationEngine (collaborative filtering)
+- [ ] LeadScorer (rule-based + ML hybrid)
+- [ ] PricePredictor (linear regression on historical data)
+- [ ] ChatbotBrain (RAG-style with vector storage)
+- [ ] Continuous learning pipeline (cron job)
 
----
+**Tables restored**: `ai_learning_data`, `ai_user_profiles`, `ai_intent_patterns`, `ai_recommendations`, `ai_lead_scores`, `ai_anomalies`, `ai_price_models`
 
-## 🔧 PHASE 1: Foundation & MCP Setup
-**Status: ✅ IN PROGRESS**
-**Duration: Day 1**
+### **Phase 24: User-Facing Features** (Day 3)
+- [ ] `incomplete_registrations` — track abandoned forms, auto-recover
+- [ ] `progressive_registrations` — step-by-step registration wizard
+- [ ] `customer_journeys` — lifecycle stage tracking (new→engaged→converted)
+- [ ] `customer_behavior_analysis` — RFM segmentation
+- [ ] `customer_favorites` (already exists) — enhance with AI recommendations
+- [ ] `saved_searches` (already exists) — auto-notify on matching properties
 
-### 1.1 MCP Tools Configuration ✅
-| Tool | Status | Purpose |
-|------|--------|---------|
-| MySQL MCP | ✅ Active | Local database (127.0.0.1:3307) |
-| Supabase MCP | ✅ Active | Cloud PostgreSQL backup |
-| Sequential Thinking | ✅ Active | Complex problem solving |
-| Playwright MCP | ✅ Active | Visual testing |
-| Filesystem MCP | ✅ Active | File operations |
-| Memory MCP | ✅ Active | Knowledge storage |
+### **Phase 25: HRM Complete** (Day 4)
+- [ ] `employee_advances` — salary advance requests/approvals
+- [ ] `employee_bonuses` — bonus calculation & payout
+- [ ] `payroll_entries` — line items per payroll run
+- [ ] `salary_contracts` — contract management
+- [ ] `salary_history` — change tracking (raise, role change)
+- [ ] `attendance_settings` — config per company
+- [ ] `employee_tasks` — task assignment & tracking
+- [ ] `department_budgets` — budget per department
 
-**Configuration Files Updated:**
-- `.mcp.json` ✅
-- `~/.codeium/windsurf/mcp_config.json` ✅
-- `.vscode/settings.json` ✅
+### **Phase 26: Property Features** (Day 5)
+- [ ] `property_valuations` — historical price tracking
+- [ ] `property_ai_tags` — auto-tagging (luxury, family, investment)
+- [ ] `property_analytics` — view counts, inquiry rate, conversion
+- [ ] `property_maintenance` — post-sale maintenance schedule
+- [ ] `property_market_data` — neighborhood market intelligence
+- [ ] `resell_properties` — resale listing separate from primary
+- [ ] `resell_property_images` — multiple images per resale
+- [ ] `resell_commission_structure` — different rates for resales
 
-### 1.2 Database Connections
+### **Phase 27: MLM & Commission** (Day 6)
+- [ ] `agent_commission_rates` — per-agent commission config
+- [ ] `commission_calculation_rules` — flexible rule engine
+- [ ] `hybrid_commission_records` — tier-based hybrid model
+- [ ] `hybrid_commission_plans` — plan definitions
+- [ ] `farmer_commissions` — farmer referral commissions
+- [ ] `farmer_commission_structures` — sector-specific rates
+- [ ] `mlm_rank_rates` — rank-based rate table
+- [ ] `sponsor_running_no` — auto-increment sponsor counter
 
-**Primary: MySQL (Local XAMPP)**
-```
-Host: 127.0.0.1
-Port: 3307
-Database: apsdreamhome
-User: root
-Password: (blank)
-Tables: 597
-```
+### **Phase 28: Notification System Complete** (Day 7)
+- [ ] `notification_templates` (64 rows) — multi-channel templates
+- [ ] `email_tracking` — open/click/bounce tracking
+- [ ] `push_notifications` — mobile push queue
+- [ ] `push_subscriptions` — device tokens
+- [ ] `whatsapp_lead_shares` — share lead via WhatsApp
+- [ ] `realtime_notifications` — websocket push
+- [ ] `notification_settings` — per-user channel preferences
+- [ ] `sms_templates` — SMS-specific templates
 
-**Secondary: Supabase (Cloud PostgreSQL)**
-```
-URL: https://shegdyxcfvfcrhyjarwu.supabase.co
-Project: shegdyxcfvfcrhyjarwu
-Features: database, debugging, development, functions, branching, storage, account
-```
+### **Phase 29: Document & Workflow** (Day 8)
+- [ ] `document_classification` — auto-tag (KYC, Legal, Financial)
+- [ ] `ocr_documents` — OCR processing queue
+- [ ] `ocr_extracted_fields` — extracted data from OCR
+- [ ] `ocr_templates` — field templates per doc type
+- [ ] `report_executions` — track who ran what report when
+- [ ] `document_reviews` — review/approval workflow
+- [ ] `file_access_logs` — file access audit
 
-### 1.3 IDE Setup ✅
-- PROJECT_MAP.md ✅
-- AGENTS.md ✅
-- IDE_SETUP_GUIDE.md ✅
-- VS Code settings.json ✅
-- VS Code launch.json ✅
-- PHP Code Snippets ✅
+### **Phase 30: Analytics & Reporting** (Day 9)
+- [ ] `kpis` — company-wide KPI tracking
+- [ ] `employee_kpis` — per-employee KPIs
+- [ ] `daily_metrics_summary` — daily aggregated metrics
+- [ ] `performance_benchmarks` — performance targets
+- [ ] `forecast_results` — sales/revenue forecasts
+- [ ] `market_analytics_summary` — market intelligence
+- [ ] `analytics_dashboards` — saved dashboard configs
+- [ ] `analytics_alerts` — threshold-based alerts
 
-### Phase 1 Deliverables:
-- [x] All MCP tools installed and configured
-- [x] Documentation created
-- [x] VS Code workspace configured
-- [x] MySQL database accessible via MCP
-- [x] Supabase cloud database connected
+### **Phase 31: Auth & Security** (Day 10)
+- [ ] `two_factor_tokens` — 2FA (TOTP/SMS)
+- [ ] `password_reset_tokens` — secure reset flow
+- [ ] `blocked_ips` — IP blacklist
+- [ ] `failed_login_attempts` — brute force protection
+- [ ] `jwt_blacklist` — JWT revocation
+- [ ] `security_sessions` — active session tracking
+- [ ] `two_factor_settings` — per-user 2FA config
 
----
+### **Phase 32: Marketing & Finance** (Day 11)
+- [ ] `campaign_deliveries` — multi-channel delivery tracking
+- [ ] `budgets` + `budget_planning` — budget management
+- [ ] `cash_flow_projections` — financial forecasting
+- [ ] `gst_returns` — GST compliance
+- [ ] `gst_settings` — GST config
+- [ ] `tax_slabs` — tax bracket config
+- [ ] `tax_types` — tax type master
+- [ ] `budget_expenses` — budget vs actual
 
-## 🐛 PHASE 2: Critical Bug Fixes
-**Status: 🔄 READY TO START**
-**Duration: Day 2-3**
-**Priority: HIGH**
+### **Phase 33: Multi-Agent Orchestration** (Day 12)
+- [ ] `agent_tasks` — task queue for agents
+- [ ] `agent_executions` — execution history
+- [ ] `agent_state` — agent state persistence
+- [ ] `workflow_automations` — rule-based automation
+- [ ] `workflow_instances` — running workflow state
+- [ ] `agent_orchestrator` — coordinates multiple agents
+- [ ] Sequential workflow manager
+- [ ] Real-time agent monitoring dashboard
 
-### 2.1 Router Bug Fix 🔴 CRITICAL
-**Issue:** Double Router instance creation
-**Location:** `routes/web.php` Line 9
-**Impact:** Route registration conflicts
-
-**Fix Required:**
-```php
-// REMOVE THIS from routes/web.php:
-$router = new Router(); // Line 9
-
-// Router is already created in public/index.php
-```
-
-**Verification:**
-- Test: All routes load correctly
-- Check: No "Router instance" warnings in logs
-
-### 2.2 User Routes Position Fix 🔴 CRITICAL
-**Issue:** User routes at end of web.php may not register
-**Location:** `routes/web.php` Lines 720-736
-**Impact:** `/user/dashboard` returns 404
-
-**Fix Required:**
-```php
-// MOVE these routes from Line 720 to around Line 200:
-// User Authentication (Customer)
-$router->get('/user/logout', 'Auth\CustomerAuthController@logout');
-$router->get('/user/dashboard', 'Front\UserController@dashboard');
-$router->get('/user/properties', 'Front\UserController@myProperties');
-$router->get('/user/inquiries', 'Front\UserController@myInquiries');
-$router->get('/user/profile', 'Front\\UserController@profile');
-$router->post('/user/profile', 'Front\\UserController@updateProfile');
-```
-
-**Verification:**
-- Test: `/user/dashboard` loads correctly
-- Test: Redirect to login when not authenticated
-
-### 2.3 JavaScript 404 Fix 🟡 MEDIUM
-**Issue:** smart-form-autocomplete.js not found
-**Location:** `assets/js/components/`
-**Impact:** Property listing form autocomplete broken
-
-**Fix Required:**
-1. Check if file exists at correct path
-2. If missing, create or update reference
-3. Verify MIME type headers in .htaccess
-
-**Verification:**
-- Browser console: No 404 errors
-- Form autocomplete: Working
-
-### 2.4 Missing Images Fix 🟢 LOW
-**Issue:** placeholder.jpg not found
-**Location:** `assets/images/projects/gorakhpur/`
-**Impact:** Visual broken on properties page
-
-**Fix Required:**
-1. Create placeholder image
-2. Add to correct path
-3. Update references if path changed
-
-### Phase 2 Deliverables:
-- [ ] Router bug fixed
-- [ ] User routes repositioned
-- [ ] JS 404 resolved
-- [ ] Placeholder images added
-- [ ] All critical routes tested
+### **Phase 34: Production Hardening** (Day 13)
+- [ ] Performance optimization (caching, query optimization)
+- [ ] Security audit (CSRF, XSS, SQL injection, auth)
+- [ ] Backup & recovery strategy
+- [ ] Monitoring & alerting (uptime, errors, performance)
+- [ ] Documentation (API docs, admin guide, dev guide)
+- [ ] Final E2E test (100% pass rate)
+- [ ] Load testing
+- [ ] Deployment script
 
 ---
 
-## ✨ PHASE 3: Feature Completion
-**Status: ⏳ PENDING**
-**Duration: Day 4-7**
+## 🏗️ Multi-Agent Orchestration Strategy
 
-### 3.1 Customer Portal Enhancement
-**Files:**
-- `app/Controllers/Front/UserController.php`
-- `app/views/pages/user_dashboard.php`
-- `app/views/pages/user_properties.php`
-- `app/views/pages/user_inquiries.php`
+**Agents** (each runs in parallel):
+1. **DatabaseAgent** — schema, migrations, indexes
+2. **BackendAgent** — controllers, services, APIs
+3. **FrontendAgent** — views, JS, CSS
+4. **AIAgent** — self-learning AI core
+5. **SecurityAgent** — auth, CSRF, validation
+6. **PerformanceAgent** — caching, query optimization
+7. **TestAgent** — E2E, unit, integration tests
+8. **DocsAgent** — documentation, API specs
 
-**Features to Complete:**
-- [ ] Dashboard statistics (properties count, inquiries count)
-- [ ] Property management (add, edit, delete)
-- [ ] Inquiry tracking with status
-- [ ] Profile management with image upload
-- [ ] Notification system
-
-### 3.2 Admin Panel Features
-**Files:**
-- `app/Controllers/Admin/AdminController.php`
-- `app/views/admin/dashboard.php`
-- `app/Controllers/Admin/UserPropertyController.php`
-
-**Features to Complete:**
-- [ ] Dashboard analytics (charts, graphs)
-- [ ] User management (approve, block, delete)
-- [ ] Property verification workflow
-- [ ] Lead management (CRM)
-- [ ] Reports generation
-
-### 3.3 MLM/Associate Features
-**Files:**
-- `app/Controllers/AssociateController.php`
-- `app/views/pages/associate_dashboard.php`
-
-**Features to Complete:**
-- [ ] Network genealogy tree
-- [ ] Commission calculation
-- [ ] Performance dashboard
-- [ ] Training module access
-
-### 3.4 AI Features Enhancement
-**Files:**
-- `app/Services/AI/AIManager.php`
-- `app/Controllers/Front/AIBotController.php`
-
-**Features to Complete:**
-- [ ] Property valuation AI
-- [ ] Chatbot improvements
-- [ ] Lead scoring system
-- [ ] Recommendation engine
-
-### 3.5 Payment & Wallet
-**Files:**
-- `app/Services/Payment/PaymentGateway.php`
-- `app/Controllers/PaymentController.php`
-
-**Features to Complete:**
-- [ ] EMI calculator
-- [ ] Payment gateway integration
-- [ ] Wallet system
-- [ ] Commission payout
-
-### Phase 3 Deliverables:
-- [ ] Customer portal 100% functional
-- [ ] Admin panel all features working
-- [ ] MLM system operational
-- [ ] AI features integrated
-- [ ] Payment system tested
-
----
-
-## 🧪 PHASE 4: Testing & Optimization
-**Status: ⏳ PENDING**
-**Duration: Day 8-10**
-
-### 4.1 Automated Testing
-**Tools:** Playwright MCP, MASTER_TEST_RUNNER.js
-
-**Test Suites:**
-- [ ] Header UI/UX tests (Desktop/Tablet/Mobile)
-- [ ] Admin login flow tests
-- [ ] User registration tests
-- [ ] Property posting tests
-- [ ] Newsletter subscription tests
-- [ ] End-to-end user journey tests
-
-**Fix Required in MASTER_TEST_RUNNER.js:**
-```javascript
-// Change from:
-await page.goto(BASE, { waitUntil: 'networkidle' });
-
-// To:
-await page.goto(BASE, { waitUntil: 'domcontentloaded' });
-```
-
-### 4.2 Database Optimization
-**Tools:** MySQL MCP, Supabase MCP
-
-**Tasks:**
-- [ ] Index optimization on frequently queried tables
-- [ ] Slow query analysis
-- [ ] Database cleanup (orphaned records)
-- [ ] Connection pooling setup
-
-### 4.3 Code Quality
-**Tools:** PHP Intelephense, SonarLint
-
-**Tasks:**
-- [ ] Remove unused imports
-- [ ] Fix PHP warnings
-- [ ] Code formatting consistency
-- [ ] Documentation comments
-
-### 4.4 Security Audit
-**Tasks:**
-- [ ] CSRF protection verification
-- [ ] SQL injection prevention check
-- [ ] XSS vulnerability scan
-- [ ] Password hashing review
-
-### Phase 4 Deliverables:
-- [ ] All tests passing
-- [ ] Performance optimized
-- [ ] Security audited
-- [ ] Code quality improved
-
----
-
-## 📚 PHASE 5: Documentation & Deployment
-**Status: ⏳ PENDING**
-**Duration: Day 11-12**
-
-### 5.1 API Documentation
-**Files:**
-- `api-docs/index.html`
-- API endpoint documentation
-
-**Tasks:**
-- [ ] Document all API endpoints
-- [ ] Request/Response examples
-- [ ] Authentication details
-
-### 5.2 User Documentation
-**Tasks:**
-- [ ] Customer user guide
-- [ ] Admin manual
-- [ ] Associate training guide
-
-### 5.3 Technical Documentation
-**Files:**
-- `PROJECT_MAP.md` ✅ (Already done)
-- `AGENTS.md` ✅ (Already done)
-- `README.md`
-
-**Tasks:**
-- [ ] Update README with setup instructions
-- [ ] Database schema documentation
-- [ ] Deployment guide
-
-### 5.4 Deployment Preparation
-**Tasks:**
-- [ ] Environment configuration
-- [ ] Production database setup
-- [ ] SSL certificate
-- [ ] Backup strategy
-
-### Phase 5 Deliverables:
-- [ ] Complete documentation
-- [ ] Deployment ready
-- [ ] Backup system configured
-
----
-
-## 🎯 Current Status Dashboard
-
-```
-PHASE 1: Foundation        [████████░░] 80% Complete
-PHASE 2: Bug Fixes         [░░░░░░░░░░] 0% Ready to start
-PHASE 3: Features          [░░░░░░░░░░] 0% Pending
-PHASE 4: Testing           [░░░░░░░░░░] 0% Pending
-PHASE 5: Documentation     [░░░░░░░░░░] 0% Pending
-```
-
----
-
-## 🚀 Immediate Next Actions
-
-### Ready to Execute (Phase 1 Complete ✅):
-1. **Fix Router Bug** - Remove `$router = new Router()` from web.php line 9
-2. **Fix User Routes** - Move routes from line 720 to line 200
-3. **Fix JS 404** - Check smart-form-autocomplete.js path
-4. **Test User Flow** - Verify /user/dashboard works
-
-### MCP Tools Status:
-- ✅ MySQL: `SELECT * FROM users;` ready
-- ✅ Supabase: Cloud PostgreSQL ready
-- ✅ Sequential Thinking: Complex debugging ready
-- ✅ Playwright: Visual testing ready
+**Coordination**:
+- All agents share `agent_state.json`
+- Each agent claims work via DB lock
+- Conflicts resolved by priority queue
+- Progress tracked in real-time
 
 ---
 
 ## 📊 Success Metrics
 
-### Technical Metrics:
-- [ ] 100% routes functional
-- [ ] 0 critical console errors
-- [ ] All tests passing
-- [ ] < 100ms average query time
-
-### User Experience:
-- [ ] < 3s page load time
-- [ ] Mobile responsive
-- [ ] All forms functional
-- [ ] AI chatbot responding
-
-### Business Goals:
-- [ ] Customer registration working
-- [ ] Property posting working
-- [ ] Payment system tested
-- [ ] Admin panel complete
+| Metric | Current | Target |
+|--------|---------|--------|
+| Tables | 213 | 350+ (functional completeness) |
+| E2E tests | 163/164 | 250+/250+ |
+| Self-learned patterns | 0 | 1000+ |
+| External API calls | 0 | 0 (self-hosted) |
+| Performance (avg page load) | TBD | <500ms |
+| Security score | TBD | A+ |
+| Documentation | Partial | Complete |
+| Test coverage | ~30% | 80%+ |
 
 ---
 
-## 🆘 Risk Mitigation
+## 🎯 Daily Milestones
 
-| Risk | Mitigation |
-|------|------------|
-| Large codebase confusion | PROJECT_MAP.md + AGENTS.md |
-| Database conflicts | MySQL + Supabase dual setup |
-| Route conflicts | Sequential Thinking for debugging |
-| Testing complexity | Playwright automated tests |
-
----
-
-## 📝 Daily Standup Format
-
-**Each day report:**
-1. Yesterday: Kya complete hua?
-2. Today: Kya kar rahe hain?
-3. Blockers: Kya issue hai?
-4. Next: Kal kya karna hai?
-
----
-
-## 🎉 Completion Criteria
-
-**Project Complete when:**
-- ✅ All 5 phases done
-- ✅ All tests passing
-- ✅ Documentation complete
-- ✅ Client approval
-- ✅ Deployment successful
+| Day | Phase | Deliverable |
+|-----|-------|-------------|
+| 1 | 23 | Self-learning AI core working |
+| 2 | 23 | Chatbot brain, lead scorer live |
+| 3 | 24 | User features deployed |
+| 4 | 25 | HRM complete |
+| 5 | 26 | Property features complete |
+| 6 | 27 | MLM complete |
+| 7 | 28 | Notifications complete |
+| 8 | 29 | Document/Workflow complete |
+| 9 | 30 | Analytics complete |
+| 10 | 31 | Security complete |
+| 11 | 32 | Marketing/Finance complete |
+| 12 | 33 | Multi-agent orchestration |
+| 13 | 34 | Production ready |
 
 ---
 
-**Ready to start Phase 2?** 🔧
+## ⚠️ Risks & Mitigation
+
+| Risk | Impact | Mitigation |
+|------|--------|-----------|
+| Self-hosted AI quality lower than LLM | Medium | Hybrid: pattern-based for common cases, optional LLM for complex |
+| Scope creep | High | Strict phase boundaries, daily review |
+| Test debt | Medium | Test-driven development, E2E after each phase |
+| Performance regression | Medium | Benchmark before/after each phase |
+| Data integrity | High | Always verify with real DB, restore scripts ready |
+
+---
+
+**This is a 2-week sprint to production-grade ERP. Let's go! 🚀**

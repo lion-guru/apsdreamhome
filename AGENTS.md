@@ -8,16 +8,19 @@
 | **Total tables** | 756 | **213** | **-543 (-71.8%)** |
 | **E2E tests** | 163/164 | 163/164 | **Zero regressions** |
 | **Total rows** | 54,762 | ~30K | -24K (mostly fake seed data) |
-| **Performance indexes** | 66 | **78** | **+12 (hot paths)** |
-| **Scripts** | 84 | **25 in root** | 50 archived in `_archive/` |
+| **Indexes** | 163 (94 dupes) | **69 unique + cleanup** | -94 duplicates, kept optimal |
+| **Scripts** | 84 | **26 essential** | 70 archived in `_archive/` |
 | **Views dropped** | 5 | **0** | -5 (business_overview, property_performance, etc.) |
-| **Orphaned CREATE TABLE stmts** | 157 | **0** | Removed from 64 service files |
+| **Orphaned CREATE TABLE stmts** | 189 | **0** | Removed from 88 service files |
 | **Voice AI tables** | 6 | **5** | -1 (logs merged into sessions) |
 | **Document tables** | 16 | **10** | -6 (entity tables merged into polymorphic documents) |
 | **Salary tables** | 4 | **3** | -1 (salary_structures merged into employee_salary_structure) |
 | **Notification tables** | 10 | **8** | -2 (mlm_notification_log dropped, notification_feed merged) |
+| **Duplicate route methods fixed** | 13 | **0** | Phase 22: added stubs for missing controller methods |
+| **Hardcoded /login redirects** | 16 | **0** | All use BASE_URL constant |
+| **Hardcoded credentials** | 2 files | **0** | Deleted dead demo files |
 
-### Cleanup Phases Executed (19 Phases)
+### Cleanup Phases Executed (22 Phases)
 | Phase | Tables Dropped | Strategy |
 |-------|---------------|----------|
 | 1 | 4 dead + 2 views | `customers`, `admin_users`, `associates`, `employees` (0 refs); `booking_summary`, `employee_performance` (broken views) |
@@ -39,6 +42,9 @@
 | 17 | 1 | `saved_reports` (0 rows, 3 refs) |
 | 18 | 0 | Removed 157 orphaned CREATE TABLE stmts from 64 service files |
 | 19 | 0 | Archived 50 analysis/debug scripts to `_archive/` |
+| 20 | 0 | Removed 32 more orphaned CREATEs (29 auto + 3 manual fixes) |
+| 21 | 0 | Dropped 69 duplicate indexes (e.g., 'email' vs 'idx_user_email') |
+| 22 | 0 | Fixed 13 missing route methods + 1 dead route, 16 hardcoded redirects, 2 demo files with hardcoded creds |
 
 ### Key Insights
 1. **Always verify with real DB before dropping** — AGENTS.md estimates were 22% empty, reality was 0.3% empty
@@ -46,10 +52,13 @@
 3. **"0 code refs" insufficient** — must check FK incoming + view definitions + try/catch status
 4. **Restoration is cheap** — `restore_mlm_tables.php` enabled safe experimentation
 5. **3-pass safety pattern** (zero → 1 → 2 refs) is gold standard for cleanup
-6. **Auto-create removal is critical** — 157 orphaned CREATE TABLE IF NOT EXISTS statements were recreating dropped tables on every page load
+6. **Auto-create removal is critical** — 189 orphaned CREATE TABLE IF NOT EXISTS statements were recreating dropped tables on every page load
 7. **MySQL VIEWs survive DROP TABLE** — must use DROP VIEW explicitly
+8. **Duplicate indexes hurt writes** — 69 dropped (e.g., 'email' vs 'idx_user_email' vs 'idx_users_email' all on users.email)
+9. **MySQL curl quirk** — PHP curl returns 404 on this XAMPP setup; PowerShell/Playwright work fine
+10. **Routes use shorthand class names** — e.g., `Front\PageController` is auto-resolved to `App\Http\Controllers\Front\PageController`; controllers in different filenames are mapped via `app/Core/Autoloader.php` classMap
 
-### Current Scripts (25 Essential)
+### Current Scripts (26 Essential)
 **Seeds**: `seed_feature_tables.php`, `seed_feature_tables_2.php`, `seed_bank_data.php`, `seed_complete_location_data.php`, `seed_pincodes.php`, `seed_voice_agents.php`, `seed_api_keys.php`
 **Migrations**: `create_migrations_table.php`, `track_migration.php`, `view_migrations.php`, `add_admin_menu_items.php`, `add_colony_content_columns.php`, `add_property_image_column.php`, `add_ticket_booking_column.php`, `add_user_tracking_columns.php`, `add_voice_ai_indexes.php`
 **Schema fixes**: `fix_schema.php`, `fix_user_properties_schema.php`, `fix_mlm_extensions.php`

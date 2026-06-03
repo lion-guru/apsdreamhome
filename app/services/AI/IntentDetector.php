@@ -1,0 +1,186 @@
+<?php
+/**
+ * IntentDetector - NLP-based intent classification
+ * Supports Hindi + English
+ * No external API - uses pattern matching + scoring
+ */
+
+namespace App\Services\AI;
+
+use PDO;
+
+class IntentDetector
+{
+    private PDO $db;
+
+    // Common real estate intents with multi-language patterns
+    private array $defaultIntents = [
+        'buy_property' => [
+            'en' => ['buy', 'purchase', 'want to buy', 'looking to buy', 'need a property', 'want a house', 'want flat', 'want plot'],
+            'hi' => ['खरीदना', 'खरीद', 'लेना है', 'चाहिए', 'घर चाहिए', 'प्लाट चाहिए', 'फ्लैट चाहिए']
+        ],
+        'sell_property' => [
+            'en' => ['sell', 'want to sell', 'have property to sell', 'list my property'],
+            'hi' => ['बेचना', 'बेचना है', 'बेचना चाहता', 'बेचनी है', 'प्रॉपर्टी बेचनी']
+        ],
+        'rent_property' => [
+            'en' => ['rent', 'rental', 'on rent', 'for rent', 'lease'],
+            'hi' => ['किराए', 'किराये', 'रेंट', 'लीज', 'किराए पर']
+        ],
+        'site_visit' => [
+            'en' => ['site visit', 'visit property', 'see the property', 'schedule visit', 'book visit'],
+            'hi' => ['साइट विजिट', 'विजिट', 'देखना है', 'मिलने', 'आना चाहता']
+        ],
+        'price_inquiry' => [
+            'en' => ['price', 'cost', 'how much', 'rate', 'pricing', 'expensive', 'cheap'],
+            'hi' => ['कीमत', 'दाम', 'कितना', 'रेट', 'महंगा', 'सस्ता', 'प्राइस']
+        ],
+        'loan' => [
+            'en' => ['loan', 'home loan', 'mortgage', 'finance', 'emi'],
+            'hi' => ['लोन', 'होम लोन', 'कर्ज', 'फाइनेंस', 'ईएमआई']
+        ],
+        'legal_help' => [
+            'en' => ['legal', 'lawyer', 'agreement', 'registry', 'documentation'],
+            'hi' => ['कानूनी', 'वकील', 'रजिस्ट्री', 'डॉक्यूमेंट', 'कागजात']
+        ],
+        'greeting' => [
+            'en' => ['hello', 'hi', 'hey', 'namaste', 'good morning', 'good evening'],
+            'hi' => ['नमस्ते', 'नमस्कार', 'हैलो', 'हाय']
+        ],
+        'thanks' => [
+            'en' => ['thanks', 'thank you', 'thx', 'appreciated'],
+            'hi' => ['धन्यवाद', 'शुक्रिया', 'थैंक्स']
+        ],
+        'goodbye' => [
+            'en' => ['bye', 'goodbye', 'see you', 'talk later'],
+            'hi' => ['अलविदा', 'बाय', 'फिर मिलेंगे']
+        ]
+    ];
+
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+        $this->seedDefaultIntents();
+    }
+
+    /**
+     * Detect intent from user message
+     * Returns intent name, confidence, language
+     */
+    public function detect(string $message): array
+    {
+        $message = strtolower(trim($message));
+        $language = $this->detectLanguage($message);
+
+        $scores = [];
+
+        // Check DB patterns first
+        $stmt = $this->db->prepare("
+            SELECT intent_name, pattern_text, pattern_type, weight, hit_count
+            FROM ai_intent_patterns
+            WHERE is_active = 1 AND (language = ? OR language = 'en')
+        ");
+        $stmt->execute([$language]);
+        $dbPatterns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($dbPatterns as $p) {
+            $score = $this->matchPattern($message, $p['pattern_text'], $p['pattern_type']);
+            if ($score > 0) {
+                $scores[$p['intent_name']] = ($scores[$p['intent_name']] ?? 0) + $score * (float)$p['weight'];
+            }
+        }
+
+        // Fall back to default patterns
+        foreach ($this->defaultIntents as $intent => $langs) {
+            $patterns = $langs[$language] ?? $langs['en'] ?? [];
+            foreach ($patterns as $p) {
+                if (stripos($message, strtolower($p)) !== false) {
+                    $scores[$intent] = ($scores[$intent] ?? 0) + 0.7;
+                }
+            }
+        }
+
+        if (empty($scores)) {
+            return ['intent' => 'unknown', 'confidence' => 0.0, 'language' => $language];
+        }
+
+        arsort($scores);
+        $topIntent = array_key_first($scores);
+        $confidence = min(1.0, $scores[$topIntent]);
+
+        return [
+            'intent' => $topIntent,
+            'confidence' => $confidence,
+            'language' => $language,
+            'all_scores' => $scores
+        ];
+    }
+
+    /**
+     * Add new learned pattern
+     */
+    public function learn(string $intent, string $pattern, string $type = 'keyword', float $weight = 1.0, string $language = 'en'): int
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO ai_intent_patterns (intent_name, pattern_text, pattern_type, weight, language)
+            VALUES (?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE weight = weight + 0.1, hit_count = hit_count + 1
+        ");
+        $stmt->execute([$intent, $pattern, $type, $weight, $language]);
+        return (int)$this->db->lastInsertId();
+    }
+
+    /**
+     * Record successful match for reinforcement
+     */
+    public function reinforce(int $patternId, bool $success): void
+    {
+        $col = $success ? 'success_count' : 'hit_count';
+        $stmt = $this->db->prepare("UPDATE ai_intent_patterns SET $col = $col + 1 WHERE id = ?");
+        $stmt->execute([$patternId]);
+    }
+
+    /**
+     * Seed default intents on first run
+     */
+    private function seedDefaultIntents(): void
+    {
+        $stmt = $this->db->query("SELECT COUNT(*) FROM ai_intent_patterns WHERE language = 'en'");
+        if ((int)$stmt->fetchColumn() > 0) return;
+
+        foreach ($this->defaultIntents as $intent => $langs) {
+            foreach ($langs as $lang => $patterns) {
+                foreach ($patterns as $p) {
+                    try {
+                        $ins = $this->db->prepare("
+                            INSERT INTO ai_intent_patterns (intent_name, pattern_text, pattern_type, language, weight)
+                            VALUES (?, ?, 'keyword', ?, 1.0)
+                        ");
+                        $ins->execute([$intent, $p, $lang]);
+                    } catch (Exception $e) {
+                        // ignore dupes
+                    }
+                }
+            }
+        }
+    }
+
+    private function matchPattern(string $text, string $pattern, string $type): float
+    {
+        $text = strtolower($text);
+        $pattern = strtolower($pattern);
+        return match ($type) {
+            'regex' => @preg_match($pattern, $text) ? 1.0 : 0.0,
+            'exact' => $text === $pattern ? 1.0 : 0.0,
+            'phrase' => stripos($text, $pattern) !== false ? 0.9 : 0.0,
+            default => stripos($text, $pattern) !== false ? 0.7 : 0.0, // keyword
+        };
+    }
+
+    private function detectLanguage(string $text): string
+    {
+        // Detect Devanagari
+        if (preg_match('/[\x{0900}-\x{097F}]/u', $text)) return 'hi';
+        return 'en';
+    }
+}

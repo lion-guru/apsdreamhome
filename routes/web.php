@@ -1936,6 +1936,41 @@ $router->get('/admin/ai-management/suggestions', 'App\\Http\\Controllers\\Admin\
 $router->get('/admin/ai-management/usage-analytics', 'App\\Http\\Controllers\\Admin\\AIManagementController@usageAnalytics');
 
 // ═══════════════════════════════════════════════════
+// SELF-LEARNING AI (Phase 23) - No External API
+// ═══════════════════════════════════════════════════
+$router->get('/admin/ai-dashboard', 'Front\\AIBotController@stats');          // JSON stats endpoint
+$router->get('/admin/ai/dashboard', function() {
+    $root = dirname(__DIR__);
+    require_once $root . '/vendor/autoload.php';
+    $config = require $root . '/config/database.php';
+    $pdo = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $ai = new \App\Services\AI\AIManager($pdo);
+    $stats = $ai->getStats();
+    $recentMessages = $pdo->query("SELECT * FROM ai_chat_messages ORDER BY created_at DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
+    $topIntents = $pdo->query("SELECT detected_intent, COUNT(*) as cnt FROM ai_chat_messages WHERE detected_intent IS NOT NULL GROUP BY detected_intent ORDER BY cnt DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
+    $topScores = $pdo->query("SELECT ls.*, l.name, l.phone FROM ai_lead_scores ls LEFT JOIN leads l ON l.id = ls.lead_id ORDER BY ls.score DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
+    $priceModels = $pdo->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
+    $page_title = 'AI Dashboard - APS Dream Home';
+    $page_heading = 'Self-Learning AI';
+    ob_start();
+    include $root . '/app/views/admin/ai-dashboard.php';
+    $content = ob_get_clean();
+    $GLOBALS['_admin_page_title'] = $page_title;
+    $GLOBALS['_admin_page_heading'] = $page_heading;
+    $GLOBALS['_admin_content'] = $content;
+    $GLOBALS['_admin_extra_js'] = '';
+    $GLOBALS['_admin_extra_css'] = '';
+    require $root . '/app/views/admin/layouts/unified.php';
+    exit;
+});
+$router->post('/api/ai/score-lead/{id}', 'Front\\AIBotController@scoreLead');
+$router->post('/api/ai/predict-price', 'Front\\AIBotController@predictPrice');
+$router->get('/api/ai/recommend', 'Front\\AIBotController@recommend');
+$router->post('/api/ai/retrain', 'Front\\AIBotController@retrain');
+$router->get('/api/ai/stats', 'Front\\AIBotController@stats');
+$router->any('/api/ai/chat', 'Front\\AIBotController@chat');
+
+// ═══════════════════════════════════════════════════
 // COMPANY SETTINGS
 // ═══════════════════════════════════════════════════
 $router->get('/admin/company/settings', 'App\\Http\\Controllers\\Admin\\CompanyController@settings');
