@@ -12,7 +12,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/leads">
-                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -34,7 +34,7 @@
                             <label for="source_id" class="form-label fw-semibold">Source</label>
                             <select class="form-select" id="source_id" name="source_id">
                                 <option value="">-- Select Source --</option>
-                                <?php foreach ($sources as $source): ?>
+                                <?php foreach (($sources ?? []) as $source): ?>
                                     <option value="<?php echo $source['id']; ?>"><?php echo htmlspecialchars($source['name'] ?? ''); ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -45,8 +45,8 @@
                         <div class="col-md-6 mb-3">
                             <label for="status" class="form-label fw-semibold">Status</label>
                             <select class="form-select" id="status" name="status">
-                                <?php foreach ($statuses as $status): ?>
-                                    <option value="<?php echo $status['status_name']; ?>"><?php echo ucfirst($status['status_name']); ?></option>
+                                <?php foreach (($statuses ?? []) as $status): ?>
+                                    <option value="<?php echo $status['status_name'] ?? ''; ?>"><?php echo ucfirst($status['status_name'] ?? ''); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -54,7 +54,7 @@
                             <label for="assigned_to" class="form-label fw-semibold">Assigned To</label>
                             <select class="form-select" id="assigned_to" name="assigned_to">
                                 <option value="">-- Unassigned --</option>
-                                <?php foreach ($assignees as $assignee): ?>
+                                <?php foreach (($assignees ?? []) as $assignee): ?>
                                     <option value="<?php echo $assignee['id']; ?>"><?php echo htmlspecialchars($assignee['name'] ?? ''); ?></option>
                                 <?php endforeach; ?>
                             </select>

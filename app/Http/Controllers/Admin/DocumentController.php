@@ -500,7 +500,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT bd.*, u.name as uploaded_by_name FROM business_documents bd LEFT JOIN users u ON bd.uploaded_by = u.id ORDER BY bd.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.user_id = u.id WHERE d.entity_type = 'business' ORDER BY d.uploaded_on DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $records = [];
@@ -517,7 +517,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT cd.*, u.name as uploaded_by_name, c.name as customer_name FROM customer_documents cd LEFT JOIN users u ON cd.uploaded_by = u.id LEFT JOIN users c ON cd.customer_id = c.id ORDER BY cd.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name, c.name as customer_name FROM documents d LEFT JOIN users u ON d.user_id = u.id LEFT JOIN users c ON d.entity_id = c.id WHERE d.entity_type = 'customer' ORDER BY d.uploaded_on DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $records = [];
@@ -534,7 +534,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT ud.*, u.name as uploaded_by_name, u2.name as user_name FROM user_documents ud LEFT JOIN users u ON ud.uploaded_by = u.id LEFT JOIN users u2 ON ud.user_id = u2.id ORDER BY ud.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name, u2.name as user_name FROM documents d LEFT JOIN users u ON d.user_id = u.id LEFT JOIN users u2 ON d.entity_id = u2.id WHERE d.entity_type = 'user' ORDER BY d.uploaded_on DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $records = [];
@@ -551,7 +551,7 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->query("SELECT pd.*, u.name as uploaded_by_name FROM property_documents pd LEFT JOIN users u ON pd.uploaded_by = u.id ORDER BY pd.created_at DESC LIMIT 50");
+            $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.user_id = u.id WHERE d.entity_type = 'property' ORDER BY d.uploaded_on DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $records = [];
@@ -609,13 +609,7 @@ class DocumentController extends AdminController
                 $likeQ = '%' . $q . '%';
 
                 $tables = [
-                    'documents' => ['title', 'description'],
-                    'business_documents' => ['document_name', 'document_type'],
-                    'customer_documents' => ['document_name', 'document_type'],
-                    'user_documents' => ['document_name', 'document_type'],
-                    'property_documents' => ['document_name', 'document_type'],
-                    'generated_documents' => [],
-                    'ocr_documents' => ['ocr_text'],
+                    'documents' => ['document_type', 'url'],
                 ];
 
                 foreach ($tables as $table => $columns) {

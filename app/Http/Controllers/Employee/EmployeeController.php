@@ -479,7 +479,7 @@ class EmployeeController extends BaseController
         $documents = [];
         if ($employeeId > 0) {
             try {
-                $documents = $this->db->fetchAll("SELECT * FROM employee_documents WHERE employee_id = ? ORDER BY created_at DESC", [$employeeId]);
+                $documents = $this->db->fetchAll("SELECT * FROM documents WHERE entity_type = 'employee' AND entity_id = ? ORDER BY uploaded_on DESC", [$employeeId]);
             } catch (\Exception $e) {
                 $documents = [];
             }

@@ -4,7 +4,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-edit"></i> Edit Plot: <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h2>
                 <div>
-                    <a href="/admin/plots" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>admin/plots" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Plots
                     </a>
                 </div>
@@ -25,7 +25,8 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" action="/admin/plots/edit/<?= $plot['id'] ?>">
+                    <form method="POST" action="<?= BASE_URL ?>admin/plots/edit/<?= $plot['id'] ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <ul class="nav nav-tabs mb-3" id="plotTabs">
                             <li class="nav-item"><a class="nav-link active" href="#basic" data-bs-toggle="tab">Basic Info</a></li>
                             <li class="nav-item"><a class="nav-link" href="#dimensions" data-bs-toggle="tab">Dimensions & Area</a></li>
@@ -39,7 +40,7 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Plot Number *</label>
-                                        <input type="text" class="form-control" name="plot_number" value="<?= htmlspecialchars($plot['plot_number']) ?>" required>
+                                        <input type="text" class="form-control" name="plot_number" value="<?= htmlspecialchars($plot['plot_number'] ?? '') ?>" required>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Block</label>
@@ -102,7 +103,7 @@
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Area (sqft) *</label>
-                                        <input type="number" class="form-control" name="area_sqft" step="0.01" value="<?= $plot['area_sqft'] ?>" required id="area_sqft" onchange="calcFromArea()">
+                                        <input type="number" class="form-control" name="area_sqft" step="0.01" value="<?= $plot['area_sqft'] ?? 0 ?>" required id="area_sqft" onchange="calcFromArea()">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -146,7 +147,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Current Price per Sqft *</label>
-                                        <input type="number" class="form-control" name="price_per_sqft" step="0.01" value="<?= $plot['price_per_sqft'] ?>" required id="curr_pps" onchange="calcTotalPrice()">
+                                        <input type="number" class="form-control" name="price_per_sqft" step="0.01" value="<?= $plot['price_per_sqft'] ?? 0 ?>" required id="curr_pps" onchange="calcTotalPrice()">
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Total Price</label>
@@ -237,7 +238,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="/admin/plots" class="btn btn-secondary">Cancel</a>
+                            <a href="<?= BASE_URL ?>admin/plots" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Plot</button>
                         </div>
                     </form>

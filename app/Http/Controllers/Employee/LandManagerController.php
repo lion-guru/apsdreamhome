@@ -242,12 +242,9 @@ class LandManagerController extends BaseController
     private function getDocumentationStatus()
     {
         $query = "SELECT 
-                    COUNT(*) as total_documents,
-                    SUM(CASE WHEN status = 'complete' THEN 1 ELSE 0 END) as complete,
-                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-                    SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expired
-                 FROM property_documents 
-                 WHERE property_id IN (
+                    COUNT(*) as total_documents
+                 FROM documents 
+                 WHERE entity_type = 'property' AND entity_id IN (
                      SELECT id FROM properties WHERE manager_id = ?
                  )";
 
@@ -477,37 +474,33 @@ class LandManagerController extends BaseController
 
             foreach ($documents as $document) {
                 // Check if document exists
-                $checkQuery = "SELECT id FROM property_documents 
-                               WHERE property_id = ? AND document_type = ?";
+                $checkQuery = "SELECT id FROM documents 
+                               WHERE entity_type = 'property' AND entity_id = ? AND document_type = ?";
                 $existingDoc = $this->db->fetchOne($checkQuery, [$propertyId, $document['type']]);
 
                 if ($existingDoc) {
-                    // Update existing document
-                    $updateQuery = "UPDATE property_documents 
-                                   SET status = ?, expiry_date = ?, notes = ?, 
-                                       updated_by = ?, updated_at = NOW()
+                    $updateQuery = "UPDATE documents 
+                                   SET verification_status = ?, expiry_date = ?, 
+                                       user_id = ?, uploaded_on = NOW()
                                    WHERE id = ?";
 
                     $this->db->execute($updateQuery, [
                         $document['status'],
                         $document['expiry_date'] ?? null,
-                        $document['notes'] ?? '',
                         $this->employeeId,
                         $existingDoc['id']
                     ]);
                 } else {
-                    // Create new document record
-                    $insertQuery = "INSERT INTO property_documents (
-                                        property_id, document_type, status, expiry_date,
-                                        notes, created_by, created_at
-                                    ) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+                    $insertQuery = "INSERT INTO documents (
+                                        entity_type, entity_id, document_type, verification_status, expiry_date,
+                                        user_id, uploaded_on
+                                    ) VALUES ('property', ?, ?, ?, ?, ?, NOW())";
 
                     $this->db->execute($insertQuery, [
                         $propertyId,
                         $document['type'],
                         $document['status'],
                         $document['expiry_date'] ?? null,
-                        $document['notes'] ?? '',
                         $this->employeeId
                     ]);
                 }
@@ -577,10 +570,9 @@ class LandManagerController extends BaseController
         }
 
         $query = "SELECT p.*, 
-                        COUNT(pd.id) as document_count,
-                        SUM(CASE WHEN pd.status = 'complete' THEN 1 ELSE 0 END) as complete_documents
+                         COUNT(pd.id) as document_count
                  FROM properties p
-                 LEFT JOIN property_documents pd ON p.id = pd.property_id
+                 LEFT JOIN documents pd ON p.id = pd.entity_id AND pd.entity_type = 'property'
                  WHERE {$whereClause}
                  GROUP BY p.id
                  ORDER BY p.created_at DESC";
@@ -706,13 +698,12 @@ class LandManagerController extends BaseController
             $params[] = $filters['type'];
         }
 
-        $query = "SELECT pd.*, p.title as property_title, l.location_name,
+        $query = "SELECT pd.*, p.title as property_title,
                         CASE WHEN pd.expiry_date < CURDATE() THEN 'expired'
                              WHEN pd.expiry_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 'expiring_soon'
                              ELSE 'valid' END as expiry_status
-                 FROM property_documents pd
-                 LEFT JOIN properties p ON pd.property_id = p.id
-                 LEFT JOIN land l ON pd.land_id = l.id
+                 FROM documents pd
+                 LEFT JOIN properties p ON pd.entity_id = p.id AND pd.entity_type = 'property'
                  WHERE {$whereClause}
                  ORDER BY pd.expiry_date ASC";
 

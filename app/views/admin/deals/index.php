@@ -95,8 +95,8 @@ $page_title = 'Deal Tracking - APS Dream Home';
                     <label class="form-label">Stage</label>
                     <select class="form-select" name="stage">
                         <option value="">All Stages</option>
-                        <?php foreach ($stages as $stage): ?>
-                            <option value="<?= $stage['id'] ?>" <?= $filters['stage'] == $stage['id'] ? 'selected' : '' ?>>
+                        <?php foreach (($stages ?? []) as $stage): ?>
+                            <option value="<?= $stage['id'] ?>" <?= ($filters['stage'] ?? '') == $stage['id'] ? 'selected' : '' ?>>
                                 <?= $stage['name'] ?>
                             </option>
                         <?php endforeach; ?>
@@ -119,7 +119,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
     <!-- Deals Table -->
     <div class="card">
         <div class="card-header bg-light">
-            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Deals (<?= count($deals) ?>)</h5>
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Deals (<?= count($deals ?? []) ?>)</h5>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -180,12 +180,13 @@ $page_title = 'Deal Tracking - APS Dream Home';
             return;
         }
 
-        fetch('/admin/deals/' + dealId + '/stage', {
+        var csrf = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
+        fetch('<?= BASE_URL ?>admin/deals/' + dealId + '/stage', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: 'stage=' + stage
+                body: 'stage=' + stage + '&csrf_token=' + csrf
             })
             .then(response => response.json())
             .then(data => {

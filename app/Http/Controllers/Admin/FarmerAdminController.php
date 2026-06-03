@@ -42,7 +42,7 @@ class FarmerAdminController extends AdminController
                 $agreements = $this->db->fetchAll("SELECT * FROM farmer_agreements WHERE farmer_id = ? ORDER BY created_at DESC", [$id]);
                 $loans = $this->db->fetchAll("SELECT * FROM farmer_loans WHERE farmer_id = ? ORDER BY created_at DESC", [$id]);
                 $transactions = $this->db->fetchAll("SELECT * FROM farmer_transactions WHERE farmer_id = ? ORDER BY payment_date DESC", [$id]);
-                $documents = $this->db->fetchAll("SELECT * FROM farmer_documents WHERE farmer_id = ? ORDER BY uploaded_at DESC", [$id]);
+                $documents = $this->db->fetchAll("SELECT * FROM documents WHERE entity_type = 'farmer' AND entity_id = ? ORDER BY uploaded_on DESC", [$id]);
                 $this->render('admin/farmers/show', [
                     'page_title' => 'Farmer: ' . ($farmerLegacy['farmer_name'] ?? 'Unknown'),
                     'farmer' => $farmerLegacy,
@@ -61,7 +61,7 @@ class FarmerAdminController extends AdminController
         $agreements = $this->db->fetchAll("SELECT * FROM farmer_agreements WHERE farmer_id = ? ORDER BY created_at DESC", [$id]);
         $loans = $this->db->fetchAll("SELECT * FROM farmer_loans WHERE farmer_id = ? ORDER BY created_at DESC", [$id]);
         $transactions = $this->db->fetchAll("SELECT * FROM farmer_transactions WHERE farmer_id = ? ORDER BY payment_date DESC", [$id]);
-        $documents = $this->db->fetchAll("SELECT * FROM farmer_documents WHERE farmer_id = ? ORDER BY uploaded_at DESC", [$id]);
+        $documents = $this->db->fetchAll("SELECT * FROM documents WHERE entity_type = 'farmer' AND entity_id = ? ORDER BY uploaded_on DESC", [$id]);
         $this->render('admin/farmers/show', [
             'page_title' => 'Farmer: ' . ($farmer['farmer_name'] ?? 'Unknown'),
             'farmer' => $farmer,

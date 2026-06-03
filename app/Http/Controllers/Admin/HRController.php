@@ -717,10 +717,10 @@ class HRController extends AdminController
         $offset = ($page - 1) * $perPage;
         $where = "WHERE 1=1";
         $params = [];
-        if ($empId) { $where .= " AND d.employee_id=?"; $params[] = $empId; }
+        if ($empId) { $where .= " AND d.entity_id=? AND d.entity_type='employee'"; $params[] = $empId; }
         try {
-            $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_documents d $where", $params)['c'] ?? 0;
-            $documents = $this->db->fetchAll("SELECT d.*, u.name as employee_name FROM employee_documents d JOIN users e ON d.employee_id=e.id JOIN users u ON e.id=u.id $where ORDER BY d.uploaded_at DESC LIMIT $perPage OFFSET $offset", $params);
+            $total = $this->db->fetch("SELECT COUNT(*) as c FROM documents d $where", $params)['c'] ?? 0;
+            $documents = $this->db->fetchAll("SELECT d.*, u.name as employee_name FROM documents d JOIN users u ON d.entity_id=u.id $where ORDER BY d.uploaded_on DESC LIMIT $perPage OFFSET $offset", $params);
             $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
         } catch (\Exception $e) { $total = 0; $documents = []; $users = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
@@ -752,7 +752,7 @@ class HRController extends AdminController
             $filePath = 'assets/uploads/documents/' . $fileName;
         }
         try {
-            $this->db->execute("INSERT INTO employee_documents (employee_id, document_type, document_name, file_path, uploaded_at) VALUES (?,?,?,?,NOW())", [$employeeId, $docType, $docName ?: $docType, $filePath]);
+            $this->db->execute("INSERT INTO documents (entity_type, entity_id, document_type, url, uploaded_on) VALUES ('employee',?,?,?,?,NOW())", [$employeeId, $docType, $filePath]);
             $this->setFlash('success', 'Document uploaded');
         } catch (\Exception $e) { $this->setFlash('error', 'Error: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/hr/documents');

@@ -178,6 +178,7 @@ $notes = $notes ?? [];
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>/note">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="modal-body">
                     <textarea class="form-control" name="note" rows="4" placeholder="Enter your note..." required></textarea>
                 </div>

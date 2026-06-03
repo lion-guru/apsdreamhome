@@ -157,15 +157,11 @@ class VoiceCallService
         );
 
         $this->db->execute(
-            "INSERT INTO ai_call_logs (lead_id, agent_id, call_sid, transcript, summary, sentiment, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, NOW())",
+            "UPDATE ai_call_sessions SET call_sid = ?, sentiment = ? WHERE id = ?",
             [
-                $session['lead_id'],
-                $session['ai_agent_id'],
                 'SES-' . $sessionId,
-                $userInput,
-                "Intent: $detectedIntent, Response: $responseText",
-                $sentiment
+                $sentiment,
+                $sessionId
             ]
         );
 

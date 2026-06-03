@@ -92,7 +92,7 @@ class CommunicationManager {
         // Logic to generate PDF/Report based on interaction history
         $filePath = "uploads/docs/case_" . $caseId . "_" . $type . ".pdf";
         // Mock generation
-        $sql = "INSERT INTO business_documents (case_id, doc_type, file_path) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO documents (entity_type, entity_id, document_type, url, uploaded_on) VALUES ('business', ?, ?, ?, NOW())";
         return $this->db->execute($sql, [$caseId, $type, $filePath]);
     }
 }

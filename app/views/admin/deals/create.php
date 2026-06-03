@@ -26,12 +26,13 @@ $page_title = 'Create Deal - APS Dream Home';
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/deals/store">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Select Lead</label>
                                 <select class="form-select" name="lead_id" required>
                                     <option value="">Choose a lead...</option>
-                                    <?php foreach ($leads as $lead): ?>
+                                    <?php foreach (($leads ?? []) as $lead): ?>
                                         <option value="<?= $lead['id'] ?>" <?= ($selected_lead['id'] ?? '') == $lead['id'] ? 'selected' : '' ?>>
                                             <?= htmlspecialchars($lead['name'] ?? '') ?> - <?= htmlspecialchars($lead['phone'] ?? '') ?>
                                         </option>
@@ -65,13 +66,7 @@ $page_title = 'Create Deal - APS Dream Home';
                                 <label class="form-label">Property (Optional)</label>
                                 <select class="form-select" name="property_id">
                                     <option value="">Select Property</option>
-                                    <?php
-                                    // Get properties from database
-                                    $sql = "SELECT id, title, location FROM properties WHERE status IN ('available', 'under_construction') ORDER BY title";
-                                    $stmt = $this->db->prepare($sql);
-                                    $stmt->execute();
-                                    $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                                    foreach ($properties as $property):
+                                    <?php foreach (($properties ?? []) as $property):
                                     ?>
                                         <option value="<?= $property['id'] ?>"><?= htmlspecialchars($property['title'] ?? '') ?> - <?= htmlspecialchars($property['location'] ?? '') ?></option>
                                     <?php endforeach; ?>
