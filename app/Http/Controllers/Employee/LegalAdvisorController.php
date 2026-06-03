@@ -124,18 +124,22 @@ class LegalAdvisorController extends BaseController
      */
     private function getActiveDisputes()
     {
-        $query = "SELECT ld.*, 
-                        c.name as client_name,
-                        p.title as property_title,
-                        e.name as assigned_lawyer_name
-                 FROM legal_disputes ld
-                 LEFT JOIN clients c ON ld.client_id = c.id
-                 LEFT JOIN properties p ON ld.property_id = p.id
-                 LEFT JOIN users e ON ld.assigned_lawyer = e.id
-                 WHERE ld.status IN ('active', 'investigation', 'negotiation')
-                 AND (ld.assigned_lawyer = ? OR ld.assigned_lawyer IS NULL)
-                 ORDER BY ld.created_at DESC
-                 LIMIT 10";
+        try {
+            $query = "SELECT ld.*, 
+                            c.name as client_name,
+                            p.title as property_title,
+                            e.name as assigned_lawyer_name
+                     FROM legal_disputes ld
+                     LEFT JOIN clients c ON ld.client_id = c.id
+                     LEFT JOIN properties p ON ld.property_id = p.id
+                     LEFT JOIN users e ON ld.assigned_lawyer = e.id
+                     WHERE ld.status IN ('active', 'investigation', 'negotiation')
+                     AND (ld.assigned_lawyer = ? OR ld.assigned_lawyer IS NULL)
+                     ORDER BY ld.created_at DESC
+                     LIMIT 10";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
@@ -168,15 +172,19 @@ class LegalAdvisorController extends BaseController
 
         $complianceMetrics = $this->db->fetchOne($complianceMetricsQuery, [$this->employeeId]);
 
-        // Dispute resolution metrics
-        $disputeMetricsQuery = "SELECT 
-                                  COUNT(*) as total_disputes,
-                                  SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
-                                  SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
-                                  AVG(TIMESTAMPDIFF(DAY, created_at, resolved_at)) as avg_resolution_time
-                               FROM legal_disputes 
-                               WHERE assigned_lawyer = ?
-                               AND YEAR(created_at) = YEAR(CURDATE())";
+        try {
+            // Dispute resolution metrics
+            $disputeMetricsQuery = "SELECT 
+                                      COUNT(*) as total_disputes,
+                                      SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
+                                      SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
+                                      AVG(TIMESTAMPDIFF(DAY, created_at, resolved_at)) as avg_resolution_time
+                                   FROM legal_disputes 
+                                   WHERE assigned_lawyer = ?
+                                   AND YEAR(created_at) = YEAR(CURDATE())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $disputeMetrics = $this->db->fetchOne($disputeMetricsQuery, [$this->employeeId]);
 
@@ -192,11 +200,15 @@ class LegalAdvisorController extends BaseController
      */
     private function getRecentActivities()
     {
-        $query = "SELECT * FROM legal_activities 
-                  WHERE performed_by = ?
-                  AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                  ORDER BY created_at DESC
-                  LIMIT 10";
+        try {
+            $query = "SELECT * FROM legal_activities 
+                      WHERE performed_by = ?
+                      AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                      ORDER BY created_at DESC
+                      LIMIT 10";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
@@ -324,8 +336,12 @@ class LegalAdvisorController extends BaseController
     public function handleDispute($disputeId, $actionData)
     {
         try {
-            // Get dispute details
-            $disputeQuery = "SELECT * FROM legal_disputes WHERE id = ?";
+            try {
+                // Get dispute details
+                $disputeQuery = "SELECT * FROM legal_disputes WHERE id = ?";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $dispute = $this->db->fetchOne($disputeQuery, [$disputeId]);
 
             if (!$dispute) {
@@ -573,12 +589,16 @@ class LegalAdvisorController extends BaseController
             $params[] = $filters['priority'];
         }
 
-        $query = "SELECT dr.*, e.name as submitted_by_name,
-                        TIMESTAMPDIFF(DAY, dr.submitted_at, CURDATE()) as days_pending
-                 FROM document_reviews dr
-                 LEFT JOIN users e ON dr.submitted_by = e.id
-                 WHERE {$whereClause}
-                 ORDER BY dr.submitted_at DESC";
+        try {
+            $query = "SELECT dr.*, e.name as submitted_by_name,
+                            TIMESTAMPDIFF(DAY, dr.submitted_at, CURDATE()) as days_pending
+                     FROM document_reviews dr
+                     LEFT JOIN users e ON dr.submitted_by = e.id
+                     WHERE {$whereClause}
+                     ORDER BY dr.submitted_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $reportData = $this->db->fetchAll($query, $params);
 
@@ -707,10 +727,14 @@ class LegalAdvisorController extends BaseController
      */
     private function logLegalActivity($activityType, $description, $relatedId = null)
     {
-        $query = "INSERT INTO legal_activities (
-                    activity_type, description, related_id, 
-                    performed_by, created_at
-                ) VALUES (?, ?, ?, ?, NOW())";
+        try {
+            $query = "INSERT INTO legal_activities (
+                        activity_type, description, related_id, 
+                        performed_by, created_at
+                    ) VALUES (?, ?, ?, ?, NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $this->db->execute($query, [$activityType, $description, $relatedId, $this->employeeId]);
     }

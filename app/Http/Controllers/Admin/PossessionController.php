@@ -159,11 +159,15 @@ class PossessionController extends AdminController
             $checklist->execute([$id]);
             $checklist = $checklist->fetchAll(\PDO::FETCH_ASSOC);
 
-            $defects = $this->db->prepare("SELECT d.*, u.name as reported_by_name, ru.name as resolved_by_name
-                FROM defect_reports d
-                LEFT JOIN users u ON d.reported_by = u.id
-                LEFT JOIN users ru ON d.resolved_by = ru.id
-                WHERE d.booking_id = ? ORDER BY d.created_at DESC");
+            try {
+                $defects = $this->db->prepare("SELECT d.*, u.name as reported_by_name, ru.name as resolved_by_name
+                    FROM defect_reports d
+                    LEFT JOIN users u ON d.reported_by = u.id
+                    LEFT JOIN users ru ON d.resolved_by = ru.id
+                    WHERE d.booking_id = ? ORDER BY d.created_at DESC");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $defects->execute([$id]);
             $defects = $defects->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -388,11 +392,15 @@ class PossessionController extends AdminController
             $stmt->execute([$id]);
             $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            $defects = $this->db->prepare("SELECT d.*, u.name as reported_by_name, ru.name as resolved_by_name
-                FROM defect_reports d
-                LEFT JOIN users u ON d.reported_by = u.id
-                LEFT JOIN users ru ON d.resolved_by = ru.id
-                WHERE d.booking_id = ? ORDER BY d.created_at DESC");
+            try {
+                $defects = $this->db->prepare("SELECT d.*, u.name as reported_by_name, ru.name as resolved_by_name
+                    FROM defect_reports d
+                    LEFT JOIN users u ON d.reported_by = u.id
+                    LEFT JOIN users ru ON d.resolved_by = ru.id
+                    WHERE d.booking_id = ? ORDER BY d.created_at DESC");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $defects->execute([$id]);
             $defects = $defects->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -423,7 +431,11 @@ class PossessionController extends AdminController
                 $this->redirect('/admin/possession/show/' . $id);
             }
 
-            $stmt = $this->db->prepare("INSERT INTO defect_reports (booking_id, reported_by, defect_type, description, priority) VALUES (?, ?, ?, ?, ?)");
+            try {
+                $stmt = $this->db->prepare("INSERT INTO defect_reports (booking_id, reported_by, defect_type, description, priority) VALUES (?, ?, ?, ?, ?)");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$id, $_SESSION['admin_id'] ?? null, $defectType, $description, $priority]);
 
             $this->setFlash('success', 'Defect reported successfully');
@@ -445,7 +457,11 @@ class PossessionController extends AdminController
                 $this->redirect('/admin/possession');
             }
 
-            $stmt = $this->db->prepare("SELECT booking_id FROM defect_reports WHERE id = ?");
+            try {
+                $stmt = $this->db->prepare("SELECT booking_id FROM defect_reports WHERE id = ?");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$defectId]);
             $defect = $stmt->fetch(\PDO::FETCH_ASSOC);
 

@@ -151,16 +151,20 @@ class CAController extends BaseController
      */
     private function getTaxDeadlines()
     {
-        $query = "SELECT tr.*, 
-                        t.type as tax_type,
-                        t.frequency,
-                        DATEDIFF(tr.due_date, CURDATE()) as days_until_due
-                 FROM tax_reminders tr
-                 LEFT JOIN tax_types t ON tr.tax_type_id = t.id
-                 WHERE tr.due_date <= DATE_ADD(CURDATE(), INTERVAL 90 DAY)
-                 AND tr.status = 'pending'
-                 ORDER BY tr.due_date ASC
-                 LIMIT 20";
+        try {
+            $query = "SELECT tr.*, 
+                            t.type as tax_type,
+                            t.frequency,
+                            DATEDIFF(tr.due_date, CURDATE()) as days_until_due
+                     FROM tax_reminders tr
+                     LEFT JOIN tax_types t ON tr.tax_type_id = t.id
+                     WHERE tr.due_date <= DATE_ADD(CURDATE(), INTERVAL 90 DAY)
+                     AND tr.status = 'pending'
+                     ORDER BY tr.due_date ASC
+                     LIMIT 20";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->db->fetchAll($query);
     }
@@ -170,15 +174,19 @@ class CAController extends BaseController
      */
     private function getBudgetVariance()
     {
-        $query = "SELECT db.*, 
-                        d.name as department_name,
-                        db.budget_amount - db.spent_amount as variance,
-                        ((db.budget_amount - db.spent_amount) / db.budget_amount) * 100 as variance_percentage
-                 FROM department_budgets db
-                 JOIN departments d ON db.department_id = d.id
-                 WHERE db.fiscal_year = YEAR(CURDATE())
-                 ORDER BY ABS(variance) DESC
-                 LIMIT 10";
+        try {
+            $query = "SELECT db.*, 
+                            d.name as department_name,
+                            db.budget_amount - db.spent_amount as variance,
+                            ((db.budget_amount - db.spent_amount) / db.budget_amount) * 100 as variance_percentage
+                     FROM department_budgets db
+                     JOIN departments d ON db.department_id = d.id
+                     WHERE db.fiscal_year = YEAR(CURDATE())
+                     ORDER BY ABS(variance) DESC
+                     LIMIT 10";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->db->fetchAll($query);
     }
@@ -610,14 +618,18 @@ class CAController extends BaseController
     {
         $fiscalYear = $filters['fiscal_year'] ?? date('Y');
 
-        $query = "SELECT db.*, 
-                        d.name as department_name,
-                        db.budget_amount - db.spent_amount as variance,
-                        ((db.budget_amount - db.spent_amount) / db.budget_amount) * 100 as variance_percentage
-                 FROM department_budgets db
-                 JOIN departments d ON db.department_id = d.id
-                 WHERE db.fiscal_year = ?
-                 ORDER BY ABS(variance) DESC";
+        try {
+            $query = "SELECT db.*, 
+                            d.name as department_name,
+                            db.budget_amount - db.spent_amount as variance,
+                            ((db.budget_amount - db.spent_amount) / db.budget_amount) * 100 as variance_percentage
+                     FROM department_budgets db
+                     JOIN departments d ON db.department_id = d.id
+                     WHERE db.fiscal_year = ?
+                     ORDER BY ABS(variance) DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $reportData = $this->db->fetchAll($query, [$fiscalYear]);
 
@@ -642,11 +654,15 @@ class CAController extends BaseController
     {
         $year = $filters['year'] ?? date('Y');
 
-        $query = "SELECT tr.*, t.type as tax_type, t.frequency
-                 FROM tax_reminders tr
-                 LEFT JOIN tax_types t ON tr.tax_type_id = t.id
-                 WHERE YEAR(tr.due_date) = ?
-                 ORDER BY tr.due_date ASC";
+        try {
+            $query = "SELECT tr.*, t.type as tax_type, t.frequency
+                     FROM tax_reminders tr
+                     LEFT JOIN tax_types t ON tr.tax_type_id = t.id
+                     WHERE YEAR(tr.due_date) = ?
+                     ORDER BY tr.due_date ASC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $reportData = $this->db->fetchAll($query, [$year]);
 

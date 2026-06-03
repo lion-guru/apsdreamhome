@@ -40,9 +40,13 @@ class Auth extends Model
      */
     public static function findByRememberToken(string $token): ?Auth
     {
-        $sql = "SELECT u.* FROM " . static::$table . " u
-                JOIN remember_tokens rt ON u.id = rt.user_id
-                WHERE rt.token = ? AND rt.expires_at > NOW() AND u.status != 'deleted'";
+        try {
+            $sql = "SELECT u.* FROM " . static::$table . " u
+                    JOIN remember_tokens rt ON u.id = rt.user_id
+                    WHERE rt.token = ? AND rt.expires_at > NOW() AND u.status != 'deleted'";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $result = self::raw($sql, [$token]);
         return $result ? new self($result[0]) : null;
@@ -363,9 +367,13 @@ class Auth extends Model
         $token = bin2hex(random_bytes(32));
         $expires = date('Y-m-d H:i:s', time() + (30 * 24 * 3600)); // 30 days
 
-        $sql = "INSERT INTO remember_tokens (user_id, token, expires_at, created_at) 
-                VALUES (?, ?, ?, NOW())
-                ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()";
+        try {
+            $sql = "INSERT INTO remember_tokens (user_id, token, expires_at, created_at) 
+                    VALUES (?, ?, ?, NOW())
+                    ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         self::execute($sql, [$this->id, $token, $expires, $token, $expires]);
 

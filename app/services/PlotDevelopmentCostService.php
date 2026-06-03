@@ -109,12 +109,16 @@ class PlotDevelopmentCostService
      */
     private function getLandCost($colonyId)
     {
-        $result = $this->db->fetch(
-            "SELECT SUM(plot_price * available_area) as total_land_cost 
-             FROM plot_master WHERE site_id = ?",
-            [$colonyId]
-        );
-        return floatval($result['total_land_cost'] ?? 0);
+        try {
+            $result = $this->db->fetch(
+                "SELECT SUM(plot_price * available_area) as total_land_cost 
+                 FROM plot_master WHERE site_id = ?",
+                [$colonyId]
+            );
+            return floatval($result['total_land_cost'] ?? 0);
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
     
     /**

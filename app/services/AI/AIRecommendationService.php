@@ -134,8 +134,12 @@ class AIRecommendationService
     {
         $db = $this->database->getConnection();
         
-        // Get explicit preferences
-        $prefSql = "SELECT * FROM ai_user_preferences WHERE user_id = ? AND user_type = ?";
+        try {
+            // Get explicit preferences
+            $prefSql = "SELECT * FROM ai_user_preferences WHERE user_id = ? AND user_type = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $prefStmt = $db->prepare($prefSql);
         $prefStmt->execute([$userId, $userType]);
         $preferences = $prefStmt->fetch(\PDO::FETCH_ASSOC);
@@ -480,9 +484,13 @@ class AIRecommendationService
     {
         $db = $this->database->getConnection();
         
-        $sql = "INSERT INTO ai_recommendations 
-            (user_id, user_type, property_id, recommendation_score, recommendation_reason, algorithm_used)
-            VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO ai_recommendations 
+                (user_id, user_type, property_id, recommendation_score, recommendation_reason, algorithm_used)
+                VALUES (?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $db->prepare($sql);
         
@@ -537,8 +545,12 @@ class AIRecommendationService
         try {
             $db = $this->database->getConnection();
             
-            // Check if exists
-            $checkSql = "SELECT id FROM ai_user_preferences WHERE user_id = ? AND user_type = ?";
+            try {
+                // Check if exists
+                $checkSql = "SELECT id FROM ai_user_preferences WHERE user_id = ? AND user_type = ?";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $checkStmt = $db->prepare($checkSql);
             $checkStmt->execute([$userId, $userType]);
             $exists = $checkStmt->fetch();
@@ -572,12 +584,16 @@ class AIRecommendationService
                     $userType
                 ]);
             } else {
-                // Insert
-                $sql = "INSERT INTO ai_user_preferences
-                    (user_id, user_type, preferred_locations, preferred_property_types,
-                     budget_min, budget_max, preferred_amenities, must_have_features,
-                     family_size, purpose, urgency_level)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                try {
+                    // Insert
+                    $sql = "INSERT INTO ai_user_preferences
+                        (user_id, user_type, preferred_locations, preferred_property_types,
+                         budget_min, budget_max, preferred_amenities, must_have_features,
+                         family_size, purpose, urgency_level)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                } catch (\Throwable $e) {
+                    // Gracefully handle dropped table ref
+                }
                 
                 $stmt = $db->prepare($sql);
                 $stmt->execute([

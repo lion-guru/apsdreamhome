@@ -224,13 +224,17 @@ class CareerController extends AdminController
                 return $this->redirect('admin/careers');
             }
 
-            // Get recent applications
-            $sql = "SELECT ca.*, u.name as applicant_name, u.email as applicant_email
-                    FROM career_applications ca
-                    LEFT JOIN users u ON ca.applicant_id = u.id
-                    WHERE ca.career_id = ?
-                    ORDER BY ca.created_at DESC
-                    LIMIT 10";
+            try {
+                // Get recent applications
+                $sql = "SELECT ca.*, u.name as applicant_name, u.email as applicant_email
+                        FROM career_applications ca
+                        LEFT JOIN users u ON ca.applicant_id = u.id
+                        WHERE ca.career_id = ?
+                        ORDER BY ca.created_at DESC
+                        LIMIT 10";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$careerId]);
             $recentApplications = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -478,11 +482,15 @@ class CareerController extends AdminController
             $perPage = (int)($_GET['per_page'] ?? 20);
             $offset = ($page - 1) * $perPage;
 
-            $sql = "SELECT ca.*, c.title as career_title, u.name as applicant_name, u.email as applicant_email, u.phone as applicant_phone
-                    FROM career_applications ca
-                    LEFT JOIN careers c ON ca.career_id = c.id
-                    LEFT JOIN users u ON ca.applicant_id = u.id
-                    WHERE 1=1";
+            try {
+                $sql = "SELECT ca.*, c.title as career_title, u.name as applicant_name, u.email as applicant_email, u.phone as applicant_phone
+                        FROM career_applications ca
+                        LEFT JOIN careers c ON ca.career_id = c.id
+                        LEFT JOIN users u ON ca.applicant_id = u.id
+                        WHERE 1=1";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $params = [];
 
             if (!empty($search)) {
@@ -505,7 +513,11 @@ class CareerController extends AdminController
 
             $sql .= " ORDER BY ca.created_at DESC";
 
-            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM career_applications ca WHERE 1=1" . (!empty($status) ? " AND ca.status = ?" : "") . ($careerId > 0 ? " AND ca.career_id = ?" : ""));
+            try {
+                $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM career_applications ca WHERE 1=1" . (!empty($status) ? " AND ca.status = ?" : "") . ($careerId > 0 ? " AND ca.career_id = ?" : ""));
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $countParams = [];
             if (!empty($status)) $countParams[] = $status;
             if ($careerId > 0) $countParams[] = $careerId;
@@ -572,9 +584,13 @@ class CareerController extends AdminController
             $result = $this->db->fetchOne($sql);
             $stats['total_applications'] = (int)($result['total'] ?? 0);
 
-            // Applications this month
-            $sql = "SELECT COUNT(*) as this_month FROM career_applications 
-                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+            try {
+                // Applications this month
+                $sql = "SELECT COUNT(*) as this_month FROM career_applications 
+                        WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $result = $this->db->fetchOne($sql);
             $stats['applications_this_month'] = (int)($result['this_month'] ?? 0);
 

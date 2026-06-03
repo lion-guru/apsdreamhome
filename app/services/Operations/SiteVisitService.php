@@ -292,7 +292,11 @@ class SiteVisitService
      */
     private function createReminder(int $visitId, string $type, string $time): void
     {
-        $sql = "INSERT INTO visit_reminders (visit_id, reminder_type, reminder_time) VALUES (?, ?, ?)";
+        try {
+            $sql = "INSERT INTO visit_reminders (visit_id, reminder_type, reminder_time) VALUES (?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$visitId, $type, $time]);
     }
@@ -483,7 +487,11 @@ class SiteVisitService
      */
     private function clearReminders(int $visitId): void
     {
-        $sql = "DELETE FROM visit_reminders WHERE visit_id = ? AND is_sent = 0";
+        try {
+            $sql = "DELETE FROM visit_reminders WHERE visit_id = ? AND is_sent = 0";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$visitId]);
     }

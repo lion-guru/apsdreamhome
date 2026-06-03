@@ -195,10 +195,14 @@ class KYCController extends BaseApiController
             // Check if kyc_verifications table exists, if not create it
             $this->ensureKYCTableExists($db);
 
-            $sql = "INSERT INTO kyc_verifications 
-                    (user_id, type, identifier, response_data, status, created_at) 
-                    VALUES 
-                    (:user_id, :type, :identifier, :response_data, 'verified', NOW())";
+            try {
+                $sql = "INSERT INTO kyc_verifications 
+                        (user_id, type, identifier, response_data, status, created_at) 
+                        VALUES 
+                        (:user_id, :type, :identifier, :response_data, 'verified', NOW())";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             
             $db->execute($sql, [
                 'user_id' => $userId,

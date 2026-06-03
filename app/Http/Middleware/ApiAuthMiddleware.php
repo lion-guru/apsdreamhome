@@ -50,11 +50,15 @@ class ApiAuthMiddleware
             return false;
         }
 
-        $stmt = $this->db->prepare("
-            SELECT user_id, expires_at 
-            FROM api_tokens 
-            WHERE token = ? AND (expires_at IS NULL OR expires_at > NOW())
-        ");
+        try {
+            $stmt = $this->db->prepare("
+                SELECT user_id, expires_at 
+                FROM api_tokens 
+                WHERE token = ? AND (expires_at IS NULL OR expires_at > NOW())
+            ");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$token]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 

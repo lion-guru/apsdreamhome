@@ -156,10 +156,14 @@ class LeadFollowUpAgent extends BaseAgent
 
     public function getFollowUpScript($leadType)
     {
-        $script = $this->db->fetch(
-            "SELECT * FROM ai_call_scripts WHERE script_code = ? OR script_name LIKE ? ORDER BY usage_count ASC LIMIT 1",
-            ["follow_up_$leadType", "%$leadType%"]
-        );
+        try {
+            $script = $this->db->fetch(
+                "SELECT * FROM ai_call_scripts WHERE script_code = ? OR script_name LIKE ? ORDER BY usage_count ASC LIMIT 1",
+                ["follow_up_$leadType", "%$leadType%"]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if (!$script) {
             $script = $this->db->fetch(

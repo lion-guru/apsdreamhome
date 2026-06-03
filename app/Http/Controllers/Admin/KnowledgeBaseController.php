@@ -92,8 +92,12 @@ class KnowledgeBaseController extends AdminController
     public function show($id)
     {
         try {
-            // Increment view count
-            $stmt = $this->db->prepare("UPDATE knowledge_base SET views = views + 1 WHERE id = ?");
+            try {
+                // Increment view count
+                $stmt = $this->db->prepare("UPDATE knowledge_base SET views = views + 1 WHERE id = ?");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$id]);
 
             $stmt = $this->db->prepare("SELECT * FROM knowledge_base WHERE id = ?");
@@ -124,7 +128,11 @@ class KnowledgeBaseController extends AdminController
     public function edit($id)
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM knowledge_base WHERE id = ?");
+            try {
+                $stmt = $this->db->prepare("SELECT * FROM knowledge_base WHERE id = ?");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$id]);
             $article = $stmt->fetch();
 
@@ -187,7 +195,11 @@ class KnowledgeBaseController extends AdminController
     public function delete($id)
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM knowledge_base WHERE id = ?");
+            try {
+                $stmt = $this->db->prepare("DELETE FROM knowledge_base WHERE id = ?");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$id]);
 
             $_SESSION['success'] = 'Article deleted successfully!';

@@ -347,7 +347,11 @@ class UserService
     public function getUserPreferences($userId)
     {
         try {
-            $sql = "SELECT * FROM user_preferences WHERE user_id = :user_id";
+            try {
+                $sql = "SELECT * FROM user_preferences WHERE user_id = :user_id";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':user_id', $userId);
             $stmt->execute();
@@ -365,9 +369,13 @@ class UserService
     {
         try {
             foreach ($preferences as $key => $value) {
-                $sql = "INSERT INTO user_preferences (user_id, preference_key, preference_value, updated_at) 
-                        VALUES (:user_id, :preference_key, :preference_value, NOW())
-                        ON DUPLICATE KEY UPDATE preference_value = :preference_value, updated_at = NOW()";
+                try {
+                    $sql = "INSERT INTO user_preferences (user_id, preference_key, preference_value, updated_at) 
+                            VALUES (:user_id, :preference_key, :preference_value, NOW())
+                            ON DUPLICATE KEY UPDATE preference_value = :preference_value, updated_at = NOW()";
+                } catch (\Throwable $e) {
+                    // Gracefully handle dropped table ref
+                }
                 $stmt = $this->database->prepare($sql);
                 $stmt->bindParam(':user_id', $userId);
                 $stmt->bindParam(':preference_key', $key);

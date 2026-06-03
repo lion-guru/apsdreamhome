@@ -262,7 +262,11 @@ class BackupRestoreService
      */
     public function listBackups(): array
     {
-        $sql = "SELECT * FROM system_backups ORDER BY started_at DESC";
+        try {
+            $sql = "SELECT * FROM system_backups ORDER BY started_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $backups = $this->database->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($backups as &$backup) {
@@ -307,7 +311,11 @@ class BackupRestoreService
     {
         $cutoff = date('Y-m-d H:i:s', strtotime("-{$this->retentionDays} days"));
         
-        $sql = "SELECT * FROM system_backups WHERE started_at < ? AND status = 'completed'";
+        try {
+            $sql = "SELECT * FROM system_backups WHERE started_at < ? AND status = 'completed'";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$cutoff]);
         $oldBackups = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -326,8 +334,12 @@ class BackupRestoreService
      */
     private function logBackupStart(string $type, ?int $createdBy): int
     {
-        $sql = "INSERT INTO system_backups (backup_type, file_path, file_size, checksum, created_by) 
-                VALUES (?, '', 0, '', ?)";
+        try {
+            $sql = "INSERT INTO system_backups (backup_type, file_path, file_size, checksum, created_by) 
+                    VALUES (?, '', 0, '', ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$type, $createdBy]);
         
@@ -353,9 +365,13 @@ class BackupRestoreService
      */
     private function logBackupFailed(int $backupId, string $error): void
     {
-        $sql = "UPDATE system_backups 
-                SET status = 'failed', error_message = ? 
-                WHERE id = ?";
+        try {
+            $sql = "UPDATE system_backups 
+                    SET status = 'failed', error_message = ? 
+                    WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$error, $backupId]);
     }

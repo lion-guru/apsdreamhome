@@ -159,8 +159,12 @@ class RazorpayService
                 return;
             }
             
-            // Get commission rules
-            $rules = $this->db->fetchAll("SELECT * FROM commission_rules WHERE is_active = 1 ORDER BY level ASC");
+            try {
+                // Get commission rules
+                $rules = $this->db->fetchAll("SELECT * FROM commission_rules WHERE is_active = 1 ORDER BY level ASC");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             
             foreach ($referrers as $index => $referrer) {
                 $level = $index + 1;

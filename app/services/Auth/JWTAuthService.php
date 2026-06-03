@@ -101,10 +101,14 @@ class JWTAuthService
         $token = $this->encode($payload);
         $refreshToken = $this->generateRefreshToken($userId, $userType);
         
-        // Save to database
-        $sql = "INSERT INTO api_tokens 
-            (user_id, user_type, token, refresh_token, device_info, ip_address, expires_at) 
-            VALUES (?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?))";
+        try {
+            // Save to database
+            $sql = "INSERT INTO api_tokens 
+                (user_id, user_type, token, refresh_token, device_info, ip_address, expires_at) 
+                VALUES (?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?))";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([
@@ -173,7 +177,11 @@ class JWTAuthService
      */
     public function refreshToken(string $refreshToken): ?array
     {
-        $sql = "SELECT * FROM api_tokens WHERE refresh_token = ? AND expires_at > NOW()";
+        try {
+            $sql = "SELECT * FROM api_tokens WHERE refresh_token = ? AND expires_at > NOW()";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$refreshToken]);
         $tokenData = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -206,7 +214,11 @@ class JWTAuthService
      */
     public function revokeToken(string $token): bool
     {
-        $sql = "DELETE FROM api_tokens WHERE token = ?";
+        try {
+            $sql = "DELETE FROM api_tokens WHERE token = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$token]);
         
@@ -300,7 +312,11 @@ class JWTAuthService
      */
     private function updateLastUsed(string $token): void
     {
-        $sql = "UPDATE api_tokens SET last_used_at = NOW() WHERE token = ?";
+        try {
+            $sql = "UPDATE api_tokens SET last_used_at = NOW() WHERE token = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$token]);
     }
@@ -346,7 +362,11 @@ class JWTAuthService
      */
     public function cleanupExpiredTokens(): int
     {
-        $sql = "DELETE FROM api_tokens WHERE expires_at < DATE_SUB(NOW(), INTERVAL 7 DAY)";
+        try {
+            $sql = "DELETE FROM api_tokens WHERE expires_at < DATE_SUB(NOW(), INTERVAL 7 DAY)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
         

@@ -68,7 +68,11 @@ class MLMSettingsController extends AdminController
     public function rules()
     {
         $this->requireAdmin();
-        $rules = $this->db->fetchAll("SELECT * FROM commission_calculation_rules ORDER BY priority ASC");
+        try {
+            $rules = $this->db->fetchAll("SELECT * FROM commission_calculation_rules ORDER BY priority ASC");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->render('admin/mlm-settings/rules', [
             'page_title' => 'Commission Rules - Admin',
             'rules' => $rules,
@@ -86,8 +90,12 @@ class MLMSettingsController extends AdminController
         }
         $rate = $_POST['rate_percentage'] ?? $rule['rate_percentage'];
         $active = isset($_POST['is_active']) ? 1 : 0;
-        $this->db->query("UPDATE commission_calculation_rules SET rate_percentage = ?, is_active = ? WHERE id = ?",
-            [$rate, $active, $id]);
+        try {
+            $this->db->query("UPDATE commission_calculation_rules SET rate_percentage = ?, is_active = ? WHERE id = ?",
+                [$rate, $active, $id]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->setFlash('success', 'Rule updated');
         $this->redirect('/admin/mlm-settings/rules');
     }

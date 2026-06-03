@@ -153,7 +153,11 @@ class AIHealthMonitor
 
     private function checkPendingJobs()
     {
-        $sql = "SELECT COUNT(*) as cnt FROM ai_jobs WHERE status = 'pending'";
+        try {
+            $sql = "SELECT COUNT(*) as cnt FROM ai_jobs WHERE status = 'pending'";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $row = $this->db->fetch($sql);
         $count = (int)($row['cnt'] ?? 0);
         return [
@@ -175,7 +179,11 @@ class AIHealthMonitor
 
     private function checkLearningSystem()
     {
-        $sql = "SELECT COUNT(*) as cnt FROM ai_knowledge_graph";
+        try {
+            $sql = "SELECT COUNT(*) as cnt FROM ai_knowledge_graph";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $row = $this->db->fetch($sql);
         $count = (int)($row['cnt'] ?? 0);
         return [

@@ -19,9 +19,13 @@ class CommissionAgreementService
 
     public function listAgreements(array $filters = []): array
     {
-        $sql = "SELECT a.*, u.name AS user_name, u.email AS user_email
-                FROM mlm_commission_agreements a
-                JOIN users u ON a.user_id = u.id";
+        try {
+            $sql = "SELECT a.*, u.name AS user_name, u.email AS user_email
+                    FROM mlm_commission_agreements a
+                    JOIN users u ON a.user_id = u.id";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $where = [];
         $params = [];
 
@@ -43,10 +47,14 @@ class CommissionAgreementService
 
     public function createAgreement(array $data): array
     {
-        $stmt = $this->conn->prepare(
-            'INSERT INTO mlm_commission_agreements (user_id, property_id, commission_rate, flat_amount, valid_from, valid_to, notes)
-             VALUES (?, ?, ?, ?, ?, ?, ?)'
-        );
+        try {
+            $stmt = $this->conn->prepare(
+                'INSERT INTO mlm_commission_agreements (user_id, property_id, commission_rate, flat_amount, valid_from, valid_to, notes)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)'
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $userId = (int) ($data['user_id'] ?? 0);
         $propertyId = isset($data['property_id']) && $data['property_id'] !== '' ? (int) $data['property_id'] : null;
@@ -73,11 +81,15 @@ class CommissionAgreementService
 
     public function updateAgreement(int $id, array $data): bool
     {
-        $stmt = $this->conn->prepare(
-            'UPDATE mlm_commission_agreements
-             SET property_id = ?, commission_rate = ?, flat_amount = ?, valid_from = ?, valid_to = ?, notes = ?, updated_at = NOW()
-             WHERE id = ?'
-        );
+        try {
+            $stmt = $this->conn->prepare(
+                'UPDATE mlm_commission_agreements
+                 SET property_id = ?, commission_rate = ?, flat_amount = ?, valid_from = ?, valid_to = ?, notes = ?, updated_at = NOW()
+                 WHERE id = ?'
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $propertyId = isset($data['property_id']) && $data['property_id'] !== '' ? (int) $data['property_id'] : null;
         $commissionRate = isset($data['commission_rate']) && $data['commission_rate'] !== '' ? (float) $data['commission_rate'] : null;
@@ -99,7 +111,11 @@ class CommissionAgreementService
 
     public function getAgreement(int $id): ?array
     {
-        $stmt = $this->conn->prepare("SELECT * FROM mlm_commission_agreements WHERE id = ?");
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM mlm_commission_agreements WHERE id = ?");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;

@@ -78,11 +78,15 @@ class OCR extends Model
         $content = $this->extractFileContent($filePath);
         $contentHash = hash('sha256', $content);
 
-        // Check if we have classification history
-        $existing = $this->query(
-            "SELECT predicted_type FROM document_classification WHERE document_content_hash = ?",
-            [$contentHash]
-        )->fetch();
+        try {
+            // Check if we have classification history
+            $existing = $this->query(
+                "SELECT predicted_type FROM document_classification WHERE document_content_hash = ?",
+                [$contentHash]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if ($existing) {
             return $existing['predicted_type'];
@@ -414,17 +418,21 @@ class OCR extends Model
         $db = Database::getInstance();
 
         foreach ($fields as $field) {
-            $db->query(
-                "INSERT INTO ocr_extracted_fields (ocr_document_id, field_name, field_value, confidence_score, validation_status)
-                 VALUES (?, ?, ?, ?, ?)",
-                [
-                    $ocrId,
-                    $field['field_name'],
-                    $field['field_value'],
-                    $field['confidence_score'],
-                    $field['validation_status']
-                ]
-            );
+            try {
+                $db->query(
+                    "INSERT INTO ocr_extracted_fields (ocr_document_id, field_name, field_value, confidence_score, validation_status)
+                     VALUES (?, ?, ?, ?, ?)",
+                    [
+                        $ocrId,
+                        $field['field_name'],
+                        $field['field_value'],
+                        $field['confidence_score'],
+                        $field['validation_status']
+                    ]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         }
     }
 
@@ -521,11 +529,15 @@ class OCR extends Model
             return null;
         }
 
-        // Get extracted fields
-        $fields = $this->query(
-            "SELECT * FROM ocr_extracted_fields WHERE ocr_document_id = ? ORDER BY field_name",
-            [$ocrDoc['id']]
-        )->fetchAll();
+        try {
+            // Get extracted fields
+            $fields = $this->query(
+                "SELECT * FROM ocr_extracted_fields WHERE ocr_document_id = ? ORDER BY field_name",
+                [$ocrDoc['id']]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $ocrDoc['extracted_fields'] = $fields;
         $ocrDoc['structured_data'] = json_decode($ocrDoc['structured_data'], true);
@@ -539,7 +551,11 @@ class OCR extends Model
      */
     public function updateExtractedField(int $fieldId, string $correctedValue, int $userId): array
     {
-        $field = $this->query("SELECT * FROM ocr_extracted_fields WHERE id = ?", [$fieldId])->fetch();
+        try {
+            $field = $this->query("SELECT * FROM ocr_extracted_fields WHERE id = ?", [$fieldId])->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if (!$field) {
             return ['success' => false, 'message' => 'Field not found'];

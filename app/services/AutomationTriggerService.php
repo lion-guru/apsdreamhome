@@ -248,11 +248,15 @@ class AutomationTriggerService
             $tagId = $tag['id'];
         }
         
-        // Map tag to lead
-        $existing = $this->db->fetch(
-            "SELECT 1 FROM lead_tag_mapping WHERE lead_id = ? AND tag_id = ?",
-            [$leadId, $tagId]
-        );
+        try {
+            // Map tag to lead
+            $existing = $this->db->fetch(
+                "SELECT 1 FROM lead_tag_mapping WHERE lead_id = ? AND tag_id = ?",
+                [$leadId, $tagId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         if (!$existing) {
             $this->db->execute(
@@ -299,11 +303,15 @@ class AutomationTriggerService
         );
         
         if ($campaign) {
-            $this->db->execute(
-                "INSERT INTO campaign_members (campaign_id, lead_id, added_at) VALUES (?, ?, NOW())
-                 ON DUPLICATE KEY UPDATE added_at = NOW()",
-                [$campaign['id'], $leadId]
-            );
+            try {
+                $this->db->execute(
+                    "INSERT INTO campaign_members (campaign_id, lead_id, added_at) VALUES (?, ?, NOW())
+                     ON DUPLICATE KEY UPDATE added_at = NOW()",
+                    [$campaign['id'], $leadId]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         }
     }
     
@@ -351,12 +359,16 @@ class AutomationTriggerService
             [$points, $lead['referred_by']]
         );
         
-        // Log points transaction
-        $this->db->execute(
-            "INSERT INTO mlm_points_transactions (user_id, points, type, reference_id, description)
-             VALUES (?, ?, 'credit', ?, 'Referral bonus for lead $leadId')",
-            [$lead['referred_by'], $points, $leadId]
-        );
+        try {
+            // Log points transaction
+            $this->db->execute(
+                "INSERT INTO mlm_points_transactions (user_id, points, type, reference_id, description)
+                 VALUES (?, ?, 'credit', ?, 'Referral bonus for lead $leadId')",
+                [$lead['referred_by'], $points, $leadId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
     
     /**

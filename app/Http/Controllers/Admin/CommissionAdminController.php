@@ -50,8 +50,12 @@ class CommissionAdminController extends AdminController
             $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(revenue),0) as rev, COALESCE(SUM(commission),0) as comm FROM revenue_commission_daily");
             $stats['revenue_stats'] = $r[0] ?? ['c'=>0,'rev'=>0,'comm'=>0];
 
-            // Telecaller rules
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c FROM telecaller_commission_rules WHERE is_active=1");
+            try {
+                // Telecaller rules
+                $r = $this->db->fetchAll("SELECT COUNT(*) as c FROM telecaller_commission_rules WHERE is_active=1");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stats['tc_rules_count'] = $r[0]['c'] ?? 0;
 
             // Telecaller commissions

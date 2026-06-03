@@ -59,12 +59,16 @@ class AITelecallingAgent {
      * Get call performance metrics for this agent
      */
     public function getPerformanceMetrics() {
-        // Logic to fetch metrics from ai_agent_logs and ai_call_logs
-        return [
-            'total_calls' => 0,
-            'successful_conversations' => 0,
-            'followups_scheduled' => 0
-        ];
+        try {
+            // Logic to fetch metrics from ai_agent_logs and ai_call_logs
+            return [
+                'total_calls' => 0,
+                'successful_conversations' => 0,
+                'followups_scheduled' => 0
+            ];
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 }
 ?>

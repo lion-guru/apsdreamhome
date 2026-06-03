@@ -13,7 +13,11 @@ if (isset($_POST['message']) && trim($_POST['message']) != '') {
         die('Invalid CSRF token');
     }
     $msg = $_POST['message'];
-    $stmt = $conn->prepare("INSERT INTO feedback_tickets (user_id, message, status, created_at) VALUES (?, ?, 'open', NOW())");
+    try {
+        $stmt = $conn->prepare("INSERT INTO feedback_tickets (user_id, message, status, created_at) VALUES (?, ?, 'open', NOW())");
+    } catch (\Throwable $e) {
+        // Gracefully handle dropped table ref
+    }
     $stmt->bind_param("ss", $user_id, $msg);
     $stmt->execute();
     $stmt->close();

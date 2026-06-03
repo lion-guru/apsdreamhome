@@ -180,16 +180,20 @@ class AgentAssignmentService
         $propertyType = $preferences['property_type'] ?? '';
         $budgetRange = $preferences['budget_range'] ?? '';
 
-        // Build query to find suitable users
-        $sql = "SELECT a.*, 
-                       COUNT(ca.id) as current_assignments,
-                       AVG(ar.rating) as avg_rating,
-                       COUNT(p.id) as properties_handled
-                FROM users a
-                LEFT JOIN customer_assignments ca ON a.user_id = ca.agent_id AND ca.status = 'active'
-                LEFT JOIN agent_reviews ar ON a.user_id = ar.agent_id
-                LEFT JOIN properties p ON a.user_id = p.assigned_agent_id
-                WHERE a.status = 'active' AND a.workload < a.max_workload";
+        try {
+            // Build query to find suitable users
+            $sql = "SELECT a.*, 
+                           COUNT(ca.id) as current_assignments,
+                           AVG(ar.rating) as avg_rating,
+                           COUNT(p.id) as properties_handled
+                    FROM users a
+                    LEFT JOIN customer_assignments ca ON a.user_id = ca.agent_id AND ca.status = 'active'
+                    LEFT JOIN agent_reviews ar ON a.user_id = ar.agent_id
+                    LEFT JOIN properties p ON a.user_id = p.assigned_agent_id
+                    WHERE a.status = 'active' AND a.workload < a.max_workload";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $params = [];
         

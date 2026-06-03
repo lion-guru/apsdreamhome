@@ -121,8 +121,12 @@ class PerformanceRankCalculator
 
         $placeholders = implode(',', array_fill(0, count($downline), '?'));
         
-        // Sum sales from legacy property_sales
-        $sqlLegacy = "SELECT SUM(sale_amount) FROM property_sales WHERE agent_id IN ($placeholders) OR buyer_id IN ($placeholders)";
+        try {
+            // Sum sales from legacy property_sales
+            $sqlLegacy = "SELECT SUM(sale_amount) FROM property_sales WHERE agent_id IN ($placeholders) OR buyer_id IN ($placeholders)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmtLegacy = $this->db->prepare($sqlLegacy);
         $params = array_merge($downline, $downline);
         $stmtLegacy->execute($params);

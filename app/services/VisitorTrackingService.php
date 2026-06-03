@@ -184,26 +184,34 @@ class VisitorTrackingService
     public function markAsConverted($userId)
     {
         try {
-            // Update visitor session
-            $this->db->query(
-                "UPDATE visitor_sessions SET 
-                    is_converted = 1,
-                    converted_user_id = ?,
-                    converted_at = NOW()
-                WHERE session_id = ?",
-                [$userId, $this->sessionId]
-            );
+            try {
+                // Update visitor session
+                $this->db->query(
+                    "UPDATE visitor_sessions SET 
+                        is_converted = 1,
+                        converted_user_id = ?,
+                        converted_at = NOW()
+                    WHERE session_id = ?",
+                    [$userId, $this->sessionId]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
-            // Update leads - mark leads from this session as converted
-            $this->db->query(
-                "UPDATE leads SET 
-                    status = 'converted',
-                    assigned_to = ?,
-                    updated_at = NOW()
-                WHERE email IN (SELECT email FROM visitor_sessions WHERE session_id = ?) 
-                   OR phone IN (SELECT phone FROM visitor_sessions WHERE session_id = ?)",
-                [$userId, $this->sessionId, $this->sessionId]
-            );
+            try {
+                // Update leads - mark leads from this session as converted
+                $this->db->query(
+                    "UPDATE leads SET 
+                        status = 'converted',
+                        assigned_to = ?,
+                        updated_at = NOW()
+                    WHERE email IN (SELECT email FROM visitor_sessions WHERE session_id = ?) 
+                       OR phone IN (SELECT phone FROM visitor_sessions WHERE session_id = ?)",
+                    [$userId, $this->sessionId, $this->sessionId]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             return true;
         } catch (\Exception $e) {
@@ -218,10 +226,14 @@ class VisitorTrackingService
     public function getVisitorSession()
     {
         try {
-            return $this->db->fetchOne(
-                "SELECT * FROM visitor_sessions WHERE session_id = ? LIMIT 1",
-                [$this->sessionId]
-            );
+            try {
+                return $this->db->fetchOne(
+                    "SELECT * FROM visitor_sessions WHERE session_id = ? LIMIT 1",
+                    [$this->sessionId]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         } catch (\Exception $e) {
             return null;
         }

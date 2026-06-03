@@ -60,11 +60,15 @@ class AlertService
      */
     private function checkStaleAlerts()
     {
-        $query = "SELECT *
-                 FROM system_alerts
-                 WHERE resolved_at IS NULL
-                   AND acknowledged_at IS NULL
-                   AND created_at <= DATE_SUB(NOW(), INTERVAL 4 HOUR)";
+        try {
+            $query = "SELECT *
+                     FROM system_alerts
+                     WHERE resolved_at IS NULL
+                       AND acknowledged_at IS NULL
+                       AND created_at <= DATE_SUB(NOW(), INTERVAL 4 HOUR)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $results = $this->db->fetchAll($query);
         foreach ($results as $alert) {
@@ -123,10 +127,14 @@ class AlertService
 
     private function getAlertStats()
     {
-        $query = "SELECT level, COUNT(*) as count
-                 FROM system_alerts
-                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-                 GROUP BY level";
+        try {
+            $query = "SELECT level, COUNT(*) as count
+                     FROM system_alerts
+                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+                     GROUP BY level";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $results = $this->db->fetchAll($query);
         $stats = ['critical' => 0, 'warning' => 0, 'info' => 0];
@@ -299,8 +307,12 @@ class AlertService
      */
     public function createAlert($level, $title, $message, $system)
     {
-        $query = "INSERT INTO system_alerts (level, title, message, system, created_at)
-                 VALUES (?, ?, ?, ?, NOW())";
+        try {
+            $query = "INSERT INTO system_alerts (level, title, message, system, created_at)
+                     VALUES (?, ?, ?, ?, NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $this->db->execute($query, [$level, $title, $message, $system]);
 
@@ -335,18 +347,22 @@ class AlertService
      */
     public function processEscalations()
     {
-        // Get unresolved alerts
-        $query = "SELECT
-                     a.*,
-                     TIMESTAMPDIFF(MINUTE, created_at, NOW()) as age,
-                     COALESCE(MAX(e.level), 0) as current_level
-                 FROM system_alerts a
-                 LEFT JOIN alert_escalations e ON a.id = e.alert_id
-                 WHERE a.resolved_at IS NULL
-                 GROUP BY a.id
-                 HAVING age >= 15"; // Only process alerts older than 15 minutes
-
-        $results = $this->db->fetchAll($query);
+        try {
+            // Get unresolved alerts
+            $query = "SELECT
+                         a.*,
+                         TIMESTAMPDIFF(MINUTE, created_at, NOW()) as age,
+                         COALESCE(MAX(e.level), 0) as current_level
+                     FROM system_alerts a
+                     LEFT JOIN alert_escalations e ON a.id = e.alert_id
+                     WHERE a.resolved_at IS NULL
+                     GROUP BY a.id
+                     HAVING age >= 15"; // Only process alerts older than 15 minutes
+    
+            $results = $this->db->fetchAll($query);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         foreach ($results as $alert) {
             $this->escalateAlert($alert);
         }

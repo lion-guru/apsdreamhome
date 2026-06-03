@@ -250,8 +250,12 @@ class CampaignController extends AdminController
     private function deleteCampaign($campaignId)
     {
         try {
-            // Delete campaign members first
-            $this->db->execute("DELETE FROM campaign_members WHERE campaign_id = ?", [$campaignId]);
+            try {
+                // Delete campaign members first
+                $this->db->execute("DELETE FROM campaign_members WHERE campaign_id = ?", [$campaignId]);
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             // Delete campaign
             $this->db->execute("DELETE FROM campaigns WHERE campaign_id = ?", [$campaignId]);

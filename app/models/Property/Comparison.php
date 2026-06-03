@@ -138,10 +138,14 @@ class PropertyComparison extends Model
      */
     public function getComparisonSession(string $sessionKey): ?array
     {
-        $session = $this->query(
-            "SELECT * FROM property_comparison_sessions WHERE session_key = ? AND is_active = 1",
-            [$sessionKey]
-        )->fetch();
+        try {
+            $session = $this->query(
+                "SELECT * FROM property_comparison_sessions WHERE session_key = ? AND is_active = 1",
+                [$sessionKey]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if (!$session) {
             return null;
@@ -215,10 +219,14 @@ class PropertyComparison extends Model
      */
     private function getCriteriaInfo(string $criteriaKey): ?array
     {
-        return $this->query(
-            "SELECT * FROM comparison_criteria WHERE criteria_key = ? AND is_active = 1",
-            [$criteriaKey]
-        )->fetch();
+        try {
+            return $this->query(
+                "SELECT * FROM comparison_criteria WHERE criteria_key = ? AND is_active = 1",
+                [$criteriaKey]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**
@@ -358,12 +366,16 @@ class PropertyComparison extends Model
      */
     public function getSavedComparisons(int $userId, string $userType, int $limit = 20): array
     {
-        return $this->query(
-            "SELECT * FROM saved_comparisons
-             WHERE user_id = ? AND user_type = ?
-             ORDER BY created_at DESC LIMIT ?",
-            [$userId, $userType, $limit]
-        )->fetchAll();
+        try {
+            return $this->query(
+                "SELECT * FROM saved_comparisons
+                 WHERE user_id = ? AND user_type = ?
+                 ORDER BY created_at DESC LIMIT ?",
+                [$userId, $userType, $limit]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**
@@ -409,9 +421,13 @@ class PropertyComparison extends Model
      */
     public function getComparisonCriteria(): array
     {
-        $criteria = $this->query(
-            "SELECT * FROM comparison_criteria WHERE is_active = 1 ORDER BY criteria_group ASC, sort_order ASC"
-        )->fetchAll();
+        try {
+            $criteria = $this->query(
+                "SELECT * FROM comparison_criteria WHERE is_active = 1 ORDER BY criteria_group ASC, sort_order ASC"
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Group by category
         $groupedCriteria = [];
@@ -431,9 +447,13 @@ class PropertyComparison extends Model
      */
     private function getDefaultCriteria(): array
     {
-        return $this->query(
-            "SELECT * FROM comparison_criteria WHERE is_default = 1"
-        )->fetchAll();
+        try {
+            return $this->query(
+                "SELECT * FROM comparison_criteria WHERE is_default = 1"
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**
@@ -443,7 +463,11 @@ class PropertyComparison extends Model
     {
         do {
             $key = bin2hex(random_bytes(16));
-            $exists = $this->query("SELECT id FROM property_comparison_sessions WHERE session_key = ?", [$key])->fetch();
+            try {
+                $exists = $this->query("SELECT id FROM property_comparison_sessions WHERE session_key = ?", [$key])->fetch();
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         } while ($exists);
 
         return $key;
@@ -574,9 +598,13 @@ class PropertyComparison extends Model
      */
     public function cleanupExpiredSessions(): array
     {
-        $expiredCount = $this->query(
-            "UPDATE property_comparison_sessions SET is_active = 0 WHERE expires_at < NOW() AND is_active = 1"
-        );
+        try {
+            $expiredCount = $this->query(
+                "UPDATE property_comparison_sessions SET is_active = 0 WHERE expires_at < NOW() AND is_active = 1"
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'success' => true,

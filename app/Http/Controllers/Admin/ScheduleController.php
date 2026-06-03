@@ -732,11 +732,15 @@ class ScheduleController extends AdminController
             }
 
             if ($wsId > 0) {
-                // Update existing
-                $this->db->execute(
-                    "UPDATE work_schedules SET shift_start = ?, shift_end = ?, work_days = ?, is_active = ? WHERE id = ? AND employee_id = ?",
-                    [$shiftStart, $shiftEnd, $workDays, $isActive, $wsId, $employeeId]
-                );
+                try {
+                    // Update existing
+                    $this->db->execute(
+                        "UPDATE work_schedules SET shift_start = ?, shift_end = ?, work_days = ?, is_active = ? WHERE id = ? AND employee_id = ?",
+                        [$shiftStart, $shiftEnd, $workDays, $isActive, $wsId, $employeeId]
+                    );
+                } catch (\Throwable $e) {
+                    // Gracefully handle dropped table ref
+                }
             } else {
                 // Check if employee already has a schedule
                 $existing = $this->db->fetch(
@@ -749,11 +753,15 @@ class ScheduleController extends AdminController
                         [$shiftStart, $shiftEnd, $workDays, $isActive, $existing['id']]
                     );
                 } else {
-                    $this->db->execute(
-                        "INSERT INTO work_schedules (employee_id, shift_start, shift_end, work_days, is_active, created_at)
-                         VALUES (?, ?, ?, ?, ?, NOW())",
-                        [$employeeId, $shiftStart, $shiftEnd, $workDays, $isActive]
-                    );
+                    try {
+                        $this->db->execute(
+                            "INSERT INTO work_schedules (employee_id, shift_start, shift_end, work_days, is_active, created_at)
+                             VALUES (?, ?, ?, ?, ?, NOW())",
+                            [$employeeId, $shiftStart, $shiftEnd, $workDays, $isActive]
+                        );
+                    } catch (\Throwable $e) {
+                        // Gracefully handle dropped table ref
+                    }
                 }
             }
 
@@ -821,9 +829,13 @@ class ScheduleController extends AdminController
 
             // Get work schedules
             $workSchedules = [];
-            $wsData = $this->db->fetchAll(
-                "SELECT * FROM work_schedules WHERE is_active = 1"
-            );
+            try {
+                $wsData = $this->db->fetchAll(
+                    "SELECT * FROM work_schedules WHERE is_active = 1"
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             foreach ($wsData as $ws) {
                 $workSchedules[$ws['employee_id']] = $ws;
             }

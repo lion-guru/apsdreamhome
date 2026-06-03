@@ -199,8 +199,12 @@ class AdminDashboard
             // Database connection check
             $dbStatus = $this->db->fetch("SELECT 1 as status") ? 'healthy' : 'error';
 
-            // Recent error count
-            $errorCount = $this->db->fetch("SELECT COUNT(*) as count FROM error_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+            try {
+                // Recent error count
+                $errorCount = $this->db->fetch("SELECT COUNT(*) as count FROM error_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             // Active user count
             $activeUsers = $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)");

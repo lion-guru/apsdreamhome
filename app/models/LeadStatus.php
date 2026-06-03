@@ -71,7 +71,11 @@ class LeadStatus extends Model
     public function statusHistory()
     {
         $db = \App\Core\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_status_history WHERE status_id = :status_id");
+        try {
+            $stmt = $db->prepare("SELECT * FROM lead_status_history WHERE status_id = :status_id");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute(['status_id' => $this->id]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 

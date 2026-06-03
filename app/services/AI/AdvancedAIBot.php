@@ -124,7 +124,11 @@ class AdvancedAIBot {
     }
 
     private function lookupKnowledgeGraph($intent) {
-        $row = $this->db->fetch("SELECT context_data FROM ai_knowledge_graph WHERE entity_type = ? ORDER BY confidence_score DESC LIMIT 1", [$intent]);
+        try {
+            $row = $this->db->fetch("SELECT context_data FROM ai_knowledge_graph WHERE entity_type = ? ORDER BY confidence_score DESC LIMIT 1", [$intent]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         if ($row) {
             $data = json_decode($row['context_data'], true);
             return $data['summary'] ?? null;

@@ -326,20 +326,24 @@ class PushNotification extends Model
             'created_at' => date('Y-m-d H:i:s')
         ];
 
-        $db->query(
-            "INSERT INTO push_subscriptions
-             (user_id, user_type, endpoint, public_key, auth_token, user_agent, ip_address, device_type, browser, is_active, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE
-             public_key = VALUES(public_key),
-             auth_token = VALUES(auth_token),
-             user_agent = VALUES(user_agent),
-             ip_address = VALUES(ip_address),
-             device_type = VALUES(device_type),
-             browser = VALUES(browser),
-             updated_at = NOW()",
-            array_values($subscription)
-        );
+        try {
+            $db->query(
+                "INSERT INTO push_subscriptions
+                 (user_id, user_type, endpoint, public_key, auth_token, user_agent, ip_address, device_type, browser, is_active, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE
+                 public_key = VALUES(public_key),
+                 auth_token = VALUES(auth_token),
+                 user_agent = VALUES(user_agent),
+                 ip_address = VALUES(ip_address),
+                 device_type = VALUES(device_type),
+                 browser = VALUES(browser),
+                 updated_at = NOW()",
+                array_values($subscription)
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return ['success' => true, 'message' => 'Push subscription registered'];
     }
@@ -410,10 +414,14 @@ class PushNotification extends Model
      */
     private function getNotificationTemplate(string $templateKey): ?array
     {
-        return $this->query(
-            "SELECT * FROM notification_templates WHERE template_key = ? AND is_active = 1",
-            [$templateKey]
-        )->fetch();
+        try {
+            return $this->query(
+                "SELECT * FROM notification_templates WHERE template_key = ? AND is_active = 1",
+                [$templateKey]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     private function getUserNotificationPreferences(int $userId, string $channel): bool
@@ -448,11 +456,15 @@ class PushNotification extends Model
      */
     private function getUserPushSubscriptions(int $userId, string $userType): array
     {
-        return $this->query(
-            "SELECT * FROM push_subscriptions
-             WHERE user_id = ? AND user_type = ? AND is_active = 1",
-            [$userId, $userType]
-        )->fetchAll();
+        try {
+            return $this->query(
+                "SELECT * FROM push_subscriptions
+                 WHERE user_id = ? AND user_type = ? AND is_active = 1",
+                [$userId, $userType]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**

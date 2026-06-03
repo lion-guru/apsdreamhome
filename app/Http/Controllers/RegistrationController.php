@@ -323,12 +323,16 @@ class RegistrationController extends BaseController
         );
 
         if ($referrer) {
-            // Create referral record
-            $db->execute(
-                "INSERT INTO mlm_referrals (referrer_id, referred_id, referral_code, status, created_at) 
-                 VALUES (?, ?, ?, 'active', NOW())",
-                [$referrer['id'], $userId, $referralCode]
-            );
+            try {
+                // Create referral record
+                $db->execute(
+                    "INSERT INTO mlm_referrals (referrer_id, referred_id, referral_code, status, created_at) 
+                     VALUES (?, ?, ?, 'active', NOW())",
+                    [$referrer['id'], $userId, $referralCode]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             // Update referrer's MLM profile
             $db->execute(

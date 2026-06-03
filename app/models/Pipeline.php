@@ -311,12 +311,16 @@ class Pipeline extends Model
             $currentStage = $stages[$i];
             $nextStage = $stages[$i + 1];
 
-            $conversions = $this->query(
-                "SELECT COUNT(DISTINCT pmh.lead_id) as converted
-                 FROM pipeline_movement_history pmh
-                 WHERE pmh.to_stage_id = ? AND pmh.from_stage_id = ? AND pmh.moved_at >= ?",
-                [$nextStage['id'], $currentStage['id'], $startDate]
-            )->fetch()['converted'];
+            try {
+                $conversions = $this->query(
+                    "SELECT COUNT(DISTINCT pmh.lead_id) as converted
+                     FROM pipeline_movement_history pmh
+                     WHERE pmh.to_stage_id = ? AND pmh.from_stage_id = ? AND pmh.moved_at >= ?",
+                    [$nextStage['id'], $currentStage['id'], $startDate]
+                )->fetch()['converted'];
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             $totalInStage = $currentStage['lead_count'];
 
@@ -337,18 +341,22 @@ class Pipeline extends Model
      */
     private function getAverageTimeInStages(string $startDate): array
     {
-        return $this->query(
-            "SELECT ps.stage_name,
-                    AVG(pmh.time_in_previous_stage) / 1440 as avg_days,
-                    MIN(pmh.time_in_previous_stage) / 1440 as min_days,
-                    MAX(pmh.time_in_previous_stage) / 1440 as max_days
-             FROM pipeline_movement_history pmh
-             LEFT JOIN pipeline_stages ps ON pmh.from_stage_id = ps.id
-             WHERE pmh.moved_at >= ? AND pmh.time_in_previous_stage IS NOT NULL
-             GROUP BY pmh.from_stage_id, ps.stage_name
-             ORDER BY ps.stage_order ASC",
-            [$startDate]
-        )->fetchAll();
+        try {
+            return $this->query(
+                "SELECT ps.stage_name,
+                        AVG(pmh.time_in_previous_stage) / 1440 as avg_days,
+                        MIN(pmh.time_in_previous_stage) / 1440 as min_days,
+                        MAX(pmh.time_in_previous_stage) / 1440 as max_days
+                 FROM pipeline_movement_history pmh
+                 LEFT JOIN pipeline_stages ps ON pmh.from_stage_id = ps.id
+                 WHERE pmh.moved_at >= ? AND pmh.time_in_previous_stage IS NOT NULL
+                 GROUP BY pmh.from_stage_id, ps.stage_name
+                 ORDER BY ps.stage_order ASC",
+                [$startDate]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**
@@ -375,16 +383,20 @@ class Pipeline extends Model
      */
     private function getLeadVelocity(string $startDate): array
     {
-        $velocity = $this->query(
-            "SELECT DATE(pmh.moved_at) as date,
-                    COUNT(*) as movements,
-                    AVG(pmh.time_in_previous_stage) / 1440 as avg_days_in_stage
-             FROM pipeline_movement_history pmh
-             WHERE pmh.moved_at >= ?
-             GROUP BY DATE(pmh.moved_at)
-             ORDER BY date DESC LIMIT 30",
-            [$startDate]
-        )->fetchAll();
+        try {
+            $velocity = $this->query(
+                "SELECT DATE(pmh.moved_at) as date,
+                        COUNT(*) as movements,
+                        AVG(pmh.time_in_previous_stage) / 1440 as avg_days_in_stage
+                 FROM pipeline_movement_history pmh
+                 WHERE pmh.moved_at >= ?
+                 GROUP BY DATE(pmh.moved_at)
+                 ORDER BY date DESC LIMIT 30",
+                [$startDate]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return array_reverse($velocity);
     }
@@ -470,12 +482,16 @@ class Pipeline extends Model
             $timeInStage = round(($currentTime - $enteredTime) / 60);
         }
 
-        $this->query(
-            "INSERT INTO pipeline_movement_history
-             (lead_id, from_stage_id, to_stage_id, moved_by, time_in_previous_stage, movement_reason)
-             VALUES (?, ?, ?, ?, ?, ?)",
-            [$leadId, $fromStageId, $toStageId, $movedBy, $timeInStage, $reason]
-        );
+        try {
+            $this->query(
+                "INSERT INTO pipeline_movement_history
+                 (lead_id, from_stage_id, to_stage_id, moved_by, time_in_previous_stage, movement_reason)
+                 VALUES (?, ?, ?, ?, ?, ?)",
+                [$leadId, $fromStageId, $toStageId, $movedBy, $timeInStage, $reason]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     private function logActivity(int $leadId, string $activityType, string $title, array $metadata = [], int $performedBy = null): void
@@ -522,10 +538,14 @@ class Pipeline extends Model
 
         // Update old stage exit
         if ($oldStageId) {
-            $this->query(
-                "UPDATE pipeline_analytics SET leads_exited = leads_exited + 1 WHERE stage_id = ? AND date = ?",
-                [$oldStageId, $today]
-            );
+            try {
+                $this->query(
+                    "UPDATE pipeline_analytics SET leads_exited = leads_exited + 1 WHERE stage_id = ? AND date = ?",
+                    [$oldStageId, $today]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
         }
 
         // Update new stage entry

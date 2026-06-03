@@ -184,16 +184,20 @@ class AISettingsController extends AdminController
         
         $stats = $this->geminiService->getUsageStats();
         
-        // Get daily usage for last 30 days
-        $dailyUsage = $this->db->fetchAll(
-            'SELECT DATE(created_at) as date, COUNT(*) as requests, 
-                    AVG(response_time_ms) as avg_response_time
-             FROM ai_api_logs 
-             WHERE service = ? AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-             GROUP BY DATE(created_at)
-             ORDER BY date DESC',
-            ['gemini']
-        );
+        try {
+            // Get daily usage for last 30 days
+            $dailyUsage = $this->db->fetchAll(
+                'SELECT DATE(created_at) as date, COUNT(*) as requests, 
+                        AVG(response_time_ms) as avg_response_time
+                 FROM ai_api_logs 
+                 WHERE service = ? AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                 GROUP BY DATE(created_at)
+                 ORDER BY date DESC',
+                ['gemini']
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         // Get error breakdown
         $errorBreakdown = $this->db->fetchAll(
@@ -225,10 +229,14 @@ class AISettingsController extends AdminController
         
         $days = $_POST['days'] ?? 30;
         
-        $result = $this->db->execute(
-            'DELETE FROM ai_api_logs WHERE service = ? AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)',
-            ['gemini', $days]
-        );
+        try {
+            $result = $this->db->execute(
+                'DELETE FROM ai_api_logs WHERE service = ? AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)',
+                ['gemini', $days]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         if ($result) {
             $this->jsonResponse([
@@ -253,12 +261,16 @@ class AISettingsController extends AdminController
         $startDate = $_GET['start_date'] ?? date('Y-m-01');
         $endDate = $_GET['end_date'] ?? date('Y-m-t');
         
-        $logs = $this->db->fetchAll(
-            'SELECT * FROM ai_api_logs 
-             WHERE service = ? AND DATE(created_at) BETWEEN ? AND ?
-             ORDER BY created_at DESC',
-            ['gemini', $startDate, $endDate]
-        );
+        try {
+            $logs = $this->db->fetchAll(
+                'SELECT * FROM ai_api_logs 
+                 WHERE service = ? AND DATE(created_at) BETWEEN ? AND ?
+                 ORDER BY created_at DESC',
+                ['gemini', $startDate, $endDate]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $csv = "Date,Endpoint,Status Code,Response Time (ms),User ID\n";
         

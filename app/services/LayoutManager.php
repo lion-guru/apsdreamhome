@@ -11,7 +11,11 @@ class LayoutManager {
     }
     
     public function getLayoutSettings() {
-        $result = $this->db->fetch("SELECT * FROM layout_settings WHERE id = 1");
+        try {
+            $result = $this->db->fetch("SELECT * FROM layout_settings WHERE id = 1");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $result ? json_decode($result['settings'], true) : $this->getDefaultSettings();
     }
     

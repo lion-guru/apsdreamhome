@@ -265,11 +265,15 @@ class AIAgentPersonality {
      * Get user communication preferences
      */
     private function getUserPreferences($user_id) {
-        $preferences = $this->db->fetchAll("
-            SELECT preference_category, preference_key, preference_value
-            FROM ai_user_preferences
-            WHERE user_id = ?
-        ", [$user_id]);
+        try {
+            $preferences = $this->db->fetchAll("
+                SELECT preference_category, preference_key, preference_value
+                FROM ai_user_preferences
+                WHERE user_id = ?
+            ", [$user_id]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $organized_prefs = [];
         foreach ($preferences as $pref) {
@@ -376,17 +380,21 @@ class AIAgentPersonality {
     private function storeContextMemory($context_type, $context_value, $importance = 'medium') {
         $context_key = 'ai_agent_' . $context_type . '_' . time();
 
-        $this->db->execute("
-            INSERT INTO ai_context_memory
-            (user_id, context_type, context_key, context_value, importance_level)
-            VALUES (?, ?, ?, ?, ?)
-        ", [
-            1, // System context for AI agent itself
-            $context_type,
-            $context_key,
-            json_encode($context_value),
-            $importance
-        ]);
+        try {
+            $this->db->execute("
+                INSERT INTO ai_context_memory
+                (user_id, context_type, context_key, context_value, importance_level)
+                VALUES (?, ?, ?, ?, ?)
+            ", [
+                1, // System context for AI agent itself
+                $context_type,
+                $context_key,
+                json_encode($context_value),
+                $importance
+            ]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**
@@ -481,13 +489,17 @@ class AIAgentPersonality {
             'knowledge_gained' => 0
         ];
 
-        // Load from database if available
-        $progress_data = $this->db->fetch("
-            SELECT * FROM ai_context_memory
-            WHERE context_type = 'learning_progress'
-            ORDER BY created_at DESC
-            LIMIT 1
-        ");
+        try {
+            // Load from database if available
+            $progress_data = $this->db->fetch("
+                SELECT * FROM ai_context_memory
+                WHERE context_type = 'learning_progress'
+                ORDER BY created_at DESC
+                LIMIT 1
+            ");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if ($progress_data) {
             $this->learning_progress = array_merge($this->learning_progress, json_decode($progress_data['context_value'], true));

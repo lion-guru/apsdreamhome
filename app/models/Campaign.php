@@ -475,7 +475,11 @@ class Campaign extends Model
      */
     public function getMessageTemplates(string $type = null, string $category = null): array
     {
-        $query = "SELECT * FROM message_templates WHERE is_active = 1";
+        try {
+            $query = "SELECT * FROM message_templates WHERE is_active = 1";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $params = [];
 
         if ($type) {
@@ -500,10 +504,14 @@ class Campaign extends Model
     {
         $db = Database::getInstance();
 
-        // Get active triggers
-        $triggers = $this->query(
-            "SELECT * FROM automated_triggers WHERE is_active = 1 ORDER BY priority DESC"
-        )->fetchAll();
+        try {
+            // Get active triggers
+            $triggers = $this->query(
+                "SELECT * FROM automated_triggers WHERE is_active = 1 ORDER BY priority DESC"
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $processed = 0;
         $actionsTaken = 0;
@@ -549,11 +557,15 @@ class Campaign extends Model
             }
         }
 
-        // Update trigger execution count
-        $this->query(
-            "UPDATE automated_triggers SET executed_count = executed_count + ?, updated_at = NOW() WHERE id = ?",
-            [$actionsTaken, $trigger['id']]
-        );
+        try {
+            // Update trigger execution count
+            $this->query(
+                "UPDATE automated_triggers SET executed_count = executed_count + ?, updated_at = NOW() WHERE id = ?",
+                [$actionsTaken, $trigger['id']]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'processed' => !empty($targets),

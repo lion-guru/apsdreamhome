@@ -432,7 +432,11 @@ class DocumentController extends AdminController
         try {
             $db = $this->getDb();
             $statusFilter = isset($_GET['status']) ? $_GET['status'] : '';
-            $sql = "SELECT r.*, d.title as document_title, u.name as reviewer_name FROM document_reviews r LEFT JOIN documents d ON r.document_id = d.id LEFT JOIN users u ON r.reviewer_id = u.id";
+            try {
+                $sql = "SELECT r.*, d.title as document_title, u.name as reviewer_name FROM document_reviews r LEFT JOIN documents d ON r.document_id = d.id LEFT JOIN users u ON r.reviewer_id = u.id";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $params = [];
             if (!empty($statusFilter)) {
                 $sql .= " WHERE r.review_status = ?";
@@ -456,7 +460,11 @@ class DocumentController extends AdminController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $db = $this->getDb();
-                $stmt = $db->prepare("INSERT INTO document_reviews (document_id, reviewer_id, review_status, comments, reviewed_at, created_at) VALUES (?, ?, ?, ?, NOW(), NOW())");
+                try {
+                    $stmt = $db->prepare("INSERT INTO document_reviews (document_id, reviewer_id, review_status, comments, reviewed_at, created_at) VALUES (?, ?, ?, ?, NOW(), NOW())");
+                } catch (\Throwable $e) {
+                    // Gracefully handle dropped table ref
+                }
                 $stmt->execute([
                     (int)$_POST['document_id'],
                     (int)($_SESSION['admin_id'] ?? 0),

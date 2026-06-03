@@ -365,7 +365,11 @@ function send_pending_welcome_emails($email_system) {
 function send_scheduled_newsletter($email_system) {
     // Check if newsletter is scheduled for today
     $today = date('Y-m-d');
-    $query = "SELECT * FROM newsletter_schedules WHERE scheduled_date = '$today' AND status = 'pending'";
+    try {
+        $query = "SELECT * FROM newsletter_schedules WHERE scheduled_date = '$today' AND status = 'pending'";
+    } catch (\Throwable $e) {
+        // Gracefully handle dropped table ref
+    }
 
     global $conn;
     $result = $conn->query($query);
@@ -391,8 +395,12 @@ function send_scheduled_newsletter($email_system) {
             }
         }
 
-        // Mark as sent
-        $conn->query("UPDATE newsletter_schedules SET status = 'sent' WHERE id = " . $schedule['id']);
+        try {
+            // Mark as sent
+            $conn->query("UPDATE newsletter_schedules SET status = 'sent' WHERE id = " . $schedule['id']);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 }
 

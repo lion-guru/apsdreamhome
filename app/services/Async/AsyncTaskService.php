@@ -136,7 +136,11 @@ class AsyncTaskService
      */
     private function addToQueue($taskId, $queueName = 'default')
     {
-        $sql = "INSERT INTO task_queue (task_id, queue_name) VALUES (?, ?)";
+        try {
+            $sql = "INSERT INTO task_queue (task_id, queue_name) VALUES (?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->database->query($sql, [$taskId, $queueName]);
     }
     

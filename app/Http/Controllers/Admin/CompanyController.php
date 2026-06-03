@@ -17,7 +17,11 @@ class CompanyController extends AdminController
     public function settings()
     {
         $this->requireAdmin();
-        $company = $this->db->fetch("SELECT * FROM company_settings LIMIT 1");
+        try {
+            $company = $this->db->fetch("SELECT * FROM company_settings LIMIT 1");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->render('admin/company/settings', [
             'page_title' => 'Company Settings',
             'company' => $company ?: []
@@ -81,7 +85,11 @@ class CompanyController extends AdminController
             $this->redirect('/admin/company/users');
         }
 
-        $company = $this->db->fetch("SELECT id FROM company_settings LIMIT 1");
+        try {
+            $company = $this->db->fetch("SELECT id FROM company_settings LIMIT 1");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         if (!$company) {
             $_SESSION['error'] = 'Please save company settings first.';
             $this->redirect('/admin/company/settings');

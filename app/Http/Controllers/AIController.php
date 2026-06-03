@@ -579,12 +579,16 @@ class AIController extends BaseController
         $stmt = $pdo->query($sql);
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // Get recent valuations
-        $sql = "SELECT pv.*, p.title as property_title
-                FROM property_valuations pv
-                LEFT JOIN properties p ON pv.property_id = p.id
-                ORDER BY pv.created_at DESC
-                LIMIT 10";
+        try {
+            // Get recent valuations
+            $sql = "SELECT pv.*, p.title as property_title
+                    FROM property_valuations pv
+                    LEFT JOIN properties p ON pv.property_id = p.id
+                    ORDER BY pv.created_at DESC
+                    LIMIT 10";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $pdo->query($sql);
         $recentValuations = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 

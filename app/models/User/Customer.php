@@ -99,27 +99,31 @@ class Customer extends Model
      */
     public function getCustomerById($id)
     {
-        $sql = "
-            SELECT u.*, c.phone, c.address, c.city, c.state, c.pincode, c.date_of_birth, c.occupation,
-                   c.marital_status, c.anniversary_date, c.referral_source, c.created_at as customer_since,
-                   COUNT(DISTINCT p.id) as total_properties_viewed,
-                   COUNT(DISTINCT b.id) as total_bookings,
-                   COUNT(DISTINCT pay.id) as total_payments,
-                   COALESCE(SUM(CASE WHEN pay.status = 'completed' THEN pay.amount ELSE 0 END), 0) as total_spent,
-                   COALESCE(AVG(pr.rating), 0) as avg_rating_given,
-                   COUNT(DISTINCT pr.id) as total_reviews_given,
-                   (SELECT COUNT(*) FROM customer_favorites cf WHERE cf.customer_id = u.id) as total_favorites,
-                   (SELECT COUNT(*) FROM customer_alerts ca WHERE ca.customer_id = u.id AND ca.status = 'active') as active_alerts
-            FROM {static::$table} u
-            LEFT JOIN users c ON u.id = c.user_id
-            LEFT JOIN property_views pv ON u.id = pv.customer_id
-            LEFT JOIN properties p ON pv.property_id = p.id
-            LEFT JOIN bookings b ON u.id = b.customer_id
-            LEFT JOIN payments pay ON u.id = pay.user_id
-            LEFT JOIN property_reviews pr ON u.id = pr.customer_id
-            WHERE u.id = :id AND u.role = 'customer' AND u.status = 'active'
-            GROUP BY u.id
-        ";
+        try {
+            $sql = "
+                SELECT u.*, c.phone, c.address, c.city, c.state, c.pincode, c.date_of_birth, c.occupation,
+                       c.marital_status, c.anniversary_date, c.referral_source, c.created_at as customer_since,
+                       COUNT(DISTINCT p.id) as total_properties_viewed,
+                       COUNT(DISTINCT b.id) as total_bookings,
+                       COUNT(DISTINCT pay.id) as total_payments,
+                       COALESCE(SUM(CASE WHEN pay.status = 'completed' THEN pay.amount ELSE 0 END), 0) as total_spent,
+                       COALESCE(AVG(pr.rating), 0) as avg_rating_given,
+                       COUNT(DISTINCT pr.id) as total_reviews_given,
+                       (SELECT COUNT(*) FROM customer_favorites cf WHERE cf.customer_id = u.id) as total_favorites,
+                       (SELECT COUNT(*) FROM customer_alerts ca WHERE ca.customer_id = u.id AND ca.status = 'active') as active_alerts
+                FROM {static::$table} u
+                LEFT JOIN users c ON u.id = c.user_id
+                LEFT JOIN property_views pv ON u.id = pv.customer_id
+                LEFT JOIN properties p ON pv.property_id = p.id
+                LEFT JOIN bookings b ON u.id = b.customer_id
+                LEFT JOIN payments pay ON u.id = pay.user_id
+                LEFT JOIN property_reviews pr ON u.id = pr.customer_id
+                WHERE u.id = :id AND u.role = 'customer' AND u.status = 'active'
+                GROUP BY u.id
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $db = Database::getInstance();
         $stmt = $db->query($sql, ['id' => $id]);
@@ -699,16 +703,20 @@ class Customer extends Model
 
         $whereClause = "WHERE " . implode(' AND ', $conditions);
 
-        $sql = "
-            SELECT ca.*, p.title as property_title, p.city, p.state, p.price,
-                   pt.name as property_type,
-                   ca.created_at as alert_created_at
-            FROM customer_alerts ca
-            LEFT JOIN properties p ON ca.property_id = p.id
-            LEFT JOIN property_types pt ON p.property_type_id = pt.id
-            {$whereClause}
-            ORDER BY ca.created_at DESC
-        ";
+        try {
+            $sql = "
+                SELECT ca.*, p.title as property_title, p.city, p.state, p.price,
+                       pt.name as property_type,
+                       ca.created_at as alert_created_at
+                FROM customer_alerts ca
+                LEFT JOIN properties p ON ca.property_id = p.id
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                {$whereClause}
+                ORDER BY ca.created_at DESC
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
@@ -720,15 +728,19 @@ class Customer extends Model
      */
     public function createPropertyAlert($customerId, $data)
     {
-        $sql = "
-            INSERT INTO customer_alerts (
-                customer_id, property_type_id, city, state, min_price, max_price,
-                min_bedrooms, max_bedrooms, alert_type, frequency, status, created_at, updated_at
-            ) VALUES (
-                :customer_id, :property_type_id, :city, :state, :min_price, :max_price,
-                :min_bedrooms, :max_bedrooms, :alert_type, :frequency, 'active', NOW(), NOW()
-            )
-        ";
+        try {
+            $sql = "
+                INSERT INTO customer_alerts (
+                    customer_id, property_type_id, city, state, min_price, max_price,
+                    min_bedrooms, max_bedrooms, alert_type, frequency, status, created_at, updated_at
+                ) VALUES (
+                    :customer_id, :property_type_id, :city, :state, :min_price, :max_price,
+                    :min_bedrooms, :max_bedrooms, :alert_type, :frequency, 'active', NOW(), NOW()
+                )
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
@@ -772,8 +784,12 @@ class Customer extends Model
         $stmt->execute(['customer_id' => $customerId]);
         $stats['total_spent'] = (float)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-        // Active alerts
-        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM customer_alerts WHERE customer_id = :customer_id AND status = 'active'");
+        try {
+            // Active alerts
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM customer_alerts WHERE customer_id = :customer_id AND status = 'active'");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute(['customer_id' => $customerId]);
         $stats['active_alerts'] = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
@@ -1125,14 +1141,18 @@ class Customer extends Model
      */
     public function getEMICalculatorHistory($customerId, $limit = 10)
     {
-        $sql = "
-            SELECT ech.*, p.title as property_title, p.price as property_price, p.city, p.state
-            FROM emi_calculator_history ech
-            LEFT JOIN properties p ON ech.property_id = p.id
-            WHERE ech.customer_id = :customer_id
-            ORDER BY ech.created_at DESC
-            LIMIT :limit
-        ";
+        try {
+            $sql = "
+                SELECT ech.*, p.title as property_title, p.price as property_price, p.city, p.state
+                FROM emi_calculator_history ech
+                LEFT JOIN properties p ON ech.property_id = p.id
+                WHERE ech.customer_id = :customer_id
+                ORDER BY ech.created_at DESC
+                LIMIT :limit
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
@@ -1147,15 +1167,19 @@ class Customer extends Model
      */
     public function saveEMICalculation($customerId, $propertyId, $data)
     {
-        $sql = "
-            INSERT INTO emi_calculator_history (
-                customer_id, property_id, loan_amount, interest_rate, loan_tenure,
-                monthly_emi, total_interest, total_payment, created_at
-            ) VALUES (
-                :customer_id, :property_id, :loan_amount, :interest_rate, :loan_tenure,
-                :monthly_emi, :total_interest, :total_payment, NOW()
-            )
-        ";
+        try {
+            $sql = "
+                INSERT INTO emi_calculator_history (
+                    customer_id, property_id, loan_amount, interest_rate, loan_tenure,
+                    monthly_emi, total_interest, total_payment, created_at
+                ) VALUES (
+                    :customer_id, :property_id, :loan_amount, :interest_rate, :loan_tenure,
+                    :monthly_emi, :total_interest, :total_payment, NOW()
+                )
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([

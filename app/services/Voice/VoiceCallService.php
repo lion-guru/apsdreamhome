@@ -70,10 +70,14 @@ class VoiceCallService
             [$scheduleId]
         );
 
-        $script = $this->db->fetch(
-            "SELECT * FROM ai_call_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1",
-            [$schedule['script_template']]
-        );
+        try {
+            $script = $this->db->fetch(
+                "SELECT * FROM ai_call_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1",
+                [$schedule['script_template']]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $sessionData = [
             'lead_id' => $schedule['lead_id'],
@@ -360,9 +364,13 @@ class VoiceCallService
 
     public function getScriptList()
     {
-        return $this->db->fetchAll(
-            "SELECT id, script_code, script_name, is_active, usage_count FROM ai_call_scripts ORDER BY script_name"
-        );
+        try {
+            return $this->db->fetchAll(
+                "SELECT id, script_code, script_name, is_active, usage_count FROM ai_call_scripts ORDER BY script_name"
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     public function getAvailableLeadsForScheduling($limit = 50)

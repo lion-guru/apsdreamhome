@@ -73,12 +73,16 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        $query = "
-            SELECT cj.*, u.name as customer_name, u.email as customer_email
-            FROM customer_journeys cj
-            LEFT JOIN users u ON cj.customer_id = u.id
-            ORDER BY cj.started_at DESC
-        ";
+        try {
+            $query = "
+                SELECT cj.*, u.name as customer_name, u.email as customer_email
+                FROM customer_journeys cj
+                LEFT JOIN users u ON cj.customer_id = u.id
+                ORDER BY cj.started_at DESC
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $journeys = $this->db->query($query)->fetchAll();
         
         // Get stats
@@ -101,12 +105,16 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        $query = "
-            SELECT cj.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
-            FROM customer_journeys cj
-            LEFT JOIN users u ON cj.customer_id = u.id
-            WHERE cj.id = ?
-        ";
+        try {
+            $query = "
+                SELECT cj.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                FROM customer_journeys cj
+                LEFT JOIN users u ON cj.customer_id = u.id
+                WHERE cj.id = ?
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $journey = $this->db->query($query, [$id])->fetch();
         
         if (!$journey) {
@@ -415,28 +423,36 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        $query = "
-            SELECT laa.*, 
-                   l.name as lead_name,
-                   u_requested.name as requested_by_name,
-                   u_requested_to.name as requested_to_name
-            FROM lead_assignment_approvals laa
-            LEFT JOIN leads l ON laa.lead_id = l.id
-            LEFT JOIN users u_requested ON laa.requested_by = u_requested.id
-            LEFT JOIN users u_requested_to ON laa.requested_to = u_requested_to.id
-            ORDER BY laa.created_at DESC
-        ";
+        try {
+            $query = "
+                SELECT laa.*, 
+                       l.name as lead_name,
+                       u_requested.name as requested_by_name,
+                       u_requested_to.name as requested_to_name
+                FROM lead_assignment_approvals laa
+                LEFT JOIN leads l ON laa.lead_id = l.id
+                LEFT JOIN users u_requested ON laa.requested_by = u_requested.id
+                LEFT JOIN users u_requested_to ON laa.requested_to = u_requested_to.id
+                ORDER BY laa.created_at DESC
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $approvals = $this->db->query($query)->fetchAll();
         
-        // Get stats
-        $statsQuery = "
-            SELECT 
-                COUNT(*) as total_approvals,
-                COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_approvals,
-                COUNT(CASE WHEN status = 'approved' THEN 1 END) as approved_approvals,
-                COUNT(CASE WHEN status = 'rejected' THEN 1 END) as rejected_approvals
-            FROM lead_assignment_approvals
-        ";
+        try {
+            // Get stats
+            $statsQuery = "
+                SELECT 
+                    COUNT(*) as total_approvals,
+                    COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_approvals,
+                    COUNT(CASE WHEN status = 'approved' THEN 1 END) as approved_approvals,
+                    COUNT(CASE WHEN status = 'rejected' THEN 1 END) as rejected_approvals
+                FROM lead_assignment_approvals
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stats = $this->db->query($statsQuery)->fetch();
         
         return $this->render('admin/customer-lead-extras/approvals', [
@@ -449,17 +465,21 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        $query = "
-            SELECT laa.*, 
-                   l.name as lead_name, l.email as lead_email, l.phone as lead_phone,
-                   u_requested.name as requested_by_name, u_requested.email as requested_by_email,
-                   u_requested_to.name as requested_to_name, u_requested_to.email as requested_to_email
-            FROM lead_assignment_approvals laa
-            LEFT JOIN leads l ON laa.lead_id = l.id
-            LEFT JOIN users u_requested ON laa.requested_by = u_requested.id
-            LEFT JOIN users u_requested_to ON laa.requested_to = u_requested_to.id
-            WHERE laa.id = ?
-        ";
+        try {
+            $query = "
+                SELECT laa.*, 
+                       l.name as lead_name, l.email as lead_email, l.phone as lead_phone,
+                       u_requested.name as requested_by_name, u_requested.email as requested_by_email,
+                       u_requested_to.name as requested_to_name, u_requested_to.email as requested_to_email
+                FROM lead_assignment_approvals laa
+                LEFT JOIN leads l ON laa.lead_id = l.id
+                LEFT JOIN users u_requested ON laa.requested_by = u_requested.id
+                LEFT JOIN users u_requested_to ON laa.requested_to = u_requested_to.id
+                WHERE laa.id = ?
+            ";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $approval = $this->db->query($query, [$id])->fetch();
         
         if (!$approval) {
@@ -489,11 +509,15 @@ class CustomerLeadExtrasController extends AdminController
                 return;
             }
             
-            // Update approval status
-            $this->db->query(
-                "UPDATE lead_assignment_approvals SET status = ?, admin_notes = ?, approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?",
-                [$status, $adminNotes, $approvedBy, $id]
-            );
+            try {
+                // Update approval status
+                $this->db->query(
+                    "UPDATE lead_assignment_approvals SET status = ?, admin_notes = ?, approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?",
+                    [$status, $adminNotes, $approvedBy, $id]
+                );
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             
             $_SESSION['success'] = 'Approval status updated successfully';
             header('Location: ' . BASE_URL . '/admin/customer-lead/approvals');

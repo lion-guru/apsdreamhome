@@ -656,14 +656,18 @@ class LandManagerController extends BaseController
             $params[] = $filters['priority'];
         }
 
-        $query = "SELECT la.*, l.location_name, l.area_sqft, l.expected_price,
-                        COUNT(las.id) as stakeholder_count
-                 FROM land_acquisitions la
-                 LEFT JOIN land l ON la.land_id = l.id
-                 LEFT JOIN acquisition_stakeholders las ON la.id = las.acquisition_id
-                 WHERE {$whereClause}
-                 GROUP BY la.id
-                 ORDER BY la.created_at DESC";
+        try {
+            $query = "SELECT la.*, l.location_name, l.area_sqft, l.expected_price,
+                            COUNT(las.id) as stakeholder_count
+                     FROM land_acquisitions la
+                     LEFT JOIN land l ON la.land_id = l.id
+                     LEFT JOIN acquisition_stakeholders las ON la.id = las.acquisition_id
+                     WHERE {$whereClause}
+                     GROUP BY la.id
+                     ORDER BY la.created_at DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $reportData = $this->db->fetchAll($query, $params);
 
@@ -767,9 +771,13 @@ class LandManagerController extends BaseController
      */
     private function notifyAcquisitionUpdate($acquisitionId, $acquisitionData)
     {
-        // Get stakeholders to notify
-        $stakeholdersQuery = "SELECT DISTINCT employee_id FROM acquisition_stakeholders 
-                              WHERE acquisition_id = ?";
+        try {
+            // Get stakeholders to notify
+            $stakeholdersQuery = "SELECT DISTINCT employee_id FROM acquisition_stakeholders 
+                                  WHERE acquisition_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stakeholders = $this->db->fetchAll($stakeholdersQuery, [$acquisitionId]);
 
         foreach ($stakeholders as $stakeholder) {

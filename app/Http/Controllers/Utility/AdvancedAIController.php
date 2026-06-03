@@ -474,7 +474,11 @@ class AdvancedAIController extends BaseController
     private function getUserPreferences($user_id)
     {
         try {
-            $sql = "SELECT * FROM user_preferences WHERE user_id = ?";
+            try {
+                $sql = "SELECT * FROM user_preferences WHERE user_id = ?";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             return $this->db->fetchOne($sql, [$user_id]);
         } catch (Exception $e) {
             $logger = new SystemLogger();

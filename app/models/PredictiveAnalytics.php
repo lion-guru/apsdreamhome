@@ -341,13 +341,17 @@ class PredictiveAnalytics extends Model
     {
         $db = Database::getInstance();
 
-        $query = "SELECT DATE_FORMAT(transaction_date, '%Y-%m') as period,
-                         COUNT(*) as sales_count,
-                         SUM(sale_price) as total_revenue,
-                         AVG(sale_price) as avg_price,
-                         AVG(area_sqft) as avg_area
-                  FROM sales_data
-                  WHERE transaction_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)";
+        try {
+            $query = "SELECT DATE_FORMAT(transaction_date, '%Y-%m') as period,
+                             COUNT(*) as sales_count,
+                             SUM(sale_price) as total_revenue,
+                             AVG(sale_price) as avg_price,
+                             AVG(area_sqft) as avg_area
+                      FROM sales_data
+                      WHERE transaction_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $params = [$months];
 
@@ -408,12 +412,16 @@ class PredictiveAnalytics extends Model
     {
         $db = Database::getInstance();
 
-        $query = "SELECT * FROM sales_data
-                  WHERE ABS(area_sqft - ?) <= 200
-                  AND ABS(bedrooms - ?) <= 1
-                  AND city = ?
-                  AND transaction_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-                  ORDER BY transaction_date DESC LIMIT 5";
+        try {
+            $query = "SELECT * FROM sales_data
+                      WHERE ABS(area_sqft - ?) <= 200
+                      AND ABS(bedrooms - ?) <= 1
+                      AND city = ?
+                      AND transaction_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                      ORDER BY transaction_date DESC LIMIT 5";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $db->query($query, [
             $features['area_sqft'] ?? 0,

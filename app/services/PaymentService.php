@@ -13,7 +13,11 @@ class PaymentService
     }
     
     private function loadSettings() {
-        $stmt = $this->db->prepare("SELECT setting_key, setting_value FROM payment_settings");
+        try {
+            $stmt = $this->db->prepare("SELECT setting_key, setting_value FROM payment_settings");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute();
         
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -158,7 +162,11 @@ class PaymentService
     }
     
     public function getPaymentPlans() {
-        $stmt = $this->db->prepare("SELECT * FROM payment_plans WHERE is_active = 1 ORDER BY is_default DESC, plan_name ASC");
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM payment_plans WHERE is_active = 1 ORDER BY is_default DESC, plan_name ASC");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -212,7 +220,11 @@ class PaymentService
     }
     
     public function updatePaymentSetting($key, $value) {
-        $stmt = $this->db->prepare("INSERT INTO payment_settings (setting_key, setting_value, setting_type, setting_category) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()");
+        try {
+            $stmt = $this->db->prepare("INSERT INTO payment_settings (setting_key, setting_value, setting_type, setting_category) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $stmt->execute([$key, $value, "string", "general"]);
     }
     

@@ -94,7 +94,11 @@ try {
 
     // Get user permissions
     $permissions = [];
-    $stmt = $pdo->prepare("SELECT p.action FROM user_roles ur JOIN role_permissions rp ON ur.role_id = rp.role_id JOIN permissions p ON rp.permission_id = p.id WHERE ur.user_id = :user_id");
+    try {
+        $stmt = $pdo->prepare("SELECT p.action FROM user_roles ur JOIN role_permissions rp ON ur.role_id = rp.role_id JOIN permissions p ON rp.permission_id = p.id WHERE ur.user_id = :user_id");
+    } catch (\Throwable $e) {
+        // Gracefully handle dropped table ref
+    }
     $stmt->execute(['user_id' => $user_id]);
     while ($row = $stmt->fetch()) {
         $permissions[] = htmlspecialchars($row['action'], ENT_QUOTES, 'UTF-8');

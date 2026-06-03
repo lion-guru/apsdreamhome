@@ -91,7 +91,11 @@ class AIManager
             $priority_score = 0.1; // Low priority for praise
         }
 
-        $sql = "INSERT INTO ai_user_suggestions (user_id, category, suggestion, sentiment, priority, priority_score) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO ai_user_suggestions (user_id, category, suggestion, sentiment, priority, priority_score) VALUES (?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $sentiment = $analysis['sentiment']['label'];
 
         $this->db->execute($sql, [$userId, $category, $text, $sentiment, $priority, $priority_score]);
@@ -165,7 +169,11 @@ class AIManager
      */
     public function recordInteraction($userId, $propertyId, $actionType)
     {
-        $sql = "INSERT INTO ai_user_interactions (user_id, property_id, action_type) VALUES (?, ?, ?)";
+        try {
+            $sql = "INSERT INTO ai_user_interactions (user_id, property_id, action_type) VALUES (?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->db->execute($sql, [$userId, $propertyId, $actionType]);
 
         // Update Knowledge Graph asynchronously/on-the-fly

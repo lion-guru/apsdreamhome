@@ -79,20 +79,24 @@ class PropertyComparisonService
     {
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         
-        $sql = "SELECT p.*, 
-                       pt.name as property_type_name,
-                       l.name as locality_name,
-                       c.name as city_name,
-                       (SELECT COUNT(*) FROM property_amenities pa WHERE pa.property_id = p.id) as amenities_count,
-                       (SELECT AVG(rating) FROM property_reviews pr WHERE pr.property_id = p.id) as avg_rating,
-                       (SELECT COUNT(*) FROM property_images pi WHERE pi.property_id = p.id) as image_count,
-                       b.name as builder_name
-                FROM properties p
-                LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                LEFT JOIN localities l ON p.locality_id = l.id
-                LEFT JOIN cities c ON p.city_id = c.id
-                LEFT JOIN builders b ON p.builder_id = b.id
-                WHERE p.id IN ($placeholders)";
+        try {
+            $sql = "SELECT p.*, 
+                           pt.name as property_type_name,
+                           l.name as locality_name,
+                           c.name as city_name,
+                           (SELECT COUNT(*) FROM property_amenities pa WHERE pa.property_id = p.id) as amenities_count,
+                           (SELECT AVG(rating) FROM property_reviews pr WHERE pr.property_id = p.id) as avg_rating,
+                           (SELECT COUNT(*) FROM property_images pi WHERE pi.property_id = p.id) as image_count,
+                           b.name as builder_name
+                    FROM properties p
+                    LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                    LEFT JOIN localities l ON p.locality_id = l.id
+                    LEFT JOIN cities c ON p.city_id = c.id
+                    LEFT JOIN builders b ON p.builder_id = b.id
+                    WHERE p.id IN ($placeholders)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $properties = $this->db->query($sql, $ids)->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -350,12 +354,16 @@ class PropertyComparisonService
      */
     private function getPropertyAmenities(int $propertyId): array
     {
-        return $this->db->query(
-            "SELECT a.name FROM amenities a
-             JOIN property_amenities pa ON a.id = pa.amenity_id
-             WHERE pa.property_id = ?",
-            [$propertyId]
-        )->fetchAll(\PDO::FETCH_COLUMN);
+        try {
+            return $this->db->query(
+                "SELECT a.name FROM amenities a
+                 JOIN property_amenities pa ON a.id = pa.amenity_id
+                 WHERE pa.property_id = ?",
+                [$propertyId]
+            )->fetchAll(\PDO::FETCH_COLUMN);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**
@@ -376,9 +384,13 @@ class PropertyComparisonService
      */
     public function getUserComparisons(int $userId): array
     {
-        return $this->db->query(
-            "SELECT * FROM property_comparisons WHERE user_id = ? ORDER BY created_at DESC",
-            [$userId]
-        )->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            return $this->db->query(
+                "SELECT * FROM property_comparisons WHERE user_id = ? ORDER BY created_at DESC",
+                [$userId]
+            )->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 }

@@ -154,17 +154,21 @@ class TelecallingController extends BaseController
      */
     private function getLeadQueue()
     {
-        $query = "SELECT l.*, 
-                        p.title as property_title,
-                        p.location as property_location,
-                        c.name as campaign_name
-                 FROM leads l
-                 LEFT JOIN properties p ON l.interested_property_id = p.id
-                 LEFT JOIN marketing_campaigns c ON l.source_campaign_id = c.id
-                 WHERE l.assigned_to = ?
-                 AND l.status IN ('pending', 'follow_up')
-                 ORDER BY l.priority DESC, l.created_at ASC
-                 LIMIT 20";
+        try {
+            $query = "SELECT l.*, 
+                            p.title as property_title,
+                            p.location as property_location,
+                            c.name as campaign_name
+                     FROM leads l
+                     LEFT JOIN properties p ON l.interested_property_id = p.id
+                     LEFT JOIN marketing_campaigns c ON l.source_campaign_id = c.id
+                     WHERE l.assigned_to = ?
+                     AND l.status IN ('pending', 'follow_up')
+                     ORDER BY l.priority DESC, l.created_at ASC
+                     LIMIT 20";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
@@ -366,11 +370,15 @@ class TelecallingController extends BaseController
      */
     private function scheduleFollowUp($leadId, $followUpDate)
     {
-        $query = "INSERT INTO follow_ups (
-                    lead_id, employee_id, scheduled_date, status, created_at
-                ) VALUES (?, ?, ?, 'scheduled', NOW())
-                ON DUPLICATE KEY UPDATE 
-                scheduled_date = ?, status = 'scheduled', updated_at = NOW()";
+        try {
+            $query = "INSERT INTO follow_ups (
+                        lead_id, employee_id, scheduled_date, status, created_at
+                    ) VALUES (?, ?, ?, 'scheduled', NOW())
+                    ON DUPLICATE KEY UPDATE 
+                    scheduled_date = ?, status = 'scheduled', updated_at = NOW()";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $this->db->execute($query, [$leadId, $this->employeeId, $followUpDate, $followUpDate]);
     }
@@ -504,13 +512,17 @@ class TelecallingController extends BaseController
      */
     public function getTodayFollowUps()
     {
-        $query = "SELECT l.*, fu.scheduled_date, fu.status as follow_up_status
-                 FROM leads l
-                 JOIN follow_ups fu ON l.id = fu.lead_id
-                 WHERE fu.employee_id = ?
-                 AND DATE(fu.scheduled_date) = CURDATE()
-                 AND fu.status = 'scheduled'
-                 ORDER BY fu.scheduled_date ASC";
+        try {
+            $query = "SELECT l.*, fu.scheduled_date, fu.status as follow_up_status
+                     FROM leads l
+                     JOIN follow_ups fu ON l.id = fu.lead_id
+                     WHERE fu.employee_id = ?
+                     AND DATE(fu.scheduled_date) = CURDATE()
+                     AND fu.status = 'scheduled'
+                     ORDER BY fu.scheduled_date ASC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
@@ -521,10 +533,14 @@ class TelecallingController extends BaseController
     public function completeFollowUp($leadId, $result)
     {
         try {
-            // Update follow-up status
-            $query = "UPDATE follow_ups 
-                      SET status = 'completed', completed_at = NOW(), result = ?
-                      WHERE lead_id = ? AND employee_id = ? AND status = 'scheduled'";
+            try {
+                // Update follow-up status
+                $query = "UPDATE follow_ups 
+                          SET status = 'completed', completed_at = NOW(), result = ?
+                          WHERE lead_id = ? AND employee_id = ? AND status = 'scheduled'";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             
             $this->db->execute($query, [$result, $leadId, $this->employeeId]);
             

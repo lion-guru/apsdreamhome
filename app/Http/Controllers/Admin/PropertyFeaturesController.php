@@ -10,13 +10,17 @@ class PropertyFeaturesController extends AdminController
     {
         $this->requireAdmin();
 
-        $ratings = $this->db->fetchAll("
-            SELECT r.*, u.name as user_name, u.email as user_email, p.title as property_title
-            FROM property_ratings r
-            LEFT JOIN users u ON r.user_id = u.id
-            LEFT JOIN properties p ON r.property_id = p.id
-            ORDER BY r.created_at DESC
-        ") ?: [];
+        try {
+            $ratings = $this->db->fetchAll("
+                SELECT r.*, u.name as user_name, u.email as user_email, p.title as property_title
+                FROM property_ratings r
+                LEFT JOIN users u ON r.user_id = u.id
+                LEFT JOIN properties p ON r.property_id = p.id
+                ORDER BY r.created_at DESC
+            ") ?: [];
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $reviews = $this->db->fetchAll("
             SELECT r.*, u.name as customer_name, u.email as customer_email, p.title as property_title

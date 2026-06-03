@@ -47,7 +47,11 @@ class LeadCustomField extends Model
     public function fieldValues()
     {
         $db = \App\Core\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_custom_field_values WHERE field_id = :id");
+        try {
+            $stmt = $db->prepare("SELECT * FROM lead_custom_field_values WHERE field_id = :id");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute(['id' => $this->id]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 

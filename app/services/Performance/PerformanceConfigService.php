@@ -262,9 +262,13 @@ class PerformanceConfigService
         }
 
         try {
-            $sql = "INSERT INTO performance_logs 
-                    (event, event_data, execution_time_ms, level, created_at) 
-                    VALUES (?, ?, ?, ?, NOW())";
+            try {
+                $sql = "INSERT INTO performance_logs 
+                        (event, event_data, execution_time_ms, level, created_at) 
+                        VALUES (?, ?, ?, ?, NOW())";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             
             $this->db->execute($sql, [
                 $event,
@@ -290,8 +294,12 @@ class PerformanceConfigService
         try {
             $metrics = [];
 
-            // Recent performance logs
-            $sql = "SELECT * FROM performance_logs";
+            try {
+                // Recent performance logs
+                $sql = "SELECT * FROM performance_logs";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $params = [];
             
             if (!empty($filters['date_from'])) {
@@ -313,14 +321,18 @@ class PerformanceConfigService
 
             $metrics['recent_logs'] = $this->db->fetchAll($sql, $params);
 
-            // Performance summary
-            $summarySql = "SELECT 
-                        COUNT(*) as total_events,
-                        AVG(execution_time_ms) as avg_execution_time,
-                        MAX(execution_time_ms) as max_execution_time,
-                        MIN(execution_time_ms) as min_execution_time
-                    FROM performance_logs 
-                    WHERE execution_time_ms IS NOT NULL";
+            try {
+                // Performance summary
+                $summarySql = "SELECT 
+                            COUNT(*) as total_events,
+                            AVG(execution_time_ms) as avg_execution_time,
+                            MAX(execution_time_ms) as max_execution_time,
+                            MIN(execution_time_ms) as min_execution_time
+                        FROM performance_logs 
+                        WHERE execution_time_ms IS NOT NULL";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             
             $summaryParams = [];
             
@@ -342,8 +354,12 @@ class PerformanceConfigService
                 'min_execution_time_ms' => 0
             ];
 
-            // Events by level
-            $levelSql = "SELECT level, COUNT(*) as count FROM performance_logs";
+            try {
+                // Events by level
+                $levelSql = "SELECT level, COUNT(*) as count FROM performance_logs";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $levelParams = [];
             
             if (!empty($filters['date_from'])) {
@@ -704,8 +720,12 @@ class PerformanceConfigService
 
     private function cleanOldLogs(): array
     {
-        $sql = "DELETE FROM performance_logs 
-                WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
+        try {
+            $sql = "DELETE FROM performance_logs 
+                    WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $deletedRows = $this->db->execute($sql, [$this->config['metrics_retention_days']]);
 

@@ -579,9 +579,13 @@ class AuthService
             $token = bin2hex(random_bytes(32));
             $expires = date('Y-m-d H:i:s', time() + (30 * 24 * 3600)); // 30 days
             
-            $sql = "INSERT INTO remember_tokens (user_id, token, expires_at, created_at) 
-                    VALUES (?, ?, ?, NOW())
-                    ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()";
+            try {
+                $sql = "INSERT INTO remember_tokens (user_id, token, expires_at, created_at) 
+                        VALUES (?, ?, ?, NOW())
+                        ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()";
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             
             $this->db->execute($sql, [$user['id'], $token, $expires, $token, $expires]);
             
@@ -604,7 +608,11 @@ class AuthService
 
     private function clearRememberToken(string $token): void
     {
-        $sql = "DELETE FROM remember_tokens WHERE token = ?";
+        try {
+            $sql = "DELETE FROM remember_tokens WHERE token = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->db->execute($sql, [$token]);
     }
 

@@ -284,16 +284,20 @@ class EMIAutomationService
             return false;
         }
 
-        // Save report reference in database
-        $query = "INSERT INTO reports (
-                    title,
-                    type,
-                    content,
-                    file_path,
-                    generated_for_month,
-                    generated_for_year,
-                    created_at
-                  ) VALUES (?, 'emi', ?, ?, ?, ?, NOW())";
+        try {
+            // Save report reference in database
+            $query = "INSERT INTO reports (
+                        title,
+                        type,
+                        content,
+                        file_path,
+                        generated_for_month,
+                        generated_for_year,
+                        created_at
+                      ) VALUES (?, 'emi', ?, ?, ?, ?, NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $reportTitle = "EMI Collection Report - " . date('F Y');
         $reportContent = json_encode($stats);

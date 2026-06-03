@@ -44,8 +44,12 @@ class AIToolsManager {
      * Recommendation Engine (Simulated Machine Learning logic)
      */
     public function getRecommendations($userId) {
-        // Fetch user profile
-        $profile = $this->db->fetch("SELECT * FROM user_ai_profiles WHERE user_id = ?", [$userId]);
+        try {
+            // Fetch user profile
+            $profile = $this->db->fetch("SELECT * FROM user_ai_profiles WHERE user_id = ?", [$userId]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if (!$profile) return $this->getTools(['category' => 'free']); // Default
 

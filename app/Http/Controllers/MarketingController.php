@@ -482,18 +482,22 @@ class MarketingController extends BaseController
 
                 $performance = Database::getInstance()->fetchAll($sql, [$campaignId]);
             } else {
-                // Get overall performance
-                $sql = "SELECT c.name, c.type, 
-                               COUNT(cl.id) as total_leads,
-                               SUM(CASE WHEN cl.status = 'sent' THEN 1 ELSE 0 END) as sent,
-                               SUM(CASE WHEN cl.status = 'delivered' THEN 1 ELSE 0 END) as delivered,
-                               SUM(CASE WHEN cl.status = 'opened' THEN 1 ELSE 0 END) as opened,
-                               SUM(CASE WHEN cl.status = 'clicked' THEN 1 ELSE 0 END) as clicked,
-                               SUM(CASE WHEN cl.status = 'converted' THEN 1 ELSE 0 END) as converted
-                        FROM marketing_campaigns c 
-                        LEFT JOIN campaign_leads cl ON c.id = cl.campaign_id 
-                        GROUP BY c.id, c.name, c.type 
-                        ORDER BY c.created_at DESC";
+                try {
+                    // Get overall performance
+                    $sql = "SELECT c.name, c.type, 
+                                   COUNT(cl.id) as total_leads,
+                                   SUM(CASE WHEN cl.status = 'sent' THEN 1 ELSE 0 END) as sent,
+                                   SUM(CASE WHEN cl.status = 'delivered' THEN 1 ELSE 0 END) as delivered,
+                                   SUM(CASE WHEN cl.status = 'opened' THEN 1 ELSE 0 END) as opened,
+                                   SUM(CASE WHEN cl.status = 'clicked' THEN 1 ELSE 0 END) as clicked,
+                                   SUM(CASE WHEN cl.status = 'converted' THEN 1 ELSE 0 END) as converted
+                            FROM marketing_campaigns c 
+                            LEFT JOIN campaign_leads cl ON c.id = cl.campaign_id 
+                            GROUP BY c.id, c.name, c.type 
+                            ORDER BY c.created_at DESC";
+                } catch (\Throwable $e) {
+                    // Gracefully handle dropped table ref
+                }
 
                 $performance = Database::getInstance()->fetchAll($sql);
             }

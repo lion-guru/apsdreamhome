@@ -240,7 +240,11 @@ class ReferralService
      */
     public function trackReferral($referrer_user_id, $referred_user_id, $referral_type, $channel = 'direct_link')
     {
-        $stmt = $this->conn->prepare("INSERT INTO mlm_referrals (referrer_user_id, referred_user_id, referral_type, channel, created_at) VALUES (?, ?, ?, ?, NOW())");
+        try {
+            $stmt = $this->conn->prepare("INSERT INTO mlm_referrals (referrer_user_id, referred_user_id, referral_type, channel, created_at) VALUES (?, ?, ?, ?, NOW())");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $stmt->execute([$referrer_user_id, $referred_user_id, $referral_type, $channel]);
     }
 
@@ -299,16 +303,20 @@ class ReferralService
      */
     public function getDirectReferrals($user_id)
     {
-        $stmt = $this->conn->prepare("
-            SELECT 
-                u.id, u.name, u.email, u.type, u.created_at,
-                mp.referral_code, mp.total_commission
-            FROM mlm_referrals r
-            JOIN users u ON r.referred_user_id = u.id
-            JOIN mlm_profiles mp ON u.id = mp.user_id
-            WHERE r.referrer_user_id = ?
-            ORDER BY r.created_at DESC
-        ");
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT 
+                    u.id, u.name, u.email, u.type, u.created_at,
+                    mp.referral_code, mp.total_commission
+                FROM mlm_referrals r
+                JOIN users u ON r.referred_user_id = u.id
+                JOIN mlm_profiles mp ON u.id = mp.user_id
+                WHERE r.referrer_user_id = ?
+                ORDER BY r.created_at DESC
+            ");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$user_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -355,16 +363,20 @@ class ReferralService
 
     public function getReferralAnalytics($user_id, $days = 30)
     {
-        $stmt = $this->conn->prepare("
-            SELECT 
-                DATE(created_at) as date,
-                COUNT(*) as referrals,
-                referral_type
-            FROM mlm_referrals
-            WHERE referrer_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
-            GROUP BY DATE(created_at), referral_type
-            ORDER BY date DESC
-        ");
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT 
+                    DATE(created_at) as date,
+                    COUNT(*) as referrals,
+                    referral_type
+                FROM mlm_referrals
+                WHERE referrer_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                GROUP BY DATE(created_at), referral_type
+                ORDER BY date DESC
+            ");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$user_id, $days]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

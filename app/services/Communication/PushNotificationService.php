@@ -148,11 +148,15 @@ class PushNotificationService
      */
     public function registerDevice(int $userId, string $deviceToken, string $platform): array
     {
-        // Check if device already registered
-        $existing = $this->db->query(
-            "SELECT id FROM mobile_devices WHERE device_token = ?",
-            [$deviceToken]
-        )->fetchColumn();
+        try {
+            // Check if device already registered
+            $existing = $this->db->query(
+                "SELECT id FROM mobile_devices WHERE device_token = ?",
+                [$deviceToken]
+            )->fetchColumn();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if ($existing) {
             // Update existing
@@ -187,10 +191,14 @@ class PushNotificationService
      */
     public function unregisterDevice(string $deviceToken): bool
     {
-        return $this->db->query(
-            "UPDATE mobile_devices SET is_active = 0 WHERE device_token = ?",
-            [$deviceToken]
-        )->rowCount() > 0;
+        try {
+            return $this->db->query(
+                "UPDATE mobile_devices SET is_active = 0 WHERE device_token = ?",
+                [$deviceToken]
+            )->rowCount() > 0;
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**

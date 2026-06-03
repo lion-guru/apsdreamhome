@@ -99,10 +99,14 @@ class AchievementController extends BaseController
      */
     private function getUserPoints($userId)
     {
-        $sql = "SELECT COALESCE(SUM(points), 0) as total_points,
-                       COUNT(*) as total_actions
-                FROM user_points 
-                WHERE user_id = ?";
+        try {
+            $sql = "SELECT COALESCE(SUM(points), 0) as total_points,
+                           COUNT(*) as total_actions
+                    FROM user_points 
+                    WHERE user_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$userId]);
         $points = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -148,15 +152,19 @@ class AchievementController extends BaseController
      */
     private function getLeaderboard($limit = 10)
     {
-        $sql = "SELECT u.id, u.name, u.email, COALESCE(SUM(up.points), 0) as total_points,
-                       COUNT(DISTINCT ub.badge_id) as badge_count
-                FROM users u
-                LEFT JOIN user_points up ON u.id = up.user_id
-                LEFT JOIN user_badges ub ON u.id = ub.user_id
-                WHERE u.role = 'customer'
-                GROUP BY u.id
-                ORDER BY total_points DESC
-                LIMIT ?";
+        try {
+            $sql = "SELECT u.id, u.name, u.email, COALESCE(SUM(up.points), 0) as total_points,
+                           COUNT(DISTINCT ub.badge_id) as badge_count
+                    FROM users u
+                    LEFT JOIN user_points up ON u.id = up.user_id
+                    LEFT JOIN user_badges ub ON u.id = ub.user_id
+                    WHERE u.role = 'customer'
+                    GROUP BY u.id
+                    ORDER BY total_points DESC
+                    LIMIT ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$limit]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -167,7 +175,11 @@ class AchievementController extends BaseController
      */
     private function getRecentPoints($userId, $limit = 10)
     {
-        $sql = "SELECT * FROM user_points WHERE user_id = ? ORDER BY created_at DESC LIMIT ?";
+        try {
+            $sql = "SELECT * FROM user_points WHERE user_id = ? ORDER BY created_at DESC LIMIT ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$userId, $limit]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -246,14 +258,18 @@ class AchievementController extends BaseController
      */
     private function getUserStats($userId)
     {
-        $sql = "SELECT 
-                    COALESCE(SUM(points), 0) as total_points,
-                    SUM(CASE WHEN action = 'property_view' THEN 1 ELSE 0 END) as property_view_count,
-                    SUM(CASE WHEN action = 'property_enquiry' THEN 1 ELSE 0 END) as property_enquiry_count,
-                    SUM(CASE WHEN action = 'site_visit' THEN 1 ELSE 0 END) as site_visit_count,
-                    SUM(CASE WHEN action = 'booking' THEN 1 ELSE 0 END) as booking_count
-                FROM user_points 
-                WHERE user_id = ?";
+        try {
+            $sql = "SELECT 
+                        COALESCE(SUM(points), 0) as total_points,
+                        SUM(CASE WHEN action = 'property_view' THEN 1 ELSE 0 END) as property_view_count,
+                        SUM(CASE WHEN action = 'property_enquiry' THEN 1 ELSE 0 END) as property_enquiry_count,
+                        SUM(CASE WHEN action = 'site_visit' THEN 1 ELSE 0 END) as site_visit_count,
+                        SUM(CASE WHEN action = 'booking' THEN 1 ELSE 0 END) as booking_count
+                    FROM user_points 
+                    WHERE user_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$userId]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);

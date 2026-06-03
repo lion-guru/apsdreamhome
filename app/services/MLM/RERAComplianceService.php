@@ -47,8 +47,12 @@ class RERAComplianceService
                 $stmt = $this->db->prepare("UPDATE users SET rera_deduction_wallet = rera_deduction_wallet + ? WHERE id = ?");
                 $stmt->execute([$reraDeducted, $agentId]);
                 
-                // Create RERA request
-                $stmt = $this->db->prepare("INSERT INTO rera_requests (user_id, booking_id, deducted_amount, status, notes, created_at) VALUES (?, ?, ?, 'pending', 'Auto-deducted from commission payout', NOW())");
+                try {
+                    // Create RERA request
+                    $stmt = $this->db->prepare("INSERT INTO rera_requests (user_id, booking_id, deducted_amount, status, notes, created_at) VALUES (?, ?, ?, 'pending', 'Auto-deducted from commission payout', NOW())");
+                } catch (\Throwable $e) {
+                    // Gracefully handle dropped table ref
+                }
                 $stmt->execute([$agentId, $bookingId, $reraDeducted]);
                 
                 // Upgrade to Gold package configuration
@@ -97,11 +101,19 @@ class RERAComplianceService
     public function approveRERA(int $reraRequestId, string $reraNumber, int $processedBy): array
     {
         try {
-            $stmt = $this->db->prepare("UPDATE rera_requests SET status = 'approved', rera_number = ?, processed_by = ?, processed_at = NOW() WHERE id = ?");
+            try {
+                $stmt = $this->db->prepare("UPDATE rera_requests SET status = 'approved', rera_number = ?, processed_by = ?, processed_at = NOW() WHERE id = ?");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$reraNumber, $processedBy, $reraRequestId]);
             
-            // Get user ID from request
-            $stmt = $this->db->prepare("SELECT user_id FROM rera_requests WHERE id = ?");
+            try {
+                // Get user ID from request
+                $stmt = $this->db->prepare("SELECT user_id FROM rera_requests WHERE id = ?");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $stmt->execute([$reraRequestId]);
             $req = $stmt->fetch(\PDO::FETCH_ASSOC);
             
@@ -122,7 +134,11 @@ class RERAComplianceService
     public function getPendingRequests(): array
     {
         try {
-            $stmt = $this->db->query("SELECT r.*, u.name as user_name, u.email as user_email FROM rera_requests r JOIN users u ON u.id = r.user_id WHERE r.status = 'pending' ORDER BY r.created_at DESC");
+            try {
+                $stmt = $this->db->query("SELECT r.*, u.name as user_name, u.email as user_email FROM rera_requests r JOIN users u ON u.id = r.user_id WHERE r.status = 'pending' ORDER BY r.created_at DESC");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];

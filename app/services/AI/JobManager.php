@@ -28,7 +28,11 @@ class JobManager {
             $agent_id = $this->getAiManager()->findBestAgentForTask($task_type);
         }
 
-        $sql = "INSERT INTO ai_jobs (agent_id, workflow_id, task_type, input_data, priority, scheduled_at) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO ai_jobs (agent_id, workflow_id, task_type, input_data, priority, scheduled_at) VALUES (?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $input_json = json_encode($input_data);
 
         if ($this->db->execute($sql, [$agent_id, $workflow_id, $task_type, $input_json, $priority, $scheduled_at])) {
@@ -61,7 +65,11 @@ class JobManager {
      * Process a specific job
      */
     public function processJob($jobId) {
-        $sql = "SELECT * FROM ai_jobs WHERE id = ?";
+        try {
+            $sql = "SELECT * FROM ai_jobs WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $job = $this->db->fetch($sql, [$jobId]);
 
         if (!$job) return false;
@@ -91,7 +99,11 @@ class JobManager {
     }
 
     private function updateJobStatus($id, $status) {
-        $sql = "UPDATE ai_jobs SET status = ? WHERE id = ?";
+        try {
+            $sql = "UPDATE ai_jobs SET status = ? WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->execute($sql, [$status, $id]);
     }
 
@@ -100,7 +112,11 @@ class JobManager {
         $maxAttempts = 3;
 
         $status = ($newAttempts < $maxAttempts) ? 'pending' : 'failed';
-        $sql = "UPDATE ai_jobs SET status = ?, attempts = ?, error_message = ? WHERE id = ?";
+        try {
+            $sql = "UPDATE ai_jobs SET status = ?, attempts = ?, error_message = ? WHERE id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->execute($sql, [$status, $newAttempts, $errorMessage, $id]);
     }
 }

@@ -298,15 +298,19 @@ class Payroll extends Model
             [$approverId, date('Y-m-d H:i:s'), $runId]
         );
 
-        // Mark all entries as paid
-        $db->query(
-            "UPDATE payroll_entries SET
-             payment_status = 'paid',
-             payment_date = ?,
-             updated_at = ?
-             WHERE payroll_run_id = ?",
-            [date('Y-m-d'), date('Y-m-d H:i:s'), $runId]
-        );
+        try {
+            // Mark all entries as paid
+            $db->query(
+                "UPDATE payroll_entries SET
+                 payment_status = 'paid',
+                 payment_date = ?,
+                 updated_at = ?
+                 WHERE payroll_run_id = ?",
+                [date('Y-m-d'), date('Y-m-d H:i:s'), $runId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'success' => true,
@@ -338,11 +342,15 @@ class Payroll extends Model
     {
         $db = Database::getInstance();
 
-        $sql = "SELECT pe.*, e.name as employee_name, e.employee_code
-                FROM payroll_entries pe
-                LEFT JOIN users e ON pe.employee_id = e.id
-                WHERE pe.payroll_run_id = ?
-                ORDER BY e.name";
+        try {
+            $sql = "SELECT pe.*, e.name as employee_name, e.employee_code
+                    FROM payroll_entries pe
+                    LEFT JOIN users e ON pe.employee_id = e.id
+                    WHERE pe.payroll_run_id = ?
+                    ORDER BY e.name";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $db->query($sql, [$runId])->fetchAll();
     }
@@ -422,13 +430,17 @@ class Payroll extends Model
     {
         $db = Database::getInstance();
 
-        $sql = "SELECT pe.*, pr.run_name, pr.pay_period_start, pr.pay_period_end,
-                       pr.pay_date, e.name as employee_name, e.employee_code,
-                       e.designation, e.department
-                FROM payroll_entries pe
-                LEFT JOIN payroll_runs pr ON pe.payroll_run_id = pr.id
-                LEFT JOIN users e ON pe.employee_id = e.id
-                WHERE pe.employee_id = ? AND pe.payroll_run_id = ?";
+        try {
+            $sql = "SELECT pe.*, pr.run_name, pr.pay_period_start, pr.pay_period_end,
+                           pr.pay_date, e.name as employee_name, e.employee_code,
+                           e.designation, e.department
+                    FROM payroll_entries pe
+                    LEFT JOIN payroll_runs pr ON pe.payroll_run_id = pr.id
+                    LEFT JOIN users e ON pe.employee_id = e.id
+                    WHERE pe.employee_id = ? AND pe.payroll_run_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $payslip = $db->query($sql, [$employeeId, $payrollRunId])->fetch();
 

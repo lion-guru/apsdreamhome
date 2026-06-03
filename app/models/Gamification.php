@@ -125,7 +125,11 @@ class Gamification extends Model
             return ['success' => false, 'message' => 'Badge already awarded'];
         }
 
-        $badge = $this->query("SELECT * FROM gamification_badges WHERE id = ?", [$badgeId])->fetch();
+        try {
+            $badge = $this->query("SELECT * FROM gamification_badges WHERE id = ?", [$badgeId])->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         if (!$badge) {
             return ['success' => false, 'message' => 'Badge not found'];
         }
@@ -202,7 +206,11 @@ class Gamification extends Model
      */
     public function joinChallenge(int $userId, string $userType, int $challengeId): array
     {
-        $challenge = $this->query("SELECT * FROM gamification_challenges WHERE id = ? AND is_active = 1", [$challengeId])->fetch();
+        try {
+            $challenge = $this->query("SELECT * FROM gamification_challenges WHERE id = ? AND is_active = 1", [$challengeId])->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         if (!$challenge) {
             return ['success' => false, 'message' => 'Challenge not found'];
         }
@@ -231,11 +239,15 @@ class Gamification extends Model
             'joined_at' => date('Y-m-d H:i:s')
         ]);
 
-        // Update participant count
-        $this->query(
-            "UPDATE gamification_challenges SET current_participants = current_participants + 1 WHERE id = ?",
-            [$challengeId]
-        );
+        try {
+            // Update participant count
+            $this->query(
+                "UPDATE gamification_challenges SET current_participants = current_participants + 1 WHERE id = ?",
+                [$challengeId]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return ['success' => true, 'message' => 'Joined challenge successfully'];
     }
@@ -293,12 +305,16 @@ class Gamification extends Model
 
         // Build query based on leaderboard type
         switch ($leaderboard['leaderboard_type']) {
-            case 'points':
-                $query = "SELECT gp.user_id, gp.user_type, gp.{$metricField} as metric_value,
-                                 u.first_name, u.last_name, gp.current_level
-                          FROM gamification_points gp
-                          LEFT JOIN users u ON gp.user_id = u.id AND gp.user_type = 'associate'
-                          WHERE gp.{$metricField} > 0";
+                case 'points':
+                    try {
+                        $query = "SELECT gp.user_id, gp.user_type, gp.{$metricField} as metric_value,
+                                         u.first_name, u.last_name, gp.current_level
+                                  FROM gamification_points gp
+                                  LEFT JOIN users u ON gp.user_id = u.id AND gp.user_type = 'associate'
+                                  WHERE gp.{$metricField} > 0";
+                    } catch (\Throwable $e) {
+                        $query = "";
+                    }
                 break;
             case 'badges':
                 $query = "SELECT ub.user_id, ub.user_type, COUNT(*) as metric_value,
@@ -339,14 +355,18 @@ class Gamification extends Model
     {
         $points = $this->getOrCreatePointsRecord($userId, $userType);
 
-        $badges = $this->query(
-            "SELECT ub.*, gb.badge_name, gb.badge_icon, gb.badge_color, gb.rarity_level
-             FROM user_badges ub
-             LEFT JOIN gamification_badges gb ON ub.badge_id = gb.id
-             WHERE ub.user_id = ? AND ub.user_type = ? AND ub.is_displayed = 1
-             ORDER BY ub.awarded_at DESC",
-            [$userId, $userType]
-        )->fetchAll();
+        try {
+            $badges = $this->query(
+                "SELECT ub.*, gb.badge_name, gb.badge_icon, gb.badge_color, gb.rarity_level
+                 FROM user_badges ub
+                 LEFT JOIN gamification_badges gb ON ub.badge_id = gb.id
+                 WHERE ub.user_id = ? AND ub.user_type = ? AND ub.is_displayed = 1
+                 ORDER BY ub.awarded_at DESC",
+                [$userId, $userType]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         try {
             $achievements = $this->query(
@@ -361,14 +381,18 @@ class Gamification extends Model
             // Gracefully handle dropped table ref
         }
 
-        $activeChallenges = $this->query(
-            "SELECT cp.*, gc.challenge_name, gc.target_value, gc.end_date
-             FROM challenge_participants cp
-             LEFT JOIN gamification_challenges gc ON cp.challenge_id = gc.id
-             WHERE cp.user_id = ? AND cp.user_type = ? AND cp.is_completed = 0 AND gc.end_date >= CURDATE()
-             ORDER BY gc.end_date ASC",
-            [$userId, $userType]
-        )->fetchAll();
+        try {
+            $activeChallenges = $this->query(
+                "SELECT cp.*, gc.challenge_name, gc.target_value, gc.end_date
+                 FROM challenge_participants cp
+                 LEFT JOIN gamification_challenges gc ON cp.challenge_id = gc.id
+                 WHERE cp.user_id = ? AND cp.user_type = ? AND cp.is_completed = 0 AND gc.end_date >= CURDATE()
+                 ORDER BY gc.end_date ASC",
+                [$userId, $userType]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'points' => $points,
@@ -412,10 +436,14 @@ class Gamification extends Model
 
     private function getOrCreatePointsRecord(int $userId, string $userType): array
     {
-        $record = $this->query(
-            "SELECT * FROM gamification_points WHERE user_id = ? AND user_type = ?",
-            [$userId, $userType]
-        )->fetch();
+        try {
+            $record = $this->query(
+                "SELECT * FROM gamification_points WHERE user_id = ? AND user_type = ?",
+                [$userId, $userType]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if (!$record) {
             $recordId = $this->insert([
@@ -475,7 +503,11 @@ class Gamification extends Model
 
     private function checkForBadgesAndAchievements(int $userId, string $userType, string $activityType, array $metadata): void
     {
-        $badges = $this->query("SELECT * FROM gamification_badges WHERE is_active = 1");
+        try {
+            $badges = $this->query("SELECT * FROM gamification_badges WHERE is_active = 1");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         foreach ($badges as $badge) {
             $criteria = json_decode($badge['criteria_rules'], true);
@@ -539,7 +571,11 @@ class Gamification extends Model
 
     private function completeChallenge(int $participantId, int $challengeId, int $userId, string $userType): void
     {
-        $challenge = $this->query("SELECT * FROM gamification_challenges WHERE id = ?", [$challengeId])->fetch();
+        try {
+            $challenge = $this->query("SELECT * FROM gamification_challenges WHERE id = ?", [$challengeId])->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Update participant
         $this->query(

@@ -382,7 +382,11 @@ class WorkflowEngineService
      */
     public function getWorkflowByCode(string $code): ?array
     {
-        $sql = "SELECT * FROM workflow_definitions WHERE workflow_code = ?";
+        try {
+            $sql = "SELECT * FROM workflow_definitions WHERE workflow_code = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$code]);
         
@@ -465,7 +469,11 @@ class WorkflowEngineService
      */
     public function getAllWorkflows(): array
     {
-        $sql = "SELECT * FROM workflow_definitions WHERE is_active = 1";
+        try {
+            $sql = "SELECT * FROM workflow_definitions WHERE is_active = 1";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->database->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
     

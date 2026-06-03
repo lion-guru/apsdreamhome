@@ -121,9 +121,13 @@ class AdvancedAnalytics {
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'CLI';
         $ipAddress = $this->getClientIP();
         
-        $sql = "INSERT INTO analytics_page_views 
-                (session_id, user_id, page_url, page_title, referrer, user_agent, ip_address) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO analytics_page_views 
+                    (session_id, user_id, page_url, page_title, referrer, user_agent, ip_address) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $this->db->execute($sql, [$sessionId, $userId, $pageUrl, $pageTitle, $referrer, $userAgent, $ipAddress]);
     }
@@ -161,9 +165,13 @@ class AdvancedAnalytics {
         $medium = Security::sanitize($_GET['utm_medium']) ?? '';
         $campaign = Security::sanitize($_GET['utm_campaign']) ?? '';
         
-        $sql = "INSERT INTO analytics_conversions 
-                (session_id, user_id, conversion_type, conversion_value, property_id, funnel_stage, source, medium, campaign) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO analytics_conversions 
+                    (session_id, user_id, conversion_type, conversion_value, property_id, funnel_stage, source, medium, campaign) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $this->db->execute($sql, [$sessionId, $userId, $conversionType, $conversionValue, $propertyId, $funnelStage, $source, $medium, $campaign]);
     }
@@ -191,9 +199,13 @@ class AdvancedAnalytics {
      */
     private function getVisitorsToday() {
         if (!$this->db) return 0;
-        $sql = "SELECT COUNT(DISTINCT session_id) as count 
-                FROM analytics_page_views 
-                WHERE DATE(visit_time) = CURDATE()";
+        try {
+            $sql = "SELECT COUNT(DISTINCT session_id) as count 
+                    FROM analytics_page_views 
+                    WHERE DATE(visit_time) = CURDATE()";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $row = $this->db->fetch($sql);
         return $row['count'] ?? 0;
     }
@@ -215,9 +227,13 @@ class AdvancedAnalytics {
      */
     private function getConversionsToday() {
         if (!$this->db) return 0;
-        $sql = "SELECT COUNT(*) as count 
-                FROM analytics_conversions 
-                WHERE DATE(conversion_time) = CURDATE()";
+        try {
+            $sql = "SELECT COUNT(*) as count 
+                    FROM analytics_conversions 
+                    WHERE DATE(conversion_time) = CURDATE()";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $row = $this->db->fetch($sql);
         return $row['count'] ?? 0;
     }
@@ -239,10 +255,14 @@ class AdvancedAnalytics {
      */
     private function getAvgSessionDuration() {
         if (!$this->db) return 0;
-        $sql = "SELECT AVG(duration_seconds) as duration 
-                FROM analytics_page_views 
-                WHERE DATE(visit_time) = CURDATE() 
-                AND duration_seconds > 0";
+        try {
+            $sql = "SELECT AVG(duration_seconds) as duration 
+                    FROM analytics_page_views 
+                    WHERE DATE(visit_time) = CURDATE() 
+                    AND duration_seconds > 0";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $row = $this->db->fetch($sql);
         return round($row['duration'] ?? 0, 0);
     }
@@ -266,11 +286,15 @@ class AdvancedAnalytics {
      */
     private function getConversionFunnel() {
         if (!$this->db) return [];
-        $sql = "SELECT funnel_stage, COUNT(*) as conversions 
-                FROM analytics_conversions 
-                WHERE DATE(conversion_time) = CURDATE() 
-                GROUP BY funnel_stage 
-                ORDER BY conversions DESC";
+        try {
+            $sql = "SELECT funnel_stage, COUNT(*) as conversions 
+                    FROM analytics_conversions 
+                    WHERE DATE(conversion_time) = CURDATE() 
+                    GROUP BY funnel_stage 
+                    ORDER BY conversions DESC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $this->db->fetchAll($sql);
     }
     

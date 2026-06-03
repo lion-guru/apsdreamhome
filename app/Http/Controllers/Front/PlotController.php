@@ -375,7 +375,11 @@ class PlotController extends BaseController
             return $this->redirect('/user/dashboard');
         }
 
-        $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
+        try {
+            $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $this->layout = 'layouts/customer';
         $this->render('pages/booking_confirmation', [
@@ -423,7 +427,11 @@ class PlotController extends BaseController
                 exit;
             }
 
-            $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
+            try {
+                $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             $currentStatus = $booking['status'] ?? 'pending';
 
             $viewFile = __DIR__ . '/../../views/pages/booking_receipt.php';

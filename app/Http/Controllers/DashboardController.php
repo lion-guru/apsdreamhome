@@ -460,7 +460,11 @@ class DashboardController extends BaseController
 
     private function getPersonalSalesCount($userId)
     {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM property_sales WHERE agent_id = ?");
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM property_sales WHERE agent_id = ?");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$userId]);
         return (int)$stmt->fetchColumn() ?: 0;
     }

@@ -288,8 +288,12 @@ class PlotsAdminController extends AdminController
             return;
         }
 
-        // Get status history
-        $stmt = $this->db->prepare("SELECT h.*, u.name as changed_by_name FROM plot_status_history h LEFT JOIN users u ON h.changed_by = u.id WHERE h.plot_id = ? ORDER BY h.created_at DESC");
+        try {
+            // Get status history
+            $stmt = $this->db->prepare("SELECT h.*, u.name as changed_by_name FROM plot_status_history h LEFT JOIN users u ON h.changed_by = u.id WHERE h.plot_id = ? ORDER BY h.created_at DESC");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$id]);
         $history = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -447,7 +451,11 @@ class PlotsAdminController extends AdminController
 
     private function logStatusChange($plot_id, $old_status, $new_status, $changed_by, $reason)
     {
-        $stmt = $this->db->prepare("INSERT INTO plot_status_history (plot_id, old_status, new_status, changed_by, change_reason) VALUES (?, ?, ?, ?, ?)");
+        try {
+            $stmt = $this->db->prepare("INSERT INTO plot_status_history (plot_id, old_status, new_status, changed_by, change_reason) VALUES (?, ?, ?, ?, ?)");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $stmt->execute([$plot_id, $old_status, $new_status, $changed_by, $reason]);
     }
 }

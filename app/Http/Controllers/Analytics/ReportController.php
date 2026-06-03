@@ -147,11 +147,15 @@ class ReportController extends AdminController
      */
     private function getTotalUsers(array $filters)
     {
-        $query = "SELECT COUNT(DISTINCT u.id) as total 
-                 FROM users u
-                 LEFT JOIN property_views v ON u.id = v.user_id
-                 LEFT JOIN contacts c ON u.id = c.user_id
-                 WHERE 1=1";
+        try {
+            $query = "SELECT COUNT(DISTINCT u.id) as total 
+                     FROM users u
+                     LEFT JOIN property_views v ON u.id = v.user_id
+                     LEFT JOIN contacts c ON u.id = c.user_id
+                     WHERE 1=1";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $params = [];
 

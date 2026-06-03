@@ -3,6 +3,18 @@
  * Admin Layout - Full Dashboard with Sidebar Navigation
  */
 
+// Ensure BASE_URL is defined
+if (!defined('BASE_URL')) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $script = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+    if (substr($script, -7) === '/public') {
+        $script = substr($script, 0, -7);
+    }
+    $script = str_replace('/index.php', '', $script);
+    define('BASE_URL', rtrim("$protocol://$host$script", '/'));
+}
+
 if (session_status() === PHP_SESSION_NONE) @session_start();
 if (!isset($_SESSION['admin_id'])) {
     header('Location: ' . BASE_URL . '/admin/login');

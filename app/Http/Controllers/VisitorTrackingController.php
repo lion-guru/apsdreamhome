@@ -105,14 +105,18 @@ class VisitorTrackingController
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             ");
 
-            $leads = $db->fetchOne("
-                SELECT 
-                    COUNT(*) as total,
-                    COUNT(CASE WHEN lead_status = 'new' THEN 1 END) as new_leads,
-                    COUNT(CASE WHEN lead_status = 'converted' THEN 1 END) as converted_leads
-                FROM visitor_leads
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-            ");
+            try {
+                $leads = $db->fetchOne("
+                    SELECT 
+                        COUNT(*) as total,
+                        COUNT(CASE WHEN lead_status = 'new' THEN 1 END) as new_leads,
+                        COUNT(CASE WHEN lead_status = 'converted' THEN 1 END) as converted_leads
+                    FROM visitor_leads
+                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                ");
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
 
             echo json_encode([
                 'success' => true,

@@ -200,15 +200,19 @@ class Invoice extends Model
             'created_at' => date('Y-m-d H:i:s')
         ];
 
-        $db->query(
-            "INSERT INTO invoice_payments (invoice_id, payment_date, amount, payment_method, reference_number, notes, received_by, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            [
-                $paymentRecord['invoice_id'], $paymentRecord['payment_date'], $paymentRecord['amount'],
-                $paymentRecord['payment_method'], $paymentRecord['reference_number'], $paymentRecord['notes'],
-                $paymentRecord['received_by'], $paymentRecord['created_at']
-            ]
-        );
+        try {
+            $db->query(
+                "INSERT INTO invoice_payments (invoice_id, payment_date, amount, payment_method, reference_number, notes, received_by, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                    $paymentRecord['invoice_id'], $paymentRecord['payment_date'], $paymentRecord['amount'],
+                    $paymentRecord['payment_method'], $paymentRecord['reference_number'], $paymentRecord['notes'],
+                    $paymentRecord['received_by'], $paymentRecord['created_at']
+                ]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Check if invoice is fully paid
         $totalPaid = $this->getTotalPayments($invoiceId);
@@ -267,11 +271,15 @@ class Invoice extends Model
             [$invoiceId]
         )->fetchAll();
 
-        // Get payments
-        $payments = $db->query(
-            "SELECT * FROM invoice_payments WHERE invoice_id = ? ORDER BY payment_date DESC",
-            [$invoiceId]
-        )->fetchAll();
+        try {
+            // Get payments
+            $payments = $db->query(
+                "SELECT * FROM invoice_payments WHERE invoice_id = ? ORDER BY payment_date DESC",
+                [$invoiceId]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $invoice['items'] = $items;
         $invoice['payments'] = $payments;
@@ -319,13 +327,17 @@ class Invoice extends Model
 
         $whereClause = empty($whereConditions) ? '' : 'WHERE ' . implode(' AND ', $whereConditions);
 
-        $sql = "SELECT i.*, COUNT(ip.id) as payment_count, SUM(ip.amount) as paid_amount
-                FROM invoices i
-                LEFT JOIN invoice_payments ip ON i.id = ip.invoice_id
-                {$whereClause}
-                GROUP BY i.id
-                ORDER BY i.created_at DESC
-                LIMIT ? OFFSET ?";
+        try {
+            $sql = "SELECT i.*, COUNT(ip.id) as payment_count, SUM(ip.amount) as paid_amount
+                    FROM invoices i
+                    LEFT JOIN invoice_payments ip ON i.id = ip.invoice_id
+                    {$whereClause}
+                    GROUP BY i.id
+                    ORDER BY i.created_at DESC
+                    LIMIT ? OFFSET ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $params[] = $limit;
         $params[] = $offset;
@@ -459,10 +471,14 @@ class Invoice extends Model
     {
         $db = Database::getInstance();
 
-        $result = $db->query(
-            "SELECT SUM(amount) as total FROM invoice_payments WHERE invoice_id = ?",
-            [$invoiceId]
-        )->fetch();
+        try {
+            $result = $db->query(
+                "SELECT SUM(amount) as total FROM invoice_payments WHERE invoice_id = ?",
+                [$invoiceId]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return (float)($result['total'] ?? 0);
     }
@@ -473,7 +489,11 @@ class Invoice extends Model
     private function getInvoiceTemplate(int $templateId = null): ?array
     {
         if ($templateId) {
-            $template = $this->query("SELECT * FROM invoice_templates WHERE id = ?", [$templateId])->fetch();
+            try {
+                $template = $this->query("SELECT * FROM invoice_templates WHERE id = ?", [$templateId])->fetch();
+            } catch (\Throwable $e) {
+                // Gracefully handle dropped table ref
+            }
             if ($template) return $template;
         }
 

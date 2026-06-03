@@ -27,7 +27,11 @@ class CommunicationManager {
         $content = $data['content'] ?? '';
         $recording = $data['recording_url'] ?? null;
 
-        $sql = "INSERT INTO communication_interactions (lead_id, channel, interaction_type, direction, content, recording_url) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO communication_interactions (lead_id, channel, interaction_type, direction, content, recording_url) VALUES (?, ?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         if ($this->db->execute($sql, [$lead_id, $channel, $type, $direction, $content, $recording])) {
             $interaction_id = $this->db->lastInsertId();
@@ -46,8 +50,12 @@ class CommunicationManager {
         $tag = $analysis['output']['tag'] ?? 'enquiry';
         $deptType = $analysis['output']['department'] ?? 'sales';
         
-        // Update tag in interaction
-        $this->db->execute("UPDATE communication_interactions SET tag = ? WHERE id = ?", [$tag, $interactionId]);
+        try {
+            // Update tag in interaction
+            $this->db->execute("UPDATE communication_interactions SET tag = ? WHERE id = ?", [$tag, $interactionId]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         // Find best department and employee
         $dept = $this->db->fetch("SELECT id FROM departments WHERE type = ? LIMIT 1", [$deptType]);

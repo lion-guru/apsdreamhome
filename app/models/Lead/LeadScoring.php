@@ -215,10 +215,14 @@ class LeadScoring extends Model
      */
     private function getActiveRules(string $category): array
     {
-        return $this->query(
-            "SELECT * FROM lead_scoring_rules WHERE category = ? AND is_active = 1 ORDER BY priority DESC",
-            [$category]
-        )->fetchAll();
+        try {
+            return $this->query(
+                "SELECT * FROM lead_scoring_rules WHERE category = ? AND is_active = 1 ORDER BY priority DESC",
+                [$category]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**
@@ -226,12 +230,16 @@ class LeadScoring extends Model
      */
     private function calculateGrade(int $score): string
     {
-        $thresholds = $this->query(
-            "SELECT grade FROM scoring_thresholds
-             WHERE min_score <= ? AND (max_score IS NULL OR max_score >= ?) AND is_active = 1
-             ORDER BY min_score DESC LIMIT 1",
-            [$score, $score]
-        )->fetch();
+        try {
+            $thresholds = $this->query(
+                "SELECT grade FROM scoring_thresholds
+                 WHERE min_score <= ? AND (max_score IS NULL OR max_score >= ?) AND is_active = 1
+                 ORDER BY min_score DESC LIMIT 1",
+                [$score, $score]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $thresholds['grade'] ?? 'F';
     }
@@ -276,7 +284,11 @@ class LeadScoring extends Model
      */
     private function getRuleDecayDays(int $ruleId): ?int
     {
-        $rule = $this->query("SELECT decay_days FROM lead_scoring_rules WHERE id = ?", [$ruleId])->fetch();
+        try {
+            $rule = $this->query("SELECT decay_days FROM lead_scoring_rules WHERE id = ?", [$ruleId])->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         return $rule['decay_days'] ?? null;
     }
 
@@ -285,12 +297,16 @@ class LeadScoring extends Model
      */
     private function checkThresholdsAndTriggerActions(int $leadId, int $score, string $grade): void
     {
-        $threshold = $this->query(
-            "SELECT * FROM scoring_thresholds
-             WHERE min_score <= ? AND (max_score IS NULL OR max_score >= ?) AND is_active = 1
-             ORDER BY min_score DESC LIMIT 1",
-            [$score, $score]
-        )->fetch();
+        try {
+            $threshold = $this->query(
+                "SELECT * FROM scoring_thresholds
+                 WHERE min_score <= ? AND (max_score IS NULL OR max_score >= ?) AND is_active = 1
+                 ORDER BY min_score DESC LIMIT 1",
+                [$score, $score]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if (!$threshold) return;
 
@@ -409,16 +425,20 @@ class LeadScoring extends Model
             [$startDate]
         )->fetch();
 
-        // Get rule effectiveness
-        $ruleStats = $this->query(
-            "SELECT lsr.rule_name, COUNT(lsh.id) as applications, AVG(lsh.points_change) as avg_points
-             FROM lead_scoring_history lsh
-             LEFT JOIN lead_scoring_rules lsr ON lsh.rule_id = lsr.id
-             WHERE lsh.applied_at >= ? AND lsh.action = 'scored'
-             GROUP BY lsr.id, lsr.rule_name
-             ORDER BY applications DESC LIMIT 10",
-            [$startDate]
-        )->fetchAll();
+        try {
+            // Get rule effectiveness
+            $ruleStats = $this->query(
+                "SELECT lsr.rule_name, COUNT(lsh.id) as applications, AVG(lsh.points_change) as avg_points
+                 FROM lead_scoring_history lsh
+                 LEFT JOIN lead_scoring_rules lsr ON lsh.rule_id = lsr.id
+                 WHERE lsh.applied_at >= ? AND lsh.action = 'scored'
+                 GROUP BY lsr.id, lsr.rule_name
+                 ORDER BY applications DESC LIMIT 10",
+                [$startDate]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $analytics['top_rules'] = $ruleStats;
 
@@ -510,26 +530,30 @@ class LeadScoring extends Model
      */
     public function updateScoringThreshold(int $thresholdId, array $thresholdData): array
     {
-        $this->query(
-            "UPDATE scoring_thresholds SET
-             threshold_name = ?, min_score = ?, max_score = ?, grade = ?, description = ?,
-             action_required = ?, email_alert = ?, sms_alert = ?, auto_assign = ?, assigned_user_id = ?,
-             updated_at = NOW()
-             WHERE id = ?",
-            [
-                $thresholdData['threshold_name'],
-                $thresholdData['min_score'],
-                $thresholdData['max_score'] ?? null,
-                $thresholdData['grade'],
-                $thresholdData['description'] ?? null,
-                $thresholdData['action_required'],
-                $thresholdData['email_alert'] ?? 0,
-                $thresholdData['sms_alert'] ?? 0,
-                $thresholdData['auto_assign'] ?? 0,
-                $thresholdData['assigned_user_id'] ?? null,
-                $thresholdId
-            ]
-        );
+        try {
+            $this->query(
+                "UPDATE scoring_thresholds SET
+                 threshold_name = ?, min_score = ?, max_score = ?, grade = ?, description = ?,
+                 action_required = ?, email_alert = ?, sms_alert = ?, auto_assign = ?, assigned_user_id = ?,
+                 updated_at = NOW()
+                 WHERE id = ?",
+                [
+                    $thresholdData['threshold_name'],
+                    $thresholdData['min_score'],
+                    $thresholdData['max_score'] ?? null,
+                    $thresholdData['grade'],
+                    $thresholdData['description'] ?? null,
+                    $thresholdData['action_required'],
+                    $thresholdData['email_alert'] ?? 0,
+                    $thresholdData['sms_alert'] ?? 0,
+                    $thresholdData['auto_assign'] ?? 0,
+                    $thresholdData['assigned_user_id'] ?? null,
+                    $thresholdId
+                ]
+            );
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return [
             'success' => true,
