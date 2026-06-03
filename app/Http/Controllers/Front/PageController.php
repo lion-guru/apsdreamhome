@@ -17,7 +17,8 @@ class PageController extends BaseController
         $pageTitle = '';
         $pageContent = '';
         try {
-            $stmt = $this->db->query("SELECT title, content FROM pages WHERE slug = '" . addslashes($slug) . "' AND status = 'published' LIMIT 1");
+            $stmt = $this->db->prepare("SELECT title, content FROM pages WHERE slug = ? AND status = 'published' LIMIT 1");
+            $stmt->execute([$slug]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row) {
                 $pageTitle = $row['title'];
