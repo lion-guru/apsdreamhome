@@ -86,19 +86,7 @@ class ModelIntegration {
     private static function createTable($pdo, $tableName) {
         // Define table schemas based on table name
         $schemas = [
-            'company_projects' => "CREATE TABLE IF NOT EXISTS company_projects (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                project_name VARCHAR(255) NOT NULL,
-                description TEXT,
-                location VARCHAR(255),
-                project_type ENUM('residential', 'commercial', 'mixed') DEFAULT 'residential',
-                status ENUM('planning', 'ongoing', 'completed', 'cancelled') DEFAULT 'planning',
-                start_date DATE,
-                end_date DATE,
-                budget DECIMAL(15,2),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )",
+            'company_projects' => "",
             // Add other table schemas as needed
         ];
         

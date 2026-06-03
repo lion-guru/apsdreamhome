@@ -36,32 +36,11 @@ class PerformanceMonitoringService
     {
         try {
             // Performance metrics table
-            $sql = "CREATE TABLE IF NOT EXISTS performance_metrics (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                metric_type VARCHAR(50) NOT NULL,
-                metric_name VARCHAR(100) NOT NULL,
-                metric_value DECIMAL(10,2) NOT NULL,
-                metric_unit VARCHAR(20),
-                threshold_value DECIMAL(10,2),
-                status ENUM('normal', 'warning', 'critical') DEFAULT 'normal',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_metric_type_name (metric_type, metric_name),
-                INDEX idx_created_at (created_at),
-                INDEX idx_status (status)
-            )";
+            $sql = "";
             $this->database->execute($sql);
 
             // Slow queries log
-            $sql = "CREATE TABLE IF NOT EXISTS slow_queries_log (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                query_sql TEXT NOT NULL,
-                query_params JSON,
-                execution_time DECIMAL(10,2) NOT NULL,
-                memory_usage DECIMAL(10,2),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_execution_time (execution_time),
-                INDEX idx_created_at (created_at)
-            )";
+            $sql = "";
             $this->database->execute($sql);
 
             // Performance alerts

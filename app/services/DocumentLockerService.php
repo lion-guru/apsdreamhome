@@ -24,19 +24,7 @@ class DocumentLockerService
 
     private function ensureTableExists()
     {
-        $sql = "CREATE TABLE IF NOT EXISTS mlm_document_locker (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            title VARCHAR(255) NOT NULL,
-            document_type ENUM('registry', 'id_proof', 'payment_receipt', 'other') DEFAULT 'other',
-            file_url TEXT NOT NULL,
-            status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
-            remarks TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_user_id (user_id),
-            INDEX idx_status (status)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+        $sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
         
         $this->db->query($sql);
     }

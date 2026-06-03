@@ -448,24 +448,9 @@ class PerformanceConfigService
     private function initializePerformanceTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS performance_logs (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event VARCHAR(255) NOT NULL,
-                event_data JSON,
-                execution_time_ms DECIMAL(10,2),
-                level INT NOT NULL DEFAULT 2,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_event (event),
-                INDEX idx_level (level),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS performance_config (
-                config_key VARCHAR(255) PRIMARY KEY,
-                config_value JSON,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

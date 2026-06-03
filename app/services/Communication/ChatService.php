@@ -26,60 +26,13 @@ class ChatService
         $pdo = $this->database->getConnection();
         
         // Chat conversations
-        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_conversations (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NULL,
-            lead_id INT NULL,
-            customer_id INT NOT NULL,
-            agent_id INT NOT NULL,
-            status ENUM('active', 'closed', 'archived') DEFAULT 'active',
-            source ENUM('website', 'mobile', 'whatsapp', 'property_page') DEFAULT 'website',
-            last_message_at TIMESTAMP NULL,
-            last_message_preview VARCHAR(255) NULL,
-            customer_unread_count INT DEFAULT 0,
-            agent_unread_count INT DEFAULT 0,
-            metadata JSON NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_customer (customer_id),
-            INDEX idx_agent (agent_id),
-            INDEX idx_status (status),
-            INDEX idx_property (property_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Chat messages
-        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_messages (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            conversation_id INT NOT NULL,
-            sender_id INT NOT NULL,
-            sender_type ENUM('customer', 'agent', 'system', 'bot') NOT NULL,
-            message_type ENUM('text', 'image', 'file', 'location', 'property_card', 'template') DEFAULT 'text',
-            message TEXT NOT NULL,
-            attachments JSON NULL,
-            is_read TINYINT(1) DEFAULT 0,
-            read_at TIMESTAMP NULL,
-            reply_to_message_id BIGINT NULL,
-            metadata JSON NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_conversation (conversation_id),
-            INDEX idx_sender (sender_id, sender_type),
-            INDEX idx_created (created_at),
-            INDEX idx_unread (conversation_id, is_read)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Chat participants (for group chats in future)
-        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_participants (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            conversation_id INT NOT NULL,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'agent', 'admin') NOT NULL,
-            role ENUM('owner', 'participant', 'viewer') DEFAULT 'participant',
-            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            left_at TIMESTAMP NULL,
-            is_active TINYINT(1) DEFAULT 1,
-            UNIQUE KEY unique_participant (conversation_id, user_id, user_type),
-            INDEX idx_conversation (conversation_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Quick replies / templates
         $pdo->exec("CREATE TABLE IF NOT EXISTS chat_quick_replies (
@@ -98,22 +51,7 @@ class ChatService
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Chat settings per user
-        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_user_settings (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'agent') NOT NULL,
-            sound_enabled TINYINT(1) DEFAULT 1,
-            desktop_notifications TINYINT(1) DEFAULT 1,
-            email_notifications TINYINT(1) DEFAULT 1,
-            auto_reply_enabled TINYINT(1) DEFAULT 0,
-            auto_reply_message TEXT NULL,
-            working_hours_start TIME DEFAULT '09:00',
-            working_hours_end TIME DEFAULT '18:00',
-            timezone VARCHAR(50) DEFAULT 'Asia/Kolkata',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_user (user_id, user_type)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

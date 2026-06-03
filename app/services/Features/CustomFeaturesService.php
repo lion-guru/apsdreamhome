@@ -58,18 +58,7 @@ class CustomFeaturesService
 
             // Feature usage table
             $this->db->execute("
-                CREATE TABLE IF NOT EXISTS feature_usage (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    feature_type VARCHAR(50) NOT NULL,
-                    user_id INT,
-                    property_id INT,
-                    usage_data JSON,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_feature_type (feature_type),
-                    INDEX idx_user_id (user_id),
-                    INDEX idx_created_at (created_at)
-                )
-            ");
+                ");
 
             // Activity log table
             $this->db->execute("

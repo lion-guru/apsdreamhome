@@ -28,73 +28,16 @@ class SEOManagementService
         $pdo = $this->database->getConnection();
         
         // SEO meta tags table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS seo_meta_tags (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            entity_type VARCHAR(50) NOT NULL,
-            entity_id INT NOT NULL,
-            page_url VARCHAR(255) NULL,
-            title VARCHAR(70) NULL,
-            description VARCHAR(160) NULL,
-            keywords VARCHAR(255) NULL,
-            og_title VARCHAR(100) NULL,
-            og_description VARCHAR(200) NULL,
-            og_image VARCHAR(255) NULL,
-            twitter_card VARCHAR(50) DEFAULT 'summary_large_image',
-            canonical_url VARCHAR(255) NULL,
-            robots_meta VARCHAR(50) DEFAULT 'index,follow',
-            schema_markup JSON NULL,
-            priority DECIMAL(2,1) DEFAULT 0.5,
-            change_frequency ENUM('always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never') DEFAULT 'weekly',
-            is_auto_generated TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_entity (entity_type, entity_id),
-            INDEX idx_url (page_url)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // URL redirects
-        $pdo->exec("CREATE TABLE IF NOT EXISTS url_redirects (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            old_url VARCHAR(255) NOT NULL,
-            new_url VARCHAR(255) NOT NULL,
-            redirect_type ENUM('301', '302', '307') DEFAULT '301',
-            hit_count INT DEFAULT 0,
-            last_accessed TIMESTAMP NULL,
-            is_active TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_old_url (old_url),
-            INDEX idx_active (is_active)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Broken links
-        $pdo->exec("CREATE TABLE IF NOT EXISTS broken_links (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            url VARCHAR(255) NOT NULL,
-            source_page VARCHAR(255) NULL,
-            status_code INT NULL,
-            error_message TEXT NULL,
-            found_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            fixed_at TIMESTAMP NULL,
-            is_fixed TINYINT(1) DEFAULT 0,
-            INDEX idx_fixed (is_fixed),
-            INDEX idx_url (url)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // SEO analytics
-        $pdo->exec("CREATE TABLE IF NOT EXISTS seo_analytics (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            page_url VARCHAR(255) NOT NULL,
-            page_views INT DEFAULT 0,
-            unique_visitors INT DEFAULT 0,
-            avg_time_on_page INT DEFAULT 0,
-            bounce_rate DECIMAL(5,2) DEFAULT 0,
-            search_impressions INT DEFAULT 0,
-            search_clicks INT DEFAULT 0,
-            search_position DECIMAL(4,1) DEFAULT 0,
-            date_recorded DATE NOT NULL,
-            UNIQUE KEY unique_page_date (page_url, date_recorded),
-            INDEX idx_date (date_recorded)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

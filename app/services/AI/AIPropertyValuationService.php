@@ -28,70 +28,13 @@ class AIPropertyValuationService
         $pdo = $this->database->getConnection();
         
         // AI valuations
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_property_valuations (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NULL,
-            location VARCHAR(255) NOT NULL,
-            property_type ENUM('plot', 'house', 'flat', 'shop', 'farmhouse', 'commercial') NOT NULL,
-            area_sqft DECIMAL(10,2) NOT NULL,
-            bedrooms INT NULL,
-            bathrooms INT NULL,
-            age_years INT NULL,
-            floor_number INT NULL,
-            total_floors INT NULL,
-            amenities JSON NULL,
-            nearby_facilities JSON NULL,
-            market_trend_score DECIMAL(5,2) NULL,
-            demand_score DECIMAL(5,2) NULL,
-            location_score DECIMAL(5,2) NULL,
-            infrastructure_score DECIMAL(5,2) NULL,
-            predicted_price DECIMAL(15,2) NOT NULL,
-            price_per_sqft DECIMAL(10,2) NOT NULL,
-            confidence_score DECIMAL(5,2) NOT NULL,
-            price_range_low DECIMAL(15,2) NULL,
-            price_range_high DECIMAL(15,2) NULL,
-            comparable_properties JSON NULL,
-            market_analysis JSON NULL,
-            ai_model_version VARCHAR(20) DEFAULT '1.0',
-            prediction_factors JSON NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_property (property_id),
-            INDEX idx_location (location),
-            INDEX idx_type (property_type),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // AI training data
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_training_data (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NOT NULL,
-            actual_price DECIMAL(15,2) NOT NULL,
-            predicted_price DECIMAL(15,2) NOT NULL,
-            features JSON NOT NULL,
-            accuracy DECIMAL(5,2) NULL,
-            used_for_training TINYINT(1) DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_property (property_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Market trends
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_market_trends (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            location VARCHAR(255) NOT NULL,
-            property_type VARCHAR(50) NOT NULL,
-            month DATE NOT NULL,
-            avg_price DECIMAL(15,2) NULL,
-            price_change_percent DECIMAL(5,2) NULL,
-            transactions_count INT NULL,
-            demand_index DECIMAL(5,2) NULL,
-            supply_index DECIMAL(5,2) NULL,
-            trend_direction ENUM('up', 'down', 'stable') NULL,
-            forecast_next_month DECIMAL(15,2) NULL,
-            confidence DECIMAL(5,2) NULL,
-            UNIQUE KEY unique_trend (location, property_type, month),
-            INDEX idx_location (location),
-            INDEX idx_month (month)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

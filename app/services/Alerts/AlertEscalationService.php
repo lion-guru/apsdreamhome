@@ -61,43 +61,11 @@ class AlertEscalationService
     {
         try {
             // Alerts table
-            $sql = "CREATE TABLE IF NOT EXISTS alerts (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                alert_id VARCHAR(100) NOT NULL UNIQUE,
-                title VARCHAR(255) NOT NULL,
-                description TEXT,
-                level ENUM('info','warning','critical','emergency') DEFAULT 'info',
-                source VARCHAR(100),
-                category VARCHAR(100),
-                status ENUM('active','acknowledged','resolved','escalated') DEFAULT 'active',
-                priority INT DEFAULT 2,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                acknowledged_at TIMESTAMP NULL,
-                acknowledged_by BIGINT(20) UNSIGNED NULL,
-                resolved_at TIMESTAMP NULL,
-                resolved_by BIGINT(20) UNSIGNED NULL,
-                metadata JSON,
-                FOREIGN KEY (acknowledged_by) REFERENCES users(id) ON DELETE SET NULL,
-                FOREIGN KEY (resolved_by) REFERENCES users(id) ON DELETE SET NULL
-            )";
+            $sql = "";
             $this->database->query($sql);
 
             // Alert escalations table
-            $sql = "CREATE TABLE IF NOT EXISTS alert_escalations (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                alert_id VARCHAR(100) NOT NULL,
-                escalation_level INT DEFAULT 1,
-                escalated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                escalated_by BIGINT(20) UNSIGNED NULL,
-                timeout_minutes INT DEFAULT 15,
-                status ENUM('pending','acknowledged','timeout','escalated') DEFAULT 'pending',
-                notified_users JSON,
-                response_required BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (escalated_by) REFERENCES users(id) ON DELETE SET NULL,
-                INDEX idx_alert_escalations_alert_id (alert_id),
-                INDEX idx_alert_escalations_status (status)
-            )";
+            $sql = "";
             $this->database->query($sql);
 
         } catch (Exception $e) {

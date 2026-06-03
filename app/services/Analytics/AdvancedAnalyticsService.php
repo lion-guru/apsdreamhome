@@ -26,77 +26,16 @@ class AdvancedAnalyticsService
         $pdo = $this->database->getConnection();
         
         // Analytics events
-        $pdo->exec("CREATE TABLE IF NOT EXISTS analytics_events (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            event_type VARCHAR(50) NOT NULL,
-            event_name VARCHAR(100) NOT NULL,
-            user_id INT NULL,
-            user_type VARCHAR(20) NULL,
-            session_id VARCHAR(64) NULL,
-            entity_type VARCHAR(50) NULL,
-            entity_id INT NULL,
-            properties JSON NULL,
-            ip_address VARCHAR(45) NULL,
-            user_agent TEXT NULL,
-            referrer VARCHAR(500) NULL,
-            device_type ENUM('desktop', 'mobile', 'tablet') NULL,
-            browser VARCHAR(50) NULL,
-            os VARCHAR(50) NULL,
-            country VARCHAR(2) NULL,
-            city VARCHAR(100) NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_event (event_type, event_name),
-            INDEX idx_user (user_id, user_type),
-            INDEX idx_entity (entity_type, entity_id),
-            INDEX idx_created (created_at),
-            INDEX idx_session (session_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Daily aggregates
-        $pdo->exec("CREATE TABLE IF NOT EXISTS analytics_daily (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            date DATE NOT NULL,
-            metric_name VARCHAR(50) NOT NULL,
-            metric_value DECIMAL(15,2) NOT NULL,
-            dimension VARCHAR(50) NULL,
-            breakdown JSON NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_metric (date, metric_name, dimension),
-            INDEX idx_date (date)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Funnel stages
-        $pdo->exec("CREATE TABLE IF NOT EXISTS analytics_funnels (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            funnel_name VARCHAR(50) NOT NULL,
-            stage_name VARCHAR(50) NOT NULL,
-            user_id INT NULL,
-            session_id VARCHAR(64) NULL,
-            converted_at TIMESTAMP NULL,
-            time_spent_seconds INT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_funnel (funnel_name, stage_name),
-            INDEX idx_user (user_id),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Cohort analysis
-        $pdo->exec("CREATE TABLE IF NOT EXISTS analytics_cohorts (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            cohort_date DATE NOT NULL,
-            cohort_type VARCHAR(30) NOT NULL,
-            day_0 INT DEFAULT 0,
-            day_1 INT DEFAULT 0,
-            day_7 INT DEFAULT 0,
-            day_14 INT DEFAULT 0,
-            day_30 INT DEFAULT 0,
-            day_60 INT DEFAULT 0,
-            day_90 INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_cohort (cohort_date, cohort_type),
-            INDEX idx_date (cohort_date)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Heatmap data
         $pdo->exec("CREATE TABLE IF NOT EXISTS analytics_heatmaps (

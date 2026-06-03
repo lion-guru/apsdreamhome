@@ -49,38 +49,11 @@ class SecurityEnhancementService
     {
         try {
             // Security events log
-            $sql = "CREATE TABLE IF NOT EXISTS security_events (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event_type VARCHAR(50) NOT NULL,
-                severity ENUM('low', 'medium', 'high', 'critical') NOT NULL,
-                ip_address VARCHAR(45) NOT NULL,
-                user_agent TEXT,
-                request_uri TEXT,
-                request_method VARCHAR(10),
-                user_id BIGINT(20) UNSIGNED NULL,
-                details JSON,
-                blocked BOOLEAN DEFAULT FALSE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_event_type (event_type),
-                INDEX idx_severity (severity),
-                INDEX idx_ip_address (ip_address),
-                INDEX idx_created_at (created_at),
-                INDEX idx_blocked (blocked)
-            )";
+            $sql = "";
             $this->database->execute($sql);
 
             // Blocked IPs table
-            $sql = "CREATE TABLE IF NOT EXISTS blocked_ips (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                ip_address VARCHAR(45) NOT NULL UNIQUE,
-                reason VARCHAR(255),
-                blocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                expires_at TIMESTAMP NULL,
-                permanent BOOLEAN DEFAULT FALSE,
-                blocked_by VARCHAR(50),
-                INDEX idx_ip_address (ip_address),
-                INDEX idx_expires_at (expires_at)
-            )";
+            $sql = "";
             $this->database->execute($sql);
 
             // Rate limiting table

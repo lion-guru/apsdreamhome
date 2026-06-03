@@ -63,51 +63,13 @@ class BackupIntegrityService
     {
         $tables = [
             'backup_integrity_checks' => "
-                CREATE TABLE IF NOT EXISTS backup_integrity_checks (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    backup_file VARCHAR(500) NOT NULL,
-                    checksum VARCHAR(64) NOT NULL,
-                    file_size BIGINT NOT NULL,
-                    verification_status ENUM('pending', 'passed', 'failed') DEFAULT 'pending',
-                    verification_details TEXT,
-                    verification_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_backup_file (backup_file),
-                    INDEX idx_verification_status (verification_status),
-                    INDEX idx_verification_time (verification_time)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ",
             'backup_verification_history' => "
-                CREATE TABLE IF NOT EXISTS backup_verification_history (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    backup_file VARCHAR(500) NOT NULL,
-                    test_type VARCHAR(100) NOT NULL,
-                    test_status ENUM('pending', 'passed', 'failed') DEFAULT 'pending',
-                    test_result TEXT,
-                    test_duration INT DEFAULT 0,
-                    error_message TEXT,
-                    tested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_backup_file (backup_file),
-                    INDEX idx_test_type (test_type),
-                    INDEX idx_test_status (test_status)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ",
             'backup_schedule' => "
-                CREATE TABLE IF NOT EXISTS backup_schedule (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    backup_name VARCHAR(200) NOT NULL,
-                    backup_type ENUM('full', 'incremental', 'differential') DEFAULT 'full',
-                    schedule_type ENUM('daily', 'weekly', 'monthly') DEFAULT 'daily',
-                    schedule_time TIME NOT NULL,
-                    is_active BOOLEAN DEFAULT TRUE,
-                    last_run TIMESTAMP NULL,
-                    next_run TIMESTAMP NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    INDEX idx_backup_name (backup_name),
-                    INDEX idx_is_active (is_active),
-                    INDEX idx_next_run (next_run)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             "
         ];
 

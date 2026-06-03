@@ -43,60 +43,10 @@ class SalaryService
     {
         $tables = [
             'employee_salary_structure' => "
-                CREATE TABLE IF NOT EXISTS employee_salary_structure (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    employee_id INT NOT NULL,
-                    basic_salary DECIMAL(10,2) NOT NULL,
-                    hra DECIMAL(10,2) DEFAULT 0,
-                    da DECIMAL(10,2) DEFAULT 0,
-                    ta DECIMAL(10,2) DEFAULT 0,
-                    medical_allowance DECIMAL(10,2) DEFAULT 0,
-                    special_allowance DECIMAL(10,2) DEFAULT 0,
-                    other_allowance DECIMAL(10,2) DEFAULT 0,
-                    pf_deduction DECIMAL(10,2) DEFAULT 0,
-                    esi_deduction DECIMAL(10,2) DEFAULT 0,
-                    professional_tax DECIMAL(10,2) DEFAULT 0,
-                    tds_deduction DECIMAL(10,2) DEFAULT 0,
-                    other_deduction DECIMAL(10,2) DEFAULT 0,
-                    gross_salary DECIMAL(10,2) NOT NULL,
-                    net_salary DECIMAL(10,2) NOT NULL,
-                    effective_from DATE NOT NULL,
-                    is_active BOOLEAN DEFAULT TRUE,
-                    approved_by INT,
-                    created_by INT NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    INDEX idx_employee_id (employee_id),
-                    INDEX idx_effective_from (effective_from),
-                    INDEX idx_is_active (is_active)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ",
             'monthly_salary_payments' => "
-                CREATE TABLE IF NOT EXISTS monthly_salary_payments (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    employee_id INT NOT NULL,
-                    month INT NOT NULL,
-                    year INT NOT NULL,
-                    gross_salary DECIMAL(10,2) NOT NULL,
-                    total_deductions DECIMAL(10,2) NOT NULL,
-                    net_salary DECIMAL(10,2) NOT NULL,
-                    working_days INT DEFAULT 0,
-                    present_days INT DEFAULT 0,
-                    leave_days INT DEFAULT 0,
-                    overtime_hours DECIMAL(5,2) DEFAULT 0,
-                    overtime_amount DECIMAL(10,2) DEFAULT 0,
-                    payment_date DATE,
-                    payment_status ENUM('pending', 'processed', 'paid') DEFAULT 'pending',
-                    payment_method VARCHAR(50),
-                    transaction_id VARCHAR(100),
-                    processed_by INT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    UNIQUE KEY unique_employee_month_year (employee_id, month, year),
-                    INDEX idx_employee_id (employee_id),
-                    INDEX idx_payment_status (payment_status),
-                    INDEX idx_payment_date (payment_date)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ",
             'payroll_settings' => "
                 CREATE TABLE IF NOT EXISTS payroll_settings (

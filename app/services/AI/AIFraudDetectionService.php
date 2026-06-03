@@ -28,50 +28,11 @@ class AIFraudDetectionService
     {
         $pdo = $this->database->getConnection();
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_fraud_alerts (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            entity_type ENUM('user', 'transaction', 'booking', 'inquiry') NOT NULL,
-            entity_id INT NOT NULL,
-            alert_type VARCHAR(50) NOT NULL,
-            risk_score INT NOT NULL,
-            risk_level ENUM('low', 'medium', 'high', 'critical') NOT NULL,
-            indicators JSON NOT NULL,
-            evidence JSON NULL,
-            status ENUM('new', 'investigating', 'resolved', 'false_positive') DEFAULT 'new',
-            assigned_to INT NULL,
-            resolved_at TIMESTAMP NULL,
-            resolution_notes TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_entity (entity_type, entity_id),
-            INDEX idx_risk (risk_score),
-            INDEX idx_status (status),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_fraud_patterns (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            pattern_name VARCHAR(100) NOT NULL,
-            pattern_type VARCHAR(50) NOT NULL,
-            detection_rules JSON NOT NULL,
-            risk_weight INT DEFAULT 10,
-            is_active TINYINT(1) DEFAULT 1,
-            detection_count INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_user_risk_scores (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type VARCHAR(20) DEFAULT 'customer',
-            overall_risk_score INT DEFAULT 0,
-            risk_level ENUM('low', 'medium', 'high', 'critical') DEFAULT 'low',
-            factors JSON NULL,
-            last_activity_at TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_user (user_id, user_type),
-            INDEX idx_risk (risk_level)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

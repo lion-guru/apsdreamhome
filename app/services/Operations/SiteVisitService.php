@@ -29,72 +29,16 @@ class SiteVisitService
         $pdo = $this->database->getConnection();
         
         // Site visits table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS site_visits (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NOT NULL,
-            lead_id INT NULL,
-            user_id INT NULL,
-            visitor_name VARCHAR(100) NOT NULL,
-            visitor_phone VARCHAR(20) NOT NULL,
-            visitor_email VARCHAR(100) NULL,
-            visit_date DATE NOT NULL,
-            visit_time TIME NOT NULL,
-            duration_minutes INT DEFAULT 60,
-            visit_type ENUM('site_visit', 'virtual_tour', 'office_meeting', 'video_call') DEFAULT 'site_visit',
-            status ENUM('scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show') DEFAULT 'scheduled',
-            assigned_to INT NULL,
-            pickup_required TINYINT(1) DEFAULT 0,
-            pickup_location VARCHAR(255) NULL,
-            notes TEXT NULL,
-            feedback TEXT NULL,
-            rating INT NULL,
-            reminder_sent TINYINT(1) DEFAULT 0,
-            confirmation_sent TINYINT(1) DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_property (property_id),
-            INDEX idx_date (visit_date),
-            INDEX idx_status (status),
-            INDEX idx_assigned (assigned_to)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Visit checklists
-        $pdo->exec("CREATE TABLE IF NOT EXISTS visit_checklists (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            visit_id INT NOT NULL,
-            item_name VARCHAR(100) NOT NULL,
-            category ENUM('site', 'amenities', 'documentation', 'security') NOT NULL,
-            is_completed TINYINT(1) DEFAULT 0,
-            notes TEXT NULL,
-            FOREIGN KEY (visit_id) REFERENCES site_visits(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Visit reminders
-        $pdo->exec("CREATE TABLE IF NOT EXISTS visit_reminders (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            visit_id INT NOT NULL,
-            reminder_type ENUM('email', 'sms', 'whatsapp') NOT NULL,
-            reminder_time TIMESTAMP NOT NULL,
-            is_sent TINYINT(1) DEFAULT 0,
-            sent_at TIMESTAMP NULL,
-            FOREIGN KEY (visit_id) REFERENCES site_visits(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Site availability calendar
-        $pdo->exec("CREATE TABLE IF NOT EXISTS site_availability (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            property_id INT NOT NULL,
-            available_date DATE NOT NULL,
-            start_time TIME NOT NULL,
-            end_time TIME NOT NULL,
-            slot_duration INT DEFAULT 60,
-            max_visits_per_slot INT DEFAULT 1,
-            is_blocked TINYINT(1) DEFAULT 0,
-            block_reason VARCHAR(255) NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_slot (property_id, available_date, start_time),
-            INDEX idx_date (available_date)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Visit analytics
         $pdo->exec("CREATE TABLE IF NOT EXISTS visit_analytics (

@@ -176,26 +176,7 @@ try {
  */
 function createLeadsTable($pdo)
 {
-    $create_sql = "CREATE TABLE IF NOT EXISTS leads (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        phone VARCHAR(20) NOT NULL UNIQUE,
-        email VARCHAR(255),
-        property_type VARCHAR(100),
-        message TEXT,
-        user_role VARCHAR(50) DEFAULT 'customer',
-        source VARCHAR(50) DEFAULT 'manual_form',
-        created_at DATETIME NOT NULL,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        status ENUM('new', 'contacted', 'interested', 'converted', 'closed') DEFAULT 'new',
-        assigned_to VARCHAR(100),
-        follow_up_date DATE,
-        notes TEXT,
-        INDEX idx_phone (phone),
-        INDEX idx_date (created_at),
-        INDEX idx_status (status),
-        INDEX idx_role (user_role)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    $create_sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
     $pdo->exec($create_sql);
 

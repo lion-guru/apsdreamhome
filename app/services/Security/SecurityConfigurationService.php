@@ -344,33 +344,9 @@ class SecurityConfigurationService
     private function initializeSecurityTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS security_configurations (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                category VARCHAR(50) NOT NULL,
-                config_key VARCHAR(255) NOT NULL,
-                config_value JSON,
-                is_sensitive BOOLEAN DEFAULT FALSE,
-                updated_by VARCHAR(255),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                UNIQUE KEY unique_config (category, config_key),
-                INDEX idx_category (category),
-                INDEX idx_updated_at (updated_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS security_audit_log (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                category VARCHAR(50) NOT NULL,
-                config_key VARCHAR(255) NOT NULL,
-                old_value JSON,
-                new_value JSON,
-                updated_by VARCHAR(255),
-                ip_address VARCHAR(45),
-                user_agent TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_category (category),
-                INDEX idx_updated_at (created_at)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

@@ -232,19 +232,7 @@ class EventService
         try {
             // Event log table
             $this->db->execute("
-                CREATE TABLE IF NOT EXISTS event_log (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    event_id VARCHAR(36) NOT NULL,
-                    event_name VARCHAR(255) NOT NULL,
-                    event_data TEXT,
-                    event_type VARCHAR(50) NOT NULL,
-                    priority INT DEFAULT 2,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_event_name (event_name),
-                    INDEX idx_event_type (event_type),
-                    INDEX idx_created_at (created_at)
-                )
-            ");
+                ");
 
             // Event queue table
             $this->db->execute("

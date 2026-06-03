@@ -78,19 +78,7 @@ class PaymentGatewayController extends BaseController
         $this->db->query($sql);
 
         // Payment gateway logs
-        $sql = "CREATE TABLE IF NOT EXISTS payment_gateway_logs (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            transaction_id VARCHAR(100),
-            gateway_name VARCHAR(50) NOT NULL,
-            request_data JSON,
-            response_data JSON,
-            status ENUM('success', 'failed', 'pending') DEFAULT 'pending',
-            error_message TEXT,
-            ip_address VARCHAR(45),
-            user_agent TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (transaction_id) REFERENCES payment_transactions(transaction_id) ON DELETE CASCADE
-        )";
+        $sql = "";
 
         $this->db->query($sql);
 

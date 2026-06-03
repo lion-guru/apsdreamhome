@@ -52,37 +52,10 @@ class PropertyAlertService
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Alert matches log
-        $pdo->exec("CREATE TABLE IF NOT EXISTS alert_matches (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            alert_id INT NOT NULL,
-            property_id INT NOT NULL,
-            match_score DECIMAL(3,2) DEFAULT 1.00,
-            notification_sent TINYINT(1) DEFAULT 0,
-            sent_at TIMESTAMP NULL,
-            clicked TINYINT(1) DEFAULT 0,
-            clicked_at TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_match (alert_id, property_id),
-            FOREIGN KEY (alert_id) REFERENCES property_alerts(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Notification queue
-        $pdo->exec("CREATE TABLE IF NOT EXISTS notification_queue (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            type ENUM('email', 'sms', 'whatsapp', 'push') NOT NULL,
-            title VARCHAR(200) NOT NULL,
-            message TEXT NOT NULL,
-            data JSON NULL,
-            priority ENUM('low', 'normal', 'high') DEFAULT 'normal',
-            scheduled_at TIMESTAMP NULL,
-            sent_at TIMESTAMP NULL,
-            status ENUM('pending', 'sent', 'failed') DEFAULT 'pending',
-            error_message TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_status (status),
-            INDEX idx_scheduled (scheduled_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

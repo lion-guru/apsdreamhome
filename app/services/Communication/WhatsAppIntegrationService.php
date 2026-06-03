@@ -750,19 +750,7 @@ function initializeWhatsAppIntegration()
 
         // Create logs table if it doesn't exist
         $db = \App\Core\App::database();
-        $db->execute("CREATE TABLE IF NOT EXISTS whatsapp_logs (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            phone_number VARCHAR(20) NOT NULL,
-            message TEXT,
-            action ENUM('SENT', 'DELIVERED', 'FAILED', 'TEMPLATE_USED') NOT NULL,
-            provider VARCHAR(50),
-            message_id VARCHAR(255),
-            error_message TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_phone (phone_number),
-            INDEX idx_action (action),
-            INDEX idx_created_at (created_at)
-        )");
+        $db->execute("");
 
         $initialized = true;
         return true;

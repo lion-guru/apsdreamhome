@@ -325,29 +325,9 @@ class PHPOptimizerService
     private function initializeOptimizationTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS php_optimization_log (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                optimization_type VARCHAR(100) NOT NULL,
-                config_key VARCHAR(255),
-                old_value TEXT,
-                new_value TEXT,
-                status ENUM('success', 'failed') DEFAULT 'success',
-                error_message TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_type (optimization_type),
-                INDEX idx_status (status),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
             
-            "CREATE TABLE IF NOT EXISTS php_benchmark_results (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                memory_usage INT,
-                cpu_time DECIMAL(10,2),
-                io_time DECIMAL(10,2),
-                total_time DECIMAL(10,2),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_created_at (created_at)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

@@ -41,56 +41,13 @@ class MarketingAutomationService
         try {
             $tables = [
                 // Marketing leads table
-                "CREATE TABLE IF NOT EXISTS marketing_leads (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(255),
-                    email VARCHAR(255),
-                    phone VARCHAR(20),
-                    source VARCHAR(100),
-                    campaign VARCHAR(100),
-                    status ENUM('new', 'contacted', 'interested', 'converted', 'lost') DEFAULT 'new',
-                    score INT DEFAULT 0,
-                    last_contacted TIMESTAMP NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    INDEX idx_email (email),
-                    INDEX idx_status (status),
-                    INDEX idx_score (score),
-                    INDEX idx_source (source)
-                )",
+                "",
                 
                 // Marketing campaigns table
-                "CREATE TABLE IF NOT EXISTS marketing_campaigns (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(255),
-                    type ENUM('email', 'sms', 'social', 'google', 'facebook'),
-                    subject VARCHAR(500),
-                    content TEXT,
-                    target_audience JSON,
-                    schedule_at TIMESTAMP NULL,
-                    status ENUM('draft', 'scheduled', 'running', 'completed', 'paused') DEFAULT 'draft',
-                    sent_count INT DEFAULT 0,
-                    opened_count INT DEFAULT 0,
-                    clicked_count INT DEFAULT 0,
-                    converted_count INT DEFAULT 0,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_type (type),
-                    INDEX idx_status (status),
-                    INDEX idx_schedule (schedule_at)
-                )",
+                "",
                 
                 // Marketing automations table
-                "CREATE TABLE IF NOT EXISTS marketing_automations (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(255),
-                    trigger_type ENUM('lead_signup', 'property_view', 'inquiry', 'booking', 'payment'),
-                    trigger_conditions JSON,
-                    actions JSON,
-                    is_active BOOLEAN DEFAULT 1,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_trigger (trigger_type),
-                    INDEX idx_active (is_active)
-                )",
+                "",
                 
                 // Marketing analytics table
                 "CREATE TABLE IF NOT EXISTS marketing_analytics (

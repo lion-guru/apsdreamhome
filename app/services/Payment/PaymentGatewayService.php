@@ -58,80 +58,13 @@ class PaymentGatewayService
         $pdo = $this->database->getConnection();
         
         // Payment transactions
-        $pdo->exec("CREATE TABLE IF NOT EXISTS payment_transactions (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            transaction_id VARCHAR(100) NOT NULL UNIQUE,
-            gateway VARCHAR(20) NOT NULL,
-            order_id VARCHAR(100) NULL,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'associate', 'agent') NOT NULL,
-            entity_type ENUM('booking', 'emi', 'plot', 'registration', 'misc') NOT NULL,
-            entity_id INT NULL,
-            amount DECIMAL(15,2) NOT NULL,
-            currency VARCHAR(3) DEFAULT 'INR',
-            status ENUM('pending', 'captured', 'failed', 'refunded', 'partially_refunded') DEFAULT 'pending',
-            payment_method VARCHAR(50) NULL,
-            payment_mode VARCHAR(20) NULL,
-            gateway_response JSON NULL,
-            refund_amount DECIMAL(15,2) DEFAULT 0,
-            refund_reason VARCHAR(255) NULL,
-            refunded_at TIMESTAMP NULL,
-            attempts INT DEFAULT 0,
-            webhook_data JSON NULL,
-            metadata JSON NULL,
-            ip_address VARCHAR(45) NULL,
-            user_agent TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id, user_type),
-            INDEX idx_status (status),
-            INDEX idx_entity (entity_type, entity_id),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Payment methods (saved cards, UPI, etc)
-        $pdo->exec("CREATE TABLE IF NOT EXISTS user_payment_methods (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'associate', 'agent') NOT NULL,
-            gateway VARCHAR(20) NOT NULL,
-            method_type ENUM('card', 'upi', 'netbanking', 'wallet') NOT NULL,
-            method_token VARCHAR(255) NOT NULL,
-            last_four VARCHAR(4) NULL,
-            card_brand VARCHAR(20) NULL,
-            expiry_month VARCHAR(2) NULL,
-            expiry_year VARCHAR(4) NULL,
-            upi_id VARCHAR(100) NULL,
-            bank_name VARCHAR(100) NULL,
-            wallet_name VARCHAR(50) NULL,
-            is_default TINYINT(1) DEFAULT 0,
-            is_active TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_method (user_id, user_type, method_token),
-            INDEX idx_user (user_id, user_type)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Payment schedules (EMIs, installments)
-        $pdo->exec("CREATE TABLE IF NOT EXISTS payment_schedules (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            entity_type ENUM('booking', 'plot', 'emi') NOT NULL,
-            entity_id INT NOT NULL,
-            total_amount DECIMAL(15,2) NOT NULL,
-            paid_amount DECIMAL(15,2) DEFAULT 0,
-            next_due_date DATE NULL,
-            next_due_amount DECIMAL(15,2) NULL,
-            installment_count INT DEFAULT 1,
-            installments_paid INT DEFAULT 0,
-            late_fee_amount DECIMAL(10,2) DEFAULT 0,
-            status ENUM('active', 'completed', 'overdue', 'defaulted') DEFAULT 'active',
-            auto_debit TINYINT(1) DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id),
-            INDEX idx_status (status),
-            INDEX idx_due (next_due_date)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Webhook logs
         $pdo->exec("CREATE TABLE IF NOT EXISTS payment_webhook_logs (

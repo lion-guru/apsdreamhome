@@ -444,16 +444,7 @@ class EventMiddlewareService
     private function initializeEventTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS event_middleware_logs (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event_name VARCHAR(255),
-                filters_applied INT DEFAULT 0,
-                transformers_applied INT DEFAULT 0,
-                processing_time_ms DECIMAL(10,2),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_event_name (event_name),
-                INDEX idx_created_at (created_at)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

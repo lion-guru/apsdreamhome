@@ -24,24 +24,7 @@ class SiteVisitService
 
     private function ensureTableExists()
     {
-        $sql = "CREATE TABLE IF NOT EXISTS mlm_site_visits (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            agent_id INT NOT NULL,
-            lead_id INT,
-            property_id INT,
-            status ENUM('scheduled', 'in_progress', 'completed', 'cancelled') DEFAULT 'scheduled',
-            current_lat DECIMAL(10, 8),
-            current_lng DECIMAL(11, 8),
-            destination_lat DECIMAL(10, 8),
-            destination_lng DECIMAL(11, 8),
-            start_time DATETIME,
-            end_time DATETIME,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_agent_id (agent_id),
-            INDEX idx_lead_id (lead_id),
-            INDEX idx_status (status)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+        $sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
         
         $this->db->query($sql);
     }

@@ -360,40 +360,9 @@ class CareerService
     private function initializeCareerTables(): void
     {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS job_applications (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                job_id INT,
-                full_name VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL,
-                phone VARCHAR(50),
-                cover_letter TEXT,
-                resume_path VARCHAR(500),
-                status ENUM('received', 'under_review', 'shortlisted', 'interview_scheduled', 'interview_completed', 'offered', 'rejected', 'withdrawn') DEFAULT 'received',
-                status_reason TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_email (email),
-                INDEX idx_status (status),
-                INDEX idx_job_id (job_id),
-                INDEX idx_created_at (created_at)
-            )",
+            "",
 
-            "CREATE TABLE IF NOT EXISTS application_interviews (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                application_id INT NOT NULL,
-                type ENUM('phone', 'video', 'in_person') NOT NULL,
-                scheduled_date DATETIME NOT NULL,
-                duration_minutes INT DEFAULT 60,
-                interviewer_name VARCHAR(255),
-                interviewer_email VARCHAR(255),
-                meeting_link VARCHAR(500),
-                notes TEXT,
-                status ENUM('scheduled', 'completed', 'cancelled', 'rescheduled') DEFAULT 'scheduled',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (application_id) REFERENCES job_applications(id) ON DELETE CASCADE,
-                INDEX idx_application_id (application_id),
-                INDEX idx_scheduled_date (scheduled_date)
-            )",
+            "",
 
             "CREATE TABLE IF NOT EXISTS application_notes (
                 id INT AUTO_INCREMENT PRIMARY KEY,

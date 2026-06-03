@@ -37,65 +37,13 @@ class AdvancedAnalytics {
      */
     private function createAnalyticsTables() {
         $tables = [
-            "CREATE TABLE IF NOT EXISTS analytics_page_views (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                session_id VARCHAR(255),
-                user_id INT,
-                page_url VARCHAR(500),
-                page_title VARCHAR(200),
-                referrer VARCHAR(500),
-                user_agent TEXT,
-                ip_address VARCHAR(45),
-                visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                duration_seconds INT,
-                bounce_rate BOOLEAN DEFAULT 0,
-                INDEX idx_session (session_id),
-                INDEX idx_user (user_id),
-                INDEX idx_page (page_url),
-                INDEX idx_time (visit_time)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+            "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
             
-            "CREATE TABLE IF NOT EXISTS analytics_user_behavior (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                session_id VARCHAR(255),
-                user_id INT,
-                action_type VARCHAR(100),
-                action_data JSON,
-                element_clicked VARCHAR(200),
-                scroll_depth INT,
-                time_on_page INT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_session (session_id),
-                INDEX idx_user (user_id),
-                INDEX idx_action (action_type)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+            "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
             
-            "CREATE TABLE IF NOT EXISTS analytics_conversions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                session_id VARCHAR(255),
-                user_id INT,
-                conversion_type VARCHAR(100),
-                conversion_value DECIMAL(10,2),
-                property_id INT,
-                funnel_stage VARCHAR(100),
-                conversion_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                source VARCHAR(200),
-                medium VARCHAR(200),
-                campaign VARCHAR(200),
-                INDEX idx_session (session_id),
-                INDEX idx_user (user_id),
-                INDEX idx_conversion (conversion_type)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+            "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
             
-            "CREATE TABLE IF NOT EXISTS analytics_performance (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                metric_name VARCHAR(100),
-                metric_value DECIMAL(10,2),
-                metric_unit VARCHAR(50),
-                recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_metric (metric_name),
-                INDEX idx_time (recorded_at)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+            "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         ];
         
         foreach ($tables as $sql) {

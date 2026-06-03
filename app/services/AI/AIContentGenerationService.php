@@ -24,40 +24,9 @@ class AIContentGenerationService
     {
         $pdo = $this->database->getConnection();
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_generated_content (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            content_type ENUM('description', 'title', 'ad_copy', 'email', 'sms') NOT NULL,
-            property_id INT NULL,
-            entity_type VARCHAR(50) NULL,
-            entity_id INT NULL,
-            generated_content TEXT NOT NULL,
-            prompt_used TEXT NULL,
-            language VARCHAR(10) DEFAULT 'en',
-            tone ENUM('professional', 'casual', 'luxury', 'urgent', 'friendly') DEFAULT 'professional',
-            is_approved TINYINT(1) DEFAULT 0,
-            is_used TINYINT(1) DEFAULT 0,
-            generated_by VARCHAR(50) DEFAULT 'ai',
-            ai_model VARCHAR(50) DEFAULT 'local_ml',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_type (content_type),
-            INDEX idx_property (property_id),
-            INDEX idx_language (language)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS ai_content_templates (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            template_name VARCHAR(100) NOT NULL,
-            content_type ENUM('description', 'title', 'ad_copy', 'email', 'sms') NOT NULL,
-            template_content TEXT NOT NULL,
-            variables JSON NULL,
-            language VARCHAR(10) DEFAULT 'en',
-            tone VARCHAR(20) DEFAULT 'professional',
-            category VARCHAR(50) NULL,
-            is_active TINYINT(1) DEFAULT 1,
-            use_count INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_name (template_name, language)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     private function loadTemplates(): void

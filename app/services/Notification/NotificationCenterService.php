@@ -34,71 +34,13 @@ class NotificationCenterService
         $pdo = $this->database->getConnection();
         
         // Notifications table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS notifications (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'associate', 'agent', 'admin') NOT NULL,
-            type VARCHAR(50) NOT NULL,
-            title VARCHAR(200) NOT NULL,
-            message TEXT NOT NULL,
-            data JSON NULL,
-            channels JSON NULL,
-            priority ENUM('low', 'normal', 'high', 'urgent') DEFAULT 'normal',
-            status ENUM('pending', 'sent', 'delivered', 'read', 'failed') DEFAULT 'pending',
-            sent_via JSON NULL,
-            read_at TIMESTAMP NULL,
-            clicked_at TIMESTAMP NULL,
-            action_url VARCHAR(500) NULL,
-            action_text VARCHAR(100) NULL,
-            image_url VARCHAR(500) NULL,
-            icon VARCHAR(50) NULL,
-            color VARCHAR(20) NULL,
-            expires_at TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id, user_type),
-            INDEX idx_type (type),
-            INDEX idx_status (status),
-            INDEX idx_priority (priority),
-            INDEX idx_created (created_at),
-            INDEX idx_read (read_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Notification preferences
-        $pdo->exec("CREATE TABLE IF NOT EXISTS notification_preferences (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            user_type ENUM('customer', 'associate', 'agent', 'admin') NOT NULL,
-            channel VARCHAR(20) NOT NULL,
-            notification_type VARCHAR(50) NOT NULL,
-            is_enabled TINYINT(1) DEFAULT 1,
-            quiet_hours_start TIME NULL,
-            quiet_hours_end TIME NULL,
-            frequency ENUM('immediate', 'hourly_digest', 'daily_digest', 'weekly_digest') DEFAULT 'immediate',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_pref (user_id, user_type, channel, notification_type),
-            INDEX idx_user (user_id, user_type)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Notification templates
-        $pdo->exec("CREATE TABLE IF NOT EXISTS notification_templates (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            type VARCHAR(50) NOT NULL UNIQUE,
-            name VARCHAR(100) NOT NULL,
-            description TEXT NULL,
-            title_template VARCHAR(200) NOT NULL,
-            message_template TEXT NOT NULL,
-            data_schema JSON NULL,
-            default_channels JSON NULL,
-            default_priority ENUM('low', 'normal', 'high', 'urgent') DEFAULT 'normal',
-            is_system TINYINT(1) DEFAULT 0,
-            is_active TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_type (type),
-            INDEX idx_active (is_active)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Notification delivery logs
         $pdo->exec("CREATE TABLE IF NOT EXISTS notification_delivery_logs (

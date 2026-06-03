@@ -26,65 +26,19 @@ class WishlistService
         $pdo = $this->database->getConnection();
         
         // Wishlist table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS wishlists (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            property_id INT NOT NULL,
-            notes TEXT NULL,
-            priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_wish (user_id, property_id),
-            INDEX idx_user (user_id),
-            INDEX idx_property (property_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Wishlist collections/folders
-        $pdo->exec("CREATE TABLE IF NOT EXISTS wishlist_collections (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            name VARCHAR(100) NOT NULL,
-            description TEXT NULL,
-            color VARCHAR(20) DEFAULT '#3498db',
-            is_default TINYINT(1) DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Collection items
-        $pdo->exec("CREATE TABLE IF NOT EXISTS wishlist_collection_items (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            collection_id INT NOT NULL,
-            wishlist_id INT NOT NULL,
-            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_item (collection_id, wishlist_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Price alerts
-        $pdo->exec("CREATE TABLE IF NOT EXISTS price_alerts (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            property_id INT NOT NULL,
-            target_price DECIMAL(15,2) NOT NULL,
-            alert_type ENUM('below', 'above', 'drop_percent') DEFAULT 'below',
-            drop_percent INT NULL,
-            is_active TINYINT(1) DEFAULT 1,
-            triggered_at TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id),
-            INDEX idx_active (is_active)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Recently viewed properties
-        $pdo->exec("CREATE TABLE IF NOT EXISTS recently_viewed (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            property_id INT NOT NULL,
-            view_count INT DEFAULT 1,
-            last_viewed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_view (user_id, property_id),
-            INDEX idx_user (user_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

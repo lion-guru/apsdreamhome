@@ -31,39 +31,10 @@ class AdvancedSearchService
         $pdo = $this->database->getConnection();
         
         // Search indices table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS search_indices (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            entity_type VARCHAR(50) NOT NULL,
-            entity_id INT NOT NULL,
-            search_text TEXT NOT NULL,
-            search_keywords JSON NULL,
-            location_data JSON NULL,
-            price_range_min DECIMAL(15,2) NULL,
-            price_range_max DECIMAL(15,2) NULL,
-            area_range_min DECIMAL(10,2) NULL,
-            area_range_max DECIMAL(10,2) NULL,
-            attributes JSON NULL,
-            popularity_score INT DEFAULT 0,
-            last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_entity (entity_type, entity_id),
-            FULLTEXT INDEX idx_search (search_text)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Saved searches table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS saved_searches (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            name VARCHAR(100) NOT NULL,
-            search_criteria JSON NOT NULL,
-            alert_enabled TINYINT(1) DEFAULT 1,
-            alert_frequency ENUM('daily', 'weekly', 'instant') DEFAULT 'daily',
-            last_alert_sent TIMESTAMP NULL,
-            result_count INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id),
-            INDEX idx_alerts (alert_enabled, alert_frequency)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Search suggestions table
         $pdo->exec("CREATE TABLE IF NOT EXISTS search_suggestions (
@@ -79,21 +50,7 @@ class AdvancedSearchService
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Search logs table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS search_logs (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NULL,
-            session_id VARCHAR(64) NULL,
-            search_query TEXT NULL,
-            filters_applied JSON NULL,
-            results_count INT DEFAULT 0,
-            clicked_results JSON NULL,
-            search_duration_ms INT NULL,
-            ip_address VARCHAR(45) NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id),
-            INDEX idx_created (created_at),
-            INDEX idx_query (search_query(255))
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

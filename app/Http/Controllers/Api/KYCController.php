@@ -223,17 +223,7 @@ class KYCController extends BaseApiController
     private function ensureKYCTableExists($db)
     {
         try {
-            $sql = "CREATE TABLE IF NOT EXISTS kyc_verifications (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                type VARCHAR(20) NOT NULL,
-                identifier VARCHAR(50) NOT NULL,
-                response_data TEXT,
-                status VARCHAR(20) DEFAULT 'verified',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_user_id (user_id),
-                INDEX idx_type (type)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+            $sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
             
             $db->execute($sql);
         } catch (\Exception $e) {
