@@ -1,15 +1,16 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-03)
 
-## Session 2026-06-03: Database Deep Cleanup — **533 Tables Removed (-70.5%)**, Zero Regressions
+## Session 2026-06-03: Database Deep Cleanup — **542 Tables Removed (-71.7%)**, Zero Regressions
 
 ### Final State
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
-| **Total tables** | 756 | **223** | **-533 (-70.5%)** |
+| **Total tables** | 756 | **214** | **-542 (-71.7%)** |
 | **E2E tests** | 163/164 | 163/164 | **Zero regressions** |
 | **Total rows** | 54,762 | ~30K | -24K (mostly fake seed data) |
 | **Performance indexes** | 66 | **78** | **+12 (hot paths)** |
 | **Scripts** | 145 | 24 in root | 121 archived in `_archive/` |
+| **Views** | 5 | **0** | -5 (business_overview, property_performance, etc.) |
 | **Voice AI tables** | 6 | **5** | -1 (logs merged into sessions) |
 | **Document tables** | 16 | **10** | -6 (entity tables merged into polymorphic documents) |
 | **Salary tables** | 4 | **3** | -1 (salary_structures merged into employee_salary_structure) |
@@ -86,7 +87,7 @@
 - Phase 14: wrap+drop 34 three-ref tables
 - Phase 15: wrap+drop 93 four-to-eight-ref tables
 - Phase 16: final sweep 37 tables + syntax fixes
-- Final: 756 → 223 tables
+- Final: 756 → 214 tables
 
 ### **PAUSED** — Aggressive Drops Stopped Per User Request
 Remaining 294 dead tables would require either:
