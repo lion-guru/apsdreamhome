@@ -112,7 +112,7 @@ try {
     
     $enterpriseFeatures = [
         'marketing_campaigns' => 'Marketing System',
-        'customer_documents' => 'Document Management',
+        'documents' => 'Document Management',
         'payment_gateway_config' => 'Payment Gateways',
         'feedback_tickets' => 'Support System',
         'ai_chatbot_config' => 'AI Integration',

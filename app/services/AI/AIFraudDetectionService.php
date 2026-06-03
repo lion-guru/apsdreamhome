@@ -421,9 +421,9 @@ class AIFraudDetectionService
         // Check if documents are pending verification for too long
         $db = $this->database->getConnection();
         
-        $sql = "SELECT COUNT(*) FROM user_documents 
-            WHERE user_id = ? AND verification_status = 'pending'
-            AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)";
+        $sql = "SELECT COUNT(*) FROM documents 
+            WHERE entity_type = 'user' AND entity_id = ? AND verification_status = 'pending'
+            AND uploaded_on < DATE_SUB(NOW(), INTERVAL 7 DAY)";
         
         $stmt = $db->prepare($sql);
         $stmt->execute([$userId]);

@@ -18,7 +18,7 @@ $active_page = 'properties';
 <div class="card">
     <div class="card-body">
         <form method="POST" action="<?php echo BASE_URL; ?>/admin/properties" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
             <div class="row">
                 <!-- Basic Information -->

@@ -123,8 +123,8 @@ class LeadFollowUpAgent extends BaseAgent
         }
 
         $call_history = $this->db->fetchAll(
-            "SELECT id, call_sid, summary, sentiment, follow_up_date, created_at
-             FROM ai_call_logs WHERE lead_id = ? ORDER BY created_at DESC LIMIT 5",
+            "SELECT id, call_sid, ai_summary as summary, sentiment, follow_up_date, created_at
+             FROM ai_call_sessions WHERE lead_id = ? ORDER BY created_at DESC LIMIT 5",
             [$leadId]
         );
 
@@ -298,13 +298,14 @@ class LeadFollowUpAgent extends BaseAgent
 
         $follow_up_needed = ($result === 'no_answer' || $result === 'busy') ? 1 : 0;
 
-        $this->db->insert('ai_call_logs', [
+        $this->db->insert('ai_call_sessions', [
             'lead_id' => $leadId,
-            'agent_id' => $this->agentId,
-            'summary' => $notes,
+            'ai_agent_id' => $this->agentId,
+            'ai_summary' => $notes,
             'sentiment' => $sentiment,
-            'follow_up_needed' => $follow_up_needed,
+            'follow_up_required' => $follow_up_needed,
             'follow_up_date' => $follow_up_needed ? date('Y-m-d H:i:s', strtotime('+1 day')) : null,
+            'status' => 'completed',
             'created_at' => date('Y-m-d H:i:s')
         ]);
 

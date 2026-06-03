@@ -53,7 +53,10 @@
                         <td><?php echo date('M d, Y', strtotime($user['created_at'] ?? 'now')); ?></td>
                         <td class="text-end pe-4">
                             <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo $user['id']; ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                            <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo $user['id']; ?>/destroy" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this user?');"><i class="fas fa-trash"></i></a>
+                            <form method="POST" action="<?php echo BASE_URL; ?>admin/users/<?php echo $user['id']; ?>/destroy" style="display:inline" onsubmit="return confirm('Delete this user?');">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            </form>
                         </td>
                     </tr>
                     <?php endforeach; ?>

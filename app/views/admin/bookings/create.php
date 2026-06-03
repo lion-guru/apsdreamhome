@@ -160,7 +160,7 @@ $active_page = 'bookings';
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Create Booking
                     </button>
-                    <a href="/admin/bookings" class="btn btn-secondary ms-2">
+                    <a href="<?= BASE_URL ?>admin/bookings" class="btn btn-secondary ms-2">
                         <i class="fas fa-times"></i> Cancel
                     </a>
                 </div>
@@ -172,8 +172,8 @@ $active_page = 'bookings';
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const propertySelect = document.getElementById('property_id');
-        const amountInput = document.getElementById('amount');
-        const associateSelect = document.getElementById('associate_id');
+        const amountInput = document.getElementById('new_amount');
+        const associateSelect = document.getElementById('new_customer_associate_id');
         const commissionPreview = document.getElementById('commission_preview');
         const commissionDetails = document.getElementById('commission_details');
 

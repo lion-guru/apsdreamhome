@@ -194,7 +194,7 @@ class FarmerService
         try {
             $sql = "SELECT f.*, 
                            (SELECT SUM(size_acres) FROM land_allocations WHERE farmer_id = f.id AND status = 'approved') as total_land_acres,
-                           (SELECT COUNT(*) FROM farmer_documents WHERE farmer_id = f.id) as document_count
+                           (SELECT COUNT(*) FROM documents WHERE entity_type = 'farmer' AND entity_id = f.id) as document_count
                     FROM farmers f 
                     WHERE f.id = ?";
             
@@ -507,23 +507,6 @@ class FarmerService
                 INDEX idx_created_at (created_at)
             )",
             
-            "CREATE TABLE IF NOT EXISTS farmer_documents (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                farmer_id INT NOT NULL,
-                document_type VARCHAR(100) NOT NULL,
-                document_name VARCHAR(255),
-                file_path VARCHAR(500),
-                file_size INT,
-                mime_type VARCHAR(100),
-                verified BOOLEAN DEFAULT FALSE,
-                verification_date TIMESTAMP NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (farmer_id) REFERENCES farmers(id) ON DELETE CASCADE,
-                INDEX idx_farmer_id (farmer_id),
-                INDEX idx_document_type (document_type),
-                INDEX idx_verified (verified)
-            )",
-            
             "CREATE TABLE IF NOT EXISTS land_allocations (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 farmer_id INT NOT NULL,
@@ -672,17 +655,14 @@ class FarmerService
     private function processFarmerDocuments(int $farmerId, array $documents): void
     {
         foreach ($documents as $docType => $docData) {
-            $sql = "INSERT INTO farmer_documents 
-                    (farmer_id, document_type, document_name, file_path, file_size, mime_type, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO documents 
+                    (entity_type, entity_id, document_type, url, uploaded_on) 
+                    VALUES ('farmer', ?, ?, ?, NOW())";
             
             $this->db->execute($sql, [
                 $farmerId,
                 $docType,
-                $docData['name'] ?? '',
-                $docData['path'] ?? '',
-                $docData['size'] ?? 0,
-                $docData['mime_type'] ?? ''
+                $docData['path'] ?? ''
             ]);
         }
     }
@@ -787,7 +767,7 @@ class FarmerService
 
     private function getFarmerDocuments(int $farmerId): array
     {
-        $sql = "SELECT * FROM farmer_documents WHERE farmer_id = ?";
+        $sql = "SELECT * FROM documents WHERE entity_type = 'farmer' AND entity_id = ?";
         return $this->db->fetchAll($sql, [$farmerId]);
     }
 

@@ -17,10 +17,10 @@ $extraHead = '<style>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Booking Details</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="/admin/bookings" class="btn btn-secondary">
+        <a href="<?= BASE_URL ?>admin/bookings" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to Bookings
         </a>
-        <a href="/admin/bookings/<?= $booking['id'] ?>/edit" class="btn btn-primary ms-2">
+        <a href="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/edit" class="btn btn-primary ms-2">
             <i class="fas fa-edit"></i> Edit Booking
         </a>
         <button type="button" class="btn btn-danger ms-2" onclick="confirmDelete()">
@@ -88,7 +88,7 @@ $extraHead = '<style>
                             <?= date('d F Y h:i A', strtotime($booking['created_at'])) ?></p>
 
                         <p><strong>Last Updated:</strong><br>
-                            <?= date('d F Y h:i A', strtotime($booking['updated_at'])) ?></p>
+                            <?= $booking['updated_at'] ? date('d F Y h:i A', strtotime($booking['updated_at'])) : 'N/A' ?></p>
 
                         <?php if (!empty($booking['notes'])): ?>
                             <p><strong>Notes:</strong><br>
@@ -317,7 +317,7 @@ $extraHead = '<style>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" action="/admin/bookings/<?= $booking['id'] ?>/destroy" style="display: inline;">
+                <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/destroy" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
@@ -334,7 +334,7 @@ $extraHead = '<style>
                 <h5 class="modal-title" id="paymentModalLabel">Add Payment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST" action="/admin/bookings/<?= $booking['id'] ?>/payment">
+            <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/payment">
                 <div class="modal-body">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
@@ -386,13 +386,7 @@ $extraHead = '<style>
     }
 
     function viewReceipt(receiptNumber) {
-        // Open receipt in new window or modal
-        window.open(`/admin/receipts/${receiptNumber}`, '_blank');
+        window.open('<?= BASE_URL ?>admin/receipts/' + receiptNumber, '_blank');
     }
-
-    // Auto-refresh page every 30 seconds to show latest updates
-    setTimeout(() => {
-        window.location.reload();
-    }, 30000);
 </script>
 

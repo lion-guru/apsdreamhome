@@ -11,9 +11,9 @@ $active_page = 'properties';
             <a href="<?php echo BASE_URL; ?>/admin/properties/create" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Property
             </a>
-            <button class="btn btn-warning ms-2 shadow-sm fw-bold" onclick="triggerAIFetch()">
+            <a href="<?= BASE_URL ?>admin/properties" class="btn btn-warning ms-2 shadow-sm fw-bold">
                 <i class="fas fa-robot me-1"></i> Fetch Web Listings
-            </button>
+            </a>
         </div>
     </div>
 </div>
@@ -157,11 +157,11 @@ $active_page = 'properties';
         </div>
 
         <!-- Pagination -->
-        <?php if ($total_pages > 1): ?>
+        <?php if (($total_pages ?? 0) > 1): ?>
             <nav aria-label="Property pagination">
                 <ul class="pagination justify-content-center">
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <li class="page-item <?= $i === $current_page ? 'active' : '' ?>">
+                    <?php for ($i = 1; $i <= ($total_pages ?? 1); $i++): ?>
+                        <li class="page-item <?= $i === ($current_page ?? 1) ? 'active' : '' ?>">
                             <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($filters['search'] ?? '') ?>&status=<?= urlencode($filters['status'] ?? '') ?>&type=<?= urlencode($filters['type'] ?? '') ?>&site_id=<?= urlencode($filters['site_id'] ?? '') ?>">
                                 <?= $i ?>
                             </a>
@@ -188,11 +188,22 @@ $active_page = 'properties';
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form method="POST" id="deleteForm" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger">Delete Property</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+function bookProperty(id) {
+    window.location.href = '<?= BASE_URL ?>admin/bookings/create?property_id=' + id;
+}
+function confirmDelete(id) {
+    var form = document.getElementById('deleteForm');
+    form.action = '<?= BASE_URL ?>admin/properties/' + id + '/destroy';
+    var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+</script>
 

@@ -13,7 +13,7 @@ use DateTime;
  */
 class Document extends Model
 {
-    protected $table = 'employee_documents';
+    protected $table = 'documents';
     protected $fillable = [
         'employee_id',
         'document_type_id',
@@ -75,8 +75,8 @@ class Document extends Model
         $existingDoc = null;
         if ($documentTypeId) {
             $existingDoc = $this->query(
-                "SELECT id FROM employee_documents WHERE employee_id = ? AND document_type_id = ? AND status = ?",
-                [$employeeId, $documentTypeId, self::STATUS_ACTIVE]
+                "SELECT id FROM documents WHERE entity_type = 'employee' AND entity_id = ? AND document_type = ?",
+                [$employeeId, $documentTypeId]
             )->fetch();
         }
 
@@ -130,15 +130,15 @@ class Document extends Model
      */
     public function getEmployeeDocuments(int $employeeId, array $filters = []): array
     {
-        $sql = "SELECT ed.*, dt.name as document_type_name, dt.category_id,
-                       dc.name as category_name, a.auser as uploaded_by_name
-                FROM employee_documents ed
-                LEFT JOIN document_types dt ON ed.document_type_id = dt.id
+        $sql = "SELECT d.*, dt.name as document_type_name, dt.category_id,
+                       dc.name as category_name, u.name as uploaded_by_name
+                FROM documents d
+                LEFT JOIN document_types dt ON d.document_type = dt.id
                 LEFT JOIN document_categories dc ON dt.category_id = dc.id
-                LEFT JOIN admin a ON ed.uploaded_by = a.aid
-                WHERE ed.employee_id = ? AND ed.status = ?";
+                LEFT JOIN users u ON d.user_id = u.id
+                WHERE d.entity_type = 'employee' AND d.entity_id = ?";
 
-        $params = [$employeeId, self::STATUS_ACTIVE];
+        $params = [$employeeId];
 
         // Apply filters
         if (!empty($filters['document_type_id'])) {
@@ -454,31 +454,20 @@ class Document extends Model
         $params = [];
 
         if ($employeeId) {
-            $whereClause = "WHERE employee_id = ?";
+            $whereClause = "WHERE entity_type = 'employee' AND entity_id = ?";
             $params[] = $employeeId;
         }
 
         // Get document counts
         $docStats = $db->query(
-            "SELECT status, COUNT(*) as count, SUM(file_size) as total_size
-             FROM employee_documents
-             $whereClause
-             GROUP BY status",
+            "SELECT COUNT(*) as count
+             FROM documents
+             $whereClause",
             $params
         )->fetchAll();
 
         foreach ($docStats as $stat) {
             $stats['total_documents'] += $stat['count'];
-            $stats['total_size'] += $stat['total_size'];
-
-            switch ($stat['status']) {
-                case self::STATUS_ACTIVE:
-                    $stats['active_documents'] = $stat['count'];
-                    break;
-                case self::STATUS_ARCHIVED:
-                    $stats['archived_documents'] = $stat['count'];
-                    break;
-            }
         }
 
         // Get category breakdown
@@ -506,15 +495,14 @@ class Document extends Model
         $futureDate = date('Y-m-d', strtotime("+{$days} days"));
 
         return $this->query(
-            "SELECT ed.*, e.name as employee_name
-             FROM employee_documents ed
-             LEFT JOIN users e ON ed.employee_id = e.id
-             WHERE ed.expires_at IS NOT NULL
-             AND ed.expires_at <= ?
-             AND ed.expires_at >= CURDATE()
-             AND ed.status = ?
-             ORDER BY ed.expires_at ASC",
-            [$futureDate, self::STATUS_ACTIVE]
+            "SELECT d.*, e.name as employee_name
+             FROM documents d
+             LEFT JOIN users e ON d.entity_id = e.id
+             WHERE d.entity_type = 'employee'
+             AND d.expiry_date IS NOT NULL
+             AND d.expiry_date <= ?
+             AND d.expiry_date >= CURDATE()",
+            [$futureDate]
         )->fetchAll();
     }
 }

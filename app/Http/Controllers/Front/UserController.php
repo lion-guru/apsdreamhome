@@ -87,7 +87,7 @@ class UserController extends BaseController
 
         // User documents (KYC)
         try {
-            $stmt = $this->db->prepare("SELECT * FROM user_documents WHERE user_id = ? ORDER BY created_at DESC");
+            $stmt = $this->db->prepare("SELECT * FROM documents WHERE entity_type = 'user' AND entity_id = ? ORDER BY uploaded_on DESC");
             $stmt->execute([$user['id']]);
             $userDocuments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {

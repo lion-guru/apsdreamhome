@@ -5,7 +5,7 @@
             <p class="text-muted mb-0">Manage plot booking invoices and payments</p>
         </div>
         <div>
-            <a href="/admin/invoices/create" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>admin/invoices/create" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Create Invoice
             </a>
         </div>
@@ -61,10 +61,10 @@
                         Filter by Status
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/admin/invoices">All</a>
-                        <a class="dropdown-item" href="/admin/invoices?status=paid">Paid</a>
-                        <a class="dropdown-item" href="/admin/invoices?status=partial">Partial</a>
-                        <a class="dropdown-item" href="/admin/invoices?status=overdue">Overdue</a>
+                        <a class="dropdown-item" href="<?= BASE_URL ?>admin/invoices">All</a>
+                        <a class="dropdown-item" href="<?= BASE_URL ?>admin/invoices?status=paid">Paid</a>
+                        <a class="dropdown-item" href="<?= BASE_URL ?>admin/invoices?status=partial">Partial</a>
+                        <a class="dropdown-item" href="<?= BASE_URL ?>admin/invoices?status=overdue">Overdue</a>
                     </div>
                 </div>
             </div>
@@ -113,14 +113,14 @@
                                     <td><?= date('d M Y', strtotime($invoice['created_at'] ?? 'now')) ?></td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="/admin/invoices/<?= $invoice['id'] ?>" class="btn btn-outline-primary" title="View">
+                                            <a href="<?= BASE_URL ?>admin/invoices/<?= $invoice['id'] ?>" class="btn btn-outline-primary" title="View">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="/admin/invoices/<?= $invoice['id'] ?>/edit" class="btn btn-outline-secondary" title="Edit">
+                                            <a href="<?= BASE_URL ?>admin/invoices/<?= $invoice['id'] ?>/edit" class="btn btn-outline-secondary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <?php if ($invoice['status'] != 'paid'): ?>
-                                                <a href="/admin/invoices/<?= $invoice['id'] ?>/mark-paid" class="btn btn-outline-success" title="Mark Paid" onclick="return confirm('Mark this invoice as paid?')">
+                                                <a href="<?= BASE_URL ?>admin/invoices/<?= $invoice['id'] ?>/mark-paid" class="btn btn-outline-success" title="Mark Paid" onclick="return confirm('Mark this invoice as paid?')">
                                                     <i class="fas fa-check"></i>
                                                 </a>
                                             <?php endif; ?>
@@ -134,7 +134,7 @@
                                     <div class="text-muted">
                                         <i class="fas fa-invoice fa-3x mb-3"></i>
                                         <p class="mb-0">No invoices found. Create your first invoice.</p>
-                                        <a href="/admin/invoices/create" class="btn btn-primary mt-2">Create Invoice</a>
+                                        <a href="<?= BASE_URL ?>admin/invoices/create" class="btn btn-primary mt-2">Create Invoice</a>
                                     </div>
                                 </td>
                             </tr>

@@ -155,13 +155,13 @@
 
     public function uploadDocument($customerId, $documentType, $documentName, $filePath, $fileSize, $fileType)
     {
-        $stmt = $this->db->prepare("INSERT INTO customer_documents (customer_id, document_type, document_name, file_path, file_size, file_type, uploaded_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-        return $stmt->execute([$customerId, $documentType, $documentName, $filePath, $fileSize, $fileType]);
+        $stmt = $this->db->prepare("INSERT INTO documents (entity_type, entity_id, document_type, url, uploaded_on) VALUES ('customer', ?, ?, ?, NOW())");
+        return $stmt->execute([$customerId, $documentType, $filePath]);
     }
 
     public function getDocuments($customerId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM customer_documents WHERE customer_id = ? ORDER BY uploaded_at DESC");
+        $stmt = $this->db->prepare("SELECT * FROM documents WHERE entity_type = 'customer' AND entity_id = ? ORDER BY uploaded_on DESC");
         $stmt->execute([$customerId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -189,7 +189,7 @@
 
             // Mark documents as verified
             foreach ($documents as $docType) {
-                $stmt = $this->db->prepare("UPDATE customer_documents SET is_verified = 1, verified_at = NOW() WHERE customer_id = ? AND document_type = ?");
+                $stmt = $this->db->prepare("UPDATE documents SET verification_status = 'verified', verified_at = NOW() WHERE entity_type = 'customer' AND entity_id = ? AND document_type = ?");
                 $stmt->execute([$customerId, $docType]);
             }
 
