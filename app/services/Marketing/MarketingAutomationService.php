@@ -50,17 +50,7 @@ class MarketingAutomationService
                 "",
                 
                 // Marketing analytics table
-                "CREATE TABLE IF NOT EXISTS marketing_analytics (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    campaign_id INT,
-                    lead_id INT,
-                    action_type VARCHAR(100),
-                    action_data JSON,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_campaign (campaign_id),
-                    INDEX idx_lead (lead_id),
-                    INDEX idx_action (action_type)
-                )"
+                ""
             ];
             
             foreach ($tables as $sql) {

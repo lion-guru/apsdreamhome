@@ -37,17 +37,7 @@ class AdvancedSearchService
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Search suggestions table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS search_suggestions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            query VARCHAR(255) NOT NULL,
-            suggestion_type ENUM('location', 'property_type', 'amenity', 'price_range') NOT NULL,
-            result_count INT DEFAULT 0,
-            search_count INT DEFAULT 1,
-            last_searched TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_query (query),
-            INDEX idx_type (suggestion_type),
-            INDEX idx_count (search_count)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Search logs table
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");

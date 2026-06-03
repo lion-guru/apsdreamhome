@@ -26,30 +26,7 @@ class PropertyAlertService
         $pdo = $this->database->getConnection();
         
         // Property alerts table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS property_alerts (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            alert_name VARCHAR(100) NULL,
-            property_type VARCHAR(50) NULL,
-            location VARCHAR(100) NULL,
-            city VARCHAR(50) NULL,
-            min_price DECIMAL(15,2) NULL,
-            max_price DECIMAL(15,2) NULL,
-            min_area DECIMAL(10,2) NULL,
-            max_area DECIMAL(10,2) NULL,
-            bedrooms INT NULL,
-            furnishing VARCHAR(50) NULL,
-            amenities JSON NULL,
-            frequency ENUM('instant', 'daily', 'weekly') DEFAULT 'daily',
-            last_sent TIMESTAMP NULL,
-            is_active TINYINT(1) DEFAULT 1,
-            total_matches INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id),
-            INDEX idx_active (is_active),
-            INDEX idx_frequency (frequency)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Alert matches log
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");

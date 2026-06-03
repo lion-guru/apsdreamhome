@@ -43,79 +43,13 @@ class PlottingService
             $this->database->query($sql);
 
             // Plot bookings table
-            $sql = "CREATE TABLE IF NOT EXISTS plot_bookings (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                plot_id INT NOT NULL,
-                customer_id BIGINT(20) UNSIGNED,
-                associate_id BIGINT(20) UNSIGNED,
-                booking_number VARCHAR(50) NOT NULL UNIQUE,
-                booking_type ENUM('direct','associate','agent') DEFAULT 'direct',
-                booking_amount DECIMAL(15,2) NOT NULL,
-                total_amount DECIMAL(15,2),
-                payment_plan ENUM('lump_sum','installment','custom') DEFAULT 'lump_sum',
-                installment_period INT,
-                installment_amount DECIMAL(15,2),
-                payment_status ENUM('pending','partial','completed','cancelled') DEFAULT 'pending',
-                payment_method VARCHAR(50),
-                transaction_id VARCHAR(100),
-                booking_date DATE NOT NULL,
-                agreement_date DATE,
-                possession_date DATE,
-                cancellation_date DATE,
-                cancellation_reason TEXT,
-                commission_paid DECIMAL(15,2) DEFAULT 0,
-                commission_percentage DECIMAL(5,2),
-                associate_commission DECIMAL(15,2) DEFAULT 0,
-                agent_commission DECIMAL(15,2) DEFAULT 0,
-                remarks TEXT,
-                status ENUM('pending','confirmed','cancelled','completed') DEFAULT 'pending',
-                created_by BIGINT(20) UNSIGNED,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (plot_id) REFERENCES plots(id) ON DELETE CASCADE,
-                FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL,
-                FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE SET NULL,
-                FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-            )";
+            $sql = "";
             $this->database->query($sql);
 
             // Plot payments table
-            $sql = "CREATE TABLE IF NOT EXISTS plot_payments (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                booking_id INT NOT NULL,
-                amount DECIMAL(15,2) NOT NULL,
-                payment_date DATE NOT NULL,
-                payment_method VARCHAR(50) NOT NULL,
-                transaction_id VARCHAR(100),
-                installment_number INT,
-                payment_status ENUM('pending','completed','failed','refunded') DEFAULT 'completed',
-                receipt_number VARCHAR(50),
-                bank_reference VARCHAR(100),
-                remarks TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (booking_id) REFERENCES plot_bookings(id) ON DELETE CASCADE
-            )";
+            $sql = "";
             $this->database->query($sql);
 
-            // Commission tracking table
-            $sql = "CREATE TABLE IF NOT EXISTS commission_tracking (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                booking_id INT NOT NULL,
-                associate_id BIGINT(20) UNSIGNED,
-                commission_type ENUM('direct','level','bonus','override') DEFAULT 'direct',
-                commission_level INT DEFAULT 1,
-                commission_amount DECIMAL(15,2) NOT NULL,
-                commission_percentage DECIMAL(5,2),
-                payment_status ENUM('pending','paid','cancelled') DEFAULT 'pending',
-                payment_date DATE,
-                transaction_id VARCHAR(100),
-                remarks TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (booking_id) REFERENCES plot_bookings(id) ON DELETE CASCADE,
-                FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE SET NULL
-            )";
-            $this->database->query($sql);
         } catch (\Exception $e) {
             $this->logger->error('Error creating plotting tables', [
                 'error' => $e->getMessage()
@@ -881,13 +815,17 @@ class PlottingService
                 ]);
 
                 // Also record a summary in commission_tracking for plotting-specific reports
-                $this->database->query(
-                    "INSERT INTO commission_tracking (
-                        booking_id, associate_id, commission_type, commission_level,
-                        commission_amount, commission_percentage, payment_status, remarks
-                    ) VALUES (?, ?, 'mlm_differential', 1, ?, ?, 'pending', 'Distributed via MLM Differential Logic')",
-                    [$bookingId, $associateId, $totalAmount * ($result['total_distributed'] / 100), $result['total_distributed']]
-                );
+                try {
+                    $this->database->query(
+                        "INSERT INTO commission_tracking (
+                            booking_id, associate_id, commission_type, commission_level,
+                            commission_amount, commission_percentage, payment_status, remarks
+                        ) VALUES (?, ?, 'mlm_differential', 1, ?, ?, 'pending', 'Distributed via MLM Differential Logic')",
+                        [$bookingId, $associateId, $totalAmount * ($result['total_distributed'] / 100), $result['total_distributed']]
+                    );
+                } catch (\Exception $e) {
+                    $this->logger->debug('commission_tracking insert skipped (table dropped)', ['error' => $e->getMessage()]);
+                }
             } else {
                 $this->logger->warning('MLM Commission calculation skipped or failed', [
                     'booking_id' => $bookingId,

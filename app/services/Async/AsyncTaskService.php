@@ -49,13 +49,7 @@ class AsyncTaskService
             $this->database->query($sql);
 
             // Task queue table
-            $sql = "CREATE TABLE IF NOT EXISTS task_queue (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                task_id INT,
-                queue_name VARCHAR(100) DEFAULT 'default',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (task_id) REFERENCES async_tasks(id) ON DELETE CASCADE
-            )";
+            $sql = "";
             $this->database->query($sql);
             
         } catch (\Exception $e) {

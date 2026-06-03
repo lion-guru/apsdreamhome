@@ -43,21 +43,7 @@ class NotificationCenterService
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Notification delivery logs
-        $pdo->exec("CREATE TABLE IF NOT EXISTS notification_delivery_logs (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            notification_id BIGINT NOT NULL,
-            channel VARCHAR(20) NOT NULL,
-            status ENUM('sent', 'delivered', 'failed', 'bounced') NOT NULL,
-            provider_response JSON NULL,
-            error_message TEXT NULL,
-            sent_at TIMESTAMP NULL,
-            delivered_at TIMESTAMP NULL,
-            failed_at TIMESTAMP NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_notification (notification_id),
-            INDEX idx_channel (channel),
-            INDEX idx_status (status)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Seed default templates
         $this->seedTemplates();

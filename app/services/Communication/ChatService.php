@@ -35,20 +35,7 @@ class ChatService
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Quick replies / templates
-        $pdo->exec("CREATE TABLE IF NOT EXISTS chat_quick_replies (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            agent_id INT NULL,
-            title VARCHAR(100) NOT NULL,
-            message TEXT NOT NULL,
-            category VARCHAR(50) NULL,
-            is_global TINYINT(1) DEFAULT 0,
-            shortcut VARCHAR(20) NULL,
-            usage_count INT DEFAULT 0,
-            is_active TINYINT(1) DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_agent (agent_id),
-            INDEX idx_global (is_global)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Chat settings per user
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");

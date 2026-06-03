@@ -106,17 +106,7 @@ class AIEcosystemManager {
             "",
             "",
             "",
-            "CREATE TABLE IF NOT EXISTS ai_chat_history (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                conversation_id INT NULL,
-                message TEXT,
-                ai_response TEXT,
-                sender ENUM('user', 'ai') DEFAULT 'user',
-                context VARCHAR(100),
-                ip_address VARCHAR(45),
-                confidence_score FLOAT DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
+            "",
             "",
             "",
             "ALTER TABLE chat_sessions ADD COLUMN IF NOT EXISTS last_sentiment ENUM('positive', 'neutral', 'negative') DEFAULT 'neutral' AFTER session_status",

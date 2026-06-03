@@ -49,44 +49,12 @@ class WhatsAppManager
         $this->db->execute($sql);
 
         // WhatsApp conversations table
-        $sql = "CREATE TABLE IF NOT EXISTS whatsapp_conversations (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            customer_phone VARCHAR(20) NOT NULL,
-            customer_name VARCHAR(100),
-            conversation_status ENUM('active','inactive','archived') DEFAULT 'active',
-            last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            message_count INT DEFAULT 0,
-            unread_count INT DEFAULT 0,
-            tags JSON,
-            custom_fields JSON,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
+        $sql = "";
 
         $this->db->execute($sql);
 
         // WhatsApp campaigns table
-        $sql = "CREATE TABLE IF NOT EXISTS whatsapp_campaigns (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            campaign_name VARCHAR(150) NOT NULL UNIQUE,
-            campaign_type ENUM('promotional','informational','transactional','support') DEFAULT 'informational',
-            target_audience JSON,
-            template_name VARCHAR(100),
-            message_content TEXT,
-            media_url VARCHAR(500),
-            status ENUM('draft','scheduled','active','paused','completed','cancelled') DEFAULT 'draft',
-            total_recipients INT DEFAULT 0,
-            sent_count INT DEFAULT 0,
-            delivered_count INT DEFAULT 0,
-            read_count INT DEFAULT 0,
-            scheduled_at TIMESTAMP NULL,
-            started_at TIMESTAMP NULL,
-            completed_at TIMESTAMP NULL,
-            created_by INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-        )";
+        $sql = "";
 
         $this->db->execute($sql);
 

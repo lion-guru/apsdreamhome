@@ -364,15 +364,7 @@ class CareerService
 
             "",
 
-            "CREATE TABLE IF NOT EXISTS application_notes (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                application_id INT NOT NULL,
-                note TEXT NOT NULL,
-                created_by VARCHAR(255),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (application_id) REFERENCES job_applications(id) ON DELETE CASCADE,
-                INDEX idx_application_id (application_id)
-            )"
+            ""
         ];
 
         foreach ($tables as $sql) {

@@ -38,18 +38,7 @@ class AdvancedAnalyticsService
         $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Heatmap data
-        $pdo->exec("CREATE TABLE IF NOT EXISTS analytics_heatmaps (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            page_url VARCHAR(255) NOT NULL,
-            element_selector VARCHAR(255) NOT NULL,
-            click_count INT DEFAULT 0,
-            x_coordinate INT NULL,
-            y_coordinate INT NULL,
-            device_type VARCHAR(20) NULL,
-            date_recorded DATE NOT NULL,
-            INDEX idx_page (page_url),
-            INDEX idx_date (date_recorded)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
     
     /**

@@ -126,16 +126,7 @@ class LocalizationService
                 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ",
             'translation_sources' => "
-                CREATE TABLE IF NOT EXISTS translation_sources (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    source_name VARCHAR(255) NOT NULL UNIQUE,
-                    source_type VARCHAR(50) NOT NULL,
-                    source_path VARCHAR(500),
-                    is_active BOOLEAN DEFAULT TRUE,
-                    priority INT DEFAULT 0,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             "
         ];
 
