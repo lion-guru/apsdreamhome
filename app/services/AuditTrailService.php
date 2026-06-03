@@ -54,37 +54,6 @@ class AuditTrailService
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
             
             $this->database->getConnection()->exec($sql);
-            
-            // Audit log archive table (older records)
-            $sql2 = "CREATE TABLE IF NOT EXISTS audit_log_archive (
-                id BIGINT PRIMARY KEY,
-                timestamp TIMESTAMP NULL,
-                user_id INT NULL,
-                user_type VARCHAR(20) NULL,
-                action VARCHAR(100) NULL,
-                entity_type VARCHAR(50) NULL,
-                entity_id INT NULL,
-                description TEXT NULL,
-                archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_archived_at (archived_at)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-            
-            $this->database->getConnection()->exec($sql2);
-            
-            // Data change log (for sensitive data)
-            $sql3 = "CREATE TABLE IF NOT EXISTS data_change_log (
-                id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                audit_log_id BIGINT NOT NULL,
-                table_name VARCHAR(50) NOT NULL,
-                column_name VARCHAR(50) NOT NULL,
-                old_value TEXT NULL,
-                new_value TEXT NULL,
-                is_sensitive TINYINT(1) DEFAULT 0,
-                INDEX idx_audit_log (audit_log_id),
-                INDEX idx_table (table_name)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-            
-            $this->database->getConnection()->exec($sql3);
         } catch (\Exception $e) {
             error_log("AuditTrailService table creation error (non-critical): " . $e->getMessage());
         }
@@ -355,22 +324,21 @@ class AuditTrailService
                     SELECT id, timestamp, user_id, user_type, action, entity_type, entity_id, description 
                     FROM audit_log 
                     WHERE timestamp < ?";
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([$cutoff]);
+            $archived = $stmt->rowCount();
+            
+            // Delete from main table
+            if ($archived > 0) {
+                $sql2 = "DELETE FROM audit_log WHERE timestamp < ?";
+                $stmt2 = $this->database->prepare($sql2);
+                $stmt2->execute([$cutoff]);
+            }
+            
+            return $archived;
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            return 0;
         }
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([$cutoff]);
-        $archived = $stmt->rowCount();
-        
-        // Delete from main table
-        if ($archived > 0) {
-            $sql2 = "DELETE FROM audit_log WHERE timestamp < ?";
-            $stmt2 = $this->database->prepare($sql2);
-            $stmt2->execute([$cutoff]);
-        }
-        
-        return $archived;
     }
     
     /**
