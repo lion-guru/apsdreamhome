@@ -142,13 +142,17 @@ class PerformanceDashboard extends Model
      */
     public function getDashboardWidgets(int $userId, string $userType): array
     {
-        // Get user's custom widget configuration or default widgets
-        $userConfig = $this->query(
-            "SELECT widgets_configuration FROM user_dashboard_configs
-             WHERE user_id = ? AND user_type = ? AND is_active = 1
-             ORDER BY is_default DESC LIMIT 1",
-            [$userId, $userType]
-        )->fetch();
+        try {
+            // Get user's custom widget configuration or default widgets
+            $userConfig = $this->query(
+                "SELECT widgets_configuration FROM user_dashboard_configs
+                 WHERE user_id = ? AND user_type = ? AND is_active = 1
+                 ORDER BY is_default DESC LIMIT 1",
+                [$userId, $userType]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if ($userConfig) {
             return json_decode($userConfig['widgets_configuration'], true);

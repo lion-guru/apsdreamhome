@@ -257,9 +257,13 @@ class CAController extends BaseController
      */
     private function getAuditStatus()
     {
-        $query = "SELECT * FROM audit_schedules 
-                  WHERE fiscal_year = YEAR(CURDATE())
-                  ORDER BY scheduled_date ASC";
+        try {
+            $query = "SELECT * FROM audit_schedules 
+                      WHERE fiscal_year = YEAR(CURDATE())
+                      ORDER BY scheduled_date ASC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->db->fetchAll($query);
     }

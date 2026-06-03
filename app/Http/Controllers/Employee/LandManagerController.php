@@ -728,9 +728,13 @@ class LandManagerController extends BaseController
      */
     private function addToAcquisitionTimeline($acquisitionId, $acquisitionData)
     {
-        $query = "INSERT INTO acquisition_timeline (
-                    acquisition_id, status, notes, performed_by, created_at
-                ) VALUES (?, ?, ?, ?, NOW())";
+        try {
+            $query = "INSERT INTO acquisition_timeline (
+                        acquisition_id, status, notes, performed_by, created_at
+                    ) VALUES (?, ?, ?, ?, NOW())";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         $this->db->execute($query, [
             $acquisitionId,

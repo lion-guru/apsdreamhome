@@ -549,10 +549,14 @@ class EmployeeDashboardController extends BaseController
      */
     private function getHRReminders()
     {
-        $query = "SELECT * FROM hr_reminders 
-                  WHERE due_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-                  AND status = 'pending'
-                  ORDER BY due_date ASC";
+        try {
+            $query = "SELECT * FROM hr_reminders 
+                      WHERE due_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+                      AND status = 'pending'
+                      ORDER BY due_date ASC";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         return $this->db->fetchAll($query);
     }

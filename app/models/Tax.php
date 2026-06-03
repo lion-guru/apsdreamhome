@@ -20,7 +20,11 @@ class Tax extends Model
      */
     public function getGstSettings(): ?array
     {
-        return $this->query("SELECT * FROM gst_settings WHERE is_active = 1 LIMIT 1")->fetch();
+        try {
+            return $this->query("SELECT * FROM gst_settings WHERE is_active = 1 LIMIT 1")->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     /**

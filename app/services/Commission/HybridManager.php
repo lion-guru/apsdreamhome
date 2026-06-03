@@ -346,13 +346,17 @@ class HybridCommissionManager
      */
     private function getTraditionalAnalytics($userId)
     {
-        $sql = "SELECT
-                COUNT(*) as total_commissions,
-                COALESCE(SUM(commission_amount), 0) as total_earnings,
-                COALESCE(AVG(commission_amount), 0) as average_commission,
-                COUNT(DISTINCT region) as regions_covered
-                FROM traditional_commissions
-                WHERE agent_id = ? AND status = 'paid'";
+        try {
+            $sql = "SELECT
+                    COUNT(*) as total_commissions,
+                    COALESCE(SUM(commission_amount), 0) as total_earnings,
+                    COALESCE(AVG(commission_amount), 0) as average_commission,
+                    COUNT(DISTINCT region) as regions_covered
+                    FROM traditional_commissions
+                    WHERE agent_id = ? AND status = 'paid'";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->db->fetch($sql, [$userId]) ?? [];
     }

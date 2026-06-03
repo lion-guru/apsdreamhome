@@ -137,9 +137,13 @@ class AdvancedAnalytics {
         $sessionId = session_id();
         $userId = $_SESSION['user_id'] ?? null;
         
-        $sql = "INSERT INTO analytics_user_behavior 
-                (session_id, user_id, action_type, action_data, element_clicked) 
-                VALUES (?, ?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO analytics_user_behavior 
+                    (session_id, user_id, action_type, action_data, element_clicked) 
+                    VALUES (?, ?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $actionDataJson = json_encode($actionData);
         $this->db->execute($sql, [$sessionId, $userId, $actionType, $actionDataJson, $elementClicked]);

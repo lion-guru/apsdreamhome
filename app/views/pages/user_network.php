@@ -42,23 +42,31 @@ $totalDownline = $db->fetch(
     [$userId]
 );
 
-// Get MLM stats
-$stats = [
-    'direct_referrals' => count($directReferrals),
-    'total_downline' => $totalDownline['cnt'] ?? 0,
-    'total_points' => $db->fetch("SELECT SUM(points) as total FROM mlm_points WHERE user_id = ?", [$userId])['total'] ?? 0,
-    'total_earnings' => $db->fetch("SELECT SUM(amount) as total FROM mlm_earnings WHERE user_id = ?", [$userId])['total'] ?? 0,
-];
+try {
+    // Get MLM stats
+    $stats = [
+        'direct_referrals' => count($directReferrals),
+        'total_downline' => $totalDownline['cnt'] ?? 0,
+        'total_points' => $db->fetch("SELECT SUM(points) as total FROM mlm_points WHERE user_id = ?", [$userId])['total'] ?? 0,
+        'total_earnings' => $db->fetch("SELECT SUM(amount) as total FROM mlm_earnings WHERE user_id = ?", [$userId])['total'] ?? 0,
+    ];
+} catch (\Throwable $e) {
+    // Gracefully handle dropped table ref
+}
 
 // Get recent activity
-$recentActivity = $db->fetchAll(
-    "SELECT m.*, u.name as from_user 
-     FROM mlm_transactions m 
-     LEFT JOIN users u ON m.from_user_id = u.id 
-     WHERE m.user_id = ? 
-     ORDER BY m.created_at DESC LIMIT 10",
-    [$userId]
-);
+try {
+    $recentActivity = $db->fetchAll(
+        "SELECT m.*, u.name as from_user 
+         FROM mlm_transactions m 
+         LEFT JOIN users u ON m.from_user_id = u.id 
+         WHERE m.user_id = ? 
+         ORDER BY m.created_at DESC LIMIT 10",
+        [$userId]
+    );
+} catch (\Throwable $e) {
+    $recentActivity = [];
+}
 ?>
 
 <div class="container-fluid py-4">

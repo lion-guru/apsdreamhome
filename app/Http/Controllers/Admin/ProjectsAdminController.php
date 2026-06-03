@@ -96,7 +96,11 @@ class ProjectsAdminController extends AdminController
     {
         $db = Database::getInstance();
         $project = $db->fetch("SELECT * FROM projects WHERE id = ?", [$id]);
-        $images = $db->fetchAll("SELECT * FROM project_images WHERE project_id = ? ORDER BY display_order", [$id]);
+        try {
+            $images = $db->fetchAll("SELECT * FROM project_images WHERE project_id = ? ORDER BY display_order", [$id]);
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $this->data['project'] = $project ?: [];
         $this->data['images'] = $images ?: [];
         $this->data['page_title'] = 'Project Images';

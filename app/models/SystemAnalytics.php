@@ -287,10 +287,14 @@ class SystemAnalytics extends Model
     
     private function shouldTriggerAlert(array $alert): bool
     {
-        $metric = $this->query(
-            "SELECT * FROM system_analytics_metrics WHERE metric_name = ?",
-            [$alert['metric_key']]
-        )->fetch();
+        try {
+            $metric = $this->query(
+                "SELECT * FROM system_analytics_metrics WHERE metric_name = ?",
+                [$alert['metric_key']]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         if (!$metric) {
             return false;

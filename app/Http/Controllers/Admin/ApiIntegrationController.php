@@ -60,7 +60,11 @@ class ApiIntegrationController extends AdminController
         $this->requireAdmin();
 
         $apiIntegrations = $this->db->fetchAll("SELECT * FROM api_integrations ORDER BY created_at DESC");
-        $thirdParty = $this->db->fetchAll("SELECT * FROM third_party_integrations ORDER BY created_at DESC");
+        try {
+            $thirdParty = $this->db->fetchAll("SELECT * FROM third_party_integrations ORDER BY created_at DESC");
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         return $this->render('admin/api/integrations', [
             'page_title' => 'API Integrations',

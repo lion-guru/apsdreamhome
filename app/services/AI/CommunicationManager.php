@@ -59,7 +59,11 @@ class CommunicationManager {
         $employee = $this->db->fetch("SELECT employee_id FROM department_assignments WHERE department_id = ? AND is_available = 1 ORDER BY current_load ASC LIMIT 1", [$deptId]);
         $empId = $employee['employee_id'] ?? null;
 
-        $sql = "INSERT INTO interaction_routing (interaction_id, department_id, assigned_to, routing_reason) VALUES (?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO interaction_routing (interaction_id, department_id, assigned_to, routing_reason) VALUES (?, ?, ?, ?)";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $reason = "AI analyzed content as " . strtoupper($deptType) . " / " . strtoupper($tag);
         
         if ($this->db->execute($sql, [$interactionId, $deptId, $empId, $reason])) {

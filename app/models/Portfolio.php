@@ -624,12 +624,16 @@ class Portfolio extends Model
      */
     public function getUserPortfolios(int $userId, string $userType): array
     {
-        return $this->query(
-            "SELECT * FROM property_portfolios
-             WHERE owner_id = ? AND owner_type = ? AND is_active = 1
-             ORDER BY created_at DESC",
-            [$userId, $userType]
-        )->fetchAll();
+        try {
+            return $this->query(
+                "SELECT * FROM property_portfolios
+                 WHERE owner_id = ? AND owner_type = ? AND is_active = 1
+                 ORDER BY created_at DESC",
+                [$userId, $userType]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 }
 

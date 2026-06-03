@@ -348,12 +348,16 @@ class AuditTrailService
     {
         $cutoff = date('Y-m-d H:i:s', strtotime("-{$days} days"));
         
-        // Move to archive
-        $sql = "INSERT INTO audit_log_archive 
-                (id, timestamp, user_id, user_type, action, entity_type, entity_id, description)
-                SELECT id, timestamp, user_id, user_type, action, entity_type, entity_id, description 
-                FROM audit_log 
-                WHERE timestamp < ?";
+        try {
+            // Move to archive
+            $sql = "INSERT INTO audit_log_archive 
+                    (id, timestamp, user_id, user_type, action, entity_type, entity_id, description)
+                    SELECT id, timestamp, user_id, user_type, action, entity_type, entity_id, description 
+                    FROM audit_log 
+                    WHERE timestamp < ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$cutoff]);

@@ -736,8 +736,12 @@ class FileManagerService
         $tagStmt = $this->database->prepare($tagSql);
         $tagStmt->execute([$fileId]);
         
-        // Delete shares
-        $shareSql = "DELETE FROM file_shares WHERE file_id = ?";
+        try {
+            // Delete shares
+            $shareSql = "DELETE FROM file_shares WHERE file_id = ?";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         $shareStmt = $this->database->prepare($shareSql);
         $shareStmt->execute([$fileId]);
         

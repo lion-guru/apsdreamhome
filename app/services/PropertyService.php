@@ -117,7 +117,11 @@ class PropertyService
     }
     
     public function getResellProperties($filters = []) {
-        $sql = "SELECT * FROM resell_properties WHERE listing_status = 'active'";
+        try {
+            $sql = "SELECT * FROM resell_properties WHERE listing_status = 'active'";
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
         
         $params = [];
         

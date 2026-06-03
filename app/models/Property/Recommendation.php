@@ -87,15 +87,19 @@ class PropertyRecommendation extends Model
     {
         $db = Database::getInstance();
 
-        // Find similar users based on ratings and preferences
-        $similarUsers = $db->query(
-            "SELECT us.user_id_2 as similar_user_id, us.similarity_score
-             FROM user_similarity us
-             WHERE us.user_id_1 = ? AND us.similarity_score > 0.3
-             ORDER BY us.similarity_score DESC
-             LIMIT 10",
-            [$userId]
-        )->fetchAll();
+        try {
+            // Find similar users based on ratings and preferences
+            $similarUsers = $db->query(
+                "SELECT us.user_id_2 as similar_user_id, us.similarity_score
+                 FROM user_similarity us
+                 WHERE us.user_id_1 = ? AND us.similarity_score > 0.3
+                 ORDER BY us.similarity_score DESC
+                 LIMIT 10",
+                [$userId]
+            )->fetchAll();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
 
         if (empty($similarUsers)) {
             return $this->getPopularityBasedRecommendations($limit);

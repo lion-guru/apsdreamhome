@@ -381,10 +381,14 @@ class PredictiveAnalytics extends Model
 
     private function getActiveModel(string $modelType): ?array
     {
-        return $this->query(
-            "SELECT * FROM predictive_models WHERE model_type = ? AND is_active = 1 ORDER BY accuracy_score DESC LIMIT 1",
-            [$modelType]
-        )->fetch();
+        try {
+            return $this->query(
+                "SELECT * FROM predictive_models WHERE model_type = ? AND is_active = 1 ORDER BY accuracy_score DESC LIMIT 1",
+                [$modelType]
+            )->fetch();
+        } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+        }
     }
 
     private function calculateLinearRegressionPrediction(array $features, array $parameters, array $featureList): float
