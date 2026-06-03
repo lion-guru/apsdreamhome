@@ -2830,8 +2830,7 @@ $router->get('/event-calendar/{id}', 'App\\Http\\Controllers\\Front\\EventContro
 $router->get('/photo-gallery', 'App\\Http\\Controllers\\Front\\GalleryController@index');
 $router->get('/photo-gallery/{id}', 'App\\Http\\Controllers\\Front\\GalleryController@show');
 
-// --- AIAssistantController (root namespace) ---
-$router->get('/ai/assistant', 'AIAssistantController@index');
+// --- AI Assistant: /ai-assistant already routed to SmartAIController@assistantPage ---
 
 // ============================================================
 // ADMIN DIAGNOSTIC & ALERTS
