@@ -66,20 +66,6 @@ try {
         FOREIGN KEY (workflow_id) REFERENCES workflow_definitions(id) ON DELETE RESTRICT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     
-    // 4. Workflow Actions
-    echo "📋 Creating workflow_actions table...\n";
-    $pdo->exec("CREATE TABLE IF NOT EXISTS workflow_actions (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        instance_id INT NOT NULL,
-        step_id INT NOT NULL,
-        action_type ENUM('approve', 'reject', 'send_back', 'comment', 'delegate') NOT NULL,
-        action_by INT NOT NULL,
-        action_by_type VARCHAR(20) NOT NULL,
-        comments TEXT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (instance_id) REFERENCES workflow_instances(id) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    
     // 5. Saved Reports
     echo "📊 Creating saved_reports table...\n";
     $pdo->exec("CREATE TABLE IF NOT EXISTS saved_reports (
@@ -129,52 +115,7 @@ try {
         INDEX idx_entity (entity_type, entity_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     
-    // 7. Audit Log Archive
-    echo "📦 Creating audit_log_archive table...\n";
-    $pdo->exec("CREATE TABLE IF NOT EXISTS audit_log_archive (
-        id BIGINT PRIMARY KEY,
-        timestamp TIMESTAMP NULL,
-        user_id INT NULL,
-        user_type VARCHAR(20) NULL,
-        action VARCHAR(100) NULL,
-        entity_type VARCHAR(50) NULL,
-        entity_id INT NULL,
-        description TEXT NULL,
-        archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_archived_at (archived_at)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    
-    // 8. Data Change Log
-    echo "📝 Creating data_change_log table...\n";
-    $pdo->exec("CREATE TABLE IF NOT EXISTS data_change_log (
-        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-        audit_log_id BIGINT NOT NULL,
-        table_name VARCHAR(50) NOT NULL,
-        column_name VARCHAR(50) NOT NULL,
-        old_value TEXT NULL,
-        new_value TEXT NULL,
-        is_sensitive TINYINT(1) DEFAULT 0,
-        FOREIGN KEY (audit_log_id) REFERENCES audit_log(id) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    
-    // 9. Import Jobs
-    echo "📥 Creating import_jobs table...\n";
-    $pdo->exec("CREATE TABLE IF NOT EXISTS import_jobs (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        job_type ENUM('properties', 'leads', 'customers', 'associates') NOT NULL,
-        file_path VARCHAR(500) NOT NULL,
-        file_size INT NOT NULL,
-        total_rows INT DEFAULT 0,
-        processed_rows INT DEFAULT 0,
-        successful_rows INT DEFAULT 0,
-        failed_rows INT DEFAULT 0,
-        errors JSON NULL,
-        status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
-        started_at TIMESTAMP NULL,
-        completed_at TIMESTAMP NULL,
-        created_by INT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    echo "✅ Migration complete\n";
     
     // Seed default workflows
     echo "🌱 Seeding default workflows...\n";

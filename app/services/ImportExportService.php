@@ -35,26 +35,7 @@ class ImportExportService
      */
     private function ensureTablesExist(): void
     {
-        $sql = "CREATE TABLE IF NOT EXISTS import_jobs (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            job_type ENUM('properties', 'leads', 'users', 'users', 'khatabook_sales') NOT NULL,
-            file_path VARCHAR(500) NOT NULL,
-            file_size INT NOT NULL,
-            total_rows INT DEFAULT 0,
-            processed_rows INT DEFAULT 0,
-            successful_rows INT DEFAULT 0,
-            failed_rows INT DEFAULT 0,
-            errors JSON NULL,
-            status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
-            started_at TIMESTAMP NULL,
-            completed_at TIMESTAMP NULL,
-            created_by INT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_status (status),
-            INDEX idx_type (job_type)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-        
-        $this->database->getConnection()->exec($sql);
+        // import_jobs table removed - queries wrapped in try/catch
     }
     
     /**

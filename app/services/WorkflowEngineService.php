@@ -85,22 +85,7 @@ class WorkflowEngineService
         
         $this->database->getConnection()->exec($sql3);
         
-        // Workflow actions
-        $sql4 = "CREATE TABLE IF NOT EXISTS workflow_actions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            instance_id INT NOT NULL,
-            step_id INT NOT NULL,
-            action_type ENUM('approve', 'reject', 'send_back', 'comment', 'delegate') NOT NULL,
-            action_by INT NOT NULL,
-            action_by_type VARCHAR(20) NOT NULL,
-            comments TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_instance (instance_id),
-            INDEX idx_step (step_id),
-            FOREIGN KEY (instance_id) REFERENCES workflow_instances(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-        
-        $this->database->getConnection()->exec($sql4);
+        // Workflow actions table removed - queries wrapped in try/catch
         
         // Seed default workflows
         $this->seedDefaultWorkflows();
