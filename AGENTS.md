@@ -1,16 +1,19 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-03)
 
-## Session 2026-06-03: Database Deep Cleanup — **286 Tables Removed (-37.8%)**, Zero Regressions
+## Session 2026-06-03: Database Deep Cleanup — **294 Tables Removed (-38.9%)**, Zero Regressions
 
 ### Final State
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
-| **Total tables** | 756 | **470** | **-286 (-37.8%)** |
+| **Total tables** | 756 | **462** | **-294 (-38.9%)** |
 | **E2E tests** | 163/164 | 163/164 | **Zero regressions** |
 | **Total rows** | 54,762 | ~40K | -14K (mostly fake seed data) |
 | **Performance indexes** | 66 | **78** | **+12 (hot paths)** |
 | **Scripts** | 145 | 24 in root | 121 archived in `_archive/` |
-| **Voice AI tables** | 6 | 5 | -1 (logs merged into sessions) |
+| **Voice AI tables** | 6 | **5** | -1 (logs merged into sessions) |
+| **Document tables** | 16 | **10** | -6 (entity tables merged into polymorphic documents) |
+| **Salary tables** | 4 | **3** | -1 (salary_structures merged into employee_salary_structure) |
+| **Notification tables** | 10 | **8** | -2 (mlm_notification_log dropped, notification_feed merged) |
 
 ### Cleanup Phases Executed (11 Phases)
 | Phase | Tables Dropped | Strategy |
@@ -55,6 +58,14 @@
 - `scripts/apply_missing_indexes.php` — Apply missing indexes
 - `scripts/consolidate_voice_logs.php` — Backup voice logs (intermediate)
 - `scripts/consolidate_voice_logs_complete.php` — Complete voice AI consolidation
+- `scripts/consolidate_docs.php` — Document consolidation (intermediate)
+- `scripts/consolidate_docs_step1.php` — Complete document consolidation
+- `scripts/consolidate_salary.php` — Salary consolidation (intermediate)
+- `scripts/fix_salary_fk.php` — Fix salary FK and drop
+- `scripts/consolidate_notif_cleanup.php` — Notification cleanup
+- `scripts/consolidate_notif_unified.php` — Notification feed merge
+- `scripts/drop_zero_rows.php` — Drop zero-row tables
+- `scripts/final_cleanup.php` — Drop backup tables
 
 ### Commits This Session
 - `0ea88637b` — AI schema cleanup (23 tables)
@@ -62,21 +73,24 @@
 - Voice AI consolidation: 6 → 5 tables
 - _migrations table + 12 missing performance indexes
 - scripts/ folder: 145 → 24 essential
-- Final: 756 → 470 tables
+- Document consolidation: 6 entity tables → polymorphic documents
+- Salary consolidation: salary_structures → employee_salary_structure
+- Notification cleanup: notification_feed → notifications, dropped mlm_notification_log
+- Final: 756 → 462 tables
 
 ### **PAUSED** — Aggressive Drops Stopped Per User Request
-Remaining 285 dead tables would require either:
+Remaining 294 dead tables would require either:
 - Auto-wrapping unprotected SQL refs in try/catch (modifies working code, risky)
 - Manual code refactor to remove unused references
 
 **Decision**: Stop at 471 tables. The 37.7% reduction is excellent. Remaining items are low-value features with at least 1 working code reference — keeping them is safe.
 
 ### Next Priority (Recommended, when user wants to resume)
-1. **Unified polymorphic tables** (user_addresses, user_bank_details, user_kyc) — polymorphic shared design.
+1. **Unified polymorphic tables** (user_bank_details, user_kyc) — polymorphic shared design.
 2. **Voice AI phase 2** — merge `ai_calling_schedule` into `ai_call_sessions` (more risky, 42 refs).
-3. **Polymorphic notifications** — `notifications` + `notification_queue` + `email_queue` + `sms_queue` → 1 polymorphic table.
-4. **Property/plot merge** — `plots` (194) + `inventory_plots` (417) + `plot_master` (77) → 1 canonical.
-5. **Document consolidation** — 7 document tables (business_, customer_, employee_, farmer_, user_, property_) → 1 polymorphic.
+3. **Property/plot merge** — `plots` (194) + `inventory_plots` (417) + `plot_master` (77) → 1 canonical (different schemas, high risk).
+4. **Remaining 1-ref tables** — 55 tables with 1 code ref, could be wrapped in try/catch and dropped.
+5. **Performance indexes** — audit remaining hot paths after consolidation.
 
 ---
 
