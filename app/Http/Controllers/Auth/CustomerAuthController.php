@@ -70,6 +70,9 @@ class CustomerAuthController extends BaseController
                 $_SESSION['role'] = $user['role'] ?? 'customer';
                 $_SESSION['logged_in'] = true;
 
+                require_once __DIR__ . '/../../../services/AuditService.php';
+                try { (new \App\Services\AuditService($db))->log('login', (int)$user['id'], $user['role'] ?? 'customer', 'user', (int)$user['id'], 'User logged in'); } catch (\Throwable $e) {}
+
                 // Role-based redirect
                 $redirectUrl = $this->getRedirectUrl($user['role'] ?? 'customer', $user['role'] ?? 'user');
                 header('Location: ' . BASE_URL . $redirectUrl);
@@ -83,6 +86,8 @@ class CustomerAuthController extends BaseController
                 } else {
                     $_SESSION['errors'] = ["Invalid password"];
                 }
+                require_once __DIR__ . '/../../../services/AuditService.php';
+                try { (new \App\Services\AuditService($db))->log('login_failed', (int)$exists, null, 'user', (int)$exists, 'Failed login attempt for: ' . $email, [], 'failure'); } catch (\Throwable $e) {}
                 header('Location: ' . BASE_URL . '/login');
                 exit;
             }
