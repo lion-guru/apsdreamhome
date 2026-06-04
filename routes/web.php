@@ -348,6 +348,18 @@ $router->get('/admin/reviews/approve-testimonial', 'App\\Http\\Controllers\\Admi
 $router->get('/admin/reviews/reject-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@rejectTestimonial');
 $router->get('/admin/reviews/delete-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@deleteTestimonial');
 
+$router->get('/admin/visits', 'App\\Http\\Controllers\\Admin\\VisitController@index');
+$router->get('/admin/visits/confirm', 'App\\Http\\Controllers\\Admin\\VisitController@confirm');
+$router->get('/admin/visits/complete', 'App\\Http\\Controllers\\Admin\\VisitController@complete');
+$router->get('/admin/visits/cancel', 'App\\Http\\Controllers\\Admin\\VisitController@cancel');
+$router->get('/admin/visits/noshow', 'App\\Http\\Controllers\\Admin\\VisitController@noshow');
+
+$router->get('/visit/book', 'App\\Http\\Controllers\\Front\\VisitController@book');
+$router->post('/visit/store', 'App\\Http\\Controllers\\Front\\VisitController@store');
+$router->get('/visit/confirm', 'App\\Http\\Controllers\\Front\\VisitController@confirm');
+$router->get('/visit/my-visits', 'App\\Http\\Controllers\\Front\\VisitController@myVisits');
+$router->post('/visit/cancel', 'App\\Http\\Controllers\\Front\\VisitController@cancel');
+
 $router->get('/testimonials', 'App\\Http\\Controllers\\Front\\TestimonialsController@index');
 $router->get('/testimonials/submit', 'App\\Http\\Controllers\\Front\\TestimonialsController@showSubmit');
 $router->post('/testimonials/submit', 'App\\Http\\Controllers\\Front\\TestimonialsController@submit');
