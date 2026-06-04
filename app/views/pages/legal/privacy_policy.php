@@ -1,8 +1,6 @@
 <?php
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    @session_start();
-}
+// session_start() removed (Phase 1.4) — not needed for a public legal page.
+// Session is already started by the framework controller before render().
 
 // Set page variables
 $page_title = 'Privacy Policy - APS Dream Home';
