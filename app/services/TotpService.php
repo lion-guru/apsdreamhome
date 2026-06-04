@@ -125,4 +125,109 @@ class TotpService
             return $r['two_factor_secret'] ?? null;
         } catch (\Throwable $e) { return null; }
     }
+
+    public function generateBackupCodes(int $count = 8, int $length = 8): array
+    {
+        $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        $codes = [];
+        for ($i = 0; $i < $count; $i++) {
+            $code = '';
+            for ($j = 0; $j < $length; $j++) {
+                $code .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+            }
+            $codes[] = $code;
+        }
+        return $codes;
+    }
+
+    public function getBackupCodes(int $userId): array
+    {
+        try {
+            $st = $this->db->prepare("SELECT two_factor_backup_codes FROM users WHERE id = :id");
+            $st->execute([':id' => $userId]);
+            $r = $st->fetch(PDO::FETCH_ASSOC);
+            $json = $r['two_factor_backup_codes'] ?? null;
+            if (!$json) return [];
+            $decoded = json_decode($json, true);
+            return is_array($decoded) ? $decoded : [];
+        } catch (\Throwable $e) { return []; }
+    }
+
+    public function saveBackupCodes(int $userId, array $codes): bool
+    {
+        try {
+            $st = $this->db->prepare("UPDATE users SET two_factor_backup_codes = :c WHERE id = :id");
+            $st->execute([':c' => json_encode(array_values($codes)), ':id' => $userId]);
+            return true;
+        } catch (\Throwable $e) { return false; }
+    }
+
+    public function verifyBackupCode(int $userId, string $code): bool
+    {
+        $code = strtoupper(trim($code));
+        if ($code === '') return false;
+
+        $codes = $this->getBackupCodes($userId);
+        $usedCodes = $this->getUsedBackupCodes($userId);
+        if (in_array($code, $usedCodes, true)) return false;
+
+        $remaining = [];
+        $matched = false;
+        foreach ($codes as $c) {
+            if (hash_equals((string)$c, $code)) {
+                $matched = true;
+            } else {
+                $remaining[] = $c;
+            }
+        }
+
+        if (!$matched) return false;
+
+        $this->saveBackupCodes($userId, $remaining);
+        $this->markBackupCodeUsed($userId, $code);
+        return true;
+    }
+
+    public function getUsedBackupCodes(int $userId): array
+    {
+        try {
+            $st = $this->pdo->prepare("SELECT used_codes FROM two_factor_backup_codes_log WHERE user_id = :id");
+            $st->execute([':id' => $userId]);
+            $r = $st->fetch(PDO::FETCH_ASSOC);
+            $json = $r['used_codes'] ?? null;
+            if (!$json) return [];
+            $decoded = json_decode($json, true);
+            return is_array($decoded) ? $decoded : [];
+        } catch (\Throwable $e) { return []; }
+    }
+
+    public function markBackupCodeUsed(int $userId, string $code): bool
+    {
+        try {
+            $existing = $this->getUsedBackupCodes($userId);
+            $existing[] = $code;
+            $st = $this->pdo->prepare("
+                INSERT INTO two_factor_backup_codes_log (user_id, used_codes, last_used_at)
+                VALUES (:id, :codes, NOW())
+                ON DUPLICATE KEY UPDATE used_codes = :codes2, last_used_at = NOW()
+            ");
+            $st->execute([
+                ':id' => $userId,
+                ':codes' => json_encode(array_values($existing)),
+                ':codes2' => json_encode(array_values($existing)),
+            ]);
+            return true;
+        } catch (\Throwable $e) { return false; }
+    }
+
+    public function getBackupCodeStats(int $userId): array
+    {
+        $all = $this->getBackupCodes($userId);
+        $used = $this->getUsedBackupCodes($userId);
+        return [
+            'total_generated' => 8,
+            'remaining' => count($all),
+            'used' => count($used),
+        ];
+    }
 }
