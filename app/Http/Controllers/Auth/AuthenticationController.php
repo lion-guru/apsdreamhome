@@ -570,7 +570,7 @@ class AuthenticationController
         return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
     }
 
-    private function redirect($url)
+    public function redirect($url)
     {
         header("Location: $url");
         exit;

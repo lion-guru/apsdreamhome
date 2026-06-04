@@ -12,7 +12,7 @@ use Exception;
  */
 class ReportService
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {
