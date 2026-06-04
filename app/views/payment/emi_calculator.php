@@ -1,4 +1,8 @@
-<?php include __DIR__ . "/../layouts/header.php"; ?>
+<?php
+$page_title = $page_title ?? 'EMI Calculator - APS Dream Home';
+$page_heading = $page_heading ?? 'EMI Calculator';
+$content = $content ?? '';
+?>
 
 <div class="container-fluid">
     <div class="row">
@@ -117,5 +121,3 @@
         </div>
     </div>
 </div>
-
-<?php include __DIR__ . "/../layouts/footer.php"; ?>
