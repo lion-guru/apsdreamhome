@@ -1,4 +1,8 @@
-<?php include __DIR__ . "/../layouts/header.php"; ?>
+<?php
+$page_title = $page_title ?? 'Payment History - APS Dream Home';
+$page_heading = $page_heading ?? 'Payment History';
+$content = $content ?? '';
+?>
 
 <div class="container-fluid">
     <div class="row">
@@ -8,7 +12,7 @@
                     <i class="fas fa-credit-card"></i> History
                 </h1>
             </div>
-            
+
             <div class="card">
                 <div class="card-body">
                     <div class="alert alert-info">
@@ -19,5 +23,3 @@
         </div>
     </div>
 </div>
-
-<?php include __DIR__ . "/../layouts/footer.php"; ?>
