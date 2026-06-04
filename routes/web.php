@@ -338,6 +338,14 @@ $router->get('/admin/marketing-campaigns/send/{id}', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/marketing-campaigns/delete', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@delete');
 $router->get('/admin/marketing-campaigns/templates', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@templates');
 
+$router->get('/admin/drip-campaigns', 'App\\Http\\Controllers\\Admin\\DripCampaignController@index');
+$router->get('/admin/drip-campaigns/create', 'App\\Http\\Controllers\\Admin\\DripCampaignController@create');
+$router->post('/admin/drip-campaigns/store', 'App\\Http\\Controllers\\Admin\\DripCampaignController@store');
+$router->get('/admin/drip-campaigns/show/{id}', 'App\\Http\\Controllers\\Admin\\DripCampaignController@show');
+$router->get('/admin/drip-campaigns/process', 'App\\Http\\Controllers\\Admin\\DripCampaignController@process');
+$router->get('/admin/drip-campaigns/toggle', 'App\\Http\\Controllers\\Admin\\DripCampaignController@toggle');
+$router->get('/admin/drip-campaigns/delete', 'App\\Http\\Controllers\\Admin\\DripCampaignController@delete');
+
 $router->get('/admin/reviews', 'App\\Http\\Controllers\\Admin\\ReviewController@index');
 $router->get('/admin/reviews/approve', 'App\\Http\\Controllers\\Admin\\ReviewController@approve');
 $router->get('/admin/reviews/reject', 'App\\Http\\Controllers\\Admin\\ReviewController@reject');
