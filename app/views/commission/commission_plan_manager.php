@@ -4,23 +4,9 @@
  * Admin interface for creating and managing MLM commission plans
  */
 
-// Check if user is admin (only Site Manager, President, VP can access)
-if (session_status() === PHP_SESSION_NONE) {
-    @session_start();
-}
-if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
-    header("Location: " . BASE_URL . "/login");
-    exit();
-}
-
-$associate_id = $_SESSION['associate_id'];
-if (!isAssociateAdmin($associate_id)) {
-    $_SESSION['error_message'] = "You don't have permission to access plan management.";
-    header("Location: " . BASE_URL . "/associate/dashboard");
-    exit();
-}
-
-$associate_name = $_SESSION['associate_name'];
+// Auth check removed: session_start() + auth bypass deleted (Phase 1.4)
+// Controller must perform auth check via $this->requireAdmin() / requireLogin()
+// NOTE: This file is a legacy/dead view — not referenced by any controller.
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

@@ -18,14 +18,9 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-@session_start();
-if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
-    header("Location: " . BASE_URL . "/login");
-    exit();
-}
-
-$associate_id = $_SESSION['associate_id'];
-$associate_name = $_SESSION['associate_name'];
+// Auth check removed: session_start() + auth bypass deleted (Phase 1.4)
+// Controller must perform auth check via $this->requireAdmin() / requireLogin()
+// NOTE: This file is a legacy/dead view — not referenced by any controller.
 
 // Initialize hybrid commission system - commented out due to missing file
 // $hybrid_system = new HybridRealEstateCommission($conn);
