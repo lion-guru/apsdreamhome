@@ -1,4 +1,128 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-03)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-04)
+
+## Session 2026-06-04: Phases 23-34 — Self-Learning AI + 61 New Tables + 11 Services + 14 Views + 145 Seeded Records
+
+### Final State
+| Metric | Value |
+|--------|-------|
+| **Total tables** | 213 → **274** (+61 from Phases 24-33) |
+| **Services** | 11 new (146 methods) |
+| **Controllers** | 3 new (Admin, API, Front) |
+| **Views** | 14 new (11 admin features + 3 public resell) |
+| **Routes** | 11 admin + 28 API + 3 public = 42 new |
+| **Seeded records** | 145 (12 templates, 8 SMS, 8 taxes, 21 GST, 9 slabs, 8 ranks, 12 KPIs, 12 benchmarks, 7 rates, 12 resell, 10 workflows, 11 menus, 5 farmer, 10 OCR) |
+| **E2E tests** | **163/164** pass (zero regressions, 1 expected GodMode 403) |
+| **PHP syntax** | All modified/created files pass |
+
+### Phase 23: Self-Learning AI Core (Previously Committed)
+- 12 AI tables created (`ai_learning_data`, `ai_intent_patterns` with 102 patterns, `ai_user_profiles`, `ai_recommendations`, `ai_lead_scores`, `ai_anomalies`, `ai_price_models`, `ai_chat_sessions`, `ai_chat_messages`, `user_behavior_tracking`, `customer_journeys`, `customer_behavior_analysis`)
+- 6 AI services: `PatternLearner`, `IntentDetector`, `RecommendationEngine`, `LeadScorer`, `PricePredictor`, `AIManager`
+- AI supports Hindi + English, Bayesian learning, linear regression price prediction
+- 8/9 intent tests pass; ₹36.5L predicted for 1000 sqft plot
+
+### Phase 24-33: Database Expansion
+Created 61 new tables (all InnoDB, PKs, FKs where applicable):
+- **Phase 24**: `incomplete_registrations`, `progressive_registrations` (multi-step user capture)
+- **Phase 25**: `employee_advances`, `employee_bonuses`, `payroll_entries`, `salary_contracts`, `salary_history`, `attendance_settings`, `department_budgets`
+- **Phase 26**: `property_valuations`, `property_ai_tags`, `property_analytics`, `property_maintenance`, `property_market_data`, `resell_properties`, `resell_property_images`, `resell_commission_structure`
+- **Phase 27**: `agent_commission_rates`, `commission_calculation_rules`, `hybrid_commission_records`, `hybrid_commission_plans`, `farmer_commissions`, `farmer_commission_structures`, `mlm_rank_rates`
+- **Phase 28**: `notification_templates`, `email_tracking`, `push_notifications`, `push_subscriptions`, `whatsapp_lead_shares`, `realtime_notifications`, `notification_settings`, `sms_templates`
+- **Phase 29**: `document_classification`, `ocr_documents`, `ocr_extracted_fields`, `ocr_templates`, `report_executions`
+- **Phase 30**: `kpis`, `employee_kpis`, `daily_metrics_summary`, `performance_benchmarks`, `forecast_results`, `market_analytics_summary`, `analytics_dashboards`
+- **Phase 31**: `two_factor_tokens`, `password_reset_tokens`, `blocked_ips`, `failed_login_attempts`
+- **Phase 32**: `campaign_deliveries`, `budgets`, `budget_planning`, `cash_flow_projections`, `gst_returns`, `gst_settings`, `tax_slabs`, `tax_types`, `budget_expenses`
+- **Phase 33**: `agent_tasks`, `agent_executions`, `agent_state`, `workflow_automations`
+
+### 11 Services Created
+| Service | Methods | Purpose |
+|---------|---------|---------|
+| `ProgressiveRegistrationService` | 7 | Multi-step registration with abandoned cart capture |
+| `PayrollService` | 13 | Advances, bonuses, salary contracts, payroll generation |
+| `ResellPropertyService` | 13 | Property resale marketplace, valuations, AI tags, market data |
+| `CommissionService` | 17 | Agent/hybrid/farmer/MLM rank commissions |
+| `NotificationService` | 12 | Multi-channel (email/SMS/push/WhatsApp) with template rendering |
+| `SecurityService` | 14 | 2FA tokens, password reset, IP blocking, failed login tracking |
+| `FinanceService` | 23 | Budgets, GST calculation, tax slabs, cash flow, returns |
+| `AnalyticsService` | 17 | KPIs, dashboards, linear regression forecasting |
+| `AgentOrchestrator` | 14 | Background task execution, workflow automation |
+| `OcrService` | 11 | Document classification (pattern matching), OCR, report execution |
+| `PropertyMarketplaceService` | 5 | Maintenance scheduling, market analytics |
+
+### 3 Controllers Created
+- `Admin\NewFeaturesController` — 11 admin pages for all features
+- `Api\NewFeaturesApiController` — 28 API endpoints (REST-style)
+- `Front\ResellPropertyController` — 3 public resell pages
+
+### 14 Views Created
+- 11 admin feature pages: `progressive_registrations`, `payroll`, `resell_properties`, `commissions`, `notifications`, `security`, `finance`, `analytics`, `agent_tasks`, `ocr`, `maintenance`
+- 3 public resell pages: `resell_properties_public`, `resell_property_detail`, `resell_property_submit`
+
+### 42 New Routes
+```
+11 Admin:  /admin/features/{registrations,payroll,resell,commissions,notifications,security,finance,analytics,agent-tasks,ocr,maintenance}
+28 API:    /api/v2/{registration,payroll,resell,commission,notification,security,finance,analytics,agent,ocr,property}/*
+ 3 Public: /resell, /resell/{id}, /resell/submit
+```
+
+### 11 Admin Menu Items Added
+Progressive Registrations, Payroll, Resell Properties, Commission Engine, Notification Center, Security Center, Finance Management, Analytics & KPIs, Agent Tasks & Workflows, OCR & Documents, Property Maintenance
+
+### Files Created
+- 11 services, 3 controllers, 14 views, 1 phase24-32 table creator script, 1 phase34 seed script, 3 helper fix scripts
+- Total: ~35 new files
+
+### Verification
+- E2E: **163/164** pass (1 expected GodMode 403) — zero regressions
+- 11/11 admin feature pages HTTP 200
+- 3/3 public resell pages HTTP 200
+- 3/3 GET APIs HTTP 200
+- All 11 service classes load with real DB
+- All modified/created files pass PHP syntax check
+- Committed: `a7ae1e19c Phases 24-34: 61 new tables, 11 services, 3 controllers, 14 views, 145 seeded records`
+
+### Key Decisions
+- **Self-hosted AI > External APIs** (no OpenAI/Gemini dependency) — pattern-based + Bayesian + linear regression
+- **Hindi + English NLP support** — Devanagari detection via `[\x{0900}-\x{097F}]/u` regex
+- **Polymorphic patterns preserved** — `entity_type` + `entity_id` for shared tables
+- **Multi-channel notifications** — single NotificationService dispatches to email/SMS/push/WhatsApp
+- **Type hints removed from service constructors** — accept both `PDO` and `Database` wrapper via `getPdo()` helper
+- **Generated columns for budgets** — `remaining_amount = allocated - spent` (MySQL 5.7+)
+- **Auto-classify OCR** — pattern matching against filename/content (aadhaar/pan/invoice/etc.)
+- **Workflow engine** — JSON steps array, each step can be `send_email/send_sms/send_whatsapp/send_push/agent_task/create_lead`
+
+### Recent Commits
+- `a7ae1e19c` Phases 24-34: 61 new tables, 11 services, 3 controllers, 14 views, 145 seeded records
+- `0ab91f4ca` Phase 23: Self-Learning AI Core (no external API)
+- `1321b0606` Phase 22: archive analysis scripts, keep 26 essential
+- `98c8c00f8` Phase 22: fix 13 broken route methods + 1 broken route
+- `2a3c7931d` Phase 21: drop 69 duplicate indexes for write performance
+- `0ea88637b` Phase 3: AI schema cleanup: drop 23 feature-scaffolding tables (3-pass safety)
+- `c77a3912a` MLM schema cleanup: drop 31 duplicate tables, restore 4 needed ones
+- `18a739849` DB cleanup: drop 4 dead tables + 2 broken views
+
+### Current Architecture (2026-06-04)
+- **274 database tables** (213 from Phase 22 + 61 from Phases 24-33)
+- **11 new services** with 146 methods
+- **3 new controllers** (admin, API, public)
+- **14 new views** (11 admin + 3 public)
+- **42 new routes** (11 admin + 28 API + 3 public)
+- **145 seeded default records** across 14 domains
+- **Self-Learning AI** (Phase 23) with 12 AI tables, 6 services
+- **E2E: 163/164** with zero regressions
+
+### Next Priority (Recommended)
+1. **Real-time WebSocket notifications** — Replace polling with push
+2. **Mobile app API** — Already have all v2 APIs, add JWT auth
+3. **Production deployment** — Docker + nginx + SSL
+4. **Performance optimization** — Redis cache for hot queries
+5. **Internationalization** — Multi-currency (USD/EUR), multi-language UI
+6. **Advanced analytics** — ML-based lead scoring, churn prediction
+7. **Integration marketplace** — Twilio (WhatsApp/SMS), AWS S3 (images), Razorpay (payments)
+8. **Audit logging** — Track all admin actions for compliance
+
+---
+
+## Session 2026-06-03: Database Deep Cleanup — **543 Tables Removed (-71.8%)**, Zero Regressions
 
 ## Session 2026-06-03: Database Deep Cleanup — **543 Tables Removed (-71.8%)**, Zero Regressions
 
