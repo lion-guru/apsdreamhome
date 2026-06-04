@@ -2939,6 +2939,12 @@ $router->get('/api/v2/audit/log', 'Admin\\AuditLogController@api');
 $router->get('/api/v2/notifications/poll', 'Api\\NotificationStreamController@poll');
 $router->post('/api/v2/notifications/read', 'Api\\NotificationStreamController@markRead');
 $router->get('/api/v2/notifications/stream', 'Api\\NotificationStreamController@stream');
+
+$router->get('/admin/webhooks', 'Admin\\WebhookController@index');
+$router->post('/admin/webhooks/create', 'Admin\\WebhookController@create');
+$router->post('/admin/webhooks/toggle/{id}', 'Admin\\WebhookController@toggle');
+$router->post('/admin/webhooks/delete/{id}', 'Admin\\WebhookController@delete');
+$router->post('/admin/webhooks/process', 'Admin\\WebhookController@process');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');

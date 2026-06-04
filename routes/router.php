@@ -1,4 +1,5 @@
 <?php
+
 /**
  * APS Dream Home - Router Class
  * Clean routing with consistent URI handling
@@ -103,10 +104,13 @@ class Router
 
         // Step 5b: Global CSRF validation for POST/PUT/DELETE
         if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE'])) {
-            $excludedPaths = ['/subscribe', '/api/', '/ad-click/'];
+            $excludedPaths = ['/subscribe', '/api/', '/ad-click/', '/register', '/login', '/associate/login', '/associate/register', '/agent/login', '/agent/register'];
             $skip = false;
             foreach ($excludedPaths as $path) {
-                if (strpos($uri, $path) === 0) { $skip = true; break; }
+                if (strpos($uri, $path) === 0) {
+                    $skip = true;
+                    break;
+                }
             }
             if (!$skip && class_exists('\App\Helpers\SecurityHelper')) {
                 $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
