@@ -2956,6 +2956,12 @@ $router->post('/user/two-factor/enable', 'User\\TwoFactorController@enable');
 $router->post('/user/two-factor/disable', 'User\\TwoFactorController@disable');
 $router->get('/user/two-factor/verify', 'User\\TwoFactorController@verify');
 $router->post('/user/two-factor/verify', 'User\\TwoFactorController@verify');
+
+$router->get('/admin/api-keys', 'Admin\\ApiKeyController@index');
+$router->post('/admin/api-keys/create', 'Admin\\ApiKeyController@create');
+$router->post('/admin/api-keys/revoke/{id}', 'Admin\\ApiKeyController@revoke');
+$router->post('/admin/api-keys/activate/{id}', 'Admin\\ApiKeyController@activate');
+$router->post('/admin/api-keys/delete/{id}', 'Admin\\ApiKeyController@delete');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');
