@@ -1,5 +1,123 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-04)
 
+## Session 2026-06-04 (Part 2): Phases 35-42 — Cron + Real-Time + Audit + Webhooks + Bulk + 2FA + API Keys + System Health
+
+### Final State
+| Metric | Value |
+|--------|-------|
+| **Services built this session** | 7 new (Audit, NotificationCenter, Webhook, BulkOps, Totp, ApiKey, SystemHealth) |
+| **Controllers built this session** | 7 new (Cron, AuditLog, Webhook, BulkOps, ApiKey, SystemHealth, NotificationStream, TwoFactor) |
+| **Views built this session** | 7 new (realtime_analytics, audit_log, webhooks, bulk_operations, api_keys, system_health, two_factor) |
+| **Routes added this session** | 35+ new |
+| **Menu items added** | 6 new (Real-Time Analytics, Audit Log, Webhooks, Bulk Import/Export, API Keys, System Health) |
+| **E2E tests** | **163/164** pass (zero regressions, 1 expected GodMode 403) |
+
+### Phase 35: Cron Automation + Real-Time Analytics
+- **CronController**: daily/hourly/weekly endpoints with CRON_SECRET auth
+  - Daily runs 5 jobs: agent_tasks, AI retrain, state cleanup, scheduled notifications, due maintenance
+  - 5/5 jobs pass in 2.4s, 48 leads scored, 5 price models trained
+- **Real-time Analytics dashboard** (`/admin/features/realtime-analytics`):
+  - 4 KPI cards (leads, bookings, revenue, conversion rate)
+  - 4 Chart.js charts (leads over time, lead sources doughnut, pipeline bar, property type pie)
+  - Auto-refresh every 60s
+- **API endpoints**: `/api/v2/analytics/dashboard`, `/api/v2/analytics/insights`
+
+### Phase 36: Audit Log System
+- **audit_log table**: id, user_id, user_role, action, entity_type, entity_id, description, ip, user_agent, request_method, request_url, changes JSON, status, created_at
+- **AuditService**: log(), getRecent() with filters, getStats() (7d), cleanup()
+- **AuditLogController**: index (200 events + filters), api (JSON)
+- Hooked into CustomerAuthController: `login` on success, `login_failed` on failure
+- Admin page: `/admin/audit-log` with stats cards, top actions, event table
+
+### Phase 37: Real-Time Notification System
+- **NotificationCenter service**: publish(), fetchPending(), markDelivered(), markRead(), getUnreadCount(), cleanup()
+- **NotificationStreamController**: 3 endpoints (poll POST, markRead POST, stream SSE)
+- **notification-widget.js**: long-polling client (15s) + toasts + badge + dropdown
+- SSE: 60s max connection, 3s heartbeat, automatic reconnection
+- Admin bell icon: badge counter + dropdown with last 10 + "View audit log" link
+
+### Phase 38: Webhook System
+- **webhook_endpoints + webhook_deliveries tables** with full retry tracking
+- **WebhookService**: registerEndpoint, listEndpoints, trigger, deliver (curl), processPending, getDeliveries, getStats
+- **HMAC-SHA256 signing** via X-Webhook-Signature header
+- Auto-retry up to 3 attempts: pending → retrying → success/failed
+- Wildcard event subscriptions (* for all)
+- Admin page: `/admin/webhooks` with stats + endpoint CRUD + delivery log
+
+### Phase 39: Bulk Import/Export (CSV)
+- **BulkOperationsService**: importCSV, exportCSV, getTemplate, getRowCount
+- 5 import tables (leads, user_properties, plots, customers, newsletter_subscribers) with column whitelist
+- 3 export-only tables (bookings, commissions, users)
+- BOM-prefixed CSV for Excel UTF-8 compatibility
+- Per-row error reporting (first 10 errors)
+- Admin page: `/admin/bulk-operations` with separate Import + Export cards
+
+### Phase 40: 2FA/TOTP
+- **TotpService**: Pure PHP RFC 6238 implementation (no external library)
+  - generateSecret (20-char base32), getOtp (HMAC-SHA1, 6 digits, 30s period)
+  - verify with ±1 time window tolerance, base32 decode, hash_equals constant-time compare
+- **TwoFactorController**: setup, enable, disable, verify (login flow)
+- **users table**: added two_factor_secret, two_factor_enabled, two_factor_backup_codes columns
+- Login flow integration: if 2fa_enabled, store pending_2fa state, redirect to verify
+- 8 backup codes generated on enable (stored as JSON)
+- QR code via api.qrserver.com (works with Google Authenticator, Authy, Microsoft Authenticator)
+- Routes: `/user/two-factor`, `/user/two-factor/{enable,disable,verify}`
+
+### Phase 41: API Key Management
+- **api_keys table**: name, api_key (UNIQUE), api_secret_hash (bcrypt), scopes, user_id, is_active, rate_limit_per_minute, last_used_at, expires_at
+- **ApiKeyService**: create (returns plaintext secret once), list, revoke, activate, delete, verify, getStats
+- Bearer-style auth: `Authorization: Bearer <api_key>:<api_secret>`
+- Scopes: read:leads, read:properties, read:bookings, write:leads, write:properties, admin:*
+- Default rate limit: 60 req/min
+- Admin page: `/admin/api-keys` with create form + table
+
+### Phase 42: System Health Monitoring
+- **SystemHealthService**: 7 health checks (PHP, Database, Disk, Memory, Cache, Tables, Services)
+- **SystemHealthController**: index (admin page), api (JSON)
+- All checks gracefully degrade via try/catch (partial failures show warning/error not 500)
+- Database: size from information_schema, query throughput benchmark
+- Disk usage: progress bar (warning >70%, danger >90%)
+- PHP extensions check: pdo, pdo_mysql, mbstring, openssl, curl, gd, zip, json
+- 8 core services verified loadable
+- Admin page: `/admin/system-health` with 4 status cards + 4 detail cards
+
+### Key Decisions
+- **Cron uses CRON_SECRET env var** with safe fallback for dev
+- **SSE + polling fallback** for notification streaming (SSE works in modern browsers, polling is universal)
+- **2FA uses pure PHP** (no external library, no Composer dep)
+- **API secrets hashed with bcrypt** (one-time plaintext view on creation)
+- **CSV with BOM** for Excel UTF-8 compatibility
+- **All health checks are non-blocking** with try/catch
+- **Webhook HMAC** lets receivers verify authenticity
+- **Audit log is the single source of truth** for compliance
+- **Bulk operations enforce column whitelist** (no SQL injection risk)
+
+### Recent Commits
+- `c1d7e3834` Phase 40: 2FA/TOTP with QR code + backup codes
+- `0b2a5faef` Phase 39: Bulk Import/Export (CSV) system
+- `23e82d1da` Phase 38: Webhook system for external integrations
+- `7891e47aa` Phase 37: Real-time notification system (SSE + polling + toasts)
+- `125bef90e` Phase 36: Audit Log System - track all auth + critical events
+- `2c58606b2` Phase 35: Cron automation + Real-time analytics + AI service PDO fixes
+
+### Total Architecture (2026-06-04)
+- **281+ database tables** (213 from cleanup + 61 from Phases 24-33 + 6 new from Phases 35-42: audit_log, webhook_endpoints, webhook_deliveries, api_keys, users 2FA columns)
+- **18+ services** in `app/Services/` (11 from Phases 24-34 + 7 new from Phases 35-42)
+- **10+ new controllers** in `app/Http/Controllers/`
+- **20+ new views** in `app/Views/admin/features/`
+- **150+ new routes** across web.php + api.php
+- **E2E: 163/164** with zero regressions
+
+### Next Priority (Recommended)
+1. **Customer notification preferences UI** (Email/SMS/WhatsApp toggles)
+2. **WebSocket upgrade** (replace SSE for true bidirectional)
+3. **Multi-language UI** (i18n with full Hindi translation)
+4. **Advanced search** with saved queries
+5. **Performance optimization** (Redis cache, query optimization)
+6. **Production deployment** (Docker + nginx + SSL)
+
+---
+
 ## Session 2026-06-04: Phases 23-34 — Self-Learning AI + 61 New Tables + 11 Services + 14 Views + 145 Seeded Records
 
 ### Final State
