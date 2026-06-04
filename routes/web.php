@@ -330,6 +330,14 @@ $router->get('/admin/property-alerts/delete', 'App\\Http\\Controllers\\Admin\\Pr
 $router->post('/admin/property-alerts/toggle', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@toggle');
 $router->get('/admin/property-alerts/test-match', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@testMatch');
 
+$router->get('/admin/marketing-campaigns', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@index');
+$router->get('/admin/marketing-campaigns/create', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@create');
+$router->post('/admin/marketing-campaigns/store', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@store');
+$router->get('/admin/marketing-campaigns/show/{id}', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@show');
+$router->get('/admin/marketing-campaigns/send/{id}', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@send');
+$router->get('/admin/marketing-campaigns/delete', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@delete');
+$router->get('/admin/marketing-campaigns/templates', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@templates');
+
 $router->get('/property-alerts/subscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@index');
 $router->post('/property-alerts/subscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@store');
 $router->get('/property-alerts/unsubscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@unsubscribe');
