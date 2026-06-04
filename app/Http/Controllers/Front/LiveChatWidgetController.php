@@ -15,6 +15,16 @@ class LiveChatWidgetController extends BaseController
         try { $this->service = new LiveChatService($this->db); } catch (\Throwable $e) { $this->service = null; }
     }
 
+    /**
+     * Public widget — CSRF check is unsafe for unauthenticated visitors
+     * (they don't have a session token yet when starting a chat).
+     * Rate limiting + IP throttling should be applied at the edge if needed.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     public function start()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
