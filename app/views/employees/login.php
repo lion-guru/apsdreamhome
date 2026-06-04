@@ -1,10 +1,8 @@
 <?php
 
 $page_title = $page_title ?? '';
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    @session_start();
-}
+// session_start() removed (Phase 1.4) — not needed for login page rendering.
+// Session is already started by the framework controller before render().
 
 // Set page variables
 $page_title = 'Employee Login - APS Dream Home';
