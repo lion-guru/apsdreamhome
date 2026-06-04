@@ -1,215 +1,162 @@
 <?php
-
-/**
- * Site Visit Management - List View
- */
-
-$page_title = 'Site Visit Management - APS Dream Home';
+$page_title = $page_title ?? 'Property Visits';
+$page_heading = $page_heading ?? 'Property Visit Schedule';
+$content = $content ?? '';
+$stats = $stats ?? [];
+$visits = $visits ?? [];
+$slots = $slots ?? [];
+ob_start();
 ?>
-
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-2"><i class="fas fa-car me-2"></i>Site Visit Management</h1>
-            <p class="text-muted">Schedule and track property site visits</p>
-        </div>
-        <div class="btn-group">
-            <a href="<?= BASE_URL ?>/admin/visits/create" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Schedule Visit
-            </a>
-            <a href="<?= BASE_URL ?>/admin/visits/calendar" class="btn btn-outline-secondary">
-                <i class="fas fa-calendar-alt me-2"></i>Calendar View
-            </a>
+            <h2 class="mb-1">Property Visits</h2>
+            <p class="text-muted mb-0">Manage site visit bookings and time slots</p>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="row mb-4">
+    <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card bg-primary text-white">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title mb-0">Total Visits</h6>
-                            <h2 class="mb-0"><?= $stats['total_visits'] ?? 0 ?></h2>
-                        </div>
-                        <i class="fas fa-car fa-2x opacity-50"></i>
-                    </div>
+                    <p class="text-muted small mb-1">Total Visits</p>
+                    <h3><?= number_format($stats['total'] ?? 0) ?></h3>
+                    <small class="text-muted"><?= $stats['scheduled'] ?? 0 ?> scheduled, <?= $stats['confirmed'] ?? 0 ?> confirmed</small>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-warning text-dark">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title mb-0">Scheduled</h6>
-                            <h2 class="mb-0"><?= $stats['scheduled_count'] ?? 0 ?></h2>
-                        </div>
-                        <i class="fas fa-clock fa-2x opacity-50"></i>
-                    </div>
+                    <p class="text-muted small mb-1">Today</p>
+                    <h3 class="text-info"><?= number_format($stats['today'] ?? 0) ?></h3>
+                    <small class="text-muted"><?= $stats['this_week'] ?? 0 ?> this week</small>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-success text-white">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title mb-0">Completed</h6>
-                            <h2 class="mb-0"><?= $stats['completed_count'] ?? 0 ?></h2>
-                        </div>
-                        <i class="fas fa-check-circle fa-2x opacity-50"></i>
-                    </div>
+                    <p class="text-muted small mb-1">Completed</p>
+                    <h3 class="text-success"><?= number_format($stats['completed'] ?? 0) ?></h3>
+                    <small class="text-muted"><?= $stats['cancelled'] ?? 0 ?> cancelled, <?= $stats['no_show'] ?? 0 ?> no-show</small>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-info text-white">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title mb-0">Interested</h6>
-                            <h2 class="mb-0"><?= $stats['interested_count'] ?? 0 ?></h2>
-                        </div>
-                        <i class="fas fa-thumbs-up fa-2x opacity-50"></i>
-                    </div>
+                    <p class="text-muted small mb-1">Available Slots</p>
+                    <h3 class="text-warning"><?= number_format($stats['available_slots'] ?? 0) ?></h3>
+                    <small class="text-muted">Next 14 days · Avg rating: <?= number_format($stats['avg_rating'] ?? 0, 1) ?>⭐</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Filters -->
-    <div class="card mb-4">
-        <div class="card-header bg-light">
-            <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
-        </div>
-        <div class="card-body">
-            <form method="GET" class="row g-3">
-                <div class="col-md-2">
-                    <label class="form-label">Status</label>
-                    <select class="form-select" name="status">
-                        <option value="">All</option>
-                        <option value="scheduled" <?= $filters['status'] == 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
-                        <option value="completed" <?= $filters['status'] == 'completed' ? 'selected' : '' ?>>Completed</option>
-                        <option value="cancelled" <?= $filters['status'] == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                        <option value="no_show" <?= $filters['status'] == 'no_show' ? 'selected' : '' ?>>No Show</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Date From</label>
-                    <input type="date" class="form-control" name="date_from" value="<?= $filters['date_from'] ?? '' ?>">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Date To</label>
-                    <input type="date" class="form-control" name="date_to" value="<?= $filters['date_to'] ?? '' ?>">
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary me-2">
-                        <i class="fas fa-search me-2"></i>Apply
-                    </button>
-                    <a href="<?= BASE_URL ?>/admin/visits" class="btn btn-outline-secondary">Reset</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Visits Table -->
-    <div class="card">
-        <div class="card-header bg-light">
-            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Visits (<?= count($visits) ?>)</h5>
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Upcoming Visits</h5>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date & Time</th>
-                            <th>Lead</th>
+                            <th>ID</th>
+                            <th>Customer</th>
                             <th>Property</th>
-                            <th>Agent</th>
+                            <th>Date & Time</th>
+                            <th>Type</th>
                             <th>Status</th>
-                            <th>Outcome</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($visits as $visit):
-                            $statusBadge = [
-                                'scheduled' => 'primary',
-                                'completed' => 'success',
-                                'cancelled' => 'danger',
-                                'no_show' => 'warning'
-                            ][$visit['status']] ?? 'secondary';
-                        ?>
-                            <tr>
-                                <td>
-                                    <strong><?= date('M d, Y', strtotime($visit['visit_date'])) ?></strong>
-                                    <br><small class="text-muted"><?= date('h:i A', strtotime($visit['visit_time'])) ?></small>
-                                </td>
-                                <td>
-                                    <strong><?= htmlspecialchars(visit['lead_name'] ?? '') ?></strong>
-                                    <br><small class="text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars(visit['lead_phone'] ?? '') ?></small>
-                                </td>
-                                <td>
-                                    <strong><?= htmlspecialchars(visit['property_title'] ?? '') ?></strong>
-                                    <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(visit['property_location'] ?? '') ?></small>
-                                </td>
-                                <td><?= htmlspecialchars($visit['agent_name'] ?? 'Unassigned') ?></td>
-                                <td>
-                                    <span class="badge bg-<?= $statusBadge ?>">
-                                        <?= ucfirst($visit['status']) ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?php if ($visit['outcome']): ?>
-                                        <span class="badge bg-<?= $visit['outcome'] == 'interested' ? 'success' : ($visit['outcome'] == 'not_interested' ? 'danger' : 'info') ?>">
-                                            <?= ucfirst(str_replace('_', ' ', $visit['outcome'])) ?>
+                        <?php if (empty($visits)): ?>
+                            <tr><td colspan="7" class="text-center text-muted py-4">No visits scheduled</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($visits as $v): ?>
+                                <tr>
+                                    <td>#<?= $v['id'] ?></td>
+                                    <td>
+                                        <strong><?= htmlspecialchars($v['display_name'] ?? $v['customer_name'] ?? 'Guest') ?></strong>
+                                        <br><small class="text-muted"><?= htmlspecialchars($v['customer_phone'] ?? '') ?></small>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($v['property_title'] ?? 'Property #' . $v['property_id']) ?>
+                                    </td>
+                                    <td>
+                                        <strong><?= date('M j, Y', strtotime($v['visit_date'])) ?></strong>
+                                        <br><small class="text-muted"><?= date('h:i A', strtotime($v['visit_time'])) ?></small>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark"><?= ucfirst(str_replace('_', ' ', $v['visit_type'] ?? 'site_visit')) ?></span></td>
+                                    <td>
+                                        <?php
+                                        $statusColors = ['scheduled' => 'warning', 'confirmed' => 'info', 'completed' => 'success', 'cancelled' => 'danger', 'rescheduled' => 'secondary', 'no_show' => 'dark'];
+                                        ?>
+                                        <span class="badge bg-<?= $statusColors[$v['status']] ?? 'secondary' ?>">
+                                            <?= ucfirst($v['status']) ?>
                                         </span>
-                                    <?php else: ?>
-                                        <span class="text-muted">-</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-success" onclick="updateStatus(<?= $visit['id'] ?>, 'completed')">
-                                        <i class="fas fa-check" title="Mark Completed"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="updateStatus(<?= $visit['id'] ?>, 'cancelled')">
-                                        <i class="fas fa-times" title="Cancel"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($v['status'] === 'scheduled'): ?>
+                                            <a href="<?= BASE_URL ?>/admin/visits/confirm?id=<?= $v['id'] ?>" class="btn btn-sm btn-info" title="Confirm"><i class="fas fa-check"></i></a>
+                                        <?php endif; ?>
+                                        <?php if (in_array($v['status'], ['scheduled', 'confirmed'])): ?>
+                                            <a href="<?= BASE_URL ?>/admin/visits/complete?id=<?= $v['id'] ?>" class="btn btn-sm btn-success" title="Mark completed"><i class="fas fa-flag-checkered"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/visits/noshow?id=<?= $v['id'] ?>" class="btn btn-sm btn-outline-secondary" title="No show" onclick="return confirm('Mark as no-show?')"><i class="fas fa-user-times"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/visits/cancel?id=<?= $v['id'] ?>" class="btn btn-sm btn-outline-danger" title="Cancel" onclick="return confirm('Cancel this visit?')"><i class="fas fa-times"></i></a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    function updateStatus(visitId, status) {
-        if (!confirm('Are you sure you want to mark this visit as ' + status + '?')) {
-            return;
-        }
-
-        fetch('/admin/visits/' + visitId + '/status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'status=' + status
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Failed to update status');
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Available Time Slots (next 14 days)</h5>
+        </div>
+        <div class="card-body">
+            <?php if (empty($slots)): ?>
+                <p class="text-muted">No available slots</p>
+            <?php else: ?>
+                <?php
+                $byDate = [];
+                foreach ($slots as $s) {
+                    $byDate[$s['date']][] = $s;
                 }
-            })
-            .catch(error => {
-                alert('Error updating status');
-            });
-    }
-</script>
+                ?>
+                <div class="row g-3">
+                    <?php foreach (array_slice($byDate, 0, 7, true) as $date => $daySlots): ?>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-light">
+                                    <strong><?= date('D, M j', strtotime($date)) ?></strong>
+                                </div>
+                                <div class="card-body p-2">
+                                    <?php foreach ($daySlots as $slot): ?>
+                                        <div class="d-flex justify-content-between align-items-center py-1">
+                                            <span><i class="far fa-clock text-muted me-1"></i> <?= date('h:i A', strtotime($slot['time_slot'])) ?></span>
+                                            <span class="badge bg-<?= $slot['current_bookings'] >= $slot['max_bookings'] ? 'danger' : ($slot['current_bookings'] > 0 ? 'warning' : 'success') ?>">
+                                                <?= $slot['current_bookings'] ?>/<?= $slot['max_bookings'] ?>
+                                            </span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<?php
+$content = ob_get_clean();
+include APP_PATH . '/views/admin/layouts/unified.php';
