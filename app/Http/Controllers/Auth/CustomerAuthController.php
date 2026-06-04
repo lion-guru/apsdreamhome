@@ -62,6 +62,14 @@ class CustomerAuthController extends BaseController
             $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' LIMIT 1", [$email, $email]);
 
             if ($user && password_verify($password, $user['password'])) {
+                if (!empty($user['two_factor_enabled']) && !empty($user['two_factor_secret'])) {
+                    $_SESSION['pending_2fa_user'] = $user['id'];
+                    $_SESSION['pending_2fa_secret'] = $user['two_factor_secret'];
+                    $_SESSION['pending_2fa_role'] = $user['role'] ?? 'customer';
+                    header('Location: ' . BASE_URL . '/user/two-factor/verify');
+                    exit;
+                }
+
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
                 $_SESSION['user_name'] = $user['name'];
