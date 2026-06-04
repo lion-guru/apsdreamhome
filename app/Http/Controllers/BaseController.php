@@ -178,7 +178,7 @@ class BaseController
         if (!empty($url) && strpos($url, 'http') !== 0 && defined('BASE_URL')) {
             $url = rtrim(BASE_URL, '/') . '/' . ltrim($url, '/');
         }
-        
+
         if (!headers_sent()) {
             header("Location: " . $url);
         }

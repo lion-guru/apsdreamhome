@@ -29,7 +29,7 @@ ini_set('log_errors', 1);
 ini_set('error_log', APS_LOGS . '/php_error.log');
 
 // Catch fatal errors
-register_shutdown_function(function() {
+register_shutdown_function(function () {
     $error = error_get_last();
     if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
         error_log("FATAL ERROR: " . $error['message'] . " in " . $error['file'] . " on line " . $error['line']);
