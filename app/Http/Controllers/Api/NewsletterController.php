@@ -3,9 +3,9 @@ namespace App\Http\Controllers\Api;
 
 use PDO;
 
-class NewsletterController 
+class NewsletterController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {

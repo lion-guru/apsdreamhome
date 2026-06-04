@@ -234,7 +234,7 @@ class SearchController extends BaseController {
     /**
      * Return JSON response
      */
-    private function json($data, $statusCode = 200) {
+    public function json($data, $statusCode = 200) {
         http_response_code($statusCode);
         header('Content-Type: application/json');
         echo json_encode($data);
