@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-class SystemController 
+class SystemController extends BaseApiController
 {
     public function health() 
     {

@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Core\Controller;
 use App\Services\AI\AIGeminiChatbotService;
 
 /**
  * Gemini AI Chatbot API Controller
  * Advanced chatbot with Google Gemini AI integration
  */
-class GeminiChatbotController extends Controller
+class GeminiChatbotController extends BaseApiController
 {
     private $chatbotService;
     

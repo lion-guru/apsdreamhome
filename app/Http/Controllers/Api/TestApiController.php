@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-
-use App\Core\ApiController;
-
 /**
  * Sample API Controller for testing the enhanced routing system
  */
-class TestApiController extends Controller
+class TestApiController extends BaseApiController
 {
     public function __construct()
     {

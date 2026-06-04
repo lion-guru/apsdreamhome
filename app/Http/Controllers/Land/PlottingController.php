@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Land;
 
+use App\Http\Controllers\BaseController;
 use App\Services\Land\PlottingService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
@@ -10,7 +11,7 @@ use App\Core\ViewRenderer;
  * Plotting Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class PlottingController
+class PlottingController extends BaseController
 {
     private $plottingService;
     private $authService;
@@ -18,9 +19,19 @@ class PlottingController
 
     public function __construct()
     {
+        parent::__construct();
         $this->plottingService = new PlottingService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new ViewRenderer();
+    }
+
+    /**
+     * This controller validates CSRF manually (via AuthenticationService)
+     * so skip the parent's automatic CSRF check on POST.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**

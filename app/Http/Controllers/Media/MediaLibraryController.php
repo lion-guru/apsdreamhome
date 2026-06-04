@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Media;
 
+use App\Http\Controllers\BaseController;
 use App\Services\Media\MediaLibraryService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
@@ -10,7 +11,7 @@ use App\Core\ViewRenderer;
  * Media Library Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class MediaLibraryController
+class MediaLibraryController extends BaseController
 {
     private $mediaService;
     private $authService;
@@ -18,9 +19,19 @@ class MediaLibraryController
 
     public function __construct()
     {
+        parent::__construct();
         $this->mediaService = new MediaLibraryService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new ViewRenderer();
+    }
+
+    /**
+     * This controller validates CSRF manually (via AuthenticationService)
+     * so skip the parent's automatic CSRF check on POST.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**

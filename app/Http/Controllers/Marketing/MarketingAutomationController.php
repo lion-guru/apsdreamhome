@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Marketing;
 
+use App\Http\Controllers\BaseController;
 use App\Services\Marketing\MarketingAutomationService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
@@ -10,7 +11,7 @@ use App\Core\ViewRenderer;
  * Marketing Automation Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class MarketingAutomationController
+class MarketingAutomationController extends BaseController
 {
     private $marketingService;
     private $authService;
@@ -18,9 +19,19 @@ class MarketingAutomationController
 
     public function __construct()
     {
+        parent::__construct();
         $this->marketingService = new MarketingAutomationService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new ViewRenderer();
+    }
+
+    /**
+     * This controller validates CSRF manually (via AuthenticationService)
+     * so skip the parent's automatic CSRF check on POST.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**

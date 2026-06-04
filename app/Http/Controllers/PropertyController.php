@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-class PropertyController 
+class PropertyController extends BaseController
 {
     public function index() 
     {

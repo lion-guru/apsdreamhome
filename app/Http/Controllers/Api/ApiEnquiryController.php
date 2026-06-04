@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-class ApiEnquiryController 
+class ApiEnquiryController extends BaseApiController
 {
     public function store() 
     {

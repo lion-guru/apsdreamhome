@@ -3,12 +3,13 @@ namespace App\Http\Controllers\Api;
 
 use PDO;
 
-class NotificationController
+class NotificationController extends BaseApiController
 {
     protected $db;
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = new PDO(
             "mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome",
             "root",
