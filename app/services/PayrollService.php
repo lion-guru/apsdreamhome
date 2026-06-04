@@ -29,14 +29,19 @@ class PayrollService
 
     public function listAdvances(int $employeeId = 0, string $status = ''): array
     {
-        $sql = "SELECT a.*, e.name as employee_name, u.name as approver_name FROM employee_advances a LEFT JOIN users e ON a.employee_id = e.id LEFT JOIN users u ON a.approved_by = u.id WHERE 1=1";
-        $params = [];
-        if ($employeeId) { $sql .= " AND a.employee_id = :e"; $params[':e'] = $employeeId; }
-        if ($status) { $sql .= " AND a.status = :s"; $params[':s'] = $status; }
-        $sql .= " ORDER BY a.requested_at DESC LIMIT 100";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT a.*, e.name as employee_name, u.name as approver_name FROM employee_advances a LEFT JOIN users e ON a.employee_id = e.id LEFT JOIN users u ON a.approved_by = u.id WHERE 1=1";
+            $params = [];
+            if ($employeeId) { $sql .= " AND a.employee_id = :e"; $params[':e'] = $employeeId; }
+            if ($status) { $sql .= " AND a.approval_status = :s"; $params[':s'] = $status; }
+            $sql .= " ORDER BY a.created_at DESC LIMIT 100";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("PayrollService::listAdvances error: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function giveBonus(int $employeeId, float $amount, string $type, string $reason, int $givenBy = 0): array
@@ -48,14 +53,19 @@ class PayrollService
 
     public function listBonuses(int $employeeId = 0, string $type = ''): array
     {
-        $sql = "SELECT b.*, e.name as employee_name, u.name as giver_name FROM employee_bonuses b LEFT JOIN users e ON b.employee_id = e.id LEFT JOIN users u ON b.given_by = u.id WHERE 1=1";
-        $params = [];
-        if ($employeeId) { $sql .= " AND b.employee_id = :e"; $params[':e'] = $employeeId; }
-        if ($type) { $sql .= " AND b.bonus_type = :t"; $params[':t'] = $type; }
-        $sql .= " ORDER BY b.given_at DESC LIMIT 100";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT b.*, e.name as employee_name, u.name as giver_name FROM employee_bonuses b LEFT JOIN users e ON b.employee_id = e.id LEFT JOIN users u ON b.approved_by = u.id WHERE 1=1";
+            $params = [];
+            if ($employeeId) { $sql .= " AND b.employee_id = :e"; $params[':e'] = $employeeId; }
+            if ($type) { $sql .= " AND b.bonus_type = :t"; $params[':t'] = $type; }
+            $sql .= " ORDER BY b.created_at DESC LIMIT 100";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("PayrollService::listBonuses error: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function createSalaryContract(int $employeeId, float $baseSalary, float $hra, float $allowances, float $deductions, string $effectiveFrom, ?string $effectiveTo = null): array
@@ -113,13 +123,22 @@ class PayrollService
 
     public function listPayroll(int $month, int $year, int $employeeId = 0): array
     {
-        $sql = "SELECT p.*, u.name as employee_name FROM payroll_entries p LEFT JOIN users u ON p.employee_id = u.id WHERE p.month = :m AND p.year = :y";
-        $params = [':m' => $month, ':y' => $year];
-        if ($employeeId) { $sql .= " AND p.employee_id = :e"; $params[':e'] = $employeeId; }
-        $sql .= " ORDER BY u.name LIMIT 200";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT p.*, u.name as employee_name, r.run_name, r.pay_period_start, r.pay_period_end
+                    FROM payroll_entries p
+                    LEFT JOIN users u ON p.employee_id = u.id
+                    LEFT JOIN payroll_runs r ON p.payroll_run_id = r.id
+                    WHERE MONTH(r.pay_period_start) = :m AND YEAR(r.pay_period_start) = :y";
+            $params = [':m' => $month, ':y' => $year];
+            if ($employeeId) { $sql .= " AND p.employee_id = :e"; $params[':e'] = $employeeId; }
+            $sql .= " ORDER BY u.name LIMIT 200";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("PayrollService::listPayroll error: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function markPaid(int $entryId, int $paidBy, string $method = 'bank_transfer'): array
@@ -131,11 +150,16 @@ class PayrollService
 
     public function getSettings(): array
     {
-        $st = $this->db->query("SELECT * FROM attendance_settings ORDER BY setting_key LIMIT 100");
-        $rows = $st->fetchAll(PDO::FETCH_ASSOC);
-        $out = [];
-        foreach ($rows as $r) $out[$r['setting_key']] = json_decode($r['setting_value'] ?? 'null', true) ?? $r['setting_value'];
-        return $out;
+        try {
+            $st = $this->db->query("SELECT * FROM attendance_settings ORDER BY setting_key LIMIT 100");
+            $rows = $st->fetchAll(PDO::FETCH_ASSOC);
+            $out = [];
+            foreach ($rows as $r) $out[$r['setting_key']] = json_decode($r['setting_value'] ?? 'null', true) ?? $r['setting_value'];
+            return $out;
+        } catch (\Throwable $e) {
+            error_log("PayrollService::getSettings error: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function setSetting(string $key, $value, string $desc = ''): array

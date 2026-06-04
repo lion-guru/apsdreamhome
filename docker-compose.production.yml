@@ -1,0 +1,151 @@
+# =============================================================================
+# APS Dream Home - Production Compose Overrides (SSL, scaling, etc.)
+# Merge with: docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
+# DO NOT enable HTTPS in this file unless you have valid certs at docker/ssl/
+# =============================================================================
+
+version: "3.9"
+
+x-app-env-prod: &app-env-prod
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_URL: ${APP_URL}
+  APP_KEY: ${APP_KEY}
+
+  DB_HOST: db
+  DB_PORT: "3306"
+  DB_DATABASE: ${DB_DATABASE}
+  DB_USERNAME: ${DB_USERNAME}
+  DB_PASSWORD: ${DB_PASSWORD}
+
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+  CACHE_DRIVER: redis
+  SESSION_DRIVER: redis
+  QUEUE_CONNECTION: redis
+
+  WEBSOCKET_HOST: websocket
+  WEBSOCKET_PORT: ${WEBSOCKET_PORT:-8080}
+
+  MAIL_MAILER: ${MAIL_MAILER:-smtp}
+  MAIL_HOST: ${MAIL_HOST}
+  MAIL_PORT: ${MAIL_PORT}
+  MAIL_USERNAME: ${MAIL_USERNAME}
+  MAIL_PASSWORD: ${MAIL_PASSWORD}
+  MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+  MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+  MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+
+  TZ: ${TZ:-Asia/Kolkata}
+  LOG_CHANNEL: ${LOG_CHANNEL:-stderr}
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. PHP-Apache App - scaled to 2 for HA
+  # ---------------------------------------------------------------------------
+  app:
+    environment:
+      <<: *app-env-prod
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        delay: 5s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/ -o /dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # 2. WebSocket - can be scaled behind a load balancer
+  # ---------------------------------------------------------------------------
+  websocket:
+    environment:
+      <<: *app-env-prod
+    deploy:
+      replicas: 1     # WebSockets are sticky; keep 1 unless you have shared state
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+  # ---------------------------------------------------------------------------
+  # 3. MySQL - production tuned
+  # ---------------------------------------------------------------------------
+  db:
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 3G
+        reservations:
+          cpus: "0.5"
+          memory: 1G
+
+  # ---------------------------------------------------------------------------
+  # 4. Redis - more memory
+  # ---------------------------------------------------------------------------
+  redis:
+    command:
+      - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --maxmemory
+      - 768mb
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 1G
+        reservations:
+          memory: 128M
+
+  # ---------------------------------------------------------------------------
+  # 5. Nginx - bind to standard ports, ensure SSL
+  # ---------------------------------------------------------------------------
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/ssl:/etc/ssl/certs:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+# Keep the same named volumes
+volumes:
+  db_data:
+  db_backups:
+  redis_data:
+  app_storage:
+  app_uploads:
+  app_assets_uploads:
+  app_logs:
+  nginx_logs:

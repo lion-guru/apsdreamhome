@@ -1,12 +1,19 @@
 (function() {
   'use strict';
   window.NotificationWidget = {
-    pollInterval: 15000,
-    timer: null,
+    ws: null,
+    reconnectInterval: 5000,
+    heartbeatInterval: 30000,
+    heartbeatTimer: null,
+    reconnectTimer: null,
+    isConnected: false,
+    isAuthenticating: false,
     badge: null,
     dropdown: null,
     list: null,
     channel: 'global',
+    userId: null,
+    lastId: 0,
 
     init: function(options) {
       options = options || {};
@@ -14,63 +21,148 @@
       this.dropdown = document.querySelector(options.dropdownSelector || '.notification-dropdown');
       this.list = document.querySelector(options.listSelector || '.notification-list');
       this.channel = options.channel || 'global';
+      this.userId = options.userId || null;
       this.lastId = 0;
 
       if (this.dropdown) {
         this.dropdown.addEventListener('show.bs.dropdown', () => this.loadAll());
       }
 
-      this.start();
+      this.connect();
     },
 
-    start: function() {
-      this.poll();
-      this.timer = setInterval(() => this.poll(), this.pollInterval);
-    },
-
-    stop: function() {
-      if (this.timer) clearInterval(this.timer);
-    },
-
-    poll: async function() {
+    connect: function() {
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const wsUrl = `${wsProtocol}://${window.location.host}/websocket_server.php`;
+      
       try {
-        const res = await fetch((window.BASE_URL || '/apsdreamhome') + '/api/v2/notifications/poll?channel=' + this.channel + '&since_id=' + this.lastId, {
-          credentials: 'same-origin',
-          headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data.unread_count !== undefined) this.updateBadge(data.unread_count);
-        if (data.notifications && data.notifications.length) {
-          data.notifications.forEach(n => this.showToast(n));
-          if (data.last_id) this.lastId = data.last_id;
-        }
-      } catch (e) { /* silent */ }
-    },
-
-    loadAll: async function() {
-      try {
-        const res = await fetch((window.BASE_URL || '/apsdreamhome') + '/api/v2/notifications/poll?channel=' + this.channel + '&since_id=0', { credentials: 'same-origin' });
-        const data = await res.json();
-        if (this.list) {
-          if (!data.notifications.length) {
-            this.list.innerHTML = '<div class="text-center text-muted p-3">No notifications</div>';
-          } else {
-            this.list.innerHTML = data.notifications.slice(0, 10).map(n => this.renderItem(n)).join('');
+        this.ws = new WebSocket(wsUrl);
+        
+        this.ws.onopen = () => {
+          this.isConnected = true;
+          this.isAuthenticating = true;
+          error_log("WebSocket connected");
+          
+          // Send auth message if we have user info
+          if (this.userId) {
+            this.ws.send(JSON.stringify({
+              type: 'auth',
+              token: this.getAuthToken()
+            }));
           }
-        }
-      } catch (e) {}
+          
+          // Start heartbeat
+          this.startHeartbeat();
+        };
+        
+        this.ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          this.handleMessage(data);
+        };
+        
+        this.ws.onclose = () => {
+          this.isConnected = false;
+          error_log("WebSocket disconnected");
+          this.stopHeartbeat();
+          this.scheduleReconnect();
+        };
+        
+        this.ws.onerror = (error) => {
+          error_log("WebSocket error: ", error);
+          this.isConnected = false;
+          this.ws.close();
+        };
+      } catch (error) {
+        error_log("WebSocket connection error: ", error);
+        this.scheduleReconnect();
+      }
     },
 
-    renderItem: function(n) {
-      const payload = this.parsePayload(n.payload);
-      return '<div class="notification-item p-2 border-bottom" data-id="' + n.id + '">' +
-        '<div class="d-flex justify-content-between">' +
-        '<strong>' + this.escapeHtml(n.event_type) + '</strong>' +
-        '<small class="text-muted">' + this.timeAgo(n.created_at) + '</small>' +
-        '</div>' +
-        '<div class="small text-muted">' + this.escapeHtml(payload.message || payload.title || JSON.stringify(payload)) + '</div>' +
-        '</div>';
+    handleMessage: function(data) {
+      switch (data.type) {
+        case 'auth':
+          if (data.status === 'success') {
+            this.isAuthenticating = false;
+            error_log("WebSocket authenticated");
+          } else {
+            error_log("WebSocket auth failed: ", data.message);
+          }
+          break;
+          
+        case 'notification':
+          if (data.data) {
+            this.showToast(data.data);
+            this.updateUnreadCount(1); // Increment badge
+          }
+          break;
+          
+        case 'mark_read_result':
+          // Handle mark read confirmation if needed
+          break;
+          
+        case 'pong':
+          // Heartbeat response
+          break;
+          
+        case 'connection':
+          error_log("WebSocket connection established");
+          break;
+          
+        case 'error':
+          error_log("WebSocket error: ", data.message);
+          break;
+      }
+    },
+
+    getAuthToken: function() {
+      // Try to get token from meta tag or cookie
+      const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+      if (tokenMeta) {
+        return tokenMeta.getAttribute('content');
+      }
+      
+      // Fallback to session storage or return empty
+      return sessionStorage.getItem('auth_token') || '';
+    },
+
+    startHeartbeat: function() {
+      this.heartbeatTimer = setInterval(() => {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+          this.ws.send(JSON.stringify({
+            type: 'ping',
+            timestamp: Date.now()
+          }));
+        }
+      }, this.heartbeatInterval);
+    },
+
+    stopHeartbeat: function() {
+      if (this.heartbeatTimer) {
+        clearInterval(this.heartbeatTimer);
+        this.heartbeatTimer = null;
+      }
+    },
+
+    scheduleReconnect: function() {
+      if (!this.reconnectTimer) {
+        this.reconnectTimer = setTimeout(() => {
+          this.reconnectTimer = null;
+          this.connect();
+        }, this.reconnectInterval);
+      }
+    },
+
+    disconnect: function() {
+      if (this.ws) {
+        this.ws.close();
+        this.ws = null;
+      }
+      this.stopHeartbeat();
+      if (this.reconnectTimer) {
+        clearInterval(this.reconnectTimer);
+        this.reconnectTimer = null;
+      }
+      this.isConnected = false;
     },
 
     showToast: function(n) {
@@ -96,6 +188,55 @@
       return div;
     },
 
+    updateUnreadCount: function(change) {
+      // Get current count from badge
+      let current = 0;
+      if (this.badge && this.badge.style.display !== 'none') {
+        const text = this.badge.textContent;
+        if (text === '99+') {
+          current = 99;
+        } else {
+          current = parseInt(text) || 0;
+        }
+      }
+      
+      const newCount = Math.max(0, current + change);
+      this.updateBadge(newCount);
+    },
+
+    loadAll: async function() {
+      // For backward compatibility, we can still use AJAX for initial load
+      try {
+        const res = await fetch((window.BASE_URL || '/apsdreamhome') + '/api/v2/notifications/poll?channel=' + this.channel + '&since_id=0', { credentials: 'same-origin' });
+        const data = await res.json();
+        if (this.list) {
+          if (!data.notifications.length) {
+            this.list.innerHTML = '<div class="text-center text-muted p-3">No notifications</div>';
+          } else {
+            this.list.innerHTML = data.notifications.slice(0, 10).map(n => this.renderItem(n)).join('');
+          }
+          
+          // Update badge with total unread count
+          if (data.unread_count !== undefined) {
+            this.updateBadge(data.unread_count);
+          }
+        }
+      } catch (e) {
+        error_log("Error loading notifications: ", e);
+      }
+    },
+
+    renderItem: function(n) {
+      const payload = this.parsePayload(n.payload);
+      return '<div class="notification-item p-2 border-bottom" data-id="' + n.id + '">' +
+        '<div class="d-flex justify-content-between">' +
+        '<strong>' + this.escapeHtml(n.event_type) + '</strong>' +
+        '<small class="text-muted">' + this.timeAgo(n.created_at) + '</small>' +
+        '</div>' +
+        '<div class="small text-muted">' + this.escapeHtml(payload.message || payload.title || JSON.stringify(payload)) + '</div>' +
+        '</div>';
+    },
+
     markRead: async function(ids) {
       try {
         await fetch((window.BASE_URL || '/apsdreamhome') + '/api/v2/notifications/read', {
@@ -104,7 +245,17 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ids: ids })
         });
-      } catch (e) {}
+        
+        // Also notify WebSocket server to mark as read on server side
+        if (this.ws && this.ws.readyState === WebSocket.OPEN && !this.isAuthenticating) {
+          this.ws.send(JSON.stringify({
+            type: 'mark_read',
+            ids: ids
+          }));
+        }
+      } catch (e) {
+        error_log("Error marking notifications as read: ", e);
+      }
     },
 
     updateBadge: function(count) {
@@ -138,7 +289,11 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     if (document.querySelector('.notification-badge')) {
-      window.NotificationWidget.init();
+      // Get user ID from meta tag or JS variable
+      const userIdMeta = document.querySelector('meta[name="user-id"]');
+      const userId = userIdMeta ? parseInt(userIdMeta.getAttribute('content')) : null;
+      
+      window.NotificationWidget.init({ userId: userId });
     }
   });
 })();

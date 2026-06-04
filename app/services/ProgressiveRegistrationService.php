@@ -72,7 +72,7 @@ class ProgressiveRegistrationService
 
     public function listIncomplete(int $limit = 50): array
     {
-        $st = $this->db->prepare("SELECT * FROM incomplete_registrations WHERE completed = 0 AND expires_at > NOW() ORDER BY updated_at DESC LIMIT :lim");
+        $st = $this->db->prepare("SELECT * FROM incomplete_registrations WHERE recovered_at IS NULL ORDER BY last_activity_at DESC LIMIT :lim");
         $st->bindValue(':lim', $limit, PDO::PARAM_INT);
         $st->execute();
         return $st->fetchAll(PDO::FETCH_ASSOC);
@@ -80,7 +80,7 @@ class ProgressiveRegistrationService
 
     public function abandonmentStats(int $days = 30): array
     {
-        $st = $this->db->prepare("SELECT step, COUNT(*) as count, AVG(step) as avg_step FROM incomplete_registrations WHERE completed = 0 AND created_at > DATE_SUB(NOW(), INTERVAL :d DAY) GROUP BY step");
+        $st = $this->db->prepare("SELECT current_step AS step, COUNT(*) AS count, AVG(progress_percent) AS avg_step FROM incomplete_registrations WHERE recovered_at IS NULL AND last_activity_at > DATE_SUB(NOW(), INTERVAL :d DAY) GROUP BY current_step");
         $st->execute([':d' => $days]);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }

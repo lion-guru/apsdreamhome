@@ -44,6 +44,16 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
         ]
     }
     </script>
+    
+    <!-- CSRF Token -->
+    <?php if (isset($_SESSION['csrf_token'])): ?>
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES); ?>">
+    <?php endif; ?>
+    
+    <!-- User ID for WebSocket auth -->
+    <?php if (isset($_SESSION['user_id']) || isset($_SESSION['admin_id'])): ?>
+    <meta name="user-id" content="<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : $_SESSION['admin_id']; ?>">
+    <?php endif; ?>
 
     <meta name="description" content="<?php echo $page_description ?? 'Discover premium residential and commercial properties in Gorakhpur, Lucknow, Kushinagar, and across Uttar Pradesh with APS Dream Home. Premium plots, modern amenities, and trusted service.'; ?>">
     <meta name="keywords" content="real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Varanasi, Uttar Pradesh, property, residential, commercial">
@@ -275,6 +285,15 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
         };
     </script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/chatbot.js"></script>
+
+    <!-- Real-time WebSocket Notifications -->
+    <script>
+        window.NOTIFY_USER = {
+            id: <?php echo isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : (isset($_SESSION['admin_id']) ? (int)$_SESSION['admin_id'] : 'null'); ?>,
+            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'], ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
+        };
+    </script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>

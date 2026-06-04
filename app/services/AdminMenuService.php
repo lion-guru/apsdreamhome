@@ -306,12 +306,14 @@ class AdminMenuService
      */
     public function clearMenuCache(): void
     {
+        // Clear legacy key names (kept for backward compat with the file cache)
         Cache::delete('admin_sidebar_all');
-        // Clear role-specific caches for all known roles
         $roles = ['super_admin', 'admin', 'manager', 'employee', 'associate', 'agent', 'customer'];
         foreach ($roles as $role) {
             Cache::delete('admin_sidebar_role_' . md5($role));
         }
+        // Clear new CacheService entries (Redis + file, both layers, by pattern)
+        \App\Services\CacheService::invalidateAdminMenu();
     }
 
     /**

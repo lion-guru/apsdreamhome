@@ -1,5 +1,100 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-05)
 
+## Session 2026-06-04 (Late Evening): Advanced Search with Saved Queries + Email Alerts
+
+### What Was Done
+**Phase 44 v2 — Front-end saved searches + email alerts + typeahead** (extends the existing `saved_searches` table from Phase 44 admin-only work)
+
+### Schema Changes
+- `saved_searches` table: added `email_alerts TINYINT(1)`, `result_count INT`, `last_run_at DATETIME`, plus indexes on `user_id` and `email_alerts`
+- `user_properties` table: added `bedrooms INT`, `bathrooms INT`, `furnished VARCHAR(20)`, `year_built INT(4)` (advanced search filters)
+- New `search_alert_log` table: id, search_id, user_id, property_id, sent_at, email_status ENUM('sent','failed','pending'), error_message, UNIQUE KEY (search_id, property_id) to prevent duplicate alerts
+- 5 sample approved properties seeded with new columns populated
+
+### Files Created (8)
+- `app/Http/Controllers/Front/SavedSearchController.php` — 9 methods: index, store, update, destroy, execute, toggleAlerts, manageAlerts, autocomplete, cronAlerts
+- `app/views/pages/user/manage_alerts.php` — alert subscription toggles + history
+- `app/views/pages/user/saved_search_results.php` — renders `execute()` output
+- `app/views/components/save_search_modal.php` — Bootstrap modal, auto-name suggestion, AJAX submit
+- `app/views/components/saved_search_dropdown.php` — logged-in dropdown of saved searches + "Save this search" button
+- `scripts/daily_alerts_cron.php` — CLI cron entry, logs to `logs/alerts_cron.log`
+- `testing/test_saved_searches.php` — 19-test E2E runner (all pass)
+- `testing/test_saved_searches_http.php` — HTTP E2E test with real session
+- `testing/test_autocomplete_query.php` — direct SQL test
+- `testing/reset_test_password.php` — utility to reset test user password
+
+### Files Enhanced
+- `app/Services/SavedSearchService.php` — added saveSearch, getUserSearches, resolveUserRole, matchProperties, countMatches, findNewMatches, logAlertSent, toggleAlerts, recordRun, sendAlerts (cron), buildAlertEmailBody, cleanup, getAlertLog
+- `app/Http/Controllers/Front/PageController.php::properties()` — handles 8 new filter params + passes $savedSearches
+- `app/Http/Controllers/Front/UserController.php` — old methods now delegate to SavedSearchController
+- `app/views/pages/properties.php` — rewritten with advanced filters, sort options, save-search button, modal include, dropdown include, results count, map-view placeholder
+- `app/views/layouts/header.php` — typeahead search form (input + dropdown + JS)
+- `app/views/pages/user_dashboard.php` — "Manage Email Alerts" link + saved-searches count badge
+- `app/views/pages/user/saved_searches.php` — full UI with stats, filter badges, AJAX actions, alert log
+- `app/views/layouts/customer.php` — added CSRF meta tag (was missing, blocked real users from saving)
+- `routes/web.php` — 13 new routes for /user/saved-searches/* + /api/saved-searches/autocomplete + cron-alerts
+
+### Routes Added
+```
+GET    /user/saved-searches                        list
+POST   /user/saved-searches                        save new
+PUT    /user/saved-searches/{id}                   update (rename, toggle alerts, change filters)
+DELETE /user/saved-searches/{id}                   delete
+GET    /user/saved-searches/{id}/run               execute (run saved search, show matching properties)
+POST   /user/saved-searches/{id}/alerts            toggle email alerts
+GET    /user/saved-searches/manage-alerts          alert subscriptions + history
+GET    /api/saved-searches/autocomplete?q=         typeahead JSON API
+GET/POST /user/saved-searches/cron-alerts          CRON endpoint (key-auth)
+```
+
+### Verification
+- **19/19 unit tests pass** in `testing/test_saved_searches.php`:
+  - schema (3 cols + new table), service init, save/get/list/match/count/toggle/log/recordRun/sendAlerts/update/cleanup/delete, controller load (9 methods), no-filter match (12 properties), Gorakhpur filter (2), 3BHK+ filter (2), price range (3), all 3 sort orders
+- **HTTP E2E test all routes return 200**:
+  - Login → dashboard (200), saved-searches page (200), POST save with CSRF returns `{"success":true,"id":N,"name":"...","redirect":"/user/saved-searches"}`, autocomplete returns 5 results (2 property, 2 address, 1 location) with proper URL params, cron-alerts returns stats JSON, manage-alerts (200), filtered properties (200, 92-94KB with saved-searches dropdown)
+- **Cron works via CLI**: `php scripts/daily_alerts_cron.php` runs cleanly, processes searches, logs to `logs/alerts_cron.log`
+- **Cron works via HTTP**: `GET /user/saved-searches/cron-alerts?key=dev-cron-key` returns `{"success":true,"stats":{...}}`
+- **mail() failure handled gracefully** — when SMTP isn't available (XAMPP dev), `alerts_failed` counter increments but cron doesn't crash
+- **CSRF security verified** — real session-based POST works; meta tag now in customer layout so JS can pick it up
+
+### Key Decisions
+- **Did NOT drop/replace Phase-44 `saved_searches` table** — extended it (added new columns) so existing data + admin routes (`/admin/saved-searches`) keep working
+- **Reuse BaseController methods** (json, render, redirect, setFlash) — first attempt failed with "Access level must be public" on `json()`; fixed by removing duplicates from new controller
+- **Inline-cast LIMIT in `getAlertLog`** — MariaDB rejects `LIMIT ?` placeholder in some configurations
+- **Fixed PHP comma-operator parse error** in service `if(a, b) { }`
+- **Saved searches stored as JSON in existing `filters LONGTEXT` column** — fixed the view + controller that referenced the non-existent `search_params` column
+- **Custom PSR-4 autoloader in cron script** — no framework bootstrap in CLI; first attempt failed because explicit `require_once Database.php` collided with PSR-4 autoloader finding `Database/Database.php`. Fixed by removing the explicit require and letting the autoloader work
+- **`sendAlerts()` uses `last_run_at` with 5-min overlap** to avoid missing properties on the same minute the cron runs
+- **CSRF token always-set in customer layout** — was `if (isset)` guard, but token is lazy-initialized; changed to always set if missing so meta tag is always present
+
+### Test User (for manual testing)
+- Email: `customer1@apsdreamhome.com`
+- Password: `Test1234` (was reset via `testing/reset_test_password.php`)
+- Role: customer, id=3
+
+### To Schedule the Cron Job (Windows Task Scheduler)
+```powershell
+# Create a basic task that runs daily at 9 AM
+$action = New-ScheduledTaskAction -Execute 'C:\xampp\php\php.exe' -Argument 'C:\xampp\htdocs\apsdreamhome\scripts\daily_alerts_cron.php'
+$trigger = New-ScheduledTaskTrigger -Daily -At '09:00'
+Register-ScheduledTask -TaskName 'APS_DailySearchAlerts' -Action $action -Trigger $trigger -Description 'Send saved-search email alerts daily'
+```
+
+### Known Limitations
+- mail() on XAMPP without SMTP server logs to `search_alert_log` with `email_status='failed'` — alerts_failed counter increments but no crash
+- Autocomplete requires min 2 chars
+- Cron key defaults to `dev-cron-key` in dev mode; set `CRON_SECRET` env var for production
+- Old `UserController::savedSearches/saveSearch/deleteSavedSearch` still exist but delegate to SavedSearchController (backward compat)
+
+### Files Modified
+- **Created (10)**: SavedSearchController, manage_alerts.php, saved_search_results.php, save_search_modal.php, saved_search_dropdown.php, daily_alerts_cron.php, test_saved_searches.php, test_saved_searches_http.php, test_autocomplete_query.php, reset_test_password.php
+- **Enhanced (8)**: SavedSearchService, PageController::properties, UserController (delegation), properties.php, header.php (typeahead), user_dashboard.php, saved_searches.php, customer.php (CSRF)
+- **DB (3)**: saved_searches (+email_alerts, +result_count, +last_run_at), user_properties (+bedrooms, +bathrooms, +furnished, +year_built), search_alert_log (NEW)
+- **Routes**: 13 new routes
+- **Tests**: 19/19 + 7-step HTTP E2E, all green
+
+---
+
 ## Session 2026-06-05: Multi-Language UI Translation System
 
 ### What Was Done

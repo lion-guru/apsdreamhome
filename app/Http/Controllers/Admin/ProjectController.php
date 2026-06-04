@@ -203,6 +203,9 @@ class ProjectController extends AdminController
                 ]);
             }
 
+            // Project list changed — drop the header projects cache.
+            $this->invalidateHeaderProjectsCache();
+
             // Clean up uploaded image if database insert failed
             if ($imagePath && file_exists($imagePath)) {
                 unlink($imagePath);
@@ -436,10 +439,27 @@ class ProjectController extends AdminController
                 ]);
             }
 
+            // Project list changed — drop the header projects cache.
+            $this->invalidateHeaderProjectsCache();
+
             return $this->jsonError('Failed to update project', 500);
         } catch (Exception $e) {
             $this->loggingService->error("Project Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update project', 500);
+        }
+    }
+
+    /**
+     * Invalidate the header projects cache after any project mutation.
+     * Called from store(), update() and destroy() at the end of the
+     * transaction to keep the public header dropdown fresh.
+     */
+    private function invalidateHeaderProjectsCache(): void
+    {
+        try {
+            \App\Services\CacheService::invalidateHeaderProjects();
+        } catch (Exception $e) {
+            error_log('Cache invalidation error: ' . $e->getMessage());
         }
     }
 
@@ -500,6 +520,9 @@ class ProjectController extends AdminController
                     'message' => 'Project deleted successfully'
                 ]);
             }
+
+            // Project list changed — drop the header projects cache.
+            $this->invalidateHeaderProjectsCache();
 
             return $this->jsonError('Failed to delete project', 500);
         } catch (Exception $e) {

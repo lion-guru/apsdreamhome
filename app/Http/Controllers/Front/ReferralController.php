@@ -16,7 +16,7 @@ class ReferralController extends BaseController
             $this->redirect('/login');
             return;
         }
-        $user = $this->getUser();
+        $user = $this->loadCurrentUser();
         $userId = (int)($user['id'] ?? 0);
         $referralCode = $user['referral_code'] ?? null;
         $stats = [
@@ -76,15 +76,36 @@ class ReferralController extends BaseController
             'telegram' => 'https://t.me/share/url?url=' . urlencode($baseUrl . '/register?ref=' . $referralCode) . '&text=' . urlencode('Join me on APS Dream Home! Referral: ' . $referralCode)
         ];
         $this->layout = 'layouts/customer';
-        $this->render('pages/customer_referral', [
-            'page_title' => 'Refer & Earn - APS Dream Home',
-            'user' => $user,
-            'referral_code' => $referralCode,
-            'stats' => $stats,
-            'referrals' => $referrals,
-            'earnings' => $earnings,
-            'share_links' => $shareLinks
-        ]);
+        try {
+            $this->render('pages/customer_referral', [
+                'page_title' => 'Refer & Earn - APS Dream Home',
+                'user' => $user,
+                'referral_code' => $referralCode,
+                'stats' => $stats,
+                'referrals' => $referrals,
+                'earnings' => $earnings,
+                'share_links' => $shareLinks
+            ]);
+        } catch (\Throwable $e) {
+            error_log("ReferralController::index render failed: " . $e->getMessage());
+            echo '<div class="alert alert-danger m-4">Referral dashboard is temporarily unavailable. Please try again later.</div>';
+        }
+    }
+
+    private function loadCurrentUser(): array
+    {
+        $userId = (int)($_SESSION['user_id'] ?? 0);
+        if ($userId <= 0) {
+            return [];
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $user ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     private function generateReferralCode(int $userId): string

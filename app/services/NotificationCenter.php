@@ -28,7 +28,20 @@ class NotificationCenter
             ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE),
             ':exp' => $expires
         ]);
-        return (int)$this->db->lastInsertId();
+        $notificationId = (int)$this->db->lastInsertId();
+        
+        // Broadcast notification via WebSocket
+        $notification = [
+            'id' => $notificationId,
+            'channel_name' => $channel,
+            'user_id' => $userId,
+            'event_type' => $eventType,
+            'payload' => $payload,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        $this->broadcastNotification($notification);
+        
+        return $notificationId;
     }
 
     public function fetchPending(int $userId, string $channel = 'global', int $limit = 20, ?int $sinceId = null): array
@@ -96,5 +109,19 @@ class NotificationCenter
         } catch (\Throwable $e) {
             return 0;
         }
+    }
+    
+    // Broadcast notification via WebSocket
+    public function broadcastNotification(array $notification): void
+    {
+        // Try to get WebSocket server instance and broadcast
+        if (class_exists('\App\Services\WebSocketServer') && method_exists('\App\Services\WebSocketServer', 'getInstance')) {
+            $wsServer = \App\Services\WebSocketServer::getInstance();
+            if ($wsServer) {
+                $wsServer->broadcastNotification($notification);
+            }
+        }
+        // Fallback: just log if WebSocket server not available
+        error_log("WebSocket broadcast attempted: " . json_encode($notification));
     }
 }

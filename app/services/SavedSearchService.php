@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Services\EmailService;
+
 use PDO;
 
 /**
@@ -25,10 +27,10 @@ class SavedSearchService
         $this->db = $db;
     }
 
-    public function save(int $userId, string $role, string $name, string $entityType, array $filters, ?string $description = null, bool $isFavorite = false, bool $isPublic = false): int
+    public function save(int $userId, string $role, string $name, string $entityType, array $filters, ?string $description = null, bool $isFavorite = false, bool $isPublic = false, int $emailAlerts = 0): int
     {
-        $stmt = $this->db->prepare("INSERT INTO saved_searches (user_id, user_role, name, description, entity_type, filters, is_favorite, is_public) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $role, $name, $description, $entityType, json_encode($filters, JSON_UNESCAPED_UNICODE), $isFavorite ? 1 : 0, $isPublic ? 1 : 0]);
+        $stmt = $this->db->prepare("INSERT INTO saved_searches (user_id, user_role, name, description, entity_type, filters, email_alerts, is_favorite, is_public) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$userId, $role, $name, $description, $entityType, json_encode($filters, JSON_UNESCAPED_UNICODE), $emailAlerts ? 1 : 0, $isFavorite ? 1 : 0, $isPublic ? 1 : 0]);
         return (int)$this->db->lastInsertId();
     }
 
@@ -150,5 +152,407 @@ class SavedSearchService
             'favorites' => (int)($fav['total'] ?? 0),
             'by_entity' => $byEntity
         ];
+    }
+
+    /**
+     * Front-friendly alias: Save a search using just (userId, name, filters).
+     * Returns the new saved search id.
+     */
+    public function saveSearch(int $userId, string $name, array $filters, ?string $description = null, int $emailAlerts = 0, string $entityType = 'user_properties'): int
+    {
+        $role = $this->resolveUserRole($userId);
+        return $this->save($userId, $role, $name, $entityType, $filters, $description, false, false, $emailAlerts);
+    }
+
+    /**
+     * Front-friendly alias: list all saved searches for a user.
+     */
+    public function getUserSearches(int $userId, ?string $entityType = null): array
+    {
+        $role = $this->resolveUserRole($userId);
+        return $this->list($userId, $role, $entityType ?? '', false);
+    }
+
+    /**
+     * Resolve role string for a user.
+     */
+    public function resolveUserRole(int $userId): string
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT role FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch();
+            return $row['role'] ?? 'customer';
+        } catch (\Throwable $e) {
+            return 'customer';
+        }
+    }
+
+    /**
+     * Build & execute a property search from a saved search's filter set.
+     * Returns array of matching properties (id, name, address, price, image, etc).
+     */
+    public function matchProperties(array $filters, int $limit = 100, int $offset = 0, ?int $excludePropertyId = null): array
+    {
+        $where = ["status = 'approved'"];
+        $params = [];
+
+        if (!empty($filters['q'])) {
+            $where[] = "(name LIKE ? OR address LIKE ? OR location LIKE ? OR description LIKE ?)";
+            $q = '%' . $filters['q'] . '%';
+            array_push($params, $q, $q, $q, $q);
+        }
+        if (!empty($filters['type'])) {
+            $where[] = "property_type = ?";
+            $params[] = $filters['type'];
+        }
+        if (!empty($filters['listing'])) {
+            $where[] = "listing_type = ?";
+            $params[] = $filters['listing'];
+        }
+        if (!empty($filters['location'])) {
+            $where[] = "(address LIKE ? OR location LIKE ? OR city_name LIKE ?)";
+            $loc = '%' . $filters['location'] . '%';
+            array_push($params, $loc, $loc, $loc);
+        }
+        if (isset($filters['min_price']) && (int)$filters['min_price'] > 0) {
+            $where[] = "price >= ?";
+            $params[] = (int)$filters['min_price'];
+        }
+        if (isset($filters['max_price']) && (int)$filters['max_price'] > 0) {
+            $where[] = "price <= ?";
+            $params[] = (int)$filters['max_price'];
+        }
+        if (isset($filters['bedrooms']) && $filters['bedrooms'] !== '' && $filters['bedrooms'] !== null) {
+            $where[] = "bedrooms >= ?";
+            $params[] = (int)$filters['bedrooms'];
+        }
+        if (isset($filters['bathrooms']) && $filters['bathrooms'] !== '' && $filters['bathrooms'] !== null) {
+            $where[] = "bathrooms >= ?";
+            $params[] = (int)$filters['bathrooms'];
+        }
+        if (!empty($filters['furnished'])) {
+            $where[] = "furnished = ?";
+            $params[] = $filters['furnished'];
+        }
+        if (!empty($filters['year_built'])) {
+            $where[] = "year_built >= ?";
+            $params[] = (int)$filters['year_built'];
+        }
+        if (isset($filters['area_min']) && (int)$filters['area_min'] > 0) {
+            $where[] = "area_sqft >= ?";
+            $params[] = (int)$filters['area_min'];
+        }
+        if (isset($filters['area_max']) && (int)$filters['area_max'] > 0) {
+            $where[] = "area_sqft <= ?";
+            $params[] = (int)$filters['area_max'];
+        }
+        if (!empty($filters['state_id'])) {
+            $where[] = "state_id = ?";
+            $params[] = (int)$filters['state_id'];
+        }
+        if (!empty($filters['district_id'])) {
+            $where[] = "district_id = ?";
+            $params[] = (int)$filters['district_id'];
+        }
+        if (!empty($filters['city_id'])) {
+            $where[] = "city_id = ?";
+            $params[] = (int)$filters['city_id'];
+        }
+        if ($excludePropertyId) {
+            $where[] = "id != ?";
+            $params[] = $excludePropertyId;
+        }
+
+        $sort = $filters['sort'] ?? 'newest';
+        $orderBy = match ($sort) {
+            'price_low' => 'price ASC',
+            'price_high' => 'price DESC',
+            'oldest' => 'created_at ASC',
+            'area_large' => 'area_sqft DESC',
+            'area_small' => 'area_sqft ASC',
+            'newest', '' => 'created_at DESC',
+            default => 'created_at DESC'
+        };
+
+        $sql = "SELECT id, user_id, name, property_type, listing_type, address, location, area_sqft, price, price_type, image, description, bedrooms, bathrooms, furnished, year_built, created_at, views
+                FROM user_properties
+                WHERE " . implode(' AND ', $where) . "
+                ORDER BY $orderBy
+                LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Count matches for a filter set.
+     */
+    public function countMatches(array $filters): int
+    {
+        $where = ["status = 'approved'"];
+        $params = [];
+
+        if (!empty($filters['q'])) {
+            $where[] = "(name LIKE ? OR address LIKE ? OR location LIKE ? OR description LIKE ?)";
+            $q = '%' . $filters['q'] . '%';
+            array_push($params, $q, $q, $q, $q);
+        }
+        if (!empty($filters['type'])) { $where[] = "property_type = ?"; $params[] = $filters['type']; }
+        if (!empty($filters['listing'])) { $where[] = "listing_type = ?"; $params[] = $filters['listing']; }
+        if (!empty($filters['location'])) {
+            $where[] = "(address LIKE ? OR location LIKE ? OR city_name LIKE ?)";
+            $loc = '%' . $filters['location'] . '%';
+            array_push($params, $loc, $loc, $loc);
+        }
+        if (isset($filters['min_price']) && (int)$filters['min_price'] > 0) { $where[] = "price >= ?"; $params[] = (int)$filters['min_price']; }
+        if (isset($filters['max_price']) && (int)$filters['max_price'] > 0) { $where[] = "price <= ?"; $params[] = (int)$filters['max_price']; }
+        if (isset($filters['bedrooms']) && (int)$filters['bedrooms'] > 0) { $where[] = "bedrooms >= ?"; $params[] = (int)$filters['bedrooms']; }
+        if (isset($filters['bathrooms']) && (int)$filters['bathrooms'] > 0) { $where[] = "bathrooms >= ?"; $params[] = (int)$filters['bathrooms']; }
+        if (!empty($filters['furnished'])) { $where[] = "furnished = ?"; $params[] = $filters['furnished']; }
+        if (!empty($filters['year_built'])) { $where[] = "year_built >= ?"; $params[] = (int)$filters['year_built']; }
+        if (isset($filters['area_min']) && (int)$filters['area_min'] > 0) { $where[] = "area_sqft >= ?"; $params[] = (int)$filters['area_min']; }
+        if (isset($filters['area_max']) && (int)$filters['area_max'] > 0) { $where[] = "area_sqft <= ?"; $params[] = (int)$filters['area_max']; }
+        if (!empty($filters['state_id'])) { $where[] = "state_id = ?"; $params[] = (int)$filters['state_id']; }
+        if (!empty($filters['district_id'])) { $where[] = "district_id = ?"; $params[] = (int)$filters['district_id']; }
+        if (!empty($filters['city_id'])) { $where[] = "city_id = ?"; $params[] = (int)$filters['city_id']; }
+
+        $sql = "SELECT COUNT(*) as cnt FROM user_properties WHERE " . implode(' AND ', $where);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch();
+        return (int)($row['cnt'] ?? 0);
+    }
+
+    /**
+     * Find properties newly added since `since` that match the saved search.
+     * Used by sendAlerts() cron.
+     */
+    public function findNewMatches(array $filters, string $since): array
+    {
+        $filters['exclude_existing'] = false;
+        $matches = $this->matchProperties($filters, 50, 0);
+        $new = [];
+        foreach ($matches as $m) {
+            $created = $m['created_at'] ?? '';
+            if ($created && $created > $since) {
+                $new[] = $m;
+            }
+        }
+        return $new;
+    }
+
+    /**
+     * Record that an alert email was sent (or attempted) for (search, property).
+     * Prevents duplicate sends via UNIQUE KEY (search_id, property_id).
+     */
+    public function logAlertSent(int $searchId, int $userId, int $propertyId, string $status = 'sent', ?string $error = null): bool
+    {
+        try {
+            $stmt = $this->db->prepare("
+                INSERT INTO search_alert_log (search_id, user_id, property_id, sent_at, email_status, error_message)
+                VALUES (?, ?, ?, NOW(), ?, ?)
+                ON DUPLICATE KEY UPDATE
+                    sent_at = NOW(),
+                    email_status = VALUES(email_status),
+                    error_message = VALUES(error_message)
+            ");
+            $stmt->execute([$searchId, $userId, $propertyId, $status, $error]);
+            return true;
+        } catch (\Throwable $e) {
+            error_log("SavedSearchService::logAlertSent: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update a saved search's email_alerts toggle and last_run_at timestamp.
+     */
+    public function toggleAlerts(int $id, int $userId, bool $enabled): bool
+    {
+        $role = $this->resolveUserRole($userId);
+        $stmt = $this->db->prepare("
+            UPDATE saved_searches 
+            SET email_alerts = ?, last_run_at = NOW() 
+            WHERE id = ? AND user_id = ? AND user_role = ?
+        ");
+        $stmt->execute([$enabled ? 1 : 0, $id, $userId, $role]);
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Update result_count and last_run_at after executing a search.
+     */
+    public function recordRun(int $id, int $resultCount): bool
+    {
+        $stmt = $this->db->prepare("
+            UPDATE saved_searches 
+            SET result_count = ?, last_run_at = NOW(), use_count = use_count + 1, last_used_at = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([$resultCount, $id]);
+        return true;
+    }
+
+    /**
+     * Cron job: send email alerts for all saved searches with email_alerts=1.
+     * For each search, find properties added since last_run_at (or last 24h)
+     * that match the criteria and that we haven't alerted about before.
+     * Returns stats.
+     */
+    public function sendAlerts(): array
+    {
+        $stats = [
+            'searches_processed' => 0,
+            'alerts_sent' => 0,
+            'alerts_skipped_duplicate' => 0,
+            'alerts_failed' => 0,
+            'errors' => []
+        ];
+
+        try {
+            $stmt = $this->db->query("
+                SELECT s.*, u.email as user_email, u.name as user_name
+                FROM saved_searches s
+                JOIN users u ON s.user_id = u.id
+                WHERE s.email_alerts = 1 AND u.email IS NOT NULL AND u.email != ''
+            ");
+            $searches = $stmt->fetchAll();
+
+            $emailService = new EmailService();
+
+            foreach ($searches as $search) {
+                $stats['searches_processed']++;
+                $filters = json_decode($search['filters'] ?? '{}', true) ?: [];
+                $sinceDate = $search['last_run_at']
+                    ? date('Y-m-d H:i:s', strtotime($search['last_run_at']) - 300) // 5 min overlap
+                    : date('Y-m-d H:i:s', strtotime('-24 hours'));
+
+                $newMatches = $this->findNewMatches($filters, $sinceDate);
+
+                foreach ($newMatches as $property) {
+                    // Check if we've already alerted about this property for this search
+                    $check = $this->db->prepare("
+                        SELECT id FROM search_alert_log
+                        WHERE search_id = ? AND property_id = ? AND email_status = 'sent'
+                    ");
+                    $check->execute([$search['id'], $property['id']]);
+                    if ($check->fetch()) {
+                        $stats['alerts_skipped_duplicate']++;
+                        continue;
+                    }
+
+                    $subject = "New property match: " . ($search['name'] ?? 'Your saved search');
+                    $body = $this->buildAlertEmailBody($search, $property);
+
+                    $sent = $emailService->send($search['user_email'], $subject, $body);
+
+                    if ($sent) {
+                        $this->logAlertSent($search['id'], $search['user_id'], $property['id'], 'sent');
+                        $stats['alerts_sent']++;
+                    } else {
+                        $this->logAlertSent($search['id'], $search['user_id'], $property['id'], 'failed', 'mail() returned false');
+                        $stats['alerts_failed']++;
+                    }
+                }
+
+                // Update last_run_at even if no new matches (mark as "checked")
+                $this->recordRun($search['id'], $this->countMatches($filters));
+            }
+        } catch (\Throwable $e) {
+            $stats['errors'][] = $e->getMessage();
+            error_log("SavedSearchService::sendAlerts: " . $e->getMessage());
+        }
+
+        return $stats;
+    }
+
+    /**
+     * Build HTML email body for a saved-search alert.
+     */
+    public function buildAlertEmailBody(array $search, array $property): string
+    {
+        $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome';
+        $link = $baseUrl . '/properties?q=' . urlencode($property['name'] ?? '') . '&type=' . urlencode($property['property_type'] ?? '');
+        $propertyUrl = $baseUrl . '/listing/' . (int)($property['id'] ?? 0);
+        $image = !empty($property['image']) ? $baseUrl . '/assets/images/properties/' . htmlspecialchars($property['image']) : $baseUrl . '/assets/images/placeholder/property.svg';
+        $price = number_format((float)($property['price'] ?? 0));
+        $area = (int)($property['area_sqft'] ?? 0);
+        $bedrooms = (int)($property['bedrooms'] ?? 0);
+        $furnished = htmlspecialchars($property['furnished'] ?? '');
+
+        $name = htmlspecialchars($search['name'] ?? 'Your saved search');
+        $userName = htmlspecialchars($search['user_name'] ?? 'Customer');
+
+        return "
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+            <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;'>
+                <h2 style='margin: 0;'>🔔 New Property Match!</h2>
+            </div>
+            <div style='background: #f9f9f9; padding: 20px;'>
+                <p>Hi <strong>{$userName}</strong>,</p>
+                <p>A new property matching your saved search <strong>\"{$name}\"</strong> has just been listed:</p>
+                <div style='background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin: 20px 0;'>
+                    <img src='{$image}' alt='Property' style='width: 100%; height: 200px; object-fit: cover;'>
+                    <div style='padding: 15px;'>
+                        <h3 style='margin: 0 0 10px;'>" . htmlspecialchars($property['name'] ?? 'Property') . "</h3>
+                        <p style='margin: 5px 0; color: #666;'>📍 " . htmlspecialchars($property['address'] ?? $property['location'] ?? '') . "</p>
+                        <p style='margin: 5px 0;'><strong style='color: #28a745; font-size: 1.3em;'>₹{$price}</strong></p>
+                        <p style='margin: 5px 0; font-size: 0.9em; color: #888;'>
+                            " . ucfirst($property['property_type'] ?? 'Property') . " •
+                            {$area} sq ft •
+                            " . ($bedrooms > 0 ? "{$bedrooms} BHK • " : '') . "
+                            {$furnished}
+                        </p>
+                        <a href='{$propertyUrl}' style='display: inline-block; margin-top: 10px; background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;'>View Property</a>
+                    </div>
+                </div>
+                <p style='text-align: center; margin-top: 20px;'>
+                    <a href='{$link}' style='background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;'>See All Matches</a>
+                </p>
+                <p style='font-size: 0.85em; color: #888; margin-top: 30px;'>
+                    You're receiving this because you saved a search with email alerts enabled.
+                    <a href='{$baseUrl}/user/saved-searches' style='color: #667eea;'>Manage saved searches</a>
+                </p>
+            </div>
+        </div>
+        ";
+    }
+
+    /**
+     * Cron: cleanup old saved searches (no activity in 90+ days).
+     * Keeps favorites and public searches.
+     */
+    public function cleanup(int $daysOld = 90): int
+    {
+        $stmt = $this->db->prepare("
+            DELETE FROM saved_searches
+            WHERE is_favorite = 0 
+              AND is_public = 0
+              AND (last_used_at IS NULL OR last_used_at < DATE_SUB(NOW(), INTERVAL ? DAY))
+              AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)
+        ");
+        $stmt->execute([$daysOld, $daysOld]);
+        return $stmt->rowCount();
+    }
+
+    /**
+     * Get sent alert log for a user.
+     */
+    public function getAlertLog(int $userId, int $limit = 50): array
+    {
+        $limit = max(1, min(500, (int)$limit));
+        $stmt = $this->db->prepare("
+            SELECT l.*, s.name as search_name, p.name as property_name
+            FROM search_alert_log l
+            LEFT JOIN saved_searches s ON l.search_id = s.id
+            LEFT JOIN user_properties p ON l.property_id = p.id
+            WHERE l.user_id = ?
+            ORDER BY l.sent_at DESC
+            LIMIT {$limit}
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
     }
 }

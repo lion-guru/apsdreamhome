@@ -14,13 +14,17 @@ class AnalyticsService
 
     public function listKpis(string $category = ''): array
     {
-        $sql = "SELECT * FROM kpis WHERE active = 1";
-        $params = [];
-        if ($category) { $sql .= " AND category = :c"; $params[':c'] = $category; }
-        $sql .= " ORDER BY category, name";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT * FROM kpis WHERE is_active = 1";
+            $params = [];
+            if ($category) { $sql .= " AND category = :c"; $params[':c'] = $category; }
+            $sql .= " ORDER BY category, name";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function createKpi(string $code, string $name, string $category, string $unit, float $target, string $frequency = 'monthly'): array
@@ -121,10 +125,14 @@ class AnalyticsService
 
     public function listForecasts(int $limit = 20): array
     {
-        $st = $this->db->prepare("SELECT * FROM forecast_results ORDER BY generated_at DESC LIMIT :lim");
-        $st->bindValue(':lim', $limit, PDO::PARAM_INT);
-        $st->execute();
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->prepare("SELECT * FROM forecast_results ORDER BY generated_at DESC LIMIT :lim");
+            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function getMarketSummary(int $days = 30): array
@@ -144,13 +152,17 @@ class AnalyticsService
 
     public function listDashboards(int $userId = 0): array
     {
-        $sql = "SELECT * FROM analytics_dashboards WHERE 1=1";
-        $params = [];
-        if ($userId) { $sql .= " AND (user_id = :u OR is_public = 1)"; $params[':u'] = $userId; }
-        $sql .= " ORDER BY updated_at DESC";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT * FROM analytics_dashboards WHERE 1=1";
+            $params = [];
+            if ($userId) { $sql .= " AND (owner_user_id = :u OR is_public = 1)"; $params[':u'] = $userId; }
+            $sql .= " ORDER BY created_at DESC";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function createDashboard(int $userId, string $name, array $widgets, bool $isPublic = false): array
@@ -172,16 +184,20 @@ class AnalyticsService
 
     public function comprehensiveDashboard(): array
     {
-        $st = $this->db->query("SELECT
-            (SELECT COUNT(*) FROM users WHERE role = 'customer' AND status = 'active') as customers,
-            (SELECT COUNT(*) FROM users WHERE role = 'agent' AND status = 'active') as agents,
-            (SELECT COUNT(*) FROM users WHERE role = 'associate' AND status = 'active') as associates,
-            (SELECT COUNT(*) FROM users WHERE role = 'employee' AND status = 'active') as employees,
-            (SELECT COUNT(*) FROM leads WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as leads_30d,
-            (SELECT COUNT(*) FROM bookings WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as bookings_30d,
-            (SELECT COUNT(*) FROM plots WHERE status = 'available') as available_plots,
-            (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as revenue_30d");
-        $row = $st->fetch(PDO::FETCH_ASSOC);
-        return $row ?: [];
+        try {
+            $st = $this->db->query("SELECT
+                (SELECT COUNT(*) FROM users WHERE role = 'customer' AND status = 'active') as customers,
+                (SELECT COUNT(*) FROM users WHERE role = 'agent' AND status = 'active') as agents,
+                (SELECT COUNT(*) FROM users WHERE role = 'associate' AND status = 'active') as associates,
+                (SELECT COUNT(*) FROM users WHERE role = 'employee' AND status = 'active') as employees,
+                (SELECT COUNT(*) FROM leads WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as leads_30d,
+                (SELECT COUNT(*) FROM bookings WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as bookings_30d,
+                (SELECT COUNT(*) FROM plots WHERE status = 'available') as available_plots,
+                (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as revenue_30d");
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            return $row ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 }

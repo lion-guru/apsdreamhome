@@ -252,6 +252,13 @@ class PageController extends BaseController
         $location = $_GET['location'] ?? '';
         $minPrice = (int)($_GET['min_price'] ?? 0);
         $maxPrice = (int)($_GET['max_price'] ?? 0);
+        $bedrooms = (int)($_GET['bedrooms'] ?? 0);
+        $bathrooms = (int)($_GET['bathrooms'] ?? 0);
+        $furnished = $_GET['furnished'] ?? '';
+        $yearBuilt = (int)($_GET['year_built'] ?? 0);
+        $areaMin = (int)($_GET['area_min'] ?? 0);
+        $areaMax = (int)($_GET['area_max'] ?? 0);
+        $keyword = trim($_GET['q'] ?? '');
         $sortBy = $_GET['sort'] ?? 'newest';
         $perPage = 12;
         $offset = ($page - 1) * $perPage;
@@ -266,6 +273,11 @@ class PageController extends BaseController
             $where = "WHERE status = 'approved'";
             $params = [];
 
+            if ($keyword !== '') {
+                $where .= " AND (name LIKE ? OR address LIKE ? OR location LIKE ? OR description LIKE ?)";
+                $like = '%' . $keyword . '%';
+                array_push($params, $like, $like, $like, $like);
+            }
             if ($type) {
                 $where .= " AND property_type = ?";
                 $params[] = $type;
@@ -275,8 +287,9 @@ class PageController extends BaseController
                 $params[] = $listingType;
             }
             if ($location) {
-                $where .= " AND address LIKE ?";
-                $params[] = '%' . $location . '%';
+                $where .= " AND (address LIKE ? OR location LIKE ? OR city_name LIKE ?)";
+                $loc = '%' . $location . '%';
+                array_push($params, $loc, $loc, $loc);
             }
             if ($minPrice > 0) {
                 $where .= " AND price >= ?";
@@ -286,11 +299,38 @@ class PageController extends BaseController
                 $where .= " AND price <= ?";
                 $params[] = $maxPrice;
             }
+            if ($bedrooms > 0) {
+                $where .= " AND bedrooms >= ?";
+                $params[] = $bedrooms;
+            }
+            if ($bathrooms > 0) {
+                $where .= " AND bathrooms >= ?";
+                $params[] = $bathrooms;
+            }
+            if ($furnished !== '') {
+                $where .= " AND furnished = ?";
+                $params[] = $furnished;
+            }
+            if ($yearBuilt > 0) {
+                $where .= " AND year_built >= ?";
+                $params[] = $yearBuilt;
+            }
+            if ($areaMin > 0) {
+                $where .= " AND area_sqft >= ?";
+                $params[] = $areaMin;
+            }
+            if ($areaMax > 0) {
+                $where .= " AND area_sqft <= ?";
+                $params[] = $areaMax;
+            }
 
             $orderBy = match ($sortBy) {
                 'price_low' => 'price ASC',
                 'price_high' => 'price DESC',
                 'oldest' => 'created_at ASC',
+                'area_large' => 'area_sqft DESC',
+                'area_small' => 'area_sqft ASC',
+                'relevance' => 'views DESC, created_at DESC',
                 default => 'created_at DESC'
             };
 
@@ -298,7 +338,7 @@ class PageController extends BaseController
             $countSql = "SELECT COUNT(*) as total FROM user_properties $where";
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = (int)$countStmt->fetch()['total'];
 
             // Get properties
             $sql = "SELECT * FROM user_properties $where ORDER BY $orderBy LIMIT $perPage OFFSET $offset";
@@ -306,8 +346,7 @@ class PageController extends BaseController
             $stmt->execute($params);
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            // Table doesn't exist or error, use sample data
-                    error_log("PageController.php: " . $e->getMessage());
+            error_log("PageController.php: properties(): " . $e->getMessage());
         }
 
         // If no properties in DB, use sample data
@@ -316,21 +355,34 @@ class PageController extends BaseController
             $total = count($sampleProperties);
 
             // Apply filters to sample data
+            if ($keyword !== '') {
+                $sampleProperties = array_filter($sampleProperties, function($p) use ($keyword) {
+                    return stripos($p['name'] ?? '', $keyword) !== false
+                        || stripos($p['location'] ?? '', $keyword) !== false
+                        || stripos($p['description'] ?? '', $keyword) !== false;
+                });
+            }
             if ($type) {
-                $sampleProperties = array_filter($sampleProperties, fn($p) => strtolower($p['type']) === strtolower($type));
+                $sampleProperties = array_filter($sampleProperties, fn($p) => strtolower($p['type'] ?? '') === strtolower($type));
             }
             if ($listingType) {
-                $sampleProperties = array_filter($sampleProperties, fn($p) => strtolower($p['listing_type']) === strtolower($listingType));
+                $sampleProperties = array_filter($sampleProperties, fn($p) => strtolower($p['listing_type'] ?? '') === strtolower($listingType));
             }
             if ($location) {
-                $sampleProperties = array_filter($sampleProperties, fn($p) => stripos($p['location'], $location) !== false);
+                $sampleProperties = array_filter($sampleProperties, fn($p) => stripos($p['location'] ?? '', $location) !== false);
+            }
+            if ($minPrice > 0) {
+                $sampleProperties = array_filter($sampleProperties, fn($p) => ($p['price_num'] ?? 0) >= $minPrice);
+            }
+            if ($maxPrice > 0) {
+                $sampleProperties = array_filter($sampleProperties, fn($p) => ($p['price_num'] ?? 0) <= $maxPrice);
             }
 
             // Sort
             usort($sampleProperties, function ($a, $b) use ($sortBy) {
                 return match ($sortBy) {
-                    'price_low' => $a['price_num'] <=> $b['price_num'],
-                    'price_high' => $b['price_num'] <=> $a['price_num'],
+                    'price_low' => ($a['price_num'] ?? 0) <=> ($b['price_num'] ?? 0),
+                    'price_high' => ($b['price_num'] ?? 0) <=> ($a['price_num'] ?? 0),
                     default => 0
                 };
             });
@@ -339,7 +391,18 @@ class PageController extends BaseController
             $properties = array_slice($sampleProperties, $offset, $perPage);
         }
 
-        $totalPages = ceil($total / $perPage);
+        $totalPages = max(1, (int)ceil($total / $perPage));
+
+        // Fetch saved searches for logged-in users
+        $savedSearches = [];
+        if (!empty($_SESSION['user_id'])) {
+            try {
+                $svc = new \App\Services\SavedSearchService($this->db);
+                $savedSearches = $svc->getUserSearches((int)$_SESSION['user_id'], 'user_properties');
+            } catch (\Throwable $e) {
+                error_log("PageController::properties - savedSearches: " . $e->getMessage());
+            }
+        }
 
         $data = [
             'properties' => $properties,
@@ -351,7 +414,15 @@ class PageController extends BaseController
             'location' => $location,
             'minPrice' => $minPrice,
             'maxPrice' => $maxPrice,
+            'bedrooms' => $bedrooms,
+            'bathrooms' => $bathrooms,
+            'furnished' => $furnished,
+            'yearBuilt' => $yearBuilt,
+            'areaMin' => $areaMin,
+            'areaMax' => $areaMax,
+            'keyword' => $keyword,
             'sortBy' => $sortBy,
+            'savedSearches' => $savedSearches,
             'property_types' => ['plot', 'house', 'flat', 'shop', 'farmhouse', 'land'],
             'locations' => ['Gorakhpur', 'Lucknow', 'Kushinagar', 'Varanasi'],
             'price_ranges' => ['Under 5 Lakhs', '5-10 Lakhs', '10-20 Lakhs', '20-50 Lakhs', '50+ Lakhs'],

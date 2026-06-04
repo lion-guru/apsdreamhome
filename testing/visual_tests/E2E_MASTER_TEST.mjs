@@ -181,6 +181,7 @@ async function run() {
       { path: '/compare', name: 'Property Compare' },
       { path: '/user/bank-details', name: 'User Bank Details' },
       { path: '/user/notification-settings', name: 'Notification Settings' },
+      { path: '/user/notification-preferences', name: 'Notification Preferences' },
       { path: '/user/notifications', name: 'User Notifications' },
       // Newly routed
       { path: '/property-workflow', name: 'Property Workflow' },

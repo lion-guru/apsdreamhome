@@ -1,0 +1,57 @@
+# =============================================================================
+# APS Dream Home - Local Development Overrides
+# Copy to docker-compose.override.yml for local development tweaks
+# This file is .gitignored - DO NOT commit overrides
+# =============================================================================
+#
+# Usage:
+#   cp docker-compose.override.yml.example docker-compose.override.yml
+#   docker compose up -d
+#
+# Common overrides:
+#   - Expose MySQL/Redis ports to host for direct access
+#   - Mount the working tree (live code reload)
+#   - Run Xdebug
+#   - Use a development .env
+#
+
+services:
+  app:
+    build:
+      target: production
+    environment:
+      APP_ENV: development
+      APP_DEBUG: "true"
+    volumes:
+      # Live code reload - mount the host source tree
+      - ./:/var/www/html
+      # Exclude vendor and node_modules from the bind mount for performance
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+
+  websocket:
+    environment:
+      APP_ENV: development
+      APP_DEBUG: "true"
+    volumes:
+      - ./:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+
+  db:
+    ports:
+      # Expose MySQL on the host (e.g. for MySQL Workbench)
+      - "3307:3306"
+
+  redis:
+    ports:
+      # Expose Redis on the host (e.g. for Redis Desktop Manager)
+      - "6379:6379"
+
+  nginx:
+    ports:
+      # Use a non-standard port to avoid clashing with local services
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html:ro
+      - ./public:/var/www/public:ro

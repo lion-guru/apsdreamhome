@@ -10,13 +10,17 @@ class ApiIntegrationController extends AdminController
     {
         $this->requireAdmin();
 
+        $developers = [];
+        $total = 0;
+        $active = 0;
+
         try {
-            $developers = $this->db->fetchAll("SELECT * FROM api_developers ORDER BY created_at DESC");
+            $developers = $this->db->fetchAll("SELECT * FROM api_developers ORDER BY created_at DESC") ?? [];
+            $total = (int)($this->db->fetch("SELECT COUNT(*) as c FROM api_developers")['c'] ?? 0);
+            $active = (int)($this->db->fetch("SELECT COUNT(*) as c FROM api_developers WHERE status = 'active'")['c'] ?? 0);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            error_log("ApiIntegrationController::developers query failed: " . $e->getMessage());
         }
-        $total = $this->db->fetch("SELECT COUNT(*) as c FROM api_developers")['c'] ?? 0;
-        $active = $this->db->fetch("SELECT COUNT(*) as c FROM api_developers WHERE status = 'active'")['c'] ?? 0;
 
         return $this->render('admin/api/developers', [
             'page_title' => 'API Developers',
@@ -38,24 +42,29 @@ class ApiIntegrationController extends AdminController
     {
         $this->requireAdmin();
 
-        $devName = $_POST['dev_name'] ?? '';
-        $email = $_POST['email'] ?? '';
+        $devName = trim($_POST['dev_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
         $status = $_POST['status'] ?? 'active';
         $apiKey = bin2hex(random_bytes(32));
 
         if (empty($devName) || empty($email)) {
             $this->setFlash('error', 'Developer name and email are required.');
             $this->redirect('/admin/api/developers/create');
+            return;
         }
 
-        $this->db->insert('api_developers', [
-            'dev_name' => $devName,
-            'email' => $email,
-            'api_key' => $apiKey,
-            'status' => $status,
-        ]);
-
-        $this->setFlash('success', 'Developer created successfully. API Key: ' . $apiKey);
+        try {
+            $this->db->insert('api_developers', [
+                'dev_name' => $devName,
+                'email' => $email,
+                'api_key' => $apiKey,
+                'status' => in_array($status, ['active', 'inactive', 'suspended'], true) ? $status : 'active',
+            ]);
+            $this->setFlash('success', 'Developer created successfully. API Key: ' . $apiKey);
+        } catch (\Throwable $e) {
+            error_log("ApiIntegrationController::developersStore insert failed: " . $e->getMessage());
+            $this->setFlash('error', 'Could not create developer. Please try again.');
+        }
         $this->redirect('/admin/api/developers');
     }
 

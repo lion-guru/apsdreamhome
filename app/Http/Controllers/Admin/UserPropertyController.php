@@ -178,6 +178,11 @@ class UserPropertyController extends AdminController
             error_log("Property notification error: " . $e->getMessage());
         }
 
+        // Property status changed → admin dashboard counts (active, pending, total)
+        // are now stale, so invalidate the dashboard cache and filter cache.
+        \App\Services\CacheService::invalidateAdminDashboard();
+        \App\Services\CacheService::invalidatePropertyFilters();
+
         redirect('/admin/user-properties?success=updated');
         exit;
     }

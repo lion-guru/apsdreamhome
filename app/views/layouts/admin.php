@@ -140,6 +140,15 @@
     <!-- Admin JS -->
     <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/admin.js"></script>
 
+    <!-- Real-time WebSocket Notifications -->
+    <script>
+        window.NOTIFY_USER = {
+            id: <?php echo isset($_SESSION['admin_id']) ? (int)$_SESSION['admin_id'] : (isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 'null'); ?>,
+            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'], ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
+        };
+    </script>
+    <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-system.js"></script>
+
     <script>
     // AJAX Navigation for Sidebar - sidebar remains fixed, only content updates
     // Guard: only initialize once per page (prevents double-registration after reRunScripts)

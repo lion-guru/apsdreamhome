@@ -70,7 +70,7 @@ class SecurityService
 
     public function recordFailedLogin(string $email, string $ip, string $reason = 'invalid_password'): array
     {
-        $st = $this->db->prepare("INSERT INTO failed_login_attempts (email, ip_address, reason, attempted_at) VALUES (:e, :ip, :r, NOW())");
+        $st = $this->db->prepare("INSERT INTO failed_login_attempts (email, ip_address, reason, attempt_at) VALUES (:e, :ip, :r, NOW())");
         $st->execute([':e' => $email, ':ip' => $ip, ':r' => $reason]);
 
         $count = $this->getRecentFailedAttempts($email, 15);
@@ -88,7 +88,7 @@ class SecurityService
 
     public function getRecentFailedAttempts(string $email, int $minutes = 15): int
     {
-        $st = $this->db->prepare("SELECT COUNT(*) as c FROM failed_login_attempts WHERE (email = :e OR ip_address = :ip2) AND attempted_at > DATE_SUB(NOW(), INTERVAL :m MINUTE)");
+        $st = $this->db->prepare("SELECT COUNT(*) as c FROM failed_login_attempts WHERE (email = :e OR ip_address = :ip2) AND attempt_at > DATE_SUB(NOW(), INTERVAL :m MINUTE)");
         $st->execute([':e' => $email, ':ip2' => $email, ':m' => $minutes]);
         $r = $st->fetch(PDO::FETCH_ASSOC);
         return (int)($r['c'] ?? 0);
@@ -127,10 +127,10 @@ class SecurityService
 
     public function getFailedAttempts(string $email = '', int $hours = 24): array
     {
-        $sql = "SELECT email, ip_address, reason, attempted_at FROM failed_login_attempts WHERE attempted_at > DATE_SUB(NOW(), INTERVAL :h HOUR)";
+        $sql = "SELECT email, ip_address, reason, attempt_at FROM failed_login_attempts WHERE attempt_at > DATE_SUB(NOW(), INTERVAL :h HOUR)";
         $params = [':h' => $hours];
         if ($email) { $sql .= " AND email = :e"; $params[':e'] = $email; }
-        $sql .= " ORDER BY attempted_at DESC LIMIT 100";
+        $sql .= " ORDER BY attempt_at DESC LIMIT 100";
         $st = $this->db->prepare($sql);
         $st->execute($params);
         return $st->fetchAll(PDO::FETCH_ASSOC);

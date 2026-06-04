@@ -304,10 +304,27 @@ $router->post('/user/bank-details/save', 'Front\\UserController@saveBankDetails'
 $router->get('/user/network', 'Front\\UserController@network');
 $router->get('/user/notification-settings', 'Front\\UserController@notificationSettings');
 $router->post('/user/notification-settings', 'Front\\UserController@updateNotificationSettings');
+$router->get('/user/notification-preferences', 'Front\\NotificationPreferenceController@index');
+$router->post('/user/notification-preferences', 'Front\\NotificationPreferenceController@update');
+$router->get('/api/user/notification-preferences', 'Front\\NotificationPreferenceController@getPreferences');
 $router->get('/user/favorites', 'Front\\UserController@favorites');
-$router->get('/user/saved-searches', 'Front\\UserController@savedSearches');
-$router->post('/user/saved-searches/save', 'Front\\UserController@saveSearch');
-$router->get('/user/saved-searches/delete/{id}', 'Front\\UserController@deleteSavedSearch');
+
+// Saved Searches (Phase 56 - Advanced Search Feature)
+$router->get('/user/saved-searches', 'Front\\SavedSearchController@index');
+$router->post('/user/saved-searches', 'Front\\SavedSearchController@store');
+$router->post('/user/saved-searches/store', 'Front\\SavedSearchController@store');
+$router->put('/user/saved-searches/{id}', 'Front\\SavedSearchController@update');
+$router->post('/user/saved-searches/{id}/update', 'Front\\SavedSearchController@update');
+$router->delete('/user/saved-searches/{id}', 'Front\\SavedSearchController@destroy');
+$router->post('/user/saved-searches/{id}/delete', 'Front\\SavedSearchController@destroy');
+$router->get('/user/saved-searches/{id}/delete', 'Front\\SavedSearchController@destroy');
+$router->get('/user/saved-searches/{id}/execute', 'Front\\SavedSearchController@execute');
+$router->post('/user/saved-searches/{id}/alerts', 'Front\\SavedSearchController@toggleAlerts');
+$router->get('/user/saved-searches/manage-alerts', 'Front\\SavedSearchController@manageAlerts');
+$router->post('/user/saved-searches/manage-alerts', 'Front\\SavedSearchController@manageAlerts');
+$router->get('/api/saved-searches/autocomplete', 'Front\\SavedSearchController@autocomplete');
+$router->get('/user/saved-searches/cron-alerts', 'Front\\SavedSearchController@cronAlerts');
+$router->post('/user/saved-searches/cron-alerts', 'Front\\SavedSearchController@cronAlerts');
 $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->post('/property/review', 'Front\\PageController@reviewSubmit');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
@@ -638,6 +655,7 @@ $router->post('/api/ai/valuation', 'AI\\PropertyValuationController@apiValuation
 // AI CHATBOT
 // ============================================================
 $router->get('/ai/chatbot', 'AI\\AIWebController@chatbot');
+$router->get('/ai/assistant', 'Front\\AiAssistantController@index');
 $router->get('/ai/description-generator', 'AI\\AIWebController@descriptionGenerator');
 $router->get('/ai/suggestions', 'AI\\AIWebController@suggestions');
 $router->post('/api/ai/chatbot', 'AI\\ChatbotAPIController@handleMessage');
@@ -1393,8 +1411,12 @@ $router->get('/admin/faqs/{id}/delete', 'App\\Http\\Controllers\\Admin\\FaqContr
 // Admin Settings Company
 $router->get('/admin/settings/company', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 
-// Admin Cache Clear
-$router->get('/admin/cache', 'App\\Http\\Controllers\\Admin\\AdminController@cache');
+// Admin Cache Management
+$router->get('/admin/cache',                'App\\Http\\Controllers\\Admin\\CacheAdminController@index');
+$router->get('/admin/cache/stats',          'App\\Http\\Controllers\\Admin\\CacheAdminController@stats');
+$router->post('/admin/cache/flush',         'App\\Http\\Controllers\\Admin\\CacheAdminController@flush');
+$router->post('/admin/cache/redis/flush',   'App\\Http\\Controllers\\Admin\\CacheAdminController@flushRedis');
+$router->post('/admin/cache/test',          'App\\Http\\Controllers\\Admin\\CacheAdminController@test');
 
 // Admin Service Enquiries (alias for services)
 $router->get('/admin/services/enquiry', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
@@ -1664,6 +1686,17 @@ $router->get('/legal/terms', 'Front\\PageController@legalTermsPage');
 // Standalone full-HTML pages
 $router->get('/analytics', 'Front\\PageController@analytics');
 $router->get('/calc', 'Front\\PageController@calc');
+
+// WebSocket Real-time Notification Test Page
+$router->get('/websocket-test', function () {
+    $file = __DIR__ . '/../app/views/pages/websocket_test.php';
+    if (file_exists($file)) {
+        include $file;
+    } else {
+        http_response_code(404);
+        echo 'WebSocket test page not found';
+    }
+});
 
 // ============================================================
 // LOCATION PROJECT PAGES (added 2026-05-15)

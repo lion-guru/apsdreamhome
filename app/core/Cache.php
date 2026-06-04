@@ -3,8 +3,15 @@
 namespace App\Core;
 
 /**
- * Simple File-Based Caching System for APS Dream Home
- * Provides caching for frequently accessed data without external dependencies
+ * File-Based Caching System for APS Dream Home.
+ *
+ * Backward-compatible facade over the new App\Services\CacheService.
+ * All legacy static calls (Cache::get, Cache::set, etc.) still work —
+ * they are routed through the unified CacheService so that
+ * Redis (when available) and file cache are kept in sync.
+ *
+ * If you are writing new code, prefer the new CacheService::cache()
+ * helper which returns-or-sets in a single call.
  */
 
 class Cache
@@ -13,182 +20,206 @@ class Cache
     private static $defaultTTL = 3600; // 1 hour default
 
     /**
-     * Initialize cache system
+     * Initialize cache directory.
      */
     public static function init($cacheDir = null)
     {
         if ($cacheDir === null) {
-            $cacheDir = __DIR__ . '/../../storage/cache';
+            $cacheDir = defined('APP_ROOT')
+                ? APP_ROOT . '/storage/cache'
+                : __DIR__ . '/../../storage/cache';
         }
-
         self::$cacheDir = $cacheDir;
-
-        // Create cache directory if it doesn't exist
         if (!is_dir(self::$cacheDir)) {
-            mkdir(self::$cacheDir, 0755, true);
+            @mkdir(self::$cacheDir, 0755, true);
         }
     }
 
     /**
-     * Get cached data
+     * Get cached data. Tries Redis first, then file cache.
      */
     public static function get($key, $default = null)
     {
-        self::init();
-
-        $filename = self::getFilename($key);
-
-        if (!file_exists($filename)) {
-            return $default;
+        $redis = RedisCache::getInstance();
+        if ($redis->isAvailable()) {
+            $value = $redis->get($key);
+            if ($value !== null) {
+                return $value;
+            }
         }
-
-        $content = file_get_contents($filename);
-        $data = json_decode($content, true);
-
-        // Check if cache has expired
-        if ($data['expires'] < time()) {
-            self::delete($key);
-            return $default;
-        }
-
-        return $data['value'];
+        return self::fileGet($key, $default);
     }
 
     /**
-     * Set cached data
+     * Set cached data in both layers.
      */
     public static function set($key, $value, $ttl = null)
     {
-        self::init();
-
         if ($ttl === null) {
             $ttl = self::$defaultTTL;
         }
-
-        $filename = self::getFilename($key);
-
-        $data = [
-            'value' => $value,
-            'expires' => time() + $ttl,
-            'created' => time()
-        ];
-
-        return file_put_contents($filename, json_encode($data)) !== false;
+        $redis = RedisCache::getInstance();
+        if ($redis->isAvailable()) {
+            $redis->set($key, $value, $ttl);
+        }
+        return self::fileSet($key, $value, $ttl);
     }
 
     /**
-     * Delete cached data
+     * Delete from both layers.
      */
     public static function delete($key)
     {
-        self::init();
-
-        $filename = self::getFilename($key);
-
-        if (file_exists($filename)) {
-            return unlink($filename);
+        $redis = RedisCache::getInstance();
+        $r1 = false;
+        if ($redis->isAvailable()) {
+            $r1 = $redis->delete($key);
         }
-
-        return true;
+        $r2 = self::fileDelete($key);
+        return $r1 || $r2;
     }
 
     /**
-     * Clear all cached data
+     * Clear the file cache. Use App\Services\CacheService::flushAll()
+     * if you want to clear Redis too.
      */
     public static function clear()
     {
         self::init();
-
         $files = glob(self::$cacheDir . '/*.cache');
-
         foreach ($files as $file) {
-            unlink($file);
+            @unlink($file);
         }
-
         return true;
     }
 
     /**
-     * Clear expired cache entries
+     * Clear expired cache entries.
      */
     public static function clearExpired()
     {
         self::init();
-
         $files = glob(self::$cacheDir . '/*.cache');
         $cleared = 0;
-
         foreach ($files as $file) {
-            $content = file_get_contents($file);
+            $content = @file_get_contents($file);
             $data = json_decode($content, true);
-
-            if ($data['expires'] < time()) {
-                unlink($file);
+            if (is_array($data) && isset($data['expires']) && $data['expires'] < time()) {
+                @unlink($file);
                 $cleared++;
             }
         }
-
         return $cleared;
     }
 
     /**
-     * Remember pattern - get from cache or execute callback
+     * Get-or-set pattern. Backward-compatible: returns cached value
+     * or executes callback and stores the result.
      */
     public static function remember($key, $callback, $ttl = null)
     {
+        if ($ttl === null) {
+            $ttl = self::$defaultTTL;
+        }
         $value = self::get($key);
-
         if ($value !== null) {
             return $value;
         }
-
         $value = $callback();
         self::set($key, $value, $ttl);
-
         return $value;
     }
 
     /**
-     * Get cache filename for key
+     * Get cache file path for a key (private helper).
      */
     private static function getFilename($key)
     {
+        self::init();
         $safeKey = md5($key);
         return self::$cacheDir . '/' . $safeKey . '.cache';
     }
 
     /**
-     * Get cache statistics
+     * File-layer get (only the file cache, not Redis).
+     */
+    private static function fileGet($key, $default = null)
+    {
+        self::init();
+        $filename = self::getFilename($key);
+        if (!file_exists($filename)) {
+            return $default;
+        }
+        $content = @file_get_contents($filename);
+        $data = json_decode($content, true);
+        if (!is_array($data) || !isset($data['expires'])) {
+            return $default;
+        }
+        if ($data['expires'] < time()) {
+            @unlink($filename);
+            return $default;
+        }
+        return $data['value'] ?? $default;
+    }
+
+    /**
+     * File-layer set (only the file cache, not Redis).
+     */
+    private static function fileSet($key, $value, $ttl)
+    {
+        self::init();
+        $filename = self::getFilename($key);
+        $data = [
+            'key'     => $key,
+            'value'   => $value,
+            'expires' => time() + $ttl,
+            'created' => time(),
+        ];
+        return @file_put_contents($filename, json_encode($data)) !== false;
+    }
+
+    /**
+     * File-layer delete (only the file cache, not Redis).
+     */
+    private static function fileDelete($key)
+    {
+        self::init();
+        $filename = self::getFilename($key);
+        if (file_exists($filename)) {
+            return @unlink($filename);
+        }
+        return true;
+    }
+
+    /**
+     * Get file-cache statistics.
      */
     public static function getStats()
     {
         self::init();
-
         $files = glob(self::$cacheDir . '/*.cache');
         $totalSize = 0;
         $expiredCount = 0;
 
         foreach ($files as $file) {
-            $totalSize += filesize($file);
-
-            $content = file_get_contents($file);
+            $totalSize += @filesize($file);
+            $content = @file_get_contents($file);
             $data = json_decode($content, true);
-
-            if ($data['expires'] < time()) {
+            if (is_array($data) && isset($data['expires']) && $data['expires'] < time()) {
                 $expiredCount++;
             }
         }
 
         return [
-            'total_files' => count($files),
-            'total_size' => self::formatBytes($totalSize),
+            'total_files'   => count($files),
+            'total_size'    => self::formatBytes($totalSize),
             'expired_files' => $expiredCount,
-            'active_files' => count($files) - $expiredCount
+            'active_files'  => count($files) - $expiredCount,
         ];
     }
 
     /**
-     * Format bytes for display
+     * Format bytes for display.
      */
     private static function formatBytes($bytes)
     {
@@ -204,21 +235,19 @@ class Cache
     }
 
     /**
-     * Cache database query results
+     * Cache database query results.
      */
     public static function rememberQuery($key, $query, $params = [], $ttl = null)
     {
         return self::remember($key, function () use ($query, $params) {
             try {
-                // Use the database connection to execute query
                 $db = \App\Core\Database\Database::getInstance();
-
                 if (!empty($params)) {
                     $stmt = $db->prepare($query);
                     $stmt->execute($params);
-                    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
                 } else {
-                    return $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
+                    return $db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
                 }
             } catch (\Exception $e) {
                 error_log("Cache query error: " . $e->getMessage());
