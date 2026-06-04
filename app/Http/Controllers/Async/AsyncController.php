@@ -612,7 +612,7 @@ class AsyncController
     /**
      * Redirect helper
      */
-    private function redirect($url)
+    public function redirect($url)
     {
         if (!headers_sent()) {
             header("Location: $url");
