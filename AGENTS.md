@@ -1,5 +1,40 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-04)
 
+## Session 2026-06-04 (Part 5): Phases 54-55 — Live Chat + Property Auctions
+
+### What Was Done
+**Phase 54: Live Chat Support** — 6 tables, 14-method service, real-time visitor conversations
+**Phase 55: Property Auctions** — 4 tables, 13-method service, live bidding with auto-extend
+
+### Recent Commits
+- `aa0434791` Phase 55: Property Auction System with Live Bidding
+- `6ef682269` Phase 54: Live Chat Support - real-time customer conversations
+- `ea760c9a2` Phase 53: Drip Campaigns - lead nurturing email sequences
+
+### New Routes Added (Phases 54-55)
+- `/admin/live-chat/{,open/{id},send,poll,assign,close,settings,quick-replies}`
+- `/api/chat/{start,send,poll,widget}`
+- `/admin/auctions/{,create,store,show/{id},start/{id},end/{id},cancel,delete/{id},process-ending}`
+- `/auctions/{,{id},bid,watch,unwatch,deposit}`
+
+### Key Insights
+- Live chat uses 4-second polling (works in all browsers, no SSE/WS complexity)
+- Agent assignment + internal notes + quick reply templates
+- Auctions use SELECT FOR UPDATE row locking for bid atomicity
+- Auto-extend on late bids (configurable threshold + extension)
+- 4 auction types: English, Sealed, Dutch, Reserve
+- Deposit-based bidding eligibility
+- Real-time bid validation with transaction isolation
+- Watch auction with notify preferences
+- Front-side uses lightweight `renderView()` helper (no template engine dependency)
+
+### Total Architecture (Post-Phase 55)
+- 304+ database tables
+- 29+ services in `app/Services/`
+- 48+ new admin views, 11+ new public views
+- 215+ new routes across web.php
+- E2E: 163/164 pass, zero regressions
+
 ## Session 2026-06-04 (Part 4): Phases 51-53 — Reviews + Visits + Drip Campaigns
 
 ### What Was Done
