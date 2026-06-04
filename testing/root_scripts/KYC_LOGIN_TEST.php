@@ -48,7 +48,7 @@ if (file_exists($kycControllerPath)) {
 
 // Test 3: Check KYC Routes
 echo "\n3. ✅ KYC Routes Check:\n";
-$routesPath = __DIR__ . '/routes/v2_mobile_api.php';
+$routesPath = __DIR__ . '/../../routes/api.php';
 if (file_exists($routesPath)) {
     $content = file_get_contents($routesPath);
     $routes = [
