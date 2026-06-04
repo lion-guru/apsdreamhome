@@ -2936,6 +2936,9 @@ $router->get('/admin/features/analytics', 'Admin\\NewFeaturesController@analytic
 $router->get('/admin/features/realtime-analytics', 'Admin\\NewFeaturesController@realtimeAnalytics');
 $router->get('/admin/audit-log', 'Admin\\AuditLogController@index');
 $router->get('/api/v2/audit/log', 'Admin\\AuditLogController@api');
+$router->get('/api/v2/notifications/poll', 'Api\\NotificationStreamController@poll');
+$router->post('/api/v2/notifications/read', 'Api\\NotificationStreamController@markRead');
+$router->get('/api/v2/notifications/stream', 'Api\\NotificationStreamController@stream');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');

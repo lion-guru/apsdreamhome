@@ -185,10 +185,20 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </nav>
             </div>
             <div class="nav-right">
-                <button class="nav-icon" title="Notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge">3</span>
-                </button>
+                <div class="dropdown d-inline-block">
+                    <button class="nav-icon position-relative" title="Notifications" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge notification-badge" style="display:none">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end notification-dropdown shadow" style="min-width: 320px; max-height: 400px; overflow-y: auto;">
+                        <h6 class="dropdown-header">Notifications</h6>
+                        <div class="notification-list">
+                            <div class="text-center text-muted p-3">Loading...</div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-center" href="<?php echo $base; ?>/admin/audit-log">View audit log</a>
+                    </div>
+                </div>
                 <button class="nav-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
                     <span class="badge">5</span>
@@ -250,6 +260,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
 
     <!-- Admin JS - FIXED PATH -->
     <script src="/apsdreamhome/assets/admin/js/admin.js"></script>
+    <script src="/apsdreamhome/assets/js/notification-widget.js"></script>
 
     <!-- Admin Form Enhancer (SmartFormAutocomplete + validation) -->
     <script src="<?php echo BASE_URL; ?>/assets/admin/js/admin-form-enhancer.js"></script>
