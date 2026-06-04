@@ -5,12 +5,7 @@
  * Admin can train the chatbot with new Q&A patterns
  */
 
-// Session started by controller
-// Check admin login
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/') . 'admin/login');
-    exit;
-}
+// Auth handled by controller (AdminAIController@training calls requireAdmin())
 
 require_once __DIR__ . '/../../../app/Core/Database/Database.php';
 
