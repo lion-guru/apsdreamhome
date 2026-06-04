@@ -5,8 +5,9 @@
  * Complete AI-powered property valuation and market analysis
  */
 
-$page_title = 'AI Property Valuation - APS Dream Home';
-include __DIR__ . '/../layouts/header.php';
+$page_title = $page_title ?? 'AI Property Valuation - APS Dream Home';
+$page_heading = $page_heading ?? 'AI Property Valuation';
+$content = $content ?? '';
 ?>
 
 <div class="container-fluid py-4">
@@ -279,5 +280,3 @@ include __DIR__ . '/../layouts/header.php';
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 </style>
-
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
