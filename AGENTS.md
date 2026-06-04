@@ -1,5 +1,54 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-04)
 
+## Session 2026-06-04 (Part 3): Phases 43-44 — Performance Indexes + Saved Searches
+
+### What Was Done
+**Phase 43: Performance Indexes**
+- Added 32 new indexes to hot tables (leads, users, user_properties, plots, bookings, audit_log, properties, etc.)
+- 8 indexes skipped (already existed or columns missing)
+- 0 errors
+- Total indexes: 1350 across 281+ tables
+- Created `user_notification_preferences` table for customer notification UI
+
+**Phase 44: Saved Searches System**
+- 2 new tables: `saved_searches` + `search_history`
+- `SavedSearchService`: 9 methods (save/get/update/delete/favorite/apply/list/history/stats)
+- `SavedSearchController`: 6 actions with full audit log integration
+- Admin view: `/admin/saved-searches` with stats cards, filter dropdown, save form, history sidebar
+- 6 new routes + 1 menu item (Reports section)
+- JSON-based filter storage (flexible)
+- Public sharing + favorites for team collaboration
+
+### Performance Gains
+- Lead queries: faster status/source/agent filters
+- User queries: faster role/status/email lookups
+- Property queries: faster status/type filters
+- Booking queries: faster user_id/plot_id/status lookups
+- Audit log queries: faster ip/user_role lookups
+- Webhook deliveries: faster endpoint/status filters
+
+### Recent Commits
+- `0ee0c8b56` Phase 44: Saved Searches System with history tracking
+- `258019f1c` [Auto-Fix] AI Property Valuation: Fixed 403 error
+- `2aea598a0` Phase 43: Add 32 performance indexes + user_notification_preferences table
+- `6fd1bf796` AGENTS.md: Update with Phases 35-42
+
+### Key Insights
+- 32 perf indexes added without breaking E2E
+- Old `saved_searches` table from previous drops had wrong schema (only 5 cols)
+- DROP+CREATE pattern used to ensure clean schema migration
+- All saved search actions audit-logged for compliance
+- JSON column for flexible filter storage
+- PDO/Database wrapper auto-detection in service constructor
+- `error_log` to `logs/php_error.log` (NOT `C:\xampp\php\logs\php_error_log`) - check the right one
+
+### Total Architecture (Post-Phase 44)
+- 283+ database tables
+- 21+ services in `app/Services/`
+- 30+ new admin views
+- 156+ new routes across web.php
+- E2E: 163/164 pass, zero regressions
+
 ## Session 2026-06-04 (Part 2): Phases 35-42 — Cron + Real-Time + Audit + Webhooks + Bulk + 2FA + API Keys + System Health
 
 ### Final State
