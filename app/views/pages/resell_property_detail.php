@@ -2,7 +2,6 @@
 $page_title = $page_title ?? 'Property Details';
 $page_heading = $page_heading ?? 'Property Details';
 $content = $content ?? '';
-ob_start();
 ?>
 <div class="container py-5">
   <?php if (empty($property)): ?>
@@ -114,6 +113,3 @@ ob_start();
     </div>
   <?php endif; ?>
 </div>
-<?php
-$content = ob_get_clean();
-require_once APP_PATH . '/views/layouts/base.php';

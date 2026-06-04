@@ -8,7 +8,6 @@ $count = $count ?? 0;
 $not_found = $not_found ?? false;
 $shared = $shared ?? false;
 $view_count = $view_count ?? 0;
-ob_start();
 ?>
 <style>
 .cmp-hero { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; padding: 50px 0; }
@@ -273,7 +272,3 @@ function copyShareLink() {
 }
 </script>
 <?php endif; ?>
-
-<?php
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/base.php';

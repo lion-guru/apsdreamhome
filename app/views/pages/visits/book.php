@@ -9,7 +9,6 @@ $logged_in = $logged_in ?? false;
 $form_data = $_SESSION['visit_form'] ?? [];
 $errors = $_SESSION['visit_errors'] ?? [];
 unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
-ob_start();
 ?>
 <style>
 .visit-hero { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: #fff; padding: 50px 0; }
@@ -229,7 +228,3 @@ document.querySelector('select[name="visit_type"]').addEventListener('change', f
     document.getElementById('summaryType').textContent = labels[this.value] || this.value;
 });
 </script>
-
-<?php
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/base.php';

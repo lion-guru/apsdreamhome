@@ -2,7 +2,6 @@
 $page_title = $page_title ?? 'Resell Properties';
 $page_heading = $page_heading ?? 'Resell Properties Marketplace';
 $content = $content ?? '';
-ob_start();
 ?>
 <div class="container py-5">
   <div class="row mb-4">
@@ -105,6 +104,3 @@ ob_start();
 .hover-lift { transition: transform 0.2s, box-shadow 0.2s; }
 .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important; }
 </style>
-<?php
-$content = ob_get_clean();
-require_once APP_PATH . '/views/layouts/base.php';
