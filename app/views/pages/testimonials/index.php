@@ -5,7 +5,6 @@ $content = $content ?? '';
 $testimonials = $testimonials ?? [];
 $featured = $featured ?? [];
 $stats = $stats ?? [];
-ob_start();
 ?>
 <style>
 .testimonial-hero { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; padding: 60px 0; }
@@ -137,7 +136,3 @@ ob_start();
         </div>
     </div>
 </div>
-
-<?php
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/base.php';

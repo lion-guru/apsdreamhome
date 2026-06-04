@@ -2,7 +2,6 @@
 $page_title = $page_title ?? 'Unsubscribe';
 $page_heading = $page_heading ?? 'Unsubscribe';
 $content = $content ?? '';
-ob_start();
 ?>
 <div class="container py-5">
     <div class="row justify-content-center">
@@ -26,6 +25,3 @@ ob_start();
         </div>
     </div>
 </div>
-<?php
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/base.php';

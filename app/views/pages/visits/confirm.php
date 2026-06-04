@@ -3,7 +3,6 @@ $page_title = $page_title ?? 'Visit Confirmed';
 $page_heading = $page_heading ?? 'Visit Confirmed';
 $content = $content ?? '';
 $visit = $visit ?? null;
-ob_start();
 ?>
 <div class="container py-5">
     <div class="row justify-content-center">
@@ -48,6 +47,3 @@ ob_start();
         </div>
     </div>
 </div>
-<?php
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/base.php';

@@ -21,7 +21,6 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
     $month_pay = $pay / $mon;
 }
 
-ob_start();
 ?>
 
 <!-- Page Header -->
@@ -154,8 +153,3 @@ ob_start();
         background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
     }
 </style>
-
-<?php
-$content = ob_get_clean();
-echo $content;
-?>
