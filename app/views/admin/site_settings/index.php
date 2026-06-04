@@ -5,16 +5,8 @@
  * Admin panel for managing site settings
  */
 
-if (!defined('BASE_PATH')) {
-    if (session_status() === PHP_SESSION_NONE) {
-        // Session started by controller
-    }
-
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . BASE_URL . '/admin/login');
-        exit;
-    }
-}
+// NOTE: This view is a legacy file. Active rendering path is admin/settings/index.php.
+// Auth handled by SiteSettingsController (which extends AdminController).
 
 $baseUrl = BASE_URL ?? '/apsdreamhome';
 $settings = $settings ?? [];

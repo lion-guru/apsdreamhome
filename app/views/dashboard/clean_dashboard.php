@@ -3,11 +3,8 @@
 
 require_once __DIR__ . '/includes/universal_template.php';
 
-// Check if customer is logged in
-if (!isset($_SESSION['customer_logged_in']) || $_SESSION['customer_logged_in'] !== true) {
-    header('Location: ' . BASE_URL . '/login');
-    exit();
-}
+// NOTE: This view is a legacy file. Active rendering path is dashboard/index.php.
+// Auth handled by DashboardController (calls requireLogin() in constructor).
 
 $customer_name = $_SESSION['customer_name'] ?? 'Customer';
 

@@ -1,14 +1,7 @@
 <?php
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    @session_start();
-}
-
-// Check if employee is logged in
-if (!isset($_SESSION['employee_id'])) {
-    header('Location: ' . BASE_URL . '/employee/login');
-    exit;
-}
+// Auth check removed: session_start() + auth bypass deleted (Phase 1.4)
+// EmployeeController::dashboard() already enforces auth at the controller level
+// (lines 79-81 in EmployeeController.php: if (!isset($_SESSION['employee_id'])) redirect).
 
 // Set page variables
 $page_title = 'Employee Dashboard - APS Dream Home';

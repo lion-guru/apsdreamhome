@@ -4,17 +4,7 @@
  * This file renders content when accessed directly
  */
 
-if (!defined('BASE_PATH')) {
-    // If accessed directly, check auth and include the standalone version
-    if (session_status() === PHP_SESSION_NONE) {
-        // Session started by controller
-    }
-    
-    if (!isset($_SESSION['admin_id']) && !isset($_SESSION['user_id'])) {
-        header('Location: ' . BASE_URL . '/admin/login');
-        exit;
-    }
-}
+// Auth handled by controller (AdminController and Admin\AdminDashboardController both check admin auth)
 
 // Get user info from session
 $currentUser = [

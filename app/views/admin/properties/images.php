@@ -5,16 +5,7 @@
  * Drag & Drop Multi-Upload with Gallery Management
  */
 
-if (!defined('BASE_PATH')) {
-    if (session_status() === PHP_SESSION_NONE) {
-        // Session started by controller
-    }
-
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: ' . BASE_URL . '/admin/login');
-        exit;
-    }
-}
+// Auth handled by PropertyImageController (requireAdmin() called in each method)
 
 // Initialize variables with defaults if not passed from controller
 $property = $property ?? [
