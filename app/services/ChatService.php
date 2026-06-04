@@ -13,6 +13,7 @@ use App\Models\Model;
 class ChatService
 {
     private $db;
+    private $pdo;
     private $websocketServer;
     private $messageQueue;
     private $agentManager;
@@ -484,6 +485,7 @@ class WebSocketServer
 class MessageQueue
 {
     private $db;
+    private $pdo;
     public function __construct($db)
     {
         $this->db = $db;
@@ -498,6 +500,7 @@ class MessageQueue
 class AgentManager
 {
     private $db;
+    private $pdo;
     public function __construct($db)
     {
         $this->db = $db;
