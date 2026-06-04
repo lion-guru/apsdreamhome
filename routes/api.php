@@ -59,8 +59,8 @@ $router->get('/api/payment/status/{orderId}', 'Api\PaymentGatewayController@getS
 $router->get('/api/payment/methods', 'Api\PaymentGatewayController@getPaymentMethods');
 
 // AI Assistant API Routes
-$router->post('/api/assistant/chat', 'AIAssistantController@chat');
-$router->post('/api/v2/mobile/ai/parse-lead', 'AIAssistantController@parseLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/assistant/chat', 'App\\Http\\Controllers\\AIAssistantController@chat');
+$router->post('/api/v2/mobile/ai/parse-lead', 'App\\Http\\Controllers\\AIAssistantController@parseLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Gemini AI API Routes
 $router->post('/api/gemini/chat', 'Api\GeminiApiController@chat');
@@ -94,17 +94,17 @@ require_once __DIR__ . '/performance-cache.php';
 require_once __DIR__ . '/events.php';
 
 // Core Functions Management Routes - Now integrated in web.php
-$router->get('/api/ai/recommendations', 'AIAssistantController@recommendations');
-$router->get('/api/ai/analyze/{id}', 'AIAssistantController@analyze');
+$router->get('/api/ai/recommendations', 'App\\Http\\Controllers\\AIAssistantController@recommendations');
+$router->get('/api/ai/analyze/{id}', 'App\\Http\\Controllers\\AIAssistantController@analyze');
 
 // Monitoring API Routes
-$router->get('/api/monitoring/health', 'MonitoringController@healthCheck');
+$router->get('/api/monitoring/health', 'App\\Http\\Controllers\\MonitoringController@healthCheck');
 
 // AI Dashboard API Routes
-$router->post('/api/ai-dashboard/training', 'AIDashboardController@startTraining');
-$router->post('/api/ai-dashboard/reset', 'AIDashboardController@resetMemory');
-$router->post('/api/ai-dashboard/export', 'AIDashboardController@exportData');
-$router->get('/api/ai-dashboard/training-log', 'AIDashboardController@getTrainingLog');
+$router->post('/api/ai-dashboard/training', 'App\\Http\\Controllers\\AIDashboardController@startTraining');
+$router->post('/api/ai-dashboard/reset', 'App\\Http\\Controllers\\AIDashboardController@resetMemory');
+$router->post('/api/ai-dashboard/export', 'App\\Http\\Controllers\\AIDashboardController@exportData');
+$router->get('/api/ai-dashboard/training-log', 'App\\Http\\Controllers\\AIDashboardController@getTrainingLog');
 
 // Analytics API Routes
 $router->get('/api/analytics/metrics', 'Api\AnalyticsController@getRealTimeMetrics');
@@ -113,12 +113,12 @@ $router->get('/api/analytics/properties', 'Api\AnalyticsController@getPropertyAn
 $router->get('/api/analytics/users', 'Api\AnalyticsController@getUserAnalytics');
 
 // WhatsApp Templates API Routes
-$router->post('/api/whatsapp-templates/create', 'WhatsAppTemplateController@createTemplate');
-$router->post('/api/whatsapp-templates/update/{id}', 'WhatsAppTemplateController@updateTemplate');
-$router->delete('/api/whatsapp-templates/delete/{id}', 'WhatsAppTemplateController@deleteTemplate');
-$router->post('/api/whatsapp-templates/send-test', 'WhatsAppTemplateController@sendTestMessage');
-$router->get('/api/whatsapp-templates/stats', 'WhatsAppTemplateController@getUsageStats');
-$router->get('/api/whatsapp-templates/preview/{id}', 'WhatsAppTemplateController@previewTemplate');
+$router->post('/api/whatsapp-templates/create', 'App\\Http\\Controllers\\WhatsAppTemplateController@createTemplate');
+$router->post('/api/whatsapp-templates/update/{id}', 'App\\Http\\Controllers\\WhatsAppTemplateController@updateTemplate');
+$router->delete('/api/whatsapp-templates/delete/{id}', 'App\\Http\\Controllers\\WhatsAppTemplateController@deleteTemplate');
+$router->post('/api/whatsapp-templates/send-test', 'App\\Http\\Controllers\\WhatsAppTemplateController@sendTestMessage');
+$router->get('/api/whatsapp-templates/stats', 'App\\Http\\Controllers\\WhatsAppTemplateController@getUsageStats');
+$router->get('/api/whatsapp-templates/preview/{id}', 'App\\Http\\Controllers\\WhatsAppTemplateController@previewTemplate');
 
 // Referral API Routes
 $router->get('/api/referral/dashboard', 'Api\ReferralController@dashboard');
@@ -126,15 +126,15 @@ $router->get('/api/referral/stats', 'Api\ReferralController@stats');
 $router->get('/api/referral/list', 'Api\ReferralController@index');
 
 // MLM API Routes
-$router->get('/api/mlm/analytics', 'MLMController@getAnalytics');
-$router->post('/api/mlm/commission', 'MLMController@calculateCommission');
-$router->get('/api/mlm/network-tree', 'MLMController@getNetworkTree');
-$router->get('/api/mlm/commission-history', 'MLMController@getCommissionHistory');
+$router->get('/api/mlm/analytics', 'App\\Http\\Controllers\\MLMController@getAnalytics');
+$router->post('/api/mlm/commission', 'App\\Http\\Controllers\\MLMController@calculateCommission');
+$router->get('/api/mlm/network-tree', 'App\\Http\\Controllers\\MLMController@getNetworkTree');
+$router->get('/api/mlm/commission-history', 'App\\Http\\Controllers\\MLMController@getCommissionHistory');
 
 // AI Valuation API Routes
-$router->post('/api/ai-valuation/calculator', 'AIValuationController@calculateValuation');
-$router->get('/api/ai-valuation/market-trends', 'AIValuationController@getMarketTrends');
-$router->post('/api/ai-valuation/investment-analysis', 'AIValuationController@getInvestmentAnalysis');
+$router->post('/api/ai-valuation/calculator', 'App\\Http\\Controllers\\AIValuationController@calculateValuation');
+$router->get('/api/ai-valuation/market-trends', 'App\\Http\\Controllers\\AIValuationController@getMarketTrends');
+$router->post('/api/ai-valuation/investment-analysis', 'App\\Http\\Controllers\\AIValuationController@getInvestmentAnalysis');
 
 // Legacy Mobile API Routes (Backward Compatibility)
 $router->get('/api/v1/mobile/properties', 'Api\MobileApiController@properties');

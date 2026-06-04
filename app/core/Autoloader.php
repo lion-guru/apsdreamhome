@@ -179,6 +179,7 @@ $autoloader->addClassMap('UnifiedModel', APP_ROOT . '/app/Core/UnifiedModel.php'
 
 // Register root-namespace controllers
 $autoloader->addClassMap('AIAssistantController', APP_ROOT . '/app/Http/Controllers/AI/AssistantController.php');
+$autoloader->addClassMap('App\Http\Controllers\AIAssistantController', APP_ROOT . '/app/Http/Controllers/AI/AssistantController.php');
 
 // Register misnamed-file controllers
 $autoloader->addClassMap('App\Http\Controllers\Api\MonitorController', APP_ROOT . '/app/Http/Controllers/Api/MonitorApiController.php');

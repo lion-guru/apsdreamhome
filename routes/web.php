@@ -152,10 +152,10 @@ $router->post('/auth/request-referral-code', 'Auth\\QuickAuthController@requestR
 $router->post('/auth/auto-generate-user', 'Auth\\QuickAuthController@autoGenerateUser');
 
 // Visitor Tracking & Lead Capture
-$router->post('/track/page-view', 'VisitorTrackingController@trackPageView');
-$router->post('/track/incomplete-registration', 'VisitorTrackingController@trackIncompleteRegistration');
-$router->post('/track/interest', 'VisitorTrackingController@trackInterest');
-$router->get('/admin/visitor-stats', 'VisitorTrackingController@getVisitorStats');
+$router->post('/track/page-view', 'App\\Http\\Controllers\\VisitorTrackingController@trackPageView');
+$router->post('/track/incomplete-registration', 'App\\Http\\Controllers\\VisitorTrackingController@trackIncompleteRegistration');
+$router->post('/track/interest', 'App\\Http\\Controllers\\VisitorTrackingController@trackInterest');
+$router->get('/admin/visitor-stats', 'App\\Http\\Controllers\\VisitorTrackingController@getVisitorStats');
 
 // Lead Follow-up System
 $router->post('/admin/send-follow-ups', 'Admin\\LeadFollowUpController@sendFollowUps');
@@ -165,8 +165,8 @@ $router->get('/user/investments', 'Front\\PageController@userInvestments');
 $router->get('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->post('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->get('/plots-availability', 'Front\\PageController@plotsAvailability');
-$router->get('/map', 'MapController@index');
-$router->get('/gallery/{id}', 'GalleryController@project');
+$router->get('/map', 'App\\Http\\Controllers\\MapController@index');
+$router->get('/gallery/{id}', 'App\\Http\\Controllers\\GalleryController@project');
 
 // Free Tools
 $router->get('/stamp-duty-calculator', 'Front\\PageController@stampDutyCalculator');
@@ -187,7 +187,7 @@ $router->get('/rera-lookup', 'Front\\PageController@reraLookup');
 
 // MLM & AI Dashboard Routes
 $router->get('/mlm-dashboard', 'MLM\MLMDashboardController@dashboard');
-$router->get('/ai-dashboard', 'AIDashboardController@index');
+$router->get('/ai-dashboard', 'App\\Http\\Controllers\\AIDashboardController@index');
 // Career Pages
 $router->get('/careers/apply', 'Front\\PageController@careerApply');
 $router->post('/careers/apply', 'Front\\PageController@submitCareerApplication');
@@ -444,17 +444,17 @@ $router->get('/property-comparison/share', 'App\\Http\\Controllers\\Front\\Prope
 
 $router->get('/user/referral', 'App\\Http\\Controllers\\Front\\ReferralController@index');
 $router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
-$router->get('/dashboard', 'DashboardController@index');
-$router->get('/dashboard/profile', 'DashboardController@profile');
-$router->post('/dashboard/profile', 'DashboardController@updateProfile');
-$router->get('/dashboard/favorites', 'DashboardController@favorites');
-$router->post('/dashboard/favorites/add', 'DashboardController@addFavorite');
-$router->post('/dashboard/favorites/remove', 'DashboardController@removeFavorite');
-$router->get('/dashboard/inquiries', 'DashboardController@inquiries');
-$router->post('/dashboard/inquiries/submit', 'DashboardController@submitInquiry');
+$router->get('/dashboard', 'App\\Http\\Controllers\\DashboardController@index');
+$router->get('/dashboard/profile', 'App\\Http\\Controllers\\DashboardController@profile');
+$router->post('/dashboard/profile', 'App\\Http\\Controllers\\DashboardController@updateProfile');
+$router->get('/dashboard/favorites', 'App\\Http\\Controllers\\DashboardController@favorites');
+$router->post('/dashboard/favorites/add', 'App\\Http\\Controllers\\DashboardController@addFavorite');
+$router->post('/dashboard/favorites/remove', 'App\\Http\\Controllers\\DashboardController@removeFavorite');
+$router->get('/dashboard/inquiries', 'App\\Http\\Controllers\\DashboardController@inquiries');
+$router->post('/dashboard/inquiries/submit', 'App\\Http\\Controllers\\DashboardController@submitInquiry');
 
 // AI Routes
-$router->get('/ai-valuation', 'AIController@propertyValuation');
+$router->get('/ai-valuation', 'App\\Http\\Controllers\\AIController@propertyValuation');
 
 // Lead Scoring Routes (API)
 $router->get('/api/leads/{id}/score-details', 'App\Http\Controllers\Admin\LeadScoringController@getScoreDetails');
@@ -483,9 +483,9 @@ $router->post('/admin/deals/store', 'App\Http\Controllers\Admin\DealController@s
 $router->post('/admin/deals/{id}/stage', 'App\Http\Controllers\Admin\DealController@updateStage');
 
 // Achievement Routes
-$router->get('/dashboard/achievements', 'AchievementController@index');
-$router->get('/api/achievements/points', 'AchievementController@getPoints');
-$router->get('/api/achievements/badges', 'AchievementController@getBadges');
+$router->get('/dashboard/achievements', 'App\\Http\\Controllers\\AchievementController@index');
+$router->get('/api/achievements/points', 'App\\Http\\Controllers\\AchievementController@getPoints');
+$router->get('/api/achievements/badges', 'App\\Http\\Controllers\\AchievementController@getBadges');
 
 // ============================================================
 // AUTHENTICATION
@@ -516,31 +516,31 @@ $router->post('/associate/register', 'Auth\\AssociateAuthController@handleAssoci
 $router->get('/associate/login', 'Auth\\AssociateAuthController@associateLogin');
 $router->post('/associate/login', 'Auth\\AssociateAuthController@authenticateAssociate');
 $router->get('/associate/logout', 'Auth\\AssociateAuthController@logout');
-$router->get('/associate/dashboard', 'AssociateController@dashboard');
-$router->get('/associate/add-property', 'AssociateController@addProperty');
-$router->get('/associate/leads', 'AssociateController@leads');
-$router->get('/associate/commissions', 'AssociateController@commissions');
-$router->get('/associate/properties', 'AssociateController@properties');
-$router->get('/associate/sold', 'AssociateController@sold');
-$router->get('/associate/pending', 'AssociateController@pending');
-$router->get('/associate/profile', 'AssociateController@profile');
-$router->get('/associate/genealogy', 'MLMTreeController@genealogy');
-$router->get('/associate/wallet', 'WalletController@associateWallet');
-$router->get('/associate/bank-details', 'WalletController@bankAccounts');
-$router->get('/associate/settings', 'AssociateController@settings');
-$router->get('/associate/mlm-plan', 'AssociateController@mlmPlan');
-$router->get('/associate/list-property', 'AssociateController@listProperty');
-$router->post('/associate/list-property/submit', 'AssociateController@submitProperty');
+$router->get('/associate/dashboard', 'App\\Http\\Controllers\\AssociateController@dashboard');
+$router->get('/associate/add-property', 'App\\Http\\Controllers\\AssociateController@addProperty');
+$router->get('/associate/leads', 'App\\Http\\Controllers\\AssociateController@leads');
+$router->get('/associate/commissions', 'App\\Http\\Controllers\\AssociateController@commissions');
+$router->get('/associate/properties', 'App\\Http\\Controllers\\AssociateController@properties');
+$router->get('/associate/sold', 'App\\Http\\Controllers\\AssociateController@sold');
+$router->get('/associate/pending', 'App\\Http\\Controllers\\AssociateController@pending');
+$router->get('/associate/profile', 'App\\Http\\Controllers\\AssociateController@profile');
+$router->get('/associate/genealogy', 'App\\Http\\Controllers\\MLMTreeController@genealogy');
+$router->get('/associate/wallet', 'App\\Http\\Controllers\\WalletController@associateWallet');
+$router->get('/associate/bank-details', 'App\\Http\\Controllers\\WalletController@bankAccounts');
+$router->get('/associate/settings', 'App\\Http\\Controllers\\AssociateController@settings');
+$router->get('/associate/mlm-plan', 'App\\Http\\Controllers\\AssociateController@mlmPlan');
+$router->get('/associate/list-property', 'App\\Http\\Controllers\\AssociateController@listProperty');
+$router->post('/associate/list-property/submit', 'App\\Http\\Controllers\\AssociateController@submitProperty');
 
 // Associate Leads sub-routes
-$router->get('/associate/leads/add', 'AssociateController@leads');
-$router->get('/associate/leads/all', 'AssociateController@leads');
-$router->get('/associate/commissions/history', 'AssociateController@commissions');
-$router->get('/associate/wallet/withdraw', 'WalletController@withdrawal');
-$router->get('/associate/network/tree', 'MLMTreeController@tree');
-$router->get('/associate/team', 'AssociateController@team');
-$router->get('/associate/team/add', 'AssociateController@team');
-$router->get('/associate/team/performance', 'AssociateController@team');
+$router->get('/associate/leads/add', 'App\\Http\\Controllers\\AssociateController@leads');
+$router->get('/associate/leads/all', 'App\\Http\\Controllers\\AssociateController@leads');
+$router->get('/associate/commissions/history', 'App\\Http\\Controllers\\AssociateController@commissions');
+$router->get('/associate/wallet/withdraw', 'App\\Http\\Controllers\\WalletController@withdrawal');
+$router->get('/associate/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
+$router->get('/associate/team', 'App\\Http\\Controllers\\AssociateController@team');
+$router->get('/associate/team/add', 'App\\Http\\Controllers\\AssociateController@team');
+$router->get('/associate/team/performance', 'App\\Http\\Controllers\\AssociateController@team');
 
 // Associate Exports
 $router->get('/associate/export/my-earnings', 'Associate\ExportController@myEarnings');
@@ -639,7 +639,7 @@ $router->post('/employee/dashboard/update-task-status', 'Employee\\EmployeeDashb
 
 // MLM/Team
 $router->get('/team/genealogy', 'Admin\\NetworkController@genealogy');
-$router->get('/api/mlm/tree', 'MLMController@getNetworkTree');
+$router->get('/api/mlm/tree', 'App\\Http\\Controllers\\MLMController@getNetworkTree');
 
 // ============================================================
 // AI PROPERTY VALUATION
@@ -943,22 +943,22 @@ $router->get('/api/gemini/test', 'Api\\GeminiApiController@testConnection');
 $router->get('/api/gemini/status', 'Api\\GeminiApiController@getStatus');
 
 // Smart AI Chatbot (RBAC-enabled, Human-like)
-$router->post('/api/ai/chat', 'SmartAIController@chat');
-$router->get('/api/ai/history', 'SmartAIController@history');
-$router->get('/ai-assistant', 'SmartAIController@assistantPage');
+$router->post('/api/ai/chat', 'App\\Http\\Controllers\\SmartAIController@chat');
+$router->get('/api/ai/history', 'App\\Http\\Controllers\\SmartAIController@history');
+$router->get('/ai-assistant', 'App\\Http\\Controllers\\SmartAIController@assistantPage');
 
 // Notifications API
-$router->get('/api/notifications', 'NotificationController@getNotifications');
-$router->post('/api/notifications/mark-read', 'NotificationController@markAsRead');
-$router->get('/api/notifications/unread-count', 'NotificationController@getUnreadCount');
+$router->get('/api/notifications', 'App\\Http\\Controllers\\NotificationController@getNotifications');
+$router->post('/api/notifications/mark-read', 'App\\Http\\Controllers\\NotificationController@markAsRead');
+$router->get('/api/notifications/unread-count', 'App\\Http\\Controllers\\NotificationController@getUnreadCount');
 $router->get('/api/user/notifications/unread-count', 'Front\\UserController@apiUnreadCount');
-$router->get('/api/popups', 'NotificationController@getPopups');
-$router->post('/api/popups/dismiss', 'NotificationController@dismissPopup');
-$router->post('/admin/notifications/create', 'NotificationController@createNotification');
-$router->post('/admin/popups/create', 'NotificationController@createPopup');
+$router->get('/api/popups', 'App\\Http\\Controllers\\NotificationController@getPopups');
+$router->post('/api/popups/dismiss', 'App\\Http\\Controllers\\NotificationController@dismissPopup');
+$router->post('/admin/notifications/create', 'App\\Http\\Controllers\\NotificationController@createNotification');
+$router->post('/admin/popups/create', 'App\\Http\\Controllers\\NotificationController@createPopup');
 
 // Monitoring
-$router->get('/monitoring', 'MonitoringController@dashboard');
+$router->get('/monitoring', 'App\\Http\\Controllers\\MonitoringController@dashboard');
 
 // Virtual Tour Routes
 $router->get('/virtual-tour', 'Tech\VirtualTourController@index');
@@ -1096,54 +1096,54 @@ $router->post('/service-interest', 'Front\PageController@serviceInterest');
 // ============================================================
 
 // Wallet Dashboard
-$router->get('/wallet', 'WalletController@index');
-$router->get('/wallet/dashboard', 'WalletController@index');
+$router->get('/wallet', 'App\\Http\\Controllers\\WalletController@index');
+$router->get('/wallet/dashboard', 'App\\Http\\Controllers\\WalletController@index');
 
 // Wallet Transactions
-$router->get('/wallet/transactions', 'WalletController@transactions');
+$router->get('/wallet/transactions', 'App\\Http\\Controllers\\WalletController@transactions');
 
 // Wallet Transfer to EMI
-$router->get('/wallet/transfer-emi', 'WalletController@transferToEmi');
-$router->post('/wallet/transfer-emi/process', 'WalletController@processEmiTransfer');
+$router->get('/wallet/transfer-emi', 'App\\Http\\Controllers\\WalletController@transferToEmi');
+$router->post('/wallet/transfer-emi/process', 'App\\Http\\Controllers\\WalletController@processEmiTransfer');
 
 // Wallet Withdrawal
-$router->get('/wallet/withdrawal', 'WalletController@withdrawal');
-$router->post('/wallet/withdrawal/process', 'WalletController@processWithdrawal');
+$router->get('/wallet/withdrawal', 'App\\Http\\Controllers\\WalletController@withdrawal');
+$router->post('/wallet/withdrawal/process', 'App\\Http\\Controllers\\WalletController@processWithdrawal');
 
 // Bank Account Management
-$router->get('/wallet/bank-accounts', 'WalletController@bankAccounts');
-$router->post('/wallet/bank-accounts/add', 'WalletController@addBankAccount');
+$router->get('/wallet/bank-accounts', 'App\\Http\\Controllers\\WalletController@bankAccounts');
+$router->post('/wallet/bank-accounts/add', 'App\\Http\\Controllers\\WalletController@addBankAccount');
 
 // Referral Network
-$router->get('/wallet/referral-network', 'WalletController@referralNetwork');
+$router->get('/wallet/referral-network', 'App\\Http\\Controllers\\WalletController@referralNetwork');
 
 // Wallet Analytics
-$router->get('/wallet/analytics', 'WalletController@analytics');
+$router->get('/wallet/analytics', 'App\\Http\\Controllers\\WalletController@analytics');
 
 // ============================================================
 // ML & AI API ROUTES
 // ============================================================
 
 // ML Dashboard API
-$router->get('/api/ml/dashboard', 'MLController@getMLDashboard');
+$router->get('/api/ml/dashboard', 'App\\Http\\Controllers\\MLController@getMLDashboard');
 
 // ML Predictions
-$router->get('/api/ml/predict-price', 'MLController@predictPrice');
-$router->get('/api/ml/recommendations', 'MLController@getRecommendations');
+$router->get('/api/ml/predict-price', 'App\\Http\\Controllers\\MLController@predictPrice');
+$router->get('/api/ml/recommendations', 'App\\Http\\Controllers\\MLController@getRecommendations');
 
 // ML User Behavior
-$router->get('/api/ml/analyze-behavior', 'MLController@analyzeUserBehavior');
+$router->get('/api/ml/analyze-behavior', 'App\\Http\\Controllers\\MLController@analyzeUserBehavior');
 
 // ============================================================
 // FRAUD DETECTION API ROUTES
 // ============================================================
 
 // Fraud Detection
-$router->get('/api/fraud/detect', 'MLController@detectFraud');
-$router->post('/api/fraud/detect', 'MLController@detectFraud');
+$router->get('/api/fraud/detect', 'App\\Http\\Controllers\\MLController@detectFraud');
+$router->post('/api/fraud/detect', 'App\\Http\\Controllers\\MLController@detectFraud');
 
 // Fraud Dashboard
-$router->get('/api/fraud/dashboard', 'MLController@fraudDashboard');
+$router->get('/api/fraud/dashboard', 'App\\Http\\Controllers\\MLController@fraudDashboard');
 
 // Admin Network MLM
 $router->get('/admin/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
@@ -2493,15 +2493,15 @@ $router->post('/api/pwa/log-installation', 'Tech\\PWAController@logInstallation'
 // ============================================================
 // NOTIFICATION MANAGEMENT (old NotificationController, now using admin.php layout)
 // ============================================================
-$router->get('/admin/notification-management', 'NotificationController@index');
-$router->get('/admin/notification-management/templates', 'NotificationController@templates');
-$router->get('/admin/notification-management/templates/create', 'NotificationController@createTemplate');
-$router->get('/admin/notification-management/templates/edit/{id}', 'NotificationController@editTemplate');
-$router->get('/admin/notification-management/logs/email', 'NotificationController@emailLogs');
-$router->get('/admin/notification-management/logs/sms', 'NotificationController@smsLogs');
-$router->get('/admin/notification-management/settings', 'NotificationController@settings');
-$router->get('/admin/notification-management/send-test', 'NotificationController@sendTest');
-$router->get('/admin/notification-management/preview/{id}', 'NotificationController@preview');
+$router->get('/admin/notification-management', 'App\\Http\\Controllers\\NotificationController@index');
+$router->get('/admin/notification-management/templates', 'App\\Http\\Controllers\\NotificationController@templates');
+$router->get('/admin/notification-management/templates/create', 'App\\Http\\Controllers\\NotificationController@createTemplate');
+$router->get('/admin/notification-management/templates/edit/{id}', 'App\\Http\\Controllers\\NotificationController@editTemplate');
+$router->get('/admin/notification-management/logs/email', 'App\\Http\\Controllers\\NotificationController@emailLogs');
+$router->get('/admin/notification-management/logs/sms', 'App\\Http\\Controllers\\NotificationController@smsLogs');
+$router->get('/admin/notification-management/settings', 'App\\Http\\Controllers\\NotificationController@settings');
+$router->get('/admin/notification-management/send-test', 'App\\Http\\Controllers\\NotificationController@sendTest');
+$router->get('/admin/notification-management/preview/{id}', 'App\\Http\\Controllers\\NotificationController@preview');
 
 // ============================================================
 // MISSING SIDEBAR MENU ROUTES (19 items from admin_menu_items table)
@@ -2920,20 +2920,20 @@ $router->post('/admin/business/associates/activate/{id}', 'Business\\AssociateCo
 $router->post('/admin/business/associates/deactivate/{id}', 'Business\\AssociateController@deactivate');
 
 // --- PerformanceController (root namespace) ---
-$router->get('/admin/system-perf', 'PerformanceController@dashboard');
-$router->get('/admin/system-perf/metrics', 'PerformanceController@getMetrics');
-$router->get('/admin/system-perf/system', 'PerformanceController@getSystemPerformance');
-$router->get('/admin/system-perf/database', 'PerformanceController@getDatabasePerformance');
-$router->get('/admin/system-perf/cache', 'PerformanceController@getCachePerformance');
-$router->post('/admin/system-perf/optimize', 'PerformanceController@optimize');
-$router->post('/admin/system-perf/clear-cache', 'PerformanceController@clearCache');
-$router->get('/admin/system-perf/report', 'PerformanceController@generateReport');
-$router->get('/admin/system-perf/alerts', 'PerformanceController@getAlerts');
-$router->get('/admin/system-perf/monitor', 'PerformanceController@monitor');
-$router->get('/admin/system-perf/trends', 'PerformanceController@getTrends');
-$router->post('/admin/system-perf/threshold', 'PerformanceController@setThreshold');
-$router->get('/admin/system-perf/settings', 'PerformanceController@getSettings');
-$router->post('/admin/system-perf/settings/update', 'PerformanceController@updateSettings');
+$router->get('/admin/system-perf', 'App\\Http\\Controllers\\PerformanceController@dashboard');
+$router->get('/admin/system-perf/metrics', 'App\\Http\\Controllers\\PerformanceController@getMetrics');
+$router->get('/admin/system-perf/system', 'App\\Http\\Controllers\\PerformanceController@getSystemPerformance');
+$router->get('/admin/system-perf/database', 'App\\Http\\Controllers\\PerformanceController@getDatabasePerformance');
+$router->get('/admin/system-perf/cache', 'App\\Http\\Controllers\\PerformanceController@getCachePerformance');
+$router->post('/admin/system-perf/optimize', 'App\\Http\\Controllers\\PerformanceController@optimize');
+$router->post('/admin/system-perf/clear-cache', 'App\\Http\\Controllers\\PerformanceController@clearCache');
+$router->get('/admin/system-perf/report', 'App\\Http\\Controllers\\PerformanceController@generateReport');
+$router->get('/admin/system-perf/alerts', 'App\\Http\\Controllers\\PerformanceController@getAlerts');
+$router->get('/admin/system-perf/monitor', 'App\\Http\\Controllers\\PerformanceController@monitor');
+$router->get('/admin/system-perf/trends', 'App\\Http\\Controllers\\PerformanceController@getTrends');
+$router->post('/admin/system-perf/threshold', 'App\\Http\\Controllers\\PerformanceController@setThreshold');
+$router->get('/admin/system-perf/settings', 'App\\Http\\Controllers\\PerformanceController@getSettings');
+$router->post('/admin/system-perf/settings/update', 'App\\Http\\Controllers\\PerformanceController@updateSettings');
 
 // --- SaaS\ProfessionalToolsController ---
 $router->get('/saas/tools/inventory', 'SaaS\\ProfessionalToolsController@inventory');
@@ -3055,8 +3055,8 @@ $router->get('/admin/report-center', 'Admin\\ReportController@index');
 
 // Careers Management (Career\CareerController)
 $router->get('/careers', 'Career\\CareerController@index');
-$router->get('/careers/apply', 'Career\\CareerController@apply');
-$router->post('/careers/apply', 'Career\\CareerController@submitApplication');
+// /careers/apply (GET + POST) is registered earlier at lines 192-193 -> Front\PageController
+// (PageController wins because the router uses first-registered handler)
 $router->get('/careers/thank-you', 'Career\\CareerController@thankYou');
 $router->get('/admin/careers/manage', 'Career\\CareerController@applications');
 $router->get('/admin/careers/manage/jobs', 'Career\\CareerController@getAvailablePositions');
