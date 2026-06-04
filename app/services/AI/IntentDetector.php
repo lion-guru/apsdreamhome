@@ -11,7 +11,8 @@ use PDO;
 
 class IntentDetector
 {
-    private PDO $db;
+    private $db;
+    private $pdo;
 
     // Common real estate intents with multi-language patterns
     private array $defaultIntents = [
@@ -57,9 +58,10 @@ class IntentDetector
         ]
     ];
 
-    public function __construct(PDO $db)
+    public function __construct($db)
     {
         $this->db = $db;
+        $this->pdo = is_object($db) && method_exists($db, 'getPdo') ? $db->getPdo() : $db;
         $this->seedDefaultIntents();
     }
 

@@ -294,4 +294,110 @@ class NewFeaturesApiController extends BaseController
         $properties = $this->resell()->listProperties($filters, (int)($_GET['limit'] ?? 20));
         return $this->jsonResponse(['ok' => true, 'data' => $properties]);
     }
+
+    public function analyticsDashboard()
+    {
+        $data = [];
+
+        try {
+            $st = $this->db->query("SELECT COUNT(*) FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $data['leads_30d'] = (int)$st->fetchColumn();
+        } catch (\Throwable $e) { $data['leads_30d'] = 0; }
+
+        try {
+            $st = $this->db->query("SELECT COUNT(*) FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 60 DAY) AND created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $prevLeads = (int)$st->fetchColumn();
+            $data['leads_delta'] = $prevLeads > 0 ? round((($data['leads_30d'] - $prevLeads) / $prevLeads) * 100, 1) : 0;
+        } catch (\Throwable $e) { $data['leads_delta'] = 0; }
+
+        try {
+            $st = $this->db->query("SELECT COUNT(*) FROM bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $data['bookings_30d'] = (int)$st->fetchColumn();
+        } catch (\Throwable $e) { $data['bookings_30d'] = 0; }
+
+        try {
+            $st = $this->db->query("SELECT COALESCE(SUM(total_amount), 0) FROM bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $data['revenue_30d'] = (float)$st->fetchColumn();
+        } catch (\Throwable $e) { $data['revenue_30d'] = 0; }
+
+        try {
+            $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer'");
+            $data['total_customers'] = (int)$st->fetchColumn();
+        } catch (\Throwable $e) { $data['total_customers'] = 0; }
+
+        try {
+            $st = $this->db->query("SELECT DATE(created_at) as date, COUNT(*) as count FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY DATE(created_at) ORDER BY date");
+            $data['leads_by_day'] = $st->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) { $data['leads_by_day'] = []; }
+
+        try {
+            $st = $this->db->query("SELECT source, COUNT(*) as count FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY source");
+            $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+            $data['leads_by_source'] = [];
+            foreach ($rows as $r) { $data['leads_by_source'][$r['source'] ?: 'unknown'] = (int)$r['count']; }
+        } catch (\Throwable $e) { $data['leads_by_source'] = []; }
+
+        try {
+            $st = $this->db->query("SELECT status, COUNT(*) as count FROM leads GROUP BY status");
+            $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+            $data['pipeline'] = [];
+            foreach ($rows as $r) { $data['pipeline'][$r['status'] ?: 'new'] = (int)$r['count']; }
+        } catch (\Throwable $e) { $data['pipeline'] = []; }
+
+        try {
+            $st = $this->db->query("SELECT type, COUNT(*) as count FROM plots GROUP BY type");
+            $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
+            $data['property_types'] = [];
+            foreach ($rows as $r) { $data['property_types'][$r['type'] ?: 'unknown'] = (int)$r['count']; }
+        } catch (\Throwable $e) { $data['property_types'] = []; }
+
+        return $this->jsonResponse($data);
+    }
+
+    public function analyticsInsights()
+    {
+        $insights = [];
+
+        try {
+            $st = $this->db->query("SELECT COUNT(*) FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+            $weekLeads = (int)$st->fetchColumn();
+            $st = $this->db->query("SELECT COUNT(*) FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 14 DAY) AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)");
+            $prevWeek = (int)$st->fetchColumn();
+            if ($weekLeads > $prevWeek * 1.2) {
+                $insights[] = ['type' => 'success', 'title' => 'Lead Surge', 'message' => "Lead volume up " . round((($weekLeads - $prevWeek) / max(1, $prevWeek)) * 100, 1) . "% this week vs last"];
+            } elseif ($weekLeads < $prevWeek * 0.8) {
+                $insights[] = ['type' => 'warning', 'title' => 'Lead Decline', 'message' => "Lead volume down " . round((($prevWeek - $weekLeads) / max(1, $prevWeek)) * 100, 1) . "% this week vs last"];
+            }
+        } catch (\Throwable $e) {}
+
+        try {
+            $st = $this->db->query("SELECT type, COUNT(*) as cnt FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY type ORDER BY cnt DESC LIMIT 1");
+            $row = $st->fetch(\PDO::FETCH_ASSOC);
+            if ($row) {
+                $insights[] = ['type' => 'info', 'title' => 'Top Property Type', 'message' => "Most inquiries for " . ($row['type'] ?: 'general') . " ({$row['cnt']} leads)"];
+            }
+        } catch (\Throwable $e) {}
+
+        try {
+            $st = $this->db->query("SELECT id, amount FROM bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) ORDER BY amount DESC LIMIT 1");
+            $top = $st->fetch(\PDO::FETCH_ASSOC);
+            if ($top) {
+                $insights[] = ['type' => 'primary', 'title' => 'Top Booking', 'message' => "Highest booking this month: ₹" . number_format($top['amount'])];
+            }
+        } catch (\Throwable $e) {}
+
+        try {
+            $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+            $newUsers = (int)$st->fetchColumn();
+            if ($newUsers > 0) {
+                $insights[] = ['type' => 'success', 'title' => 'New Customers', 'message' => "{$newUsers} new customers this week"];
+            }
+        } catch (\Throwable $e) {}
+
+        if (empty($insights)) {
+            $insights[] = ['type' => 'secondary', 'title' => 'No Insights', 'message' => 'Need more data to generate insights'];
+        }
+
+        return $this->jsonResponse(['insights' => $insights]);
+    }
 }

@@ -2515,6 +2515,8 @@ $router->get('/team/messages', 'App\\Http\\Controllers\\TeamManagementController
 // CRON JOBS (System\CronController)
 // ============================================================
 $router->get('/system/cron/daily', 'App\\Http\\Controllers\\System\\CronController@daily');
+$router->get('/system/cron/hourly', 'App\\Http\\Controllers\\System\\CronController@hourly');
+$router->get('/system/cron/weekly', 'App\\Http\\Controllers\\System\\CronController@weekly');
 
 // ============================================================
 // LOCALIZATION API (LocalizationController)
@@ -2931,6 +2933,7 @@ $router->get('/admin/features/notifications', 'Admin\\NewFeaturesController@noti
 $router->get('/admin/features/security', 'Admin\\NewFeaturesController@security');
 $router->get('/admin/features/finance', 'Admin\\NewFeaturesController@finance');
 $router->get('/admin/features/analytics', 'Admin\\NewFeaturesController@analyticsDashboard');
+$router->get('/admin/features/realtime-analytics', 'Admin\\NewFeaturesController@realtimeAnalytics');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');
@@ -2970,6 +2973,8 @@ $router->post('/api/v2/finance/budget/create', 'Api\\NewFeaturesApiController@cr
 
 $router->post('/api/v2/analytics/kpi/record', 'Api\\NewFeaturesApiController@recordKpi');
 $router->post('/api/v2/analytics/forecast', 'Api\\NewFeaturesApiController@generateForecast');
+$router->get('/api/v2/analytics/dashboard', 'Api\\NewFeaturesApiController@analyticsDashboard');
+$router->get('/api/v2/analytics/insights', 'Api\\NewFeaturesApiController@analyticsInsights');
 
 $router->post('/api/v2/agent/task/create', 'Api\\NewFeaturesApiController@createTask');
 $router->post('/api/v2/agent/task/execute/{id}', 'Api\\NewFeaturesApiController@executeTask');

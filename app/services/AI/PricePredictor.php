@@ -11,11 +11,13 @@ use PDO;
 
 class PricePredictor
 {
-    private PDO $db;
+    private $db;
+    private $pdo;
 
-    public function __construct(PDO $db)
+    public function __construct($db)
     {
         $this->db = $db;
+        $this->pdo = is_object($db) && method_exists($db, 'getPdo') ? $db->getPdo() : $db;
     }
 
     /**

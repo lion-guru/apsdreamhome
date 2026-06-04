@@ -16,16 +16,19 @@ use App\Services\AI\PricePredictor;
 
 class AIManager
 {
-    private PDO $db;
+    private $db;
+    private $pdo;
     private PatternLearner $learner;
     private IntentDetector $intents;
     private RecommendationEngine $recommender;
     private LeadScorer $scorer;
     private PricePredictor $predictor;
 
-    public function __construct(PDO $db)
+    public function __construct($db)
     {
         $this->db = $db;
+        $pdo = is_object($db) && method_exists($db, 'getPdo') ? $db->getPdo() : $db;
+        $this->pdo = $pdo;
         $this->learner = new PatternLearner($db);
         $this->intents = new IntentDetector($db);
         $this->recommender = new RecommendationEngine($db);

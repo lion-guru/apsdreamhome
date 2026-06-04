@@ -18,7 +18,7 @@ class AgentOrchestrator
         $params = [];
         if ($agentId) { $sql .= " AND t.agent_id = :a"; $params[':a'] = $agentId; }
         if ($status) { $sql .= " AND t.status = :s"; $params[':s'] = $status; }
-        $sql .= " ORDER BY t.created_at DESC LIMIT 200";
+        $sql .= " ORDER BY t.assigned_at DESC LIMIT 200";
         $st = $this->db->prepare($sql);
         $st->execute($params);
         return $st->fetchAll(PDO::FETCH_ASSOC);
@@ -26,7 +26,7 @@ class AgentOrchestrator
 
     public function createTask(int $agentId, string $type, array $payload, int $priority = 5): array
     {
-        $st = $this->db->prepare("INSERT INTO agent_tasks (agent_id, task_type, payload, priority, status, created_at) VALUES (:a, :t, :p, :pr, 'pending', NOW())");
+        $st = $this->db->prepare("INSERT INTO agent_tasks (agent_id, task_type, task_payload, priority, status) VALUES (:a, :t, :p, :pr, 'queued')");
         $st->execute([':a' => $agentId, ':t' => $type, ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE), ':pr' => $priority]);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
@@ -88,7 +88,7 @@ class AgentOrchestrator
 
     public function updateTaskStatus(int $id, string $status, ?int $executionId = null): array
     {
-        $sql = "UPDATE agent_tasks SET status = :s, updated_at = NOW()";
+        $sql = "UPDATE agent_tasks SET status = :s, completed_at = NOW()";
         $params = [':s' => $status, ':id' => $id];
         if ($executionId) { $sql .= ", execution_id = :e"; $params[':e'] = $executionId; }
         $sql .= " WHERE id = :id";
@@ -139,13 +139,13 @@ class AgentOrchestrator
 
     public function clearExpiredState(): int
     {
-        $st = $this->db->exec("DELETE FROM agent_state WHERE expires_at IS NOT NULL AND expires_at < NOW()");
-        return (int)$st;
+        $st = $this->db->query("DELETE FROM agent_state WHERE updated_at < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+        return (int)($st->rowCount() ?? 0);
     }
 
     public function listWorkflows(int $limit = 50): array
     {
-        $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE 1=1 ORDER BY created_at DESC LIMIT :lim");
+        $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE 1=1 ORDER BY id DESC LIMIT :lim");
         $st->bindValue(':lim', $limit, PDO::PARAM_INT);
         $st->execute();
         return $st->fetchAll(PDO::FETCH_ASSOC);
@@ -153,25 +153,25 @@ class AgentOrchestrator
 
     public function createWorkflow(string $name, string $trigger, array $steps, ?int $createdBy = null): array
     {
-        $st = $this->db->prepare("INSERT INTO workflow_automations (workflow_name, trigger_event, steps, status, created_by, created_at) VALUES (:n, :t, :s, 'active', :u, NOW())");
-        $st->execute([':n' => $name, ':t' => $trigger, ':s' => json_encode($steps, JSON_UNESCAPED_UNICODE), ':u' => $createdBy]);
+        $st = $this->db->prepare("INSERT INTO workflow_automations (automation_name, trigger_event, actions, is_active) VALUES (:n, :t, :s, 1)");
+        $st->execute([':n' => $name, ':t' => $trigger, ':s' => json_encode($steps, JSON_UNESCAPED_UNICODE)]);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
     public function triggerWorkflow(string $trigger, array $context): array
     {
-        $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE trigger_event = :t AND status = 'active'");
+        $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE trigger_event = :t AND is_active = 1");
         $st->execute([':t' => $trigger]);
         $workflows = $st->fetchAll(PDO::FETCH_ASSOC);
 
         $results = [];
         foreach ($workflows as $wf) {
-            $steps = json_decode($wf['steps'] ?? '[]', true) ?: [];
+            $steps = json_decode($wf['actions'] ?? '[]', true) ?: [];
             $execResults = [];
             foreach ($steps as $step) {
                 $execResults[] = $this->executeStep($step, $context);
             }
-            $results[] = ['workflow' => $wf['workflow_name'], 'id' => $wf['id'], 'results' => $execResults];
+            $results[] = ['workflow' => $wf['automation_name'], 'id' => $wf['id'], 'results' => $execResults];
         }
         return ['ok' => true, 'workflows_triggered' => count($workflows), 'results' => $results];
     }
@@ -188,13 +188,14 @@ class AgentOrchestrator
                     require_once __DIR__ . '/NotificationService.php';
                     $ns = new NotificationService($this->db);
                     $channel = str_replace('send_', '', $type);
-                    return $ns->send((int)$context['user_id'], $channel, $step['subject'] ?? '', $step['message'] ?? '', $step);
+                    $userId = (int)($context['user_id'] ?? $step['user_id'] ?? 0);
+                    return $ns->send($userId, $channel, $step['subject'] ?? '', $step['message'] ?? '', $step);
                 case 'agent_task':
                     $payload = array_merge($step['payload'] ?? [], $context);
                     return $this->createTask((int)($step['agent_id'] ?? 1), $step['task_type'] ?? 'lead_score', $payload, (int)($step['priority'] ?? 5));
                 case 'create_lead':
-                    $st = $this->db->prepare("INSERT INTO leads (name, email, phone, source, status, created_at) VALUES (:n, :e, :p, :s, 'new', NOW())");
-                    $st->execute([':n' => $context['name'] ?? '', ':e' => $context['email'] ?? '', ':p' => $context['phone'] ?? '', ':s' => $context['source'] ?? 'workflow']);
+                    $st = $this->db->prepare("INSERT INTO leads (name, email, phone, source, lead_number) VALUES (:n, :e, :p, :s, :num)");
+                    $st->execute([':n' => $context['name'] ?? '', ':e' => $context['email'] ?? '', ':p' => $context['phone'] ?? '', ':s' => $context['source'] ?? 'workflow', ':num' => 'WF-' . date('Ymd') . '-' . substr(uniqid(), -4)]);
                     return ['ok' => true, 'lead_id' => (int)$this->db->lastInsertId()];
                 default:
                     return ['ok' => true, 'noop' => $type];
@@ -206,7 +207,7 @@ class AgentOrchestrator
 
     public function processPendingTasks(int $maxTasks = 50): array
     {
-        $st = $this->db->prepare("SELECT id FROM agent_tasks WHERE status = 'pending' ORDER BY priority DESC, created_at ASC LIMIT :lim");
+        $st = $this->db->prepare("SELECT id FROM agent_tasks WHERE status = 'queued' ORDER BY priority DESC, assigned_at ASC LIMIT :lim");
         $st->bindValue(':lim', $maxTasks, PDO::PARAM_INT);
         $st->execute();
         $ids = $st->fetchAll(PDO::FETCH_COLUMN);
