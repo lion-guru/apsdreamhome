@@ -322,6 +322,8 @@ $router->get('/admin/saved-searches/apply/{id}', 'App\\Http\\Controllers\\Admin\
 
 $router->get('/admin/lead-kanban', 'App\\Http\\Controllers\\Admin\\LeadKanbanController@index');
 $router->post('/admin/lead-kanban/update-stage', 'App\\Http\\Controllers\\Admin\\LeadKanbanController@updateStage');
+
+$router->get('/admin/sales-dashboard', 'App\\Http\\Controllers\\Admin\\SalesManagerDashboardController@index');
 $router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
 $router->get('/dashboard', 'DashboardController@index');
 $router->get('/dashboard/profile', 'DashboardController@profile');
