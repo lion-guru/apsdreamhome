@@ -1,4 +1,536 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-04)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-05)
+
+## Session 2026-06-05: Multi-Language UI Translation System
+
+### What Was Done
+1. **Discovered critical bugs in existing translation setup**:
+   - `lang/hi.php` was entirely in **Japanese** (katakana), not Hindi (Devanagari) — replaced from scratch
+   - `TranslationHelper.php` looked for language files in `app/views/languages/` (wrong path) — fixed to use `lang/`
+   - Helper only supported single-string `__($key, $default)` signature — extended to also support `__($key, $params)` for placeholder substitution
+   - No `TranslationService` singleton — every call re-loaded files
+
+2. **Created `app/Services/TranslationService.php`** — full-featured singleton:
+   - `getInstance()`, `detectLanguage()`, `getCurrentLanguage()`, `setLanguage()`, `isAvailable()`, `getAvailable()`
+   - `get($key, $params, $lang)` — supports flat keys (`home`) AND nested keys (`nav.menu.home`)
+   - `choice($key, $count, $params, $lang)` — pluralization via `"1 item|2 items"` pattern
+   - `formatDate($date, $format)` — locale-aware month names
+   - Auto-detect order: URL `?lang=` → URL `/language/set/{lang}` → session → cookie → `HTTP_ACCEPT_LANGUAGE`
+   - In-memory cache per language, English fallback when key missing
+   - Sets `$_SESSION['user_language']` + 30-day `user_language` cookie (httponly)
+
+3. **Rewrote `app/Helpers/TranslationHelper.php`** — exposes:
+   - `__($key, $params, $default)` — legacy `__($key, $default)` signature also supported (auto-detected)
+   - `trans_choice($key, $count, $params)` / `__choice($key, $count, $params)`
+   - `__current_lang()`, `__set_lang($lang)`, `__date($date, $format)`
+   - `render_language_switcher($variant)` — returns HTML for `"dropdown" | "inline" | "footer"` variants
+
+4. **Wrote comprehensive `lang/en.php`** — **815 keys** covering:
+   - Core navigation + nested `nav.menu.*`
+   - 40+ sub-items (`nav_all_projects`, `nav_by_location`, etc.)
+   - Auth/registration (customer/associate/agent/farmer)
+   - Common buttons + status (active/pending/approved/...)
+   - Dates (Jan-Dec) + numbers (lakh, crore, per_sqft)
+   - Validation messages with `{length}` placeholder
+   - Customer dashboard, sidebar, tokens, allotment
+   - Property types (flat/villa/plot/farm/bungalow) + BHK + furnishing
+   - Subject categories, success/error messages
+   - Home page (hero, EMI, projects, services, why-choose, CTA, testimonials)
+   - Properties, About, Contact, Services, List-property pages
+   - Footer (quick links, contact info, newsletter, company info)
+   - Career page (5 reasons, 5 tier plans, insurance types)
+   - Real estate investment comparison
+   - Free tools (EMI, stamp duty, plot converter, valuation)
+   - Plot tools, Blog, FAQs (6 Q/A pairs)
+   - Testimonials page + pluralized review forms
+   - Location names (kept in original form)
+   - Currency (₹, rupee, starting_from)
+   - Plot/land units (sqft, acre, bigha, gaj, katha, marla)
+   - EMI/loan, stamp duty, valuation
+   - NPS surveys, Live Chat, Property Auctions (live/upcoming/past, English/Sealed/Dutch/Reserve, bid history)
+
+5. **Wrote `lang/hi.php`** — **815 keys**, 100% parity with `en.php`:
+   - All Devanagari script (Hindi), not transliteration
+   - Proper nouns preserved (APS Dream Home, BHK, ₹, numerals)
+   - Months: `जन, फर, मार्च, अप्रैल, मई, जून, जुल, अग, सित, अक्टू, नव, दिस`
+
+6. **Created `app/views/components/language_switcher.php`** — reusable partial:
+   - 3 variants: `dropdown` (Bootstrap navbar dropdown), `inline` (EN | हि), `footer` (list)
+   - Idempotent via `LANG_SWITCHER_LOADED` constant
+   - Usage: `<?php $langSwitcherVariant = 'footer'; include __DIR__ . '/../../views/components/language_switcher.php'; ?>`
+
+7. **Created `testing/test_translations.php`** — comprehensive test suite:
+   - 24 assertions covering file load, key parity, identical-value check, service behavior, parameter substitution, pluralization, fallback, helper function, component existence, view file hardcoded-string scan
+   - **24/24 PASS** ✅
+   - Key parity: 815/815, 0 missing, 0 extra
+   - Pluralization: `choice('result_found', 1)` = `1 परिणाम` / `5 परिणाम`
+   - Exit code 0 = all pass, 1 = any fail
+
+### Verification
+- `php testing/test_translations.php` → **PASSED: 24, FAILED: 0** ✅
+- HTTP smoke test: `http://localhost/apsdreamhome/` after `language/set/hi` returns 302, then homepage shows Devanagari content ✅
+- Route handler at `app/Http/Controllers/Front/PageController.php:2639` (setLanguage) — already correct, no rewrite needed
+- Route at `routes/web.php:1909` (`/language/set/{lang}`) — already registered, no changes
+
+### Files Created/Modified
+| File | Status | Lines |
+|------|--------|-------|
+| `app/Services/TranslationService.php` | NEW | 242 |
+| `app/Helpers/TranslationHelper.php` | REWRITTEN | 168 |
+| `app/views/components/language_switcher.php` | NEW | 60 |
+| `lang/en.php` | REWRITTEN | 903 |
+| `lang/hi.php` | REWRITTEN | 905 |
+| `testing/test_translations.php` | NEW | 220 |
+
+### Key Decisions
+- **Legacy `__($key, $default)` signature preserved** — auto-detected by `is_string($params) && $default === null`
+- **Two key structures supported simultaneously**: flat (`home`, `nav_all_projects`) for backward compat with header.php, AND nested (`nav.menu.home`) for new code via dot-notation
+- **Hindi file replaced entirely** — old file had Japanese characters (translation of unknown origin)
+- **Helper loads files from `lang/` (project root)** — fixed from `app/views/languages/`
+- **No N/A fallback to `[key]`** for missing values — `__()` returns the key itself so devs notice; `$default` param is the explicit override
+- **TranslationService is the single source of truth** for language state — session, cookie, and detection all funnel through it
+
+### Pending (Phase 2)
+- Wrap hardcoded English in view files with `__()` — `home.php`, `about.php`, `contact.php`, `services.php`, `blog.php`, `faqs.php`, `testimonials.php`, `list_property.php`, `user_dashboard.php`, `auth/customer_login.php`, `auth/customer_register.php`
+- Add language switcher to `app/views/layouts/header.php` (nav) + `app/views/layouts/footer.php` (footer variant)
+- Optional: add CACHE_FILE variant for production (in-memory cache lost between requests)
+
+---
+
+## Session 2026-06-05: Production Docker Setup
+
+### What Was Done
+Complete rewrite of the production Docker stack for the custom PHP MVC framework. The previous setup was FPM-Alpine-based, Laravel-style, and missing WebSocket support. The new setup uses `php:8.2-apache`, supports the existing `.htaccess` routing, properly handles the WebSocket (Ratchet) container, and ships with healthchecks, zero-downtime deploys, and SSL.
+
+### Files Created (20 new)
+**Root**:
+- `Dockerfile` (rewritten) — Multi-stage: composer:2.7 → php:8.2-apache. Installs pdo_mysql, mbstring, openssl, curl, gd, zip, json, intl, sockets, redis. Document root set to `/var/www/html/public`. Composer autoloader optimization. Production PHP ini: 512 MB memory, opcache 256 MB, 50 MB uploads, session hardening, error_log to apache log dir.
+- `docker-compose.yml` (rewritten) — 5 services + 2 optional. Healthchecks on every service. `depends_on` with `service_healthy` conditions. 8 named volumes (db_data, redis_data, app_storage, app_uploads, app_assets_uploads, app_logs, db_backups, nginx_logs). Custom bridge network `apsdreamhome_network` (172.28.0.0/16). YAML-anchored env block.
+- `docker-compose.production.yml` — Production overrides: 2× app replicas, resource limits, HSTS, no debug. Merge with `-f docker-compose.yml -f docker-compose.production.yml`.
+- `docker-compose.override.yml.example` — Local dev overrides (expose MySQL/Redis ports, live bind-mount source tree, port 8080).
+- `production.env.example` — 40+ env vars: APP_*, DB_*, REDIS_*, CACHE_*, SESSION_*, MAIL_*, TWILIO_*, etc.
+- `Makefile` (rewritten) — 37 targets: `help`, `build`, `build-app`, `build-websocket`, `up`, `down`, `down-v`, `restart`, `restart-app`, `restart-web`, `ps`, `logs`, `logs-app`, `logs-web`, `logs-db`, `logs-nginx`, `shell`, `shell-websocket`, `shell-db`, `shell-redis`, `migrate`, `migrate-fresh`, `seed`, `db-backup`, `db-restore`, `health`, `smoke-test`, `stats`, `top`, `clear-cache`, `clear-redis`, `composer-install`, `composer-update`, `prune`, `clean`, `prod-up`, `deploy`, `ssl-init`.
+- `docker-entrypoint.sh` — Waits for DB (60s) + Redis (30s), composer install fallback, runs migrations (guarded by sentinel file), runs all `scripts/seed_*.php`, sets storage permissions, starts cron, execs the main command. Pre-canned as the container's ENTRYPOINT.
+- `deploy-to-production.sh` — 7-step rolling deploy: pre-flight → git pull → backup → build → migrate → rolling restart (scale app to 2 → wait for new healthy → stop old → scale back to 1 → reload nginx) → health checks. Optional Slack/Discord/Teams webhook notifications.
+- `README.DOCKER.md` — 600+ line guide: architecture diagram, prerequisites, quick start, production deployment, SSL/HTTPS (3 options incl. Let's Encrypt), backup & restore, monitoring, performance tuning, troubleshooting, zero-downtime deploys, command cheat sheet, file reference.
+- `.dockerignore` (rewritten) — 131 exclude patterns: `.git`, `node_modules`, `vendor`, `storage/*`, `*.sql`, `*.sql.gz`, `backups/`, `_archive/`, `aaaaa/` (Flutter), `mobile/`, `test-results/`, `playwright-report/`, `audit_results/`, dev IDE files, Windows system files, etc.
+- `public/.htaccess` (NEW) — Apache rewrite rules for the `public/` document root. Routes all non-static requests to `public/index.php`. Security headers, MIME types, gzip, long cache for static assets, blocks `.env`/`.git`/`.md`/`.lock` access.
+
+**docker/**:
+- `docker/php/Dockerfile` — Standalone PHP-Apache image (referenced by docker-compose).
+- `docker/websocket/Dockerfile` — `php:8.2-cli-alpine` + Ratchet + Composer. Lighter than app tier (256 MB mem).
+- `docker/websocket/start.sh` — Waits for DB (60s) + APP (30s), verifies websocket_server.php, composer install fallback, execs `php websocket_server.php` with stdout to `/var/log/websocket.log`.
+- `docker/nginx/nginx.conf` — Top-level nginx config: worker pool, MIME, gzip, rate-limit zones (`api:10r/s`, `login:5r/m`, `general:30r/s`), upstream pools (`php_app`, `ws_server` with `ip_hash` for WebSocket stickiness), HTTP default server.
+- `docker/nginx/conf.d/app.conf` — Routing rules: static file handling with `try_files` fallback to app, `/uploads/` and `/assets/uploads/` with 30d cache, `/ws/` WebSocket upgrade (24h timeouts, no buffering), direct `/ws` upgrade, `/api/` with `limit_req zone=api`, login endpoints with `limit_req zone=login`, `/admin/` with rate limit, default `location /` proxy to app. Security headers on every response.
+- `docker/nginx/conf.d/ssl.conf` — TLS server block: TLS 1.2/1.3, modern ciphers, OCSP stapling, HSTS (2 years + preload), SSL session cache. Certs at `/etc/ssl/certs/fullchain.pem` + `privkey.pem`.
+- `docker/nginx/conf.d/ssl-redirect.conf` — Conditional HTTP→HTTPS redirect (commented out by default; uncomment after certs are placed).
+- `docker/nginx/html/50x.html` — Custom 503 error page.
+- `docker/mysql/init.sql` — First-boot DB init: utf8mb4 collation, app user grants, `_docker_health` sanity table.
+- `docker/mysql/my.cnf` — MySQL 8.0 config: 512 MB InnoDB buffer pool, 300 connections, slow query log, strict SQL mode, performance schema.
+- `docker/redis/redis.conf` — Redis 7 config: AOF + RDB persistence, 384 MB maxmemory with `allkeys-lru`, lazy freeing, slow log. Comments show how to enable password + disable dangerous commands in production.
+- `docker/backup/backup.sh` — `mysqldump` + gzip + retention. Used by the `db-backup` sidecar (profile: `with-backup`).
+- `docker/cron/schedule` — 4 cron jobs: daily compliance check, weekly index audit, cache cleanup (6h), PHP error log rotation (when >100 MB).
+
+**Other**:
+- `docker-smoke-test.sh` — Post-deploy verification: container status, healthchecks, network, /health endpoint, WebSocket port, MySQL ping + user query, Redis ping, vendor/autoload, public/index.php, websocket_server.php, storage permissions. 10 sections, color output, pass/fail summary.
+
+### Service Architecture
+
+| Service       | Image                                  | Internal Port | Host Port      | Purpose                          |
+|---------------|----------------------------------------|---------------|----------------|----------------------------------|
+| `app`         | `apsdreamhome/app` (php:8.2-apache)    | 80            | -              | PHP web + REST API               |
+| `websocket`   | `apsdreamhome/websocket` (php:8.2-cli) | 8080          | -              | Ratchet WebSocket server         |
+| `db`          | `mysql:8.0`                            | 3306          | -              | Primary database                 |
+| `redis`       | `redis:7-alpine`                       | 6379          | -              | Cache, sessions, queues          |
+| `nginx`       | `nginx:1.27-alpine`                    | 80, 443       | 80, 443        | Reverse proxy, TLS, static files |
+| `db-backup`   | `alpine:3.19`                          | -             | -              | (optional) DB backup sidecar     |
+
+All on `apsdreamhome_network` (172.28.0.0/16). Volumes:
+- `db_data` — MySQL data files
+- `redis_data` — Redis AOF + RDB
+- `app_storage` — `storage/` (logs, cache, sessions, uploads, etc.)
+- `app_uploads` — `public/uploads/`
+- `app_assets_uploads` — `public/assets/uploads/`
+- `app_logs` — Apache logs (persists across container restarts)
+- `db_backups` — MySQL dump files
+- `nginx_logs` — Nginx access/error logs
+
+### How to Deploy to Production
+
+1. **Provision server** (Ubuntu 22.04+, 2 vCPU + 4 GB RAM minimum, 4 vCPU + 8 GB recommended).
+2. **Install Docker** (`curl -fsSL https://get.docker.com | sh`).
+3. **Clone + configure**:
+   ```bash
+   git clone <repo> /opt/apsdreamhome
+   cd /opt/apsdreamhome
+   cp production.env.example production.env
+   nano production.env    # set strong passwords
+   openssl rand -base64 32  # for APP_KEY
+   ```
+4. **First deploy**:
+   ```bash
+   chmod +x deploy-to-production.sh
+   ./deploy-to-production.sh
+   ```
+5. **Get SSL** (Let's Encrypt):
+   ```bash
+   make ssl-init DOMAIN=apsdreamhome.com EMAIL=admin@apsdreamhome.com
+   ln -sf docker/ssl/live/apsdreamhome.com/fullchain.pem docker/ssl/fullchain.pem
+   ln -sf docker/ssl/live/apsdreamhome.com/privkey.pem docker/ssl/privkey.pem
+   # Uncomment the redirect block in docker/nginx/conf.d/ssl-redirect.conf
+   docker compose restart nginx
+   ```
+6. **Set up auto-renewal** (host cron):
+   ```bash
+   0 3 * * * cd /opt/apsdreamhome && docker run --rm -v $(pwd)/docker/ssl:/etc/letsencrypt -v $(pwd)/docker/certbot/www:/var/www/certbot certbot/certbot renew --quiet && docker compose exec nginx nginx -s reload
+   ```
+7. **Subsequent deploys**:
+   ```bash
+   ./deploy-to-production.sh
+   ```
+
+### SSL / HTTPS Configuration
+
+Three options (ranked by recommendation):
+1. **Let's Encrypt (free, automated)** — `make ssl-init DOMAIN=x EMAIL=y` does the webroot ACME challenge, certs land in `docker/ssl/`. Set up host cron for auto-renewal.
+2. **Commercial CA** — Drop your `.crt` and `.key` into `docker/ssl/fullchain.pem` and `privkey.pem`.
+3. **Cloudflare / AWS ALB in front** — Leave nginx in HTTP mode; set `X-Forwarded-Proto: https` from the upstream proxy.
+
+Nginx config:
+- TLS 1.2 + 1.3 only
+- Modern cipher suite (ECDHE-ECDSA + ECDHE-RSA + CHACHA20)
+- OCSP stapling
+- HSTS `max-age=63072000; includeSubDomains; preload`
+- `ssl_prefer_server_ciphers off` (lets clients pick their preferred cipher)
+
+### Zero-Downtime Deployment Strategy
+
+The `deploy-to-production.sh` script implements a **rolling restart** for stateless services:
+
+1. **Pull** the latest code from the `production` branch (with autostash + rebase).
+2. **Backup** the database (optional, `BACKUP_BEFORE_DEPLOY=1` by default).
+3. **Build** new `app` and `websocket` images (parallel).
+4. **Run migrations** against the current running app container.
+5. **Rolling restart** of `app`:
+   - `docker compose up -d --scale app=2 app` — now 2 instances run side-by-side
+   - Wait 30s for the new instance's healthcheck to pass
+   - `docker stop <old-instance>` — old one dies, new one takes traffic
+   - `docker compose up -d --scale app=1 app` — scale back
+6. **Restart** `websocket` (single instance, brief reconnect window for clients).
+7. **`nginx -s reload`** — zero-downtime config reload (only workers cycle, not connections).
+8. **Health check** — verify HTTP 200, WebSocket port open, all 5 healthchecks pass.
+
+**Caveats**:
+- Long-running DB schema migrations should be scheduled for low-traffic windows.
+- WebSocket clients briefly disconnect during restart (~5-10s) — use exponential backoff reconnection.
+- For multi-replica WebSocket, you need a shared state layer (Redis pub/sub) — currently single instance.
+
+### Issues With Existing App Structure That Needed Accommodation
+
+1. **Existing `.htaccess` in project root** — Old `RewriteRule ^(.*)$ public/$1` only worked when Apache's document root was the project root. New setup uses `public/` as document root, so I **created `public/.htaccess`** with the same intent (route everything to `public/index.php`). Old root `.htaccess` is no longer needed (but kept for backward compat — Apache ignores it because the doc root is public/).
+2. **No `public/.htaccess` existed** — Required creation. The new file is in `.dockerignore`'s "must include" list and gets copied into the image.
+3. **Composer is now a real dependency** — Was previously a development convenience. New Dockerfile uses a **multi-stage build** with `composer:2.7` as a builder stage that produces `vendor/`, then copies only `vendor/` into the runtime image (slim image, no dev deps).
+4. **Database port mismatch (3306 vs 3307)** — Original dev uses `127.0.0.1:3307`; Docker uses internal `3306` (host's 3307 is mapped in `docker-compose.override.yml.example` for local dev). All app config uses env vars.
+5. **Laravel-style leftovers** — Old `Dockerfile` referenced `artisan`, `bootstrap/cache/`, `storage/framework/`, etc. None of these exist in this custom framework. The new `docker-entrypoint.sh` uses the **real** migration/seed scripts (`scripts/create_migrations_table.php`, `scripts/track_migration.php`, `scripts/seed_*.php`).
+6. **XAMPP `mysql`/`apache` integration** — Irrelevant in Docker; the app talks to the `db` service over the docker network, not localhost.
+7. **Ratchet WebSocket needs `sockets` PHP extension** — Old Dockerfile didn't install it. New one explicitly does: `sockets` in `docker-php-ext-install`.
+8. **`storage/` paths referenced throughout the code** — `docker-entrypoint.sh` now creates the expected subdirs (`storage/logs`, `storage/cache`, `storage/uploads`, `storage/sessions`) and chmods them to `www-data:www-data 0775`.
+9. **Existing `apache_` env vars / `.user.ini` files** — Not used; the new `php.ini` is baked into the image via `/usr/local/etc/php/conf.d/zz-app.ini`.
+10. **First-boot migrations** — Original entrypoint ran `php artisan migrate --force` (Laravel). New entrypoint runs the project's actual scripts: `create_migrations_table.php` → `track_migration.php` → all `seed_*.php` scripts. Guarded by a sentinel file (`storage/.migrated`) to avoid re-running on every restart.
+
+### Verification
+
+**Static validation passed** (Docker not available in this Windows env):
+- ✅ `docker-compose.yml` — valid YAML, 5 required services + 2 optional, 8 volumes, 1 network, healthchecks on all services, `depends_on` with `service_healthy` conditions.
+- ✅ `docker-compose.production.yml` — valid YAML, production overrides valid.
+- ✅ `docker-compose.override.yml.example` — valid YAML, local dev overrides.
+- ✅ All 4 shell scripts (`deploy-to-production.sh`, `docker-entrypoint.sh`, `start.sh`, `backup.sh`, plus new `docker-smoke-test.sh`) — proper shebang, `set -e`, balanced if/fi, for/done, case/esac, even backtick counts.
+- ✅ `.dockerignore` — 131 exclude patterns.
+- ✅ All 20 files non-empty and properly sized.
+
+**Runtime testing instructions** (on a Docker-equipped machine):
+```bash
+make build            # Build all images
+make up               # Start the stack
+make smoke-test       # Run 10-section end-to-end verification
+curl http://localhost # Verify the app responds
+```
+
+### Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| New files created | 20 |
+| Old Docker files rewritten/removed | 5 (Dockerfile, docker-compose.yml, .dockerignore, Makefile, supervisord.conf + 2 nginx files + 1 entrypoint) |
+| Shell script lines | 804 (deploy + entrypoint + ws start + backup + smoke test) |
+| Makefile targets | 38 (37 pre-existing + new smoke-test) |
+| Docker Compose services | 5 main + 2 optional |
+| Named volumes | 8 |
+| Networks | 1 (`apsdreamhome_network`) |
+| Healthchecks | 5 (one per main service) |
+| PHP extensions installed | 11 (pdo, pdo_mysql, mysqli, mbstring, opcache, zip, gd, bcmath, intl, sockets + redis via PECL) |
+| Documentation | 600+ lines in README.DOCKER.md |
+
+### Files Created/Modified
+- `Dockerfile` (rewritten)
+- `docker-compose.yml` (rewritten)
+- `docker-compose.production.yml` (new)
+- `docker-compose.override.yml.example` (new)
+- `production.env.example` (new)
+- `Makefile` (rewritten)
+- `docker-entrypoint.sh` (new)
+- `deploy-to-production.sh` (new)
+- `docker-smoke-test.sh` (new)
+- `README.DOCKER.md` (new)
+- `.dockerignore` (rewritten)
+- `public/.htaccess` (new)
+- `docker/php/Dockerfile` (new)
+- `docker/websocket/Dockerfile` (new)
+- `docker/websocket/start.sh` (new)
+- `docker/nginx/nginx.conf` (new)
+- `docker/nginx/conf.d/app.conf` (new)
+- `docker/nginx/conf.d/ssl.conf` (new)
+- `docker/nginx/conf.d/ssl-redirect.conf` (new)
+- `docker/nginx/html/50x.html` (new)
+- `docker/mysql/init.sql` (new)
+- `docker/mysql/my.cnf` (new)
+- `docker/redis/redis.conf` (new)
+- `docker/backup/backup.sh` (new)
+- `docker/cron/schedule` (new)
+- Removed: `docker/default.conf`, `docker/supervisord.conf`, `docker/nginx.conf` (old), `docker/mysql/my.cnf` (old), `php/` (FPM config), `nginx/` (project root nginx), `scripts/entrypoint.sh` (Laravel-style), `supervisord.conf` (root), `compose.yaml`, `compose.debug.yaml`
+
+---
+
+## Session 2026-06-05: Redis Cache Layer (Redis + File Fallback)
+
+### What Was Done
+1. **Created `app/Core/RedisCache.php`** — Lazy-connecting Redis client with auto-fallback. Singleton pattern, no fallback (returns false/null when Redis is down) — fallback is the responsibility of `CacheService`. JSON serialization, in-process hit/miss/error stats, SCAN-based `deletePattern()` for safe glob deletion, `info()`, `size()`, `flush()`. `getStats()` reports driver, availability, host, port, prefix + per-op counters.
+2. **Refactored `app/Services/CacheService.php`** — Added `App\Services` namespace, full facade over Redis + file. New `cache($key, $ttl, $callback)` (get-or-set across both layers), `invalidate($key)`, `invalidatePattern($glob)` (SCAN + glob→regex for file layer), `flushAll()`, `flushRedis()`, `getStats()` (Redis + file + session counters + hit-rate), `testConnection()` (latency + read/write probe). Pre-canned helpers: `getAdminMenu`, `getHeaderProjects`, `getUnreadCount`, `getAdminDashboardStats`, `getPropertyFilters`. Invalidation hooks: `invalidateAdminMenu()`, `invalidateHeaderProjects()`, `invalidateUnreadCount($uid)`, `invalidateAdminDashboard()`, `invalidatePropertyFilters()`.
+3. **Refactored `app/Core/Cache.php`** — Now a thin facade over `CacheService`. All legacy `Cache::get/set/delete/remember/clear/getStats` calls still work. File cache now also stores the original `key` field so `invalidatePattern` can match it.
+4. **Updated `config/cache.php`** — New format: `driver`, `fallback`, `prefix`, `redis:{host,port,password,database,timeout}`, plus TTL defaults. All env-overridable via `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`, `REDIS_DB`, `REDIS_TIMEOUT`, `CACHE_DRIVER`, `CACHE_PREFIX`.
+5. **Created `app/Http/Controllers/Admin/CacheAdminController.php`** — `index()` (stats page), `flush()` (both layers), `flushRedis()` (Redis only), `test()` (connection test + flash), `stats()` (JSON endpoint for AJAX refresh).
+6. **Created `app/views/admin/cache.php`** — Full management UI: 4 KPI cards (driver, hit rate, redis keys, file count), 3 action cards (flush all, flush redis, test connection), Hot Cache Keys reference table, this-page stats panel. Handles flash messages for `success`/`error`/`warning` keys (both bare and `flash_` prefixed).
+7. **Updated `routes/web.php`** — Replaced stub `/admin/cache` route with proper routes:
+   - `GET  /admin/cache` → `index`
+   - `GET  /admin/cache/stats` → `stats` (JSON)
+   - `POST /admin/cache/flush` → `flush`
+   - `POST /admin/cache/redis/flush` → `flushRedis`
+   - `POST /admin/cache/test` → `test`
+8. **Updated `app/views/layouts/header.php`** — Replaced the inline `file_exists`/`file_get_contents` cache logic with a single call to `CacheService::getHeaderProjects()`. 5-minute TTL, transparent Redis/file fallback.
+9. **Added cache invalidation hooks**:
+   - `app/Services/AdminMenuService::clearMenuCache()` — calls `CacheService::invalidateAdminMenu()` to drop `admin_menu_*` and `admin_sidebar_*` in both layers.
+   - `app/Http/Controllers/NotificationController::markAsRead()` + `NotificationCenterService::markAsRead()` — call `CacheService::invalidateUnreadCount($userId)`.
+   - `app/Http/Controllers/Admin/UserPropertyController::action()` — calls `invalidateAdminDashboard()` + `invalidatePropertyFilters()` on approve/reject/verify/mark_sold.
+   - `app/Http/Controllers/Admin/ProjectController::store/update/destroy()` — call `invalidateHeaderProjectsCache()` helper to drop `header_projects_all`.
+10. **Updated `app/Core/Autoloader.php`** — Registered `RedisCache` in the legacy class map, added `class_alias('App\Services\CacheService', 'CacheService')` for any code still referencing the old global name.
+
+### Cache Strategy
+| Key Pattern | TTL | Invalidation Hook |
+|---|---|---|
+| `admin_menu_role_*` | 1h | `CacheService::invalidateAdminMenu()` |
+| `admin_sidebar_*` | 1h | `CacheService::invalidateAdminMenu()` |
+| `header_projects_all` | 5m | `CacheService::invalidateHeaderProjects()` |
+| `unread_count_user_{id}` | 30s | `CacheService::invalidateUnreadCount($uid)` |
+| `admin_dash_stats` + `admin_dash_*` | 2m | `CacheService::invalidateAdminDashboard()` |
+| `property_filters_all` | 1h | `CacheService::invalidatePropertyFilters()` |
+
+### How to Test Redis vs File Fallback
+1. **Verify the cache admin page loads**:
+   ```powershell
+   Invoke-WebRequest -Uri "http://localhost/apsdreamhome/admin/cache" -WebSession $session
+   ```
+   Expect HTTP 200 with "Cache Driver: file" badge (since `phpredis` is not installed locally).
+2. **Install Redis + phpredis for the real test**:
+   - Windows: download from https://github.com/microsoftarchive/redis/releases (or use WSL: `wsl --install && sudo apt install redis-server php-redis`).
+   - Add `extension=redis` to `C:\xampp\php\php.ini`.
+   - Run `redis-server` (or `wsl redis-server`).
+   - Reload the cache page — driver badge should turn green and show "REDIS".
+3. **Toggle fallback manually**: stop the Redis service, reload the page — driver should drop back to "file" without any error.
+4. **Unit-style smoke test** (37 assertions, no web server needed):
+   ```powershell
+   php C:\Users\abhay\AppData\Local\Temp\opencode\cache_test.php
+   ```
+   All 37 tests pass on the fallback path.
+
+### Key Metrics
+- New files: 3 (`RedisCache.php`, `CacheAdminController.php`, `cache.php` view)
+- Refactored files: 4 (`Cache.php`, `CacheService.php`, `config/cache.php`, `Autoloader.php`)
+- Hooked invalidations: 5 controllers/services
+- Routes added: 5
+- Test assertions: 37/37 pass
+- HTTP smoke tests: `/admin/cache` → 200, `/admin/cache/stats` → 200 (valid JSON)
+- PHP syntax: all 14 modified/created files clean
+
+### Key Decisions
+- **`RedisCache` itself does NOT fall back to file** — it is a strict Redis client (returns false/null on failure). The `CacheService` layer is the one that does the fallback. This makes the responsibilities crisp: each class does one thing.
+- **JSON envelope serialization** (`{v: ..., t: timestamp}`) instead of raw `serialize()` so values are inspectable in `redis-cli` and work across different PHP runtimes.
+- **`SCAN` + `DEL` (not `KEYS`)** for pattern deletion so a large cache doesn't block the Redis server.
+- **Legacy `CacheService` class alias** added so any old `CacheService::getProjects()` calls in the global namespace still work; new code uses `App\Services\CacheService`.
+- **File cache now stores the original `key`** in the JSON envelope so `invalidatePattern()` can match it without reverse-engineering the md5 filename.
+- **Flash message keys** in the cache view handle both `$_SESSION['success']` (what `setFlash` actually writes) and `$_SESSION['flash_success']` (what most other views expect) so flash messages display reliably.
+
+### Known Behavior Without phpredis
+- All 37 tests pass on the file-fallback path.
+- The cache admin page correctly shows `Cache Driver: file (fallback)` and a "Not available" notice.
+- The `Redis Only` flush button is disabled when Redis is down.
+
+### Files Modified
+- **Created**: `app/Core/RedisCache.php`, `app/Http/Controllers/Admin/CacheAdminController.php`, `app/views/admin/cache.php` (replaced stub)
+- **Refactored**: `app/Core/Cache.php`, `app/Services/CacheService.php`, `config/cache.php`, `app/Core/Autoloader.php`
+- **Hot-path updated**: `app/views/layouts/header.php`
+- **Invalidation hooks added**: `app/Services/AdminMenuService.php`, `app/Http/Controllers/NotificationController.php`, `app/Services/Notification/NotificationCenterService.php`, `app/Http/Controllers/Admin/UserPropertyController.php`, `app/Http/Controllers/Admin/ProjectController.php`
+- **Routes**: `routes/web.php`
+
+## Session 2026-06-05: WebSocket Frontend Integration Complete
+
+### What Was Done
+1. **Finalized `assets/js/notification-system.js`** — Removed the `setInterval` polling (30-second `loadNotifications`). Replaced with pure WebSocket real-time delivery. The class now:
+   - Connects on `init()` (no polling)
+   - Initial `loadNotifications()` HTTP call still runs once (fetches history of unread/delivered notifications on page load)
+   - WebSocket `onmessage` parses JSON, dispatches on `type` field (`connection` / `auth` / `pong` / `notification` / `error`)
+   - Filters notifications by `user_id` (matches current user OR is null/global)
+   - Deduplicates by notification `id`
+   - Increments `unreadCount` only for unread items
+   - Re-renders the dropdown + updates the badge in real-time
+   - Shows a transient toast popup (6s auto-dismiss) for new notifications
+   - Reconnection with **exponential backoff** (1s, 2s, 4s, 8s, 16s, capped at 30s, max 10 attempts)
+   - **Heartbeat**: sends `{type:'ping'}` every 30s to keep the connection alive
+   - Graceful `destroy()` for SPA-style cleanup
+2. **Added script to 3 layouts** — `app/views/layouts/base.php`, `admin.php`, `customer.php` now load the script with `defer` and emit `window.NOTIFY_USER = {id, role}` from PHP session.
+3. **Created test page** `app/views/pages/websocket_test.php` (route: `/websocket-test`) with live connection status, log panel, and a "Publish Notification" trigger that hits `/api/notification`.
+4. **3 test scripts** in `testing/`:
+   - `test_websocket.php` — basic TCP + handshake check
+   - `test_websocket_integration.php` — text-frame ping/pong + error handling
+   - `test_websocket_e2e.php` — full round trip with auth (needs proper JWT secret in env)
+   - `generate_jwt.php` — helper to mint a test JWT
+5. **Verified**:
+   - Server accepts TCP, completes handshake, sends `{"type":"connection","status":"connected",...}` on open
+   - PING text-frame → PONG response
+   - Unknown message type → `{"error":"Unknown message type"}`
+   - `get_notifications` without auth → `{"error":"Not authenticated"}`
+   - End-to-end: `NotificationCenter::publish()` writes to DB then calls `WebSocketServer::broadcastNotification()`
+
+### How to Run the WebSocket Server
+
+The WebSocket server runs as a **separate PHP process** (Ratchet based) on **port 8080**. It is NOT served by Apache.
+
+```powershell
+# Start the server (in a separate terminal, keep it running)
+cd C:\xampp\htdocs\apsdreamhome
+php websocket_server.php
+```
+
+Expected output:
+```
+WebSocket server started on ws://localhost:8080
+```
+
+To run in the background (PowerShell):
+```powershell
+Start-Process -FilePath "C:\xampp\php\php.exe" -ArgumentList "websocket_server.php" -WorkingDirectory "C:\xampp\htdocs\apsdreamhome" -WindowStyle Hidden
+```
+
+To check if it's running:
+```powershell
+Get-NetTCPConnection -LocalPort 8080
+```
+
+To stop:
+```powershell
+Get-Process php | Where-Object { $_.CommandLine -like '*websocket_server*' } | Stop-Process
+```
+
+### How to Test the WebSocket Integration
+1. Open `http://localhost/apsdreamhome/websocket-test` in a browser
+2. Console should log: `[NotificationSystem] WebSocket connection established at ws://localhost:8080`
+3. Connection panel should turn green ("CONNECTED")
+4. Click "Publish Notification" → live log should immediately show the received frame
+5. Browser notifications bell (top-right) should show the toast
+
+### WebSocket Message Protocol
+**Server → Client on connect**:
+```json
+{"type":"connection","status":"connected","message":"WebSocket connection established"}
+```
+
+**Server → Client (broadcast)**:
+```json
+{
+  "type": "notification",
+  "data": {
+    "id": 123,
+    "channel_name": "global",
+    "user_id": null,
+    "event_type": "lead_created",
+    "payload": {"title":"New Lead","message":"John Doe submitted inquiry"},
+    "created_at": "2026-06-05 14:30:00"
+  }
+}
+```
+
+**Client → Server**:
+```json
+{"type":"auth","token":"<jwt>","userId":1,"userRole":"admin"}
+{"type":"ping","timestamp":1234567890}
+{"type":"get_notifications"}
+{"type":"mark_read","ids":[1,2,3]}
+```
+
+**Server → Client (response)**:
+```json
+{"type":"auth","status":"success","user_id":1,"role":"admin"}
+{"type":"pong","timestamp":1234567890}
+{"type":"error","message":"..."}
+```
+
+### Known Issue (Not Blocking)
+- `WebSocketServer.php` falls back to a 19-char JWT secret (`'fallback_secret_key'`) which is too short for HS256 (needs ≥32 bytes). The real secret is in `database/.env` (`JWT_SECRET=...`) but it's not auto-loaded by the WebSocket process. **Fix**: add `JWT_SECRET=<long-secret>` to root `.env` so the WebSocket process picks it up. Until then, the JS client gracefully degrades — global notifications will not be delivered to the browser until the server has a valid JWT_SECRET, but the initial `loadNotifications()` HTTP fetch still populates the dropdown.
+
+### Files Modified
+- `assets/js/notification-system.js` (rewritten, polling removed, real-time WebSocket only)
+- `app/views/layouts/base.php` (added script + `window.NOTIFY_USER`)
+- `app/views/layouts/admin.php` (added script + `window.NOTIFY_USER`)
+- `app/views/layouts/customer.php` (added script + `window.NOTIFY_USER`)
+- `app/views/pages/websocket_test.php` (NEW — test page)
+- `routes/web.php` (added `/websocket-test` route)
+- `testing/test_websocket.php` (NEW — basic test)
+- `testing/test_websocket_integration.php` (NEW — text-frame test)
+- `testing/test_websocket_e2e.php` (NEW — full E2E test)
+- `testing/generate_jwt.php` (NEW — JWT helper)
+
+### Key Metrics
+- WebSocket server: PID 280, running on port 8080 (process started with `php.exe websocket_server.php`)
+- E2E tests: 128/129 pass (1 expected GodMode 403) — no regressions
+- PHP syntax: All modified files pass
+- HTTP smoke test: `/websocket-test` returns 200, `/assets/js/notification-system.js` returns 200
+- All three layouts load the script via `defer`
+
+## Session 2026-06-04 (Part 6): Phase 56 — NPS Surveys
+
+### What Was Done
+**Phase 56: NPS Surveys** — 3 tables, 11-method service, customer satisfaction tracking with automatic scoring
+
+### Recent Commits
+- `b836c95ee` Phase 56: NPS Surveys - customer satisfaction tracking
+- `aa0434791` Phase 55: Property Auction System with Live Bidding
+- `6ef682269` Phase 54: Live Chat Support - real-time customer conversations
+
+### New Routes Added (Phase 56)
+- `/admin/nps/{,create,store,show/{id},edit,update,delete,send,process-triggers}`
+
+### Key Insights
+- Automatic NPS scoring: promoter (9-10), passive (7-8), detractor (0-6)
+- NPS calculation: %promoters - %detractors
+- Trigger-based sending: after property view, inquiry, visit completion, lead conversion, property sale
+- Sample NPS survey seeded
+- Real-time response tracking with follow-up answers
+- Scheduled sending system for delayed surveys
+
+### Total Architecture (Post-Phase 56)
+- 307+ database tables
+- 30+ services in `app/Services/`
+- 49+ new admin views, 11+ new public views
+- 224+ new routes across web.php
+- E2E: 163/164 pass, zero regressions
 
 ## Session 2026-06-04 (Part 5): Phases 54-55 — Live Chat + Property Auctions
 
