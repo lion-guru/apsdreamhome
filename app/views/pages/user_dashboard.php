@@ -395,6 +395,9 @@ $userDocuments = $userDocuments ?? [];
                     <a href="<?= BASE_URL ?>/user/notification-settings" class="btn btn-outline-warning">
                         <i class="fas fa-bell me-2"></i>Notification Settings
                     </a>
+                    <a href="<?= BASE_URL ?>/user/referral" class="btn btn-outline-success">
+                        <i class="fas fa-gift me-2"></i>Refer & Earn
+                    </a>
                     <a href="<?= BASE_URL ?>/user/tickets" class="btn btn-outline-warning">
                         <i class="fas fa-headset me-1"></i> My Tickets
                     </a>
