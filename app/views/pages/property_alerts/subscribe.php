@@ -1,0 +1,243 @@
+<?php
+$page_title = $page_title ?? 'Property Alerts';
+$page_heading = $page_heading ?? 'Property Alerts';
+$content = $content ?? '';
+$errors = $errors ?? [];
+$logged_in = $logged_in ?? false;
+ob_start();
+?>
+<style>
+.alert-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 60px 0; }
+.alert-card { border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.alert-card .card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.feature-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.match-card { border: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.2s; }
+.match-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: #667eea; }
+</style>
+
+<section class="alert-hero">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-bell me-2"></i>Property Alerts</h1>
+        <p class="lead mb-0">Get instant notifications when properties matching your criteria are listed</p>
+    </div>
+</section>
+
+<div class="container py-5">
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following:</strong>
+            <ul class="mb-0 mt-2">
+                <?php foreach ($errors as $err): ?>
+                    <li><?= htmlspecialchars($err) ?></li>
+                <?php endforeach; ?>
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card alert-card">
+                <div class="card-header p-4">
+                    <h4 class="mb-1"><i class="fas fa-search me-2"></i>Create Your Property Alert</h4>
+                    <p class="mb-0 opacity-75">Fill in your preferences and we'll notify you when matching properties are listed</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="<?= BASE_URL ?>/property-alerts/subscribe">
+                        <h6 class="text-uppercase text-muted small mb-3"><i class="fas fa-user me-2"></i>Your Information</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" name="name" required
+                                       value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" name="email" required
+                                       value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone (optional)</label>
+                                <input type="tel" class="form-control" name="phone" placeholder="+91 98765 43210"
+                                       value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Alert Frequency *</label>
+                                <select class="form-select" name="frequency" required>
+                                    <option value="instant" <?= ($_POST['frequency'] ?? '') === 'instant' ? 'selected' : '' ?>>Instant (as soon as listed)</option>
+                                    <option value="daily" <?= ($_POST['frequency'] ?? 'daily') === 'daily' ? 'selected' : '' ?>>Daily Digest</option>
+                                    <option value="weekly" <?= ($_POST['frequency'] ?? '') === 'weekly' ? 'selected' : '' ?>>Weekly Summary</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h6 class="text-uppercase text-muted small mb-3"><i class="fas fa-home me-2"></i>Property Preferences</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Property Type *</label>
+                                <select class="form-select" name="property_type" required>
+                                    <option value="">Any Type</option>
+                                    <option value="plot" <?= ($_POST['property_type'] ?? '') === 'plot' ? 'selected' : '' ?>>Plot / Land</option>
+                                    <option value="house" <?= ($_POST['property_type'] ?? '') === 'house' ? 'selected' : '' ?>>House</option>
+                                    <option value="flat" <?= ($_POST['property_type'] ?? '') === 'flat' ? 'selected' : '' ?>>Flat / Apartment</option>
+                                    <option value="shop" <?= ($_POST['property_type'] ?? '') === 'shop' ? 'selected' : '' ?>>Shop / Commercial</option>
+                                    <option value="farmhouse" <?= ($_POST['property_type'] ?? '') === 'farmhouse' ? 'selected' : '' ?>>Farmhouse</option>
+                                    <option value="villa" <?= ($_POST['property_type'] ?? '') === 'villa' ? 'selected' : '' ?>>Villa</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Listing Type *</label>
+                                <select class="form-select" name="listing_type" required>
+                                    <option value="">Any</option>
+                                    <option value="sale" <?= ($_POST['listing_type'] ?? '') === 'sale' ? 'selected' : '' ?>>For Sale</option>
+                                    <option value="rent" <?= ($_POST['listing_type'] ?? '') === 'rent' ? 'selected' : '' ?>>For Rent</option>
+                                    <option value="lease" <?= ($_POST['listing_type'] ?? '') === 'lease' ? 'selected' : '' ?>>For Lease</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" name="city" placeholder="e.g. Gorakhpur"
+                                       value="<?= htmlspecialchars($_POST['city'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-control" name="state" placeholder="e.g. Uttar Pradesh"
+                                       value="<?= htmlspecialchars($_POST['state'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Min Price (₹)</label>
+                                <input type="number" class="form-control" name="min_price" min="0" placeholder="No min"
+                                       value="<?= htmlspecialchars($_POST['min_price'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Max Price (₹)</label>
+                                <input type="number" class="form-control" name="max_price" min="0" placeholder="No max"
+                                       value="<?= htmlspecialchars($_POST['max_price'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Min Area (sqft)</label>
+                                <input type="number" class="form-control" name="min_area_sqft" min="0"
+                                       value="<?= htmlspecialchars($_POST['min_area_sqft'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Max Area (sqft)</label>
+                                <input type="number" class="form-control" name="max_area_sqft" min="0"
+                                       value="<?= htmlspecialchars($_POST['max_area_sqft'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Bedrooms</label>
+                                <select class="form-select" name="bedrooms">
+                                    <option value="">Any</option>
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <option value="<?= $i ?>" <?= ($_POST['bedrooms'] ?? '') == $i ? 'selected' : '' ?>><?= $i ?>+</option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h6 class="text-uppercase text-muted small mb-3"><i class="fas fa-bell me-2"></i>Notification Channels</h6>
+                        <div class="row g-2 mb-4">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="notify_email" id="ne" checked
+                                           <?= !empty($_POST['notify_email']) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="ne">
+                                        <i class="fas fa-envelope text-primary me-1"></i> Email
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="notify_sms" id="ns"
+                                           <?= !empty($_POST['notify_sms']) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="ns">
+                                        <i class="fas fa-sms text-info me-1"></i> SMS
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="notify_whatsapp" id="nw"
+                                           <?= !empty($_POST['notify_whatsapp']) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="nw">
+                                        <i class="fab fa-whatsapp text-success me-1"></i> WhatsApp
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-bell me-2"></i>Create Property Alert
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body p-4">
+                    <h5 class="mb-3"><i class="fas fa-star text-warning me-2"></i>Why Subscribe?</h5>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon bg-primary bg-opacity-10 text-primary me-3">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Real-time Alerts</h6>
+                            <p class="text-muted small mb-0">Get notified the moment a matching property is listed</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon bg-success bg-opacity-10 text-success me-3">
+                            <i class="fas fa-filter"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Smart Filters</h6>
+                            <p class="text-muted small mb-0">Budget, location, size, type — refine to your needs</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon bg-info bg-opacity-10 text-info me-3">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Multi-channel</h6>
+                            <p class="text-muted small mb-0">Email, SMS, or WhatsApp — your choice</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <div class="feature-icon bg-warning bg-opacity-10 text-warning me-3">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Unsubscribe Anytime</h6>
+                            <p class="text-muted small mb-0">No spam — easy one-click unsubscribe</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($logged_in && !empty($subscriptions)): ?>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h6 class="mb-3"><i class="fas fa-list me-2"></i>Your Active Alerts (<?= count($subscriptions) ?>)</h6>
+                        <?php foreach (array_slice($subscriptions, 0, 3) as $sub): ?>
+                            <div class="border-bottom pb-2 mb-2 small">
+                                <strong><?= htmlspecialchars($sub['property_type']) ?></strong>
+                                <span class="badge bg-<?= $sub['frequency'] === 'instant' ? 'warning' : 'info' ?> ms-1"><?= $sub['frequency'] ?></span>
+                                <br>
+                                <span class="text-muted"><?= htmlspecialchars($sub['city'] ?? 'any city') ?> · ₹<?= number_format($sub['min_price'] ?? 0) ?> - <?= number_format($sub['max_price'] ?? 0) ?></span>
+                                <br>
+                                <span class="text-success"><i class="fas fa-paper-plane"></i> <?= $sub['total_notifications'] ?> sent</span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<?php
+$content = ob_get_clean();
+include APP_PATH . '/views/layouts/base.php';

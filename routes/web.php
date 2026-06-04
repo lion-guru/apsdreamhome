@@ -325,6 +325,15 @@ $router->post('/admin/lead-kanban/update-stage', 'App\\Http\\Controllers\\Admin\
 
 $router->get('/admin/sales-dashboard', 'App\\Http\\Controllers\\Admin\\SalesManagerDashboardController@index');
 
+$router->get('/admin/property-alerts', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@index');
+$router->get('/admin/property-alerts/delete', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@delete');
+$router->post('/admin/property-alerts/toggle', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@toggle');
+$router->get('/admin/property-alerts/test-match', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@testMatch');
+
+$router->get('/property-alerts/subscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@index');
+$router->post('/property-alerts/subscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@store');
+$router->get('/property-alerts/unsubscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@unsubscribe');
+
 $router->get('/user/referral', 'App\\Http\\Controllers\\Front\\ReferralController@index');
 $router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
 $router->get('/dashboard', 'DashboardController@index');
