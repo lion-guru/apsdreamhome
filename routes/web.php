@@ -2962,6 +2962,9 @@ $router->post('/admin/api-keys/create', 'Admin\\ApiKeyController@create');
 $router->post('/admin/api-keys/revoke/{id}', 'Admin\\ApiKeyController@revoke');
 $router->post('/admin/api-keys/activate/{id}', 'Admin\\ApiKeyController@activate');
 $router->post('/admin/api-keys/delete/{id}', 'Admin\\ApiKeyController@delete');
+
+$router->get('/admin/system-health', 'Admin\\SystemHealthController@index');
+$router->get('/api/v2/system/health', 'Admin\\SystemHealthController@api');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');
