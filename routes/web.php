@@ -356,6 +356,23 @@ $router->any('/admin/live-chat/settings', 'App\\Http\\Controllers\\Admin\\LiveCh
 $router->get('/admin/live-chat/quick-replies', 'App\\Http\\Controllers\\Admin\\LiveChatController@quickReplies');
 $router->get('/api/live-chat', 'App\\Http\\Controllers\\Admin\\LiveChatController@api');
 
+$router->get('/admin/auctions', 'App\\Http\\Controllers\\Admin\\AuctionController@index');
+$router->get('/admin/auctions/create', 'App\\Http\\Controllers\\Admin\\AuctionController@create');
+$router->post('/admin/auctions/store', 'App\\Http\\Controllers\\Admin\\AuctionController@store');
+$router->get('/admin/auctions/show/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@show');
+$router->get('/admin/auctions/start/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@start');
+$router->get('/admin/auctions/end/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@end');
+$router->get('/admin/auctions/cancel', 'App\\Http\\Controllers\\Admin\\AuctionController@cancel');
+$router->get('/admin/auctions/delete/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@delete');
+$router->get('/admin/auctions/process-ending', 'App\\Http\\Controllers\\Admin\\AuctionController@processEnding');
+
+$router->get('/auctions', 'App\\Http\\Controllers\\Front\\AuctionController@index');
+$router->get('/auctions/{id}', 'App\\Http\\Controllers\\Front\\AuctionController@show');
+$router->post('/auctions/bid', 'App\\Http\\Controllers\\Front\\AuctionController@bid');
+$router->post('/auctions/watch', 'App\\Http\\Controllers\\Front\\AuctionController@watch');
+$router->post('/auctions/unwatch', 'App\\Http\\Controllers\\Front\\AuctionController@unwatch');
+$router->post('/auctions/deposit', 'App\\Http\\Controllers\\Front\\AuctionController@deposit');
+
 $router->post('/api/chat/start', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@start');
 $router->post('/api/chat/send', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@send');
 $router->get('/api/chat/poll', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@poll');
