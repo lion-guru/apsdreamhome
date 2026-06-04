@@ -346,6 +346,21 @@ $router->get('/admin/drip-campaigns/process', 'App\\Http\\Controllers\\Admin\\Dr
 $router->get('/admin/drip-campaigns/toggle', 'App\\Http\\Controllers\\Admin\\DripCampaignController@toggle');
 $router->get('/admin/drip-campaigns/delete', 'App\\Http\\Controllers\\Admin\\DripCampaignController@delete');
 
+$router->get('/admin/live-chat', 'App\\Http\\Controllers\\Admin\\LiveChatController@index');
+$router->get('/admin/live-chat/open/{id}', 'App\\Http\\Controllers\\Admin\\LiveChatController@open');
+$router->post('/admin/live-chat/send', 'App\\Http\\Controllers\\Admin\\LiveChatController@send');
+$router->get('/admin/live-chat/poll', 'App\\Http\\Controllers\\Admin\\LiveChatController@poll');
+$router->get('/admin/live-chat/assign', 'App\\Http\\Controllers\\Admin\\LiveChatController@assign');
+$router->get('/admin/live-chat/close', 'App\\Http\\Controllers\\Admin\\LiveChatController@close');
+$router->any('/admin/live-chat/settings', 'App\\Http\\Controllers\\Admin\\LiveChatController@settings');
+$router->get('/admin/live-chat/quick-replies', 'App\\Http\\Controllers\\Admin\\LiveChatController@quickReplies');
+$router->get('/api/live-chat', 'App\\Http\\Controllers\\Admin\\LiveChatController@api');
+
+$router->post('/api/chat/start', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@start');
+$router->post('/api/chat/send', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@send');
+$router->get('/api/chat/poll', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@poll');
+$router->get('/api/chat/widget', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@widget');
+
 $router->get('/admin/reviews', 'App\\Http\\Controllers\\Admin\\ReviewController@index');
 $router->get('/admin/reviews/approve', 'App\\Http\\Controllers\\Admin\\ReviewController@approve');
 $router->get('/admin/reviews/reject', 'App\\Http\\Controllers\\Admin\\ReviewController@reject');
