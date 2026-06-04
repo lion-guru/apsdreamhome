@@ -1,4 +1,19 @@
+<?php
+$page_title = $page_title ?? 'Properties - APS Dream Home';
+$current_page = 'properties';
 
+// Pull current filter values from URL ($_GET) with safe defaults
+$currentFilters = [];
+foreach (['q','type','listing','location','min_price','max_price','bedrooms','bathrooms','furnished','year_built','area_min','area_max','sort'] as $k) {
+    $currentFilters[$k] = $_GET[$k] ?? '';
+}
+$hasActiveFilters = false;
+foreach ($currentFilters as $k => $v) {
+    if ($v !== '' && $v !== null && $v !== 0 && $k !== 'sort') {
+        $hasActiveFilters = true; break;
+    }
+}
+?>
 
 <div class="container mt-4">
     <!-- Breadcrumb -->
@@ -10,94 +25,212 @@
     </nav>
 
     <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-6 fw-bold text-primary">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-7">
+            <h1 class="display-6 fw-bold text-primary mb-1">
                 <i class="fas fa-building me-2"></i><?= __('properties') ?>
             </h1>
-            <p class="text-muted"><?php echo number_format($total); ?> <?= __('properties_found') ?></p>
+            <p class="text-muted mb-0">
+                <i class="fas fa-list me-1"></i>
+                <strong id="resultsCount"><?= number_format($total ?? 0) ?></strong> <?= __('properties_found') ?>
+                <?php if ($hasActiveFilters): ?>
+                    <span class="badge bg-primary-subtle text-primary ms-2">Filtered</span>
+                <?php endif; ?>
+            </p>
+        </div>
+        <div class="col-md-5 text-md-end mt-2 mt-md-0">
+            <div class="btn-group" role="group" aria-label="View toggle">
+                <button type="button" class="btn btn-outline-primary active" id="gridViewBtn" onclick="setView('grid')">
+                    <i class="fas fa-th-large me-1"></i>Grid
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="mapViewBtn" onclick="setView('map')" disabled title="Coming soon">
+                    <i class="fas fa-map-marked-alt me-1"></i>Map <span class="badge bg-secondary ms-1">Soon</span>
+                </button>
+            </div>
+            <?php if (!empty($_SESSION['user_id'])): ?>
+                <button type="button" class="btn btn-success rounded-pill ms-2" onclick="triggerSaveSearch()" id="saveSearchBtnInline" style="<?= $hasActiveFilters ? '' : 'display:none;' ?>">
+                    <i class="fas fa-bookmark me-1"></i>Save Search
+                </button>
+            <?php endif; ?>
         </div>
     </div>
 
-    <!-- Search Filters -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <form method="GET" action="<?php echo BASE_URL; ?>/properties" class="row g-3">
-                <div class="col-md-3">
-                    <label for="q" class="form-label"><i class="fas fa-search"></i> <?= __('search') ?></label>
-                    <input type="text" class="form-control" id="q" name="q" placeholder="<?= __('search_placeholder') ?>" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+    <!-- Saved Searches Dropdown (only for logged-in users) -->
+    <?php if (!empty($_SESSION['user_id'])): ?>
+        <?php $savedSearches = $savedSearches ?? []; ?>
+        <?php $isLoggedIn = true; ?>
+        <?php include __DIR__ . '/../components/saved_search_dropdown.php'; ?>
+    <?php endif; ?>
+
+    <!-- Advanced Search Filters -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-2">
+            <h6 class="mb-0 fw-bold">
+                <i class="fas fa-sliders-h text-primary me-2"></i>Advanced Search
+                <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="true">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </h6>
+            <div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="resetFilters()">
+                    <i class="fas fa-redo me-1"></i>Reset
+                </button>
+            </div>
+        </div>
+        <div class="card-body collapse show" id="advancedFilters">
+            <form method="GET" action="<?php echo BASE_URL; ?>/properties" id="propertyFilterForm" class="row g-3">
+                <!-- Text Search -->
+                <div class="col-md-4">
+                    <label for="q" class="form-label small fw-semibold"><i class="fas fa-search"></i> Keyword</label>
+                    <input type="text" class="form-control" id="q" name="q" placeholder="Property name, address, description..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                 </div>
-                <div class="col-md-3">
-                    <label for="type" class="form-label"><?= __('filter_type') ?></label>
-                    <select class="form-select" id="type" name="type">
-                        <option value=""><?= __('all_types') ?></option>
-                        <option value="plot" <?php echo $type === 'plot' ? 'selected' : ''; ?>>Plot</option>
-                        <option value="house" <?php echo $type === 'house' ? 'selected' : ''; ?>>House</option>
-                        <option value="flat" <?php echo $type === 'flat' ? 'selected' : ''; ?>>Flat/Apartment</option>
-                        <option value="shop" <?php echo $type === 'shop' ? 'selected' : ''; ?>>Shop</option>
+
+                <!-- Property Type -->
+                <div class="col-md-2">
+                    <label for="type" class="form-label small fw-semibold"><?= __('filter_type') ?></label>
+                    <select class="form-select form-select-sm" id="type" name="type">
+                        <option value="">All Types</option>
+                        <option value="plot" <?= ($_GET['type'] ?? '') === 'plot' ? 'selected' : ''; ?>>Plot</option>
+                        <option value="house" <?= ($_GET['type'] ?? '') === 'house' ? 'selected' : ''; ?>>House</option>
+                        <option value="flat" <?= ($_GET['type'] ?? '') === 'flat' ? 'selected' : ''; ?>>Flat/Apartment</option>
+                        <option value="shop" <?= ($_GET['type'] ?? '') === 'shop' ? 'selected' : ''; ?>>Shop</option>
+                        <option value="farmhouse" <?= ($_GET['type'] ?? '') === 'farmhouse' ? 'selected' : ''; ?>>Farmhouse</option>
+                        <option value="villa" <?= ($_GET['type'] ?? '') === 'villa' ? 'selected' : ''; ?>>Villa</option>
+                        <option value="land" <?= ($_GET['type'] ?? '') === 'land' ? 'selected' : ''; ?>>Land</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="listing" class="form-label"><?= __('filter_listing') ?></label>
-                    <select class="form-select" id="listing" name="listing">
-                        <option value=""><?= __('buy') ?> & <?= __('rent') ?></option>
-                        <option value="sell" <?php echo $listingType === 'sell' ? 'selected' : ''; ?>>For Sale</option>
-                        <option value="rent" <?php echo $listingType === 'rent' ? 'selected' : ''; ?>>For Rent</option>
+
+                <!-- Listing Type -->
+                <div class="col-md-2">
+                    <label for="listing" class="form-label small fw-semibold"><?= __('filter_listing') ?></label>
+                    <select class="form-select form-select-sm" id="listing" name="listing">
+                        <option value="">Buy & Rent</option>
+                        <option value="sell" <?= ($_GET['listing'] ?? '') === 'sell' ? 'selected' : ''; ?>>For Sale</option>
+                        <option value="rent" <?= ($_GET['listing'] ?? '') === 'rent' ? 'selected' : ''; ?>>For Rent</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="location" class="form-label"><?= __('filter_location') ?></label>
-                    <select class="form-select" id="location" name="location">
-                        <option value=""><?= __('all_locations') ?></option>
-                        <?php foreach ($locations as $loc): ?>
-                            <option value="<?php echo htmlspecialchars($loc); ?>" <?php echo $location === $loc ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($loc); ?>
+
+                <!-- Location -->
+                <div class="col-md-2">
+                    <label for="location" class="form-label small fw-semibold"><?= __('filter_location') ?></label>
+                    <select class="form-select form-select-sm" id="location" name="location">
+                        <option value="">All Locations</option>
+                        <?php foreach (($locations ?? []) as $loc): ?>
+                            <option value="<?= htmlspecialchars($loc) ?>" <?= ($_GET['location'] ?? '') === $loc ? 'selected' : ''; ?>>
+                                <?= htmlspecialchars($loc) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="sort" class="form-label"><?= __('filter_sort') ?></label>
-                    <select class="form-select" id="sort" name="sort">
-                        <option value="newest" <?php echo $sortBy === 'newest' ? 'selected' : ''; ?>><?= __('newest_first') ?></option>
-                        <option value="price_low" <?php echo $sortBy === 'price_low' ? 'selected' : ''; ?>><?= __('price_low_high') ?></option>
-                        <option value="price_high" <?php echo $sortBy === 'price_high' ? 'selected' : ''; ?>><?= __('price_high_low') ?></option>
+
+                <!-- Sort -->
+                <div class="col-md-2">
+                    <label for="sort" class="form-label small fw-semibold">Sort By</label>
+                    <select class="form-select form-select-sm" id="sort" name="sort" onchange="document.getElementById('propertyFilterForm').submit()">
+                        <option value="newest" <?= ($_GET['sort'] ?? 'newest') === 'newest' ? 'selected' : ''; ?>><i class="fas fa-clock"></i> Newest First</option>
+                        <option value="oldest" <?= ($_GET['sort'] ?? '') === 'oldest' ? 'selected' : ''; ?>>Oldest First</option>
+                        <option value="relevance" <?= ($_GET['sort'] ?? '') === 'relevance' ? 'selected' : ''; ?>>Relevance</option>
+                        <option value="price_low" <?= ($_GET['sort'] ?? '') === 'price_low' ? 'selected' : ''; ?>>Price: Low to High</option>
+                        <option value="price_high" <?= ($_GET['sort'] ?? '') === 'price_high' ? 'selected' : ''; ?>>Price: High to Low</option>
+                        <option value="area_large" <?= ($_GET['sort'] ?? '') === 'area_large' ? 'selected' : ''; ?>>Area: Largest First</option>
+                        <option value="area_small" <?= ($_GET['sort'] ?? '') === 'area_small' ? 'selected' : ''; ?>>Area: Smallest First</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="min_price" class="form-label"><?= __('min_price') ?> (₹)</label>
-                    <select class="form-select" id="min_price" name="min_price">
+
+                <!-- Advanced fields row -->
+                <div class="col-md-2">
+                    <label for="bedrooms" class="form-label small fw-semibold">Bedrooms (min)</label>
+                    <select class="form-select form-select-sm" id="bedrooms" name="bedrooms">
+                        <option value="">Any</option>
+                        <option value="1" <?= ($_GET['bedrooms'] ?? '') === '1' ? 'selected' : ''; ?>>1+ BHK</option>
+                        <option value="2" <?= ($_GET['bedrooms'] ?? '') === '2' ? 'selected' : ''; ?>>2+ BHK</option>
+                        <option value="3" <?= ($_GET['bedrooms'] ?? '') === '3' ? 'selected' : ''; ?>>3+ BHK</option>
+                        <option value="4" <?= ($_GET['bedrooms'] ?? '') === '4' ? 'selected' : ''; ?>>4+ BHK</option>
+                        <option value="5" <?= ($_GET['bedrooms'] ?? '') === '5' ? 'selected' : ''; ?>>5+ BHK</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="bathrooms" class="form-label small fw-semibold">Bathrooms (min)</label>
+                    <select class="form-select form-select-sm" id="bathrooms" name="bathrooms">
+                        <option value="">Any</option>
+                        <option value="1" <?= ($_GET['bathrooms'] ?? '') === '1' ? 'selected' : ''; ?>>1+</option>
+                        <option value="2" <?= ($_GET['bathrooms'] ?? '') === '2' ? 'selected' : ''; ?>>2+</option>
+                        <option value="3" <?= ($_GET['bathrooms'] ?? '') === '3' ? 'selected' : ''; ?>>3+</option>
+                        <option value="4" <?= ($_GET['bathrooms'] ?? '') === '4' ? 'selected' : ''; ?>>4+</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="furnished" class="form-label small fw-semibold">Furnished</label>
+                    <select class="form-select form-select-sm" id="furnished" name="furnished">
+                        <option value="">Any</option>
+                        <option value="unfurnished" <?= ($_GET['furnished'] ?? '') === 'unfurnished' ? 'selected' : ''; ?>>Unfurnished</option>
+                        <option value="semi-furnished" <?= ($_GET['furnished'] ?? '') === 'semi-furnished' ? 'selected' : ''; ?>>Semi-Furnished</option>
+                        <option value="fully-furnished" <?= ($_GET['furnished'] ?? '') === 'fully-furnished' ? 'selected' : ''; ?>>Fully-Furnished</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="year_built" class="form-label small fw-semibold">Year Built (≥)</label>
+                    <select class="form-select form-select-sm" id="year_built" name="year_built">
+                        <option value="">Any</option>
+                        <?php for ($y = (int)date('Y'); $y >= 2000; $y--): ?>
+                            <option value="<?= $y ?>" <?= ($_GET['year_built'] ?? '') == (string)$y ? 'selected' : ''; ?>><?= $y ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="area_min" class="form-label small fw-semibold">Min Area (sqft)</label>
+                    <input type="number" class="form-control form-control-sm" id="area_min" name="area_min" placeholder="e.g. 500" min="0" value="<?= htmlspecialchars($_GET['area_min'] ?? '') ?>">
+                </div>
+
+                <div class="col-md-2">
+                    <label for="area_max" class="form-label small fw-semibold">Max Area (sqft)</label>
+                    <input type="number" class="form-control form-control-sm" id="area_max" name="area_max" placeholder="e.g. 5000" min="0" value="<?= htmlspecialchars($_GET['area_max'] ?? '') ?>">
+                </div>
+
+                <!-- Price range -->
+                <div class="col-md-2">
+                    <label for="min_price" class="form-label small fw-semibold"><?= __('min_price') ?> (₹)</label>
+                    <select class="form-select form-select-sm" id="min_price" name="min_price">
                         <option value="">No Min</option>
-                        <option value="100000" <?php echo ($minPrice ?? 0) == 100000 ? 'selected' : ''; ?>>₹1 Lakh</option>
-                        <option value="500000" <?php echo ($minPrice ?? 0) == 500000 ? 'selected' : ''; ?>>₹5 Lakhs</option>
-                        <option value="1000000" <?php echo ($minPrice ?? 0) == 1000000 ? 'selected' : ''; ?>>₹10 Lakhs</option>
-                        <option value="2000000" <?php echo ($minPrice ?? 0) == 2000000 ? 'selected' : ''; ?>>₹20 Lakhs</option>
-                        <option value="5000000" <?php echo ($minPrice ?? 0) == 5000000 ? 'selected' : ''; ?>>₹50 Lakhs</option>
+                        <?php foreach ([100000=>'1L', 500000=>'5L', 1000000=>'10L', 2000000=>'20L', 5000000=>'50L', 10000000=>'1Cr', 20000000=>'2Cr'] as $val => $label): ?>
+                            <option value="<?= $val ?>" <?= ($_GET['min_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>₹<?= $label ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="max_price" class="form-label"><?= __('max_price') ?> (₹)</label>
-                    <select class="form-select" id="max_price" name="max_price">
+
+                <div class="col-md-2">
+                    <label for="max_price" class="form-label small fw-semibold"><?= __('max_price') ?> (₹)</label>
+                    <select class="form-select form-select-sm" id="max_price" name="max_price">
                         <option value="">No Max</option>
-                        <option value="500000" <?php echo ($maxPrice ?? 0) == 500000 ? 'selected' : ''; ?>>₹5 Lakhs</option>
-                        <option value="1000000" <?php echo ($maxPrice ?? 0) == 1000000 ? 'selected' : ''; ?>>₹10 Lakhs</option>
-                        <option value="2000000" <?php echo ($maxPrice ?? 0) == 2000000 ? 'selected' : ''; ?>>₹20 Lakhs</option>
-                        <option value="5000000" <?php echo ($maxPrice ?? 0) == 5000000 ? 'selected' : ''; ?>>₹50 Lakhs</option>
-                        <option value="10000000" <?php echo ($maxPrice ?? 0) == 10000000 ? 'selected' : ''; ?>>₹1 Crore</option>
+                        <?php foreach ([500000=>'5L', 1000000=>'10L', 2000000=>'20L', 5000000=>'50L', 10000000=>'1Cr', 20000000=>'2Cr', 50000000=>'5Cr'] as $val => $label): ?>
+                            <option value="<?= $val ?>" <?= ($_GET['max_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>₹<?= $label ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-12">
+
+                <div class="col-12 d-flex gap-2 align-items-center">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> <?= __('search') ?>
+                        <i class="fas fa-search me-1"></i>Search
                     </button>
-                    <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary"><?= __('clear_filters') ?></a>
+                    <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>Clear All
+                    </a>
+                    <?php if (!empty($_SESSION['user_id']) && $hasActiveFilters): ?>
+                        <button type="button" class="btn btn-success ms-auto" onclick="triggerSaveSearch()">
+                            <i class="fas fa-bookmark me-1"></i>Save this search
+                        </button>
+                    <?php endif; ?>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Properties Grid -->
-    <div class="row">
+    <div class="row" id="propertiesContainer">
         <?php if (!empty($properties)): ?>
             <?php foreach ($properties as $property): ?>
                 <div class="col-lg-4 col-md-6 mb-4">
@@ -109,53 +242,63 @@
                                     $imgSrc = BASE_URL . '/assets/images/placeholder/property.svg';
                                 }
                             ?>
-                            <img src="<?php echo $imgSrc; ?>" 
-                                 class="card-img-top" 
-                                 alt="<?php echo htmlspecialchars($property['name']); ?>"
+                            <img src="<?= $imgSrc ?>"
+                                 class="card-img-top"
+                                 alt="<?= htmlspecialchars($property['name'] ?? '') ?>"
                                  style="height: 200px; object-fit: cover;"
-                                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                                 onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 end-0 p-2 d-flex gap-1">
                                 <button class="btn btn-sm btn-light favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="Add to Favorites" onclick="toggleFavorite(this)">
                                     <i class="far fa-heart text-danger"></i>
                                 </button>
-                                <span class="badge bg-<?php echo ($property['listing_type'] ?? 'sell') === 'rent' ? 'info' : 'success'; ?>">
-                                    <?php echo ucfirst($property['listing_type'] ?? 'Sell'); ?>
+                                <span class="badge bg-<?= ($property['listing_type'] ?? 'sell') === 'rent' ? 'info' : 'success'; ?>">
+                                    <?= ucfirst($property['listing_type'] ?? 'Sell') ?>
                                 </span>
                             </div>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($property['name']); ?></h5>
+                            <h5 class="card-title"><?= htmlspecialchars($property['name'] ?? '') ?></h5>
                             <p class="text-muted small mb-2">
-                                <i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($property['address'] ?? $property['location']); ?>
+                                <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($property['address'] ?? $property['location'] ?? '') ?>
                             </p>
-                            <p class="card-text small"><?php echo htmlspecialchars(substr($property['description'] ?? '', 0, 100)); ?>...</p>
-                            <div class="row small text-center border-top border-bottom py-2 mb-3">
-                                <div class="col-4">
+                            <p class="card-text small"><?= htmlspecialchars(substr($property['description'] ?? '', 0, 100)) ?>...</p>
+                            <div class="row small text-center border-top border-bottom py-2 mb-3 g-1">
+                                <div class="col">
                                     <i class="fas fa-vector-square text-muted"></i><br>
-                                    <strong><?php echo number_format($property['area_sqft'] ?? 0); ?></strong> sq ft
+                                    <strong><?= number_format((float)($property['area_sqft'] ?? 0)) ?></strong> sq ft
                                 </div>
-                                <div class="col-4">
+                                <div class="col">
                                     <i class="fas fa-home text-muted"></i><br>
-                                    <strong><?php echo ucfirst($property['property_type'] ?? 'Plot'); ?></strong>
+                                    <strong><?= ucfirst($property['property_type'] ?? 'Plot') ?></strong>
                                 </div>
-                                <div class="col-4">
-                                    <i class="fas fa-eye text-muted"></i><br>
-                                    <strong><?php echo $property['views'] ?? 0; ?></strong> views
+                                <?php if (!empty($property['bedrooms'])): ?>
+                                <div class="col">
+                                    <i class="fas fa-bed text-muted"></i><br>
+                                    <strong><?= (int)$property['bedrooms'] ?></strong> BHK
                                 </div>
+                                <?php endif; ?>
+                                <?php if (!empty($property['furnished'])): ?>
+                                <div class="col">
+                                    <i class="fas fa-couch text-muted"></i><br>
+                                    <strong><?= ucfirst($property['furnished']) ?></strong>
+                                </div>
+                                <?php endif; ?>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <span class="text-success fw-bold fs-5">₹<?php echo number_format($property['price']); ?></span>
+                                    <span class="text-success fw-bold fs-5">₹<?= number_format((float)($property['price'] ?? 0)) ?></span>
                                     <?php if (($property['listing_type'] ?? 'sell') === 'rent'): ?>
                                         <span class="text-muted">/month</span>
                                     <?php endif; ?>
                                 </div>
-                                <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-phone"></i> <?= __('enquire') ?>
-                                </a>
-                                <button class="btn btn-sm btn-outline-info add-to-compare" data-id="<?= $property['id'] ?? '' ?>" onclick="addToCompare(this)">
-                                    <i class="fas fa-balance-scale me-1"></i> <?= __('compare') ?>
-                                </button>
+                                <div class="d-flex gap-1">
+                                    <a href="<?= BASE_URL ?>/contact" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-phone"></i> Enquire
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-info add-to-compare" data-id="<?= $property['id'] ?? '' ?>" onclick="addToCompare(this)" title="Add to compare">
+                                        <i class="fas fa-balance-scale"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,7 +311,7 @@
                         <i class="fas fa-search fa-4x text-muted mb-3"></i>
                         <h5 class="text-muted"><?= __('no_properties') ?></h5>
                         <p class="text-muted"><?= __('no_results_tip') ?></p>
-                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-primary"><?= __('view_all') ?> <?= __('properties') ?></a>
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-primary"><?= __('view_all') ?> Properties</a>
                     </div>
                 </div>
             </div>
@@ -176,31 +319,36 @@
     </div>
 
     <!-- Pagination -->
-    <?php if ($totalPages > 1): ?>
+    <?php if (($totalPages ?? 0) > 1): ?>
+        <?php
+        // Build pagination URL preserving all current filters
+        $paginationParams = $_GET;
+        unset($paginationParams['page']);
+        ?>
         <nav aria-label="Property pagination" class="mt-4">
             <ul class="pagination justify-content-center">
-                <?php if ($page > 1): ?>
+                <?php if (($page ?? 1) > 1): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<?php echo $page - 1; ?>&type=<?php echo urlencode($type); ?>&listing=<?php echo urlencode($listingType); ?>&location=<?php echo urlencode($location); ?>&sort=<?php echo urlencode($sortBy); ?>">
-                            <?= __('previous') ?>
+                        <a class="page-link" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page - 1)])) ?>">
+                            <i class="fas fa-chevron-left"></i> Previous
                         </a>
                     </li>
                 <?php endif; ?>
-                
-                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                    <?php if ($i >= $page - 2 && $i <= $page + 2): ?>
-                        <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                            <a class="page-link" href="?page=<?php echo $i; ?>&type=<?php echo urlencode($type); ?>&listing=<?php echo urlencode($listingType); ?>&location=<?php echo urlencode($location); ?>&sort=<?php echo urlencode($sortBy); ?>">
-                                <?php echo $i; ?>
-                            </a>
-                        </li>
-                    <?php endif; ?>
+
+                <?php
+                $startPage = max(1, ($page ?? 1) - 2);
+                $endPage = min($totalPages, ($page ?? 1) + 2);
+                for ($i = $startPage; $i <= $endPage; $i++):
+                ?>
+                    <li class="page-item <?= $i === ($page ?? 1) ? 'active' : ''; ?>">
+                        <a class="page-link" href="?<?= http_build_query(array_merge($paginationParams, ['page' => $i])) ?>"><?= $i ?></a>
+                    </li>
                 <?php endfor; ?>
-                
-                <?php if ($page < $totalPages): ?>
+
+                <?php if (($page ?? 1) < $totalPages): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<?php echo $page + 1; ?>&type=<?php echo urlencode($type); ?>&listing=<?php echo urlencode($listingType); ?>&location=<?php echo urlencode($location); ?>&sort=<?php echo urlencode($sortBy); ?>">
-                            <?= __('next') ?>
+                        <a class="page-link" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page + 1)])) ?>">
+                            Next <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
                 <?php endif; ?>
@@ -208,6 +356,9 @@
         </nav>
     <?php endif; ?>
 </div>
+
+<!-- Save Search Modal -->
+<?php include __DIR__ . '/../components/save_search_modal.php'; ?>
 
 <style>
 .property-card {
@@ -223,7 +374,9 @@
     background: transparent;
     padding: 0;
 }
+.bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 </style>
+
 <script>
 function toggleFavorite(btn) {
     const id = btn.dataset.id;
@@ -244,29 +397,35 @@ function toggleFavorite(btn) {
                 icon.className = 'fas fa-heart text-danger';
                 btn.title = 'Remove from Favorites';
             }
-        } else if (d.message.includes('login')) {
+        } else if (d.message && d.message.includes('login')) {
             window.location.href = BASE_URL + '/login';
         }
     }).catch(() => {});
 }
+
 function addToCompare(btn) {
     const id = btn.dataset.id;
     if (!id) return;
     const fd = new FormData();
     fd.append('property_id', id);
-    fetch(BASE_URL + '/property-comparison/add', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-        .then(r => r.json())
-        .then(d => {
-            if (d.success) {
-                btn.innerHTML = '<i class="fas fa-check me-1"></i> Added';
-                btn.classList.remove('btn-outline-info');
-                btn.classList.add('btn-info');
-                updateCompareBadge(d.count);
-            } else {
-                alert(d.error || 'Failed to add to comparison');
-            }
-        }).catch(() => alert('Network error'));
+    fetch(BASE_URL + '/property-comparison/add', {
+        method: 'POST',
+        body: fd,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            btn.innerHTML = '<i class="fas fa-check me-1"></i> Added';
+            btn.classList.remove('btn-outline-info');
+            btn.classList.add('btn-info');
+            updateCompareBadge(d.count);
+        } else {
+            alert(d.error || 'Failed to add to comparison');
+        }
+    }).catch(() => alert('Network error'));
 }
+
 function updateCompareBadge(count) {
     const badge = document.getElementById('compareBadge');
     if (badge) {
@@ -287,6 +446,19 @@ function updateCompareBadge(count) {
         }
     }
 }
+
+function setView(view) {
+    if (view === 'map') {
+        alert('Map view is coming soon! In the meantime, use the grid view to browse properties.');
+        return;
+    }
+    document.getElementById('gridViewBtn').classList.add('active');
+    document.getElementById('mapViewBtn').classList.remove('active');
+}
+
+function resetFilters() {
+    window.location.href = BASE_URL + '/properties';
+}
+
 document.addEventListener('DOMContentLoaded', updateCompareBadge);
 </script>
-

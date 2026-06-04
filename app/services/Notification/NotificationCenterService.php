@@ -373,14 +373,17 @@ class NotificationCenterService
      */
     public function markAsRead(int $notificationId, int $userId, string $userType): bool
     {
-        $sql = "UPDATE notifications SET 
+        $sql = "UPDATE notifications SET
             status = 'read',
             read_at = NOW()
             WHERE id = ? AND user_id = ? AND user_type = ?";
-        
+
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$notificationId, $userId, $userType]);
-        
+
+        // Invalidate the unread-count cache for this user so the badge refreshes.
+        \App\Services\CacheService::invalidateUnreadCount($userId);
+
         return $stmt->rowCount() > 0;
     }
     

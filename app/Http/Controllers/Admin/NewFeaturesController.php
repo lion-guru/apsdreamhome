@@ -84,7 +84,7 @@ class NewFeaturesController extends AdminController
     {
         $this->requireAdmin();
         $agentRates = $this->comm()->getRules();
-        $hybridPlans = $this->db->query("SELECT * FROM hybrid_commission_plans ORDER BY created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC);
+        $hybridPlans = $this->comm()->getHybridPlans(50);
         $farmerStructures = $this->comm()->getFarmerStructures();
         $mlmRanks = $this->comm()->getMlmRankRates();
         $this->data = array_merge($this->data, [
@@ -135,12 +135,12 @@ class NewFeaturesController extends AdminController
         $summary = $this->fin()->financialSummary($currentYear);
         $this->data = array_merge($this->data, [
             'page_title' => 'Finance Management',
-            'budgets' => $budgets,
-            'expenses' => $expenses,
-            'taxSlabs' => $taxSlabs,
-            'taxTypes' => $taxTypes,
-            'gstReturns' => $gstReturns,
-            'summary' => $summary,
+            'budgets' => is_array($budgets) ? $budgets : [],
+            'expenses' => is_array($expenses) ? $expenses : [],
+            'taxSlabs' => is_array($taxSlabs) ? $taxSlabs : [],
+            'taxTypes' => is_array($taxTypes) ? $taxTypes : [],
+            'gstReturns' => is_array($gstReturns) ? $gstReturns : [],
+            'summary' => is_array($summary) ? $summary : ['budgets' => 0, 'spent' => 0, 'remaining' => 0, 'utilization' => 0, 'expense_count' => 0],
             'currentYear' => $currentYear,
         ]);
         return $this->render('admin/features/finance', $this->data);

@@ -1,0 +1,314 @@
+# =============================================================================
+# APS Dream Home - Production Docker Compose
+# Multi-container stack: PHP-Apache app, WebSocket (Ratchet), MySQL, Redis, Nginx
+# =============================================================================
+
+version: "3.9"
+
+x-app-env: &app-env
+  APP_ENV: ${APP_ENV:-production}
+  APP_DEBUG: ${APP_DEBUG:-false}
+  APP_URL: ${APP_URL:-https://apsdreamhome.com}
+  APP_KEY: ${APP_KEY:-apsdreamhome-prod-change-me}
+
+  # Database
+  DB_CONNECTION: mysql
+  DB_HOST: db
+  DB_PORT: "3306"
+  DB_DATABASE: ${DB_DATABASE:-apsdreamhome}
+  DB_USERNAME: ${DB_USERNAME:-apsdream}
+  DB_PASSWORD: ${DB_PASSWORD:-changeme}
+
+  # Cache / Sessions
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+  CACHE_DRIVER: redis
+  SESSION_DRIVER: redis
+  QUEUE_CONNECTION: redis
+
+  # WebSocket
+  WEBSOCKET_HOST: websocket
+  WEBSOCKET_PORT: ${WEBSOCKET_PORT:-8080}
+
+  # Mail
+  MAIL_MAILER: ${MAIL_MAILER:-log}
+  MAIL_HOST: ${MAIL_HOST:-}
+  MAIL_PORT: ${MAIL_PORT:-587}
+  MAIL_USERNAME: ${MAIL_USERNAME:-}
+  MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+  MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+  MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-no-reply@apsdreamhome.com}
+  MAIL_FROM_NAME: ${MAIL_FROM_NAME:-APS Dream Home}
+
+  # Misc
+  TZ: ${TZ:-Asia/Kolkata}
+  LOG_CHANNEL: ${LOG_CHANNEL:-stderr}
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. PHP-Apache Application (main web frontend + REST API)
+  # ---------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    image: apsdreamhome/app:${APP_VERSION:-latest}
+    container_name: apsdreamhome_app
+    restart: unless-stopped
+    env_file:
+      - .env
+      - production.env
+    environment:
+      <<: *app-env
+    volumes:
+      # Persistent storage for uploads and cache
+      - app_storage:/var/www/html/storage
+      - app_uploads:/var/www/html/public/uploads
+      - app_assets_uploads:/var/www/html/public/assets/uploads
+      - app_logs:/var/log/apache2
+      # Mount cron schedule (read-only)
+      - ./docker/cron/schedule:/etc/cron.d/apsdream:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - apsdreamhome_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/ -o /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  # ---------------------------------------------------------------------------
+  # 2. WebSocket Server (Ratchet) - real-time chat, notifications, auctions
+  # ---------------------------------------------------------------------------
+  websocket:
+    build:
+      context: .
+      dockerfile: docker/websocket/Dockerfile
+    image: apsdreamhome/websocket:${APP_VERSION:-latest}
+    container_name: apsdreamhome_websocket
+    restart: unless-stopped
+    env_file:
+      - .env
+      - production.env
+    environment:
+      <<: *app-env
+    depends_on:
+      app:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - apsdreamhome_network
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(@fsockopen(\"127.0.0.1\", 8080) ? 0 : 1);'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # 3. MySQL 8.0 Database
+  # ---------------------------------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: apsdreamhome_db
+    restart: unless-stopped
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-buffer-pool-size=512M
+      - --max-connections=300
+      - --slow-query-log=1
+      - --long-query-time=2
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootroot}
+      MYSQL_DATABASE: ${DB_DATABASE:-apsdreamhome}
+      MYSQL_USER: ${DB_USERNAME:-apsdream}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
+      TZ: ${TZ:-Asia/Kolkata}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/app.cnf:ro
+      - db_backups:/backups
+    networks:
+      - apsdreamhome_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootroot}"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  # ---------------------------------------------------------------------------
+  # 4. Redis 7 - cache, sessions, queues, real-time presence
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: apsdreamhome_redis
+    restart: unless-stopped
+    command:
+      - redis-server
+      - /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - redis_data:/data
+    networks:
+      - apsdreamhome_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # 5. Nginx Reverse Proxy (TLS termination, static files, WebSocket upgrade)
+  # ---------------------------------------------------------------------------
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: apsdreamhome_nginx
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/ssl:/etc/ssl/certs:ro
+      - ./public:/var/www/public:ro
+      - ./assets:/var/www/assets:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      app:
+        condition: service_healthy
+      websocket:
+        condition: service_healthy
+    networks:
+      - apsdreamhome_network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  # ---------------------------------------------------------------------------
+  # 6. (Optional) Backup service - cron-driven DB dumps
+  # ---------------------------------------------------------------------------
+  backup:
+    image: prodrigestivill/postgres-backup:latest
+    # Note: this image is for postgres; we use a custom approach below
+    profiles: ["never"]  # Disabled by default
+
+  # Custom backup sidecar - enables daily DB dumps
+  db-backup:
+    image: alpine:3.19
+    container_name: apsdreamhome_dbbackup
+    restart: unless-stopped
+    profiles: ["with-backup"]
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: ${DB_DATABASE:-apsdreamhome}
+      MYSQL_USER: ${DB_USERNAME:-apsdream}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootroot}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-7}
+      TZ: ${TZ:-Asia/Kolkata}
+    volumes:
+      - db_backups:/backups
+      - ./docker/backup/backup.sh:/usr/local/bin/backup.sh:ro
+    entrypoint: ["sh", "/usr/local/bin/backup.sh"]
+    networks:
+      - apsdreamhome_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+# =============================================================================
+# Named volumes (persistent data)
+# =============================================================================
+volumes:
+  db_data:
+    driver: local
+  db_backups:
+    driver: local
+  redis_data:
+    driver: local
+  app_storage:
+    driver: local
+  app_uploads:
+    driver: local
+  app_assets_uploads:
+    driver: local
+  app_logs:
+    driver: local
+  nginx_logs:
+    driver: local
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  apsdreamhome_network:
+    driver: bridge
+    name: apsdreamhome_network
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

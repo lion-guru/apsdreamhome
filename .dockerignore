@@ -1,31 +1,47 @@
-# APS Dream Home - Docker Ignore File
-# ====================================
+# =============================================================================
+# APS Dream Home - Docker Build Context Excludes
+# Keep this file at the project root
+# =============================================================================
 
-# Git
+# -----------------------------------------------------------------------------
+# Version control
+# -----------------------------------------------------------------------------
 .git
 .gitignore
 .gitattributes
+.github
+.githooks
+.gitlab-ci.yml
+.gitkeep
 
+# -----------------------------------------------------------------------------
 # Documentation
-*.md
+# -----------------------------------------------------------------------------
+# Allow the docker README in the image (uncomment the next line to exclude)
+# README.DOCKER.md
+# AGENTS.md
 docs/
-README*
+*.md
 
-# Development files
+# -----------------------------------------------------------------------------
+# Local environment files
+# -----------------------------------------------------------------------------
 .env
 .env.local
+.env.*.local
 .env.development
-.env.testing
 .env.production
+production.env
+docker-compose.override.yml
 
-# IDE files
-.vscode/
+# -----------------------------------------------------------------------------
+# IDE / editor
+# -----------------------------------------------------------------------------
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
-
-# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -33,113 +49,175 @@ README*
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
+# -----------------------------------------------------------------------------
+# OS / Windows
+# -----------------------------------------------------------------------------
+$RECYCLE.BIN/
+System Volume Information/
+
+# -----------------------------------------------------------------------------
+# Dependencies (installed inside the image)
+# -----------------------------------------------------------------------------
+node_modules/
+.pnp/
+.pnp.js
+vendor/                  # Re-installed during build by composer stage
+
+# -----------------------------------------------------------------------------
+# Build artifacts
+# -----------------------------------------------------------------------------
+build/
+dist/
+out/
+*.tgz
+*.tar.gz
+*.zip
+*.egg-info/
+
+# -----------------------------------------------------------------------------
+# Test / coverage
+# -----------------------------------------------------------------------------
+coverage/
+.nyc_output/
+*.lcov
+*.coverage
+*.cover
+htmlcov/
+.pytest_cache/
+.tox/
+
+# -----------------------------------------------------------------------------
+# Cache directories
+# -----------------------------------------------------------------------------
+.cache/
+.parcel-cache/
+.eslintcache
+.tsbuildinfo
+.npm/
+.yarn/
+
+# -----------------------------------------------------------------------------
 # Logs
+# -----------------------------------------------------------------------------
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Runtime data
-pids/
+# -----------------------------------------------------------------------------
+# Storage (mounted as volumes in production, never baked into the image)
+# -----------------------------------------------------------------------------
+storage/cache/*
+storage/logs/*
+storage/sessions/*
+storage/backups/*
+storage/exports/*
+storage/imports/*
+storage/reports/*
+storage/test/*
+!storage/cache/.gitkeep
+!storage/logs/.gitkeep
+
+public/uploads/*
+public/assets/uploads/*
+!public/uploads/.gitkeep
+!public/assets/uploads/.gitkeep
+
+# -----------------------------------------------------------------------------
+# Backups
+# -----------------------------------------------------------------------------
+backups/
+backup_cleanup/
+backup/
+*.sql
+*.sql.gz
+*.dump
+
+# -----------------------------------------------------------------------------
+# Local development / temporary
+# -----------------------------------------------------------------------------
+tmp/
+temp/
+.tmp/
+.temporary/
+
+# -----------------------------------------------------------------------------
+# Testing artifacts
+# -----------------------------------------------------------------------------
+testing/screenshots/
+testing/videos/
+testing/traces/
+testing/downloads/
+testing/.auth/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# -----------------------------------------------------------------------------
+# Reports / analysis
+# -----------------------------------------------------------------------------
+reports/
+audit_results/
+api-docs/build/
+
+# -----------------------------------------------------------------------------
+# CI / devops tools (not needed in image)
+# -----------------------------------------------------------------------------
+.devin/
+.skills/
+.trae/
+.windsurf/
+.agents/
+.anchored_summary.md
+.idea_modules/
+
+# -----------------------------------------------------------------------------
+# Old / archived
+# -----------------------------------------------------------------------------
+_archive/
+old/
+legacy/
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+
+# -----------------------------------------------------------------------------
+# Mobile (different artefact set)
+# -----------------------------------------------------------------------------
+aaaaa/
+mobile/build/
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/pubspec.lock
+
+# -----------------------------------------------------------------------------
+# Cron (kept in image, just exclude the runtime state)
+# -----------------------------------------------------------------------------
+cron/*.pid
+cron/*.lock
+
+# -----------------------------------------------------------------------------
+# SSL / certs (mounted as volumes)
+# -----------------------------------------------------------------------------
+docker/ssl/*.pem
+docker/ssl/*.crt
+docker/ssl/*.key
+
+# -----------------------------------------------------------------------------
+# Misc
+# -----------------------------------------------------------------------------
 *.pid
 *.seed
 *.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env.test
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
+.history
 .tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# Temporary folders
-tmp/
-temp/
-
-# Local development
-.vagrant/
-.env.local
-
-# Testing
-coverage/
-.nyc_output
-
-# Build outputs
-dist/
-build/
-
-# Backup files
-*.bak
-*.backup
-
-# Composer cache
-vendor/
-composer.lock
-
-# Laravel specific
-storage/app/*
-storage/framework/cache/*
-storage/framework/sessions/*
-storage/framework/testing/*
-storage/framework/views/*
-storage/logs/*
-bootstrap/cache/*
-
-# Database
-*.sqlite
-*.sqlite3
-
-# Redis
-dump.rdb
-
-# SSL certificates (will be mounted as volume)
-ssl/
-
-# Backups
-backups/
+.htaccess              # already in image, but exclude from build context
+.babelrc

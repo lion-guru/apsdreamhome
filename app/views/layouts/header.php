@@ -20,21 +20,11 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
 }
 
-$cacheFile = defined('APP_ROOT') ? APP_ROOT . '/storage/cache/header_projects.cache' : null;
-$cacheTtl = 300; // 5 minutes
 $projectLocations = [];
 $allProjects = [];
 
-// Try loading from cache
-if ($cacheFile && file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTtl) {
-    $cached = @unserialize(file_get_contents($cacheFile));
-    if ($cached && isset($cached['locations'], $cached['projects'])) {
-        $projectLocations = $cached['locations'];
-        $allProjects = $cached['projects'];
-    }
-}
-
-if (empty($allProjects)) {
+// Load from cache (Redis first, file fallback) — 5 minute TTL
+$cachedProjects = \App\Services\CacheService::getHeaderProjects(function () {
     try {
         $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -47,35 +37,38 @@ if (empty($allProjects)) {
                 ORDER BY d.name, c.name";
         $projects = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
+        $locations = [];
+        $all = [];
         foreach ($projects as $p) {
             $district = ucfirst(strtolower($p['district'] ?? 'Other'));
             $state = ucfirst(strtolower($p['state'] ?? ''));
 
             $locKey = strtolower($district);
-            if (!isset($projectLocations[$locKey])) {
-                $projectLocations[$locKey] = [
-                    'name' => $district,
+            if (!isset($locations[$locKey])) {
+                $locations[$locKey] = [
+                    'name'  => $district,
                     'count' => 0,
-                    'state' => $state
+                    'state' => $state,
                 ];
             }
-            $projectLocations[$locKey]['count']++;
+            $locations[$locKey]['count']++;
 
-            $allProjects[] = [
-                'id' => $p['id'],
-                'name' => $p['name'],
-                'slug' => $p['slug'],
-                'district' => $district
+            $all[] = [
+                'id'       => $p['id'],
+                'name'     => $p['name'],
+                'slug'     => $p['slug'],
+                'district' => $district,
             ];
         }
-        // Save to cache
-        if ($cacheFile) {
-            @file_put_contents($cacheFile, serialize(['locations' => $projectLocations, 'projects' => $allProjects]));
-        }
+        return ['locations' => $locations, 'projects' => $all];
     } catch (PDOException $e) {
-        $projectLocations = [];
-        $allProjects = [];
+        return ['locations' => [], 'projects' => []];
     }
+});
+
+if (is_array($cachedProjects) && isset($cachedProjects['locations'], $cachedProjects['projects'])) {
+    $projectLocations = $cachedProjects['locations'];
+    $allProjects      = $cachedProjects['projects'];
 }
 
 $projectsSubmenu = [
@@ -144,6 +137,15 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo" style="height: 40px; width: auto; max-width: 130px;">
             </a>
+
+            <!-- Quick Search Bar (Typeahead) -->
+            <form class="d-none d-lg-flex align-items-center ms-3 me-2 quick-search-form" role="search" id="quickSearchForm" onsubmit="return quickSearchSubmit(event)" autocomplete="off" style="position: relative; min-width: 240px; max-width: 360px; flex: 1;">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="search" class="form-control border-start-0" id="quickSearchInput" placeholder="Search properties, locations..." aria-label="Quick search" style="border-left: 0;">
+                </div>
+                <div id="quickSearchResults" class="quick-search-dropdown shadow-lg" style="display: none;"></div>
+            </form>
 
             <button class="navbar-toggler" type="button" id="navbarToggler" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -643,6 +645,46 @@ try {
         .btn-call { font-size: 12px; padding: 4px 8px; }
     }
     main { padding-top: var(--header-height, 80px); }
+
+    /* Quick Search Typeahead */
+    .quick-search-form { position: relative; }
+    .quick-search-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-top: 4px;
+        max-height: 420px;
+        overflow-y: auto;
+        z-index: 9999;
+    }
+    .quick-search-result {
+        padding: 10px 14px;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: background 0.15s;
+    }
+    .quick-search-result:hover, .quick-search-result.active {
+        background: #f8fafc;
+    }
+    .quick-search-result i { color: #4f46e5; width: 18px; }
+    .quick-search-result .label { font-weight: 500; color: #1e293b; flex: 1; }
+    .quick-search-result .type-tag { font-size: 10px; text-transform: uppercase; background: #e0e7ff; color: #4f46e5; padding: 2px 6px; border-radius: 4px; }
+    .quick-search-footer {
+        padding: 10px 14px;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        text-align: center;
+    }
+    @media (max-width: 991px) {
+        .quick-search-form { display: none !important; }
+    }
 </style>
 
 <script>
@@ -772,6 +814,126 @@ try {
             }
         });
     });
+</script>
+
+<!-- Quick Search Typeahead -->
+<script>
+(function() {
+    const input = document.getElementById('quickSearchInput');
+    const dropdown = document.getElementById('quickSearchResults');
+    if (!input || !dropdown) return;
+
+    let debounceTimer = null;
+    let activeIndex = -1;
+    let lastResults = [];
+
+    function renderResults(results) {
+        if (!results.length) {
+            dropdown.innerHTML = '<div class="quick-search-result text-muted"><i class="fas fa-info-circle"></i><span class="label">No matches found</span></div>';
+            dropdown.style.display = 'block';
+            return;
+        }
+
+        let html = '';
+        results.forEach((r, i) => {
+            const icon = r.type === 'property' ? 'fa-building'
+                       : r.type === 'location' ? 'fa-map-marker-alt'
+                       : 'fa-tag';
+            html += `<a href="${r.url}" class="quick-search-result" data-idx="${i}">
+                <i class="fas ${icon}"></i>
+                <span class="label">${escapeHtml(r.label)}</span>
+                <span class="type-tag">${r.type}</span>
+            </a>`;
+        });
+        html += `<div class="quick-search-footer">
+            <a href="${BASE_URL}/properties?q=${encodeURIComponent(input.value)}" class="text-primary small text-decoration-none">
+                <i class="fas fa-search me-1"></i>See all results for "${escapeHtml(input.value)}"
+            </a>
+        </div>`;
+        dropdown.innerHTML = html;
+        dropdown.style.display = 'block';
+
+        dropdown.querySelectorAll('.quick-search-result').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                activeIndex = parseInt(el.dataset.idx);
+                updateActive();
+            });
+        });
+    }
+
+    function escapeHtml(s) {
+        return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function updateActive() {
+        dropdown.querySelectorAll('.quick-search-result').forEach((el, i) => {
+            el.classList.toggle('active', i === activeIndex);
+        });
+    }
+
+    function search(q) {
+        if (q.length < 2) {
+            dropdown.style.display = 'none';
+            return;
+        }
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            fetch(BASE_URL + '/api/saved-searches/autocomplete?q=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) {
+                        lastResults = d.results;
+                        renderResults(d.results);
+                    }
+                })
+                .catch(() => {});
+        }, 200);
+    }
+
+    input.addEventListener('input', e => {
+        activeIndex = -1;
+        search(e.target.value.trim());
+    });
+
+    input.addEventListener('focus', () => {
+        if (input.value.trim().length >= 2 && lastResults.length) {
+            dropdown.style.display = 'block';
+        }
+    });
+
+    input.addEventListener('keydown', e => {
+        const items = dropdown.querySelectorAll('.quick-search-result');
+        if (e.key === 'ArrowDown' && items.length) {
+            e.preventDefault();
+            activeIndex = Math.min(activeIndex + 1, items.length - 1);
+            updateActive();
+        } else if (e.key === 'ArrowUp' && items.length) {
+            e.preventDefault();
+            activeIndex = Math.max(activeIndex - 1, 0);
+            updateActive();
+        } else if (e.key === 'Enter') {
+            if (activeIndex >= 0 && lastResults[activeIndex]) {
+                e.preventDefault();
+                window.location.href = lastResults[activeIndex].url;
+            }
+        } else if (e.key === 'Escape') {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('click', e => {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+})();
+
+function quickSearchSubmit(e) {
+    e.preventDefault();
+    const q = document.getElementById('quickSearchInput').value.trim();
+    if (q) window.location.href = BASE_URL + '/properties?q=' + encodeURIComponent(q);
+    return false;
+}
 </script>
 
 <script src="<?php echo BASE_URL; ?>/js/visitor-tracking.js" defer></script>

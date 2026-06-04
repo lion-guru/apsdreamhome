@@ -1,6 +1,6 @@
 /**
  * APS Dream Home Notification System
- * Handles notifications and popups for all user types
+ * Real-time notifications via WebSocket (no polling)
  */
 
 class NotificationSystem {
@@ -11,52 +11,43 @@ class NotificationSystem {
     this.notifications = [];
     this.popups = [];
     this.unreadCount = 0;
+    this.ws = null;
+    this.wsUrl = null;
+    this.reconnectAttempts = 0;
+    this.maxReconnectAttempts = 10;
+    this.reconnectTimer = null;
+    this.heartbeatTimer = null;
+    this.heartbeatInterval = 30000;
+    this.isConnecting = false;
+    this.shouldReconnect = true;
 
     this.init();
   }
 
-  /**
-   * Initialize the notification system
-   */
   init() {
-    // Detect user type and ID from session
     this.detectUserInfo();
-
-    // Load notifications
     this.loadNotifications();
-
-    // Load popups
     this.loadPopups();
-
-    // Set up periodic updates
-    this.setupPeriodicUpdates();
-
-    // Create notification UI
+    this.connectWebSocket();
     this.createNotificationUI();
   }
 
-  /**
-   * Detect current user information
-   */
   detectUserInfo() {
-    // This would be set by the backend in a real implementation
-    // For now, we'll detect from page context
-    if (typeof window.currentUser !== 'undefined') {
-      this.userId = window.currentUser.id;
-      this.userRole = window.currentUser.role;
+    if (typeof window.currentUser !== 'undefined' && window.currentUser) {
+      this.userId = window.currentUser.id || null;
+      this.userRole = window.currentUser.role || null;
+    } else if (typeof window.NOTIFY_USER !== 'undefined' && window.NOTIFY_USER) {
+      this.userId = window.NOTIFY_USER.id || null;
+      this.userRole = window.NOTIFY_USER.role || null;
     } else {
-      // Default values for testing
-      this.userId = 1;
-      this.userRole = 'customer';
+      this.userId = null;
+      this.userRole = 'guest';
     }
   }
 
-  /**
-   * Get current page name
-   */
   getCurrentPage() {
     const path = window.location.pathname;
-    if (path.includes('home') || path === '/') return 'home';
+    if (path === '/' || path.includes('home')) return 'home';
     if (path.includes('properties')) return 'properties';
     if (path.includes('about')) return 'about';
     if (path.includes('contact')) return 'contact';
@@ -66,335 +57,564 @@ class NotificationSystem {
     return 'unknown';
   }
 
-  /**
-   * Load notifications from API
-   */
+  buildWebSocketUrl() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${protocol}//${window.location.hostname}:8080`;
+  }
+
   async loadNotifications() {
     try {
       const response = await fetch('/api/notifications', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
       });
-
       if (response.ok) {
         const data = await response.json();
-        if (data.success) {
-          this.notifications = data.data || [];
+        if (data && data.success) {
+          this.notifications = Array.isArray(data.data) ? data.data : [];
           this.unreadCount = data.unread_count || 0;
           this.updateNotificationBadge();
+          this.updateNotificationDropdown();
         }
       }
     } catch (error) {
-      /* Error loading notifications handled silently */
+      // Silent fail - WebSocket will provide real-time updates
     }
   }
 
-  /**
-   * Load popups from API
-   */
   async loadPopups() {
     try {
       const response = await fetch(`/api/popups?page=${this.currentPage}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
       });
-
       if (response.ok) {
         const data = await response.json();
-        if (data.success) {
-          this.popups = data.data || [];
+        if (data && data.success) {
+          this.popups = Array.isArray(data.data) ? data.data : [];
           this.showPopups();
         }
       }
     } catch (error) {
-      /* Error loading popups handled silently */
+      // Silent fail
     }
   }
 
-  /**
-   * Show popups with delays
-   */
-  showPopups() {
-    this.popups.forEach(popup => {
-      setTimeout(() => {
-        this.createPopupElement(popup);
-      }, popup.show_delay || 0);
+  connectWebSocket() {
+    if (this.isConnecting || (this.ws && this.ws.readyState === WebSocket.OPEN)) {
+      return;
+    }
+
+    this.wsUrl = this.buildWebSocketUrl();
+    this.isConnecting = true;
+
+    try {
+      this.ws = new WebSocket(this.wsUrl);
+    } catch (err) {
+      console.error('[NotificationSystem] WebSocket construct error:', err);
+      this.isConnecting = false;
+      this.scheduleReconnect();
+      return;
+    }
+
+    this.ws.onopen = (event) => {
+      this.isConnecting = false;
+      this.reconnectAttempts = 0;
+      console.log('[NotificationSystem] WebSocket connection established at', this.wsUrl);
+
+      this.authenticate();
+      this.startHeartbeat();
+    };
+
+    this.ws.onmessage = (event) => {
+      this.handleSocketMessage(event);
+    };
+
+    this.ws.onerror = (error) => {
+      console.warn('[NotificationSystem] WebSocket error (will retry):', error);
+    };
+
+    this.ws.onclose = (event) => {
+      this.isConnecting = false;
+      this.stopHeartbeat();
+      console.log('[NotificationSystem] WebSocket connection closed (code=' + event.code + ')');
+
+      if (this.shouldReconnect) {
+        this.scheduleReconnect();
+      }
+    };
+  }
+
+  authenticate() {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+    if (!this.userId) return;
+
+    this.sendSocketMessage({
+      type: 'auth',
+      token: this.buildAuthToken(),
+      userId: this.userId,
+      userRole: this.userRole || 'user',
     });
   }
 
-  /**
-   * Create popup element
-   */
-  createPopupElement(popup) {
-    // Check if popup was already dismissed
-    if (this.isPopupDismissed(popup.id)) {
+  buildAuthToken() {
+    if (typeof window.NOTIFY_AUTH_TOKEN !== 'undefined' && window.NOTIFY_AUTH_TOKEN) {
+      return window.NOTIFY_AUTH_TOKEN;
+    }
+    return null;
+  }
+
+  startHeartbeat() {
+    this.stopHeartbeat();
+    this.heartbeatTimer = setInterval(() => {
+      this.sendPing();
+    }, this.heartbeatInterval);
+  }
+
+  stopHeartbeat() {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+  }
+
+  sendPing() {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+    try {
+      this.ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
+    } catch (e) {
+      // Socket may be closing - reconnect will be scheduled
+    }
+  }
+
+  sendSocketMessage(payload) {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return false;
+    try {
+      this.ws.send(JSON.stringify(payload));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  scheduleReconnect() {
+    if (!this.shouldReconnect) return;
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.warn('[NotificationSystem] Max reconnect attempts reached. Real-time updates disabled.');
       return;
     }
+    if (this.reconnectTimer) return;
+
+    const delay = Math.min(30000, 1000 * Math.pow(2, this.reconnectAttempts));
+    this.reconnectAttempts++;
+
+    console.log('[NotificationSystem] Reconnecting in', delay, 'ms (attempt', this.reconnectAttempts + ')');
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      this.connectWebSocket();
+    }, delay);
+  }
+
+  handleSocketMessage(event) {
+    let message;
+    try {
+      message = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+    } catch (e) {
+      console.error('[NotificationSystem] Invalid JSON from server:', e);
+      return;
+    }
+    if (!message || typeof message !== 'object') return;
+
+    switch (message.type) {
+      case 'connection':
+        console.log('[NotificationSystem] Server says:', message.message || 'connected');
+        break;
+
+      case 'auth':
+        if (message.status === 'success') {
+          console.log('[NotificationSystem] Authenticated as user', message.user_id, '(' + (message.role || 'user') + ')');
+        } else {
+          console.warn('[NotificationSystem] Auth failed:', message.message);
+        }
+        break;
+
+      case 'pong':
+        // Heartbeat response - connection is alive
+        break;
+
+      case 'notification':
+        this.handleIncomingNotification(message.data || message.payload);
+        break;
+
+      case 'mark_read_result':
+        // Server confirmed mark-read operation
+        break;
+
+      case 'error':
+        console.error('[NotificationSystem] Server error:', message.error || message.message);
+        break;
+
+      default:
+        // Unknown message type - ignore silently
+    }
+  }
+
+  handleIncomingNotification(notification) {
+    if (!notification || typeof notification !== 'object') return;
+
+    const notifUserId = notification.user_id != null ? parseInt(notification.user_id, 10) : null;
+    const myUserId = this.userId != null ? parseInt(this.userId, 10) : null;
+
+    const isForMe = notifUserId === null || notifUserId === myUserId;
+    if (!isForMe) return;
+
+    const isDuplicate = this.notifications.some(n => n.id && n.id === notification.id);
+    if (isDuplicate) return;
+
+    this.notifications.unshift(notification);
+
+    const isUnread = !notification.read_at && !notification.delivered_at;
+    if (isUnread) {
+      this.unreadCount++;
+      this.updateNotificationBadge();
+    }
+
+    this.updateNotificationDropdown();
+    this.showToast(notification);
+  }
+
+  showToast(notification) {
+    const title = (notification.payload && (notification.payload.title || notification.payload.subject)) || notification.event_type || 'Notification';
+    const message = (notification.payload && (notification.payload.message || notification.payload.body)) || '';
+    if (!document.body) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'notification-toast';
+    toast.setAttribute('data-notif-id', notification.id || '');
+    toast.innerHTML = `
+      <div class="toast-content">
+        <div class="toast-title">${this.escapeHtml(title)}</div>
+        <div class="toast-message">${this.escapeHtml(message)}</div>
+      </div>
+      <button class="toast-close" type="button" aria-label="Close">&times;</button>
+    `;
+
+    const closeBtn = toast.querySelector('.toast-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.removeToast(toast));
+    }
+
+    Object.assign(toast.style, {
+      position: 'fixed',
+      top: '80px',
+      right: '20px',
+      zIndex: '10000',
+      maxWidth: '360px',
+      background: '#fff',
+      borderLeft: '4px solid #0d6efd',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      padding: '12px 16px',
+      borderRadius: '6px',
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: '10px',
+      opacity: '0',
+      transition: 'opacity 0.3s, transform 0.3s',
+      transform: 'translateX(20px)',
+    });
+
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(0)';
+    });
+
+    setTimeout(() => this.removeToast(toast), 6000);
+  }
+
+  removeToast(toast) {
+    if (!toast || !toast.parentNode) return;
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(20px)';
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 300);
+  }
+
+  escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  showPopups() {
+    if (!Array.isArray(this.popups)) return;
+    this.popups.forEach(popup => {
+      setTimeout(() => this.createPopupElement(popup), popup.show_delay || 0);
+    });
+  }
+
+  createPopupElement(popup) {
+    if (this.isPopupDismissed(popup.id)) return;
 
     const popupEl = document.createElement('div');
     popupEl.className = `notification-popup popup-${popup.position} popup-${popup.type}`;
     popupEl.setAttribute('data-popup-id', popup.id);
 
     popupEl.innerHTML = `
-            <div class="popup-content">
-                <div class="popup-header">
-                    <h5>${popup.title}</h5>
-                    <button class="popup-close" onclick="notificationSystem.dismissPopup(${popup.id})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="popup-body">
-                    ${popup.content}
-                </div>
-            </div>
-        `;
+      <div class="popup-content">
+        <div class="popup-header">
+          <h5>${this.escapeHtml(popup.title)}</h5>
+          <button class="popup-close" type="button" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="popup-body">${popup.content || ''}</div>
+      </div>
+    `;
+
+    const closeBtn = popupEl.querySelector('.popup-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.dismissPopup(popup.id));
+    }
 
     document.body.appendChild(popupEl);
 
-    // Auto-close if specified
     if (popup.auto_close > 0) {
-      setTimeout(() => {
-        this.removePopupElement(popup.id);
-      }, popup.auto_close);
+      setTimeout(() => this.removePopupElement(popup.id), popup.auto_close);
     }
 
-    // Animate in
-    setTimeout(() => {
-      popupEl.classList.add('show');
-    }, 100);
+    setTimeout(() => popupEl.classList.add('show'), 100);
   }
 
-  /**
-   * Remove popup element
-   */
   removePopupElement(popupId) {
     const popupEl = document.querySelector(`[data-popup-id="${popupId}"]`);
     if (popupEl) {
       popupEl.classList.remove('show');
-      setTimeout(() => {
-        popupEl.remove();
-      }, 300);
+      setTimeout(() => { if (popupEl.parentNode) popupEl.parentNode.removeChild(popupEl); }, 300);
     }
   }
 
-  /**
-   * Dismiss popup
-   */
   async dismissPopup(popupId) {
     try {
       const response = await fetch('/api/popups/dismiss', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          popup_id: popupId,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ popup_id: popupId }),
       });
-
       if (response.ok) {
         this.markPopupAsDismissed(popupId);
         this.removePopupElement(popupId);
       }
     } catch (error) {
-      /* Error dismissing popup handled silently */
+      // Silent fail
     }
   }
 
-  /**
-   * Create notification UI
-   */
   createNotificationUI() {
-    // Create notification bell
-    const notificationBell = document.createElement('div');
-    notificationBell.className = 'notification-bell';
-    notificationBell.innerHTML = `
-            <button class="btn btn-link position-relative" onclick="notificationSystem.toggleNotificationDropdown()">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge" id="notificationBadge">${this.unreadCount}</span>
-            </button>
-            <div class="notification-dropdown" id="notificationDropdown">
-                <div class="notification-header">
-                    <h6>Notifications</h6>
-                    <button class="btn btn-sm btn-link" onclick="notificationSystem.markAllAsRead()">Mark all as read</button>
-                </div>
-                <div class="notification-list" id="notificationList">
-                    <!-- Notifications will be loaded here -->
-                </div>
-                <div class="notification-footer">
-                    <a href="/notifications" class="btn btn-link">View all notifications</a>
-                </div>
-            </div>
-        `;
+    if (document.getElementById('notification-bell-root')) return;
 
-    // Add to header
+    const root = document.createElement('div');
+    root.id = 'notification-bell-root';
+    root.className = 'notification-bell';
+    root.innerHTML = `
+      <button class="btn btn-link position-relative" id="notificationBellBtn" type="button" aria-label="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notificationBadge">${this.unreadCount}</span>
+      </button>
+      <div class="notification-dropdown" id="notificationDropdown">
+        <div class="notification-header">
+          <h6>Notifications</h6>
+          <button class="btn btn-sm btn-link" id="markAllReadBtn" type="button">Mark all as read</button>
+        </div>
+        <div class="notification-list" id="notificationList"></div>
+        <div class="notification-footer">
+          <a href="/notifications" class="btn btn-link">View all notifications</a>
+        </div>
+      </div>
+    `;
+
     const header = document.querySelector('.navbar-nav') || document.querySelector('header');
     if (header) {
-      header.appendChild(notificationBell);
+      header.appendChild(root);
+    } else {
+      document.body.appendChild(root);
     }
 
-    // Load notifications into dropdown
+    const bellBtn = document.getElementById('notificationBellBtn');
+    if (bellBtn) {
+      bellBtn.addEventListener('click', () => this.toggleNotificationDropdown());
+    }
+
+    const markAllBtn = document.getElementById('markAllReadBtn');
+    if (markAllBtn) {
+      markAllBtn.addEventListener('click', () => this.markAllAsRead());
+    }
+
+    this.updateNotificationBadge();
     this.updateNotificationDropdown();
   }
 
-  /**
-   * Toggle notification dropdown
-   */
   toggleNotificationDropdown() {
     const dropdown = document.getElementById('notificationDropdown');
-    if (dropdown) {
-      dropdown.classList.toggle('show');
-      if (dropdown.classList.contains('show')) {
-        this.updateNotificationDropdown();
-      }
+    if (!dropdown) return;
+    dropdown.classList.toggle('show');
+    if (dropdown.classList.contains('show')) {
+      this.updateNotificationDropdown();
     }
   }
 
-  /**
-   * Update notification dropdown
-   */
   updateNotificationDropdown() {
     const notificationList = document.getElementById('notificationList');
     if (!notificationList) return;
 
-    if (this.notifications.length === 0) {
-      notificationList.innerHTML = `
-                <div class="p-3 text-center text-muted small">
-                    No notifications
-                </div>
-            `;
+    if (!this.notifications || this.notifications.length === 0) {
+      notificationList.innerHTML = '<div class="p-3 text-center text-muted small">No notifications</div>';
       return;
     }
 
-    notificationList.innerHTML = this.notifications
-      .map(
-        notif => `
-            <div class="notification-item ${notif.is_read ? 'read' : 'unread'}" data-notif-id="${notif.id}">
-                <div class="notification-content">
-                    <div class="notification-title">${notif.title}</div>
-                    <div class="notification-message">${notif.message}</div>
-                    <div class="notification-time">${this.formatTime(notif.created_at)}</div>
-                </div>
-                <button class="btn btn-sm btn-link" onclick="notificationSystem.markAsRead(${notif.id})">
-                    <i class="fas fa-check"></i>
-                </button>
-            </div>
-        `
-      )
-      .join('');
+    notificationList.innerHTML = this.notifications.map(notif => {
+      const payload = notif.payload || {};
+      const title = payload.title || payload.subject || notif.event_type || 'Notification';
+      const message = payload.message || payload.body || '';
+      const isUnread = !notif.read_at;
+      return `
+        <div class="notification-item ${isUnread ? 'unread' : 'read'}" data-notif-id="${notif.id}">
+          <div class="notification-content">
+            <div class="notification-title">${this.escapeHtml(title)}</div>
+            <div class="notification-message">${this.escapeHtml(message)}</div>
+            <div class="notification-time">${this.formatTime(notif.created_at)}</div>
+          </div>
+          ${isUnread ? `<button class="btn btn-sm btn-link mark-read-btn" type="button" data-notif-id="${notif.id}">
+            <i class="fas fa-check"></i>
+          </button>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    notificationList.querySelectorAll('.mark-read-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-notif-id');
+        if (id) this.markAsRead(parseInt(id, 10));
+      });
+    });
   }
 
-  /**
-   * Format time
-   */
   formatTime(timestamp) {
+    if (!timestamp) return '';
     const date = new Date(timestamp);
+    if (isNaN(date.getTime())) return '';
     const now = new Date();
     const diff = now - date;
-
     if (diff < 60000) return 'Just now';
     if (diff < 3600000) return Math.floor(diff / 60000) + ' min ago';
     if (diff < 86400000) return Math.floor(diff / 3600000) + ' hours ago';
     return date.toLocaleDateString();
   }
 
-  /**
-   * Update notification badge
-   */
   updateNotificationBadge() {
     const badge = document.getElementById('notificationBadge');
     if (badge) {
-      badge.textContent = this.unreadCount;
+      badge.textContent = this.unreadCount > 99 ? '99+' : this.unreadCount;
       badge.style.display = this.unreadCount > 0 ? 'inline-block' : 'none';
     }
   }
 
-  /**
-   * Mark notification as read
-   */
   async markAsRead(notifId) {
+    if (!notifId) return;
     try {
       await fetch('/api/notifications/read', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({ notification_id: notifId }),
       });
 
-      this.unreadCount--;
-      this.updateNotificationBadge();
-
-      // Remove unread class
-      const notifEl = document.querySelector(`[data-notif-id="${notifId}"]`);
-      if (notifEl) {
-        notifEl.classList.add('read');
-        notifEl.classList.remove('unread');
+      const notif = this.notifications.find(n => n.id === notifId);
+      if (notif && !notif.read_at) {
+        notif.read_at = new Date().toISOString();
+        if (this.unreadCount > 0) this.unreadCount--;
       }
+      this.updateNotificationBadge();
+      this.updateNotificationDropdown();
     } catch (error) {
-      /* Error marking notification as read handled silently */
+      // Silent fail
     }
   }
 
-  /**
-   * Mark all as read
-   */
   async markAllAsRead() {
     try {
       await fetch('/api/notifications/read-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
       });
 
+      const now = new Date().toISOString();
+      this.notifications.forEach(notif => { notif.read_at = now; });
       this.unreadCount = 0;
       this.updateNotificationBadge();
-
-      this.notifications.forEach(notif => {
-        const notifEl = document.querySelector(`[data-notif-id="${notif.id}"]`);
-        if (notifEl) {
-          notifEl.classList.add('read');
-          notifEl.classList.remove('unread');
-        }
-      });
+      this.updateNotificationDropdown();
     } catch (error) {
-      /* Error marking all as read handled silently */
+      // Silent fail
     }
   }
 
-  /**
-   * Check if popup was dismissed
-   */
   isPopupDismissed(popupId) {
-    const dismissed = localStorage.getItem('dismissed_popups');
-    if (!dismissed) return false;
-    const dismissedIds = JSON.parse(dismissed);
-    return dismissedIds.includes(popupId);
+    try {
+      const dismissed = localStorage.getItem('dismissed_popups');
+      if (!dismissed) return false;
+      const dismissedIds = JSON.parse(dismissed);
+      return Array.isArray(dismissedIds) && dismissedIds.includes(popupId);
+    } catch (e) {
+      return false;
+    }
   }
 
-  /**
-   * Mark popup as dismissed
-   */
   markPopupAsDismissed(popupId) {
-    const dismissed = localStorage.getItem('dismissed_popups') || '[]';
-    const dismissedIds = JSON.parse(dismissed);
-    dismissedIds.push(popupId);
-    localStorage.setItem('dismissed_popups', JSON.stringify(dismissedIds));
+    try {
+      const dismissed = localStorage.getItem('dismissed_popups') || '[]';
+      const dismissedIds = JSON.parse(dismissed);
+      if (!Array.isArray(dismissedIds)) return;
+      dismissedIds.push(popupId);
+      localStorage.setItem('dismissed_popups', JSON.stringify(dismissedIds));
+    } catch (e) {
+      // localStorage unavailable
+    }
   }
 
-  /**
-   * Setup periodic updates
-   */
-  setupPeriodicUpdates() {
-    // Refresh notifications every 30 seconds
-    setInterval(() => {
-      this.loadNotifications();
-    }, 30000);
+  destroy() {
+    this.shouldReconnect = false;
+    this.stopHeartbeat();
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    if (this.ws) {
+      try { this.ws.close(); } catch (e) { /* ignore */ }
+      this.ws = null;
+    }
   }
 }
 
-// Initialize globally
-if (typeof window.notificationSystem === 'undefined') {
-  window.notificationSystem = new NotificationSystem();
+if (typeof window !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof window.notificationSystem === 'undefined') {
+        window.notificationSystem = new NotificationSystem();
+      }
+    });
+  } else {
+    if (typeof window.notificationSystem === 'undefined') {
+      window.notificationSystem = new NotificationSystem();
+    }
+  }
 }

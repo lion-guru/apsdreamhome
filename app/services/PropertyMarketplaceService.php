@@ -28,20 +28,28 @@ class PropertyMarketplaceService
 
     public function listMaintenance(int $propertyId = 0, string $status = ''): array
     {
-        $sql = "SELECT m.*, p.title as property_title, u.name as assignee_name FROM property_maintenance m LEFT JOIN plots p ON m.property_id = p.id LEFT JOIN users u ON m.assigned_to = u.id WHERE 1=1";
-        $params = [];
-        if ($propertyId) { $sql .= " AND m.property_id = :p"; $params[':p'] = $propertyId; }
-        if ($status) { $sql .= " AND m.status = :s"; $params[':s'] = $status; }
-        $sql .= " ORDER BY m.scheduled_date ASC LIMIT 100";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT m.*, p.plot_number as property_title, u.name as assignee_name FROM property_maintenance m LEFT JOIN plots p ON m.property_id = p.id LEFT JOIN users u ON m.assigned_to = u.id WHERE 1=1";
+            $params = [];
+            if ($propertyId) { $sql .= " AND m.property_id = :p"; $params[':p'] = $propertyId; }
+            if ($status) { $sql .= " AND m.status = :s"; $params[':s'] = $status; }
+            $sql .= " ORDER BY m.created_at ASC LIMIT 100";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function getMarketAnalytics(int $days = 90): array
     {
-        $st = $this->db->prepare("SELECT * FROM property_market_data WHERE created_at > DATE_SUB(NOW(), INTERVAL :d DAY) ORDER BY created_at DESC");
-        $st->execute([':d' => $days]);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->prepare("SELECT * FROM property_market_data WHERE data_date > DATE_SUB(CURDATE(), INTERVAL :d DAY) ORDER BY data_date DESC");
+            $st->execute([':d' => $days]);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 }

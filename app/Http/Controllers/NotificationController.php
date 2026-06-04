@@ -100,6 +100,8 @@ class NotificationController extends AdminController
         try {
             $stmt = $this->db->prepare("UPDATE notification_feed SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
             $stmt->execute([$id, $userId]);
+            // Invalidate the unread-count cache for this user
+            \App\Services\CacheService::invalidateUnreadCount((int)$userId);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);

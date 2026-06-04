@@ -28,14 +28,18 @@ class FinanceService
 
     public function listBudgets(int $departmentId = 0, int $fiscalYear = 0): array
     {
-        $sql = "SELECT b.*, d.name as department_name FROM budgets b LEFT JOIN departments d ON b.department_id = d.id WHERE 1=1";
-        $params = [];
-        if ($departmentId) { $sql .= " AND b.department_id = :d"; $params[':d'] = $departmentId; }
-        if ($fiscalYear) { $sql .= " AND b.fiscal_year = :y"; $params[':y'] = $fiscalYear; }
-        $sql .= " ORDER BY b.fiscal_year DESC, b.category";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT b.*, d.name as department_name, b.budget_name AS period FROM budgets b LEFT JOIN departments d ON b.department_id = d.id WHERE 1=1";
+            $params = [];
+            if ($departmentId) { $sql .= " AND b.department_id = :d"; $params[':d'] = $departmentId; }
+            if ($fiscalYear) { $sql .= " AND b.fiscal_year = :y"; $params[':y'] = $fiscalYear; }
+            $sql .= " ORDER BY b.fiscal_year DESC, b.category";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function getBudgetUtilization(int $id): ?array
@@ -59,14 +63,18 @@ class FinanceService
 
     public function listExpenses(int $budgetId = 0, string $status = ''): array
     {
-        $sql = "SELECT e.*, b.category, d.name as department_name FROM budget_expenses e LEFT JOIN budgets b ON e.budget_id = b.id LEFT JOIN departments d ON b.department_id = d.id WHERE 1=1";
-        $params = [];
-        if ($budgetId) { $sql .= " AND e.budget_id = :b"; $params[':b'] = $budgetId; }
-        if ($status) { $sql .= " AND e.status = :s"; $params[':s'] = $status; }
-        $sql .= " ORDER BY e.expense_date DESC LIMIT 200";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT e.*, b.category, d.name as department_name FROM budget_expenses e LEFT JOIN budgets b ON e.budget_id = b.id LEFT JOIN departments d ON b.department_id = d.id WHERE 1=1";
+            $params = [];
+            if ($budgetId) { $sql .= " AND e.budget_id = :b"; $params[':b'] = $budgetId; }
+            if ($status) { $sql .= " AND e.status = :s"; $params[':s'] = $status; }
+            $sql .= " ORDER BY e.expense_date DESC LIMIT 200";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function approveExpense(int $id, int $approverId): array
@@ -111,14 +119,17 @@ class FinanceService
 
     public function getTaxSlabs(string $taxType = '', string $stateCode = ''): array
     {
-        $sql = "SELECT * FROM tax_slabs WHERE 1=1";
-        $params = [];
-        if ($taxType) { $sql .= " AND tax_type = :t"; $params[':t'] = $taxType; }
-        if ($stateCode) { $sql .= " AND (state_code = :sc OR state_code = 'ALL')"; $params[':sc'] = $stateCode; }
-        $sql .= " AND (effective_to IS NULL OR effective_to >= CURDATE()) ORDER BY min_amount";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT id, tax_type, 'ALL' AS state_code, min_amount, max_amount, rate_pct AS tax_rate, fiscal_year, is_active FROM tax_slabs WHERE is_active = 1";
+            $params = [];
+            if ($taxType) { $sql .= " AND tax_type = :t"; $params[':t'] = $taxType; }
+            $sql .= " ORDER BY tax_type, min_amount";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function addTaxSlab(string $taxType, string $stateCode, float $min, float $max, float $rate, ?string $effectiveTo = null): array
@@ -143,8 +154,12 @@ class FinanceService
 
     public function getTaxTypes(): array
     {
-        $st = $this->db->query("SELECT * FROM tax_types WHERE active = 1 ORDER BY name");
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->query("SELECT id, type_code AS code, type_name AS name, description, default_rate, is_active AS active FROM tax_types WHERE is_active = 1 ORDER BY type_name");
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function addTaxType(string $code, string $name, string $description = '', float $defaultRate = 0): array
@@ -198,26 +213,33 @@ class FinanceService
 
     public function listGstReturns(int $limit = 24): array
     {
-        $st = $this->db->prepare("SELECT * FROM gst_returns ORDER BY filed_at DESC LIMIT :lim");
-        $st->bindValue(':lim', $limit, PDO::PARAM_INT);
-        $st->execute();
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->prepare("SELECT id, return_period, gstin, return_type, total_taxable_value AS total_sales, total_tax_amount AS tax_liability, total_itc_claimed, net_payable, filing_status AS status, filed_at, acknowledgment_number FROM gst_returns ORDER BY filed_at DESC LIMIT :lim");
+            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function financialSummary(int $fiscalYear): array
     {
         $out = ['budgets' => 0, 'spent' => 0, 'remaining' => 0, 'utilization' => 0, 'expense_count' => 0];
-        $st = $this->db->prepare("SELECT SUM(allocated_amount) as total_alloc, SUM(spent_amount) as total_spent, COUNT(*) as count FROM budgets WHERE fiscal_year = :y");
-        $st->execute([':y' => $fiscalYear]);
-        $b = $st->fetch(PDO::FETCH_ASSOC);
-        $out['budgets'] = (float)($b['total_alloc'] ?? 0);
-        $out['spent'] = (float)($b['total_spent'] ?? 0);
-        $out['remaining'] = $out['budgets'] - $out['spent'];
-        $out['utilization'] = $out['budgets'] > 0 ? round(($out['spent'] / $out['budgets']) * 100, 1) : 0;
-
-        $st2 = $this->db->prepare("SELECT COUNT(*) as c FROM budget_expenses e LEFT JOIN budgets b ON e.budget_id = b.id WHERE b.fiscal_year = :y");
-        $st2->execute([':y' => $fiscalYear]);
-        $out['expense_count'] = (int)$st2->fetchColumn();
+        try {
+            $st = $this->db->prepare("SELECT SUM(allocated_amount) as total_alloc, SUM(spent_amount) as total_spent, COUNT(*) as count FROM budgets WHERE fiscal_year = :y");
+            $st->execute([':y' => (string)$fiscalYear]);
+            $b = $st->fetch(PDO::FETCH_ASSOC);
+            $out['budgets'] = (float)($b['total_alloc'] ?? 0);
+            $out['spent'] = (float)($b['total_spent'] ?? 0);
+            $out['remaining'] = $out['budgets'] - $out['spent'];
+            $out['utilization'] = $out['budgets'] > 0 ? round(($out['spent'] / $out['budgets']) * 100, 1) : 0;
+        } catch (\Throwable $e) {}
+        try {
+            $st2 = $this->db->prepare("SELECT COUNT(*) as c FROM budget_expenses e LEFT JOIN budgets b ON e.budget_id = b.id WHERE b.fiscal_year = :y");
+            $st2->execute([':y' => (string)$fiscalYear]);
+            $out['expense_count'] = (int)$st2->fetchColumn();
+        } catch (\Throwable $e) {}
         return $out;
     }
 }

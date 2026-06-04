@@ -1,0 +1,19 @@
+# =============================================================================
+# APS Dream Home - Daily Cron Schedule
+# Mounted into the app container at /etc/cron.d/apsdream
+# All times are in container timezone (TZ env var, default Asia/Kolkata)
+# =============================================================================
+
+# m  h  dom mon dow  user  command
+
+# Daily housekeeping - 02:00 AM
+0  2  *  *  *  www-data  cd /var/www/html && /usr/local/bin/php scripts/cron_daily_compliance.php >> /var/log/cron_daily.log 2>&1
+
+# Performance index audit - weekly, Sunday 03:00 AM
+0  3  *  *  0  www-data  cd /var/www/html && /usr/local/bin/php scripts/audit_indexes.php >> /var/log/cron_audit.log 2>&1
+
+# Clear stale cache files - every 6 hours
+0  */6  *  *  *  www-data  find /var/www/html/storage/cache -type f -name "*.php" -mmin +360 -delete >> /var/log/cron_cache.log 2>&1
+
+# Rotate PHP error log if it grows past 100M
+0  0  *  *  *  www-data  [ -f /var/log/apache2/php_error.log ] && [ $(stat -c%s /var/log/apache2/php_error.log 2>/dev/null || echo 0) -gt 104857600 ] && mv /var/log/apache2/php_error.log /var/log/apache2/php_error.log.$(date +\%Y\%m\%d) && touch /var/log/apache2/php_error.log

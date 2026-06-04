@@ -1,327 +1,328 @@
 <?php
-/**
- * Cache Service for APS Dream Home
- * Provides high-level caching for frequently accessed data
- */
 
-class CacheService {
-    private static $cachePrefix = 'apsdreamhome_';
-    
+namespace App\Services;
+
+use App\Core\Cache;
+use App\Core\RedisCache;
+
+/**
+ * CacheService - unified cache facade for the whole application.
+ *
+ * Tries Redis first (when configured + reachable), then transparently
+ * falls back to the file-based Cache. Tracking of hits/misses is done
+ * locally; RedisCache also tracks its own stats.
+ *
+ * Hot keys used in the application (see "cache strategy" in AGENTS.md):
+ *   - admin_sidebar_*                 (1h)  invalidated on menu change
+ *   - header_projects_*               (5m)  invalidated on project change
+ *   - unread_count_user_{id}          (30s) invalidated on notification read
+ *   - admin_dash_*                    (2m)  invalidated on dashboard events
+ *   - property_filters_*              (1h)  invalidated on filter data change
+ */
+class CacheService
+{
+    private static ?array $stats = null;
+    private static array $localStats = [
+        'redis_hits'   => 0,
+        'redis_misses' => 0,
+        'file_hits'    => 0,
+        'file_misses'  => 0,
+        'invalidations'=> 0,
+    ];
+
     /**
-     * Cache projects data
+     * Get-or-set: try Redis first, then file cache, then callback.
+     *
+     * @param string   $key      Cache key (without prefix)
+     * @param int      $ttl      TTL in seconds
+     * @param callable $callback Function to compute the value on miss
      */
-    public static function getProjects($forceRefresh = false) {
-        $key = self::$cachePrefix . 'projects';
-        
-        if ($forceRefresh) {
-            Cache::delete($key);
+    public static function cache(string $key, int $ttl, callable $callback)
+    {
+        $redis = RedisCache::getInstance();
+        if ($redis->isAvailable()) {
+            $value = $redis->get($key);
+            if ($value !== null) {
+                self::$localStats['redis_hits']++;
+                return $value;
+            }
+            self::$localStats['redis_misses']++;
+        } else {
+            $value = Cache::get($key);
+            if ($value !== null) {
+                self::$localStats['file_hits']++;
+                return $value;
+            }
+            self::$localStats['file_misses']++;
         }
-        
-        return Cache::remember($key, function() {
-            $db = Database::getInstance();
-            
-            // Get projects with location data
-            $query = "SELECT p.*, d.name as district_name, s.name as state_name 
-                      FROM projects p 
-                      LEFT JOIN districts d ON p.district_id = d.id 
-                      LEFT JOIN states s ON p.state_id = s.id 
-                      WHERE p.status = 'active' 
-                      ORDER BY p.created_at DESC";
-            
-            $result = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Group by location for efficient display
-            $grouped = [];
-            foreach ($result as $project) {
-                $location = $project['district_name'] ?? 'Other';
-                if (!isset($grouped[$location])) {
-                    $grouped[$location] = [];
-                }
-                $grouped[$location][] = $project;
-            }
-            
-            return [
-                'projects' => $result,
-                'grouped_by_location' => $grouped,
-                'total' => count($result)
-            ];
-        }, 3600); // Cache for 1 hour
-    }
-    
-    /**
-     * Cache locations/states data
-     */
-    public static function getLocations($forceRefresh = false) {
-        $key = self::$cachePrefix . 'locations';
-        
-        if ($forceRefresh) {
-            Cache::delete($key);
+
+        $value = $callback();
+
+        // Best-effort write to both layers (file is durable, redis is fast).
+        if ($redis->isAvailable()) {
+            $redis->set($key, $value, $ttl);
         }
-        
-        return Cache::remember($key, function() {
-            $db = Database::getInstance();
-            
-            $states = $db->query("SELECT * FROM states ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
-            $districts = $db->query("SELECT * FROM districts ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
-            
-            return [
-                'states' => $states,
-                'districts' => $districts,
-                'total_states' => count($states),
-                'total_districts' => count($districts)
-            ];
-        }, 86400); // Cache for 24 hours
+        Cache::set($key, $value, $ttl);
+        return $value;
     }
-    
+
     /**
-     * Cache properties data
+     * Invalidate a single key in both cache layers.
      */
-    public static function getProperties($filters = [], $forceRefresh = false) {
-        // Create cache key based on filters
-        $filterKey = md5(serialize($filters));
-        $key = self::$cachePrefix . 'properties_' . $filterKey;
-        
-        if ($forceRefresh) {
-            Cache::delete($key);
-        }
-        
-        return Cache::remember($key, function() use ($filters) {
-            $db = Database::getInstance();
-            
-            $query = "SELECT p.*, u.name as user_name, u.phone as user_phone 
-                      FROM user_properties p 
-                      LEFT JOIN users u ON p.user_id = u.id 
-                      WHERE p.status = 'approved'";
-            
-            $params = [];
-            
-            // Apply filters
-            if (!empty($filters['property_type'])) {
-                $query .= " AND p.property_type = :property_type";
-                $params['property_type'] = $filters['property_type'];
-            }
-            
-            if (!empty($filters['listing_type'])) {
-                $query .= " AND p.listing_type = :listing_type";
-                $params['listing_type'] = $filters['listing_type'];
-            }
-            
-            if (!empty($filters['min_price'])) {
-                $query .= " AND p.price >= :min_price";
-                $params['min_price'] = $filters['min_price'];
-            }
-            
-            if (!empty($filters['max_price'])) {
-                $query .= " AND p.price <= :max_price";
-                $params['max_price'] = $filters['max_price'];
-            }
-            
-            if (!empty($filters['location'])) {
-                $query .= " AND p.address LIKE :location";
-                $params['location'] = '%' . $filters['location'] . '%';
-            }
-            
-            $query .= " ORDER BY p.created_at DESC";
-            
-            if (!empty($params)) {
-                $stmt = $db->prepare($query);
-                $stmt->execute($params);
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            } else {
-                $result = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
-            }
-            
-            return [
-                'properties' => $result,
-                'total' => count($result),
-                'filters' => $filters
-            ];
-        }, 1800); // Cache for 30 minutes
+    public static function invalidate(string $key): bool
+    {
+        self::$localStats['invalidations']++;
+        $ok1 = RedisCache::getInstance()->delete($key);
+        $ok2 = Cache::delete($key);
+        return $ok1 || $ok2;
     }
-    
+
     /**
-     * Cache user dashboard data
+     * Invalidate all keys matching a glob pattern across both layers.
+     *
+     *   CacheService::invalidatePattern('admin_menu_*')
+     *
+     * For Redis uses SCAN + DEL. For the file layer, iterates cache
+     * files and decodes them to read the original key.
      */
-    public static function getUserDashboard($userId, $forceRefresh = false) {
-        $key = self::$cachePrefix . 'user_dashboard_' . $userId;
-        
-        if ($forceRefresh) {
-            Cache::delete($key);
-        }
-        
-        return Cache::remember($key, function() use ($userId) {
-            $db = Database::getInstance();
-            
-            // Get user's properties count
-            $propertyCount = $db->prepare("SELECT COUNT(*) as count FROM user_properties WHERE user_id = ?");
-            $propertyCount->execute([$userId]);
-            $propertyCount = $propertyCount->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            // Get user's inquiries count
-            $inquiryCount = $db->prepare("SELECT COUNT(*) as count FROM inquiries WHERE user_id = ?");
-            $inquiryCount->execute([$userId]);
-            $inquiryCount = $inquiryCount->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            // Get recent properties
-            $recentProperties = $db->prepare("SELECT * FROM user_properties WHERE user_id = ? ORDER BY created_at DESC LIMIT 5");
-            $recentProperties->execute([$userId]);
-            $recentProperties = $recentProperties->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Get recent inquiries
-            $recentInquiries = $db->prepare("SELECT * FROM inquiries WHERE user_id = ? ORDER BY created_at DESC LIMIT 5");
-            $recentInquiries->execute([$userId]);
-            $recentInquiries = $recentInquiries->fetchAll(PDO::FETCH_ASSOC);
-            
-            return [
-                'property_count' => $propertyCount,
-                'inquiry_count' => $inquiryCount,
-                'recent_properties' => $recentProperties,
-                'recent_inquiries' => $recentInquiries
-            ];
-        }, 900); // Cache for 15 minutes
+    public static function invalidatePattern(string $pattern): int
+    {
+        self::$localStats['invalidations']++;
+        $count = 0;
+
+        // Redis: pattern-based delete
+        $count += RedisCache::getInstance()->deletePattern($pattern);
+
+        // File: iterate cache files and check the embedded key
+        $count += self::invalidateFilePattern($pattern);
+
+        return $count;
     }
-    
+
     /**
-     * Cache admin dashboard stats
+     * Get aggregate statistics from both cache layers.
      */
-    public static function getAdminDashboardStats($forceRefresh = false) {
-        $key = self::$cachePrefix . 'admin_dashboard_stats';
-        
-        if ($forceRefresh) {
-            Cache::delete($key);
-        }
-        
-        return Cache::remember($key, function() {
-            $db = Database::getInstance();
-            
-            $stats = [];
-            
-            // Count pending properties
-            $stats['pending_properties'] = $db->query("SELECT COUNT(*) as count FROM user_properties WHERE status = 'pending'")
-                ->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            // Count approved properties
-            $stats['approved_properties'] = $db->query("SELECT COUNT(*) as count FROM user_properties WHERE status = 'approved'")
-                ->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            // Count total users
-            $stats['total_users'] = $db->query("SELECT COUNT(*) as count FROM users")
-                ->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            // Count pending inquiries
-            $stats['pending_inquiries'] = $db->query("SELECT COUNT(*) as count FROM inquiries WHERE status = 'pending'")
-                ->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            // Count total projects
-            $stats['total_projects'] = $db->query("SELECT COUNT(*) as count FROM projects")
-                ->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            // Count active projects
-            $stats['active_projects'] = $db->query("SELECT COUNT(*) as count FROM projects WHERE status = 'active'")
-                ->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            $stats['generated_at'] = date('Y-m-d H:i:s');
-            
-            return $stats;
-        }, 600); // Cache for 10 minutes
-    }
-    
-    /**
-     * Cache menu structure for navigation
-     */
-    public static function getMenuStructure($role = 'customer', $forceRefresh = false) {
-        $key = self::$cachePrefix . 'menu_' . $role;
-        
-        if ($forceRefresh) {
-            Cache::delete($key);
-        }
-        
-        return Cache::remember($key, function() use ($role) {
-            $db = Database::getInstance();
-            
-            // Get menu items for role
-            $query = "SELECT mi.*, rmp.status as permission_status 
-                      FROM admin_menu_items mi 
-                      LEFT JOIN admin_role_menu_permissions rmp ON mi.id = rmp.menu_item_id 
-                      LEFT JOIN admin_roles r ON rmp.role_id = r.id 
-                      WHERE r.name = :role OR rmp.role_id IS NULL
-                      ORDER BY mi.sort_order ASC";
-            
-            $stmt = $db->prepare($query);
-            $stmt->execute(['role' => $role]);
-            $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Organize into menu structure
-            $menu = [];
-            foreach ($items as $item) {
-                if ($item['parent_id'] == 0) {
-                    $menu[$item['id']] = [
-                        'item' => $item,
-                        'children' => []
-                    ];
-                } else {
-                    if (isset($menu[$item['parent_id']])) {
-                        $menu[$item['parent_id']]['children'][] = $item;
-                    }
-                }
-            }
-            
-            return $menu;
-        }, 3600); // Cache for 1 hour
-    }
-    
-    /**
-     * Clear all application cache
-     */
-    public static function clearAll() {
-        $prefix = self::$cachePrefix;
-        $cacheDir = __DIR__ . '/../../storage/cache';
-        
-        if (is_dir($cacheDir)) {
-            $files = glob($cacheDir . '/*.cache');
-            $cleared = 0;
-            
-            foreach ($files as $file) {
-                $content = file_get_contents($file);
-                $data = json_decode($content, true);
-                
-                // Clear only APS Dream Home cache
-                if (isset($data['key']) && strpos($data['key'], $prefix) === 0) {
-                    unlink($file);
-                    $cleared++;
-                }
-            }
-            
-            return $cleared;
-        }
-        
-        return 0;
-    }
-    
-    /**
-     * Clear specific cache type
-     */
-    public static function clearType($type) {
-        $key = self::$cachePrefix . $type;
-        return Cache::delete($key);
-    }
-    
-    /**
-     * Get cache statistics
-     */
-    public static function getStats() {
-        $cacheStats = Cache::getStats();
-        
-        // Add application-specific stats
-        $appStats = [
-            'prefix' => self::$cachePrefix,
-            'cache_types' => [
-                'projects' => Cache::get(self::$cachePrefix . 'projects') !== null,
-                'locations' => Cache::get(self::$cachePrefix . 'locations') !== null,
-                'admin_dashboard' => Cache::get(self::$cachePrefix . 'admin_dashboard_stats') !== null
-            ]
+    public static function getStats(): array
+    {
+        $redis = RedisCache::getInstance();
+        $redisStats = $redis->getStats();
+        $fileStats  = Cache::getStats();
+
+        return [
+            'driver'   => $redisStats['driver'] ?? 'unknown',
+            'available'=> $redisStats['available'] ?? false,
+            'host'     => $redisStats['host'] ?? null,
+            'port'     => $redisStats['port'] ?? null,
+            'prefix'   => $redisStats['prefix'] ?? 'apsdream_',
+            'redis'    => [
+                'hits'      => $redisStats['hits']   ?? 0,
+                'misses'    => $redisStats['misses'] ?? 0,
+                'sets'      => $redisStats['sets']   ?? 0,
+                'deletes'   => $redisStats['deletes']?? 0,
+                'evictions' => $redisStats['evictions'] ?? 0,
+                'errors'    => $redisStats['errors'] ?? 0,
+                'size'      => $redis->size(),
+                'info'      => $redis->info(),
+            ],
+            'file' => [
+                'total_files'  => $fileStats['total_files']  ?? 0,
+                'total_size'   => $fileStats['total_size']   ?? '0 bytes',
+                'expired_files'=> $fileStats['expired_files']?? 0,
+                'active_files' => $fileStats['active_files'] ?? 0,
+            ],
+            'session' => self::$localStats,
+            'hit_rate' => self::calcHitRate($redisStats, self::$localStats),
         ];
-        
-        return array_merge($cacheStats, $appStats);
+    }
+
+    /**
+     * Flush both cache layers.
+     */
+    public static function flushAll(): bool
+    {
+        $r = RedisCache::getInstance()->flush();
+        $f = Cache::clear();
+        self::$localStats['invalidations']++;
+        return $r || $f;
+    }
+
+    /**
+     * Flush only the Redis cache (file cache untouched).
+     */
+    public static function flushRedis(): bool
+    {
+        self::$localStats['invalidations']++;
+        return RedisCache::getInstance()->flush();
+    }
+
+    /**
+     * Test that Redis is reachable. Returns diagnostic info.
+     */
+    public static function testConnection(): array
+    {
+        $redis = RedisCache::getInstance();
+        $start = microtime(true);
+        $available = $redis->isAvailable();
+        $latency = round((microtime(true) - $start) * 1000, 2);
+
+        $result = [
+            'available' => $available,
+            'driver'    => $available ? 'redis' : 'file (fallback)',
+            'latency_ms'=> $latency,
+            'host'      => $redis->getStats()['host'] ?? null,
+            'port'      => $redis->getStats()['port'] ?? null,
+            'timestamp' => date('Y-m-d H:i:s'),
+        ];
+
+        if ($available) {
+            try {
+                $redis->set('__cache_test__', 'ok', 10);
+                $value = $redis->get('__cache_test__');
+                $redis->delete('__cache_test__');
+                $result['read_write'] = ($value === 'ok');
+                $result['info'] = array_slice($redis->info(), 0, 5);
+            } catch (\Throwable $e) {
+                $result['error'] = $e->getMessage();
+            }
+        } else {
+            $result['error'] = 'Redis not available. Using file cache fallback.';
+        }
+        return $result;
+    }
+
+    /**
+     * Calculate overall cache hit-rate percentage.
+     */
+    private static function calcHitRate(array $redisStats, array $localStats): float
+    {
+        $hits = ($redisStats['hits'] ?? 0) + $localStats['file_hits'];
+        $total = $hits + ($redisStats['misses'] ?? 0) + $localStats['file_misses'];
+        if ($total === 0) {
+            return 0.0;
+        }
+        return round(($hits / $total) * 100, 2);
+    }
+
+    /**
+     * Walk the file cache directory, decoding each entry's original key
+     * to determine if it matches the supplied glob pattern.
+     */
+    private static function invalidateFilePattern(string $pattern): int
+    {
+        $count = 0;
+        $cacheDir = defined('APP_ROOT')
+            ? APP_ROOT . '/storage/cache'
+            : __DIR__ . '/../../storage/cache';
+
+        if (!is_dir($cacheDir)) {
+            return 0;
+        }
+
+        $regex = self::globToRegex($pattern);
+        $files = glob($cacheDir . '/*.cache');
+        if (!$files) {
+            return 0;
+        }
+
+        foreach ($files as $file) {
+            $content = @file_get_contents($file);
+            if (!$content) {
+                continue;
+            }
+            $data = json_decode($content, true);
+            if (!is_array($data) || !isset($data['key'])) {
+                continue;
+            }
+            if (preg_match($regex, $data['key'])) {
+                @unlink($file);
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    /**
+     * Convert a glob pattern like 'admin_menu_*' to a regex.
+     */
+    private static function globToRegex(string $pattern): string
+    {
+        $quoted = preg_quote($pattern, '~');
+        $regex = str_replace(['\*', '\?'], ['.*', '.'], $quoted);
+        return '~^' . $regex . '$~';
+    }
+
+    // -----------------------------------------------------------------
+    // Domain-specific helpers — pre-canned cache strategies for hot data
+    // -----------------------------------------------------------------
+
+    /**
+     * Cache admin menu items (1 hour).
+     * @param string $role  e.g. 'admin', 'manager', 'associate'
+     */
+    public static function getAdminMenu(string $role, callable $callback): array
+    {
+        $key = 'admin_menu_role_' . md5($role);
+        return self::cache($key, 3600, $callback);
+    }
+
+    /**
+     * Cache header projects / locations (5 minutes).
+     */
+    public static function getHeaderProjects(callable $callback): array
+    {
+        return self::cache('header_projects_all', 300, $callback);
+    }
+
+    /**
+     * Cache unread notification count for a user (30 seconds).
+     */
+    public static function getUnreadCount(int $userId, callable $callback): int
+    {
+        return (int) self::cache('unread_count_user_' . $userId, 30, $callback);
+    }
+
+    /**
+     * Cache admin dashboard stats (2 minutes).
+     */
+    public static function getAdminDashboardStats(callable $callback): array
+    {
+        return self::cache('admin_dash_stats', 120, $callback);
+    }
+
+    /**
+     * Cache property list filters — cities, types, price ranges (1 hour).
+     */
+    public static function getPropertyFilters(callable $callback): array
+    {
+        return self::cache('property_filters_all', 3600, $callback);
+    }
+
+    /**
+     * Invalidate hooks — call these from places that mutate the underlying data.
+     */
+    public static function invalidateAdminMenu(): int
+    {
+        return self::invalidatePattern('admin_menu_') + self::invalidatePattern('admin_sidebar_');
+    }
+
+    public static function invalidateHeaderProjects(): int
+    {
+        return self::invalidate('header_projects_all');
+    }
+
+    public static function invalidateUnreadCount(int $userId): int
+    {
+        self::invalidate('unread_count_user_' . $userId);
+        return 1;
+    }
+
+    public static function invalidateAdminDashboard(): int
+    {
+        return self::invalidatePattern('admin_dash_');
+    }
+
+    public static function invalidatePropertyFilters(): int
+    {
+        return self::invalidate('property_filters_all');
     }
 }

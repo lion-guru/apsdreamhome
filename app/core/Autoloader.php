@@ -185,9 +185,17 @@ $autoloader->addClassMap('App\Http\Controllers\Api\MonitorController', APP_ROOT 
 
 // Register legacy managers for backward compatibility
 $autoloader->addClassMap('Cache', APP_ROOT . '/app/Core/Cache.php');
+$autoloader->addClassMap('RedisCache', APP_ROOT . '/app/Core/RedisCache.php');
 $autoloader->addClassMap('UserManager', APP_ROOT . '/includes/managers.php');
 $autoloader->addClassMap('PropertyManager', APP_ROOT . '/includes/managers.php');
 $autoloader->addClassMap('ContactManager', APP_ROOT . '/includes/managers.php');
+
+// Alias the namespaced CacheService to the legacy global name
+// so any pre-namespace references (e.g. `CacheService::getProjects()`)
+// continue to work.
+if (PHP_VERSION_ID >= 80000 && !class_exists('CacheService', false)) {
+    class_alias('App\\Services\\CacheService', 'CacheService');
+}
 
 // Ensure AppConfig is autoloaded from legacy config
 // $autoloader->addClassMap('AppConfig', APP_ROOT . '/includes/config.php');

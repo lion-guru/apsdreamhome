@@ -391,8 +391,23 @@ $userDocuments = $userDocuments ?? [];
                     </a>
                     <a href="<?= BASE_URL ?>/user/saved-searches" class="btn btn-outline-secondary">
                         <i class="fas fa-search me-2"></i>Saved Searches
+                        <?php
+                        // Show badge with count of saved searches
+                        try {
+                            $cntStmt = $this->db ?? \App\Core\Database\Database::getInstance()->getConnection();
+                            $cntStmt2 = $cntStmt->prepare("SELECT COUNT(*) as cnt FROM saved_searches WHERE user_id = ?");
+                            $cntStmt2->execute([$_SESSION['user_id'] ?? 0]);
+                            $cntRow = $cntStmt2->fetch(\PDO::FETCH_ASSOC);
+                            $savedCount = (int)($cntRow['cnt'] ?? 0);
+                            if ($savedCount > 0):
+                        ?>
+                            <span class="badge bg-primary ms-1"><?= $savedCount ?></span>
+                        <?php endif; } catch (\Throwable $e) {} ?>
                     </a>
-                    <a href="<?= BASE_URL ?>/user/notification-settings" class="btn btn-outline-warning">
+                    <a href="<?= BASE_URL ?>/user/saved-searches/manage-alerts" class="btn btn-outline-success">
+                        <i class="fas fa-bell me-2"></i>Manage Email Alerts
+                    </a>
+                    <a href="<?= BASE_URL ?>/user/notification-preferences" class="btn btn-outline-warning">
                         <i class="fas fa-bell me-2"></i>Notification Settings
                     </a>
                     <a href="<?= BASE_URL ?>/user/referral" class="btn btn-outline-success">

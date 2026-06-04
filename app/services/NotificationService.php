@@ -14,6 +14,22 @@ class NotificationService
 
     public function send(int $userId, string $channel, string $subject, string $message, array $data = []): array
     {
+        // Respect customer notification preferences. If the caller passes
+        // 'notification_type' in $data, the user's channel toggle for that
+        // type is consulted; if the channel is disabled we skip delivery
+        // and persist a 'skipped' record for auditability.
+        $notificationType = $data['notification_type'] ?? null;
+        if ($notificationType && !$this->isChannelEnabled($userId, $notificationType, $channel)) {
+            $payload = json_encode(['subject' => $subject, 'message' => $message, 'data' => $data], JSON_UNESCAPED_UNICODE);
+            $stSkip = $this->db->prepare("INSERT INTO realtime_notifications (user_id, channel, subject, message, payload, status, created_at) VALUES (:u, :c, :s, :m, :p, 'skipped', NOW())");
+            try {
+                $stSkip->execute([':u' => $userId, ':c' => $channel, ':s' => $subject, ':m' => $message, ':p' => $payload]);
+            } catch (\Throwable $e) {
+                // ignore audit log failure - delivery is the priority
+            }
+            return ['ok' => false, 'id' => 0, 'skipped' => true, 'reason' => 'channel_disabled_by_user'];
+        }
+
         $template = $this->getTemplate($data['template_code'] ?? $channel);
         $st = $this->db->prepare("INSERT INTO notification_templates (template_code, channel, subject, body, variables, active, created_at)
                                   VALUES (:c, :ch, :s, :b, :v, 0, NOW())
@@ -39,32 +55,93 @@ class NotificationService
         return ['ok' => true, 'id' => $id];
     }
 
-    public function getTemplate(string $code): ?array
+    /**
+     * Check whether the user has the given channel enabled for the given
+     * notification type. Returns true when no preference row exists yet
+     * (default opt-in behaviour). Critical/security notification types
+     * bypass the check.
+     */
+    public function isChannelEnabled(int $userId, string $notificationType, string $channel): bool
     {
-        $st = $this->db->prepare("SELECT * FROM notification_templates WHERE template_code = :c AND active = 1 LIMIT 1");
-        $st->execute([':c' => $code]);
-        $r = $st->fetch(PDO::FETCH_ASSOC);
-        return $r ?: null;
+        $criticalTypes = ['security', 'password_reset', '2fa', 'login_alert', 'fraud'];
+        if (in_array($notificationType, $criticalTypes, true)) {
+            return true;
+        }
+
+        $columnMap = [
+            'email'    => 'email_enabled',
+            'sms'      => 'sms_enabled',
+            'whatsapp' => 'whatsapp_enabled',
+            'push'     => 'push_enabled',
+        ];
+        if (!isset($columnMap[$channel])) {
+            return true;
+        }
+        $col = $columnMap[$channel];
+
+        try {
+            $st = $this->db->prepare(
+                "SELECT {$col} AS enabled
+                 FROM user_notification_preferences
+                 WHERE user_id = ? AND notification_type = ?"
+            );
+            $st->execute([$userId, $notificationType]);
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            if (!$row) {
+                // No preference row yet - default to enabled
+                return true;
+            }
+            return (int) $row['enabled'] === 1;
+        } catch (\Throwable $e) {
+            // If the table is missing or the query fails, default to enabled
+            // so that we don't accidentally silence all notifications.
+            error_log('NotificationService::isChannelEnabled error: ' . $e->getMessage());
+            return true;
+        }
     }
 
-    public function saveTemplate(string $code, string $channel, string $subject, string $body, array $variables = []): array
+    public function getTemplate(string $code): ?array
     {
-        $st = $this->db->prepare("INSERT INTO notification_templates (template_code, channel, subject, body, variables, active, created_at)
-                                  VALUES (:c, :ch, :s, :b, :v, 1, NOW())
-                                  ON DUPLICATE KEY UPDATE subject = VALUES(subject), body = VALUES(body), variables = VALUES(variables), active = 1, updated_at = NOW()");
-        $st->execute([':c' => $code, ':ch' => $channel, ':s' => $subject, ':b' => $body, ':v' => json_encode($variables, JSON_UNESCAPED_UNICODE)]);
-        return ['ok' => true];
+        try {
+            $st = $this->db->prepare("SELECT * FROM notification_templates WHERE template_code = :c AND is_active = 1 LIMIT 1");
+            $st->execute([':c' => $code]);
+            $r = $st->fetch(PDO::FETCH_ASSOC);
+            return $r ?: null;
+        } catch (\Throwable $e) {
+            error_log('NotificationService::getTemplate error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function saveTemplate(string $code, string $channel, string $subject, string $body, array $variables = [], string $templateName = ''): array
+    {
+        try {
+            $name = $templateName !== '' ? $templateName : $code;
+            $st = $this->db->prepare("INSERT INTO notification_templates (template_code, template_name, channel, subject, body, variables, is_active, created_at)
+                                      VALUES (:c, :n, :ch, :s, :b, :v, 1, NOW())
+                                      ON DUPLICATE KEY UPDATE template_name = VALUES(template_name), subject = VALUES(subject), body = VALUES(body), variables = VALUES(variables), is_active = 1, updated_at = NOW()");
+            $st->execute([':c' => $code, ':n' => $name, ':ch' => $channel, ':s' => $subject, ':b' => $body, ':v' => json_encode($variables, JSON_UNESCAPED_UNICODE)]);
+            return ['ok' => true];
+        } catch (\Throwable $e) {
+            error_log('NotificationService::saveTemplate error: ' . $e->getMessage());
+            return ['ok' => false, 'error' => $e->getMessage()];
+        }
     }
 
     public function listTemplates(string $channel = ''): array
     {
-        $sql = "SELECT * FROM notification_templates WHERE 1=1";
-        $params = [];
-        if ($channel) { $sql .= " AND channel = :c"; $params[':c'] = $channel; }
-        $sql .= " ORDER BY template_code";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT * FROM notification_templates WHERE 1=1";
+            $params = [];
+            if ($channel) { $sql .= " AND channel = :c"; $params[':c'] = $channel; }
+            $sql .= " ORDER BY template_code";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::listTemplates error: ' . $e->getMessage());
+            return [];
+        }
     }
 
     public function render(string $templateCode, array $vars): array
@@ -161,15 +238,26 @@ class NotificationService
 
     public function getSmsTemplates(): array
     {
-        $st = $this->db->query("SELECT * FROM sms_templates WHERE active = 1 ORDER BY template_code");
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->query("SELECT * FROM sms_templates WHERE is_active = 1 ORDER BY template_code");
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('NotificationService::getSmsTemplates error: ' . $e->getMessage());
+            return [];
+        }
     }
 
-    public function saveSmsTemplate(string $code, string $body, string $category = 'general'): array
+    public function saveSmsTemplate(string $code, string $body, string $templateName = ''): array
     {
-        $st = $this->db->prepare("INSERT INTO sms_templates (template_code, body, category, active, created_at) VALUES (:c, :b, :cat, 1, NOW())
-                                  ON DUPLICATE KEY UPDATE body = VALUES(body), category = VALUES(category), active = 1");
-        $st->execute([':c' => $code, ':b' => $body, ':cat' => $category]);
-        return ['ok' => true];
+        try {
+            $name = $templateName !== '' ? $templateName : $code;
+            $st = $this->db->prepare("INSERT INTO sms_templates (template_code, template_name, body, is_active, created_at) VALUES (:c, :n, :b, 1, NOW())
+                                      ON DUPLICATE KEY UPDATE template_name = VALUES(template_name), body = VALUES(body), is_active = 1");
+            $st->execute([':c' => $code, ':n' => $name, ':b' => $body]);
+            return ['ok' => true];
+        } catch (\Throwable $e) {
+            error_log('NotificationService::saveSmsTemplate error: ' . $e->getMessage());
+            return ['ok' => false, 'error' => $e->getMessage()];
+        }
     }
 }

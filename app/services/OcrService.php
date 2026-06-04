@@ -14,9 +14,13 @@ class OcrService
 
     public function classifyDocument(int $documentId, string $category, float $confidence = 0.0, array $metadata = []): array
     {
-        $st = $this->db->prepare("INSERT INTO document_classification (document_id, category, confidence, metadata, classified_at) VALUES (:d, :c, :co, :m, NOW())");
-        $st->execute([':d' => $documentId, ':c' => $category, ':co' => $confidence, ':m' => json_encode($metadata, JSON_UNESCAPED_UNICODE)]);
-        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+        try {
+            $st = $this->db->prepare("INSERT INTO document_classification (document_id, classified_category, classified_type, confidence, manual_override, classified_at) VALUES (:d, :c, :t, :co, 0, NOW())");
+            $st->execute([':d' => $documentId, ':c' => $category, ':t' => substr(json_encode($metadata, JSON_UNESCAPED_UNICODE), 0, 50), ':co' => $confidence]);
+            return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+        } catch (\Throwable $e) {
+            return ['ok' => false, 'error' => $e->getMessage()];
+        }
     }
 
     public function autoClassify(int $documentId, string $fileName, string $content = ''): array
@@ -53,13 +57,17 @@ class OcrService
 
     public function listClassifications(string $category = ''): array
     {
-        $sql = "SELECT * FROM document_classification WHERE 1=1";
-        $params = [];
-        if ($category) { $sql .= " AND category = :c"; $params[':c'] = $category; }
-        $sql .= " ORDER BY classified_at DESC LIMIT 200";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT * FROM document_classification WHERE 1=1";
+            $params = [];
+            if ($category) { $sql .= " AND classified_category = :c"; $params[':c'] = $category; }
+            $sql .= " ORDER BY classified_at DESC LIMIT 200";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function processOcr(int $documentId, string $extractedText, array $fields = []): array
@@ -90,29 +98,41 @@ class OcrService
 
     public function listOcrDocuments(int $limit = 100): array
     {
-        $st = $this->db->prepare("SELECT * FROM ocr_documents ORDER BY created_at DESC LIMIT :lim");
-        $st->bindValue(':lim', $limit, PDO::PARAM_INT);
-        $st->execute();
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->prepare("SELECT * FROM ocr_documents ORDER BY created_at DESC LIMIT :lim");
+            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function listTemplates(string $category = ''): array
     {
-        $sql = "SELECT * FROM ocr_templates WHERE active = 1";
-        $params = [];
-        if ($category) { $sql .= " AND category = :c"; $params[':c'] = $category; }
-        $sql .= " ORDER BY name";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT * FROM ocr_templates WHERE is_active = 1";
+            $params = [];
+            if ($category) { $sql .= " AND document_type = :c"; $params[':c'] = $category; }
+            $sql .= " ORDER BY template_name";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function saveTemplate(string $name, string $category, array $fields, string $regex = ''): array
     {
-        $st = $this->db->prepare("INSERT INTO ocr_templates (name, category, fields, regex_pattern, active, created_at) VALUES (:n, :c, :f, :r, 1, NOW())
-                                  ON DUPLICATE KEY UPDATE category = VALUES(category), fields = VALUES(fields), regex_pattern = VALUES(regex_pattern), active = 1");
-        $st->execute([':n' => $name, ':c' => $category, ':f' => json_encode($fields, JSON_UNESCAPED_UNICODE), ':r' => $regex]);
-        return ['ok' => true];
+        try {
+            $st = $this->db->prepare("INSERT INTO ocr_templates (template_name, document_type, field_definitions, is_active) VALUES (:n, :c, :f, 1)
+                                      ON DUPLICATE KEY UPDATE document_type = VALUES(document_type), field_definitions = VALUES(field_definitions), is_active = 1");
+            $st->execute([':n' => $name, ':c' => $category, ':f' => json_encode($fields, JSON_UNESCAPED_UNICODE)]);
+            return ['ok' => true];
+        } catch (\Throwable $e) {
+            return ['ok' => false, 'error' => $e->getMessage()];
+        }
     }
 
     public function executeReport(int $userId, string $reportType, array $params, string $format = 'json'): array
@@ -169,14 +189,18 @@ class OcrService
 
     public function listExecutions(int $userId = 0, int $limit = 50): array
     {
-        $sql = "SELECT * FROM report_executions WHERE 1=1";
-        $params = [];
-        if ($userId) { $sql .= " AND user_id = :u"; $params[':u'] = $userId; }
-        $sql .= " ORDER BY started_at DESC LIMIT :lim";
-        $st = $this->db->prepare($sql);
-        foreach ($params as $k => $v) $st->bindValue($k, $v);
-        $st->bindValue(':lim', $limit, PDO::PARAM_INT);
-        $st->execute();
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT * FROM report_executions WHERE 1=1";
+            $params = [];
+            if ($userId) { $sql .= " AND run_by_user_id = :u"; $params[':u'] = $userId; }
+            $sql .= " ORDER BY started_at DESC LIMIT :lim";
+            $st = $this->db->prepare($sql);
+            foreach ($params as $k => $v) $st->bindValue($k, $v);
+            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 }

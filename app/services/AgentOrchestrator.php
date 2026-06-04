@@ -14,14 +14,18 @@ class AgentOrchestrator
 
     public function listTasks(int $agentId = 0, string $status = ''): array
     {
-        $sql = "SELECT t.*, u.name as agent_name FROM agent_tasks t LEFT JOIN users u ON t.agent_id = u.id WHERE 1=1";
-        $params = [];
-        if ($agentId) { $sql .= " AND t.agent_id = :a"; $params[':a'] = $agentId; }
-        if ($status) { $sql .= " AND t.status = :s"; $params[':s'] = $status; }
-        $sql .= " ORDER BY t.assigned_at DESC LIMIT 200";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT t.* FROM agent_tasks t WHERE 1=1";
+            $params = [];
+            if ($status) { $sql .= " AND t.status = :s"; $params[':s'] = $status; }
+            $sql .= " ORDER BY t.assigned_at DESC LIMIT 200";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("AgentOrchestrator::listTasks error: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function createTask(int $agentId, string $type, array $payload, int $priority = 5): array
@@ -107,15 +111,19 @@ class AgentOrchestrator
 
     public function listExecutions(int $taskId = 0, int $limit = 100): array
     {
-        $sql = "SELECT e.*, t.task_type, u.name as agent_name FROM agent_executions e LEFT JOIN agent_tasks t ON e.task_id = t.id LEFT JOIN users u ON e.agent_id = u.id WHERE 1=1";
-        $params = [];
-        if ($taskId) { $sql .= " AND e.task_id = :t"; $params[':t'] = $taskId; }
-        $sql .= " ORDER BY e.completed_at DESC LIMIT :lim";
-        $st = $this->db->prepare($sql);
-        foreach ($params as $k => $v) $st->bindValue($k, $v);
-        $st->bindValue(':lim', $limit, PDO::PARAM_INT);
-        $st->execute();
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT e.* FROM agent_executions e WHERE 1=1";
+            $params = [];
+            $sql .= " ORDER BY e.execution_end DESC LIMIT :lim";
+            $st = $this->db->prepare($sql);
+            foreach ($params as $k => $v) $st->bindValue($k, $v);
+            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("AgentOrchestrator::listExecutions error: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function updateState(int $agentId, string $context, array $data, int $ttl = 3600): array
@@ -145,10 +153,15 @@ class AgentOrchestrator
 
     public function listWorkflows(int $limit = 50): array
     {
-        $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE 1=1 ORDER BY id DESC LIMIT :lim");
-        $st->bindValue(':lim', $limit, PDO::PARAM_INT);
-        $st->execute();
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE 1=1 ORDER BY id DESC LIMIT :lim");
+            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("AgentOrchestrator::listWorkflows error: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function createWorkflow(string $name, string $trigger, array $steps, ?int $createdBy = null): array

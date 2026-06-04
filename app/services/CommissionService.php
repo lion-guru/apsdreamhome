@@ -89,8 +89,24 @@ class CommissionService
 
     public function getFarmerStructures(): array
     {
-        $st = $this->db->query("SELECT * FROM farmer_commission_structures WHERE active = 1 ORDER BY min_sales");
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $st = $this->db->query("SELECT id, structure_name AS tier, commission_type, base_rate_pct AS base_rate, tier_rules, is_active, base_rate_pct AS bonus_rate, 0 AS min_sales FROM farmer_commission_structures WHERE is_active = 1 ORDER BY base_rate_pct");
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    public function getHybridPlans(int $limit = 50): array
+    {
+        try {
+            $st = $this->db->prepare("SELECT id, plan_name, '—' AS agent_id, 0 AS fixed_amount, 0 AS variable_rate, 0 AS sales_threshold, effective_from AS valid_from, effective_to AS valid_to, plan_type, level_rates, override_levels, performance_tiers, IF(is_active = 1, 'active', 'inactive') AS status, effective_from, is_active FROM hybrid_commission_plans ORDER BY effective_from DESC LIMIT :lim");
+            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function recordFarmerCommission(int $farmerId, int $referralId, float $saleAmount, string $tier = 'tier1'): array
@@ -111,13 +127,17 @@ class CommissionService
 
     public function getMlmRankRates(string $rank = ''): array
     {
-        $sql = "SELECT * FROM mlm_rank_rates WHERE 1=1";
-        $params = [];
-        if ($rank) { $sql .= " AND rank_name = :r"; $params[':r'] = $rank; }
-        $sql .= " ORDER BY rank_level DESC";
-        $st = $this->pdo->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT id, rank_name AS rank, rank_name, rank_level, min_qualification_volume, min_downline_count AS min_downline, commission_multiplier AS commission_pct, bonus_amount, '' AS perks FROM mlm_rank_rates WHERE 1=1";
+            $params = [];
+            if ($rank) { $sql .= " AND rank_name = :r"; $params[':r'] = $rank; }
+            $sql .= " ORDER BY rank_level DESC";
+            $st = $this->pdo->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function setMlmRank(string $rank, int $minDownline, float $commissionPct, float $bonusAmount, array $perks = []): array
@@ -133,13 +153,17 @@ class CommissionService
 
     public function getRules(string $ruleType = ''): array
     {
-        $sql = "SELECT * FROM commission_calculation_rules WHERE active = 1";
-        $params = [];
-        if ($ruleType) { $sql .= " AND rule_type = :r"; $params[':r'] = $ruleType; }
-        $sql .= " ORDER BY priority";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT id, rule_type, rule_name, formula, conditions, priority, is_active, formula AS output_amount FROM commission_calculation_rules WHERE is_active = 1";
+            $params = [];
+            if ($ruleType) { $sql .= " AND rule_type = :r"; $params[':r'] = $ruleType; }
+            $sql .= " ORDER BY priority";
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function addRule(string $type, string $name, array $conditions, float $amount, int $priority = 100): array
