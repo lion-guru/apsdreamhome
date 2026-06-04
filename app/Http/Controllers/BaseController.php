@@ -128,9 +128,21 @@ class BaseController
 
     /**
      * Render a view with data
+     *
+     * Accepts both slash notation (`admin/users/index`) and dot notation
+     * (`admin.users.index`) — dots are converted to slashes automatically so
+     * controllers using either style work without code changes.
+     *
+     * Includes a self-rendering safeguard: if the view file already produced
+     * a full HTML document (starts with <!DOCTYPE>), we skip the layout to
+     * avoid double-render. This protects against legacy self-contained views
+     * that do their own ob_start + include layouts/base.php.
      */
     protected function render($view, $data = [])
     {
+        // Normalize dot-notation (admin.users.index) to slash-notation (admin/users/index)
+        $view = str_replace('.', '/', $view);
+
         // Ensure translation helper is loaded before any view content
         if (!function_exists('__')) {
             require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
@@ -155,6 +167,14 @@ class BaseController
 
         // Get content and clean buffer
         $content = ob_get_clean();
+
+        // Self-rendering safeguard: if the view already produced a full HTML
+        // document (starts with <!DOCTYPE>), it owns the layout — emit as-is
+        // to prevent double-render.
+        if (preg_match('/^\s*<!DOCTYPE/i', $content)) {
+            echo $content;
+            return;
+        }
 
         // If layout exists, render layout with content
         if ($this->layout) {

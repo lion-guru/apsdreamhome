@@ -145,10 +145,10 @@ class AuctionController extends BaseController
         extract($data);
         $viewFile = APP_PATH . '/views/pages/' . str_replace('.', '/', $view) . '.php';
         if (file_exists($viewFile)) {
-            ob_start();
+            // The view file is self-contained: it manages its own ob_start /
+            // ob_get_clean and includes layouts/base.php directly.
+            // Do NOT wrap with an outer layout here or the page will render twice.
             include $viewFile;
-            $content = ob_get_clean();
-            include APP_PATH . '/views/layouts/base.php';
         } else {
             echo "View not found: $view";
         }
