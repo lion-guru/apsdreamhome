@@ -66,14 +66,15 @@ Acting as Project Manager/CEO for APS Dream Home project. Conducting comprehensi
 **Root Cause:** CSRF token validation failing - token may not be properly generated or validated  
 **Recommended Fix:** Check CSRF token generation in registration form and validation in controller
 
-### Issue #6: Property Cards No Detail Page Links
+### Issue #7: AI Property Valuation API 404 Error
 
-**Severity:** Medium  
-**Location:** Customer Properties Page (`/properties`)  
-**Issue:** Property cards don't have clickable links to view property details  
-**Impact:** Users cannot view detailed property information (images, full description, amenities, etc.)  
-**Root Cause:** Property cards only have Enquire and Compare buttons, no link to property detail page  
-**Recommended Fix:** Add property title or image as clickable link to property detail page
+**Severity:** High  
+**Location:** AI Property Valuation Page (`/ai/property-valuation`)  
+**Issue:** API endpoint `/ai/property-valuation/generate` returns 404 error  
+**Impact:** AI property valuation feature not functional  
+**Root Cause:** API route not properly configured or controller method missing  
+**JavaScript Error:** TypeError: Cannot set properties of null (setting 'textContent')  
+**Recommended Fix:** Verify AI valuation routes in routes file and ensure PropertyValuationController has generate() method
 
 ---
 
@@ -190,13 +191,16 @@ Acting as Project Manager/CEO for APS Dream Home project. Conducting comprehensi
 - **Impact:** New users cannot register accounts
 - **Root Cause:** CSRF token validation failing
 
-### 11. Customer Portal - Login
+### 13. AI Features - Property Valuation
 
-- **Status:** ✅ WORKING (but no test user accounts)
-- **Login Form:** Email/Phone, Password, Remember Me, Forgot Password
-- **Social Login:** Google, Facebook, LinkedIn options available
-- **Test Result:** Login with user@apsdreamhome.com failed - "Account not found. Please register first."
-- **Note:** This is expected since registration failed due to CSRF error
+- **Status:** ❌ NOT WORKING
+- **AI Property Valuation Page:** Accessible at `/ai/property-valuation`
+- **Features:** Property ID input, Generate Valuation button, View History button
+- **ISSUE FOUND:** API endpoint `/ai/property-valuation/generate` returns 404 error
+- **JavaScript Error:** TypeError: Cannot set properties of null (setting 'textContent')
+- **Impact:** AI property valuation feature not functional
+- **Root Cause:** API route not properly configured or controller method missing
+- **Note:** According to AGENTS.md, AI valuation routes should be configured (5 endpoints active)
 
 ---
 

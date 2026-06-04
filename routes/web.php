@@ -2934,6 +2934,8 @@ $router->get('/admin/features/security', 'Admin\\NewFeaturesController@security'
 $router->get('/admin/features/finance', 'Admin\\NewFeaturesController@finance');
 $router->get('/admin/features/analytics', 'Admin\\NewFeaturesController@analyticsDashboard');
 $router->get('/admin/features/realtime-analytics', 'Admin\\NewFeaturesController@realtimeAnalytics');
+$router->get('/admin/audit-log', 'Admin\\AuditLogController@index');
+$router->get('/api/v2/audit/log', 'Admin\\AuditLogController@api');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');
