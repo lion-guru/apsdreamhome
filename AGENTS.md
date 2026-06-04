@@ -1,6 +1,6 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-04)
 
-## Session 2026-06-04 (Part 3): Phases 43-47 — Performance + CRM + Sales
+## Session 2026-06-04 (Part 3): Phases 43-50 — Performance + CRM + Sales + Marketing
 
 ### What Was Done
 **Phase 43: Performance Indexes** — 32 new indexes on hot tables (1350 total), user_notification_preferences table
@@ -8,37 +8,38 @@
 **Phase 45: Lead Kanban Board** — 8-stage drag-and-drop pipeline, color-coded scores, AJAX stage update
 **Phase 46: Sales Manager Dashboard** — 4 KPI cards, 6-month Chart.js trend, top performers, pipeline breakdown
 **Phase 47: Customer Referral Dashboard** — auto-gen referral code, share via 4 channels, earnings + team tracking
+**Phase 48: Property Alert Subscriptions** — 2 tables, 9 service methods, multi-channel notifications, public subscribe form
+**Phase 49: Property Comparison Tool** — backend-driven compare list (4 max), share tokens, best-value detection
+**Phase 50: Marketing Campaign Manager** — 4 tables, 5 channel types, 6 default templates, send & track delivery
 
 ### Recent Commits
-- `Phase 47: Customer Referral Dashboard` (commit pending)
+- `Phase 50: Marketing Campaign Manager` (commit pending)
+- `Phase 49: Property Comparison Tool`
+- `Phase 48: Property Alert Subscriptions`
+- `Phase 47: Customer Referral Dashboard`
 - `Phase 46: Sales Manager Dashboard`
-- `Phase 45: Lead Pipeline Kanban Board`
-- `0ee0c8b56` Phase 44: Saved Searches System with history tracking
-- `258019f1c` [Auto-Fix] AI Property Valuation: Fixed 403 error
-- `2aea598a0` Phase 43: Add 32 performance indexes + user_notification_preferences table
+- `0ee0c8b56` Phase 44: Saved Searches System
 
-### New Routes Added (Phases 43-47)
-- `/admin/saved-searches`, `/admin/saved-searches/{store,update/{id},delete/{id},favorite/{id},apply/{id}}`
-- `/admin/lead-kanban`, `/admin/lead-kanban/update-stage`
-- `/admin/sales-dashboard`
+### New Routes Added (Phases 43-50)
+- `/admin/saved-searches*`, `/admin/lead-kanban*`, `/admin/sales-dashboard`
 - `/user/referral`
+- `/admin/property-alerts*`, `/property-alerts/{subscribe,unsubscribe}`
+- `/property-comparison/{,add,remove,clear,share}`
+- `/admin/marketing-campaigns/{,create,store,show/{id},send/{id},delete,templates}`
 
 ### Key Insights
 - All new admin pages: 200 OK, E2E zero regressions
-- HTML5 native drag-and-drop sufficient for Kanban (no Sortable.js)
-- Auto-generate referral codes: `USR{userid}{uniqid}`
-- Share URLs work across WhatsApp/Telegram/FB/Twitter with pre-filled messages
-- Pipeline value = SUM(score) from AI lead scoring
-- Chart.js loaded from CDN
-- Audit log captures all kanban moves for compliance
-- Sales dashboard handles missing tables gracefully (try/catch + 0 fallback)
-- `error_log` goes to `logs/php_error.log` (NOT `C:\xampp\php\logs\php_error_log`) - check the right one!
+- HTML5 native drag-and-drop for Kanban, no library
+- Backend-driven comparison (persists across sessions)
+- `{{variable}}` template engine for campaigns
+- Unsubscribe table for compliance
+- `error_log` goes to `logs/php_error.log`
 
-### Total Architecture (Post-Phase 47)
-- 283+ database tables
-- 22+ services in `app/Services/`
-- 34+ new admin views
-- 160+ new routes across web.php
+### Total Architecture (Post-Phase 50)
+- 287+ database tables
+- 25+ services in `app/Services/`
+- 40+ new admin views, 5+ new public views
+- 175+ new routes across web.php
 - E2E: 163/164 pass, zero regressions
 
 ## Session 2026-06-04 (Part 2): Phases 35-42 — Cron + Real-Time + Audit + Webhooks + Bulk + 2FA + API Keys + System Health
