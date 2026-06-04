@@ -172,6 +172,28 @@ document.getElementById('newsletterForm')?.addEventListener('submit', function(e
     });
 });
 </script>
+<?php
+// gtag 'page_view' event with the actual document title + path. Emitted
+// whenever GA4_MEASUREMENT_ID is non-empty. With the G-PLACEHOLDER default,
+// the gtag() call is a no-op at the GA4 endpoint (unknown IDs are ignored),
+// so this is safe to ship with the placeholder. Replace the env var in
+// .env with a real G-XXXXXXXXXX to enable actual tracking.
+$ga4_footer_id = $_ENV['GA4_MEASUREMENT_ID'] ?? getenv('GA4_MEASUREMENT_ID') ?: 'G-PLACEHOLDER';
+$ga4_footer_id = is_string($ga4_footer_id) ? trim($ga4_footer_id) : 'G-PLACEHOLDER';
+$ga4_footer_enabled = ($ga4_footer_id !== '');
+if ($ga4_footer_enabled):
+?>
+<script>
+  if (typeof gtag === 'function') {
+    gtag('event', 'page_view', {
+      page_title: document.title,
+      page_path: window.location.pathname + window.location.search,
+      page_location: window.location.href
+    });
+  }
+</script>
+<?php endif; ?>
+
 <?php if (isset($GLOBALS['_html_doc_started']) && !isset($GLOBALS['_layout_handles_close'])): ?>
 </body>
 </html>

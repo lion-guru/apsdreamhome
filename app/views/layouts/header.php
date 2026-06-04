@@ -1,5 +1,23 @@
 <?php
 require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
+
+// Google Analytics 4 (gtag.js) — id pulled from GA4_MEASUREMENT_ID env var.
+// The placeholder 'G-PLACEHOLDER' is shown in the source for visibility so
+// the wiring is obviously present; replace it with a real ID (G-XXXXXXXXXX)
+// in .env to enable actual tracking. GA4 ignores unknown IDs at runtime.
+$ga4_id = $_ENV['GA4_MEASUREMENT_ID'] ?? getenv('GA4_MEASUREMENT_ID') ?: 'G-PLACEHOLDER';
+$ga4_id = is_string($ga4_id) ? trim($ga4_id) : 'G-PLACEHOLDER';
+$ga4_enabled = ($ga4_id !== '');
+
+// Emit the gtag loader at most once per request. This MUST happen for both
+// self-rendering pages (where header.php is the first thing in the page) AND
+// pages wrapped in layouts/base.php (where base.php has already started the
+// <head>). The base.php layout does NOT include this snippet itself, so
+// header.php is the canonical place.
+if ($ga4_enabled && !isset($GLOBALS['_ga4_loader_emitted'])) {
+    $GLOBALS['_ga4_loader_emitted'] = true;
+}
+
 // Ensure proper HTML document structure (gated to prevent double output)
 if (!isset($GLOBALS['_html_doc_started'])) {
     $GLOBALS['_html_doc_started'] = true;
@@ -10,9 +28,36 @@ if (!isset($GLOBALS['_html_doc_started'])) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($page_title) ?></title>
+<?php if ($ga4_enabled): ?>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id) ?>"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '<?= htmlspecialchars($ga4_id) ?>', { 'anonymize_ip': true });
+</script>
+<?php endif; ?>
 </head>
 <body>
 <?php
+} elseif ($ga4_enabled && !isset($GLOBALS['_ga4_loader_emitted_secondary'])) {
+    // The base.php layout has already opened <head> but doesn't know about GA.
+    // Inject the loader now (right after the </head> would be too late for an
+    // async script; we emit it as soon as possible by piggy-backing on the
+    // nav include, before <main>). It still loads before page_view fires in
+    // the footer.
+    $GLOBALS['_ga4_loader_emitted_secondary'] = true;
+    ?>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id) ?>"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '<?= htmlspecialchars($ga4_id) ?>', { 'anonymize_ip': true });
+</script>
+    <?php
 }
 if (!defined('BASE_URL')) {
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
@@ -937,3 +982,6 @@ function quickSearchSubmit(e) {
 </script>
 
 <script src="<?php echo BASE_URL; ?>/js/visitor-tracking.js" defer></script>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/live-chat-widget.css">
+<script src="<?= BASE_URL ?>/assets/js/live-chat-widget.js" defer></script>
+<?php if (!defined('LIVE_CHAT_WIDGET_INCLUDED')) { define('LIVE_CHAT_WIDGET_INCLUDED', true); include __DIR__ . '/../components/live_chat_widget.php'; } ?>
