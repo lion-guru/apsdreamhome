@@ -1,11 +1,6 @@
 <?php
 // Admin Layout Management Interface
-// Session started by controller
-// Check if admin is logged in
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: ' . BASE_URL . '/admin/login'); exit;
-}
-
+// Auth handled by LayoutController constructor (calls requireAdmin())
 require_once __DIR__ . '/../../Services/LayoutManager.php';
 require_once __DIR__ . '/../../Core/Database/Database.php';
 

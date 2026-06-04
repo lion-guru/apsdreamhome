@@ -4,12 +4,7 @@
  * Add/Edit bank account details with IFSC lookup
  */
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['flash_error'] = 'Please login first';
-    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login?redirect=/user/bank-details');
-    exit;
-}
+// Auth handled by UserController::bankDetails() (checks $_SESSION['user_id'])
 
 $db = \App\Core\Database\Database::getInstance();
 $userId = $_SESSION['user_id'];

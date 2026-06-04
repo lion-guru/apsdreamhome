@@ -601,6 +601,7 @@ class UserController extends BaseController
      */
     public function network()
     {
+        $this->requireLogin();
         $this->render('pages/user_network', ['page_title' => 'My Network']);
     }
 

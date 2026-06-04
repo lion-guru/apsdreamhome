@@ -4,16 +4,7 @@
  * Shows downline team tree visualization
  */
 
-// Check if user is logged in
-if (session_status() === PHP_SESSION_NONE) {
-    @session_start();
-}
-
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['flash_error'] = 'Please login first';
-    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login?redirect=/user/network');
-    exit;
-}
+// Auth handled by UserController::network() (requireLogin() added in Phase 1.5)
 
 $db = \App\Core\Database\Database::getInstance();
 $userId = $_SESSION['user_id'];

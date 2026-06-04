@@ -15,12 +15,7 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', rtrim("$protocol://$host$script", '/'));
 }
 
-if (session_status() === PHP_SESSION_NONE) @session_start();
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: ' . BASE_URL . '/admin/login');
-    exit;
-}
-
+// Auth handled by each admin page's controller. Layout is loaded only after controller auth check passes.
 $admin_name = $_SESSION['admin_name'] ?? 'Admin';
 $admin_role = $_SESSION['admin_role'] ?? 'admin';
 $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);

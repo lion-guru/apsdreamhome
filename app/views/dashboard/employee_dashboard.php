@@ -4,12 +4,10 @@
 
 // Modern, AI-powered, feature-rich dashboard for users (2025 best practices)
 require_once dirname(__DIR__) . '/layouts/header.php';
-@session_start();
-if (!isset($_SESSION['uid']) || $_SESSION['utype'] !== 'employee') {
-    header('Location: ' . BASE_URL . '/login');
-    exit();
-}
-// Example employee stats (replace with real queries)
+// NOTE: This view is a legacy file. Active employee dashboard path goes through
+// EmployeeController::dashboard() which uses $_SESSION['employee_id'].
+// Auth handled by EmployeeController.
+
 $employee_name = htmlspecialchars($_SESSION['name'] ?? 'Employee');
 $stats = [
     'tasks_today' => 4,
