@@ -319,6 +319,9 @@ $router->post('/admin/saved-searches/update/{id}', 'App\\Http\\Controllers\\Admi
 $router->get('/admin/saved-searches/delete/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@delete');
 $router->post('/admin/saved-searches/favorite/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@favorite');
 $router->get('/admin/saved-searches/apply/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@apply');
+
+$router->get('/admin/lead-kanban', 'App\\Http\\Controllers\\Admin\\LeadKanbanController@index');
+$router->post('/admin/lead-kanban/update-stage', 'App\\Http\\Controllers\\Admin\\LeadKanbanController@updateStage');
 $router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
 $router->get('/dashboard', 'DashboardController@index');
 $router->get('/dashboard/profile', 'DashboardController@profile');
