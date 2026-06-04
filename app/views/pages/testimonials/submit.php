@@ -4,7 +4,6 @@ $page_heading = $page_heading ?? 'Share Your Testimonial';
 $content = $content ?? '';
 $errors = $errors ?? [];
 $logged_in = $logged_in ?? false;
-ob_start();
 ?>
 
 <div class="container py-5">
@@ -72,7 +71,3 @@ ob_start();
         </div>
     </div>
 </div>
-
-<?php
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/base.php';

@@ -1,7 +1,6 @@
 <?php
 $page_title = $page_title ?? 'Two-Factor Authentication';
 $content = $content ?? '';
-ob_start();
 ?>
 <div class="container py-5">
   <?php if (!empty($_SESSION['flash_success'])): ?>
@@ -72,6 +71,3 @@ ob_start();
     </div>
   </div>
 </div>
-<?php
-$content = ob_get_clean();
-require_once APP_PATH . '/views/layouts/base.php';

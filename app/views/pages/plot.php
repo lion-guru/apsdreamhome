@@ -44,7 +44,6 @@ function get_plot_status_badge($status) {
     }
 }
 
-ob_start();
 ?>
 
 <!-- Page Header -->
@@ -202,10 +201,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
-<?php
-$content = ob_get_clean();
-
-// Include the layout
-require_once __DIR__ . '/../../layouts/' . $layout . '.php';
-?>

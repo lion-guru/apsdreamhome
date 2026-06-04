@@ -8,7 +8,6 @@ $page_description = 'Terms and conditions for using APS Dream Home real estate s
 $active_page = 'terms';
 
 // Content for base layout
-ob_start();
 ?>
 
 <div class="container my-5">
@@ -156,9 +155,3 @@ ob_start();
         }
     }
 </style>
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../../layouts/base.php';
-echo $content;
-?>

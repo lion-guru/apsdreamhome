@@ -2,7 +2,6 @@
 $page_title = $page_title ?? 'Subscription Confirmed';
 $page_heading = $page_heading ?? 'Subscription Confirmed';
 $content = $content ?? '';
-ob_start();
 ?>
 <section class="py-5" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
     <div class="container text-center py-5">
@@ -50,6 +49,3 @@ ob_start();
         </div>
     </div>
 </div>
-<?php
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/base.php';

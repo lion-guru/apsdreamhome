@@ -4,7 +4,6 @@ $page_heading = $page_heading ?? 'Property Alerts';
 $content = $content ?? '';
 $errors = $errors ?? [];
 $logged_in = $logged_in ?? false;
-ob_start();
 ?>
 <style>
 .alert-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 60px 0; }
@@ -237,7 +236,3 @@ ob_start();
         </div>
     </div>
 </div>
-
-<?php
-$content = ob_get_clean();
-include APP_PATH . '/views/layouts/base.php';

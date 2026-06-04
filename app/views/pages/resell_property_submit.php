@@ -2,7 +2,6 @@
 $page_title = $page_title ?? 'List Resell Property';
 $page_heading = $page_heading ?? 'List Your Property';
 $content = $content ?? '';
-ob_start();
 ?>
 <div class="container py-5">
   <div class="row">
@@ -98,6 +97,3 @@ ob_start();
     </div>
   </div>
 </div>
-<?php
-$content = ob_get_clean();
-require_once APP_PATH . '/views/layouts/base.php';
