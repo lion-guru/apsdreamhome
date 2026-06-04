@@ -14,7 +14,7 @@ use PDO;
 
 class AgentAssignmentService
 {
-    private PDO $db;
+    private $db;
     private SecurityService $securityService;
 
     public function __construct()

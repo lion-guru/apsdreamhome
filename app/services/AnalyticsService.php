@@ -1,0 +1,187 @@
+<?php
+namespace App\Services;
+
+use PDO;
+
+/**
+ * AnalyticsService - KPIs, dashboards, forecasting, performance metrics
+ */
+class AnalyticsService
+{
+    private $db;
+    private $pdo;
+    public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
+
+    public function listKpis(string $category = ''): array
+    {
+        $sql = "SELECT * FROM kpis WHERE active = 1";
+        $params = [];
+        if ($category) { $sql .= " AND category = :c"; $params[':c'] = $category; }
+        $sql .= " ORDER BY category, name";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function createKpi(string $code, string $name, string $category, string $unit, float $target, string $frequency = 'monthly'): array
+    {
+        $st = $this->db->prepare("INSERT INTO kpis (kpi_code, name, category, unit, target_value, frequency, active, created_at) VALUES (:c, :n, :cat, :u, :t, :f, 1, NOW())
+                                  ON DUPLICATE KEY UPDATE name = VALUES(name), category = VALUES(category), unit = VALUES(unit), target_value = VALUES(target_value), frequency = VALUES(frequency), active = 1");
+        $st->execute([':c' => $code, ':n' => $name, ':cat' => $category, ':u' => $unit, ':t' => $target, ':f' => $frequency]);
+        return ['ok' => true];
+    }
+
+    public function recordKpi(int $kpiId, float $actual, ?int $employeeId = null, string $period = null, array $metadata = []): array
+    {
+        $p = $period ?: date('Y-m');
+        $st = $this->db->prepare("INSERT INTO employee_kpis (kpi_id, employee_id, period, actual_value, metadata, recorded_at) VALUES (:k, :e, :p, :a, :m, NOW())
+                                  ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value), metadata = VALUES(metadata), recorded_at = NOW()");
+        $st->execute([':k' => $kpiId, ':e' => $employeeId, ':p' => $p, ':a' => $actual, ':m' => json_encode($metadata, JSON_UNESCAPED_UNICODE)]);
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+    }
+
+    public function getKpiPerformance(int $kpiId, int $months = 6): array
+    {
+        $st = $this->db->prepare("SELECT period, AVG(actual_value) as avg_val, MIN(actual_value) as min_val, MAX(actual_value) as max_val, COUNT(*) as sample_count
+                                  FROM employee_kpis WHERE kpi_id = :k AND recorded_at > DATE_SUB(NOW(), INTERVAL :m MONTH) GROUP BY period ORDER BY period DESC");
+        $st->execute([':k' => $kpiId, ':m' => $months]);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function recordDailyMetric(string $metricName, float $value, string $category = 'general', array $dimensions = []): array
+    {
+        $st = $this->db->prepare("INSERT INTO daily_metrics_summary (metric_name, category, value, dimensions, metric_date, created_at) VALUES (:n, :c, :v, :d, :dt, NOW())
+                                  ON DUPLICATE KEY UPDATE value = VALUES(value), dimensions = VALUES(dimensions)");
+        $st->execute([':n' => $metricName, ':c' => $category, ':v' => $value, ':d' => json_encode($dimensions, JSON_UNESCAPED_UNICODE), ':dt' => date('Y-m-d')]);
+        return ['ok' => true];
+    }
+
+    public function getDailyMetrics(string $name, int $days = 30): array
+    {
+        $st = $this->db->prepare("SELECT metric_date, value FROM daily_metrics_summary WHERE metric_name = :n AND metric_date > DATE_SUB(CURDATE(), INTERVAL :d DAY) ORDER BY metric_date DESC");
+        $st->execute([':n' => $name, ':d' => $days]);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function listBenchmarks(string $category = ''): array
+    {
+        $sql = "SELECT * FROM performance_benchmarks WHERE active = 1";
+        $params = [];
+        if ($category) { $sql .= " AND category = :c"; $params[':c'] = $category; }
+        $sql .= " ORDER BY category, name";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function setBenchmark(string $category, string $name, float $target, float $min, float $max, string $unit = ''): array
+    {
+        $st = $this->db->prepare("INSERT INTO performance_benchmarks (category, name, target_value, min_value, max_value, unit, active, created_at) VALUES (:c, :n, :t, :mi, :ma, :u, 1, NOW())
+                                  ON DUPLICATE KEY UPDATE target_value = VALUES(target_value), min_value = VALUES(min_value), max_value = VALUES(max_value), unit = VALUES(unit), active = 1");
+        $st->execute([':c' => $category, ':n' => $name, ':t' => $target, ':mi' => $min, ':ma' => $max, ':u' => $unit]);
+        return ['ok' => true];
+    }
+
+    public function generateForecast(string $metric, int $periods = 6, string $method = 'linear'): array
+    {
+        $history = $this->getDailyMetrics($metric, 90);
+        if (count($history) < 3) return ['error' => 'Insufficient data for forecast'];
+
+        $values = array_reverse(array_column($history, 'value'));
+        $n = count($values);
+
+        $sumX = 0; $sumY = 0; $sumXY = 0; $sumX2 = 0;
+        for ($i = 0; $i < $n; $i++) {
+            $sumX += $i; $sumY += $values[$i];
+            $sumXY += $i * $values[$i]; $sumX2 += $i * $i;
+        }
+        $slope = ($n * $sumXY - $sumX * $sumY) / max(1, $n * $sumX2 - $sumX * $sumX);
+        $intercept = ($sumY - $slope * $sumX) / $n;
+
+        $predictions = [];
+        for ($i = 0; $i < $periods; $i++) {
+            $x = $n + $i;
+            $predictions[] = ['period' => $i + 1, 'predicted' => round($intercept + $slope * $x, 2)];
+        }
+
+        $ssRes = 0; $ssTot = 0; $meanY = $sumY / $n;
+        for ($i = 0; $i < $n; $i++) {
+            $predicted = $intercept + $slope * $i;
+            $ssRes += pow($values[$i] - $predicted, 2);
+            $ssTot += pow($values[$i] - $meanY, 2);
+        }
+        $rSquared = $ssTot > 0 ? round(1 - $ssRes / $ssTot, 4) : 0;
+
+        $st = $this->db->prepare("INSERT INTO forecast_results (metric_name, method, periods, predictions, r_squared, generated_at) VALUES (:m, :me, :p, :pr, :r, NOW())");
+        $st->execute([':m' => $metric, ':me' => $method, ':p' => $periods, ':pr' => json_encode($predictions, JSON_UNESCAPED_UNICODE), ':r' => $rSquared]);
+        $id = (int)$this->db->lastInsertId();
+
+        return ['ok' => true, 'id' => $id, 'metric' => $metric, 'predictions' => $predictions, 'r_squared' => $rSquared, 'method' => $method];
+    }
+
+    public function listForecasts(int $limit = 20): array
+    {
+        $st = $this->db->prepare("SELECT * FROM forecast_results ORDER BY generated_at DESC LIMIT :lim");
+        $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $st->execute();
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getMarketSummary(int $days = 30): array
+    {
+        $st = $this->db->prepare("SELECT * FROM market_analytics_summary WHERE summary_date > DATE_SUB(CURDATE(), INTERVAL :d DAY) ORDER BY summary_date DESC LIMIT 30");
+        $st->execute([':d' => $days]);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function recordMarketSummary(string $category, float $value, array $data = []): array
+    {
+        $st = $this->db->prepare("INSERT INTO market_analytics_summary (category, value, summary_data, summary_date, created_at) VALUES (:c, :v, :d, :dt, NOW())
+                                  ON DUPLICATE KEY UPDATE value = VALUES(value), summary_data = VALUES(summary_data)");
+        $st->execute([':c' => $category, ':v' => $value, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE), ':dt' => date('Y-m-d')]);
+        return ['ok' => true];
+    }
+
+    public function listDashboards(int $userId = 0): array
+    {
+        $sql = "SELECT * FROM analytics_dashboards WHERE 1=1";
+        $params = [];
+        if ($userId) { $sql .= " AND (user_id = :u OR is_public = 1)"; $params[':u'] = $userId; }
+        $sql .= " ORDER BY updated_at DESC";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function createDashboard(int $userId, string $name, array $widgets, bool $isPublic = false): array
+    {
+        $st = $this->db->prepare("INSERT INTO analytics_dashboards (user_id, name, widgets, is_public, created_at, updated_at) VALUES (:u, :n, :w, :p, NOW(), NOW())");
+        $st->execute([':u' => $userId, ':n' => $name, ':w' => json_encode($widgets, JSON_UNESCAPED_UNICODE), ':p' => $isPublic ? 1 : 0]);
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+    }
+
+    public function getDashboard(int $id): ?array
+    {
+        $st = $this->db->prepare("SELECT * FROM analytics_dashboards WHERE id = :id");
+        $st->execute([':id' => $id]);
+        $r = $st->fetch(PDO::FETCH_ASSOC);
+        if (!$r) return null;
+        $r['widgets'] = json_decode($r['widgets'] ?? '[]', true) ?: [];
+        return $r;
+    }
+
+    public function comprehensiveDashboard(): array
+    {
+        $st = $this->db->query("SELECT
+            (SELECT COUNT(*) FROM users WHERE role = 'customer' AND status = 'active') as customers,
+            (SELECT COUNT(*) FROM users WHERE role = 'agent' AND status = 'active') as agents,
+            (SELECT COUNT(*) FROM users WHERE role = 'associate' AND status = 'active') as associates,
+            (SELECT COUNT(*) FROM users WHERE role = 'employee' AND status = 'active') as employees,
+            (SELECT COUNT(*) FROM leads WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as leads_30d,
+            (SELECT COUNT(*) FROM bookings WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as bookings_30d,
+            (SELECT COUNT(*) FROM plots WHERE status = 'available') as available_plots,
+            (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as revenue_30d");
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        return $row ?: [];
+    }
+}

@@ -1,0 +1,223 @@
+<?php
+namespace App\Services;
+
+use PDO;
+
+/**
+ * FinanceService - budgets, GST, cash flow, tax management
+ */
+class FinanceService
+{
+    private $db;
+    private $pdo;
+    public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
+
+    public function createBudget(int $departmentId, string $category, float $allocated, string $period, int $fiscalYear, int $createdBy = 0): array
+    {
+        $st = $this->db->prepare("INSERT INTO budgets (department_id, category, allocated_amount, period, fiscal_year, created_by, status, created_at) VALUES (:d, :c, :a, :p, :y, :u, 'active', NOW())");
+        $st->execute([':d' => $departmentId, ':c' => $category, ':a' => $allocated, ':p' => $period, ':y' => $fiscalYear, ':u' => $createdBy]);
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+    }
+
+    public function updateBudgetSpent(int $id, float $amount): array
+    {
+        $st = $this->db->prepare("UPDATE budgets SET spent_amount = spent_amount + :a WHERE id = :id");
+        $st->execute([':a' => $amount, ':id' => $id]);
+        return ['ok' => true];
+    }
+
+    public function listBudgets(int $departmentId = 0, int $fiscalYear = 0): array
+    {
+        $sql = "SELECT b.*, d.name as department_name FROM budgets b LEFT JOIN departments d ON b.department_id = d.id WHERE 1=1";
+        $params = [];
+        if ($departmentId) { $sql .= " AND b.department_id = :d"; $params[':d'] = $departmentId; }
+        if ($fiscalYear) { $sql .= " AND b.fiscal_year = :y"; $params[':y'] = $fiscalYear; }
+        $sql .= " ORDER BY b.fiscal_year DESC, b.category";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getBudgetUtilization(int $id): ?array
+    {
+        $st = $this->db->prepare("SELECT *, (spent_amount / allocated_amount * 100) as utilization_pct FROM budgets WHERE id = :id");
+        $st->execute([':id' => $id]);
+        $r = $st->fetch(PDO::FETCH_ASSOC);
+        return $r ?: null;
+    }
+
+    public function createBudgetExpense(int $budgetId, string $description, float $amount, string $date, int $createdBy = 0, ?string $receiptUrl = null): array
+    {
+        $st = $this->db->prepare("INSERT INTO budget_expenses (budget_id, description, amount, expense_date, receipt_url, status, created_by, created_at) VALUES (:b, :d, :a, :dt, :r, 'pending', :u, NOW())");
+        $st->execute([':b' => $budgetId, ':d' => $description, ':a' => $amount, ':dt' => $date, ':r' => $receiptUrl, ':u' => $createdBy]);
+
+        $st2 = $this->db->prepare("UPDATE budgets SET spent_amount = spent_amount + :a WHERE id = :id");
+        $st2->execute([':a' => $amount, ':id' => $budgetId]);
+
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+    }
+
+    public function listExpenses(int $budgetId = 0, string $status = ''): array
+    {
+        $sql = "SELECT e.*, b.category, d.name as department_name FROM budget_expenses e LEFT JOIN budgets b ON e.budget_id = b.id LEFT JOIN departments d ON b.department_id = d.id WHERE 1=1";
+        $params = [];
+        if ($budgetId) { $sql .= " AND e.budget_id = :b"; $params[':b'] = $budgetId; }
+        if ($status) { $sql .= " AND e.status = :s"; $params[':s'] = $status; }
+        $sql .= " ORDER BY e.expense_date DESC LIMIT 200";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function approveExpense(int $id, int $approverId): array
+    {
+        $st = $this->db->prepare("UPDATE budget_expenses SET status = 'approved', approved_by = :a, approved_at = NOW() WHERE id = :id");
+        $st->execute([':a' => $approverId, ':id' => $id]);
+        return ['ok' => true];
+    }
+
+    public function createBudgetPlan(string $name, int $fiscalYear, float $totalRevenue, float $totalExpense, string $strategy, int $createdBy = 0): array
+    {
+        $st = $this->db->prepare("INSERT INTO budget_planning (plan_name, fiscal_year, projected_revenue, projected_expense, projected_profit, strategy, status, created_by, created_at) VALUES (:n, :y, :r, :e, :p, :s, 'draft', :u, NOW())");
+        $st->execute([':n' => $name, ':y' => $fiscalYear, ':r' => $totalRevenue, ':e' => $totalExpense, ':p' => $totalRevenue - $totalExpense, ':s' => $strategy, ':u' => $createdBy]);
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+    }
+
+    public function listBudgetPlans(int $fiscalYear = 0): array
+    {
+        $sql = "SELECT * FROM budget_planning WHERE 1=1";
+        $params = [];
+        if ($fiscalYear) { $sql .= " AND fiscal_year = :y"; $params[':y'] = $fiscalYear; }
+        $sql .= " ORDER BY fiscal_year DESC, created_at DESC";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addCashFlow(int $planId, string $month, float $inflow, float $outflow, string $category = 'operations'): array
+    {
+        $st = $this->db->prepare("INSERT INTO cash_flow_projections (plan_id, month, inflow, outflow, net_flow, category, created_at) VALUES (:p, :m, :i, :o, :n, :c, NOW())
+                                  ON DUPLICATE KEY UPDATE inflow = VALUES(inflow), outflow = VALUES(outflow), net_flow = VALUES(net_flow), category = VALUES(category)");
+        $st->execute([':p' => $planId, ':m' => $month, ':i' => $inflow, ':o' => $outflow, ':n' => $inflow - $outflow, ':c' => $category]);
+        return ['ok' => true];
+    }
+
+    public function getCashFlow(int $planId): array
+    {
+        $st = $this->db->prepare("SELECT * FROM cash_flow_projections WHERE plan_id = :p ORDER BY month");
+        $st->execute([':p' => $planId]);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTaxSlabs(string $taxType = '', string $stateCode = ''): array
+    {
+        $sql = "SELECT * FROM tax_slabs WHERE 1=1";
+        $params = [];
+        if ($taxType) { $sql .= " AND tax_type = :t"; $params[':t'] = $taxType; }
+        if ($stateCode) { $sql .= " AND (state_code = :sc OR state_code = 'ALL')"; $params[':sc'] = $stateCode; }
+        $sql .= " AND (effective_to IS NULL OR effective_to >= CURDATE()) ORDER BY min_amount";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addTaxSlab(string $taxType, string $stateCode, float $min, float $max, float $rate, ?string $effectiveTo = null): array
+    {
+        $st = $this->db->prepare("INSERT INTO tax_slabs (tax_type, state_code, min_amount, max_amount, tax_rate, effective_to, created_at) VALUES (:t, :sc, :mi, :ma, :r, :et, NOW())");
+        $st->execute([':t' => $taxType, ':sc' => $stateCode, ':mi' => $min, ':ma' => $max, ':r' => $rate, ':et' => $effectiveTo]);
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+    }
+
+    public function calculateTax(string $taxType, float $amount, string $stateCode = ''): float
+    {
+        $slabs = $this->getTaxSlabs($taxType, $stateCode);
+        $tax = 0;
+        foreach ($slabs as $s) {
+            if ($amount >= (float)$s['min_amount'] && ($s['max_amount'] === null || $amount <= (float)$s['max_amount'])) {
+                $tax = $amount * (float)$s['tax_rate'] / 100;
+                break;
+            }
+        }
+        return round($tax, 2);
+    }
+
+    public function getTaxTypes(): array
+    {
+        $st = $this->db->query("SELECT * FROM tax_types WHERE active = 1 ORDER BY name");
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addTaxType(string $code, string $name, string $description = '', float $defaultRate = 0): array
+    {
+        $st = $this->db->prepare("INSERT INTO tax_types (code, name, description, default_rate, active, created_at) VALUES (:c, :n, :d, :r, 1, NOW())
+                                  ON DUPLICATE KEY UPDATE name = VALUES(name), description = VALUES(description), default_rate = VALUES(default_rate), active = 1");
+        $st->execute([':c' => $code, ':n' => $name, ':d' => $description, ':r' => $defaultRate]);
+        return ['ok' => true];
+    }
+
+    public function getGstSettings(string $stateCode = ''): ?array
+    {
+        $sql = "SELECT * FROM gst_settings WHERE 1=1";
+        $params = [];
+        if ($stateCode) { $sql .= " AND state_code = :sc"; $params[':sc'] = $stateCode; }
+        $sql .= " ORDER BY effective_from DESC LIMIT 1";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        $r = $st->fetch(PDO::FETCH_ASSOC);
+        return $r ?: null;
+    }
+
+    public function saveGstSetting(string $stateCode, float $cgst, float $sgst, float $igst, ?string $effectiveFrom = null): array
+    {
+        $eff = $effectiveFrom ?: date('Y-m-d');
+        $st = $this->db->prepare("INSERT INTO gst_settings (state_code, cgst_rate, sgst_rate, igst_rate, effective_from, active, created_at) VALUES (:sc, :c, :s, :i, :e, 1, NOW())
+                                  ON DUPLICATE KEY UPDATE cgst_rate = VALUES(cgst_rate), sgst_rate = VALUES(sgst_rate), igst_rate = VALUES(igst_rate), effective_from = VALUES(effective_from), active = 1");
+        $st->execute([':sc' => $stateCode, ':c' => $cgst, ':s' => $sgst, ':i' => $igst, ':e' => $eff]);
+        return ['ok' => true];
+    }
+
+    public function calculateGst(float $amount, bool $interstate = false, string $stateCode = ''): array
+    {
+        $s = $this->getGstSettings($stateCode);
+        if (!$s) $s = ['cgst_rate' => 9, 'sgst_rate' => 9, 'igst_rate' => 18];
+        if ($interstate) {
+            $tax = $amount * (float)$s['igst_rate'] / 100;
+            return ['total_tax' => round($tax, 2), 'igst' => round($tax, 2), 'cgst' => 0, 'sgst' => 0];
+        }
+        $cgst = $amount * (float)$s['cgst_rate'] / 100;
+        $sgst = $amount * (float)$s['sgst_rate'] / 100;
+        return ['total_tax' => round($cgst + $sgst, 2), 'igst' => 0, 'cgst' => round($cgst, 2), 'sgst' => round($sgst, 2)];
+    }
+
+    public function fileGstReturn(string $period, string $gstin, float $totalSales, float $totalPurchase, float $taxLiability, int $filedBy = 0): array
+    {
+        $st = $this->db->prepare("INSERT INTO gst_returns (return_period, gstin, total_sales, total_purchase, tax_liability, status, filed_by, filed_at, created_at) VALUES (:p, :g, :s, :pu, :t, 'filed', :u, NOW(), NOW())");
+        $st->execute([':p' => $period, ':g' => $gstin, ':s' => $totalSales, ':pu' => $totalPurchase, ':t' => $taxLiability, ':u' => $filedBy]);
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+    }
+
+    public function listGstReturns(int $limit = 24): array
+    {
+        $st = $this->db->prepare("SELECT * FROM gst_returns ORDER BY filed_at DESC LIMIT :lim");
+        $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $st->execute();
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function financialSummary(int $fiscalYear): array
+    {
+        $out = ['budgets' => 0, 'spent' => 0, 'remaining' => 0, 'utilization' => 0, 'expense_count' => 0];
+        $st = $this->db->prepare("SELECT SUM(allocated_amount) as total_alloc, SUM(spent_amount) as total_spent, COUNT(*) as count FROM budgets WHERE fiscal_year = :y");
+        $st->execute([':y' => $fiscalYear]);
+        $b = $st->fetch(PDO::FETCH_ASSOC);
+        $out['budgets'] = (float)($b['total_alloc'] ?? 0);
+        $out['spent'] = (float)($b['total_spent'] ?? 0);
+        $out['remaining'] = $out['budgets'] - $out['spent'];
+        $out['utilization'] = $out['budgets'] > 0 ? round(($out['spent'] / $out['budgets']) * 100, 1) : 0;
+
+        $st2 = $this->db->prepare("SELECT COUNT(*) as c FROM budget_expenses e LEFT JOIN budgets b ON e.budget_id = b.id WHERE b.fiscal_year = :y");
+        $st2->execute([':y' => $fiscalYear]);
+        $out['expense_count'] = (int)$st2->fetchColumn();
+        return $out;
+    }
+}

@@ -2920,4 +2920,75 @@ $router->get('/admin/careers/manage/stats', 'Career\\CareerController@getApplica
 $router->post('/admin/careers/manage/export', 'Career\\CareerController@exportApplications');
 
 
+// ============================================================
+// PHASE 24-33 NEW FEATURES (admin pages)
+// ============================================================
+$router->get('/admin/features/registrations', 'Admin\\NewFeaturesController@progressiveRegistrations');
+$router->get('/admin/features/payroll', 'Admin\\NewFeaturesController@payroll');
+$router->get('/admin/features/resell', 'Admin\\NewFeaturesController@resellProperties');
+$router->get('/admin/features/commissions', 'Admin\\NewFeaturesController@commissions');
+$router->get('/admin/features/notifications', 'Admin\\NewFeaturesController@notifications');
+$router->get('/admin/features/security', 'Admin\\NewFeaturesController@security');
+$router->get('/admin/features/finance', 'Admin\\NewFeaturesController@finance');
+$router->get('/admin/features/analytics', 'Admin\\NewFeaturesController@analyticsDashboard');
+$router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
+$router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
+$router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');
+
+
+// ============================================================
+// PHASE 24-33 NEW FEATURES (APIs)
+// ============================================================
+$router->post('/api/v2/registration/start', 'Api\\NewFeaturesApiController@regStart');
+$router->post('/api/v2/registration/progress/{token}', 'Api\\NewFeaturesApiController@regProgress');
+$router->post('/api/v2/registration/complete/{token}', 'Api\\NewFeaturesApiController@regComplete');
+
+$router->post('/api/v2/payroll/generate', 'Api\\NewFeaturesApiController@payrollGenerate');
+
+$router->get('/api/v2/resell', 'Api\\NewFeaturesApiController@resellList');
+$router->get('/api/v2/resell/public', 'Api\\NewFeaturesApiController@resellListPublic');
+$router->post('/api/v2/resell/create', 'Api\\NewFeaturesApiController@resellCreate');
+$router->post('/api/v2/resell/value/{id}', 'Api\\NewFeaturesApiController@resellValuate');
+
+$router->post('/api/v2/commission/calculate', 'Api\\NewFeaturesApiController@commissionCalculate');
+$router->post('/api/v2/commission/record', 'Api\\NewFeaturesApiController@commissionRecord');
+$router->get('/api/v2/commission/mlm-ranks', 'Api\\NewFeaturesApiController@mlmRanks');
+
+$router->post('/api/v2/notification/send', 'Api\\NewFeaturesApiController@sendNotification');
+$router->post('/api/v2/notification/render', 'Api\\NewFeaturesApiController@renderTemplate');
+
+$router->post('/api/v2/security/2fa/generate', 'Api\\NewFeaturesApiController@generate2fa');
+$router->post('/api/v2/security/2fa/verify', 'Api\\NewFeaturesApiController@verify2fa');
+$router->post('/api/v2/security/password-reset', 'Api\\NewFeaturesApiController@passwordReset');
+$router->post('/api/v2/security/password-reset/confirm', 'Api\\NewFeaturesApiController@passwordResetConfirm');
+$router->post('/api/v2/security/ip/block', 'Api\\NewFeaturesApiController@blockIp');
+$router->post('/api/v2/security/ip/unblock', 'Api\\NewFeaturesApiController@unblockIp');
+
+$router->post('/api/v2/finance/gst', 'Api\\NewFeaturesApiController@calculateGst');
+$router->post('/api/v2/finance/tax', 'Api\\NewFeaturesApiController@calculateTax');
+$router->post('/api/v2/finance/budget/create', 'Api\\NewFeaturesApiController@createBudget');
+
+$router->post('/api/v2/analytics/kpi/record', 'Api\\NewFeaturesApiController@recordKpi');
+$router->post('/api/v2/analytics/forecast', 'Api\\NewFeaturesApiController@generateForecast');
+
+$router->post('/api/v2/agent/task/create', 'Api\\NewFeaturesApiController@createTask');
+$router->post('/api/v2/agent/task/execute/{id}', 'Api\\NewFeaturesApiController@executeTask');
+$router->post('/api/v2/agent/tasks/process', 'Api\\NewFeaturesApiController@processPendingTasks');
+$router->post('/api/v2/agent/workflow/trigger', 'Api\\NewFeaturesApiController@triggerWorkflow');
+
+$router->post('/api/v2/ocr/classify', 'Api\\NewFeaturesApiController@classifyDocument');
+$router->post('/api/v2/ocr/report', 'Api\\NewFeaturesApiController@executeReport');
+
+$router->post('/api/v2/property/maintenance', 'Api\\NewFeaturesApiController@scheduleMaintenance');
+
+
+// ============================================================
+// PUBLIC RESELL PROPERTIES (Phase 26)
+// ============================================================
+$router->get('/resell', 'Front\\ResellPropertyController@index');
+$router->get('/resell/submit', 'Front\\ResellPropertyController@submit');
+$router->post('/resell/submit', 'Front\\ResellPropertyController@submit');
+$router->get('/resell/{id}', 'Front\\ResellPropertyController@show');
+
+
 

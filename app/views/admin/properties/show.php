@@ -15,7 +15,7 @@ $property = $property ?? [
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="/admin/properties">Properties</a></li>
-                    <li class="breadcrumb-item active"><?= $property['title'] ?? 'Property' ?></li>
+                    <li class="breadcrumb-item active"><?= htmlspecialchars($property['title'] ?? 'Property') ?></li>
                 </ul>
             </div>
             <div class="col-auto">
@@ -33,12 +33,12 @@ $property = $property ?? [
             <div class="col-md-8">
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white py-3">
-                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= $property['title'] ?></h5>
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($property['title']) ?></h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted">Property Type</div>
-                            <div class="col-sm-8"><span class="badge bg-primary-subtle text-primary rounded-pill px-3"><?= $property['type'] ?? 'N/A' ?></span></div>
+                            <div class="col-sm-8"><span class="badge bg-primary-subtle text-primary rounded-pill px-3"><?= htmlspecialchars($property['type'] ?? 'N/A') ?></span></div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted">Price</div>
@@ -46,7 +46,7 @@ $property = $property ?? [
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted">Location</div>
-                            <div class="col-sm-8"><?= $property['address'] ?? '' ?>, <?= $property['city'] ?? '' ?> <?= $property['state'] ?? '' ?></div>
+                            <div class="col-sm-8"><?= htmlspecialchars($property['address'] ?? '') ?>, <?= htmlspecialchars($property['city'] ?? '') ?> <?= htmlspecialchars($property['state'] ?? '') ?></div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted">Area</div>
@@ -58,7 +58,7 @@ $property = $property ?? [
                         </div>
                         <div class="row">
                             <div class="col-sm-4 text-muted">Description</div>
-                            <div class="col-sm-8"><?= nl2br($property['description'] ?? 'No description') ?></div>
+                            <div class="col-sm-8"><?= nl2br(htmlspecialchars($property['description'] ?? 'No description')) ?></div>
                         </div>
                     </div>
                 </div>
@@ -69,9 +69,9 @@ $property = $property ?? [
                         <h5 class="mb-0"><i class="fas fa-user me-2"></i>Owner Info</h5>
                     </div>
                     <div class="card-body">
-                        <p class="mb-2"><strong><?= $property['owner_name'] ?? 'N/A' ?></strong></p>
-                        <p class="mb-1 text-muted"><i class="fas fa-phone me-1"></i><?= $property['owner_phone'] ?? '-' ?></p>
-                        <p class="mb-0 text-muted"><i class="fas fa-envelope me-1"></i><?= $property['owner_email'] ?? '-' ?></p>
+                        <p class="mb-2"><strong><?= htmlspecialchars($property['owner_name'] ?? 'N/A') ?></strong></p>
+                        <p class="mb-1 text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($property['owner_phone'] ?? '-') ?></p>
+                        <p class="mb-0 text-muted"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($property['owner_email'] ?? '-') ?></p>
                     </div>
                 </div>
                 <div class="card shadow-sm border-0">

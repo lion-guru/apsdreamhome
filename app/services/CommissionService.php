@@ -1,327 +1,169 @@
 <?php
-
 namespace App\Services;
 
-use App\Core\Database;
-use App\Services\NotificationService;
-use App\Services\MlmSettings;
 use PDO;
 
 /**
- * CommissionService
- * Phase 2 analytics helper for MLM commission insights.
+ * CommissionService - multi-tier commission engine (agent, hybrid, farmer, MLM rank)
  */
-
 class CommissionService
 {
-    private PDO $conn;
-    private NotificationService $notifier;
+    private $db;
+    private $pdo;
+    public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
 
-    public function __construct()
+    public function getAgentRate(int $agentId, string $tier = ''): ?array
     {
-        $this->conn = Database::getInstance()->getConnection();
-        $this->notifier = new NotificationService();
+        $sql = "SELECT * FROM agent_commission_rates WHERE agent_id = :a";
+        $params = [':a' => $agentId];
+        if ($tier) { $sql .= " AND tier = :t"; $params[':t'] = $tier; }
+        $sql .= " ORDER BY effective_from DESC LIMIT 1";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        $r = $st->fetch(PDO::FETCH_ASSOC);
+        return $r ?: null;
     }
 
-    public function getSummary(array $filters = []): array
+    public function setAgentRate(int $agentId, string $tier, float $rate, string $effectiveFrom = null): array
     {
-        $filter = $this->buildFilter($filters);
-        $sql = 'SELECT status, SUM(amount) AS total_amount, COUNT(*) AS total_records
-                FROM mlm_commission_ledger';
-
-        if ($filter['where']) {
-            $sql .= ' WHERE ' . $filter['where'];
-        }
-
-        $sql .= ' GROUP BY status';
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($filter['params']);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $this->checkPendingThreshold($filter['where'], $filter['params']);
-
-        return $result;
+        $eff = $effectiveFrom ?: date('Y-m-d');
+        $st = $this->db->prepare("INSERT INTO agent_commission_rates (agent_id, tier, commission_rate, effective_from, created_at) VALUES (:a, :t, :r, :e, NOW())
+                                  ON DUPLICATE KEY UPDATE commission_rate = VALUES(commission_rate), effective_from = VALUES(effective_from)");
+        $st->execute([':a' => $agentId, ':t' => $tier, ':r' => $rate, ':e' => $eff]);
+        return ['ok' => true];
     }
 
-    public function getLevelBreakdown(array $filters = []): array
+    public function calculateAgentCommission(int $agentId, float $saleAmount, string $tier = 'standard'): float
     {
-        $filter = $this->buildFilter($filters);
-        $sql = 'SELECT IFNULL(level, 0) AS level, SUM(amount) AS total_amount, COUNT(*) AS total_records
-                FROM mlm_commission_ledger';
-
-        if ($filter['where']) {
-            $sql .= ' WHERE ' . $filter['where'];
+        $rate = $this->getAgentRate($agentId, $tier);
+        if (!$rate) {
+            $st = $this->db->prepare("SELECT commission_rate FROM agent_commission_rates WHERE tier = :t ORDER BY effective_from DESC LIMIT 1");
+            $st->execute([':t' => $tier]);
+            $r = $st->fetch(PDO::FETCH_ASSOC);
+            $pct = (float)($r['commission_rate'] ?? 2.0);
+        } else {
+            $pct = (float)$rate['commission_rate'];
         }
-
-        $sql .= ' GROUP BY level ORDER BY level';
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($filter['params']);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+        return round($saleAmount * $pct / 100, 2);
     }
 
-    public function getTopBeneficiaries(array $filters = [], int $limit = 10): array
+    public function recordAgentCommission(int $agentId, int $bookingId, float $saleAmount, string $tier = 'standard'): array
     {
-        $filter = $this->buildFilter($filters);
-        $sql = 'SELECT u.id, u.name, u.email, u.type,
-                       SUM(l.amount) AS total_amount,
-                       SUM(CASE WHEN l.status = "paid" THEN l.amount ELSE 0 END) AS total_paid,
-                       SUM(CASE WHEN l.status = "pending" THEN l.amount ELSE 0 END) AS total_pending,
-                       COUNT(*) AS commissions
-                FROM mlm_commission_ledger l
-                JOIN users u ON l.beneficiary_user_id = u.id';
-
-        if ($filter['where']) {
-            $sql .= ' WHERE ' . $filter['where'];
-        }
-
-        $sql .= ' GROUP BY u.id, u.name, u.email, u.type
-                  ORDER BY total_amount DESC
-                  LIMIT ?';
-
-        $stmt = $this->conn->prepare($sql);
-        
-        // Bind parameters manually to handle LIMIT
-        $paramIndex = 1;
-        foreach ($filter['params'] as $param) {
-            $stmt->bindValue($paramIndex++, $param);
-        }
-        $stmt->bindValue($paramIndex, $limit, PDO::PARAM_INT);
-        
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+        $amt = $this->calculateAgentCommission($agentId, $saleAmount, $tier);
+        $st = $this->db->prepare("INSERT INTO hybrid_commission_records (agent_id, booking_id, sale_amount, commission_rate, commission_amount, tier, status, created_at) VALUES (:a, :b, :s, NULL, :c, :t, 'pending', NOW())");
+        $st->execute([':a' => $agentId, ':b' => $bookingId, ':s' => $saleAmount, ':c' => $amt, ':t' => $tier]);
+        return ['ok' => true, 'amount' => $amt, 'id' => (int)$this->db->lastInsertId()];
     }
 
-    public function getTopReferrers(array $filters = [], int $limit = 10): array
+    public function createHybridPlan(int $agentId, float $fixedAmount, float $variableRate, float $threshold, string $validFrom, ?string $validTo = null): array
     {
-        $filter = $this->buildFilter($filters);
-        $sql = 'SELECT u.id, u.name, u.email, u.type,
-                       mp.direct_referrals,
-                       mp.total_commission,
-                       SUM(l.amount) AS total_amount
-                FROM mlm_commission_ledger l
-                JOIN mlm_profiles mp ON l.beneficiary_user_id = mp.user_id
-                JOIN users u ON mp.user_id = u.id';
-
-        if ($filter['where']) {
-            $sql .= ' WHERE ' . $filter['where'];
-        }
-
-        $sql .= ' GROUP BY u.id, u.name, u.email, u.type, mp.direct_referrals, mp.total_commission
-                  ORDER BY mp.direct_referrals DESC, total_amount DESC
-                  LIMIT ?';
-
-        $stmt = $this->conn->prepare($sql);
-        
-        $paramIndex = 1;
-        foreach ($filter['params'] as $param) {
-            $stmt->bindValue($paramIndex++, $param);
-        }
-        $stmt->bindValue($paramIndex, $limit, PDO::PARAM_INT);
-        
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+        $st = $this->db->prepare("INSERT INTO hybrid_commission_plans (agent_id, fixed_amount, variable_rate, sales_threshold, valid_from, valid_to, status, created_at) VALUES (:a, :f, :v, :t, :frm, :to, 'active', NOW())");
+        $st->execute([':a' => $agentId, ':f' => $fixedAmount, ':v' => $variableRate, ':t' => $threshold, ':frm' => $validFrom, ':to' => $validTo]);
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
-    public function getTimeline(array $filters = [], string $groupBy = 'day'): array
+    public function getActiveHybridPlan(int $agentId): ?array
     {
-        $filter = $this->buildFilter($filters);
-
-        $column = 'DATE(created_at)';
-        if ($groupBy === 'month') {
-            $column = 'DATE_FORMAT(created_at, "%Y-%m")';
-        } elseif ($groupBy === 'week') {
-            $column = 'DATE_FORMAT(created_at, "%x-W%v")';
-        }
-
-        $sql = "SELECT {$column} AS bucket, SUM(amount) AS total_amount, COUNT(*) AS total_records
-                FROM mlm_commission_ledger";
-
-        if ($filter['where']) {
-            $sql .= ' WHERE ' . $filter['where'];
-        }
-
-        $sql .= ' GROUP BY bucket ORDER BY bucket';
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($filter['params']);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+        $st = $this->db->prepare("SELECT * FROM hybrid_commission_plans WHERE agent_id = :a AND status = 'active' AND valid_from <= CURDATE() AND (valid_to IS NULL OR valid_to >= CURDATE()) ORDER BY valid_from DESC LIMIT 1");
+        $st->execute([':a' => $agentId]);
+        $r = $st->fetch(PDO::FETCH_ASSOC);
+        return $r ?: null;
     }
 
-    public function getLedger(array $filters = [], int $limit = 50, int $offset = 0): array
+    public function calculateHybridCommission(int $agentId, float $saleAmount, float $totalSalesThisPeriod): float
     {
-        $filter = $this->buildFilter($filters);
-
-        $sql = 'SELECT l.*, u.name AS beneficiary_name, u.email AS beneficiary_email,
-                       src.name AS source_name, src.email AS source_email
-                FROM mlm_commission_ledger l
-                JOIN users u ON l.beneficiary_user_id = u.id
-                LEFT JOIN users src ON l.source_user_id = src.id';
-
-        if ($filter['where']) {
-            $sql .= ' WHERE ' . $filter['where'];
-        }
-
-        $sql .= ' ORDER BY l.created_at DESC LIMIT ? OFFSET ?';
-
-        $stmt = $this->conn->prepare($sql);
-        
-        $paramIndex = 1;
-        foreach ($filter['params'] as $param) {
-            $stmt->bindValue($paramIndex++, $param);
-        }
-        $stmt->bindValue($paramIndex++, $limit, PDO::PARAM_INT);
-        $stmt->bindValue($paramIndex, $offset, PDO::PARAM_INT);
-        
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+        $plan = $this->getActiveHybridPlan($agentId);
+        if (!$plan) return $this->calculateAgentCommission($agentId, $saleAmount);
+        $variable = $saleAmount * (float)$plan['variable_rate'] / 100;
+        $bonus = $totalSalesThisPeriod >= (float)$plan['sales_threshold'] ? (float)$plan['fixed_amount'] : 0;
+        return round((float)$plan['fixed_amount'] + $variable + $bonus, 2);
     }
 
-    public function exportLedger(array $filters = []): array
+    public function setFarmerStructure(string $tier, float $baseRate, float $bonusRate, float $minSales): array
     {
-        $filter = $this->buildFilter($filters);
-        $sql = 'SELECT l.id, l.beneficiary_user_id, u.name AS beneficiary_name, u.email AS beneficiary_email,
-                       l.source_user_id, src.name AS source_name, src.email AS source_email,
-                       l.commission_type, l.amount, l.level, l.status, l.created_at, l.updated_at
-                FROM mlm_commission_ledger l
-                JOIN users u ON l.beneficiary_user_id = u.id
-                LEFT JOIN users src ON l.source_user_id = src.id';
-
-        if ($filter['where']) {
-            $sql .= ' WHERE ' . $filter['where'];
-        }
-
-        $sql .= ' ORDER BY l.created_at DESC';
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($filter['params']);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+        $st = $this->db->prepare("INSERT INTO farmer_commission_structures (tier, base_rate, bonus_rate, min_sales, active, created_at) VALUES (:t, :b, :bo, :m, 1, NOW())
+                                  ON DUPLICATE KEY UPDATE base_rate = VALUES(base_rate), bonus_rate = VALUES(bonus_rate), min_sales = VALUES(min_sales)");
+        $st->execute([':t' => $tier, ':b' => $baseRate, ':bo' => $bonusRate, ':m' => $minSales]);
+        return ['ok' => true];
     }
 
-    private function buildFilter(array $filters): array
+    public function getFarmerStructures(): array
     {
-        $where = [];
+        $st = $this->db->query("SELECT * FROM farmer_commission_structures WHERE active = 1 ORDER BY min_sales");
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function recordFarmerCommission(int $farmerId, int $referralId, float $saleAmount, string $tier = 'tier1'): array
+    {
+        $st = $this->db->prepare("SELECT * FROM farmer_commission_structures WHERE tier = :t");
+        $st->execute([':t' => $tier]);
+        $struct = $st->fetch(PDO::FETCH_ASSOC);
+        if (!$struct) return ['error' => 'Tier not found'];
+
+        $base = $saleAmount * (float)$struct['base_rate'] / 100;
+        $bonus = (float)$struct['bonus_rate'];
+        $total = $base + $bonus;
+
+        $st2 = $this->db->prepare("INSERT INTO farmer_commissions (farmer_id, referral_id, sale_amount, tier, base_commission, bonus_amount, total_commission, status, created_at) VALUES (:f, :r, :s, :t, :b, :bo, :tot, 'pending', NOW())");
+        $st2->execute([':f' => $farmerId, ':r' => $referralId, ':s' => $saleAmount, ':t' => $tier, ':b' => $base, ':bo' => $bonus, ':tot' => $total]);
+        return ['ok' => true, 'amount' => $total, 'id' => (int)$this->db->lastInsertId()];
+    }
+
+    public function getMlmRankRates(string $rank = ''): array
+    {
+        $sql = "SELECT * FROM mlm_rank_rates WHERE 1=1";
         $params = [];
-
-        if (!empty($filters['status'])) {
-            $statuses = (array) $filters['status'];
-            $placeholders = implode(',', array_fill(0, count($statuses), '?'));
-            $where[] = 'status IN (' . $placeholders . ')';
-            $params = array_merge($params, $statuses);
-        }
-
-        if (!empty($filters['commission_type'])) {
-            $typesFilter = (array) $filters['commission_type'];
-            $placeholders = implode(',', array_fill(0, count($typesFilter), '?'));
-            $where[] = 'commission_type IN (' . $placeholders . ')';
-            $params = array_merge($params, $typesFilter);
-        }
-
-        if (!empty($filters['beneficiary_id'])) {
-            $where[] = 'beneficiary_user_id = ?';
-            $params[] = (int) $filters['beneficiary_id'];
-        }
-
-        if (!empty($filters['source_user_id'])) {
-            $where[] = 'source_user_id = ?';
-            $params[] = (int) $filters['source_user_id'];
-        }
-
-        if (!empty($filters['date_from'])) {
-            $where[] = 'created_at >= ?';
-            $params[] = $filters['date_from'];
-        }
-
-        if (!empty($filters['date_to'])) {
-            $where[] = 'created_at <= ?';
-            $params[] = $filters['date_to'];
-        }
-
-        return [
-            'where' => implode(' AND ', $where),
-            'params' => $params
-        ];
+        if ($rank) { $sql .= " AND rank_name = :r"; $params[':r'] = $rank; }
+        $sql .= " ORDER BY rank_level DESC";
+        $st = $this->pdo->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    private function checkPendingThreshold(string $baseWhere, array $params): void
+    public function setMlmRank(string $rank, int $minDownline, float $commissionPct, float $bonusAmount, array $perks = []): array
     {
-        $threshold = (float) MlmSettings::getFloat('pending_commission_threshold', 0);
-        if ($threshold <= 0) {
-            return;
+        try {
+            $st = $this->pdo->prepare("INSERT INTO mlm_rank_rates (rank_name, rank_level, min_downline_count, commission_multiplier, bonus_amount) VALUES (:r, :l, :m, :c, :b)");
+            $st->execute([':r' => $rank, ':l' => $minDownline, ':m' => $minDownline, ':c' => $commissionPct / 10, ':b' => $bonusAmount]);
+            return ['ok' => true];
+        } catch (\Throwable $e) {
+            return ['error' => $e->getMessage()];
         }
+    }
 
-        $sql = 'SELECT SUM(amount) AS pending_total FROM mlm_commission_ledger WHERE status = \'pending\'';
-        if ($baseWhere) {
-            $sql .= ' AND ' . $baseWhere;
-        }
+    public function getRules(string $ruleType = ''): array
+    {
+        $sql = "SELECT * FROM commission_calculation_rules WHERE active = 1";
+        $params = [];
+        if ($ruleType) { $sql .= " AND rule_type = :r"; $params[':r'] = $ruleType; }
+        $sql .= " ORDER BY priority";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-        // Prepend 'pending' to params if filtering by status, or just use base params if status is part of filter?
-        // Wait, the query adds `status='pending'` manually.
-        // If `$baseWhere` contains `status IN (...)`, we might have a conflict or just redundant condition.
-        // Assuming `$baseWhere` filters by date/user, not status, or if it does, it might be restrictive.
-        // The original code merged `['pending']` with `$params`.
-        // Wait, the original code had:
-        // $stmt = $this->prepare($sql, 's' . $types, array_merge(['pending'], $params));
-        // But `status = 'pending'` is hardcoded in SQL.
-        // If `status` was in `$baseWhere`, it would be `status = 'pending' AND status IN (...)`.
-        // This seems fine.
-        // However, `params` for `$baseWhere` must match placeholders in `$baseWhere`.
-        
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params); // Wait, original code merged `['pending']`?
-        
-        // Original code:
-        // $sql = 'SELECT ... WHERE status = \'pending\'';
-        // if ($baseWhere) $sql .= ' AND ' . $baseWhere;
-        // $stmt = $this->prepare($sql, 's' . $types, array_merge(['pending'], $params));
-        
-        // Wait, if `status = 'pending'` is hardcoded, where does the extra parameter come from?
-        // Ah, maybe the original code used `WHERE status = ?`?
-        // Let's check original code.
-        // Line 270: $sql = 'SELECT SUM(amount) AS pending_total FROM mlm_commission_ledger WHERE status = \'pending\'';
-        // Line 275: $stmt = $this->prepare($sql, 's' . $types, array_merge(['pending'], $params));
-        // This looks like a bug in original code if SQL didn't have `?` for status.
-        // Or maybe `prepare` ignored extra params? No, `bind_param` would fail if types count mismatch.
-        // Unless `prepare` wrapper handles it?
-        
-        // Let's look at `CommissionService.php` again.
-        // Line 270: `WHERE status = 'pending'`
-        // Line 275: `prepare($sql, 's' . $types, array_merge(['pending'], $params))`
-        // This definitely looks like the original code was trying to bind 'pending' but hardcoded it in SQL.
-        // If I keep `status = 'pending'`, I don't need to bind it.
-        // I will trust the SQL and remove the extra bind if it's not needed.
-        // But wait, if `$baseWhere` has params, I need to pass them.
-        
-        $stmt->execute($params);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    public function addRule(string $type, string $name, array $conditions, float $amount, int $priority = 100): array
+    {
+        $st = $this->db->prepare("INSERT INTO commission_calculation_rules (rule_type, rule_name, conditions, output_amount, priority, active, created_at) VALUES (:t, :n, :c, :a, :p, 1, NOW())");
+        $st->execute([':t' => $type, ':n' => $name, ':c' => json_encode($conditions, JSON_UNESCAPED_UNICODE), ':a' => $amount, ':p' => $priority]);
+        return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
+    }
 
-        $pendingTotal = (float) ($row['pending_total'] ?? 0);
-        if ($pendingTotal >= $threshold) {
-            $payload = [
-                'pending_total' => $pendingTotal,
-                'threshold' => $threshold,
-            ];
-            $subject = 'Pending commissions exceed threshold';
-            $body = '<h2>Pending Commission Alert</h2>'
-                . '<p><strong>Pending Total:</strong> ₹' . number_format($pendingTotal, 2)
-                . '<br><strong>Threshold:</strong> ₹' . number_format($threshold, 2)
-                . '</p>'
-                . '<p>Review pending approvals in the admin analytics dashboard.</p>';
+    public function getAgentCommissions(int $agentId, string $status = ''): array
+    {
+        $sql = "SELECT h.*, u.name as agent_name, b.booking_code FROM hybrid_commission_records h LEFT JOIN users u ON h.agent_id = u.id LEFT JOIN bookings b ON h.booking_id = b.id WHERE h.agent_id = :a";
+        $params = [':a' => $agentId];
+        if ($status) { $sql .= " AND h.status = :s"; $params[':s'] = $status; }
+        $sql .= " ORDER BY h.created_at DESC LIMIT 100";
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-            $this->notifier->notifyAdmin($subject, $body, 'pending_commission_threshold', $payload);
-        }
+    public function approveCommission(int $id, int $approverId): array
+    {
+        $st = $this->db->prepare("UPDATE hybrid_commission_records SET status = 'approved', approved_by = :a, approved_at = NOW() WHERE id = :id");
+        $st->execute([':a' => $approverId, ':id' => $id]);
+        return ['ok' => true];
     }
 }
