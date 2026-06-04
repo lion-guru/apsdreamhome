@@ -191,16 +191,13 @@ Acting as Project Manager/CEO for APS Dream Home project. Conducting comprehensi
 - **Impact:** New users cannot register accounts
 - **Root Cause:** CSRF token validation failing
 
-### 13. AI Features - Property Valuation
+### 14. Associate/Agent Portal - Login
 
 - **Status:** ❌ NOT WORKING
-- **AI Property Valuation Page:** Accessible at `/ai/property-valuation`
-- **Features:** Property ID input, Generate Valuation button, View History button
-- **ISSUE FOUND:** API endpoint `/ai/property-valuation/generate` returns 404 error
-- **JavaScript Error:** TypeError: Cannot set properties of null (setting 'textContent')
-- **Impact:** AI property valuation feature not functional
-- **Root Cause:** API route not properly configured or controller method missing
-- **Note:** According to AGENTS.md, AI valuation routes should be configured (5 endpoints active)
+- **Login Form:** Email or Phone, Password
+- **ISSUE FOUND:** Same CSRF token error as customer registration - "Security token expired. Please try again."
+- **Impact:** Associates/Agents cannot login to their portal
+- **Root Cause:** Same CSRF token validation issue affecting multiple login/registration forms
 
 ---
 
