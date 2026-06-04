@@ -1873,6 +1873,11 @@ $router->get('/admin/hrm/leave', 'App\\Http\\Controllers\\Admin\\HRMController@l
 
 // Backup
 $router->get('/admin/backup', 'App\\Http\\Controllers\\Admin\\BackupController@index');
+$router->post('/admin/backup/create', 'App\\Http\\Controllers\\Admin\\BackupController@create');
+$router->post('/admin/backup/restore/{id}', 'App\\Http\\Controllers\\Admin\\BackupController@restore');
+$router->post('/admin/backup/upload', 'App\\Http\\Controllers\\Admin\\BackupController@upload');
+$router->get('/admin/backup/health', 'App\\Http\\Controllers\\Admin\\BackupController@health');
+$router->get('/admin/backup/download/{id}', 'App\\Http\\Controllers\\Admin\\BackupController@download');
 
 // Services
 $router->get('/admin/services/home-loan', 'App\\Http\\Controllers\\Admin\\ServiceController@homeLoan');
@@ -3103,6 +3108,10 @@ $router->post('/user/two-factor/enable', 'User\\TwoFactorController@enable');
 $router->post('/user/two-factor/disable', 'User\\TwoFactorController@disable');
 $router->get('/user/two-factor/verify', 'User\\TwoFactorController@verify');
 $router->post('/user/two-factor/verify', 'User\\TwoFactorController@verify');
+$router->get('/user/two-factor/backup-codes', 'User\\TwoFactorController@backupCodes');
+$router->get('/user/two-factor/recovery', 'User\\TwoFactorController@recovery');
+$router->post('/user/two-factor/recovery/verify', 'User\\TwoFactorController@verifyBackupCode');
+$router->get('/user/two-factor/disabled', 'User\\TwoFactorController@disabled');
 
 $router->get('/admin/api-keys', 'Admin\\ApiKeyController@index');
 $router->post('/admin/api-keys/create', 'Admin\\ApiKeyController@create');
