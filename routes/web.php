@@ -2945,6 +2945,11 @@ $router->post('/admin/webhooks/create', 'Admin\\WebhookController@create');
 $router->post('/admin/webhooks/toggle/{id}', 'Admin\\WebhookController@toggle');
 $router->post('/admin/webhooks/delete/{id}', 'Admin\\WebhookController@delete');
 $router->post('/admin/webhooks/process', 'Admin\\WebhookController@process');
+
+$router->get('/admin/bulk-operations', 'Admin\\BulkOperationsController@index');
+$router->get('/admin/bulk-operations/template/{table}', 'Admin\\BulkOperationsController@template');
+$router->get('/admin/bulk-operations/export/{table}', 'Admin\\BulkOperationsController@export');
+$router->post('/admin/bulk-operations/import', 'Admin\\BulkOperationsController@import');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');
