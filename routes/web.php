@@ -338,6 +338,20 @@ $router->get('/admin/marketing-campaigns/send/{id}', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/marketing-campaigns/delete', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@delete');
 $router->get('/admin/marketing-campaigns/templates', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@templates');
 
+$router->get('/admin/reviews', 'App\\Http\\Controllers\\Admin\\ReviewController@index');
+$router->get('/admin/reviews/approve', 'App\\Http\\Controllers\\Admin\\ReviewController@approve');
+$router->get('/admin/reviews/reject', 'App\\Http\\Controllers\\Admin\\ReviewController@reject');
+$router->post('/admin/reviews/respond', 'App\\Http\\Controllers\\Admin\\ReviewController@respond');
+$router->get('/admin/reviews/delete', 'App\\Http\\Controllers\\Admin\\ReviewController@delete');
+$router->get('/admin/reviews/feature-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@featureTestimonial');
+$router->get('/admin/reviews/approve-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@approveTestimonial');
+$router->get('/admin/reviews/reject-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@rejectTestimonial');
+$router->get('/admin/reviews/delete-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@deleteTestimonial');
+
+$router->get('/testimonials', 'App\\Http\\Controllers\\Front\\TestimonialsController@index');
+$router->get('/testimonials/submit', 'App\\Http\\Controllers\\Front\\TestimonialsController@showSubmit');
+$router->post('/testimonials/submit', 'App\\Http\\Controllers\\Front\\TestimonialsController@submit');
+
 $router->get('/property-alerts/subscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@index');
 $router->post('/property-alerts/subscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@store');
 $router->get('/property-alerts/unsubscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@unsubscribe');
