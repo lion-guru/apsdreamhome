@@ -151,211 +151,227 @@ include __DIR__ . '/../layouts/base.php';
 </div>
 
 <style>
-.valuation-summary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.progress {
-    height: 20px;
-    background-color: #e9ecef;
-}
-
-.progress-bar {
-    height: 20px;
-    background-color: #28a745;
-    transition: width 0.3s ease;
-}
-
-.badge {
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-weight: bold;
-}
-
-.badge.badge-success {
-    background-color: #28a745;
-    color: white;
-}
-
-.badge.badge-warning {
-    background-color: #ffc107;
-    color: black;
-}
-
-.badge.badge-danger {
-    background-color: #dc3545;
-    color: white;
-}
-
-.spinner-border {
-    display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    vertical-align: text-bottom;
-    border: 0.25em solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    border-top-color: #007bff;
-    animation: spinner-border .75s linear infinite;
-}
-
-@keyframes spinner-border {
-    to {
-        border-top-color: #28a745;
+    .valuation-summary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
     }
-}
+
+    .progress {
+        height: 20px;
+        background-color: #e9ecef;
+    }
+
+    .progress-bar {
+        height: 20px;
+        background-color: #28a745;
+        transition: width 0.3s ease;
+    }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-weight: bold;
+    }
+
+    .badge.badge-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge.badge-warning {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .badge.badge-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .spinner-border {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        vertical-align: text-bottom;
+        border: 0.25em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        border-top-color: #007bff;
+        animation: spinner-border .75s linear infinite;
+    }
+
+    @keyframes spinner-border {
+        to {
+            border-top-color: #28a745;
+        }
+    }
 </style>
 
 <script>
-function generateValuation() {
-    const propertyId = document.getElementById('property_id').value;
-    
-    if (!propertyId) {
-        alert('Please enter a Property ID');
-        return;
-    }
-    
-    // Show loading state
-    document.getElementById('loading-state').style.display = 'block';
-    document.getElementById('valuation-results').style.display = 'none';
-    document.getElementById('recommendations').style.display = 'none';
-    document.getElementById('error-state').style.display = 'none';
-    
-    // Make API call
-    fetch('/ai/property-valuation/generate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({
-            property_id: propertyId
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('loading-state').style.display = 'none';
-        
-        if (data.success) {
-            displayValuationResults(data.data);
-        } else {
-            displayError(data.message);
+    function generateValuation() {
+        const propertyId = document.getElementById('property_id').value;
+
+        if (!propertyId) {
+            alert('Please enter a Property ID');
+            return;
         }
-    })
-    .catch(error => {
-        document.getElementById('loading-state').style.display = 'none';
-        displayError('Network error occurred');
-    });
-}
 
-function displayValuationResults(data) {
-    // Update valuation summary
-    document.getElementById('base-valuation').textContent = '₹' + data.base_valuation.toLocaleString();
-    document.getElementById('final-valuation').textContent = '₹' + data.final_valuation.toLocaleString();
-    document.getElementById('location-multiplier').textContent = data.location_multiplier + 'x';
-    document.getElementById('type-multiplier').textContent = data.type_multiplier + 'x';
-    document.getElementById('amenity-value').textContent = '₹' + data.amenity_value.toLocaleString();
-    document.getElementById('market-adjustment').textContent = data.market_adjustment;
-    
-    // Update confidence score
-    const confidenceBar = document.getElementById('confidence-bar');
-    confidenceBar.style.width = data.confidence_score + '%';
-    confidenceBar.textContent = data.confidence_score + '%';
-    
-    // Update market analysis
-    const marketAnalysis = data.market_analysis;
-    document.getElementById('market-position').textContent = marketAnalysis.market_position.charAt(0).toUpperCase() + marketAnalysis.market_position.slice(1);
-    document.getElementById('market-position').className = 'badge badge-' + getCompetitivenessClass(marketAnalysis.competitiveness);
-    
-    document.getElementById('competitiveness').textContent = marketAnalysis.competitiveness.charAt(0).toUpperCase() + marketAnalysis.competitiveness.slice(1);
-    document.getElementById('competitiveness').className = 'badge badge-' + getCompetitivenessClass(marketAnalysis.competitiveness);
-    
-    document.getElementById('comparable-count').textContent = data.comparable_properties;
-    
-    if (marketAnalysis.price_range) {
-        document.getElementById('price-min').textContent = marketAnalysis.price_range.min.toLocaleString();
-        document.getElementById('price-avg').textContent = marketAnalysis.price_range.average.toLocaleString();
-        document.getElementById('price-max').textContent = marketAnalysis.price_range.max.toLocaleString();
+        // Show loading state
+        document.getElementById('loading-state').style.display = 'block';
+        document.getElementById('valuation-results').style.display = 'none';
+        document.getElementById('recommendations').style.display = 'none';
+        document.getElementById('error-state').style.display = 'none';
+
+        // Make API call
+        fetch(BASE_URL + '/ai/property-valuation/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    property_id: propertyId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading-state').style.display = 'none';
+
+                if (data.success) {
+                    displayValuationResults(data.data);
+                } else {
+                    displayError(data.message);
+                }
+            })
+            .catch(error => {
+                document.getElementById('loading-state').style.display = 'none';
+                displayError('Network error occurred');
+            });
     }
-    
-    // Update recommendations
-    displayRecommendations(data.recommendations);
-    
-    // Show results
-    document.getElementById('valuation-results').style.display = 'block';
-    document.getElementById('recommendations').style.display = 'block';
-}
 
-function displayRecommendations(recommendations) {
-    const container = document.getElementById('recommendations-list');
-    container.innerHTML = '';
-    
-    recommendations.forEach(rec => {
-        const div = document.createElement('div');
-        div.className = 'alert alert-' + getPriorityClass(rec.priority) + ' mb-2';
-        
-        const icon = getPriorityIcon(rec.priority);
-        const type = getTypeIcon(rec.type);
-        
-        div.innerHTML = `
+    function displayValuationResults(data) {
+        // Update valuation summary
+        document.getElementById('base-valuation').textContent = '₹' + data.base_valuation.toLocaleString();
+        document.getElementById('final-valuation').textContent = '₹' + data.final_valuation.toLocaleString();
+        document.getElementById('location-multiplier').textContent = data.location_multiplier + 'x';
+        document.getElementById('type-multiplier').textContent = data.type_multiplier + 'x';
+        document.getElementById('amenity-value').textContent = '₹' + data.amenity_value.toLocaleString();
+        document.getElementById('market-adjustment').textContent = data.market_adjustment;
+
+        // Update confidence score
+        const confidenceBar = document.getElementById('confidence-bar');
+        confidenceBar.style.width = data.confidence_score + '%';
+        confidenceBar.textContent = data.confidence_score + '%';
+
+        // Update market analysis
+        const marketAnalysis = data.market_analysis;
+        document.getElementById('market-position').textContent = marketAnalysis.market_position.charAt(0).toUpperCase() + marketAnalysis.market_position.slice(1);
+        document.getElementById('market-position').className = 'badge badge-' + getCompetitivenessClass(marketAnalysis.competitiveness);
+
+        document.getElementById('competitiveness').textContent = marketAnalysis.competitiveness.charAt(0).toUpperCase() + marketAnalysis.competitiveness.slice(1);
+        document.getElementById('competitiveness').className = 'badge badge-' + getCompetitivenessClass(marketAnalysis.competitiveness);
+
+        document.getElementById('comparable-count').textContent = data.comparable_properties;
+
+        if (marketAnalysis.price_range) {
+            document.getElementById('price-min').textContent = marketAnalysis.price_range.min.toLocaleString();
+            document.getElementById('price-avg').textContent = marketAnalysis.price_range.average.toLocaleString();
+            document.getElementById('price-max').textContent = marketAnalysis.price_range.max.toLocaleString();
+        }
+
+        // Update recommendations
+        displayRecommendations(data.recommendations);
+
+        // Show results
+        document.getElementById('valuation-results').style.display = 'block';
+        document.getElementById('recommendations').style.display = 'block';
+    }
+
+    function displayRecommendations(recommendations) {
+        const container = document.getElementById('recommendations-list');
+        container.innerHTML = '';
+
+        recommendations.forEach(rec => {
+            const div = document.createElement('div');
+            div.className = 'alert alert-' + getPriorityClass(rec.priority) + ' mb-2';
+
+            const icon = getPriorityIcon(rec.priority);
+            const type = getTypeIcon(rec.type);
+
+            div.innerHTML = `
             <strong>${icon} ${type} ${rec.priority.toUpperCase()}:</strong>
             ${rec.message}
         `;
-        
-        container.appendChild(div);
-    });
-}
 
-function displayError(message) {
-    document.getElementById('error-message').textContent = message;
-    document.getElementById('error-state').style.display = 'block';
-}
-
-function getPriorityClass(priority) {
-    switch(priority) {
-        case 'high': return 'danger';
-        case 'medium': return 'warning';
-        case 'low': return 'info';
-        default: return 'secondary';
+            container.appendChild(div);
+        });
     }
-}
 
-function getPriorityIcon(priority) {
-    switch(priority) {
-        case 'high': return '<i class="fas fa-exclamation-triangle"></i>';
-        case 'medium': return '<i class="fas fa-exclamation-circle"></i>';
-        case 'low': return '<i class="fas fa-info-circle"></i>';
-        default: return '<i class="fas fa-info"></i>';
+    function displayError(message) {
+        document.getElementById('error-message').textContent = message;
+        document.getElementById('error-state').style.display = 'block';
     }
-}
 
-function getTypeIcon(type) {
-    switch(type) {
-        case 'price': return '<i class="fas fa-rupee-sign"></i>';
-        case 'marketing': return '<i class="fas fa-bullhorn"></i>';
-        case 'features': return '<i class="fas fa-star"></i>';
-        default: return '<i class="fas fa-info"></i>';
+    function getPriorityClass(priority) {
+        switch (priority) {
+            case 'high':
+                return 'danger';
+            case 'medium':
+                return 'warning';
+            case 'low':
+                return 'info';
+            default:
+                return 'secondary';
+        }
     }
-}
 
-function getCompetitivenessClass(competitiveness) {
-    switch(competitiveness) {
-        case 'high': return 'success';
-        case 'medium': return 'warning';
-        case 'low': return 'danger';
-        default: return 'secondary';
+    function getPriorityIcon(priority) {
+        switch (priority) {
+            case 'high':
+                return '<i class="fas fa-exclamation-triangle"></i>';
+            case 'medium':
+                return '<i class="fas fa-exclamation-circle"></i>';
+            case 'low':
+                return '<i class="fas fa-info-circle"></i>';
+            default:
+                return '<i class="fas fa-info"></i>';
+        }
     }
-}
 
-// Auto-generate valuation on page load if property ID is in URL
-const urlParams = new URLSearchParams(window.location.search);
-const propertyId = urlParams.get('property_id');
-if (propertyId) {
-    document.getElementById('property_id').value = propertyId;
-    setTimeout(() => generateValuation(), 1000);
-}
+    function getTypeIcon(type) {
+        switch (type) {
+            case 'price':
+                return '<i class="fas fa-rupee-sign"></i>';
+            case 'marketing':
+                return '<i class="fas fa-bullhorn"></i>';
+            case 'features':
+                return '<i class="fas fa-star"></i>';
+            default:
+                return '<i class="fas fa-info"></i>';
+        }
+    }
+
+    function getCompetitivenessClass(competitiveness) {
+        switch (competitiveness) {
+            case 'high':
+                return 'success';
+            case 'medium':
+                return 'warning';
+            case 'low':
+                return 'danger';
+            default:
+                return 'secondary';
+        }
+    }
+
+    // Auto-generate valuation on page load if property ID is in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const propertyId = urlParams.get('property_id');
+    if (propertyId) {
+        document.getElementById('property_id').value = propertyId;
+        setTimeout(() => generateValuation(), 1000);
+    }
 </script>

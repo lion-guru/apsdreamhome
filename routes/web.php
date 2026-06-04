@@ -2950,6 +2950,12 @@ $router->get('/admin/bulk-operations', 'Admin\\BulkOperationsController@index');
 $router->get('/admin/bulk-operations/template/{table}', 'Admin\\BulkOperationsController@template');
 $router->get('/admin/bulk-operations/export/{table}', 'Admin\\BulkOperationsController@export');
 $router->post('/admin/bulk-operations/import', 'Admin\\BulkOperationsController@import');
+
+$router->get('/user/two-factor', 'User\\TwoFactorController@setup');
+$router->post('/user/two-factor/enable', 'User\\TwoFactorController@enable');
+$router->post('/user/two-factor/disable', 'User\\TwoFactorController@disable');
+$router->get('/user/two-factor/verify', 'User\\TwoFactorController@verify');
+$router->post('/user/two-factor/verify', 'User\\TwoFactorController@verify');
 $router->get('/admin/features/agent-tasks', 'Admin\\NewFeaturesController@agentTasks');
 $router->get('/admin/features/ocr', 'Admin\\NewFeaturesController@ocrCenter');
 $router->get('/admin/features/maintenance', 'Admin\\NewFeaturesController@propertyMaintenance');

@@ -1,0 +1,128 @@
+<?php
+namespace App\Services;
+
+use PDO;
+
+class TotpService
+{
+    private $db;
+    private $pdo;
+    private $algorithm = 'sha1';
+    private $digits = 6;
+    private $period = 30;
+    private $issuer = 'APS Dream Home';
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->pdo = is_object($db) && method_exists($db, 'getPdo') ? $db->getPdo() : $db;
+    }
+
+    public function generateSecret(int $length = 20): string
+    {
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+        $secret = '';
+        for ($i = 0; $i < $length; $i++) {
+            $secret .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+        return $secret;
+    }
+
+    public function base32Decode(string $secret): string
+    {
+        $base32chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+        $base32 = strtoupper($secret);
+        $base32 = rtrim($base32, '=');
+        $binary = '';
+        foreach (str_split($base32) as $c) {
+            $binary .= str_pad(decbin(strpos($base32chars, $c)), 5, '0', STR_PAD_LEFT);
+        }
+        $output = '';
+        foreach (str_split($binary, 8) as $byte) {
+            if (strlen($byte) === 8) {
+                $output .= chr(bindec($byte));
+            }
+        }
+        return $output;
+    }
+
+    public function getOtp(string $secret, ?int $timeSlice = null): string
+    {
+        $timeSlice = $timeSlice ?? floor(time() / $this->period);
+        $secretKey = $this->base32Decode($secret);
+        $time = pack('N*', 0) . pack('N*', $timeSlice);
+        $hash = hash_hmac($this->algorithm, $time, $secretKey, true);
+        $offset = ord($hash[strlen($hash) - 1]) & 0xf;
+        $code = (
+            ((ord($hash[$offset]) & 0x7f) << 24) |
+            ((ord($hash[$offset + 1]) & 0xff) << 16) |
+            ((ord($hash[$offset + 2]) & 0xff) << 8) |
+            (ord($hash[$offset + 3]) & 0xff)
+        ) % (10 ** $this->digits);
+        return str_pad((string)$code, $this->digits, '0', STR_PAD_LEFT);
+    }
+
+    public function verify(string $secret, string $code, int $window = 1): bool
+    {
+        $timeSlice = floor(time() / $this->period);
+        for ($i = -$window; $i <= $window; $i++) {
+            $otp = $this->getOtp($secret, $timeSlice + $i);
+            if (hash_equals($otp, $code)) return true;
+        }
+        return false;
+    }
+
+    public function provisioningUri(string $secret, string $userEmail): string
+    {
+        return 'otpauth://totp/' . rawurlencode($this->issuer) . ':' . rawurlencode($userEmail) .
+               '?secret=' . $secret .
+               '&issuer=' . rawurlencode($this->issuer) .
+               '&algorithm=' . strtoupper($this->algorithm) .
+               '&digits=' . $this->digits .
+               '&period=' . $this->period;
+    }
+
+    public function qrCodeUrl(string $secret, string $userEmail, int $size = 200): string
+    {
+        $uri = $this->provisioningUri($secret, $userEmail);
+        return 'https://api.qrserver.com/v1/create-qr-code/?size=' . $size . 'x' . $size . '&data=' . urlencode($uri);
+    }
+
+    public function enableForUser(int $userId, string $secret): bool
+    {
+        try {
+            $st = $this->db->prepare("UPDATE users SET two_factor_secret = :s, two_factor_enabled = 1 WHERE id = :id");
+            $st->execute([':s' => $secret, ':id' => $userId]);
+            return $st->rowCount() > 0;
+        } catch (\Throwable $e) { return false; }
+    }
+
+    public function disableForUser(int $userId): bool
+    {
+        try {
+            $st = $this->db->prepare("UPDATE users SET two_factor_secret = NULL, two_factor_enabled = 0 WHERE id = :id");
+            $st->execute([':id' => $userId]);
+            return $st->rowCount() > 0;
+        } catch (\Throwable $e) { return false; }
+    }
+
+    public function isEnabled(int $userId): bool
+    {
+        try {
+            $st = $this->db->prepare("SELECT two_factor_enabled FROM users WHERE id = :id");
+            $st->execute([':id' => $userId]);
+            $r = $st->fetch(PDO::FETCH_ASSOC);
+            return !empty($r['two_factor_enabled']);
+        } catch (\Throwable $e) { return false; }
+    }
+
+    public function getSecret(int $userId): ?string
+    {
+        try {
+            $st = $this->db->prepare("SELECT two_factor_secret FROM users WHERE id = :id");
+            $st->execute([':id' => $userId]);
+            $r = $st->fetch(PDO::FETCH_ASSOC);
+            return $r['two_factor_secret'] ?? null;
+        } catch (\Throwable $e) { return null; }
+    }
+}
