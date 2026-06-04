@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Career;
 
+use App\Http\Controllers\BaseController;
 use App\Services\HR\CareerService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
@@ -11,7 +12,7 @@ use App\Core\ViewRenderer;
  * Custom MVC implementation without Laravel dependencies
  * IDE Cache Refresh: Methods added to CareerService
  */
-class CareerController
+class CareerController extends BaseController
 {
     private $careerService;
     private $authService;
@@ -19,9 +20,19 @@ class CareerController
 
     public function __construct()
     {
+        parent::__construct();
         $this->careerService = new CareerService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new ViewRenderer();
+    }
+
+    /**
+     * This controller validates CSRF manually (via AuthenticationService)
+     * so skip the parent's automatic CSRF check on POST.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**

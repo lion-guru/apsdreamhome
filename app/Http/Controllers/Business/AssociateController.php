@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Business;
 
+use App\Http\Controllers\BaseController;
 use App\Services\Business\AssociateService;
 use App\Services\Auth\AuthenticationService;
 
@@ -9,7 +10,7 @@ use App\Services\Auth\AuthenticationService;
  * Associate Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class AssociateController
+class AssociateController extends BaseController
 {
     private $associateService;
     private $authService;
@@ -17,9 +18,19 @@ class AssociateController
 
     public function __construct()
     {
+        parent::__construct();
         $this->associateService = new AssociateService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new \App\Core\ViewRenderer();
+    }
+
+    /**
+     * This controller validates CSRF manually (via AuthenticationService)
+     * so skip the parent's automatic CSRF check on POST.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**

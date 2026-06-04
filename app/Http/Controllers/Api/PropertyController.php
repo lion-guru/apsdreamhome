@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 use PDO;
 use Exception;
 
-class PropertyController 
+class PropertyController extends BaseApiController
 {
     public function index() 
     {

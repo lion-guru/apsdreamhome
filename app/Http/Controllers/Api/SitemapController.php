@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Api;
 use App\Core\Database\Database;
 
-class SitemapController {
+class SitemapController extends BaseApiController {
     
     public function generate() {
         header('Content-Type: application/xml; charset=utf-8');

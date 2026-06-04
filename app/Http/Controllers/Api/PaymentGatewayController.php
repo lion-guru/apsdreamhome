@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Core\Controller;
 use App\Services\Payment\PhonePeGatewayService;
 use App\Services\Payment\GooglePayService;
 use App\Core\Database\Database;
@@ -11,7 +10,7 @@ use App\Core\Database\Database;
  * Payment Gateway API Controller
  * PhonePe and Google Pay integration endpoints
  */
-class PaymentGatewayController extends Controller
+class PaymentGatewayController extends BaseApiController
 {
     private $database;
     
