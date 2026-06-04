@@ -312,6 +312,13 @@ $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->post('/property/review', 'Front\\PageController@reviewSubmit');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
 $router->get('/listing/{id}', 'Front\\PageController@userPropertyDetail');
+
+$router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
+$router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');
+$router->post('/admin/saved-searches/update/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@update');
+$router->get('/admin/saved-searches/delete/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@delete');
+$router->post('/admin/saved-searches/favorite/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@favorite');
+$router->get('/admin/saved-searches/apply/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@apply');
 $router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
 $router->get('/dashboard', 'DashboardController@index');
 $router->get('/dashboard/profile', 'DashboardController@profile');

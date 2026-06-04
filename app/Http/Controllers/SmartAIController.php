@@ -85,6 +85,7 @@ class SmartAIController extends BaseController
     public function chat()
     {
         header('Content-Type: application/json');
+        try {
 
         // Get user context
         $userContext = $this->getUserContext();
@@ -167,6 +168,16 @@ class SmartAIController extends BaseController
             'model' => $modelUsed
         ]);
         exit;
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'file' => basename($e->getFile()),
+                'line' => $e->getLine()
+            ]);
+            exit;
+        }
     }
 
     /**
