@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-class CustomerController 
+class CustomerController extends BaseController
 {
     public function index() 
     {

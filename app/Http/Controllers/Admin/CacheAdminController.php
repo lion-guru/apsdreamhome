@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Services\CacheService;
 use Exception;
 
@@ -15,7 +14,7 @@ use Exception;
  *   POST /admin/cache/redis/flush -> flushRedis()
  *   POST /admin/cache/test      -> test()
  */
-class CacheAdminController extends BaseController
+class CacheAdminController extends AdminController
 {
     public function __construct()
     {

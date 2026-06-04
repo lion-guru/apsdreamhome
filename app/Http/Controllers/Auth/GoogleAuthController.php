@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Core\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\User;
 
-class GoogleAuthController extends Controller
+class GoogleAuthController extends BaseController
 {
     /**
      * Redirect to Google OAuth

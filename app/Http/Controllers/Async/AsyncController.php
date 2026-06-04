@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Async;
 
+use App\Http\Controllers\BaseController;
 use App\Services\Async\AsyncTaskService;
 use App\Services\Auth\AuthenticationService;
 
@@ -9,7 +10,7 @@ use App\Services\Auth\AuthenticationService;
  * Async Task Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class AsyncController
+class AsyncController extends BaseController
 {
     private $taskService;
     private $authService;
@@ -17,9 +18,19 @@ class AsyncController
 
     public function __construct()
     {
+        parent::__construct();
         $this->taskService = new AsyncTaskService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new \App\Core\ViewRenderer();
+    }
+
+    /**
+     * This controller validates CSRF manually (via AuthenticationService)
+     * so skip the parent's automatic CSRF check on POST.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**

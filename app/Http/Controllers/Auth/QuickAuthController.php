@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Core\Controller;
+use App\Http\Controllers\BaseController;
 use App\Core\Database;
 
-class QuickAuthController extends Controller
+class QuickAuthController extends BaseController
 {
     protected $db;
 

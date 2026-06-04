@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
  * Visitor Tracking Controller
  * Handles visitor tracking and lead capture
  */
-class VisitorTrackingController
+class VisitorTrackingController extends BaseController
 {
     private $trackingService;
 

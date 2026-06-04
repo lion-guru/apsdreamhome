@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\BaseController;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\PasswordOtpService;
 
@@ -10,7 +11,7 @@ use App\Services\Auth\PasswordOtpService;
  * Custom MVC implementation without Laravel dependencies
  * Following APS Dream Home custom architecture patterns
  */
-class AuthenticationController
+class AuthenticationController extends BaseController
 {
     private $authService;
     private $otpService;
@@ -18,9 +19,19 @@ class AuthenticationController
 
     public function __construct()
     {
+        parent::__construct();
         $this->authService = new AuthenticationService();
         $this->otpService = new PasswordOtpService();
         $this->viewRenderer = new \App\Core\View();
+    }
+
+    /**
+     * This controller validates CSRF manually inside each method,
+     * so skip the parent's automatic CSRF check on POST.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**
@@ -564,11 +575,6 @@ class AuthenticationController
     }
 
     // Private helper methods
-
-    private function validateCsrfToken($token)
-    {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-    }
 
     public function redirect($url)
     {

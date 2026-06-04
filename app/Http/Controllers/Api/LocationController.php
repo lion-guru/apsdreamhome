@@ -6,12 +6,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Core\Controller;
-
-class LocationController extends Controller
+class LocationController extends BaseApiController
 {
-    protected $db;
-    
     public function __construct()
     {
         parent::__construct();
