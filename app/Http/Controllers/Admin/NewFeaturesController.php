@@ -163,6 +163,16 @@ class NewFeaturesController extends AdminController
         return $this->render('admin/features/analytics', $this->data);
     }
 
+    public function realtimeAnalytics()
+    {
+        $this->requireAdmin();
+        $this->data = array_merge($this->data, [
+            'page_title' => 'Real-Time Analytics',
+            'page_heading' => 'Real-Time Analytics',
+        ]);
+        return $this->render('admin/features/realtime_analytics', $this->data);
+    }
+
     public function agentTasks()
     {
         $this->requireAdmin();
