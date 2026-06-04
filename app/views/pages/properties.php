@@ -252,20 +252,40 @@ function toggleFavorite(btn) {
 function addToCompare(btn) {
     const id = btn.dataset.id;
     if (!id) return;
-    let compare = JSON.parse(localStorage.getItem('property_compare') || '[]');
-    if (compare.includes(id)) { alert('Already in comparison'); return; }
-    if (compare.length >= 4) { alert('Maximum 4 properties can be compared'); return; }
-    compare.push(id);
-    localStorage.setItem('property_compare', JSON.stringify(compare));
-    btn.innerHTML = '<i class="fas fa-check me-1"></i> Added';
-    btn.classList.remove('btn-outline-info');
-    btn.classList.add('btn-info');
-    updateCompareBadge();
+    const fd = new FormData();
+    fd.append('property_id', id);
+    fetch(BASE_URL + '/property-comparison/add', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                btn.innerHTML = '<i class="fas fa-check me-1"></i> Added';
+                btn.classList.remove('btn-outline-info');
+                btn.classList.add('btn-info');
+                updateCompareBadge(d.count);
+            } else {
+                alert(d.error || 'Failed to add to comparison');
+            }
+        }).catch(() => alert('Network error'));
 }
-function updateCompareBadge() {
-    const compare = JSON.parse(localStorage.getItem('property_compare') || '[]');
+function updateCompareBadge(count) {
     const badge = document.getElementById('compareBadge');
-    if (badge) { badge.textContent = compare.length; badge.style.display = compare.length > 0 ? 'inline' : 'none'; }
+    if (badge) {
+        if (count === undefined) {
+            fetch(BASE_URL + '/property-comparison', { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+                .then(() => {
+                    let stored = parseInt(localStorage.getItem('property_compare_count') || '0');
+                    badge.textContent = stored;
+                    badge.style.display = stored > 0 ? 'inline' : 'none';
+                }).catch(() => {
+                    badge.textContent = 0;
+                    badge.style.display = 'none';
+                });
+        } else {
+            localStorage.setItem('property_compare_count', count);
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'inline' : 'none';
+        }
+    }
 }
 document.addEventListener('DOMContentLoaded', updateCompareBadge);
 </script>

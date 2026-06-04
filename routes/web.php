@@ -334,6 +334,13 @@ $router->get('/property-alerts/subscribe', 'App\\Http\\Controllers\\Front\\Prope
 $router->post('/property-alerts/subscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@store');
 $router->get('/property-alerts/unsubscribe', 'App\\Http\\Controllers\\Front\\PropertyAlertsController@unsubscribe');
 
+$router->get('/property-comparison', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@index');
+$router->post('/property-comparison/add', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@add');
+$router->get('/property-comparison/add', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@add');
+$router->post('/property-comparison/remove', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@remove');
+$router->post('/property-comparison/clear', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@clear');
+$router->get('/property-comparison/share', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@share');
+
 $router->get('/user/referral', 'App\\Http\\Controllers\\Front\\ReferralController@index');
 $router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
 $router->get('/dashboard', 'DashboardController@index');

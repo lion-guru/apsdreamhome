@@ -1,0 +1,279 @@
+<?php
+$page_title = $page_title ?? 'Property Comparison';
+$page_heading = $page_heading ?? 'Property Comparison';
+$content = $content ?? '';
+$properties = $properties ?? [];
+$comparison = $comparison ?? [];
+$count = $count ?? 0;
+$not_found = $not_found ?? false;
+$shared = $shared ?? false;
+$view_count = $view_count ?? 0;
+ob_start();
+?>
+<style>
+.cmp-hero { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; padding: 50px 0; }
+.cmp-card { border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; }
+.cmp-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.cmp-best { border: 2px solid #10b981 !important; position: relative; }
+.cmp-best::before { content: "BEST VALUE"; position: absolute; top: -10px; left: 20px; background: #10b981; color: white; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+.cmp-row { display: grid; grid-template-columns: 200px repeat(4, 1fr); gap: 1px; background: #e5e7eb; }
+.cmp-row > div { background: white; padding: 12px 16px; font-size: 14px; }
+.cmp-row .label { font-weight: 600; color: #6b7280; background: #f9fafb; }
+.cmp-image { height: 200px; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); display: flex; align-items: center; justify-content: center; font-size: 48px; color: #9ca3af; }
+</style>
+
+<section class="cmp-hero">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-2"><i class="fas fa-balance-scale me-2"></i>Compare Properties</h1>
+        <p class="lead mb-0 opacity-90">Side-by-side comparison of up to 4 properties</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    <?php if (!empty($_SESSION['comparison_error'])): ?>
+        <div class="alert alert-warning alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($_SESSION['comparison_error']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['comparison_error']); ?>
+    <?php endif; ?>
+
+    <?php if ($not_found): ?>
+        <div class="alert alert-danger text-center">
+            <h4>Comparison Not Found</h4>
+            <p>The shared comparison link is invalid or has expired.</p>
+            <a href="<?= BASE_URL ?>/property-comparison" class="btn btn-primary">My Comparison</a>
+        </div>
+    <?php endif; ?>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0"><?= $shared ? 'Shared Comparison (' . $view_count . ' views)' : 'Your Comparison List' ?> <span class="badge bg-warning text-dark"><?= $count ?> / 4</span></h4>
+        <div class="d-flex gap-2">
+            <?php if (!empty($share_token) && $count > 0): ?>
+                <button class="btn btn-outline-primary" onclick="copyShareLink()">
+                    <i class="fas fa-share-alt me-1"></i> Copy Share Link
+                </button>
+            <?php endif; ?>
+            <?php if ($count > 0): ?>
+                <form method="POST" action="<?= BASE_URL ?>/property-comparison/clear" style="display:inline;">
+                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Clear all?')">
+                        <i class="fas fa-trash me-1"></i> Clear All
+                    </button>
+                </form>
+            <?php endif; ?>
+            <a href="<?= BASE_URL ?>/properties" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Add More
+            </a>
+        </div>
+    </div>
+
+    <?php if ($count === 0): ?>
+        <div class="text-center py-5">
+            <div class="display-1 text-muted mb-3"><i class="fas fa-balance-scale"></i></div>
+            <h4 class="text-muted">No Properties to Compare</h4>
+            <p class="text-muted mb-4">Add properties from listing pages to compare them side-by-side</p>
+            <a href="<?= BASE_URL ?>/properties" class="btn btn-primary btn-lg">
+                <i class="fas fa-search me-2"></i>Browse Properties
+            </a>
+        </div>
+    <?php else: ?>
+        <div class="cmp-card">
+            <div class="cmp-row">
+                <div class="label cmp-image" style="background:#f9fafb;"><i class="fas fa-image"></i></div>
+                <?php foreach ($properties as $p): ?>
+                    <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?>" style="background:linear-gradient(135deg, #667eea20 0%, #764ba220 100%);">
+                        <?php if (!empty($p['image'])): ?>
+                            <img src="<?= htmlspecialchars($p['image']) ?>" alt="" style="max-width:100%; max-height:100%;">
+                        <?php else: ?>
+                            <i class="fas fa-home text-muted"></i>
+                        <?php endif; ?>
+                        <form method="POST" action="<?= BASE_URL ?>/property-comparison/remove" style="position:absolute; top:5px; right:5px;">
+                            <input type="hidden" name="property_id" value="<?= $p['id'] ?>">
+                            <button type="submit" class="btn btn-sm btn-danger" style="padding: 2px 8px;" title="Remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?>
+                    <div class="cmp-image text-muted">
+                        <a href="<?= BASE_URL ?>/properties" class="text-decoration-none text-muted">
+                            <i class="fas fa-plus-circle fa-2x"></i>
+                            <div class="small mt-1">Add</div>
+                        </a>
+                    </div>
+                <?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-tag me-1"></i> Property Type</div>
+                <?php foreach ($properties as $p): ?>
+                    <div><strong><?= htmlspecialchars(ucfirst($p['property_type'] ?? 'N/A')) ?></strong></div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-map-marker-alt me-1"></i> Location</div>
+                <?php foreach ($properties as $p): ?>
+                    <div>
+                        <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                        <?= htmlspecialchars($p['city'] ?? $p['address'] ?? 'N/A') ?>
+                    </div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-rupee-sign me-1"></i> Price</div>
+                <?php foreach ($properties as $p): ?>
+                    <div>
+                        <strong class="text-success">₹<?= number_format($p['price'] ?? 0) ?></strong>
+                        <?php if (($comparison['cheapest'] ?? 0) > 0 && ($p['price'] ?? 0) == $comparison['cheapest']): ?>
+                            <i class="fas fa-arrow-down text-success ms-1" title="Cheapest"></i>
+                        <?php elseif (($comparison['priciest'] ?? 0) > 0 && ($p['price'] ?? 0) == $comparison['priciest']): ?>
+                            <i class="fas fa-arrow-up text-danger ms-1" title="Priciest"></i>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-ruler-combined me-1"></i> Area (sqft)</div>
+                <?php foreach ($properties as $p): ?>
+                    <div>
+                        <strong><?= number_format($p['area_sqft'] ?? 0) ?></strong> sqft
+                        <?php if (($comparison['largest'] ?? 0) > 0 && ($p['area_sqft'] ?? 0) == $comparison['largest']): ?>
+                            <i class="fas fa-trophy text-warning ms-1" title="Largest"></i>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-calculator me-1"></i> Price/sqft</div>
+                <?php foreach ($properties as $p):
+                    $ps = (!empty($p['price']) && !empty($p['area_sqft']) && $p['area_sqft'] > 0) ? round($p['price'] / $p['area_sqft'], 2) : 0;
+                ?>
+                    <div>
+                        <strong>₹<?= number_format($ps) ?></strong>
+                        <?php if (($comparison['best_value_id'] ?? null) == $p['id']): ?>
+                            <span class="badge bg-success ms-1">Best</span>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-bed me-1"></i> Bedrooms</div>
+                <?php foreach ($properties as $p): ?>
+                    <div><?= htmlspecialchars($p['bedrooms'] ?? '—') ?></div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-bath me-1"></i> Bathrooms</div>
+                <?php foreach ($properties as $p): ?>
+                    <div><?= htmlspecialchars($p['bathrooms'] ?? '—') ?></div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-list me-1"></i> Listing</div>
+                <?php foreach ($properties as $p): ?>
+                    <div>
+                        <span class="badge bg-<?= ($p['listing_type'] ?? '') === 'rent' ? 'info' : 'success' ?>">
+                            <?= htmlspecialchars(ucfirst($p['listing_type'] ?? 'sale')) ?>
+                        </span>
+                    </div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-info-circle me-1"></i> Status</div>
+                <?php foreach ($properties as $p): ?>
+                    <div>
+                        <span class="badge bg-<?= ($p['status'] ?? '') === 'approved' ? 'success' : 'warning' ?>">
+                            <?= htmlspecialchars(ucfirst($p['status'] ?? 'pending')) ?>
+                        </span>
+                    </div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+
+            <div class="cmp-row">
+                <div class="label"><i class="fas fa-cogs me-1"></i> Actions</div>
+                <?php foreach ($properties as $p): ?>
+                    <div class="d-grid gap-1">
+                        <a href="<?= BASE_URL ?>/properties/<?= $p['id'] ?>" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye me-1"></i> View
+                        </a>
+                        <a href="<?= BASE_URL ?>/property/inquire?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-envelope me-1"></i> Inquire
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+            </div>
+        </div>
+
+        <?php if (!empty($comparison['avg_price'])): ?>
+            <div class="row g-3 mt-3">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <p class="text-muted small mb-1">Cheapest</p>
+                            <h4 class="text-success mb-0">₹<?= number_format($comparison['cheapest'] ?? 0) ?></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <p class="text-muted small mb-1">Most Expensive</p>
+                            <h4 class="text-danger mb-0">₹<?= number_format($comparison['priciest'] ?? 0) ?></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <p class="text-muted small mb-1">Average Price</p>
+                            <h4 class="text-info mb-0">₹<?= number_format($comparison['avg_price'] ?? 0) ?></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <p class="text-muted small mb-1">Largest Area</p>
+                            <h4 class="text-warning mb-0"><?= number_format($comparison['largest'] ?? 0) ?> sqft</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>
+
+<?php if (!empty($share_token)): ?>
+<input type="hidden" id="shareUrl" value="<?= BASE_URL ?>/property-comparison/share?token=<?= $share_token ?>">
+<script>
+function copyShareLink() {
+    const url = document.getElementById('shareUrl').value;
+    navigator.clipboard.writeText(url).then(() => {
+        alert('Share link copied!\n' + url);
+    });
+}
+</script>
+<?php endif; ?>
+
+<?php
+$content = ob_get_clean();
+include APP_PATH . '/views/layouts/base.php';
