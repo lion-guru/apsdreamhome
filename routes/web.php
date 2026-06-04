@@ -356,6 +356,16 @@ $router->any('/admin/live-chat/settings', 'App\\Http\\Controllers\\Admin\\LiveCh
 $router->get('/admin/live-chat/quick-replies', 'App\\Http\\Controllers\\Admin\\LiveChatController@quickReplies');
 $router->get('/api/live-chat', 'App\\Http\\Controllers\\Admin\\LiveChatController@api');
 
+$router->get('/admin/nps', 'App\\Http\\Controllers\\Admin\\NpsController@index');
+$router->get('/admin/nps/create', 'App\\Http\\Controllers\\Admin\\NpsController@create');
+$router->post('/admin/nps/store', 'App\\Http\\Controllers\\Admin\\NpsController@store');
+$router->get('/admin/nps/show/{id}', 'App\\Http\\Controllers\\Admin\\NpsController@show');
+$router->get('/admin/nps/edit/{id}', 'App\\Http\\Controllers\\Admin\\NpsController@edit');
+$router->post('/admin/nps/update', 'App\\Http\\Controllers\\Admin\\NpsController@update');
+$router->get('/admin/nps/delete', 'App\\Http\\Controllers\\Admin\\NpsController@delete');
+$router->get('/admin/nps/send', 'App\\Http\\Controllers\\Admin\\NpsController@send');
+$router->get('/admin/nps/process-triggers', 'App\\Http\\Controllers\\Admin\\NpsController@processTriggers');
+
 $router->get('/admin/auctions', 'App\\Http\\Controllers\\Admin\\AuctionController@index');
 $router->get('/admin/auctions/create', 'App\\Http\\Controllers\\Admin\\AuctionController@create');
 $router->post('/admin/auctions/store', 'App\\Http\\Controllers\\Admin\\AuctionController@store');
