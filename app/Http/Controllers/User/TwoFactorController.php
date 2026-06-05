@@ -149,8 +149,9 @@ class TwoFactorController extends BaseController
         $codes = $totp->getBackupCodes($userId);
         $stats = $totp->getBackupCodeStats($userId);
         $userName = $_SESSION['user_name'] ?? 'User';
+        $userEmail = $_SESSION['user_email'] ?? '';
         $csrf = $this->getCsrfToken();
-        include __DIR__ . '/../../views/user/two_factor_backup_codes.php';
+        include __DIR__ . '/../../../views/user/two_factor_backup_codes.php';
     }
 
     public function recovery()
