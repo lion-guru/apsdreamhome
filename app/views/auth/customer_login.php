@@ -315,36 +315,74 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                 </div>
             <?php endif; ?>
 
-            <form action="<?php echo BASE_URL; ?>/login" method="POST" novalidate>
+            <?php $isTwoFactorStep = !empty($_SESSION['pending_2fa_user']); ?>
+
+            <form action="<?= $isTwoFactorStep ? (BASE_URL . '/user/two-factor/verify') : (BASE_URL . '/login') ?>" method="POST" novalidate>
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
 
-                <div class="input-icon-wrapper">
-                    <input type="text" class="form-control" id="identity" name="identity"
-                        placeholder="<?= __('email_or_phone') ?>" required autofocus>
-                    <i class="fas fa-user input-icon"></i>
-                </div>
-
-                <div class="input-icon-wrapper password-wrapper">
-                    <input type="password" class="form-control" id="password" name="password"
-                        placeholder="<?= __('password') ?>" required>
-                    <i class="fas fa-lock input-icon"></i>
-                    <button type="button" class="toggle-password" onclick="togglePassword()"
-                        aria-label="Toggle password visibility">
-                        <i class="fas fa-eye" id="toggleIcon"></i>
-                    </button>
-                </div>
-
-                <div class="form-options">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                        <label class="form-check-label" for="remember" style="color:#666;"><?= __('remember_me') ?></label>
+                <?php if ($isTwoFactorStep): ?>
+                    <div class="alert alert-info small mb-3" role="alert">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        <strong>Two-factor authentication required.</strong>
+                        Enter the 6-digit code from your authenticator app.
                     </div>
-                    <a href="<?php echo BASE_URL; ?>/forgot-password" class="forgot-link"><?= __('forgot_password') ?></a>
-                </div>
 
-                <button type="submit" class="btn-login">
-                    <i class="fas fa-sign-in-alt me-2"></i><?= __('sign_in') ?>
-                </button>
+                    <div class="input-icon-wrapper">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="two_factor_code"
+                            name="code"
+                            placeholder="000000"
+                            maxlength="6"
+                            pattern="[0-9]{6}"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            required
+                            autofocus
+                            style="letter-spacing: 8px; font-family: 'Courier New', monospace; text-align: center; font-size: 1.25rem; font-weight: 700;"
+                        >
+                        <i class="fas fa-mobile-alt input-icon" style="left: 16px;"></i>
+                    </div>
+
+                    <div class="form-options">
+                        <a href="<?= BASE_URL ?>/user/two-factor/recovery" class="forgot-link">
+                            <i class="fas fa-key me-1"></i>Use backup code instead
+                        </a>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        <i class="fas fa-shield-alt me-2"></i>Verify
+                    </button>
+                <?php else: ?>
+                    <div class="input-icon-wrapper">
+                        <input type="text" class="form-control" id="identity" name="identity"
+                            placeholder="<?= __('email_or_phone') ?>" required autofocus>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+
+                    <div class="input-icon-wrapper password-wrapper">
+                        <input type="password" class="form-control" id="password" name="password"
+                            placeholder="<?= __('password') ?>" required>
+                        <i class="fas fa-lock input-icon"></i>
+                        <button type="button" class="toggle-password" onclick="togglePassword()"
+                            aria-label="Toggle password visibility">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+
+                    <div class="form-options">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                            <label class="form-check-label" for="remember" style="color:#666;"><?= __('remember_me') ?></label>
+                        </div>
+                        <a href="<?php echo BASE_URL; ?>/forgot-password" class="forgot-link"><?= __('forgot_password') ?></a>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        <i class="fas fa-sign-in-alt me-2"></i><?= __('sign_in') ?>
+                    </button>
+                <?php endif; ?>
             </form>
 
             <!-- Social Login Buttons -->

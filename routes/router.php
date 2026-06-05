@@ -232,6 +232,7 @@ class Router
                         if ($controllerFile !== null) {
                             require_once $controllerFile;
                         }
+                        error_log("[ROUTE_DEBUG] Instantiating: $controllerClass");
                         $controllerInstance = new $controllerClass();
 
                         if (!empty($params)) {
@@ -306,6 +307,7 @@ class Router
 
             if (preg_match($pattern, $uri, $matches)) {
                 array_shift($matches);
+                error_log("[ROUTE_DEBUG] Dynamic match: $route -> $uri");
                 return [
                     'route_data' => $handler,
                     'params' => $matches
@@ -313,6 +315,7 @@ class Router
             }
         }
 
+        error_log("[ROUTE_DEBUG] No route match for $uri");
         return null;
     }
 }

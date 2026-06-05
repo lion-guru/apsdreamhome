@@ -3,11 +3,10 @@
  * Migration: Add two_factor_backup_codes_log table
  * Tracks which backup codes have been used by each user (for reuse prevention)
  */
-require_once __DIR__ . '/../../app/Core/Database.php';
-require_once __DIR__ . '/../../database/connection.php';
-
-$db = \App\Core\Database\Database::getInstance();
-$pdo = $db->getPdo();
+$db = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+]);
 
 $sql = "CREATE TABLE IF NOT EXISTS two_factor_backup_codes_log (
     user_id INT UNSIGNED PRIMARY KEY,
@@ -18,10 +17,10 @@ $sql = "CREATE TABLE IF NOT EXISTS two_factor_backup_codes_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
 try {
-    $pdo->exec($sql);
+    $db->exec($sql);
     echo "[OK] two_factor_backup_codes_log table created/exists\n";
 
-    $count = $pdo->query("SELECT COUNT(*) FROM two_factor_backup_codes_log")->fetchColumn();
+    $count = $db->query("SELECT COUNT(*) FROM two_factor_backup_codes_log")->fetchColumn();
     echo "    Rows: $count\n";
 } catch (\Throwable $e) {
     echo "[ERR] " . $e->getMessage() . "\n";

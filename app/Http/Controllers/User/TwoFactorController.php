@@ -34,6 +34,7 @@ class TwoFactorController extends BaseController
         $qrUrl = $totp->qrCodeUrl($secret, $userEmail, 200);
         $manualKey = $secret;
         $otp = $totp->getOtp($secret);
+        $backupStats = $totp->getBackupCodeStats($userId);
         $this->data = [
             'page_title' => 'Two-Factor Authentication',
             'secret' => $secret,
@@ -41,6 +42,7 @@ class TwoFactorController extends BaseController
             'manual_key' => chunk_split($manualKey, 4, ' '),
             'current_otp' => $otp,
             'is_enabled' => $isEnabled,
+            'backup_stats' => $backupStats,
         ];
         return $this->render('user/two_factor', $this->data);
     }
@@ -68,12 +70,13 @@ class TwoFactorController extends BaseController
         }
 
         $totp->enableForUser($userId, $secret);
-        $backupCodes = $this->generateBackupCodes(8);
-        $this->saveBackupCodes($userId, $backupCodes);
+        $backupCodes = $totp->generateBackupCodes(8);
+        $totp->saveBackupCodes($userId, $backupCodes);
 
         unset($_SESSION['2fa_temp_secret']);
-        $_SESSION['flash_success'] = '2FA enabled! Save your backup codes: ' . implode(', ', $backupCodes);
-        header('Location: ' . BASE_URL . '/user/two-factor');
+        $_SESSION['flash_success'] = '2FA enabled! Save your backup codes now.';
+        session_write_close();
+        header('Location: ' . BASE_URL . '/user/two-factor/backup-codes');
         exit;
     }
 
@@ -85,8 +88,11 @@ class TwoFactorController extends BaseController
 
         $totp = new TotpService($this->db);
         $totp->disableForUser($userId);
-        $_SESSION['flash_success'] = '2FA disabled';
-        header('Location: ' . BASE_URL . '/user/two-factor');
+
+        $disabledAt = date('Y-m-d H:i:s');
+        $_SESSION['flash_success'] = '2FA has been disabled.';
+        $_SESSION['2fa_disabled_at'] = $disabledAt;
+        header('Location: ' . BASE_URL . '/user/two-factor/disabled');
         exit;
     }
 
@@ -130,20 +136,85 @@ class TwoFactorController extends BaseController
         exit;
     }
 
-    private function generateBackupCodes(int $count = 8): array
+    public function backupCodes()
     {
-        $codes = [];
-        for ($i = 0; $i < $count; $i++) {
-            $codes[] = strtoupper(bin2hex(random_bytes(4)));
+        @session_start();
+        $userId = (int)($_SESSION['user_id'] ?? 0);
+        if (!$userId) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
-        return $codes;
+        $totp = new TotpService($this->db);
+        $isEnabled = $totp->isEnabled($userId);
+        $codes = $totp->getBackupCodes($userId);
+        $stats = $totp->getBackupCodeStats($userId);
+        $userName = $_SESSION['user_name'] ?? 'User';
+        $csrf = $this->getCsrfToken();
+        include __DIR__ . '/../../views/user/two_factor_backup_codes.php';
     }
 
-    private function saveBackupCodes(int $userId, array $codes): void
+    public function recovery()
     {
-        try {
-            $st = $this->db->prepare("UPDATE users SET two_factor_backup_codes = :c WHERE id = :id");
-            $st->execute([':c' => json_encode($codes), ':id' => $userId]);
-        } catch (\Throwable $e) {}
+        @session_start();
+        $userId = (int)($_SESSION['pending_2fa_user'] ?? 0);
+        $hasPending = (bool)$userId;
+
+        $this->data = [
+            'page_title' => 'Use Backup Code',
+            'has_pending' => $hasPending,
+        ];
+        return $this->render('user/two_factor_recovery', $this->data);
+    }
+
+    public function verifyBackupCode()
+    {
+        @session_start();
+        $userId = (int)($_SESSION['pending_2fa_user'] ?? 0);
+        $code = trim($_POST['code'] ?? $_GET['code'] ?? '');
+
+        if (!$userId || !$code) {
+            $_SESSION['flash_error'] = 'Missing user session or backup code. Please login again.';
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $totp = new TotpService($this->db);
+        if (!$totp->verifyBackupCode($userId, $code)) {
+            $_SESSION['flash_error'] = 'Invalid or already-used backup code. Please try another.';
+            header('Location: ' . BASE_URL . '/user/two-factor/recovery');
+            exit;
+        }
+
+        $pendingRole = $_SESSION['pending_2fa_role'] ?? 'customer';
+        $_SESSION['user_id'] = $userId;
+        $_SESSION['role'] = $pendingRole;
+        $_SESSION['logged_in'] = true;
+        $_SESSION['2fa_verified'] = true;
+        $_SESSION['2fa_used_backup'] = true;
+
+        unset($_SESSION['pending_2fa_user'], $_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role']);
+
+        $redirectMap = [
+            'admin' => '/admin/dashboard',
+            'employee' => '/admin/dashboard',
+            'agent' => '/admin/agent-dashboard',
+            'associate' => '/associate/dashboard',
+            'customer' => '/user/dashboard'
+        ];
+        $redirect = $redirectMap[$pendingRole] ?? '/user/dashboard';
+        header('Location: ' . BASE_URL . $redirect);
+        exit;
+    }
+
+    public function disabled()
+    {
+        @session_start();
+        $userId = (int)($_SESSION['user_id'] ?? 0);
+
+        $this->data = [
+            'page_title' => '2FA Disabled',
+            'disabled_at' => $_SESSION['2fa_disabled_at'] ?? date('Y-m-d H:i:s'),
+        ];
+        return $this->render('user/two_factor_disabled', $this->data);
     }
 }
