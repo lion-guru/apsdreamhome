@@ -959,6 +959,7 @@ $router->post('/admin/popups/create', 'App\\Http\\Controllers\\NotificationContr
 
 // Monitoring
 $router->get('/monitoring', 'App\\Http\\Controllers\\MonitoringController@dashboard');
+$router->get('/admin/monitoring', 'App\\Http\\Controllers\\MonitoringController@adminMonitoring');
 
 // Virtual Tour Routes
 $router->get('/virtual-tour', 'Tech\VirtualTourController@index');
@@ -1751,7 +1752,9 @@ $router->post('/admin/accounting/store-expense', 'App\Http\Controllers\Admin\Acc
 $router->get('/admin/ai_settings', 'App\\Http\\Controllers\\Admin\\AISettingsController@index');
 
 // Marketing
-$router->get('/admin/email-templates', 'App\\Http\\Controllers\\Admin\\CampaignController@emailTemplates');
+$router->get('/admin/email-templates', 'App\\Http\\Controllers\\Admin\\EmailTemplateController@index');
+$router->get('/admin/email-templates/preview/{code}', 'App\\Http\\Controllers\\Admin\\EmailTemplateController@preview');
+$router->get('/admin/email-templates/test/{code}', 'App\\Http\\Controllers\\Admin\\EmailTemplateController@test');
 $router->get('/admin/email-templates/editor', 'App\\Http\\Controllers\\Admin\\CampaignController@templateEditor');
 $router->post('/admin/email-templates/save', 'App\\Http\\Controllers\\Admin\\CampaignController@saveTemplate');
 $router->get('/admin/email-logs', 'App\\Http\\Controllers\\Admin\\CampaignController@logs');
@@ -3183,4 +3186,13 @@ $router->post('/resell/submit', 'Front\\ResellPropertyController@submit');
 $router->get('/resell/{id}', 'Front\\ResellPropertyController@show');
 
 
+// ============================================================
+// WEB PUSH NOTIFICATIONS (VAPID — RFC 8291/8292)
+// Public/sw.js is the service worker (registered from header.php).
+// Endpoints hit by the browser's PushManager.
+// ============================================================
+$router->post('/push/subscribe',   'App\\Http\\Controllers\\Front\\PushNotificationController@subscribe');
+$router->post('/push/unsubscribe', 'App\\Http\\Controllers\\Front\\PushNotificationController@unsubscribe');
+$router->post('/push/test',        'App\\Http\\Controllers\\Front\\PushNotificationController@test');
+$router->get('/push/vapid-key',    'App\\Http\\Controllers\\Front\\PushNotificationController@vapidPublicKey');
 

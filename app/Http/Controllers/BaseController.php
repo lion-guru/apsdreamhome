@@ -52,6 +52,32 @@ class BaseController
         // Initialize database
         $this->db = \App\Core\Database\Database::getInstance();
 
+        // Monitoring: register global exception handler (once per process).
+        // Captures uncaught Throwables into monitoring_errors without breaking
+        // any existing handler that PHP installed earlier.
+        if (!defined('APS_MONITORING_HANDLER_REGISTERED')) {
+            define('APS_MONITORING_HANDLER_REGISTERED', true);
+            if (class_exists('\App\Services\Monitoring\ErrorTrackerService')) {
+                $previous = set_exception_handler(null);
+                set_exception_handler(function ($exception) use ($previous) {
+                    try {
+                        \App\Services\Monitoring\ErrorTrackerService::captureException($exception, [
+                            'url'    => $_SERVER['REQUEST_URI'] ?? null,
+                            'method' => $_SERVER['REQUEST_METHOD'] ?? null,
+                        ]);
+                    } catch (\Throwable $e) {
+                        // never let monitoring break the app
+                    }
+                    if (is_callable($previous)) {
+                        call_user_func($previous, $exception);
+                    } else {
+                        // Default rethrow so PHP prints/logs the error
+                        throw $exception;
+                    }
+                });
+            }
+        }
+
         // Initialize Localization Service (mlSupport) if available
         if (class_exists('\App\Services\Localization\LocalizationService')) {
             if (method_exists('\App\Services\Localization\LocalizationService', 'getInstance')) {
