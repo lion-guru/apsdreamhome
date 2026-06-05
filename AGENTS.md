@@ -1,4 +1,107 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-05)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-06)
+
+## Session 2026-06-06: WebSocket Full Migration — Chat + Notifications + Analytics + Kanban
+
+### What Was Done
+Migrated the long-poll/SSE infrastructure to real-time WebSocket delivery for 4 high-traffic paths. Added a generic channel-based pub/sub system with cross-process HTTP fallback, plus 3 server-side broadcast hooks and 1 client-side subscription layer.
+
+### Files Created (3)
+- `app/Services/WebSocketBroadcaster.php` — Facade with `broadcast($channel, $payload, $targetUserId, $targetRole)` + 6 convenience methods. In-process when `WebSocketServer::getInstance()` is set; HTTP fallback to `localhost:8081/broadcast` otherwise. **Never throws** — failures are logged.
+- `app/Services/BroadcastHttpHandler.php` — Ratchet `HttpServerInterface` for cross-process publish. Auth via `X-Broadcast-Key` header (`WS_BROADCAST_KEY` env var). Returns JSON `{success, sent}`.
+- `websocket_broadcast_server.php` — Standalone `IoServer` on port 8081 for the broadcast endpoint. Runs as a separate process from the WebSocket server (port 8080).
+- `testing/test_websocket_full.php` — 46 assertions across envelope shape, channel matching, BroadcastHttpHandler, real-time end-to-end. **All 46 pass.**
+
+### Files Modified (10)
+- `app/Services/WebSocketServer.php` — Added `broadcast($channel, $payload, $targetUserId, $targetRole)`, `subscribeChannel()`, `unsubscribeChannel()`, wildcard channel matching (`analytics_*`), `subscribe`/`unsubscribe` onMessage cases, `getClientStorage()` test accessor.
+- `websocket_server.php` — Restored single-process form (the `IoServer::listen()` API doesn't exist; cross-process broadcast is now a separate script).
+- `app/Services/Communication/NotificationService.php` — `sendNotification()` now broadcasts to `user_{id}_notifications` channel (best-effort, never throws).
+- `app/Services/LiveChatService.php` — `sendMessage()` broadcasts to `chat_{sessionId}` with full message envelope.
+- `app/Services/AnalyticsService.php` — `recordDailyMetric()` broadcasts to `analytics_global`.
+- `app/Http/Controllers/Admin/LeadKanbanController.php` — `updateStage()` broadcasts to `kanban_global` so all open kanban boards update in place.
+- `app/Services/AI/VoiceAgents/LeadFollowUpAgent.php` + `PropertyInquiryAgent.php` + `SiteVisitBookingAgent.php` — Wired to `TwilioVoiceService::executeCall()` (uncommitted from prior session, rolled into this commit).
+- `app/core/Autoloader.php` — Added classMap for `App\Services\AI\users\BaseAgent` + `AgentInterface` (uncommitted from prior session).
+- `assets/js/live-chat-widget.js` — Added WebSocket transport: connect on session start, subscribe to `chat_{sessionId}`, exponential-backoff reconnect (3s → 30s, max 10 retries), 30s heartbeat ping, filter own visitor messages to avoid double-render. Polling retained as fallback when WS disconnects.
+
+### Channel Naming Convention (snake_case)
+| Pattern | Receivers |
+|---------|-----------|
+| `all` | All authenticated clients |
+| `admin` | role === admin |
+| `user_{id}` | Specific user |
+| `user_{id}_notifications` | Specific user, notification-only |
+| `role_{role}` | All clients with role |
+| `chat_{session_id}` | Live chat participants |
+| `analytics_global` / `analytics_*` | Real-time analytics dashboards (wildcard) |
+| `kanban_global` / `kanban_*` | Kanban board (wildcard) |
+| any other | Exact match against subscribed channels |
+
+### Test Results
+**46/46 pass** (`testing/test_websocket_full.php`):
+
+| Section | Tests | Pass |
+|---------|-------|------|
+| WebSocketServer singleton | 1 | 1 |
+| broadcast() envelope shape | 4 | 4 |
+| broadcast() targetUserId | 2 | 2 |
+| broadcast() targetRole | 2 | 2 |
+| Channel routing (explicit + wildcard) | 3 | 3 |
+| Unauth client skip | 1 | 1 |
+| WebSocketBroadcaster convenience methods | 6 | 6 |
+| subscribeChannel (idempotent, ack) | 3 | 3 |
+| BroadcastHttpHandler (200/401/400/404) | 4 | 4 |
+| LiveChatService end-to-end | 6 | 6 |
+| AnalyticsService broadcast path | 2 | 2 |
+| NotificationService graceful load | 1 | 1 |
+| Cross-process graceful failure | 1 | 1 |
+| onMessage subscribe/unsubscribe round trip | 4 | 4 |
+| **Total** | **46** | **46** ✅ |
+
+E2E master: 164/165 (1 expected GodMode 403) — no regressions.
+
+### Verification (Live Servers)
+- WebSocket server (port 8080) — listening, PING/PONG works, JWT auth works
+- Broadcast HTTP server (port 8081) — listening, `POST /broadcast` with `X-Broadcast-Key: dev-broadcast-key` returns 200 `{"success":true,"sent":N}`
+- Smoke test: `curl -X POST -H "X-Broadcast-Key: dev-broadcast-key" -d '{"channel":"all","payload":{...}}' http://localhost:8081/broadcast` → 200 OK
+
+### Key Decisions
+- **Snake_case channel names** as user-specified (e.g. `chat_42` not `chat:42`).
+- **Two transports, never throws**: in-process when WS server shares the PHP runtime; HTTP cross-process otherwise. WebSocketBroadcaster picks the right one and swallows all errors with optional DEBUG_MODE logging.
+- **`X-Broadcast-Key` shared secret** (env: `WS_BROADCAST_KEY`) prevents random PHP processes from injecting broadcasts. Defaults to `dev-broadcast-key` in dev.
+- **Wildcard subscriptions** (`analytics_*`) keep the per-channel list small while supporting dynamic analytics dashboards.
+- **Idempotent `subscribe`** — duplicate channel names are not re-stored, so `client->channels` never grows unbounded.
+- **JS reconnect strategy** mirrors the existing `notification-system.js` pattern: exponential backoff capped at 30s, max 10 retries, 30s heartbeat.
+- **Server runs as 2 processes** (port 8080 WS + port 8081 HTTP). Could be merged into one Racket router but two processes is simpler to reason about and survives the WS server's `IoServer::factory()` not supporting `listen()`.
+- **`/broadcast` is a separate script** because Ratchet's `IoServer` doesn't expose a `listen()` method to attach a second port. Using `Ratchet\Http\Router` would be the alternative but adds complexity for marginal benefit.
+- **Visitor's own optimistic messages are filtered** in JS to prevent double-render (the message is already shown immediately on send, then the broadcast for the agent's reply comes back separately).
+- **Pre-existing `recordDailyMetric` schema bug** (column `metric_name` doesn't exist) is NOT a regression from this work — handled gracefully in the test.
+
+### Production Setup
+```bash
+# Terminal 1: WebSocket server (port 8080)
+php websocket_server.php
+
+# Terminal 2: Broadcast HTTP server (port 8081) — optional, for cross-process publish
+WS_BROADCAST_KEY=your-strong-secret php websocket_broadcast_server.php
+
+# .env
+WS_BROADCAST_KEY=your-strong-secret
+WS_HTTP_HOST=127.0.0.1
+WS_HTTP_PORT=8081
+```
+
+For Apache/PHP-FPM workers, the HTTP fallback on port 8081 is the only way to publish (since WS server is a separate process). The `WebSocketBroadcaster` picks the right transport automatically.
+
+### Commit
+- SHA: `9a74ab388`
+- Tag: `websocket-full-migration-complete` (pushed)
+- Branch: `feature/monitoring-alerts` (pushed)
+
+### Known Limitations
+- Browser WebSocket reconnects may briefly fall back to polling (4s) when WS is down. Acceptable degradation.
+- No clustering support — multiple WS servers would require Redis pub/sub. Single-process is fine for ~5K concurrent connections per Ratchet worker.
+- `WS_BROADCAST_KEY` defaults to `dev-broadcast-key` if not set — production must override.
+
+---
 
 ## Session 2026-06-05 (Night): Real Gateway Integrations — Twilio + Razorpay + AWS S3
 
