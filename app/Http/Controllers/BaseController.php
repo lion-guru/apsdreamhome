@@ -187,6 +187,9 @@ class BaseController
      * a full HTML document (starts with <!DOCTYPE>), we skip the layout to
      * avoid double-render. This protects against legacy self-contained views
      * that do their own ob_start + include layouts/base.php.
+     *
+     * Auto-injects SEO meta tags via generateSEO() if not already provided
+     * in $data['seo'] — gives every page proper OG / Twitter / JSON-LD.
      */
     protected function render($view, $data = [])
     {
@@ -203,6 +206,11 @@ class BaseController
 
         // Merge with class data
         $data = array_merge($this->data, $data);
+
+        // Auto-inject SEO meta tags (only if not explicitly provided)
+        if (!isset($data['seo']) || !is_array($data['seo'])) {
+            $data['seo'] = $this->generateSEO($data);
+        }
 
         // Extract data to variables
         extract($data);
@@ -237,6 +245,55 @@ class BaseController
         } else {
             echo $content;
         }
+    }
+
+    /**
+     * Generate SEO meta tag payload for auto-injection.
+     *
+     * Reads from common $data keys (page_title, meta_description, etc.) and
+     * falls back to sensible defaults. The returned array is consumed by
+     * header.php and base.php to render <title>, <meta>, Open Graph,
+     * Twitter Card, and optional JSON-LD structured data.
+     *
+     * Per-page overrides: pass $data['seo'] from the controller to fully
+     * customize, or pass individual keys (page_title, meta_description,
+     * meta_keywords, og_image, canonical_url, og_type, json_ld).
+     *
+     * @param array $data The view data being rendered
+     * @return array SEO payload
+     */
+    protected function generateSEO($data = [])
+    {
+        $title = $data['page_title'] ?? $data['title'] ?? 'APS Dream Home - Premium Real Estate';
+        $description = $data['meta_description'] ?? $data['description'] ?? $data['page_description']
+            ?? 'Find your dream home with APS Dream Home. Premium plots, flats, villas, and farmhouses across India.';
+        $keywords = $data['meta_keywords'] ?? $data['keywords']
+            ?? 'real estate, plots, flats, villas, property, APS Dream Home, India';
+
+        $image = $data['og_image'] ?? (defined('BASE_URL') ? BASE_URL : '') . '/assets/images/og-default.jpg';
+
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+        $url = $data['canonical_url']
+            ?? ($protocol . '://' . $host . $requestUri);
+
+        return [
+            'title'              => $title,
+            'description'        => $description,
+            'keywords'           => $keywords,
+            'og_title'           => $title,
+            'og_description'     => $description,
+            'og_image'           => $image,
+            'og_url'             => $url,
+            'og_type'            => $data['og_type'] ?? 'website',
+            'twitter_card'       => 'summary_large_image',
+            'twitter_title'      => $title,
+            'twitter_description'=> $description,
+            'twitter_image'      => $image,
+            'canonical'          => $url,
+            'json_ld'            => $data['json_ld'] ?? null
+        ];
     }
 
     /**

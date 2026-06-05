@@ -13,6 +13,56 @@ foreach ($currentFilters as $k => $v) {
         $hasActiveFilters = true; break;
     }
 }
+
+// Build JSON-LD ItemList of properties for SEO structured data
+$jsonLd = [
+    '@context' => 'https://schema.org',
+    '@type' => 'ItemList',
+    'name' => 'Properties - APS Dream Home',
+    'description' => 'Browse ' . number_format($total ?? 0) . ' premium properties from APS Dream Home',
+    'url' => (defined('BASE_URL') ? BASE_URL : '') . '/properties',
+    'numberOfItems' => (int)($total ?? 0),
+    'itemListElement' => []
+];
+if (!empty($properties) && is_array($properties)) {
+    $startPosition = (int)((($page ?? 1) - 1) * 12) + 1; // matches $perPage in controller
+    foreach ($properties as $i => $property) {
+        $itemUrl = (defined('BASE_URL') ? BASE_URL : '') . '/property/' . ($property['id'] ?? '');
+        $itemImage = !empty($property['image'])
+            ? ((defined('BASE_URL') ? BASE_URL : '') . '/assets/images/properties/' . $property['image'])
+            : '';
+        $jsonLd['itemListElement'][] = [
+            '@type' => 'ListItem',
+            'position' => $startPosition + $i,
+            'item' => [
+                '@type' => 'RealEstateListing',
+                'name' => $property['name'] ?? $property['title'] ?? 'Property',
+                'url' => $itemUrl,
+                'image' => $itemImage,
+                'description' => $property['description'] ?? '',
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => $property['address'] ?? $property['location'] ?? ''
+                ],
+                'offers' => [
+                    '@type' => 'Offer',
+                    'price' => (float)($property['price'] ?? 0),
+                    'priceCurrency' => 'INR',
+                    'availability' => 'https://schema.org/InStock'
+                ]
+            ]
+        ];
+    }
+}
+// Pass JSON-LD to render() (BaseController picks it up via $data['json_ld'])
+$json_ld = $jsonLd;
+
+// SEO description / keywords (used by BaseController::generateSEO fallback)
+$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties — plots, flats, villas, farmhouses — from APS Dream Home across India. Verified listings, transparent pricing, RERA compliant.';
+$meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' . implode(', ', array_filter([
+    $currentFilters['location'] ?? null,
+    $currentFilters['type'] ?? null
+]));
 ?>
 
 <div class="container mt-4">
