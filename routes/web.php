@@ -3144,6 +3144,18 @@ $router->get('/user/two-factor/recovery', 'User\\TwoFactorController@recovery');
 $router->post('/user/two-factor/recovery/verify', 'User\\TwoFactorController@verifyBackupCode');
 $router->get('/user/two-factor/disabled', 'User\\TwoFactorController@disabled');
 
+// Admin-side alias: `/admin/2fa` should be findable from bookmarks and
+// admin menu links even though the actual handler lives under /user/two-factor.
+// (Users with admin role share the same users table, so this just forwards.)
+$router->get('/admin/2fa', function () {
+    $base = defined('BASE_URL') ? BASE_URL : '';
+    header('Location: ' . $base . '/user/two-factor', true, 302);
+    exit;
+});
+
+$router->get('/admin/production-checklist', 'Admin\\ProductionChecklistController@index');
+$router->post('/admin/production-checklist/mark/{key}', 'Admin\\ProductionChecklistController@mark');
+
 $router->get('/admin/api-keys', 'Admin\\ApiKeyController@index');
 $router->post('/admin/api-keys/create', 'Admin\\ApiKeyController@create');
 $router->post('/admin/api-keys/revoke/{id}', 'Admin\\ApiKeyController@revoke');
