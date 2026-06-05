@@ -86,6 +86,36 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <!-- Canonical URL -->
     <link rel="canonical" href="<?php echo BASE_URL . ($_SERVER['REQUEST_URI'] ?? '/'); ?>">
 
+    <?php if (isset($seo) && is_array($seo)): ?>
+    <!-- SEO Auto-Injected Meta Tags (BaseController::generateSEO) -->
+    <title><?= htmlspecialchars($seo['title'] ?? 'APS Dream Home') ?></title>
+    <meta name="description" content="<?= htmlspecialchars($seo['description'] ?? '') ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($seo['keywords'] ?? '') ?>">
+
+    <!-- Open Graph (dynamic) -->
+    <meta property="og:title" content="<?= htmlspecialchars($seo['og_title'] ?? '') ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($seo['og_description'] ?? '') ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($seo['og_image'] ?? '') ?>">
+    <meta property="og:url" content="<?= htmlspecialchars($seo['og_url'] ?? '') ?>">
+    <meta property="og:type" content="<?= htmlspecialchars($seo['og_type'] ?? 'website') ?>">
+
+    <!-- Twitter Card (dynamic) -->
+    <meta name="twitter:card" content="<?= htmlspecialchars($seo['twitter_card'] ?? 'summary_large_image') ?>">
+    <meta name="twitter:title" content="<?= htmlspecialchars($seo['twitter_title'] ?? '') ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($seo['twitter_description'] ?? '') ?>">
+    <meta name="twitter:image" content="<?= htmlspecialchars($seo['twitter_image'] ?? '') ?>">
+
+    <!-- Canonical (dynamic — overrides static one above for accuracy) -->
+    <link rel="canonical" href="<?= htmlspecialchars($seo['canonical'] ?? '') ?>">
+
+    <!-- JSON-LD Structured Data -->
+    <?php if (!empty($seo['json_ld'])): ?>
+    <script type="application/ld+json">
+    <?= json_encode($seo['json_ld'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) ?>
+    </script>
+    <?php endif; ?>
+    <?php endif; ?>
+
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
 

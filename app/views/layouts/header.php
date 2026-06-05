@@ -38,6 +38,34 @@ gtag('js', new Date());
 gtag('config', '<?= htmlspecialchars($ga4_id) ?>', { 'anonymize_ip': true });
 </script>
 <?php endif; ?>
+
+<?php if (isset($seo) && is_array($seo)): ?>
+<!-- SEO Auto-Injected Meta Tags -->
+<title><?= htmlspecialchars($seo['title'] ?? 'APS Dream Home') ?></title>
+<meta name="description" content="<?= htmlspecialchars($seo['description'] ?? '') ?>">
+<meta name="keywords" content="<?= htmlspecialchars($seo['keywords'] ?? '') ?>">
+<link rel="canonical" href="<?= htmlspecialchars($seo['canonical'] ?? '') ?>">
+
+<!-- Open Graph -->
+<meta property="og:title" content="<?= htmlspecialchars($seo['og_title'] ?? '') ?>">
+<meta property="og:description" content="<?= htmlspecialchars($seo['og_description'] ?? '') ?>">
+<meta property="og:image" content="<?= htmlspecialchars($seo['og_image'] ?? '') ?>">
+<meta property="og:url" content="<?= htmlspecialchars($seo['og_url'] ?? '') ?>">
+<meta property="og:type" content="<?= htmlspecialchars($seo['og_type'] ?? 'website') ?>">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="<?= htmlspecialchars($seo['twitter_card'] ?? 'summary_large_image') ?>">
+<meta name="twitter:title" content="<?= htmlspecialchars($seo['twitter_title'] ?? '') ?>">
+<meta name="twitter:description" content="<?= htmlspecialchars($seo['twitter_description'] ?? '') ?>">
+<meta name="twitter:image" content="<?= htmlspecialchars($seo['twitter_image'] ?? '') ?>">
+
+<!-- JSON-LD Structured Data -->
+<?php if (!empty($seo['json_ld'])): ?>
+<script type="application/ld+json">
+<?= json_encode($seo['json_ld'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) ?>
+</script>
+<?php endif; ?>
+<?php endif; ?>
 </head>
 <body>
 <?php
