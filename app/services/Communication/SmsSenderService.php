@@ -92,24 +92,16 @@ class SmsSenderService
 
     private function sendViaTwilio($phone, $message)
     {
-        $sid = $_ENV['TWILIO_ACCOUNT_SID'] ?? '';
-        $token = $_ENV['TWILIO_AUTH_TOKEN'] ?? '';
-        $from = $_ENV['TWILIO_FROM_NUMBER'] ?? '';
-        if (!$sid || !$token) return ['success' => false, 'status' => 'failed', 'error' => 'Twilio not configured'];
-
-        $url = "https://api.twilio.com/2010-04-01/Accounts/$sid/Messages.json";
-        $data = ['From' => $from, 'To' => $phone, 'Body' => $message];
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-        curl_setopt($ch, CURLOPT_USERPWD, "$sid:$token");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $resp = curl_exec($ch);
-        $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($http === 201) return ['success' => true, 'status' => 'sent', 'provider' => 'twilio'];
-        return ['success' => false, 'status' => 'failed', 'error' => "Twilio HTTP $http: $resp"];
+        try {
+            $twilio = new \App\Services\Gateway\TwilioService();
+            $result = $twilio->sendSms($phone, $message);
+            if (!empty($result['success'])) {
+                return ['success' => true, 'status' => 'sent', 'provider' => 'twilio', 'sid' => $result['sid'] ?? null];
+            }
+            return ['success' => false, 'status' => 'failed', 'error' => $result['error'] ?? 'Twilio send failed', 'provider' => 'twilio'];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'status' => 'failed', 'error' => 'TwilioService unavailable: ' . $e->getMessage(), 'provider' => 'twilio'];
+        }
     }
 
     private function sendViaMsg91($phone, $message)
