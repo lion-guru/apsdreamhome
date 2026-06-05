@@ -2,18 +2,21 @@
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use App\Services\Gateway\CommunicationGateway;
 
 class NotificationService
 {
     private $db;
     private $fromEmail;
     private $fromName;
+    private $gateway;
 
     public function __construct()
     {
         $this->db = Database::getInstance();
         $this->fromEmail = $_ENV['SMTP_FROM_EMAIL'] ?? 'notifications@apsdreamhome.com';
         $this->fromName = $_ENV['SMTP_FROM_NAME'] ?? 'APS Dream Home';
+        $this->gateway = new CommunicationGateway();
     }
 
     public function sendNotification($userId, $channel, $title, $message, $data = [])
@@ -39,8 +42,52 @@ class NotificationService
 
         $this->addToFeed($userId, $notificationId, $title, $message, $data);
 
-        if ($channel === 'whatsapp') {
-            $this->sendWhatsApp($userId, $message, $data);
+        // Delegate real-time channel sends to the unified CommunicationGateway.
+        // This makes provider swaps, retries, and logging consistent across
+        // every channel, and keeps the DB queue path intact for async processing.
+        $user = $this->getUser($userId);
+        if ($user) {
+            $this->dispatchViaGateway($channel, $user, $title, $message, $data);
+        }
+    }
+
+    /**
+     * Send via CommunicationGateway for the given channel.
+     * Never throws — failures are logged inside the gateway.
+     */
+    private function dispatchViaGateway($channel, array $user, $title, $message, array $data = [])
+    {
+        try {
+            switch ($channel) {
+                case 'email':
+                    $this->gateway->sendEmail($user['email'] ?? '', $title, nl2br(htmlspecialchars($message)), [
+                        'from'      => $this->fromEmail,
+                        'from_name' => $this->fromName,
+                        'isHtml'    => true,
+                    ]);
+                    break;
+                case 'sms':
+                    if (!empty($user['phone'])) {
+                        $this->gateway->sendSms($user['phone'], $message, $data);
+                    }
+                    break;
+                case 'whatsapp':
+                    if (!empty($user['phone'])) {
+                        $this->gateway->sendWhatsApp($user['phone'], $message, $data);
+                    }
+                    break;
+                case 'push':
+                    $this->gateway->sendPush($user['id'] ?? null, $title, $message, $data);
+                    break;
+                case 'in_app':
+                    $senderId = $data['sender_id'] ?? 0;
+                    if (!empty($user['id']) && $senderId) {
+                        $this->gateway->sendInApp($senderId, $user['id'], $message, $data);
+                    }
+                    break;
+            }
+        } catch (\Throwable $e) {
+            error_log("NotificationService: gateway dispatch failed for channel=$channel: " . $e->getMessage());
         }
     }
 
