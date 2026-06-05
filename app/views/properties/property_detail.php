@@ -17,12 +17,13 @@ include __DIR__ . '/../layouts/base.php';
         <!-- Left: Image Gallery & Content -->
         <div class="col-lg-8">
             <!-- Hero Image Section -->
-            <div class="glass-card p-2 mb-4 overflow-hidden">
+            <div class="glass-card p-2 mb-4 overflow-hidden" data-gallery="property-<?= (int)($property['id'] ?? 0) ?>">
                 <div class="position-relative">
-                    <img loading="lazy" src="<?php echo $property_images[0]['image_path'] ?? $property['image'] ?? 'https://via.placeholder.com/1200x600'; ?> class="img-fluid">"
+                    <img loading="lazy" src="<?php echo $property_images[0]['image_path'] ?? $property['image'] ?? 'https://via.placeholder.com/1200x600'; ?>"
                         alt="<?php echo htmlspecialchars($property['title']); ?>"
-                        class="w-100 rounded-lg shadow-2xl" id="main-gallery-image"
-                        style="height: 500px; object-fit: cover; border-radius: 12px;">
+                        data-caption="<?php echo htmlspecialchars($property['title']); ?>"
+                        class="w-100 rounded-lg shadow-2xl property-image" id="main-gallery-image"
+                        style="height: 500px; object-fit: cover; border-radius: 12px; cursor: zoom-in;">
 
                     <div class="position-absolute top-0 end-0 p-3">
                         <span class="badge bg-primary glass-blur px-3 py-2 fs-6">
@@ -33,12 +34,13 @@ include __DIR__ . '/../layouts/base.php';
 
                 <!-- Thumbnails -->
                 <?php if (!empty($property_images) && count($property_images) > 1): ?>
-                    <div class="d-flex gap-2 mt-2 px-1 overflow-auto pb-2 scrollbar-hidden">
+                    <div class="d-flex gap-2 mt-2 px-1 overflow-auto pb-2 scrollbar-hidden" data-gallery="property-<?= (int)($property['id'] ?? 0) ?>-thumbs">
                         <?php foreach ($property_images as $img): ?>
-                            <img loading="lazy" src="<?php echo $img['image_path']; ?> class="img-fluid">"
+                            <img loading="lazy" src="<?php echo $img['image_path']; ?>"
+                                alt="<?php echo htmlspecialchars($property['title']); ?>"
+                                data-caption="<?php echo htmlspecialchars($property['title']); ?>"
                                 class="rounded cursor-pointer thumbnail-hover"
-                                style="width: 100px; height: 70px; object-fit: cover;"
-                                onclick="document.getElementById('main-gallery-image').src = this.src">
+                                style="width: 100px; height: 70px; object-fit: cover; cursor: zoom-in;">
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
