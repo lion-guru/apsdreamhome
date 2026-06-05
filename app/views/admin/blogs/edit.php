@@ -40,7 +40,7 @@
                                     <label class="form-label">Featured Image</label>
                                     <input type="file" name="image" class="form-control" accept="image/*">
                                     <?php if (!empty($blog['image'])): ?>
-                                    <img src="<?php echo BASE_URL; ?>/assets/images/blogs/<?php echo $blog['image']; ?>" class="mt-2" style="max-width: 200px;">
+                                    <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/blogs/<?php echo $blog['image']; ?>" class="mt-2" style="max-width: 200px;">
                                     <?php endif; ?>
                                 </div>
                                 <div class="mb-3">

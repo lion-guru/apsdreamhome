@@ -121,7 +121,7 @@
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('imagePreview').innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 150px;">';
+                document.getElementById('imagePreview').innerHTML = '<img loading="lazy" src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 150px;">';
             };
             reader.readAsDataURL(file);
         }

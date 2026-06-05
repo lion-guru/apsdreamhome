@@ -249,7 +249,7 @@
             document.getElementById('pending-commission').textContent = '₹' + data.stats.pending_commission.toLocaleString();
             
             document.getElementById('referral-link').textContent = data.stats.referral_link;
-            document.getElementById('qr-code').innerHTML = `<img src="${data.stats.qr_code}" alt="QR Code" class="img-fluid">`;
+            document.getElementById('qr-code').innerHTML = `<img loading="lazy" src="${data.stats.qr_code}" alt="QR Code" class="img-fluid">`;
 
             if (data.stats.rank) {
                 const rank = data.stats.rank;

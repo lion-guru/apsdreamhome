@@ -17,7 +17,7 @@
                 <div class="card-body text-center">
                     <div class="avatar-lg mx-auto mb-3">
                         <?php if (!empty($user['photo'])): ?>
-                            <img src="<?= htmlspecialchars($user['photo']) ?>" alt="Photo" class="rounded-circle" width="100" height="100" style="object-fit:cover;">
+                            <img loading="lazy" src="<?= htmlspecialchars($user['photo']) ?>" alt="Photo" class="rounded-circle" width="100" height="100" style="object-fit:cover;">
                         <?php else: ?>
                             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width:100px;height:100px;font-size:36px;">
                                 <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>

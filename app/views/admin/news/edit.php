@@ -62,7 +62,7 @@
                                 <h6>Featured Image</h6>
                                 <?php if (!empty($news['image'])): ?>
                                     <div class="mb-2 text-center">
-                                        <img src="/<?= $news['image'] ?>" class="img-fluid rounded" style="max-height: 150px;">
+                                        <img loading="lazy" src="/<?= $news['image'] ?>" class="img-fluid rounded" style="max-height: 150px;">
                                     </div>
                                 <?php endif; ?>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
@@ -131,7 +131,7 @@
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('imagePreview').innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 150px;">';
+                document.getElementById('imagePreview').innerHTML = '<img loading="lazy" src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 150px;">';
             };
             reader.readAsDataURL(file);
         }

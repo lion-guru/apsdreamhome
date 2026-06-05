@@ -98,7 +98,7 @@
                                     <!-- Property Image -->
                                     <div class="property-image-wrapper" style="height: 200px; overflow: hidden;">
                                         <?php if ($property['primary_image']): ?>
-                                            <img src="/<?= htmlspecialchars($property['primary_image']) ?>"
+                                            <img loading="lazy" src="/<?= htmlspecialchars($property['primary_image']) ?>"
                                                 class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         <?php else: ?>

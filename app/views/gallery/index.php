@@ -112,10 +112,10 @@
                         <div class="col-lg-4 col-md-6">
                             <div class="gallery-card">
                                 <?php if (($item['type'] ?? 'image') === 'video'): ?>
-                                    <img src="<?= $item['thumbnail'] ?? $item['url'] ?> class="img-fluid">" alt="<?= htmlspecialchars($item['title'] ?? '') ?>">
+                                    <img loading="lazy" src="<?= $item['thumbnail'] ?? $item['url'] ?> class="img-fluid">" alt="<?= htmlspecialchars($item['title'] ?? '') ?>">
                                     <div class="video-icon"><i class="fas fa-play"></i></div>
                                 <?php else: ?>
-                                    <img src="<?= $item['thumbnail'] ?? $item['url'] ?> class="img-fluid">" alt="<?= htmlspecialchars($item['title'] ?? '') ?>">
+                                    <img loading="lazy" src="<?= $item['thumbnail'] ?? $item['url'] ?> class="img-fluid">" alt="<?= htmlspecialchars($item['title'] ?? '') ?>">
                                 <?php endif; ?>
                                 <div class="gallery-overlay">
                                     <h5 class="mb-1"><?= htmlspecialchars($item['title'] ?? 'Gallery Item') ?></h5>

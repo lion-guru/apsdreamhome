@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <img src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Amit Kumar Singh">
+                            <img loading="lazy" src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Amit Kumar Singh">
                             <div class="card-body">
                                 <h5 class="card-title">Amit Kumar Singh</h5>
                                 <p class="text-muted">Managing Director</p>
@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <img src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Priya Singh">
+                            <img loading="lazy" src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Priya Singh">
                             <div class="card-body">
                                 <h5 class="card-title">Priya Singh</h5>
                                 <p class="text-muted">Operations Head</p>
@@ -48,7 +48,7 @@
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <img src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Rahul Verma">
+                            <img loading="lazy" src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Rahul Verma">
                             <div class="card-body">
                                 <h5 class="card-title">Rahul Verma</h5>
                                 <p class="text-muted">Technical Director</p>

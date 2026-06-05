@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="hero-image animate-slide-in-right">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-1.jpg" alt="Dream Property" class="img-fluid rounded-3 shadow-lg">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-1.jpg" alt="Dream Property" class="img-fluid rounded-3 shadow-lg">
                     </div>
                 </div>
             </div>
@@ -147,7 +147,7 @@
             <div class="row" id="featuredProjects">
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
                         <div class="card-body">
                             <h5 class="card-title">Suyoday Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -162,7 +162,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
                         <div class="card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -177,7 +177,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
                         <div class="card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -192,7 +192,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Budh Bihar Colony">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Budh Bihar Colony">
                         <div class="card-body">
                             <h5 class="card-title">Budh Bihar Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Kushinagar</p>
@@ -207,7 +207,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Awadhpuri">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Awadhpuri">
                         <div class="card-body">
                             <h5 class="card-title">Awadhpuri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Lucknow</p>
@@ -246,7 +246,7 @@
                 <!-- Static Featured Properties -->
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
                         <div class="card-body">
                             <h5 class="card-title">Suyoday Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -261,7 +261,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
                         <div class="card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -276,7 +276,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
                         <div class="card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -337,7 +337,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="about-image">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/hero-1.jpg" alt="About APS Dream Home" class="img-fluid rounded-3 shadow-lg">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/hero-1.jpg" alt="About APS Dream Home" class="img-fluid rounded-3 shadow-lg">
                     </div>
                 </div>
             </div>

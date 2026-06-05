@@ -22,7 +22,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
         </button>
 
         <a href="<?php echo BASE_URL; ?>" class="flex items-center space-x-2 mx-auto">
-            <img src="<?php echo BASE_URL; ?> class="img-fluid">assets/images/logo.png" alt="APS Dream Home" class="h-8" onerror="this.style.display='none'">
+            <img loading="lazy" src="<?php echo BASE_URL; ?> class="img-fluid">assets/images/logo.png" alt="APS Dream Home" class="h-8" onerror="this.style.display='none'">
             <span class="text-lg font-bold text-primary">APS Dream Home</span>
         </a>
 
@@ -30,7 +30,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
             <?php if ($isAuthenticated): ?>
                 <div class="dropdown">
                     <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="dropdown">
-                        <img src="<?php echo !empty($userAvatar) ? BASE_URL . $userAvatar : BASE_URL . 'assets/images/user/default-avatar.jpg'; ?> class="img-fluid">"
+                        <img loading="lazy" src="<?php echo !empty($userAvatar) ? BASE_URL . $userAvatar : BASE_URL . 'assets/images/user/default-avatar.jpg'; ?> class="img-fluid">"
                              alt="Profile" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -79,7 +79,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                 <!-- Logo -->
                 <div class="col-lg-3">
                     <a href="<?php echo BASE_URL; ?>" class="d-flex align-items-center text-decoration-none">
-                        <img src="<?php echo BASE_URL; ?> class="img-fluid">assets/images/logo.png" alt="APS Dream Home" class="me-2" style="height: 40px;" onerror="this.style.display='none'">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?> class="img-fluid">assets/images/logo.png" alt="APS Dream Home" class="me-2" style="height: 40px;" onerror="this.style.display='none'">
                         <span class="h5 mb-0 text-primary fw-bold">APS Dream Home</span>
                     </a>
                 </div>
@@ -122,7 +122,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                     <?php if ($isAuthenticated): ?>
                         <div class="dropdown">
                             <button class="btn btn-link text-decoration-none d-flex align-items-center ms-auto p-0" type="button" data-bs-toggle="dropdown">
-                                <img src="<?php echo !empty($userAvatar) ? BASE_URL . $userAvatar : BASE_URL . 'assets/images/user/default-avatar.jpg'; ?> class="img-fluid">"
+                                <img loading="lazy" src="<?php echo !empty($userAvatar) ? BASE_URL . $userAvatar : BASE_URL . 'assets/images/user/default-avatar.jpg'; ?> class="img-fluid">"
                                      alt="Profile" class="rounded-circle me-2" style="width: 36px; height: 36px; object-fit: cover;">
                                 <div class="text-start d-none d-md-block">
                                     <div class="fw-bold small"><?php echo htmlspecialchars($userName); ?></div>
@@ -205,7 +205,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
             <!-- User Info -->
             <?php if ($isAuthenticated): ?>
                 <div class="text-center mb-4 pb-3 border-bottom">
-                    <img src="<?php echo !empty($userAvatar) ? BASE_URL . $userAvatar : BASE_URL . 'assets/images/user/default-avatar.jpg'; ?> class="img-fluid">"
+                    <img loading="lazy" src="<?php echo !empty($userAvatar) ? BASE_URL . $userAvatar : BASE_URL . 'assets/images/user/default-avatar.jpg'; ?> class="img-fluid">"
                          alt="Profile" class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
                     <div class="fw-bold"><?php echo htmlspecialchars($userName); ?></div>
                     <small class="text-muted"><?php echo ucfirst($userRole); ?></small>

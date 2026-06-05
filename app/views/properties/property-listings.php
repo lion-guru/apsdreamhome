@@ -832,7 +832,7 @@ try {
                                             <?php
                                             $image = !empty($property['image_path']) ? (defined('BASE_URL') ? BASE_URL : '') . '/' . $property['image_path'] : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
                                             ?>
-                                            <img src="<?php echo htmlspecialchars($image); ?> class="img-fluid">" alt="<?php echo htmlspecialchars($property['title'] ?? 'Property'); ?>">
+                                            <img loading="lazy" src="<?php echo htmlspecialchars($image); ?> class="img-fluid">" alt="<?php echo htmlspecialchars($property['title'] ?? 'Property'); ?>">
                                             <?php if (!empty($property['featured'])): ?>
                                                 <span class="property-badge featured">Featured</span>
                                             <?php elseif (!empty($property['status']) && $property['status'] != 'available'): ?>

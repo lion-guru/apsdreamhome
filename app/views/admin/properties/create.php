@@ -273,7 +273,7 @@ $active_page = 'properties';
                 reader.onload = function(e) {
                     previewHtml += `
                             <div class="col-md-3 mb-2">
-                                <img src="${e.target.result}" class="img-fluid img-thumbnail" style="max-height: 150px;">
+                                <img loading="lazy" src="${e.target.result}" class="img-fluid img-thumbnail" style="max-height: 150px;">
                                 <div class="small text-muted">${file.name}</div>
                             </div>
                         `;

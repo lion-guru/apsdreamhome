@@ -48,7 +48,7 @@
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
-                    <img src="https://img.freepik.com/free-photo/architectural-blueprints-construction-site_23-2148901413.jpg" alt="Construction" class="img-fluid rounded-4 shadow-lg">
+                    <img loading="lazy" src="https://img.freepik.com/free-photo/architectural-blueprints-construction-site_23-2148901413.jpg" alt="Construction" class="img-fluid rounded-4 shadow-lg">
                     <div class="position-absolute bottom-0 start-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
                         <i class="fas fa-check-circle text-success me-1"></i> ISO 9001:2015 Certified
                     </div>
@@ -185,7 +185,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="project-card card">
                             <?php if (!empty($p['image'])): ?>
-                                <img src="<?= htmlspecialchars($p['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ?>">
+                                <img loading="lazy" src="<?= htmlspecialchars($p['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ?>">
                             <?php else: ?>
                                 <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:200px"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
                             <?php endif; ?>

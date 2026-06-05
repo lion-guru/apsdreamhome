@@ -100,7 +100,7 @@
                                 $imagePath = get_asset_url($imagePath);
                             }
                             ?>
-                            <img src="<?php echo $imagePath; ?>" alt="<?php echo $colony['name']; ?>" class="img-fluid">
+                            <img loading="lazy" src="<?php echo $imagePath; ?>" alt="<?php echo $colony['name']; ?>" class="img-fluid">
                             <div class="colony-placeholder" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; flex-direction: column; background: #eee; color: #555;">
                                 <i class="fas fa-city fa-3x mb-2"></i>
                                 <p class="mb-0 text-center px-2"><?php echo $colony['name']; ?></p>

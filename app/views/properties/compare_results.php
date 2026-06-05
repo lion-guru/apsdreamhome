@@ -109,7 +109,7 @@
                 <!-- Property Image -->
                 <div class="position-relative">
                     <?php if ($property['primary_image']): ?>
-                    <img src="/<?= htmlspecialchars($property['primary_image']) ?>"
+                    <img loading="lazy" src="/<?= htmlspecialchars($property['primary_image']) ?>"
                          class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
                          style="height: 200px; object-fit: cover;">
                     <?php else: ?>

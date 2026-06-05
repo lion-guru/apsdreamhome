@@ -48,7 +48,7 @@
             </div>
             <?php if ($project['image_url']): ?>
             <div class="card shadow-sm border-0">
-                <div class="card-body p-0"><img src="<?= $project['image_url'] ?>" class="img-fluid rounded" alt="<?= $project['name'] ?>" style="width:100%"></div>
+                <div class="card-body p-0"><img loading="lazy" src="<?= $project['image_url'] ?>" class="img-fluid rounded" alt="<?= $project['name'] ?>" style="width:100%"></div>
             </div>
             <?php endif; ?>
         </div>

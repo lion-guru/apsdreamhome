@@ -79,7 +79,7 @@
                     <div class="card-body p-0">
                         <div class="bank-details-wrapper text-center p-4 p-md-5">
                             <h4 class="fw-bold mb-4">Official Bank Account Details</h4>
-                            <img src="<?= get_asset_url('bank.PNG', 'images') ?>" class="img-fluid rounded-4 shadow-sm border" alt="APS Dream Homes Bank Details" onerror="this.src='https://placehold.co/800x400?text=Bank+Details+Image'">
+                            <img loading="lazy" src="<?= get_asset_url('bank.PNG', 'images') ?>" class="img-fluid rounded-4 shadow-sm border" alt="APS Dream Homes Bank Details" onerror="this.src='https://placehold.co/800x400?text=Bank+Details+Image'">
                         </div>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
                 <div class="mt-5 text-center" data-aos="zoom-in">
                     <div class="p-4 rounded-4 bg-white shadow-sm d-inline-block">
                         <p class="fw-bold mb-2">Scan for Easy Payment</p>
-                        <img src="https://placehold.co/150x150?text=UPI+QR+Code" class="img-fluid rounded" alt="UPI QR Code">
+                        <img loading="lazy" src="https://placehold.co/150x150?text=UPI+QR+Code" class="img-fluid rounded" alt="UPI QR Code">
                         <div class="mt-2">
                             <span class="badge bg-light text-dark border"><i class="fas fa-bolt text-warning me-1"></i> Instant Settlement</span>
                         </div>

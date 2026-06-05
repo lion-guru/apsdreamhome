@@ -46,7 +46,7 @@
                             <?php foreach ($images as $image): ?>
                                 <div class="col-md-3 mb-3">
                                     <div class="position-relative">
-                                        <img src="<?php echo BASE_URL . '/uploads/projects/' . htmlspecialchars($image['filename'] ?? ''); ?>" class="img-fluid rounded" alt="Project Image">
+                                        <img loading="lazy" src="<?php echo BASE_URL . '/uploads/projects/' . htmlspecialchars($image['filename'] ?? ''); ?>" class="img-fluid rounded" alt="Project Image">
                                         <a href="<?= BASE_URL ?>/admin/projects/images/delete/<?php echo $image['id'] ?? 0; ?>" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" onclick="return confirm('Delete this image?')">
                                             <i class="fas fa-trash"></i>
                                         </a>

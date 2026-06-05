@@ -74,7 +74,7 @@ $content = $content ?? '';
               <h5>Photos</h5>
               <div class="row g-2">
                 <?php foreach ($property['images'] as $img): ?>
-                  <div class="col-md-4"><img src="<?= htmlspecialchars($img['image_url']) ?>" class="img-fluid rounded" alt=""></div>
+                  <div class="col-md-4"><img loading="lazy" src="<?= htmlspecialchars($img['image_url']) ?>" class="img-fluid rounded" alt=""></div>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>

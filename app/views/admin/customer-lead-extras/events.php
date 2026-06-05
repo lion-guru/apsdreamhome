@@ -177,7 +177,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
-                                                <img src="<?php echo BASE_URL; ?>/assets/img/default-avatar.png" alt="Avatar" class="rounded-circle" width="32" height="32">
+                                                <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/img/default-avatar.png" alt="Avatar" class="rounded-circle" width="32" height="32">
                                             </div>
                                             <div class="flex-grow-1 ms-2">
                                                 <h6 class="mb-0"><?php echo htmlspecialchars($event['lead_name'] ?? 'Unknown'); ?></h6>
