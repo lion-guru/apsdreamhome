@@ -180,6 +180,134 @@ class ExperimentController extends AdminController
         $this->redirect('/admin/experiments/' . $id);
     }
 
+    /**
+     * Render the per-experiment results dashboard.
+     * GET /admin/experiments/{id}/results
+     */
+    public function results($id)
+    {
+        $this->requireAdmin();
+        $id = (int) $id;
+        $exp = $this->svc ? $this->svc->getExperimentById($id) : null;
+        if (!$exp) {
+            $this->setFlash('error', 'Experiment not found.');
+            $this->redirect('/admin/experiments');
+            return;
+        }
+
+        try {
+            $stats = $this->svc->getStats($exp['name']);
+        } catch (Throwable $e) {
+            $stats = ['experiment' => $exp, 'results' => [], 'totals' => ['users' => 0, 'conversions' => 0, 'rate' => 0], 'chi_square' => ['stat' => 0, 'p_value' => 1, 'significant' => false, 'df' => 0]];
+        }
+
+        $this->render('admin/experiments/results', [
+            'page_title' => 'Results — ' . $exp['name'],
+            'experiment' => $exp,
+            'stats'      => $stats,
+            'csrf_token' => $this->getCsrfToken(),
+        ]);
+    }
+
+    /**
+     * POST /admin/experiments/{id}/set-winner
+     * Sets the winner on a running experiment without ending it.
+     */
+    public function setWinner($id)
+    {
+        $this->requireAdmin();
+        $id = (int) $id;
+        $exp = $this->svc ? $this->svc->getExperimentById($id) : null;
+        if (!$exp) {
+            $this->setFlash('error', 'Experiment not found.');
+            $this->redirect('/admin/experiments');
+            return;
+        }
+
+        $winner = trim($_POST['winner'] ?? '');
+        if ($winner === '') {
+            $this->setFlash('error', 'Winner variant is required.');
+            $this->redirect('/admin/experiments/' . $id . '/results');
+            return;
+        }
+
+        try {
+            $stmt = $this->svc->getPdo()->prepare("UPDATE ab_experiments SET winner = ? WHERE id = ?");
+            $stmt->execute([$winner, $id]);
+            $this->setFlash('success', "Winner set to '{$winner}'.");
+        } catch (Throwable $e) {
+            $this->setFlash('error', 'Failed to set winner: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/experiments/' . $id . '/results');
+    }
+
+    /**
+     * GET /admin/experiments/{id}/export
+     * Returns a CSV download with per-variant results.
+     */
+    public function exportCsv($id)
+    {
+        $this->requireAdmin();
+        $id = (int) $id;
+        $exp = $this->svc ? $this->svc->getExperimentById($id) : null;
+        if (!$exp) {
+            $this->setFlash('error', 'Experiment not found.');
+            $this->redirect('/admin/experiments');
+            return;
+        }
+
+        try {
+            $stats = $this->svc->getStats($exp['name']);
+        } catch (Throwable $e) {
+            $stats = ['results' => [], 'totals' => ['users' => 0, 'conversions' => 0]];
+        }
+
+        $filename = 'experiment_' . preg_replace('/[^a-z0-9_]/i', '', $exp['name']) . '_' . date('Ymd_His') . '.csv';
+
+        // Prepend UTF-8 BOM so Excel opens it correctly.
+        echo "\xEF\xBB\xBF";
+        $fh = fopen('php://output', 'w');
+        fputcsv($fh, ['variant', 'users', 'conversions', 'rate_pct']);
+        foreach (($stats['results'] ?? []) as $variant => $r) {
+            fputcsv($fh, [
+                $variant,
+                (int)($r['users'] ?? 0),
+                (int)($r['conversions'] ?? 0),
+                number_format((float)($r['rate_pct'] ?? 0), 2),
+            ]);
+        }
+        fputcsv($fh, ['TOTAL', (int)($stats['totals']['users'] ?? 0), (int)($stats['totals']['conversions'] ?? 0), number_format((float)($stats['totals']['rate'] ?? 0), 2)]);
+        fclose($fh);
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+        exit;
+    }
+
+    /**
+     * POST /admin/experiments/seed-defaults
+     * Idempotent: creates the 4 default experiments if they don't exist.
+     */
+    public function seedDefaults()
+    {
+        $this->requireAdmin();
+        if (!$this->svc) {
+            $this->setFlash('error', 'ExperimentService not available.');
+            $this->redirect('/admin/experiments');
+            return;
+        }
+        try {
+            $result = $this->svc->seedDefaults();
+            $created = count($result['created']);
+            $skipped = count($result['skipped']);
+            $this->setFlash('success', "Seeded defaults: {$created} created, {$skipped} already existed.");
+        } catch (Throwable $e) {
+            $this->setFlash('error', 'Seed failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/experiments');
+    }
+
     public function delete($id)
     {
         $this->requireAdmin();
