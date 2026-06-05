@@ -19,7 +19,27 @@ class WebSocketServer implements MessageComponentInterface
         $this->clients = new \SplObjectStorage;
         $this->db = $db;
         $this->notificationCenter = new NotificationCenter($db);
-        $this->jwtSecret = $_ENV['JWT_SECRET'] ?? 'fallback_secret_key';
+
+        $secret = $_ENV['JWT_SECRET'] ?? getenv('JWT_SECRET') ?: null;
+        if (!$secret || strlen($secret) < 32) {
+            $secretFile = __DIR__ . '/../../storage/websocket_jwt_secret';
+            if (is_readable($secretFile)) {
+                $stored = trim((string)@file_get_contents($secretFile));
+                if (strlen($stored) >= 32) {
+                    $secret = $stored;
+                }
+            }
+        }
+        if (!$secret || strlen($secret) < 32) {
+            $newSecret = bin2hex(random_bytes(32));
+            $secretDir = __DIR__ . '/../../storage';
+            if (is_dir($secretDir) || @mkdir($secretDir, 0775, true)) {
+                @file_put_contents($secretDir . '/websocket_jwt_secret', $newSecret);
+            }
+            error_log("WebSocketServer: JWT_SECRET env not set or too short; generated 64-char fallback. Set JWT_SECRET in .env to a 32+ char string to use a stable secret.");
+            $secret = $newSecret;
+        }
+        $this->jwtSecret = $secret;
         self::setInstance($this);
     }
 

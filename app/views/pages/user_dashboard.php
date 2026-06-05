@@ -481,6 +481,49 @@ $userDocuments = $userDocuments ?? [];
                 </a>
             </div>
         </div>
+
+        <div class="card border-0 shadow-sm mt-4 security-section">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title mb-0"><i class="fas fa-shield-alt text-success me-2"></i>Security</h5>
+            </div>
+            <div class="card-body">
+                <?php
+                    $twoFactorEnabled = false;
+                    try {
+                        $secPdo = $this->db ?? \App\Core\Database\Database::getInstance()->getConnection();
+                        $secStmt = $secPdo->prepare("SELECT two_factor_enabled FROM users WHERE id = ?");
+                        $secStmt->execute([$_SESSION['user_id'] ?? 0]);
+                        $secRow = $secStmt->fetch(\PDO::FETCH_ASSOC);
+                        $twoFactorEnabled = !empty($secRow['two_factor_enabled']);
+                    } catch (\Throwable $e) {
+                        $twoFactorEnabled = !empty($user['two_factor_enabled']);
+                    }
+                ?>
+                <?php if ($twoFactorEnabled): ?>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                        <div>
+                            <p class="mb-0 fw-bold text-success">2FA Enabled</p>
+                            <small class="text-muted">Your account is protected</small>
+                        </div>
+                    </div>
+                    <a href="<?= BASE_URL ?>/user/two-factor" class="btn btn-sm btn-outline-primary w-100">
+                        <i class="fas fa-cog me-1"></i> Manage 2FA
+                    </a>
+                <?php else: ?>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-exclamation-triangle text-warning fa-2x me-3"></i>
+                        <div>
+                            <p class="mb-0 fw-bold text-warning">2FA Not Enabled</p>
+                            <small class="text-muted">Add an extra layer of security</small>
+                        </div>
+                    </div>
+                    <a href="<?= BASE_URL ?>/user/two-factor" class="btn btn-sm btn-primary w-100">
+                        <i class="fas fa-shield-alt me-1"></i> Enable 2FA
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
 
