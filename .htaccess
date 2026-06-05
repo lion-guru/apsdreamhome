@@ -21,11 +21,40 @@
     RewriteRule ^public/(.*)$ public/index.php [L]
 </IfModule>
 
-# Security headers
+# Security Headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
 <IfModule mod_headers.c>
-    Header always set X-Frame-Options DENY
-    Header always set X-Content-Type-Options nosniff
+    # HSTS (HTTP Strict Transport Security) — force HTTPS for 2 years, include subdomains, preload eligible
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" env=HTTPS
+
+    # Prevent MIME-sniffing
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Clickjacking protection — only allow framing from same origin (admin/iframe content needs SAMEORIGIN)
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # XSS Protection (legacy, but still good to have)
     Header always set X-XSS-Protection "1; mode=block"
+
+    # Referrer policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Permissions policy — disable unused browser features
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    # Content Security Policy
+    # Allows: self, Bootstrap CDN (jsdelivr/cdnjs), FontAwesome (cdnjs), Chart.js (jsdelivr),
+    #         Google Fonts (fonts.googleapis.com + fonts.gstatic.com), Google Analytics + Tag Manager,
+    #         inline styles (Bootstrap classes), inline scripts (for legacy views), eval (for some libs)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'self';"
+
+    # Disable server signature / powered-by leaks
+    Header always unset X-Powered-By
+    Header always unset Server
+
+    # Prevent caching of sensitive pages (login, dashboard, admin)
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=!CACHE_OK
+    </IfModule>
 </IfModule>
 
 # PHP settings
