@@ -78,6 +78,12 @@ class WebSocketServer implements MessageComponentInterface
             case 'mark_read':
                 $this->markNotificationsRead($from, $data['ids'] ?? []);
                 break;
+            case 'subscribe':
+                $this->subscribeChannel($from, $data['channel'] ?? '');
+                break;
+            case 'unsubscribe':
+                $this->unsubscribeChannel($from, $data['channel'] ?? '');
+                break;
             default:
                 $from->send(json_encode(['error' => 'Unknown message type']));
         }
@@ -158,6 +164,33 @@ class WebSocketServer implements MessageComponentInterface
         ]));
     }
 
+    // Subscribe an authenticated client to a channel
+    protected function subscribeChannel($conn, $channel)
+    {
+        if (!isset($conn->userId) || !$conn->userId) {
+            $conn->send(json_encode(['type' => 'error', 'message' => 'Not authenticated']));
+            return;
+        }
+        if (!is_string($channel) || $channel === '') {
+            $conn->send(json_encode(['type' => 'error', 'message' => 'Invalid channel']));
+            return;
+        }
+        if (!isset($conn->channels) || !is_array($conn->channels)) {
+            $conn->channels = [];
+        }
+        if (!in_array($channel, $conn->channels, true)) {
+            $conn->channels[] = $channel;
+        }
+        $conn->send(json_encode(['type' => 'subscribed', 'channel' => $channel]));
+    }
+
+    protected function unsubscribeChannel($conn, $channel)
+    {
+        if (!isset($conn->channels) || !is_array($conn->channels)) return;
+        $conn->channels = array_values(array_filter($conn->channels, fn($c) => $c !== $channel));
+        $conn->send(json_encode(['type' => 'unsubscribed', 'channel' => $channel]));
+    }
+
     // Broadcast a notification to all connected clients
     public function broadcastNotification($notification)
     {
@@ -166,7 +199,7 @@ class WebSocketServer implements MessageComponentInterface
             if (!isset($client->userId) || !$client->userId) {
                 continue;
             }
-            
+
             // Check if notification is for this user
             if (isset($notification['user_id']) && $notification['user_id'] == $client->userId) {
                 $client->send(json_encode([
@@ -183,7 +216,71 @@ class WebSocketServer implements MessageComponentInterface
             }
         }
     }
-    
+
+    // Generic channel-based broadcast. Subscribers receive `{type: 'channel', channel, payload}`.
+    // Supports:
+    //   - 'all'                 → all authenticated clients
+    //   - 'admin'               → role === 'admin'
+    //   - 'user_{id}'           → specific user
+    //   - 'role_{role}'         → specific role
+    //   - 'chat_{id}'           → chat session
+    //   - 'analytics_global'    → any analytics channel prefix (real-time dashboards)
+    //   - 'kanban_global'       → kanban board broadcasts
+    //   - anything else         → exact match against client->channels
+    public function broadcast($channel, $payload, $targetUserId = null, $targetRole = null)
+    {
+        if (!is_string($channel) || $channel === '') return 0;
+        $sent = 0;
+        $envelope = json_encode([
+            'type' => 'channel',
+            'channel' => $channel,
+            'payload' => $payload,
+            'ts' => time()
+        ]);
+        foreach ($this->clients as $client) {
+            if (!isset($client->userId) || !$client->userId) continue;
+            if (!$this->matchesChannel($client, $channel, $targetUserId, $targetRole)) continue;
+            try {
+                $client->send($envelope);
+                $sent++;
+            } catch (\Throwable $e) {
+                error_log("WebSocketServer::broadcast send error: " . $e->getMessage());
+            }
+        }
+        return $sent;
+    }
+
+    private function matchesChannel($client, $channel, $targetUserId, $targetRole)
+    {
+        // Direct target overrides
+        if ($targetUserId !== null && (int)$client->userId === (int)$targetUserId) return true;
+        if ($targetRole !== null && (string)$client->userRole === (string)$targetRole) return true;
+
+        if ($channel === 'all') return true;
+        if ($channel === 'admin' && $client->userRole === 'admin') return true;
+        if (strpos($channel, 'user_') === 0) {
+            $id = (int)substr($channel, 5);
+            return $id > 0 && (int)$client->userId === $id;
+        }
+        if (strpos($channel, 'role_') === 0) {
+            $role = substr($channel, 5);
+            return $client->userRole === $role;
+        }
+
+        // Check explicit subscriptions
+        if (isset($client->channels) && is_array($client->channels)) {
+            if (in_array($channel, $client->channels, true)) return true;
+            // Wildcard match: e.g. 'analytics_*'
+            foreach ($client->channels as $sub) {
+                if (strpos($sub, '*') !== false) {
+                    $regex = '/^' . str_replace('\*', '.*', preg_quote($sub, '/')) . '$/';
+                    if (preg_match($regex, $channel)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // Static method to get/set instance for broadcasting from NotificationCenter
     private static $instance = null;
     
@@ -195,5 +292,11 @@ class WebSocketServer implements MessageComponentInterface
     public static function getInstance()
     {
         return self::$instance;
+    }
+
+    // Test-only accessors (used by testing/test_websocket_full.php)
+    public function getClientStorage(): \SplObjectStorage
+    {
+        return $this->clients;
     }
 }
