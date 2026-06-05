@@ -290,6 +290,15 @@ $router->post('/admin/user-properties/action', 'App\\Http\\Controllers\\Admin\\U
 $router->get('/admin/api-keys/guide', 'App\\Http\\Controllers\\Admin\\ApiKeyController@guide');
 $router->get('/admin/api-keys/create', 'App\\Http\\Controllers\\Admin\\ApiKeyController@create');
 $router->post('/admin/api-keys/store', 'App\\Http\\Controllers\\Admin\\ApiKeyController@store');
+
+// Bulk Property Import (CSV)
+if (file_exists(__DIR__ . '/../app/Services/Bulk/PropertyImportService.php')) {
+    $router->get('/admin/bulk/property-import', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImport');
+    $router->post('/admin/bulk/property-import/upload', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImportUpload');
+    $router->post('/admin/bulk/property-import/execute', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImportExecute');
+    $router->get('/admin/bulk/property-import/template', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImportTemplate');
+    $router->get('/admin/bulk/property-import/sample', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImportSample');
+}
 $router->get('/admin/api-keys/edit/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@edit');
 $router->post('/admin/api-keys/update/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@update');
 $router->get('/admin/api-keys/delete/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@delete');
@@ -922,6 +931,22 @@ $router->get('/admin/gallery/{id}/destroy', 'App\\Http\\Controllers\\Admin\\Gall
 // Admin Settings & System
 $router->get('/admin/settings', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 $router->post('/admin/settings', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/contact', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/contact', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/social', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/social', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/seo', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/seo', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/maintenance', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/maintenance', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->post('/admin/settings/maintenance/toggle', 'App\\Http\\Controllers\\Admin\\MaintenanceController@toggle');
+$router->post('/admin/settings/maintenance/ips/add', 'App\\Http\\Controllers\\Admin\\MaintenanceController@addIp');
+$router->post('/admin/settings/maintenance/ips/remove', 'App\\Http\\Controllers\\Admin\\MaintenanceController@removeIp');
+$router->get('/admin/settings/maintenance/status', 'App\\Http\\Controllers\\Admin\\MaintenanceController@status');
+$router->get('/admin/settings/sms', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/sms', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/export', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@export');
+$router->get('/admin/settings/stats', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@getStats');
 $router->get('/admin/legal-pages', 'App\\Http\\Controllers\\Admin\\LegalPagesController@index');
 $router->post('/admin/legal-pages/update-terms', 'App\\Http\\Controllers\\Admin\\LegalPagesController@updateTerms');
 $router->post('/admin/legal-pages/update-privacy', 'App\\Http\\Controllers\\Admin\\LegalPagesController@updatePrivacy');
@@ -1485,8 +1510,12 @@ $router->get('/admin/experiments',                  'App\\Http\\Controllers\\Adm
 $router->get('/admin/experiments/create',           'App\\Http\\Controllers\\Admin\\ExperimentController@create');
 $router->post('/admin/experiments/store',           'App\\Http\\Controllers\\Admin\\ExperimentController@store');
 $router->get('/admin/experiments/{id}',             'App\\Http\\Controllers\\Admin\\ExperimentController@show');
+$router->get('/admin/experiments/{id}/results',     'App\\Http\\Controllers\\Admin\\ExperimentController@results');
+$router->post('/admin/experiments/{id}/set-winner', 'App\\Http\\Controllers\\Admin\\ExperimentController@setWinner');
 $router->post('/admin/experiments/{id}/end',        'App\\Http\\Controllers\\Admin\\ExperimentController@end');
+$router->get('/admin/experiments/{id}/export',      'App\\Http\\Controllers\\Admin\\ExperimentController@exportCsv');
 $router->post('/admin/experiments/{id}/delete',     'App\\Http\\Controllers\\Admin\\ExperimentController@delete');
+$router->post('/admin/experiments/seed-defaults',   'App\\Http\\Controllers\\Admin\\ExperimentController@seedDefaults');
 $router->get('/api/ab/variant/{name}',              'App\\Http\\Controllers\\Admin\\ExperimentController@getVariant');
 $router->post('/api/ab/track',                      'App\\Http\\Controllers\\Admin\\ExperimentController@track');
 
@@ -2285,6 +2314,10 @@ $router->get('/admin/voice-agents/scripts', 'App\\Http\\Controllers\\Admin\\Voic
 $router->get('/admin/voice-agents/extracted-leads', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@extractedLeads');
 $router->get('/admin/voice-agents/settings', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@settings');
 $router->get('/admin/voice-agents/oln', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@olnDashboard');
+// Live voice call monitor (Cluster 2 - 2026-06-05)
+$router->get('/admin/voice-agents/live', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@live');
+$router->post('/admin/voice-agents/transfer-call', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@transferCall');
+$router->post('/admin/voice-agents/hangup-call', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@hangupCall');
 
 // ═══════════════════════════════════════════════════
 // VOICE CALL SCHEDULER (Admin)

@@ -660,4 +660,70 @@ class VoiceAgentAdminController extends AdminController
         echo json_encode(['success' => true, 'timeline' => $timeline]);
         exit;
     }
+
+    /**
+     * Live voice call monitor (Cluster 2 - 2026-06-05).
+     * Shows in-progress and recent completed calls with controls.
+     */
+    public function live()
+    {
+        $this->requireAdmin();
+        $this->render('admin/voice-agents/live', []);
+    }
+
+    /**
+     * Transfer an in-progress call to a different number.
+     * Accepts POST {call_sid, to}.
+     */
+    public function transferCall()
+    {
+        $this->requireAdmin();
+
+        $callSid = $_POST['call_sid'] ?? '';
+        $to      = $_POST['to']      ?? '';
+
+        if (!$callSid || !$to) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Missing call_sid or to']);
+            exit;
+        }
+
+        try {
+            $voice = new \App\Services\Voice\TwilioVoiceService();
+            $result = $voice->transferCall($callSid, $to);
+            header('Content-Type: application/json');
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Hang up an in-progress call.
+     * Accepts POST {call_sid}.
+     */
+    public function hangupCall()
+    {
+        $this->requireAdmin();
+
+        $callSid = $_POST['call_sid'] ?? '';
+        if (!$callSid) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Missing call_sid']);
+            exit;
+        }
+
+        try {
+            $voice = new \App\Services\Voice\TwilioVoiceService();
+            $result = $voice->hangupCall($callSid);
+            header('Content-Type: application/json');
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
 }

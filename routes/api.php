@@ -216,3 +216,12 @@ $router->get('/api/monitor/status', 'Api\\MonitorController@status');
 $router->get('/api/monitor/health', 'Api\\MonitorController@health');
 $router->get('/api/monitor/performance', 'Api\\MonitorController@performance');
 $router->get('/api/monitor/errors', 'Api\\MonitorController@errors');
+
+// ============================================================
+// Twilio Voice Webhooks (Cluster 2 - 2026-06-05)
+// ============================================================
+// Inbound from Twilio. CSRF is bypassed (HMAC-signed by Twilio).
+$router->post('/api/twilio/voice', 'Api\TwilioVoiceWebhookController@voice');
+$router->post('/api/twilio/voice/status', 'Api\TwilioVoiceWebhookController@status');
+$router->post('/api/twilio/voice/recording', 'Api\TwilioVoiceWebhookController@recording');
+$router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gather');
