@@ -1894,6 +1894,15 @@ $router->post('/admin/backup/restore/{id}', 'App\\Http\\Controllers\\Admin\\Back
 $router->post('/admin/backup/upload', 'App\\Http\\Controllers\\Admin\\BackupController@upload');
 $router->get('/admin/backup/health', 'App\\Http\\Controllers\\Admin\\BackupController@health');
 $router->get('/admin/backup/download/{id}', 'App\\Http\\Controllers\\Admin\\BackupController@download');
+$router->post('/admin/backup/to-s3', 'App\\Http\\Controllers\\Admin\\BackupController@toS3');
+$router->get('/admin/backup/from-s3', 'App\\Http\\Controllers\\Admin\\BackupController@fromS3');
+$router->get('/admin/backup/s3-download', 'App\\Http\\Controllers\\Admin\\BackupController@s3Download');
+
+// Storage Gateway (admin UI)
+$router->get('/admin/storage', 'App\\Http\\Controllers\\Admin\\StorageGatewayController@index');
+$router->post('/admin/storage/test', 'App\\Http\\Controllers\\Admin\\StorageGatewayController@test');
+$router->get('/admin/storage/list', 'App\\Http\\Controllers\\Admin\\StorageGatewayController@listBucket');
+$router->post('/admin/storage/switch', 'App\\Http\\Controllers\\Admin\\StorageGatewayController@switchDriver');
 
 // Services
 $router->get('/admin/services/home-loan', 'App\\Http\\Controllers\\Admin\\ServiceController@homeLoan');
@@ -3208,4 +3217,20 @@ $router->post('/push/subscribe',   'App\\Http\\Controllers\\Front\\PushNotificat
 $router->post('/push/unsubscribe', 'App\\Http\\Controllers\\Front\\PushNotificationController@unsubscribe');
 $router->post('/push/test',        'App\\Http\\Controllers\\Front\\PushNotificationController@test');
 $router->get('/push/vapid-key',    'App\\Http\\Controllers\\Front\\PushNotificationController@vapidPublicKey');
+
+// ============================================================
+// CHECKOUT + RAZORPAY FLOW
+// GET  /checkout/{bookingId}           — payment page
+// POST /checkout/process/{bookingId}   — create Razorpay order (AJAX)
+// POST /checkout/verify                — verify signature after checkout
+// GET  /checkout/success/{paymentId}   — receipt
+// GET  /checkout/failed                — failure page
+// POST /webhook/razorpay               — Razorpay server-side callback (HMAC)
+// ============================================================
+$router->get('/checkout/{bookingId}',              'App\\Http\\Controllers\\Front\\CheckoutController@checkout');
+$router->post('/checkout/process/{bookingId}',     'App\\Http\\Controllers\\Front\\CheckoutController@processPayment');
+$router->post('/checkout/verify',                  'App\\Http\\Controllers\\Front\\CheckoutController@verifyPayment');
+$router->get('/checkout/success/{paymentId}',      'App\\Http\\Controllers\\Front\\CheckoutController@paymentSuccess');
+$router->get('/checkout/failed',                   'App\\Http\\Controllers\\Front\\CheckoutController@paymentFailed');
+$router->post('/webhook/razorpay',                 'App\\Http\\Controllers\\Front\\CheckoutController@webhook');
 
