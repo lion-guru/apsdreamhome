@@ -162,10 +162,27 @@ class CheckoutController extends BaseController
     {
         $paymentId = htmlspecialchars((string)$paymentId, ENT_QUOTES, 'UTF-8');
         $orderId   = htmlspecialchars((string)($_GET['order'] ?? ''), ENT_QUOTES, 'UTF-8');
+        // Try to resolve the booking ID so we can offer a PDF receipt link
+        $bookingId = 0;
+        try {
+            $db = Database::getInstance()->getConnection();
+            // Look up by order first, then by payment_id
+            $stmt = $db->prepare("SELECT booking_id FROM payment_orders WHERE order_id = ? LIMIT 1");
+            $stmt->execute([$orderId]);
+            $bookingId = (int)($stmt->fetchColumn() ?: 0);
+            if (!$bookingId && $paymentId) {
+                $stmt = $db->prepare("SELECT booking_id FROM payments WHERE gateway_transaction_id = ? LIMIT 1");
+                $stmt->execute([$paymentId]);
+                $bookingId = (int)($stmt->fetchColumn() ?: 0);
+            }
+        } catch (\Throwable $e) {
+            // Non-fatal - just skip the PDF link
+        }
         return $this->render('pages/payment_success', [
             'page_title' => 'Payment Successful — APS Dream Home',
             'payment_id' => $paymentId,
             'order_id'   => $orderId,
+            'booking_id' => $bookingId,
         ]);
     }
 
