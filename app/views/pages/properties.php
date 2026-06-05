@@ -284,11 +284,17 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     </div>
 
     <!-- Properties Grid -->
-    <div class="row" id="propertiesContainer">
+    <div class="row" id="propertiesContainer" data-experiment="property_card_layout" data-variant="<?= htmlspecialchars($_SESSION['experiments']['property_card_layout'] ?? 'current', ENT_QUOTES) ?>">
+        <?php
+            // A/B test: property_card_layout — 'compact' variant = 4 per row (col-lg-3)
+            $cardLayout = $_SESSION['experiments']['property_card_layout'] ?? 'current';
+            $cardColClass = $cardLayout === 'compact' ? 'col-lg-3 col-md-6' : 'col-lg-4 col-md-6';
+            $cardClass    = $cardLayout === 'compact' ? 'property-card property-card-compact h-100' : 'property-card h-100';
+        ?>
         <?php if (!empty($properties)): ?>
             <?php foreach ($properties as $property): ?>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card property-card h-100">
+                <div class="<?= htmlspecialchars($cardColClass) ?> mb-4">
+                    <div class="card <?= htmlspecialchars($cardClass) ?>" data-gallery="property-card-<?= (int)($property['id'] ?? 0) ?>" data-property-id="<?= (int)($property['id'] ?? 0) ?>" data-property-track="property_card">
                         <div class="position-relative">
                             <?php
                                 $imgSrc = BASE_URL . '/assets/images/properties/' . htmlspecialchars($property['image'] ?? '');
@@ -297,9 +303,10 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                 }
                             ?>
                             <img loading="lazy" src="<?= $imgSrc ?>"
-                                 class="card-img-top"
+                                 class="card-img-top property-image"
                                  alt="<?= htmlspecialchars($property['name'] ?? '') ?>"
-                                 style="height: 200px; object-fit: cover;"
+                                 data-caption="<?= htmlspecialchars($property['name'] ?? '') ?>"
+                                 style="height: 200px; object-fit: cover; cursor: zoom-in;"
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 end-0 p-2 d-flex gap-1">
                                 <button class="btn btn-sm btn-light favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="Add to Favorites" onclick="toggleFavorite(this)">

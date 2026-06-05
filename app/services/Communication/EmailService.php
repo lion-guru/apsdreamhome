@@ -74,23 +74,54 @@ class EmailService
         try {
             $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
             if (!$user) return false;
-            
+
             $subject = "Welcome to APS Dream Home - Your Dream Property Awaits!";
-            
-            $body = $this->getWelcomeTemplate([
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'customer_id' => $user['customer_id'] ?? $user['id'],
-                'login_url' => BASE_URL . '/login',
-                'properties_url' => BASE_URL . '/properties',
-                'support_email' => $this->fromEmail
+
+            // Prefer the new HTML template service (app/views/emails/welcome.php)
+            $body = $this->renderModernTemplate('welcome', [
+                'name'            => $user['name'],
+                'login_url'       => BASE_URL . '/login',
+                'logo_url'        => BASE_URL . '/assets/images/logo.png',
+                'unsubscribe_url' => BASE_URL . '/unsubscribe',
+                'preferences_url' => BASE_URL . '/email-preferences',
             ]);
-            
+
+            // Fallback to legacy inline template if the modern one fails
+            if ($body === '') {
+                $body = $this->getWelcomeTemplate([
+                    'name' => $user['name'],
+                    'email' => $user['email'],
+                    'customer_id' => $user['customer_id'] ?? $user['id'],
+                    'login_url' => BASE_URL . '/login',
+                    'properties_url' => BASE_URL . '/properties',
+                    'support_email' => $this->fromEmail
+                ]);
+            }
+
             return $this->send($user['email'], $subject, $body);
-            
+
         } catch (\Exception $e) {
             error_log("Welcome email failed: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Renders a template by code using TemplateService. Returns '' on failure
+     * so callers can fall back to their inline legacy template.
+     */
+    private function renderModernTemplate(string $code, array $vars): string
+    {
+        try {
+            if (!class_exists('App\\Services\\Communication\\TemplateService')) {
+                return '';
+            }
+            $svc = new \App\Services\Communication\TemplateService();
+            $result = $svc->renderHtmlTemplate($code, $vars);
+            return ($result['ok'] ?? false) ? ($result['html'] ?? '') : '';
+        } catch (\Throwable $t) {
+            error_log('renderModernTemplate failed: ' . $t->getMessage());
+            return '';
         }
     }
     

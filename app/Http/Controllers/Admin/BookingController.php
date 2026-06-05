@@ -199,6 +199,8 @@ class BookingController extends AdminController
             $stmt->execute([$data['customer_id'], $data['property_id'], $data['visit_date'] ?? date('Y-m-d'), $data['status'] ?? 'pending', $data['notes'] ?? '', $id]);
             $_SESSION['flash_message'] = 'Booking updated successfully.';
             $_SESSION['flash_type'] = 'success';
+            // Hot-path: booking status/amount changes affect the admin dashboard KPI bundle.
+            \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
             $this->redirect('/admin/bookings');
         } catch (Exception $e) {
             $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();

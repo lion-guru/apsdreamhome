@@ -21,11 +21,11 @@ try {
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h2 class="h3 mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>My Investments</h2>
+                <h2 class="h3 mb-0"><i class="fas fa-chart-line me-2 text-primary"></i><?= __('user_inv2_title', null, 'My Investments') ?></h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>user/dashboard">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Investments</li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>user/dashboard"><?= __('user_inv2_dashboard', null, 'Dashboard') ?></a></li>
+                        <li class="breadcrumb-item active"><?= __('user_inv2_investments', null, 'Investments') ?></li>
                     </ol>
                 </nav>
             </div>
@@ -36,7 +36,7 @@ try {
         <div class="col-md-4">
             <div class="card shadow-sm border-0 bg-primary text-white">
                 <div class="card-body">
-                    <h6 class="text-white-50 small fw-bold text-uppercase mb-2">Total Active Plots</h6>
+                    <h6 class="text-white-50 small fw-bold text-uppercase mb-2"><?= __('user_inv2_total_plots', null, 'Total Active Plots') ?></h6>
                     <h3 class="mb-0 fw-bold"><?= count($investments) ?></h3>
                 </div>
             </div>
@@ -49,9 +49,9 @@ try {
                 <div class="card border-0 shadow-sm text-center py-5">
                     <div class="card-body">
                         <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
-                        <h5>No active investments found</h5>
-                        <p class="text-muted">You haven't purchased any plots yet.</p>
-                        <a href="<?= BASE_URL ?>properties" class="btn btn-primary px-4">Browse Properties</a>
+                        <h5><?= __('user_inv2_empty_title', null, 'No active investments found') ?></h5>
+                        <p class="text-muted"><?= __('user_inv2_empty_desc', null, "You haven't purchased any plots yet.") ?></p>
+                        <a href="<?= BASE_URL ?>properties" class="btn btn-primary px-4"><?= __('user_inv2_browse', null, 'Browse Properties') ?></a>
                     </div>
                 </div>
             </div>
@@ -64,7 +64,7 @@ try {
                                 <div class="bg-primary-subtle text-primary p-2 rounded">
                                     <i class="fas fa-map-marked-alt fa-lg"></i>
                                 </div>
-                                <span class="badge bg-success rounded-pill px-3">ACTIVE</span>
+                                <span class="badge bg-success rounded-pill px-3"><?= __('user_inv2_active', null, 'ACTIVE') ?></span>
                             </div>
                             <h5 class="card-title fw-bold mb-1"><?= htmlspecialchars($inv['site_name'] ?? 'N/A') ?></h5>
                             <p class="text-muted small mb-3">
@@ -74,24 +74,24 @@ try {
                             <hr class="my-3 opacity-10">
                             <div class="row g-3">
                                 <div class="col-6">
-                                    <label class="text-muted small d-block mb-1">Plot Number</label>
+                                    <label class="text-muted small d-block mb-1"><?= __('user_inv2_plot_number', null, 'Plot Number') ?></label>
                                     <span class="fw-bold"><?= htmlspecialchars($inv['plot_number'] ?? 'N/A') ?></span>
                                 </div>
                                 <div class="col-6">
-                                    <label class="text-muted small d-block mb-1">Sector</label>
+                                    <label class="text-muted small d-block mb-1"><?= __('user_inv2_sector', null, 'Sector') ?></label>
                                     <span class="fw-bold"><?= htmlspecialchars($inv['sector'] ?? 'N/A') ?></span>
                                 </div>
                                 <div class="col-6">
-                                    <label class="text-muted small d-block mb-1">Size</label>
-                                    <span class="fw-bold"><?= number_format($inv['area_sqft'] ?? 0) ?> sq.ft</span>
+                                    <label class="text-muted small d-block mb-1"><?= __('user_inv2_size', null, 'Size') ?></label>
+                                    <span class="fw-bold"><?= number_format($inv['area_sqft'] ?? 0) ?> <?= __('unit_sqft', null, 'sq.ft') ?></span>
                                 </div>
                                 <div class="col-6">
-                                    <label class="text-muted small d-block mb-1">Price</label>
+                                    <label class="text-muted small d-block mb-1"><?= __('user_inv2_price', null, 'Price') ?></label>
                                     <span class="fw-bold">&#8377;<?= number_format($inv['total_price'] ?? 0) ?></span>
                                 </div>
                             </div>
                             <div class="d-grid mt-4">
-                                <a href="<?= BASE_URL ?>properties/<?= $inv['id'] ?? '' ?>" class="btn btn-outline-primary">View Details</a>
+                                <a href="<?= BASE_URL ?>properties/<?= $inv['id'] ?? '' ?>" class="btn btn-outline-primary"><?= __('user_inv2_view_details', null, 'View Details') ?></a>
                             </div>
                         </div>
                     </div>

@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Core\Database\Database;
 use App\Core\ImageOptimizer;
+use App\Services\Storage\StorageManager;
 
 class PropertyImageController extends AdminController
 {
@@ -113,7 +114,7 @@ class PropertyImageController extends AdminController
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = 'prop_' . $propertyId . '_' . time() . '_' . uniqid() . '.' . $extension;
             $filepath = $this->uploadPath . $filename;
-            
+
             // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
                 // Optimize uploaded image (resize, strip EXIF, emit WebP)
@@ -126,21 +127,43 @@ class PropertyImageController extends AdminController
                 // Create medium version
                 $mediumFilename = 'medium_' . $filename;
                 $this->createThumbnail($filepath, $this->uploadPath . $mediumFilename, 800, 600);
-                
+
+                // Mirror all 3 variants to StorageManager (S3 or local fallback).
+                $relPath = 'uploads/properties/' . $filename;
+                $relThumb = 'uploads/properties/' . $thumbFilename;
+                $relMedium = 'uploads/properties/' . $mediumFilename;
+                try {
+                    $storage = StorageManager::getInstance();
+                    $storage->put($relPath, file_get_contents($filepath), [
+                        'ContentType'  => $file['type'] ?? 'image/jpeg',
+                        'Cache-Control' => 'public, max-age=31536000, immutable',
+                    ]);
+                    $storage->put($relThumb, file_get_contents($this->uploadPath . $thumbFilename), [
+                        'ContentType'  => $file['type'] ?? 'image/jpeg',
+                        'Cache-Control' => 'public, max-age=31536000, immutable',
+                    ]);
+                    $storage->put($relMedium, file_get_contents($this->uploadPath . $mediumFilename), [
+                        'ContentType'  => $file['type'] ?? 'image/jpeg',
+                        'Cache-Control' => 'public, max-age=31536000, immutable',
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log('PropertyImageController: storage mirror failed: ' . $e->getMessage());
+                }
+
                 // Check if this is the first image (make it primary)
                 $existingCount = $this->db->fetchOne(
                     "SELECT COUNT(*) as count FROM property_images WHERE property_id = ?",
                     [$propertyId]
                 )['count'];
-                
+
                 $isPrimary = ($existingCount == 0) ? 1 : 0;
-                
+
                 // Save to database
                 $this->db->insert('property_images', [
                     'property_id' => $propertyId,
-                    'image_path' => 'uploads/properties/' . $filename,
-                    'thumbnail_path' => 'uploads/properties/' . $thumbFilename,
-                    'medium_path' => 'uploads/properties/' . $mediumFilename,
+                    'image_path' => $relPath,
+                    'thumbnail_path' => $relThumb,
+                    'medium_path' => $relMedium,
                     'original_name' => $file['name'],
                     'file_size' => $file['size'],
                     'mime_type' => $file['type'],
@@ -149,7 +172,7 @@ class PropertyImageController extends AdminController
                     'caption' => $_POST['caption'] ?? null,
                     'created_at' => date('Y-m-d H:i:s')
                 ]);
-                
+
                 $uploadedCount++;
             } else {
                 $errors[] = $file['name'] . ": Failed to upload.";
@@ -211,21 +234,44 @@ class PropertyImageController extends AdminController
 
             $mediumFilename = 'medium_' . $filename;
             $this->createThumbnail($filepath, $this->uploadPath . $mediumFilename, 800, 600);
-            
+
+            $relPath = 'uploads/properties/' . $filename;
+            $relThumb = 'uploads/properties/' . $thumbFilename;
+            $relMedium = 'uploads/properties/' . $mediumFilename;
+
+            // Mirror to StorageManager (S3 or local fallback).
+            try {
+                $storage = StorageManager::getInstance();
+                $storage->put($relPath, file_get_contents($filepath), [
+                    'ContentType'   => $file['type'] ?? 'image/jpeg',
+                    'Cache-Control' => 'public, max-age=31536000, immutable',
+                ]);
+                $storage->put($relThumb, file_get_contents($this->uploadPath . $thumbFilename), [
+                    'ContentType'   => $file['type'] ?? 'image/jpeg',
+                    'Cache-Control' => 'public, max-age=31536000, immutable',
+                ]);
+                $storage->put($relMedium, file_get_contents($this->uploadPath . $mediumFilename), [
+                    'ContentType'   => $file['type'] ?? 'image/jpeg',
+                    'Cache-Control' => 'public, max-age=31536000, immutable',
+                ]);
+            } catch (\Throwable $e) {
+                error_log('PropertyImageController::ajaxUpload: storage mirror failed: ' . $e->getMessage());
+            }
+
             // Get sort order
             $existingCount = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM property_images WHERE property_id = ?",
                 [$propertyId]
             )['count'];
-            
+
             $isPrimary = ($existingCount == 0) ? 1 : 0;
-            
+
             // Save to database
             $imageId = $this->db->insert('property_images', [
                 'property_id' => $propertyId,
-                'image_path' => 'uploads/properties/' . $filename,
-                'thumbnail_path' => 'uploads/properties/' . $thumbFilename,
-                'medium_path' => 'uploads/properties/' . $mediumFilename,
+                'image_path' => $relPath,
+                'thumbnail_path' => $relThumb,
+                'medium_path' => $relMedium,
                 'original_name' => $file['name'],
                 'file_size' => $file['size'],
                 'mime_type' => $file['type'],
@@ -233,12 +279,12 @@ class PropertyImageController extends AdminController
                 'sort_order' => $existingCount,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
-            
+
             echo json_encode([
                 'success' => true,
                 'image_id' => $imageId,
-                'path' => 'uploads/properties/' . $filename,
-                'thumbnail' => 'uploads/properties/' . $thumbFilename,
+                'path' => $relPath,
+                'thumbnail' => $relThumb,
                 'is_primary' => $isPrimary
             ]);
         } else {

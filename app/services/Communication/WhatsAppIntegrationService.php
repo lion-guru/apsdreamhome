@@ -322,51 +322,23 @@ class WhatsAppIntegration
 
     /**
      * Send via Twilio WhatsApp API
+     * Delegates to the unified TwilioService for consistency + logging.
      */
     private function sendViaTwilio($phone_number, $message, $media_url = null)
     {
-        // Twilio WhatsApp API implementation
-        // Note: This requires a Twilio account with WhatsApp enabled
-
-        $twilio_sid = getenv('TWILIO_ACCOUNT_SID');
-        $twilio_token = getenv('TWILIO_AUTH_TOKEN');
-        $twilio_number = getenv('TWILIO_PHONE_NUMBER');
-
-        if (!$twilio_sid || !$twilio_token || !$twilio_number) {
-            return ['success' => false, 'error' => 'Twilio credentials not configured'];
-        }
-
-        $url = "https://api.twilio.com/2010-04-01/Accounts/{$twilio_sid}/Messages.json";
-
-        $payload = [
-            'From' => 'whatsapp:' . $twilio_number,
-            'To' => 'whatsapp:' . $phone_number,
-            'Body' => $message
-        ];
-
-        if ($media_url) {
-            $payload['MediaUrl'] = $media_url;
-        }
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload));
-        curl_setopt($ch, CURLOPT_USERPWD, "{$twilio_sid}:{$twilio_token}");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        // curl_close is deprecated in PHP 8.0+ for CurlHandle objects
-
-        if ($http_code === 201) {
-            $this->logWhatsAppActivity('SENT', $phone_number, $message);
-            return ['success' => true, 'message' => 'WhatsApp message sent successfully via Twilio'];
-        } else {
-            $error = json_decode($response, true);
-            $this->logWhatsAppActivity('FAILED', $phone_number, $message, $error['message'] ?? 'Unknown error');
-            return ['success' => false, 'error' => 'Twilio API error: ' . ($error['message'] ?? 'Unknown error')];
+        try {
+            $twilio = new \App\Services\Gateway\TwilioService();
+            $result = $twilio->sendWhatsApp($phone_number, $message, $media_url ? ['mediaUrl' => $media_url] : []);
+            if (!empty($result['success'])) {
+                $this->logWhatsAppActivity('SENT', $phone_number, $message);
+                return ['success' => true, 'message' => 'WhatsApp message sent successfully via Twilio', 'sid' => $result['sid'] ?? null];
+            }
+            $err = $result['error'] ?? 'Unknown Twilio error';
+            $this->logWhatsAppActivity('FAILED', $phone_number, $message, $err);
+            return ['success' => false, 'error' => 'Twilio API error: ' . $err];
+        } catch (\Throwable $e) {
+            $this->logWhatsAppActivity('FAILED', $phone_number, $message, $e->getMessage());
+            return ['success' => false, 'error' => 'TwilioService unavailable: ' . $e->getMessage()];
         }
     }
 

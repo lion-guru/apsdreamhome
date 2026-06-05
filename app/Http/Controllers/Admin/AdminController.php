@@ -103,17 +103,25 @@ class AdminController extends BaseController
         }
 
         try {
-            // Get dashboard statistics
-            $stats = [
-                'total_users' => $this->getTotalUsers(),
-                'total_properties' => $this->getTotalProperties(),
-                'total_inquiries' => $this->getTotalInquiries(),
-                'total_revenue' => $this->getTotalRevenue(),
-                'active_properties' => $this->getActiveProperties(),
-                'new_users_today' => $this->getNewUsersToday(),
-                'pending_approvals' => $this->getPendingApprovals(),
-                'system_health' => $this->getSystemHealth()
-            ];
+            // ── Hot-path cache: admin dashboard KPIs (2 min TTL, per role+user) ──
+            $adminRole = (string) ($_SESSION['admin_role'] ?? 'admin');
+            $adminId   = (int) ($_SESSION['admin_id'] ?? 0);
+            $stats = \App\Services\Cache\HotPathCacheService::getAdminDashboardKpis(
+                $adminRole,
+                $adminId,
+                function () {
+                    return [
+                        'total_users' => $this->getTotalUsers(),
+                        'total_properties' => $this->getTotalProperties(),
+                        'total_inquiries' => $this->getTotalInquiries(),
+                        'total_revenue' => $this->getTotalRevenue(),
+                        'active_properties' => $this->getActiveProperties(),
+                        'new_users_today' => $this->getNewUsersToday(),
+                        'pending_approvals' => $this->getPendingApprovals(),
+                        'system_health' => $this->getSystemHealth()
+                    ];
+                }
+            );
 
             // Get Khatabook sales stats
             try {

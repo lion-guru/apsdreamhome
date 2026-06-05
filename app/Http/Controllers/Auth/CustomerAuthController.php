@@ -62,10 +62,26 @@ class CustomerAuthController extends BaseController
             $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' LIMIT 1", [$email, $email]);
 
             if ($user && password_verify($password, $user['password'])) {
-                if (!empty($user['two_factor_enabled']) && !empty($user['two_factor_secret'])) {
-                    $_SESSION['pending_2fa_user'] = $user['id'];
-                    $_SESSION['pending_2fa_secret'] = $user['two_factor_secret'];
-                    $_SESSION['pending_2fa_role'] = $user['role'] ?? 'customer';
+                // Check 2FA: re-query the focused columns so we don't rely on
+                // the full SELECT * result and so the secret is re-validated
+                // from the database on each login attempt.
+                $stmt2fa = $db->prepare("SELECT two_factor_enabled, two_factor_secret FROM users WHERE id = ?");
+                $stmt2fa->execute([$user['id']]);
+                $twoFactor = $stmt2fa->fetch(\PDO::FETCH_ASSOC);
+
+                if ($twoFactor && !empty($twoFactor['two_factor_enabled']) && !empty($twoFactor['two_factor_secret'])) {
+                    // 2FA is enabled — do NOT set the regular session vars yet.
+                    // Store the pending user (id, email, role) so verify() can
+                    // re-fetch the secret and complete the login on success.
+                    $_SESSION['pending_2fa_user'] = [
+                        'id'    => (int)$user['id'],
+                        'email' => $user['email'],
+                        'role'  => $user['role'] ?? 'customer',
+                    ];
+                    $_SESSION['pending_2fa_attempts'] = 0;
+                    // Drop the scalar secret from session; the verify handler
+                    // re-reads it from the DB on submit.
+                    unset($_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role']);
                     session_regenerate_id(true); // Prevent session fixation on 2FA pending state
                     header('Location: ' . BASE_URL . '/user/two-factor/verify');
                     exit;

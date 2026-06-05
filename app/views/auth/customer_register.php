@@ -5,18 +5,19 @@ if (!defined('BASE_URL')) {
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
 }
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 $csrf_token = $csrf_token ?? '';
 $errors = $errors ?? [];
 $old = $old ?? [];
 $base = BASE_URL;
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= htmlspecialchars(__current_lang()) ?>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | APS Dream Home</title>
+    <title><?= __('register_page_title') ?> | APS Dream Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -53,8 +54,8 @@ $base = BASE_URL;
                     <div class="mb-3">
                         <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width:60px;height:60px;background:linear-gradient(135deg,#667eea,#764ba2)"><i class="fas fa-home text-white fa-lg"></i></div>
                     </div>
-                    <h3 class="fw-bold">Create Account</h3>
-                    <p class="text-muted">Join APS Dream Home</p>
+                    <h3 class="fw-bold"><?= __('register_title') ?></h3>
+                    <p class="text-muted"><?= __('register_subtitle') ?></p>
                 </div>
 
                 <?php if (!empty($errors)): ?>
@@ -63,43 +64,74 @@ $base = BASE_URL;
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" action="<?php echo $base; ?>/register" id="customer-register-form">
+                <form method="POST" action="<?php echo $base; ?>/register" id="customer-register-form" data-experiment="registration_form_length" data-variant="<?= htmlspecialchars($_SESSION['experiments']['registration_form_length'] ?? 'full', ENT_QUOTES) ?>">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                    <?php
+                        // A/B test: registration_form_length — 'minimal' shows only 3 fields, 'full' shows all
+                        $formVariant = $_SESSION['experiments']['registration_form_length'] ?? 'full';
+                    ?>
                     <div class="mb-3">
-                        <label class="form-label">Full Name *</label>
-                        <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>" required>
+                        <label class="form-label"><?= __('register_label_name') ?> *</label>
+                        <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>" placeholder="<?= __('register_ph_name') ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Email *</label>
-                        <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required>
+                        <label class="form-label"><?= __('register_label_email') ?> *</label>
+                        <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" placeholder="<?= __('register_ph_email') ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Phone (10 digits) *</label>
-                        <input type="text" class="form-control" name="phone" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required>
+                        <label class="form-label"><?= __('register_label_phone') ?> *</label>
+                        <input type="text" class="form-control" name="phone" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" placeholder="<?= __('register_ph_phone') ?>" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password *</label>
-                        <input type="password" class="form-control" name="password" required>
+                    <div class="reg-step-2" <?= $formVariant === 'minimal' ? 'style="display:none"' : '' ?>>
+                        <div class="mb-3">
+                            <label class="form-label"><?= __('register_label_password') ?> *</label>
+                            <input type="password" class="form-control" name="password" placeholder="<?= __('register_ph_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><?= __('register_label_confirm_password') ?> *</label>
+                            <input type="password" class="form-control" name="confirm_password" placeholder="<?= __('register_ph_confirm_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><?= __('register_label_referral') ?></label>
+                            <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>" placeholder="<?= __('register_ph_referral') ?>">
+                            <small class="text-success">
+                                <i class="fas fa-gift me-1"></i>
+                                <?= __('register_referral_bonus', ['percent' => 5]) ?>
+                            </small>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Confirm Password *</label>
-                        <input type="password" class="form-control" name="confirm_password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Referral Code (optional)</label>
-                        <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>" placeholder="Enter referral code for 5% discount">
-                        <small class="text-success">
-                            <i class="fas fa-gift me-1"></i>
-                            Use referral code to get <strong>5% discount</strong> on your first booking!
-                        </small>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
-                        <i class="fas fa-user-plus me-2"></i>Register
-                    </button>
+                    <?php if ($formVariant === 'minimal'): ?>
+                        <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
+                            <i class="fas fa-arrow-right me-2"></i>Continue
+                        </button>
+                        <button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;display:none">
+                            <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
+                        </button>
+                        <script>
+                        (function(){
+                            var btn1 = document.getElementById('reg-step-1-continue');
+                            var btn2 = document.getElementById('reg-step-2-submit');
+                            var step2 = document.querySelectorAll('.reg-step-2');
+                            if (btn1 && btn2 && step2.length) {
+                                btn1.addEventListener('click', function(){
+                                    step2.forEach(function(s){ s.style.display = ''; });
+                                    btn1.style.display = 'none';
+                                    btn2.style.display = '';
+                                    // Track step transition
+                                    if (window.ABTracker) window.ABTracker.track('registration_form_length', '<?= htmlspecialchars($formVariant, ENT_QUOTES) ?>', 'step_continue', {step: 1});
+                                });
+                            }
+                        })();
+                        </script>
+                    <?php else: ?>
+                        <button type="submit" class="btn btn-primary w-100 py-2" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
+                            <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
+                        </button>
+                    <?php endif; ?>
                 </form>
                 <div class="text-center mt-3">
-                    <p class="text-muted">Already have an account? <a href="<?php echo $base; ?>/login">Login</a></p>
-                    <a href="<?php echo $base; ?>/" class="text-muted"><i class="fas fa-arrow-left me-1"></i>Back to Home</a>
+                    <p class="text-muted"><?= __('register_have_account') ?> <a href="<?php echo $base; ?>/login"><?= __('register_link_login') ?></a></p>
+                    <a href="<?php echo $base; ?>/" class="text-muted"><i class="fas fa-arrow-left me-1"></i><?= __('register_link_home') ?></a>
                 </div>
             </div>
         </div>

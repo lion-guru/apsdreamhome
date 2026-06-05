@@ -8,15 +8,15 @@
             </div>
             <div class="col-6 col-md-3 mb-2 mb-md-0">
                 <div class="fs-3 fw-bold">500+</div>
-                <div class="small opacity-75">Happy Families</div>
+                <div class="small opacity-75"><?= __('about_stat_families') ?></div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="fs-3 fw-bold">4</div>
-                <div class="small opacity-75">Premium Colonies</div>
+                <div class="small opacity-75"><?= __('footer_premium_colonies') ?></div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="fs-3 fw-bold">204+</div>
-                <div class="small opacity-75">Plots Available</div>
+                <div class="small opacity-75"><?= __('footer_plots_available') ?></div>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
             </div>
             <div class="col-lg-6">
                 <form action="<?php echo BASE_URL; ?>/subscribe" method="POST" class="d-flex gap-2" id="newsletterForm">
-                    <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
+                    <input type="email" name="email" class="form-control" placeholder="<?= __('newsletter_ph_email') ?>" required>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i> <?= __('subscribe') ?>
                     </button>
@@ -45,7 +45,7 @@
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6 mb-4">
                 <h5 class="mb-3 text-white">APS Dream Homes Pvt Ltd</h5>
-                <p class="text-light">With over 15 years of excellence in real estate, we help families and businesses find their perfect properties across Gorakhpur, Lucknow, and Uttar Pradesh.</p>
+                <p class="text-light"><?= __('footer_company_desc') ?></p>
                 <div class="social-links mt-3">
                     <a href="https://www.facebook.com/apsdreamhomes/" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://www.instagram.com/apsdreamhomes/" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-instagram"></i></a>
@@ -81,7 +81,7 @@
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/company/projects" class="text-light text-decoration-none"><?= __('projects') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/about" class="text-light text-decoration-none"><?= __('about_us') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/contact" class="text-light text-decoration-none"><?= __('contact_us') ?></a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/admin/login" class="text-light text-decoration-none">Admin</a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/admin/login" class="text-light text-decoration-none"><?= __('admin') ?></a></li>
                 </ul>
             </div>
 
@@ -103,7 +103,7 @@
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <i class="fas fa-map-marker-alt me-2 text-primary"></i>
-                        <span class="text-light">1st floor, Singhariya Chauraha, Kunraghat, Gorakhpur, UP - 273008</span>
+                        <span class="text-light"><?= __('footer_address') ?></span>
                     </li>
                     <li class="mb-3">
                         <i class="fas fa-phone me-2 text-primary"></i>
@@ -119,7 +119,7 @@
                     </li>
                     <li class="mb-3">
                         <i class="fas fa-clock me-2 text-primary"></i>
-                        <span class="text-light">Mon-Sat: 9:00 AM - 7:00 PM</span>
+                        <span class="text-light"><?= __('footer_business_hours') ?></span>
                     </li>
                 </ul>
             </div>

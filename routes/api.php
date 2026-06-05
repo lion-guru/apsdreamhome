@@ -100,6 +100,16 @@ $router->get('/api/ai/analyze/{id}', 'App\\Http\\Controllers\\AIAssistantControl
 // Monitoring API Routes
 $router->get('/api/monitoring/health', 'App\\Http\\Controllers\\MonitoringController@healthCheck');
 
+// ============================================================
+// MOBILE API V2 (JWT Auth)
+// ============================================================
+$router->post('/api/mobile/auth/login', 'Api\MobileApiController@loginV2');
+$router->post('/api/mobile/auth/refresh', 'Api\MobileApiController@refreshV2');
+$router->get('/api/mobile/profile', 'Api\MobileApiController@profileV2');
+$router->get('/api/mobile/properties', 'Api\MobileApiController@mobileProperties');
+$router->get('/api/mobile/dashboard', 'Api\MobileApiController@dashboardV2');
+$router->post('/api/mobile/notifications/register', 'Api\MobileApiController@registerPushTokenV2');
+
 // AI Dashboard API Routes
 $router->post('/api/ai-dashboard/training', 'App\\Http\\Controllers\\AIDashboardController@startTraining');
 $router->post('/api/ai-dashboard/reset', 'App\\Http\\Controllers\\AIDashboardController@resetMemory');
@@ -206,3 +216,21 @@ $router->get('/api/monitor/status', 'Api\\MonitorController@status');
 $router->get('/api/monitor/health', 'Api\\MonitorController@health');
 $router->get('/api/monitor/performance', 'Api\\MonitorController@performance');
 $router->get('/api/monitor/errors', 'Api\\MonitorController@errors');
+
+// ============================================================
+// Twilio Voice Webhooks (Cluster 2 - 2026-06-05)
+// ============================================================
+// Inbound from Twilio. CSRF is bypassed (HMAC-signed by Twilio).
+$router->post('/api/twilio/voice', 'Api\TwilioVoiceWebhookController@voice');
+$router->post('/api/twilio/voice/status', 'Api\TwilioVoiceWebhookController@status');
+$router->post('/api/twilio/voice/recording', 'Api\TwilioVoiceWebhookController@recording');
+
+// ============================================================
+// Auto-generated API Documentation (Cluster 4 - 2026-06-05)
+// ============================================================
+// DocsController introspects the live Router and generates an OpenAPI 3.0 spec.
+// CSRF is bypassed for these GET endpoints (read-only, no state mutation).
+$router->get('/api/docs', 'App\Http\Controllers\Api\DocsController@index');
+$router->get('/api/docs/spec', 'App\Http\Controllers\Api\DocsController@spec');
+$router->get('/api/docs/list', 'App\Http\Controllers\Api\DocsController@list');
+$router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gather');

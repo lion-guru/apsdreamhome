@@ -69,6 +69,20 @@ class LeadKanbanController extends AdminController
             $role = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin';
             $this->db->prepare("INSERT INTO audit_log (user_id, user_role, action, entity_type, entity_id, description, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?)")
                 ->execute([$userId, $role, 'kanban_move', 'lead', $leadId, "Moved lead to $newStage", $_SERVER['REMOTE_ADDR'] ?? null]);
+
+            // WebSocket broadcast - tells all open kanban boards to update in place
+            try {
+                \App\Services\WebSocketBroadcaster::broadcastKanban([
+                    'event' => 'stage_change',
+                    'lead_id' => $leadId,
+                    'new_stage' => $newStage,
+                    'moved_by' => $userId,
+                    'moved_at' => date('Y-m-d H:i:s')
+                ], 'kanban_global');
+            } catch (\Throwable $e) {
+                error_log("LeadKanbanController: WS broadcast failed: " . $e->getMessage());
+            }
+
             echo json_encode(['success' => true]);
         } catch (\Throwable $e) {
             echo json_encode(['error' => $e->getMessage()]);

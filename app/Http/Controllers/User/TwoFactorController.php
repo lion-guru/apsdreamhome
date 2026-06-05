@@ -99,30 +99,66 @@ class TwoFactorController extends BaseController
     public function verify()
     {
         @session_start();
-        $userId = (int)($_SESSION['pending_2fa_user'] ?? 0);
-        $secret = $_SESSION['pending_2fa_secret'] ?? '';
         $code = trim($_POST['code'] ?? $_GET['code'] ?? '');
 
-        if (!$userId || !$secret || !$code) {
+        // Accept both the new array shape and the legacy scalar (for any
+        // older browsers still holding a pre-fix session).
+        $pending = $_SESSION['pending_2fa_user'] ?? null;
+        if (is_array($pending)) {
+            $userId      = (int)($pending['id'] ?? 0);
+            $pendingRole = (string)($pending['role'] ?? 'customer');
+        } else {
+            $userId      = (int)$pending;
+            $pendingRole = (string)($_SESSION['pending_2fa_role'] ?? 'customer');
+        }
+
+        // GET requests (no code) just render the OTP page by bouncing to /login,
+        // where customer_login.php detects $_SESSION['pending_2fa_user'] and
+        // shows the 2FA input. Only POST with a code is a true verify call.
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        if (!$userId || !$code) {
             $_SESSION['flash_error'] = 'Invalid verification request';
             header('Location: ' . BASE_URL . '/login');
             exit;
         }
 
+        // Re-fetch the secret from the database on every verification attempt
+        // so a stale session can't validate a rotated/changed 2FA secret.
         $totp = new TotpService($this->db);
-        if (!$totp->verify($secret, $code)) {
-            $_SESSION['flash_error'] = 'Invalid code';
+        $secret = $totp->getSecret($userId);
+        if (!$secret) {
+            unset($_SESSION['pending_2fa_user'], $_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role'], $_SESSION['pending_2fa_attempts']);
+            $_SESSION['flash_error'] = '2FA is no longer enabled for this account.';
             header('Location: ' . BASE_URL . '/login');
             exit;
         }
 
-        $pendingRole = $_SESSION['pending_2fa_role'] ?? 'customer';
+        if (!$totp->verify($secret, $code)) {
+            // Increment attempts; lock out after 5 failed tries to thwart brute force.
+            $_SESSION['pending_2fa_attempts'] = (int)($_SESSION['pending_2fa_attempts'] ?? 0) + 1;
+            if ($_SESSION['pending_2fa_attempts'] >= 5) {
+                unset($_SESSION['pending_2fa_user'], $_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role'], $_SESSION['pending_2fa_attempts']);
+                $_SESSION['flash_error'] = 'Too many failed attempts. Please log in again.';
+            } else {
+                $_SESSION['flash_error'] = 'Invalid code. ' . (5 - $_SESSION['pending_2fa_attempts']) . ' attempt(s) remaining.';
+            }
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        // Success — set the regular session vars and clear the pending 2FA state.
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $userId;
-        $_SESSION['role'] = $pendingRole;
+        $_SESSION['role']    = $pendingRole;
         $_SESSION['logged_in'] = true;
         $_SESSION['2fa_verified'] = true;
+        $_SESSION['last_regenerate'] = time();
 
-        unset($_SESSION['pending_2fa_user'], $_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role']);
+        unset($_SESSION['pending_2fa_user'], $_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role'], $_SESSION['pending_2fa_attempts']);
 
         $redirectMap = [
             'admin' => '/admin/dashboard',
@@ -157,7 +193,9 @@ class TwoFactorController extends BaseController
     public function recovery()
     {
         @session_start();
-        $userId = (int)($_SESSION['pending_2fa_user'] ?? 0);
+        // Accept both the new array shape and the legacy scalar.
+        $pending = $_SESSION['pending_2fa_user'] ?? null;
+        $userId = is_array($pending) ? (int)($pending['id'] ?? 0) : (int)$pending;
         $hasPending = (bool)$userId;
 
         $this->data = [
@@ -170,8 +208,17 @@ class TwoFactorController extends BaseController
     public function verifyBackupCode()
     {
         @session_start();
-        $userId = (int)($_SESSION['pending_2fa_user'] ?? 0);
         $code = trim($_POST['code'] ?? $_GET['code'] ?? '');
+
+        // Accept both the new array shape and the legacy scalar.
+        $pending = $_SESSION['pending_2fa_user'] ?? null;
+        if (is_array($pending)) {
+            $userId      = (int)($pending['id'] ?? 0);
+            $pendingRole = (string)($pending['role'] ?? 'customer');
+        } else {
+            $userId      = (int)$pending;
+            $pendingRole = (string)($_SESSION['pending_2fa_role'] ?? 'customer');
+        }
 
         if (!$userId || !$code) {
             $_SESSION['flash_error'] = 'Missing user session or backup code. Please login again.';
@@ -186,14 +233,15 @@ class TwoFactorController extends BaseController
             exit;
         }
 
-        $pendingRole = $_SESSION['pending_2fa_role'] ?? 'customer';
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $userId;
         $_SESSION['role'] = $pendingRole;
         $_SESSION['logged_in'] = true;
         $_SESSION['2fa_verified'] = true;
         $_SESSION['2fa_used_backup'] = true;
+        $_SESSION['last_regenerate'] = time();
 
-        unset($_SESSION['pending_2fa_user'], $_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role']);
+        unset($_SESSION['pending_2fa_user'], $_SESSION['pending_2fa_secret'], $_SESSION['pending_2fa_role'], $_SESSION['pending_2fa_attempts']);
 
         $redirectMap = [
             'admin' => '/admin/dashboard',

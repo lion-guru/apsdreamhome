@@ -5,6 +5,9 @@
  * Now with Smart Location Dropdowns & Guest Support
  */
 // session_start() removed (Phase 1.4) — session is already started by the framework controller.
+if (!function_exists('__')) {
+    require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
+}
 
 $success = isset($_SESSION['flash_success']) ? $_SESSION['flash_success'] : null;
 $error = isset($_SESSION['flash_error']) ? $_SESSION['flash_error'] : null;
@@ -42,8 +45,8 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 <!-- Hero Section -->
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-home me-3"></i>List Your Property for Free</h1>
-        <p class="lead">Fill the form in just 1 minute - Verified buyers will find your property!</p>
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-home me-3"></i><?= __('list_property_hero_title') ?></h1>
+        <p class="lead"><?= __('list_property_hero_lead') ?></p>
     </div>
 </section>
 
@@ -72,25 +75,25 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
             <div class="col-lg-6">
                 <div class="card shadow-lg border-0">
                     <div class="card-header bg-success text-white text-center py-3">
-                        <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Submit Your Property Details</h4>
+                        <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i><?= __('list_property_card_title') ?></h4>
                     </div>
                     <div class="card-body p-4">
                         <form action="<?php echo BASE_URL; ?>/list-property/submit" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                             <!-- Property Type -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">What is the purpose of listing? *</label>
+                                <label class="form-label fw-bold"><?= __('list_property_label_purpose') ?> *</label>
                                 <div class="d-flex gap-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="listing_type" value="sell" id="sell" checked>
                                         <label class="form-check-label" for="sell">
-                                            <i class="fas fa-tag text-success me-1"></i> Sell
+                                            <i class="fas fa-tag text-success me-1"></i> <?= __('sell') ?>
                                         </label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="listing_type" value="rent" id="rent">
                                         <label class="form-check-label" for="rent">
-                                            <i class="fas fa-key text-primary me-1"></i> Rent
+                                            <i class="fas fa-key text-primary me-1"></i> <?= __('rent') ?>
                                         </label>
                                     </div>
                                 </div>
@@ -98,32 +101,32 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 
                             <!-- Property Type -->
                             <div class="mb-3">
-                                <label for="property_type" class="form-label fw-bold">Property Type *</label>
+                                <label for="property_type" class="form-label fw-bold"><?= __('list_property_label_property_type') ?> *</label>
                                 <select name="property_type" id="property_type" class="form-select" required autocomplete="property-type">
-                                    <option value="">Select...</option>
-                                    <option value="plot">Plot (Naksha)</option>
-                                    <option value="house">House / Villa</option>
-                                    <option value="flat">Flat / Apartment</option>
-                                    <option value="shop">Shop</option>
-                                    <option value="farmhouse">Farm House</option>
+                                    <option value=""><?= __('list_property_select') ?></option>
+                                    <option value="plot"><?= __('list_property_type_plot') ?></option>
+                                    <option value="house"><?= __('list_property_type_house') ?></option>
+                                    <option value="flat"><?= __('list_property_type_flat') ?></option>
+                                    <option value="shop"><?= __('list_property_type_shop') ?></option>
+                                    <option value="farmhouse"><?= __('list_property_type_farmhouse') ?></option>
                                 </select>
                             </div>
 
                             <!-- Location with Smart Dropdowns -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="state_id" class="form-label fw-bold">State *</label>
+                                    <label for="state_id" class="form-label fw-bold"><?= __('list_property_label_state') ?> *</label>
                                     <select id="state_id" name="state_id" class="form-select" required autocomplete="address-level1">
-                                        <option value="">Select State...</option>
+                                        <option value=""><?= __('list_property_select_state') ?></option>
                                         <?php foreach ($states as $state): ?>
                                             <option value="<?= $state['id'] ?>"><?= htmlspecialchars($state['name']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="district_id" class="form-label fw-bold">District/City *</label>
+                                    <label for="district_id" class="form-label fw-bold"><?= __('list_property_label_district') ?> *</label>
                                     <select id="district_id" name="location" class="form-select" required disabled autocomplete="address-level2">
-                                        <option value="">Select District First...</option>
+                                        <option value=""><?= __('list_property_select_district_first') ?></option>
                                     </select>
                                 </div>
                             </div>
@@ -135,77 +138,77 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 
                             <!-- Price -->
                             <div class="mb-3">
-                                <label for="price" class="form-label fw-bold">Expected Price (₹) *</label>
+                                <label for="price" class="form-label fw-bold"><?= __('list_property_label_price') ?> *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
-                                    <input type="text" name="price" id="price" class="form-control" placeholder="e.g. 25 Lakh or 15000/month" required autocomplete="transaction-amount">
+                                    <input type="text" name="price" id="price" class="form-control" placeholder="<?= __('list_property_ph_price') ?>" required autocomplete="transaction-amount">
                                 </div>
                             </div>
 
                             <!-- Area (sq ft) -->
                             <div class="mb-3">
-                                <label for="area" class="form-label fw-bold">Area (sq ft) *</label>
-                                <input type="text" name="area" id="area" class="form-control" placeholder="e.g. 1500 sq ft" required autocomplete="off">
+                                <label for="area" class="form-label fw-bold"><?= __('list_property_label_area') ?> *</label>
+                                <input type="text" name="area" id="area" class="form-control" placeholder="<?= __('list_property_ph_area') ?>" required autocomplete="off">
                             </div>
 
                             <!-- Name & Phone -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label fw-bold">Your Name *</label>
-                                    <input type="text" name="name" id="name" class="form-control" placeholder="Name" required autocomplete="name" value="<?php echo htmlspecialchars($userName); ?>">
+                                    <label for="name" class="form-label fw-bold"><?= __('list_property_label_name') ?> *</label>
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="<?= __('list_property_ph_name') ?>" required autocomplete="name" value="<?php echo htmlspecialchars($userName); ?>">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="phone" class="form-label fw-bold">Phone Number *</label>
-                                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="+91 XXXXXXXXXX" required autocomplete="tel" value="<?php echo htmlspecialchars($userPhone); ?>">
+                                    <label for="phone" class="form-label fw-bold"><?= __('list_property_label_phone') ?> *</label>
+                                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="<?= __('list_property_ph_phone') ?>" required autocomplete="tel" value="<?php echo htmlspecialchars($userPhone); ?>">
                                 </div>
                             </div>
 
                             <!-- Email -->
                             <div class="mb-3">
-                                <label for="email" class="form-label fw-bold">Email Address</label>
-                                <input type="email" name="email" id="email" class="form-control" placeholder="your@email.com" autocomplete="email" value="<?php echo htmlspecialchars($userEmail); ?>">
+                                <label for="email" class="form-label fw-bold"><?= __('list_property_label_email') ?></label>
+                                <input type="email" name="email" id="email" class="form-control" placeholder="<?= __('list_property_ph_email') ?>" autocomplete="email" value="<?php echo htmlspecialchars($userEmail); ?>">
                             </div>
 
                             <!-- Description -->
                             <div class="mb-3">
-                                <label for="description" class="form-label fw-bold">Full Address / Location</label>
-                                <textarea name="description" id="description" class="form-control" rows="3" placeholder="Plot size, road width, nearby landmarks..." autocomplete="street-address"></textarea>
+                                <label for="description" class="form-label fw-bold"><?= __('list_property_label_description') ?></label>
+                                <textarea name="description" id="description" class="form-control" rows="3" placeholder="<?= __('list_property_ph_description') ?>" autocomplete="street-address"></textarea>
                             </div>
 
                             <!-- Pincode & City -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="pincode" class="form-label fw-bold">Pincode</label>
-                                    <input type="text" name="pincode" id="pincode" class="form-control" placeholder="e.g. 273008" maxlength="6" autocomplete="postal-code">
+                                    <label for="pincode" class="form-label fw-bold"><?= __('list_property_label_pincode') ?></label>
+                                    <input type="text" name="pincode" id="pincode" class="form-control" placeholder="<?= __('list_property_ph_pincode') ?>" maxlength="6" autocomplete="postal-code">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="city" class="form-label fw-bold">City/Town</label>
-                                    <input type="text" name="city" id="city" class="form-control" placeholder="e.g. Gorakhpur" autocomplete="address-level2">
+                                    <label for="city" class="form-label fw-bold"><?= __('list_property_label_city') ?></label>
+                                    <input type="text" name="city" id="city" class="form-control" placeholder="<?= __('list_property_ph_city') ?>" autocomplete="address-level2">
                                 </div>
                             </div>
 
                             <!-- Image Upload -->
                             <div class="mb-3">
-                                <label for="property_image" class="form-label fw-bold">Property Image (Optional)</label>
+                                <label for="property_image" class="form-label fw-bold"><?= __('list_property_label_image') ?></label>
                                 <input type="file" name="property_image" id="property_image" class="form-control" accept="image/jpeg,image/png,image/webp" autocomplete="photo">
-                                <small class="text-muted">Upload JPG, PNG or WEBP (Max 5MB)</small>
+                                <small class="text-muted"><?= __('list_property_image_hint') ?></small>
                             </div>
 
                             <!-- Submit -->
                             <?php if ($isLoggedIn): ?>
                                 <button type="submit" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-paper-plane me-2"></i>Submit Property Listing
+                                    <i class="fas fa-paper-plane me-2"></i><?= __('list_property_button_submit') ?>
                                 </button>
                                 <div class="text-center mt-3">
-                                    <small class="text-muted">By submitting, you agree to our <a href="/terms">Terms of Service</a></small>
+                                    <small class="text-muted"><?= __('list_property_terms_prefix') ?> <a href="/terms"><?= __('list_property_terms_link') ?></a></small>
                                 </div>
                             <?php else: ?>
                                 <button type="button" class="btn btn-success btn-lg w-100" onclick="handleGuestSubmit()">
-                                    <i class="fas fa-paper-plane me-2"></i>Submit Property Listing
+                                    <i class="fas fa-paper-plane me-2"></i><?= __('list_property_button_submit') ?>
                                 </button>
                                 <div class="alert alert-info mt-3 mb-0">
                                     <i class="fas fa-info-circle me-2"></i>
-                                    <strong>Guest Posting:</strong> Quick signup required to post your property. It's FREE and takes 10 seconds!
+                                    <strong><?= __('list_property_guest_label') ?>:</strong> <?= __('list_property_guest_desc') ?>
                                 </div>
                             <?php endif; ?>
                         </form>
@@ -214,12 +217,12 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 
                 <!-- Info Box -->
                 <div class="alert alert-info mt-4">
-                    <h5><i class="fas fa-info-circle me-2"></i>How It Works?</h5>
+                    <h5><i class="fas fa-info-circle me-2"></i><?= __('list_property_how_title') ?></h5>
                     <ol class="mb-0">
-                        <li>You submit the form</li>
-                        <li>We verify your details</li>
-                        <li>We connect you with verified buyers</li>
-                        <li>You close the deal!</li>
+                        <li><?= __('list_property_how_step_1') ?></li>
+                        <li><?= __('list_property_how_step_2') ?></li>
+                        <li><?= __('list_property_how_step_3') ?></li>
+                        <li><?= __('list_property_how_step_4') ?></li>
                     </ol>
                 </div>
             </div>
@@ -228,28 +231,28 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0"><i class="fas fa-star me-2"></i>100% FREE Service</h5>
+                        <h5 class="mb-0"><i class="fas fa-star me-2"></i><?= __('list_property_free_title') ?></h5>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mb-0">
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>No listing charges</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>No commission on sale</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>No hidden fees</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Direct buyer contact</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('list_property_free_1') ?></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('list_property_free_2') ?></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('list_property_free_3') ?></li>
+                            <li><i class="fas fa-check text-success me-2"></i><?= __('list_property_free_4') ?></li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>What You Get</h5>
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i><?= __('list_property_benefits_title') ?></h5>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mb-0">
-                            <li class="mb-2"><i class="fas fa-phone text-primary me-2"></i>Free property valuation</li>
-                            <li class="mb-2"><i class="fas fa-gavel text-primary me-2"></i>Legal document help</li>
-                            <li class="mb-2"><i class="fas fa-hand-holding-usd text-primary me-2"></i>Home loan assistance</li>
-                            <li><i class="fas fa-user-friends text-primary me-2"></i>Serious buyers only</li>
+                            <li class="mb-2"><i class="fas fa-phone text-primary me-2"></i><?= __('list_property_benefit_1') ?></li>
+                            <li class="mb-2"><i class="fas fa-gavel text-primary me-2"></i><?= __('list_property_benefit_2') ?></li>
+                            <li class="mb-2"><i class="fas fa-hand-holding-usd text-primary me-2"></i><?= __('list_property_benefit_3') ?></li>
+                            <li><i class="fas fa-user-friends text-primary me-2"></i><?= __('list_property_benefit_4') ?></li>
                         </ul>
                     </div>
                 </div>
@@ -257,14 +260,14 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                 <div class="card border-0 shadow-sm bg-light">
                     <div class="card-body text-center">
                         <i class="fas fa-headset fa-3x text-primary mb-3"></i>
-                        <h5>Need Help?</h5>
-                        <p class="text-muted mb-3">We're here to assist you!</p>
+                        <h5><?= __('list_property_help_title') ?></h5>
+                        <p class="text-muted mb-3"><?= __('list_property_help_desc') ?></p>
                         <div class="d-grid gap-2">
                             <a href="tel:+919277121112" class="btn btn-success">
-                                <i class="fas fa-phone me-2"></i>Call: +91 92771 21112
+                                <i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?>: +91 92771 21112
                             </a>
                             <a href="https://wa.me/919277121112?text=Hi, I want to list my property for sale" target="_blank" class="btn btn-outline-success">
-                                <i class="fab fa-whatsapp me-2"></i>WhatsApp Us
+                                <i class="fab fa-whatsapp me-2"></i><?= __('list_property_whatsapp_button') ?>
                             </a>
                         </div>
                     </div>
@@ -283,23 +286,23 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
                 <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                     <span class="h2 mb-0">1</span>
                 </div>
-                <h5>Submit Your Property Details</h5>
-                <p class="text-muted">Fill the form in just 1 minute</p>
+                <h5><?= __('list_property_step_1_title') ?></h5>
+                <p class="text-muted"><?= __('list_property_step_1_desc') ?></p>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                     <span class="h2 mb-0">2</span>
                 </div>
-                <h5>We Verify Your Details</h5>
-                <p class="text-muted">We'll contact you to verify your property details</p>
+                <h5><?= __('list_property_step_2_title') ?></h5>
+                <p class="text-muted"><?= __('list_property_step_2_desc') ?></p>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                     <span class="h2 mb-0">3</span>
                 </div>
-                <h5>Get Connected with Buyers</h5>
-                <p class="text-muted">We'll connect you with verified buyers</p>
-                <p class="text-muted">Serious buyers will contact you directly</p>
+                <h5><?= __('list_property_step_3_title') ?></h5>
+                <p class="text-muted"><?= __('list_property_step_3_desc_1') ?></p>
+                <p class="text-muted"><?= __('list_property_step_3_desc_2') ?></p>
             </div>
         </div>
     </div>
@@ -308,10 +311,10 @@ $states = $db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER B
 <!-- CTA -->
 <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container">
-        <h3>List Your Property Today!</h3>
-        <p class="mb-4">It's completely FREE - No charges at all!</p>
+        <h3><?= __('list_property_cta_title') ?></h3>
+        <p class="mb-4"><?= __('list_property_cta_desc') ?></p>
         <a href="#form" class="btn btn-warning btn-lg">
-            <i class="fas fa-arrow-up me-2"></i>Fill the Form
+            <i class="fas fa-arrow-up me-2"></i><?= __('list_property_cta_button') ?>
         </a>
     </div>
 </section>

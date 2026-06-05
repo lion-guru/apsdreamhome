@@ -121,48 +121,48 @@ $contactError = $contact_error ?? '';
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faq1">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1">
-                                What types of properties do you offer?
+                                <?= __('contact_faq1_q', null, 'What types of properties do you offer?') ?>
                             </button>
                         </h2>
                         <div id="faqCollapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                We offer residential apartments, villas, commercial spaces, and plots in Gorakhpur, Lucknow, and across Uttar Pradesh.
+                                <?= __('contact_faq1_a', null, 'We offer residential apartments, villas, commercial spaces, and plots in Gorakhpur, Lucknow, and across Uttar Pradesh.') ?>
                             </div>
                         </div>
                     </div>
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faq2">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2">
-                                How can I schedule a property visit?
+                                <?= __('contact_faq2_q', null, 'How can I schedule a property visit?') ?>
                             </button>
                         </h2>
                         <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                You can call us at +91 92771 21112 / +91 70074 44842 or fill out the contact form. Our team will get back to you to arrange a convenient time.
+                                <?= __('contact_faq2_a', null, 'You can call us at +91 92771 21112 / +91 70074 44842 or fill out the contact form. Our team will get back to you to arrange a convenient time.') ?>
                             </div>
                         </div>
                     </div>
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faq3">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3">
-                                Do you provide home loan assistance?
+                                <?= __('contact_faq3_q', null, 'Do you provide home loan assistance?') ?>
                             </button>
                         </h2>
                         <div id="faqCollapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                Yes, we have partnerships with leading banks and financial institutions to help you with home loan assistance and documentation.
+                                <?= __('contact_faq3_a', null, 'Yes, we have partnerships with leading banks and financial institutions to help you with home loan assistance and documentation.') ?>
                             </div>
                         </div>
                     </div>
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faq4">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4">
-                                Are your properties legally verified?
+                                <?= __('contact_faq4_q', null, 'Are your properties legally verified?') ?>
                             </button>
                         </h2>
                         <div id="faqCollapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                Absolutely! All our properties undergo thorough legal verification to ensure they are free from disputes and have clear titles.
+                                <?= __('contact_faq4_a', null, 'Absolutely! All our properties undergo thorough legal verification to ensure they are free from disputes and have clear titles.') ?>
                             </div>
                         </div>
                     </div>
@@ -173,12 +173,12 @@ $contactError = $contact_error ?? '';
                     <div class="card-body">
                         <h3 class="card-title"><?php echo __('office_locations'); ?></h3>
                         <div class="office-location">
-                            <h4>Head Office - Gorakhpur</h4>
+                            <h4><?= __('contact_office_hq', null, 'Head Office - Gorakhpur') ?></h4>
                             <address>
-                                1st floor, Singhariya Chauraha, Kunraghat, Deoria Road<br>
-                                Gorakhpur, UP - 273008<br>
-                                Phone: +91 92771 21112 / +91 70074 44842<br>
-                                Email: info@apsdreamhome.com
+                                <?= __('contact_office_addr1', null, '1st floor, Singhariya Chauraha, Kunraghat, Deoria Road') ?><br>
+                                <?= __('contact_office_addr2', null, 'Gorakhpur, UP - 273008') ?><br>
+                                <?= __('phone_lbl') ?>: +91 92771 21112 / +91 70074 44842<br>
+                                <?= __('email_lbl') ?>: info@apsdreamhome.com
                             </address>
                         </div>
                         <div class="map-container mt-3">

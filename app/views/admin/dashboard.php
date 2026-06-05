@@ -76,7 +76,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         </div>
         <div class="d-flex gap-2">
             <button class="btn btn-primary" onclick="location.reload()">
-                <i class="fas fa-sync-alt me-2"></i> Refresh
+                <i class="fas fa-sync-alt me-2"></i> <?= __('admin_btn_refresh', null, 'Refresh') ?>
             </button>
         </div>
     </div>
@@ -88,7 +88,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="stat-card">
             <div class="stat-icon primary"><i class="fas fa-users"></i></div>
             <div class="stat-content">
-                <div class="stat-label">Total Users</div>
+                <div class="stat-label"><?= __('admin_stat_users', null, 'Total Users') ?></div>
                 <div class="stat-value"><?php echo number_format($stats['total_users']); ?></div>
             </div>
         </div>
@@ -98,7 +98,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="stat-card">
             <div class="stat-icon success"><i class="fas fa-building"></i></div>
             <div class="stat-content">
-                <div class="stat-label">Properties</div>
+                <div class="stat-label"><?= __('admin_stat_properties', null, 'Properties') ?></div>
                 <div class="stat-value"><?php echo number_format($stats['total_properties']); ?></div>
             </div>
         </div>
@@ -108,9 +108,9 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="stat-card">
             <div class="stat-icon warning"><i class="fas fa-bullseye"></i></div>
             <div class="stat-content">
-                <div class="stat-label">Total Leads</div>
+                <div class="stat-label"><?= __('admin_stat_leads', null, 'Total Leads') ?></div>
                 <div class="stat-value"><?php echo number_format($stats['total_leads']); ?></div>
-                <div class="stat-change up"><i class="fas fa-arrow-up"></i> <?php echo $stats['new_leads_today']; ?> today</div>
+                <div class="stat-change up"><i class="fas fa-arrow-up"></i> <?php echo $stats['new_leads_today']; ?> <?= __('admin_today', null, 'today') ?></div>
             </div>
         </div>
     </div>
@@ -132,7 +132,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="stat-card">
             <div class="stat-icon purple"><i class="fas fa-rupee-sign"></i></div>
             <div class="stat-content">
-                <div class="stat-label">Revenue (30 Days)</div>
+                <div class="stat-label"><?= __('admin_stat_revenue', null, 'Revenue (30 Days)') ?></div>
                 <div class="stat-value">₹<?php echo number_format($stats['revenue_month'], 2); ?></div>
             </div>
         </div>
@@ -162,7 +162,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="stat-card">
             <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
             <div class="stat-content">
-                <div class="stat-label">System Status</div>
+                <div class="stat-label"><?= __('admin_stat_system', null, 'System Status') ?></div>
                 <div class="stat-value text-success">Online</div>
             </div>
         </div>
@@ -174,20 +174,20 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                <h5 class="card-title"><i class="fas fa-bolt me-2"></i><?= __('admin_quick_actions', null, 'Quick Actions') ?></h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-3">
                         <a href="<?php echo BASE_URL; ?>/admin/leads?action=new" class="btn btn-outline-primary w-100 py-3">
                             <i class="fas fa-user-plus mb-2" style="font-size: 1.5rem;"></i>
-                            <div>Add New Lead</div>
+                            <div><?= __('admin_action_add_lead', null, 'Add New Lead') ?></div>
                         </a>
                     </div>
                     <div class="col-md-3">
                         <a href="<?php echo BASE_URL; ?>/admin/properties?action=new" class="btn btn-outline-success w-100 py-3">
                             <i class="fas fa-plus mb-2" style="font-size: 1.5rem;"></i>
-                            <div>Add Property</div>
+                            <div><?= __('admin_action_add_property', null, 'Add Property') ?></div>
                         </a>
                     </div>
                     <div class="col-md-3">

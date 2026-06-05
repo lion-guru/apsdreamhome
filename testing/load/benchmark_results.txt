@@ -1,0 +1,13 @@
+────────────────────────────────────────────────────────────────
+  URL           : http://localhost/apsdreamhome/
+  Iterations    : 50
+  Wall time     : 3.4s
+  Throughput    : 14.7 req/s
+  Errors (≥500) : 0
+────────────────────────────────────────────────────────────────
+  Min          :   49.5ms
+  Max          :  186.7ms
+  Avg          :   68.1ms
+  Median       :   56.0ms
+  p95          :  158.0ms
+  p99          :  186.7ms

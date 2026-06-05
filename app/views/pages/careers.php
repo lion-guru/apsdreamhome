@@ -10,13 +10,12 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h1 class="display-4 fw-bold mb-4">Join Our Team</h1>
+                <h1 class="display-4 fw-bold mb-4"><?= __('careers_hero_title', null, 'Join Our Team') ?></h1>
                 <p class="lead mb-4">
-                    Be part of a dynamic team that's shaping the future of real estate in Eastern UP.
-                    Grow your career with APS Dream Homes Pvt Ltd.
+                    <?= __('careers_hero_desc', null, "Build your career with India's most trusted real estate brand. We're looking for passionate individuals ready to make an impact in the property sector.") ?>
                 </p>
                 <a href="#jobs" class="btn btn-light btn-lg">
-                    <i class="fas fa-search me-2"></i>View Open Positions
+                    <i class="fas fa-search me-2"></i><?= __('careers_view_positions', null, 'View Open Positions') ?>
                 </a>
             </div>
         </div>
@@ -37,8 +36,8 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Careers</li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('nav_home', null, 'Home') ?></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?= __('careers_breadcrumb', null, 'Careers') ?></li>
                 <?php endif; ?>
             </ol>
         </nav>
@@ -50,8 +49,8 @@
 <section class="section-padding bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <h2>Why Join APS Dream Homes?</h2>
-            <p class="lead text-muted">Discover what makes us a great place to work</p>
+            <h2><?= __('careers_why_title', null, 'Why Join APS Dream Homes?') ?></h2>
+            <p class="lead text-muted"><?= __('careers_why_subtitle', null, 'Discover what makes us a great place to work') ?></p>
         </div>
 
         <div class="row g-4">
@@ -60,8 +59,8 @@
                     <div class="benefit-icon">
                         <i class="fas fa-rocket"></i>
                     </div>
-                    <h5>Growth Opportunities</h5>
-                    <p class="text-muted">Continuous learning and career advancement opportunities in a growing company</p>
+                    <h5><?= __('careers_b1_title', null, 'Growth Opportunities') ?></h5>
+                    <p class="text-muted"><?= __('careers_b1_desc', null, 'Continuous learning and career advancement opportunities in a growing company') ?></p>
                 </div>
             </div>
 
@@ -70,8 +69,8 @@
                     <div class="benefit-icon">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h5>Collaborative Culture</h5>
-                    <p class="text-muted">Work with talented professionals in a supportive and inclusive environment</p>
+                    <h5><?= __('careers_b2_title', null, 'Collaborative Culture') ?></h5>
+                    <p class="text-muted"><?= __('careers_b2_desc', null, 'Work with talented professionals in a supportive and inclusive environment') ?></p>
                 </div>
             </div>
 
@@ -80,8 +79,8 @@
                     <div class="benefit-icon">
                         <i class="fas fa-balance-scale"></i>
                     </div>
-                    <h5>Work-Life Balance</h5>
-                    <p class="text-muted">Flexible working hours and policies that support your personal life</p>
+                    <h5><?= __('careers_b3_title', null, 'Work-Life Balance') ?></h5>
+                    <p class="text-muted"><?= __('careers_b3_desc', null, 'Flexible working hours and policies that support your personal life') ?></p>
                 </div>
             </div>
 
@@ -90,8 +89,8 @@
                     <div class="benefit-icon">
                         <i class="fas fa-award"></i>
                     </div>
-                    <h5>Competitive Compensation</h5>
-                    <p class="text-muted">Attractive salary packages with performance-based incentives and benefits</p>
+                    <h5><?= __('careers_b4_title', null, 'Competitive Compensation') ?></h5>
+                    <p class="text-muted"><?= __('careers_b4_desc', null, 'Attractive salary packages with performance-based incentives and benefits') ?></p>
                 </div>
             </div>
 
@@ -100,8 +99,8 @@
                     <div class="benefit-icon">
                         <i class="fas fa-heart"></i>
                     </div>
-                    <h5>Employee Wellness</h5>
-                    <p class="text-muted">Comprehensive health benefits and wellness programs for our team members</p>
+                    <h5><?= __('careers_b5_title', null, 'Employee Wellness') ?></h5>
+                    <p class="text-muted"><?= __('careers_b5_desc', null, 'Comprehensive health benefits and wellness programs for our team members') ?></p>
                 </div>
             </div>
 
@@ -110,8 +109,8 @@
                     <div class="benefit-icon">
                         <i class="fas fa-home"></i>
                     </div>
-                    <h5>Meaningful Work</h5>
-                    <p class="text-muted">Contribute to building dream homes and communities that matter</p>
+                    <h5><?= __('careers_b6_title', null, 'Meaningful Work') ?></h5>
+                    <p class="text-muted"><?= __('careers_b6_desc', null, 'Contribute to building dream homes and communities that matter') ?></p>
                 </div>
             </div>
         </div>

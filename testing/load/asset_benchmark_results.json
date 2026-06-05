@@ -1,0 +1,137 @@
+{
+    "meta": {
+        "test_name": "APS Dream Home Asset Benchmark",
+        "timestamp": "2026-06-05T13:20:05+02:00",
+        "homepage": "http://localhost/apsdreamhome/",
+        "homepage_size_bytes": 159706,
+        "homepage_status": 200
+    },
+    "totals": {
+        "css": {
+            "count": 1,
+            "raw": 11337,
+            "gzip": 2756
+        },
+        "js": {
+            "count": 7,
+            "raw": 523670,
+            "gzip": 176214
+        },
+        "img": {
+            "count": 3,
+            "raw": 51940,
+            "gzip": 39220
+        }
+    },
+    "grand_total": {
+        "count": 11,
+        "raw": 586947,
+        "gzip": 218190,
+        "savings_pct": 62.8
+    },
+    "recommendations": [
+        "CSS: gzip saves 75.7% (11337B \u2192 2756B). Ensure mod_deflate is enabled.",
+        "JS: gzip saves 66.4% (523670B \u2192 176214B). Ensure mod_deflate is enabled."
+    ],
+    "assets": [
+        {
+            "type": "css",
+            "url": "http://localhost/apsdreamhome/assets/css/live-chat-widget.css",
+            "status": 200,
+            "content_type": "text/css",
+            "cache_control": "public, max-age=2592000",
+            "raw_bytes": 11337,
+            "gzip_bytes": 2756
+        },
+        {
+            "type": "js",
+            "url": "https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER",
+            "status": 200,
+            "content_type": "application/javascript; charset=UTF-8",
+            "cache_control": "private, max-age=900",
+            "raw_bytes": 395731,
+            "gzip_bytes": 140011
+        },
+        {
+            "type": "js",
+            "url": "http://localhost/apsdreamhome/js/visitor-tracking.js",
+            "status": 200,
+            "content_type": "application/javascript",
+            "cache_control": "public, max-age=2592000",
+            "raw_bytes": 6111,
+            "gzip_bytes": 1751
+        },
+        {
+            "type": "js",
+            "url": "http://localhost/apsdreamhome/assets/js/live-chat-widget.js",
+            "status": 200,
+            "content_type": "application/javascript",
+            "cache_control": "public, max-age=2592000",
+            "raw_bytes": 14567,
+            "gzip_bytes": 3369
+        },
+        {
+            "type": "js",
+            "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js",
+            "status": 200,
+            "content_type": "application/javascript; charset=utf-8",
+            "cache_control": "public, max-age=31536000, s-maxage=31536000, immutable",
+            "raw_bytes": 80721,
+            "gzip_bytes": 23799
+        },
+        {
+            "type": "js",
+            "url": "http://localhost/apsdreamhome/assets/js/chatbot.js",
+            "status": 200,
+            "content_type": "application/javascript",
+            "cache_control": "public, max-age=2592000",
+            "raw_bytes": 3508,
+            "gzip_bytes": 1264
+        },
+        {
+            "type": "js",
+            "url": "http://localhost/apsdreamhome/assets/js/notification-system.js",
+            "status": 200,
+            "content_type": "application/javascript",
+            "cache_control": "public, max-age=2592000",
+            "raw_bytes": 19627,
+            "gzip_bytes": 4751
+        },
+        {
+            "type": "js",
+            "url": "http://localhost/apsdreamhome/assets/js/main.js",
+            "status": 200,
+            "content_type": "application/javascript",
+            "cache_control": "public, max-age=2592000",
+            "raw_bytes": 3405,
+            "gzip_bytes": 1269
+        },
+        {
+            "type": "img",
+            "url": "http://localhost/apsdreamhome/assets/images/logo/apslogonew.jpg",
+            "status": 200,
+            "content_type": "image/jpeg",
+            "cache_control": "public, max-age=31536000, immutable",
+            "raw_bytes": 39529,
+            "gzip_bytes": 35466
+        },
+        {
+            "type": "img",
+            "url": "https://placehold.co/728x90/2c3e50/ffffff?text=Premium+Plots+Available+-+Call+Now+92771+21112",
+            "status": 200,
+            "content_type": "image/svg+xml; charset=utf-8",
+            "cache_control": "public, max-age=1209600",
+            "raw_bytes": 11673,
+            "gzip_bytes": 3436
+        },
+        {
+            "type": "img",
+            "url": "http://localhost/apsdreamhome/assets/images/placeholder/property.svg",
+            "status": 200,
+            "content_type": "image/svg+xml",
+            "cache_control": "public, max-age=31536000, immutable",
+            "raw_bytes": 738,
+            "gzip_bytes": 318
+        }
+    ]
+}

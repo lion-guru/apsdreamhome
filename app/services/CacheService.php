@@ -266,11 +266,11 @@ class CacheService
     }
 
     /**
-     * Cache header projects / locations (5 minutes).
+     * Cache header projects / locations (10 minutes).
      */
     public static function getHeaderProjects(callable $callback): array
     {
-        return self::cache('header_projects_all', 300, $callback);
+        return self::cache('header_projects_all', 600, $callback);
     }
 
     /**

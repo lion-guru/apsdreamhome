@@ -9,9 +9,9 @@
                 <?php if (!empty($pageContent)): ?>
                     <?php echo $pageContent; ?>
                 <?php else: ?>
-                    <h1 class="display-4 fw-bold mb-4">About APS Dream Home</h1>
-                    <p class="lead mb-4">Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction.</p>
-                    <p>Building dreams into reality with trust and innovation. We are committed to delivering exceptional real estate solutions across Uttar Pradesh.</p>
+                    <h1 class="display-4 fw-bold mb-4"><?= __('about_hero_title') ?></h1>
+                    <p class="lead mb-4"><?= __('about_hero_lead') ?></p>
+                    <p><?= __('about_hero_desc') ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -22,16 +22,16 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
-                <h2 class="mb-4">Our Leadership Team</h2>
+                <h2 class="mb-4"><?= __('about_leadership_title') ?></h2>
                 <div class="row">
                     <div class="col-md-4 mb-4">
                         <div class="card">
                             <img loading="lazy" src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Amit Kumar Singh">
                             <div class="card-body">
-                                <h5 class="card-title">Amit Kumar Singh</h5>
-                                <p class="text-muted">Managing Director</p>
-                                <p class="small">15+ Years Experience</p>
-                                <p>Leading the company with vision and expertise in real estate development.</p>
+                                <h5 class="card-title"><?= __('about_leader_1_name') ?></h5>
+                                <p class="text-muted"><?= __('about_leader_1_role') ?></p>
+                                <p class="small"><?= __('about_leader_1_exp') ?></p>
+                                <p><?= __('about_leader_1_bio') ?></p>
                             </div>
                         </div>
                     </div>
@@ -39,10 +39,10 @@
                         <div class="card">
                             <img loading="lazy" src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Priya Singh">
                             <div class="card-body">
-                                <h5 class="card-title">Priya Singh</h5>
-                                <p class="text-muted">Operations Head</p>
-                                <p class="small">10+ Years Experience</p>
-                                <p>Managing day-to-day operations with focus on efficiency and quality.</p>
+                                <h5 class="card-title"><?= __('about_leader_2_name') ?></h5>
+                                <p class="text-muted"><?= __('about_leader_2_role') ?></p>
+                                <p class="small"><?= __('about_leader_2_exp') ?></p>
+                                <p><?= __('about_leader_2_bio') ?></p>
                             </div>
                         </div>
                     </div>
@@ -50,10 +50,10 @@
                         <div class="card">
                             <img loading="lazy" src="assets/images/property-placeholder.jpg" class="card-img-top img-fluid" alt="Rahul Verma">
                             <div class="card-body">
-                                <h5 class="card-title">Rahul Verma</h5>
-                                <p class="text-muted">Technical Director</p>
-                                <p class="small">12+ Years Experience</p>
-                                <p>Ensuring technical excellence and innovation in construction.</p>
+                                <h5 class="card-title"><?= __('about_leader_3_name') ?></h5>
+                                <p class="text-muted"><?= __('about_leader_3_role') ?></p>
+                                <p class="small"><?= __('about_leader_3_exp') ?></p>
+                                <p><?= __('about_leader_3_bio') ?></p>
                             </div>
                         </div>
                     </div>
@@ -62,31 +62,31 @@
             <div class="col-lg-4">
                 <div class="card bg-light">
                     <div class="card-body">
-                        <h3 class="card-title">Company Stats</h3>
+                        <h3 class="card-title"><?= __('about_stats_title') ?></h3>
                         <div class="row text-center">
                             <div class="col-6 mb-3">
                                 <h2 class="text-primary">500+</h2>
-                                <p>Properties Delivered</p>
+                                <p><?= __('about_stat_properties') ?></p>
                             </div>
                             <div class="col-6 mb-3">
                                 <h2 class="text-success">2000+</h2>
-                                <p>Happy Families</p>
+                                <p><?= __('about_stat_families') ?></p>
                             </div>
                             <div class="col-6 mb-3">
                                 <h2 class="text-info">50+</h2>
-                                <p>Projects Completed</p>
+                                <p><?= __('about_stat_projects') ?></p>
                             </div>
                             <div class="col-6 mb-3">
                                 <h2 class="text-warning">8+</h2>
-                                <p>Years Experience</p>
+                                <p><?= __('about_stat_years') ?></p>
                             </div>
                         </div>
 
                         <hr>
 
                         <div class="text-center">
-                            <h5>Registration No: U70109UP2022PTC163047</h5>
-                            <p class="small text-muted">Government Registered Real Estate Developer</p>
+                            <h5><?= __('about_reg_label') ?> U70109UP2022PTC163047</h5>
+                            <p class="small text-muted"><?= __('about_reg_subtitle') ?></p>
                         </div>
                     </div>
                 </div>

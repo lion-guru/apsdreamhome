@@ -14,7 +14,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
 <div class="container py-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/user/saved-searches">Saved Searches</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/user/saved-searches"><?= __('saved_res_breadcrumb', null, 'Saved Searches') ?></a></li>
             <li class="breadcrumb-item active"><?= htmlspecialchars($search['name'] ?? 'Search') ?></li>
         </ol>
     </nav>
@@ -23,19 +23,19 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
         <div>
             <h3 class="fw-bold mb-1"><?= htmlspecialchars($search['name'] ?? 'Saved Search') ?></h3>
             <p class="text-muted mb-0">
-                <strong><?= number_format($count) ?></strong> matching properties
+                <strong><?= number_format($count) ?></strong> <?= __('saved_res_matching', null, 'matching properties') ?>
                 <?php if (!empty($search['last_run_at'])): ?>
-                    &middot; Last run <?= date('d M Y, H:i', strtotime($search['last_run_at'])) ?>
+                    &middot; <?= __('saved_res_last_run', null, 'Last run') ?> <?= date('d M Y, H:i', strtotime($search['last_run_at'])) ?>
                 <?php endif; ?>
             </p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
             <a href="<?= BASE_URL ?>/properties?<?= htmlspecialchars($queryString) ?>" class="btn btn-outline-primary rounded-pill">
-                <i class="fas fa-external-link-alt me-1"></i>Open in Properties Page
+                <i class="fas fa-external-link-alt me-1"></i><?= __('saved_res_open_props', null, 'Open in Properties Page') ?>
             </a>
             <button type="button" class="btn <?= $alertsOn ? 'btn-success' : 'btn-outline-success' ?> rounded-pill js-toggle-alert"
                     data-search-id="<?= (int)($search['id'] ?? 0) ?>" data-enabled="<?= $alertsOn ? '1' : '0' ?>">
-                <i class="fas fa-bell me-1"></i><?= $alertsOn ? 'Alerts On' : 'Enable Alerts' ?>
+                <i class="fas fa-bell me-1"></i><?= $alertsOn ? __('saved_res_alerts_on', null, 'Alerts On') : __('saved_res_alerts_enable', null, 'Enable Alerts') ?>
             </button>
         </div>
     </div>
@@ -44,8 +44,8 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-search fa-4x text-muted mb-3"></i>
-                <h5 class="text-muted">No properties match this search right now</h5>
-                <p class="text-muted">Enable email alerts to be notified when new properties matching your criteria are listed.</p>
+                <h5 class="text-muted"><?= __('saved_res_no_match', null, 'No properties match this search right now') ?></h5>
+                <p class="text-muted"><?= __('saved_res_alert_prompt', null, 'Enable email alerts to be notified when new properties matching your criteria are listed.') ?></p>
             </div>
         </div>
     <?php else: ?>
@@ -76,7 +76,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-success fw-bold fs-5">₹<?= number_format((float)($p['price'] ?? 0)) ?></span>
-                                <a href="<?= BASE_URL ?>/listing/<?= (int)($p['id'] ?? 0) ?>" class="btn btn-sm btn-primary">View Details</a>
+                                <a href="<?= BASE_URL ?>/listing/<?= (int)($p['id'] ?? 0) ?>" class="btn btn-sm btn-primary"><?= __('saved_res_view_details', null, 'View Details') ?></a>
                             </div>
                         </div>
                     </div>
