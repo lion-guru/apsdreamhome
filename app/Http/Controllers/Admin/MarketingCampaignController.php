@@ -217,4 +217,158 @@ class MarketingCampaignController extends AdminController
             'templates' => $templates
         ]);
     }
+
+    // ----------------------------------------------------------------------
+    // Cluster 4 additions: edit, update, pause, resume, cancel, clone,
+    // test-send, stats, export, schedule
+    // ----------------------------------------------------------------------
+
+    public function edit($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_GET['id'] ?? 0);
+        if (!$id) {
+            return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+        }
+        $campaign = $this->service ? $this->service->getById($id) : null;
+        if (!$campaign) {
+            $this->setFlash('error', 'Campaign not found');
+            return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+        }
+        $templates = $this->service ? $this->service->getTemplates() : [];
+        $audience = $this->service ? $this->service->getAudienceList([]) : [];
+        return $this->render('admin.marketing_campaigns.edit', [
+            'page_title'  => 'Edit Campaign #' . $id,
+            'page_heading' => 'Edit Campaign',
+            'campaign'    => $campaign,
+            'templates'   => $templates,
+            'audience'    => $audience,
+        ]);
+    }
+
+    public function update($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
+        if (!$id || !$this->service) {
+            return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+        }
+        $name = trim($_POST['name'] ?? '');
+        if (!$name) {
+            $this->setFlash('error', 'Name is required');
+            return $this->redirect(BASE_URL . '/admin/marketing-campaigns/' . $id . '/edit');
+        }
+        $this->service->updateCampaign($id, [
+            'name'        => $name,
+            'description' => $_POST['description'] ?? null,
+            'type'        => $_POST['type'] ?? 'email',
+            'subject'     => $_POST['subject'] ?? null,
+            'content'     => $_POST['content'] ?? '',
+            'scheduled_at'=> $_POST['scheduled_at'] ?? null,
+        ]);
+        $this->setFlash('success', 'Campaign updated');
+        return $this->redirect(BASE_URL . '/admin/marketing-campaigns/show/' . $id);
+    }
+
+    public function pause($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
+        if ($id && $this->service) {
+            $this->service->pauseCampaign($id);
+            $this->setFlash('success', 'Campaign paused');
+        }
+        return $this->redirect(BASE_URL . '/admin/marketing-campaigns/show/' . $id);
+    }
+
+    public function resume($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
+        if ($id && $this->service) {
+            $this->service->resumeCampaign($id);
+            $this->setFlash('success', 'Campaign resumed');
+        }
+        return $this->redirect(BASE_URL . '/admin/marketing-campaigns/show/' . $id);
+    }
+
+    public function cancel($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
+        if ($id && $this->service) {
+            $this->service->cancelCampaign($id);
+            $this->setFlash('success', 'Campaign cancelled');
+        }
+        return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+    }
+
+    public function clone($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
+        if ($id && $this->service) {
+            $newId = $this->service->cloneCampaign($id);
+            if ($newId) {
+                $this->setFlash('success', "Campaign cloned as #$newId");
+                return $this->redirect(BASE_URL . '/admin/marketing-campaigns/show/' . $newId);
+            }
+        }
+        return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+    }
+
+    public function testSend($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
+        if (!$id || !$this->service) {
+            return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+        }
+        $result = $this->service->testSend($id, 5);
+        if ($result['ok']) {
+            $this->setFlash('success', 'Test send dispatched to ' . count($result['samples']) . ' recipients');
+        } else {
+            $this->setFlash('error', $result['error'] ?? 'Test send failed');
+        }
+        return $this->redirect(BASE_URL . '/admin/marketing-campaigns/show/' . $id);
+    }
+
+    public function schedule($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_POST['id'] ?? 0);
+        $sendAt = $_POST['scheduled_at'] ?? '';
+        if ($id && $sendAt && $this->service) {
+            $this->service->scheduleCampaign($id, $sendAt);
+            $this->setFlash('success', "Campaign scheduled for $sendAt");
+        }
+        return $this->redirect(BASE_URL . '/admin/marketing-campaigns/show/' . $id);
+    }
+
+    public function stats($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_GET['id'] ?? 0);
+        if (!$id || !$this->service) {
+            return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+        }
+        $stats = $this->service->getStats($id);
+        if (empty($stats)) {
+            $this->setFlash('error', 'Campaign not found');
+            return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+        }
+        $recipients = $this->service->getRecipients($id, '', 200);
+        return $this->render('admin.marketing_campaigns.stats', [
+            'page_title'  => 'Campaign Stats #' . $id,
+            'page_heading' => $stats['campaign']['name'] ?? 'Stats',
+            'stats'       => $stats,
+            'recipients'  => $recipients,
+            'campaign_id' => $id,
+        ]);
+    }
+
+    public function exportRecipients($id = 0)
+    {
+        $id = (int) $id ?: (int) ($_GET['id'] ?? 0);
+        if (!$id || !$this->service) {
+            return $this->redirect(BASE_URL . '/admin/marketing-campaigns');
+        }
+        $csv = $this->service->exportRecipientsCsv($id);
+        $filename = 'campaign_' . $id . '_recipients_' . date('Ymd_His') . '.csv';
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        echo $csv;
+        exit;
+    }
 }
