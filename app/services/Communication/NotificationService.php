@@ -42,6 +42,23 @@ class NotificationService
 
         $this->addToFeed($userId, $notificationId, $title, $message, $data);
 
+        // WebSocket real-time push (best-effort, never throws).
+        // The connected browser sees the notification instantly without waiting
+        // for the next page load or long-poll cycle.
+        try {
+            \App\Services\WebSocketBroadcaster::broadcastToUser((int)$userId, [
+                'event' => 'notification',
+                'notification_id' => $notificationId,
+                'title' => $title,
+                'message' => $message,
+                'channel' => $channel,
+                'data' => $data,
+                'ts' => time()
+            ], 'user_' . (int)$userId . '_notifications');
+        } catch (\Throwable $e) {
+            error_log("NotificationService: WS broadcast failed: " . $e->getMessage());
+        }
+
         // Delegate real-time channel sends to the unified CommunicationGateway.
         // This makes provider swaps, retries, and logging consistent across
         // every channel, and keeps the DB queue path intact for async processing.

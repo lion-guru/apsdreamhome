@@ -4,6 +4,7 @@
 
     const STORAGE_KEY = 'lcw_session';
     const POLL_MS = 4000;
+    const WS_RECONNECT_MS = 3000;
     const BASE = (window.BASE_URL || '/apsdreamhome').replace(/\/+$/, '');
 
     const API = {
@@ -12,6 +13,7 @@
         poll:    BASE + '/api/chat/poll',
         config:  BASE + '/api/chat/widget',
     };
+    const WS_URL = (window.WS_URL || ('ws://' + (location.hostname || 'localhost') + ':8080'));
 
     const $ = (sel) => document.querySelector(sel);
     const escape = (s) => String(s || '')
@@ -32,6 +34,10 @@
             this.lastId = 0;
             this.sending = false;
             this.agentTypingUntil = 0;
+            this.ws = null;
+            this.wsRetry = 0;
+            this.wsHeartbeatTimer = null;
+            this.wsSubscribedChannel = null;
         }
 
         init() {
@@ -41,6 +47,7 @@
             if (this.session && this.session.token) {
                 this.showThread();
                 this.fetchHistory();
+                this.connectWs();
             }
         }
 
@@ -117,6 +124,7 @@
             this.scrollToBottom();
             if (this.session && this.session.token) {
                 this.startPolling();
+                this.connectWs();
             }
         }
 
@@ -126,6 +134,7 @@
             this.root.classList.remove('lcw-open');
             this.launcher.classList.remove('lcw-launcher-active');
             this.stopPolling();
+            this.disconnectWs();
         }
 
         loadSession() {
@@ -191,6 +200,7 @@
                     this.saveSession();
                     this.showThread();
                     this.fetchHistory();
+                    this.connectWs();
                 } else {
                     this.showPrechatError((data && data.error) || 'Could not start chat. Please try again.');
                 }
@@ -260,6 +270,90 @@
         schedulePoll() {
             this.stopPolling();
             this.pollTimer = setTimeout(() => this.pollMessages(), POLL_MS);
+        }
+
+        // === WebSocket transport (real-time) ===
+        connectWs() {
+            if (!this.session || !this.session.token) return;
+            if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) return;
+            try {
+                this.ws = new WebSocket(WS_URL);
+            } catch (_) {
+                this.scheduleWsReconnect();
+                return;
+            }
+            this.ws.onopen = () => {
+                this.wsRetry = 0;
+                try {
+                    this.ws.send(JSON.stringify({ type: 'auth', token: this.session.token, userId: 0, userRole: 'visitor' }));
+                } catch (_) {}
+                this.subscribeToChannel();
+                this.startWsHeartbeat();
+            };
+            this.ws.onmessage = (ev) => {
+                let data;
+                try { data = JSON.parse(ev.data); } catch (_) { return; }
+                if (!data || !data.type) return;
+                if (data.type === 'channel' && data.channel === this.wsSubscribedChannel && data.payload) {
+                    this.handleChannelPayload(data.payload);
+                }
+            };
+            this.ws.onerror = () => { /* will trigger onclose */ };
+            this.ws.onclose = () => {
+                this.stopWsHeartbeat();
+                this.wsSubscribedChannel = null;
+                this.scheduleWsReconnect();
+            };
+        }
+
+        subscribeToChannel() {
+            if (!this.session || !this.session.id) return;
+            const channel = 'chat_' + this.session.id;
+            try {
+                this.ws.send(JSON.stringify({ type: 'subscribe', channel: channel }));
+                this.wsSubscribedChannel = channel;
+            } catch (_) {}
+        }
+
+        handleChannelPayload(payload) {
+            if (!payload || payload.event !== 'message') return;
+            // Filter out the visitor's own optimistic messages (already shown immediately)
+            if (payload.sender_type === 'visitor') return;
+            // Avoid double-rendering messages we already got via polling
+            if (payload.message_id && payload.message_id <= this.lastId) return;
+            this.renderMessage(payload, true);
+            if (payload.message_id) this.lastId = Math.max(this.lastId, payload.message_id);
+            if (!this.opened) this.bumpBadge(1);
+            this.scrollToBottom();
+        }
+
+        startWsHeartbeat() {
+            this.stopWsHeartbeat();
+            this.wsHeartbeatTimer = setInterval(() => {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    try { this.ws.send(JSON.stringify({ type: 'ping', ts: Date.now() })); } catch (_) {}
+                }
+            }, 30000);
+        }
+
+        stopWsHeartbeat() {
+            if (this.wsHeartbeatTimer) { clearInterval(this.wsHeartbeatTimer); this.wsHeartbeatTimer = null; }
+        }
+
+        scheduleWsReconnect() {
+            if (this.wsRetry > 10) return; // give up after 10 retries
+            this.wsRetry++;
+            const delay = Math.min(WS_RECONNECT_MS * Math.pow(2, this.wsRetry - 1), 30000);
+            setTimeout(() => this.connectWs(), delay);
+        }
+
+        disconnectWs() {
+            this.stopWsHeartbeat();
+            if (this.ws) {
+                try { this.ws.close(); } catch (_) {}
+                this.ws = null;
+                this.wsSubscribedChannel = null;
+            }
         }
 
         async sendMessage() {

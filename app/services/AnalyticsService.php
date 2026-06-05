@@ -57,6 +57,23 @@ class AnalyticsService
         $st = $this->db->prepare("INSERT INTO daily_metrics_summary (metric_name, category, value, dimensions, metric_date, created_at) VALUES (:n, :c, :v, :d, :dt, NOW())
                                   ON DUPLICATE KEY UPDATE value = VALUES(value), dimensions = VALUES(dimensions)");
         $st->execute([':n' => $metricName, ':c' => $category, ':v' => $value, ':d' => json_encode($dimensions, JSON_UNESCAPED_UNICODE), ':dt' => date('Y-m-d')]);
+
+        // WebSocket broadcast - real-time dashboards subscribed to analytics_global
+        // receive an event the moment a metric is recorded. Best-effort, never throws.
+        try {
+            \App\Services\WebSocketBroadcaster::broadcastAnalytics([
+                'event' => 'metric_recorded',
+                'metric' => $metricName,
+                'category' => $category,
+                'value' => (float)$value,
+                'dimensions' => $dimensions,
+                'ts' => time()
+            ], 'analytics_global');
+        } catch (\Throwable $e) {
+            // Log only; never propagate.
+            error_log("AnalyticsService::recordDailyMetric WS broadcast failed: " . $e->getMessage());
+        }
+
         return ['ok' => true];
     }
 
