@@ -64,8 +64,12 @@ $base = BASE_URL;
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" action="<?php echo $base; ?>/register" id="customer-register-form">
+                <form method="POST" action="<?php echo $base; ?>/register" id="customer-register-form" data-experiment="registration_form_length" data-variant="<?= htmlspecialchars($_SESSION['experiments']['registration_form_length'] ?? 'full', ENT_QUOTES) ?>">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                    <?php
+                        // A/B test: registration_form_length — 'minimal' shows only 3 fields, 'full' shows all
+                        $formVariant = $_SESSION['experiments']['registration_form_length'] ?? 'full';
+                    ?>
                     <div class="mb-3">
                         <label class="form-label"><?= __('register_label_name') ?> *</label>
                         <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>" placeholder="<?= __('register_ph_name') ?>" required>
@@ -78,25 +82,52 @@ $base = BASE_URL;
                         <label class="form-label"><?= __('register_label_phone') ?> *</label>
                         <input type="text" class="form-control" name="phone" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" placeholder="<?= __('register_ph_phone') ?>" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label"><?= __('register_label_password') ?> *</label>
-                        <input type="password" class="form-control" name="password" placeholder="<?= __('register_ph_password') ?>" required>
+                    <div class="reg-step-2" <?= $formVariant === 'minimal' ? 'style="display:none"' : '' ?>>
+                        <div class="mb-3">
+                            <label class="form-label"><?= __('register_label_password') ?> *</label>
+                            <input type="password" class="form-control" name="password" placeholder="<?= __('register_ph_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><?= __('register_label_confirm_password') ?> *</label>
+                            <input type="password" class="form-control" name="confirm_password" placeholder="<?= __('register_ph_confirm_password') ?>" <?= $formVariant === 'minimal' ? '' : 'required' ?>>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><?= __('register_label_referral') ?></label>
+                            <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>" placeholder="<?= __('register_ph_referral') ?>">
+                            <small class="text-success">
+                                <i class="fas fa-gift me-1"></i>
+                                <?= __('register_referral_bonus', ['percent' => 5]) ?>
+                            </small>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label"><?= __('register_label_confirm_password') ?> *</label>
-                        <input type="password" class="form-control" name="confirm_password" placeholder="<?= __('register_ph_confirm_password') ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label"><?= __('register_label_referral') ?></label>
-                        <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>" placeholder="<?= __('register_ph_referral') ?>">
-                        <small class="text-success">
-                            <i class="fas fa-gift me-1"></i>
-                            <?= __('register_referral_bonus', ['percent' => 5]) ?>
-                        </small>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
-                        <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
-                    </button>
+                    <?php if ($formVariant === 'minimal'): ?>
+                        <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
+                            <i class="fas fa-arrow-right me-2"></i>Continue
+                        </button>
+                        <button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;display:none">
+                            <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
+                        </button>
+                        <script>
+                        (function(){
+                            var btn1 = document.getElementById('reg-step-1-continue');
+                            var btn2 = document.getElementById('reg-step-2-submit');
+                            var step2 = document.querySelectorAll('.reg-step-2');
+                            if (btn1 && btn2 && step2.length) {
+                                btn1.addEventListener('click', function(){
+                                    step2.forEach(function(s){ s.style.display = ''; });
+                                    btn1.style.display = 'none';
+                                    btn2.style.display = '';
+                                    // Track step transition
+                                    if (window.ABTracker) window.ABTracker.track('registration_form_length', '<?= htmlspecialchars($formVariant, ENT_QUOTES) ?>', 'step_continue', {step: 1});
+                                });
+                            }
+                        })();
+                        </script>
+                    <?php else: ?>
+                        <button type="submit" class="btn btn-primary w-100 py-2" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
+                            <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
+                        </button>
+                    <?php endif; ?>
                 </form>
                 <div class="text-center mt-3">
                     <p class="text-muted"><?= __('register_have_account') ?> <a href="<?php echo $base; ?>/login"><?= __('register_link_login') ?></a></p>

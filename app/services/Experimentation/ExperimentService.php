@@ -314,6 +314,68 @@ class ExperimentService
     }
 
     /**
+     * Seed the 4 standard experiments. Idempotent — re-running won't
+     * create duplicates (uses UNIQUE name constraint).
+     *
+     * @return array  ['created' => [name,…], 'skipped' => [name,…]]
+     */
+    public function seedDefaults(): array
+    {
+        $seeds = [
+            [
+                'name'        => 'homepage_cta',
+                'description' => 'A/B test the home page hero CTA copy ("Browse Properties" vs "Find Your Dream Home").',
+                'variants'    => [
+                    ['name' => 'control',   'weight' => 50],
+                    ['name' => 'treatment', 'weight' => 50],
+                ],
+                'traffic'     => 100,
+            ],
+            [
+                'name'        => 'property_card_layout',
+                'description' => 'Property listing card density: current (3 per row) vs compact (4 per row).',
+                'variants'    => [
+                    ['name' => 'current', 'weight' => 50],
+                    ['name' => 'compact', 'weight' => 50],
+                ],
+                'traffic'     => 100,
+            ],
+            [
+                'name'        => 'cta_button_color',
+                'description' => 'Home page primary CTA color: blue vs green vs orange.',
+                'variants'    => [
+                    ['name' => 'blue',   'weight' => 34],
+                    ['name' => 'green',  'weight' => 33],
+                    ['name' => 'orange', 'weight' => 33],
+                ],
+                'traffic'     => 100,
+            ],
+            [
+                'name'        => 'registration_form_length',
+                'description' => 'Customer registration form length: full (all fields) vs minimal (name+email+phone, then step 2).',
+                'variants'    => [
+                    ['name' => 'full',    'weight' => 50],
+                    ['name' => 'minimal', 'weight' => 50],
+                ],
+                'traffic'     => 100,
+            ],
+        ];
+
+        $created = [];
+        $skipped = [];
+        foreach ($seeds as $s) {
+            try {
+                $this->createExperiment($s['name'], $s['variants'], $s['traffic'], $s['description']);
+                $created[] = $s['name'];
+            } catch (Throwable $e) {
+                // Likely a duplicate (1062) — that's fine, treat as skipped.
+                $skipped[] = $s['name'];
+            }
+        }
+        return ['created' => $created, 'skipped' => $skipped];
+    }
+
+    /**
      * Get experiment by ID (raw row).
      */
     public function getExperimentById(int $id): ?array
@@ -331,6 +393,15 @@ class ExperimentService
     {
         $stmt = $this->pdo->query("SELECT name FROM ab_experiments WHERE status = 'running'");
         return $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+    }
+
+    /**
+     * Expose the underlying PDO handle for callers that need to do
+     * low-level queries (CSV export, ad-hoc updates, etc.).
+     */
+    public function getPdo(): PDO
+    {
+        return $this->pdo;
     }
 
     // ───────────────────────────────────────────────────────────────────

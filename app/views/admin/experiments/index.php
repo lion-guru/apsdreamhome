@@ -14,9 +14,17 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
             <h1 class="h3 mb-0"><i class="fas fa-flask me-2 text-primary"></i><?= htmlspecialchars($pageTitle) ?></h1>
             <p class="text-muted mb-0">Run controlled experiments and measure conversion lifts.</p>
         </div>
-        <a href="<?= $baseUrl ?>/admin/experiments/create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> New Experiment
-        </a>
+        <div>
+            <form method="POST" action="<?= $baseUrl ?>/admin/experiments/seed-defaults" class="d-inline" onsubmit="return confirm('Seed the 4 default experiments (homepage_cta, property_card_layout, cta_button_color, registration_form_length)?');">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                <button type="submit" class="btn btn-outline-secondary">
+                    <i class="fas fa-seedling me-1"></i> Seed Defaults
+                </button>
+            </form>
+            <a href="<?= $baseUrl ?>/admin/experiments/create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> New Experiment
+            </a>
+        </div>
     </div>
 
     <?php if ($flashSuccess): ?>
@@ -96,8 +104,14 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                                     </td>
                                     <td class="small text-muted"><?= !empty($exp['started_at']) ? htmlspecialchars($exp['started_at']) : '—' ?></td>
                                     <td class="text-end">
-                                        <a href="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>" class="btn btn-sm btn-outline-primary" title="View results">
-                                            <i class="fas fa-chart-bar"></i>
+                                        <a href="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/results" class="btn btn-sm btn-outline-success" title="View Results Dashboard">
+                                            <i class="fas fa-chart-line"></i>
+                                        </a>
+                                        <a href="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>" class="btn btn-sm btn-outline-primary" title="Show page">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/export" class="btn btn-sm btn-outline-secondary" title="Export CSV">
+                                            <i class="fas fa-file-csv"></i>
                                         </a>
                                         <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this experiment and ALL its events? This cannot be undone.');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
