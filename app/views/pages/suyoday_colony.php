@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Suyoday Colony Project Page - APS Dream Home
@@ -32,7 +32,7 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6 mb-4 mb-md-0" data-aos="fade-right">
-                <img loading="lazy" src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="img-fluid rounded-4 shadow-lg" alt="Suyoday Colony Overview">
+                <img />/assets/images/projects/gorakhpur/suryoday.jpg" class="img-fluid rounded-4 shadow-lg" alt="Suyoday Colony Overview">
             </div>
             <div class="col-md-6" data-aos="fade-left">
                 <h2 class="text-primary double-down-line mb-4">OVERVIEW - Suyoday Colony</h2>
@@ -100,7 +100,7 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
                         <i class="fas fa-rupee-sign fa-3x text-danger"></i>
                     </div>
                     <h5>Starting Price</h5>
-                    <p class="text-muted">₹7.5 Lakhs</p>
+                    <p class="text-muted">â‚¹7.5 Lakhs</p>
                 </div>
             </div>
             
@@ -222,17 +222,17 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
         <div class="row g-4">
             <div class="col-md-6 col-lg-4">
                 <div class="gallery-item">
-                    <img loading="lazy" src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="img-fluid rounded" alt="Suyoday Colony View 1">
+                    <img />/assets/images/projects/gorakhpur/suryoday.jpg" class="img-fluid rounded" alt="Suyoday Colony View 1">
                 </div>
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="gallery-item">
-                    <img loading="lazy" src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="img-fluid rounded" alt="Suyoday Colony View 2">
+                    <img />/assets/images/projects/gorakhpur/suryoday1.jpeg" class="img-fluid rounded" alt="Suyoday Colony View 2">
                 </div>
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="gallery-item">
-                    <img loading="lazy" src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday2.jpeg" class="img-fluid rounded" alt="Suyoday Colony View 3">
+                    <img />/assets/images/projects/gorakhpur/suryoday2.jpeg" class="img-fluid rounded" alt="Suyoday Colony View 3">
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -124,7 +124,7 @@ ob_start();
                                         <tr>
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
-                                                    <img loading="lazy" src="<?= !empty($property['pimage']) ? BASE_URL . 'public/uploads/property/' . $property['pimage'] : BASE_URL . '/assets/images/property-placeholder.jpg' ?> class="img-fluid">"
+                                                    <img /> class="img-fluid">"
                                                         alt="Property" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                                     <div>
                                                         <h6 class="mb-0 fw-bold"><?= h($property['title']) ?></h6>
@@ -134,7 +134,7 @@ ob_start();
                                             </td>
                                             <td><span class="badge bg-light text-dark fw-normal"><?= ucfirst(h($property['type'])) ?></span></td>
                                             <td><i class="fas fa-map-marker-alt text-muted me-1 small"></i><?= h($property['city']) ?></td>
-                                            <td class="fw-bold text-primary">₹<?= number_format($property['price']) ?></td>
+                                            <td class="fw-bold text-primary">â‚¹<?= number_format($property['price']) ?></td>
                                             <td>
                                                 <?php
                                                 $status_class = 'bg-success';
@@ -212,7 +212,7 @@ ob_start();
                 <h5 class="fw-bold mb-4">Profile Summary</h5>
                 <div class="text-center mb-4">
                     <div class="position-relative d-inline-block">
-                        <img loading="lazy" src="<?= !empty($user_data['uimage']) ? '/admin/user/' . $user_data['uimage'] : '/assets/images/user-placeholder.jpg' ?> class="img-fluid">"
+                        <img /> class="img-fluid">"
                             alt="Profile" class="rounded-circle shadow-sm border border-4 border-light" style="width: 100px; height: 100px; object-fit: cover;">
                         <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
                     </div>

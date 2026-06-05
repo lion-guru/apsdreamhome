@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Featured Properties Page - APS Dream Homes
 
 $featuredProperties = [
@@ -25,7 +25,7 @@ $featuredProperties = [
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="position-relative">
-                        <img loading="lazy" src="<?= $property['image'] ?>" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name']) ?>" style="height:220px;object-fit:cover;">
+                        <img />" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name']) ?>" style="height:220px;object-fit:cover;">
                         <span class="badge bg-success position-absolute top-0 start-0 m-3">Featured</span>
                     </div>
                     <div class="card-body">
@@ -35,7 +35,7 @@ $featuredProperties = [
                             <span><i class="fas fa-ruler-combined text-muted me-1"></i><?= $property['area'] ?></span>
                             <span><i class="fas fa-tag text-muted me-1"></i><?= $property['type'] ?></span>
                         </div>
-                        <div class="h4 text-primary">₹<?= $property['price'] ?></div>
+                        <div class="h4 text-primary">â‚¹<?= $property['price'] ?></div>
                     </div>
                     <div class="card-footer bg-white border-0 pb-3">
                         <a href="/apsdreamhome/properties" class="btn btn-primary w-100">View Details</a>

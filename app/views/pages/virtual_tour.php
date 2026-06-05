@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -50,7 +50,7 @@
 
                 <div class="mt-4">
                     <h3>About this Tour</h3>
-                    <p><?= nl2br(h($tour['description'] ?? 'Experience this property in immersive 360°.')) ?></p>
+                    <p><?= nl2br(h($tour['description'] ?? 'Experience this property in immersive 360Â°.')) ?></p>
                 </div>
 
                 <?php if (!empty($tour['assets']) && count($tour['assets']) > 1): ?>
@@ -60,7 +60,7 @@
                             <?php foreach ($tour['assets'] as $asset): ?>
                                 <div class="col-md-3">
                                     <div class="card h-100 tour-scene-card" style="cursor: pointer;">
-                                        <img loading="lazy" src="<?= BASE_URL . ($asset['thumbnail_path'] ?: $asset['file_path']) ?>" class="card-img-top img-fluid" alt="<?= h($asset['title']) ?>">
+                                        <img />" class="card-img-top img-fluid" alt="<?= h($asset['title']) ?>">
                                         <div class="card-body p-2">
                                             <p class="card-text small mb-0"><?= h($asset['title']) ?></p>
                                         </div>

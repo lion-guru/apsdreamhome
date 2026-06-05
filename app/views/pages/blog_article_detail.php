@@ -1,4 +1,4 @@
-<div class="container py-5">
+﻿<div class="container py-5">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
@@ -9,7 +9,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <?php if (!empty($post['featured_image'])): ?>
-                <img loading="lazy" src="<?php echo htmlspecialchars($post['featured_image']); ?>" class="img-fluid rounded mb-4 w-100" alt="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" style="max-height: 400px; object-fit: cover;">
+                <img />" class="img-fluid rounded mb-4 w-100" alt="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" style="max-height: 400px; object-fit: cover;">
             <?php endif; ?>
             <h1 class="display-5 fw-bold mb-3"><?php echo htmlspecialchars($post['title'] ?? ''); ?></h1>
             <p class="text-muted mb-4">

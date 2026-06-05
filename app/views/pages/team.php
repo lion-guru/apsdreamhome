@@ -1,4 +1,4 @@
-<style>
+﻿<style>
 .team-hero {
     background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
     position: relative;
@@ -385,7 +385,7 @@
             <div class="team-card" data-category="<?php echo $catSlug; ?>">
                 <div class="team-card-photo">
                     <?php if ($hasPhoto): ?>
-                    <img src="<?php echo $photoUrl; ?>" alt="<?php echo htmlspecialchars($m->name); ?>" loading="lazy">
+                    <img />" alt="<?php echo htmlspecialchars($m->name); ?>" loading="lazy">
                     <?php else: ?>
                     <div class="placeholder-icon"><i class="fas fa-user-tie"></i></div>
                     <?php endif; ?>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,7 +50,7 @@
                 <?php if (!empty($booking['state_name'])): ?>, <?= htmlspecialchars($booking['state_name']) ?><?php endif; ?>
             </td></tr>
             <tr><th>Plot Size</th><td>
-                <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label']) ?> — <?php endif; ?>
+                <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label']) ?> â€” <?php endif; ?>
                 <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft
             </td></tr>
             <tr><th>Block</th><td><?= htmlspecialchars($booking['block'] ?? 'N/A') ?></td></tr>
@@ -65,11 +65,11 @@
             <div class="row">
                 <div class="col-6">
                     <div class="label">Total Plot Price</div>
-                    <div class="value">₹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></div>
+                    <div class="value">â‚¹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></div>
                 </div>
                 <div class="col-6 text-end">
                     <div class="label">Amount Paid</div>
-                    <div class="value">₹<?= number_format(intval($booking['amount'] ?? 0)) ?></div>
+                    <div class="value">â‚¹<?= number_format(intval($booking['amount'] ?? 0)) ?></div>
                 </div>
             </div>
             <?php if (!empty($emis)): ?>
@@ -82,8 +82,8 @@
                     <tr>
                         <td><?= $emi['installment_no'] ?></td>
                         <td><?= date('d M Y', strtotime($emi['due_date'])) ?></td>
-                        <td>₹<?= number_format(intval($emi['amount'])) ?></td>
-                        <td>₹<?= number_format(intval($emi['paid_amount'] ?? 0)) ?></td>
+                        <td>â‚¹<?= number_format(intval($emi['amount'])) ?></td>
+                        <td>â‚¹<?= number_format(intval($emi['paid_amount'] ?? 0)) ?></td>
                         <td><span class="badge bg-<?= $emi['status'] === 'paid' ? 'success' : 'warning' ?>"><?= ucfirst($emi['status']) ?></span></td>
                     </tr>
                     <?php endforeach; ?>
@@ -99,7 +99,7 @@
                 <i class="fas fa-check-circle text-success me-1"></i> Park Facing: <?= !empty($booking['park_facing']) ? 'Yes' : 'No' ?><br>
             </div>
             <div class="col-6 text-end">
-                <img loading="lazy" src="<?= BASE_URL ?>/assets/images/logo.png" alt="APS Dream Home" style="max-height:60px;" onerror="this.style.display='none'"><br>
+                <img />/assets/images/logo.png" alt="APS Dream Home" style="max-height:60px;" onerror="this.style.display='none'"><br>
                 <small class="text-muted">Authorized Signature</small>
             </div>
         </div>

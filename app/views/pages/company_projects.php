@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Company Projects Page
  * Display company projects portfolio from sites table
@@ -82,7 +82,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="card project-card h-100 shadow-sm border-0 overflow-hidden">
                                         <div class="project-image position-relative">
-                                            <img loading="lazy" src="<?php echo BASE_URL . $imgPath; ?>" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="height: 180px; object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                                            <img />" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="height: 180px; object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                                             <div class="position-absolute top-0 start-0 m-2">
                                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : ($project->status === 'completed' ? 'primary' : 'warning'); ?>">
                                                     <?php echo ucfirst(str_replace('_', ' ', $project->status ?? 'Active')); ?>

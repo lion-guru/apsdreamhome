@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Helper function for HTML escaping if not defined
 if (!function_exists('h')) {
     function h($string)
@@ -13,7 +13,7 @@ if (!function_exists('h')) {
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
                 <?php $brand = $site['brand_name'] ?? 'APS Dream Home';
                 $logo = $site['logo_url'] ?? '/assets/images/logo/apslogo.svg'; ?>
-                <img loading="lazy" src="<?php echo BASE_URL . $logo; ?>" alt="<?php echo h($brand); ?>" class="logo me-2" style="height:32px;">
+                <img />" alt="<?php echo h($brand); ?>" class="logo me-2" style="height:32px;">
                 <span class="brand-text"><?php echo h($brand); ?></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

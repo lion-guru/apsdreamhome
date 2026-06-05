@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Ganga Nagri Project View - APS Dream Homes
  */
@@ -30,7 +30,7 @@
                     </ul>
                 </div>
                 <div class="col-lg-6">
-                    <img loading="lazy" src="<?= ASSETS_URL ?>/images/projects/ganga-nagri.jpg" alt="Ganga Nagri" class="img-fluid rounded-4 shadow-lg">
+                    <img />/images/projects/ganga-nagri.jpg" alt="Ganga Nagri" class="img-fluid rounded-4 shadow-lg">
                 </div>
             </div>
 
@@ -46,7 +46,7 @@
                         <div class="col-6 col-md-4 col-lg-3 text-center">
                             <div class="card h-100 border-0 shadow-sm p-4">
                                 <div class="mb-3">
-                                    <img loading="lazy" src="<?= ASSETS_URL ?>/images/<?= $item['image'] ?>" alt="<?= $item['alt_text'] ?>" class="img-fluid" style="height: 50px;">
+                                    <img />/images/<?= $item['image'] ?>" alt="<?= $item['alt_text'] ?>" class="img-fluid" style="height: 50px;">
                                 </div>
                                 <h6 class="fw-bold"><?= $item['title'] ?></h6>
                             </div>

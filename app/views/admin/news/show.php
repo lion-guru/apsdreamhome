@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $pageTitle = $pageTitle ?? 'News Article';
 $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
 $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'publish_date' => '', 'status' => '', 'image' => '', 'excerpt' => '', 'category' => ''];
@@ -15,7 +15,7 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
         <div class="col-lg-8">
             <div class="card shadow mb-4">
                 <?php if (!empty($news['image'])): ?>
-                <img loading="lazy" src="<?= $base ?>/<?= htmlspecialchars($news['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" style="max-height:400px;object-fit:cover">
+                <img />/<?= htmlspecialchars($news['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" style="max-height:400px;object-fit:cover">
                 <?php endif; ?>
                 <div class="card-body">
                     <h2 class="card-title"><?= htmlspecialchars($news['title'] ?? '') ?></h2>

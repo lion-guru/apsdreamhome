@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (class_exists('\App\Helpers\SecurityHelper')) {
     \App\Helpers\SecurityHelper::setSecurityHeaders();
 }
@@ -105,7 +105,7 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <meta name="twitter:description" content="<?= htmlspecialchars($seo['twitter_description'] ?? '') ?>">
     <meta name="twitter:image" content="<?= htmlspecialchars($seo['twitter_image'] ?? '') ?>">
 
-    <!-- Canonical (dynamic — overrides static one above for accuracy) -->
+    <!-- Canonical (dynamic â€” overrides static one above for accuracy) -->
     <link rel="canonical" href="<?= htmlspecialchars($seo['canonical'] ?? '') ?>">
 
     <!-- JSON-LD Structured Data -->
@@ -143,6 +143,7 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
     <!-- Local CSS (header first, then core styles) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/frontend-enhancements.css" rel="stylesheet">
 
     <!-- Extra head content from views -->
     <?php if (!empty($extraHead)) echo $extraHead; ?>
@@ -217,7 +218,7 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
     <?php
     if (!$isAdminPage) {
-        // Tell footer.php NOT to close the document — base.php handles it
+        // Tell footer.php NOT to close the document â€” base.php handles it
         $GLOBALS['_layout_handles_close'] = true;
         if ($isPremiumPage) {
             include __DIR__ . '/active/footer_new.php';
@@ -246,21 +247,21 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
         <div class="ai-chat-popup" id="chatPopup">
             <div class="ai-chat-header">
                 <div class="ai-avatar">
-                    <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="APS Assistant" onerror="this.style.display='none'">
+                    <img />/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="APS Assistant" onerror="this.style.display='none'">
                     <span class="online-indicator"></span>
                 </div>
                 <div class="ai-header-info">
                     <h5>APS Property Assistant</h5>
-                    <span class="status-text">Online • Ready to Help</span>
+                    <span class="status-text">Online â€¢ Ready to Help</span>
                 </div>
-                <button class="ai-lang-btn" id="langToggle" onclick="toggleChatLanguage()" title="Switch Language">🇮🇳 HI</button>
+                <button class="ai-lang-btn" id="langToggle" onclick="toggleChatLanguage()" title="Switch Language">ðŸ‡®ðŸ‡³ HI</button>
                 <button class="ai-close-btn" onclick="toggleChat()">&times;</button>
             </div>
             <div class="ai-chat-body" id="chatBody">
                 <div class="ai-message bot">
                     <div class="ai-message-content">
-                        Namaste! 🙏<br><br>
-                        Welcome to <strong>APS Dream Home</strong>! 🏠<br><br>
+                        Namaste! ðŸ™<br><br>
+                        Welcome to <strong>APS Dream Home</strong>! ðŸ <br><br>
                         I'm your personal property assistant. Tell me what you're looking for!
                     </div>
                     <span class="ai-time">Just now</span>
@@ -329,6 +330,8 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
+    <!-- Frontend enhancements: a11y, forms, toasts, loading -->
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <!-- Image gallery lightbox -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/image-gallery.js"></script>
     <!-- premium-header.js removed - functionality merged into header.php inline -->

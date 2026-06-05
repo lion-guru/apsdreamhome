@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Raghunath Nagri Project View - APS Dream Homes
  */
@@ -54,7 +54,7 @@
                 </div>
                 <div class="col-lg-5">
                     <div class="position-relative">
-                        <img loading="lazy" src="<?= ASSETS_URL ?>/images/projects/raghunath-nagri.jpg" alt="Raghunath Nagri" class="img-fluid rounded-4 shadow-lg">
+                        <img />/images/projects/raghunath-nagri.jpg" alt="Raghunath Nagri" class="img-fluid rounded-4 shadow-lg">
                         <div class="position-absolute bottom-0 start-0 p-4 w-100">
                             <div class="bg-white p-3 rounded-3 shadow-sm d-flex align-items-center">
                                 <div class="bg-success text-white p-2 rounded-circle me-3">
@@ -80,7 +80,7 @@
                         <div class="col-6 col-md-4 col-lg-3">
                             <div class="card h-100 border-0 shadow-sm text-center p-4 hover-up">
                                 <div class="mb-3">
-                                    <img loading="lazy" src="<?= ASSETS_URL ?>/images/<?= $item['image'] ?>" alt="<?= $item['alt_text'] ?>" class="img-fluid" style="height: 60px; object-fit: contain;">
+                                    <img />/images/<?= $item['image'] ?>" alt="<?= $item['alt_text'] ?>" class="img-fluid" style="height: 60px; object-fit: contain;">
                                 </div>
                                 <h6 class="fw-bold mb-0"><?= $item['title'] ?></h6>
                             </div>

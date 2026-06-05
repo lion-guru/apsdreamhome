@@ -1,4 +1,4 @@
-<!-- Page Header -->
+﻿<!-- Page Header -->
 <div class="mb-4">
     <a href="<?php echo BASE_URL; ?>/admin/gallery" class="text-decoration-none text-muted">
         <i class="fas fa-arrow-left me-2"></i>Back to Gallery
@@ -19,7 +19,7 @@
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Current Image</label>
                         <div class="border rounded p-3">
-                            <img loading="lazy" src="<?php echo BASE_URL . '/' . $image['image_path']; ?>" class="img-thumbnail" style="max-height: 200px;" alt="Current image">
+                            <img />" class="img-thumbnail" style="max-height: 200px;" alt="Current image">
                         </div>
                     </div>
                     <?php endif; ?>

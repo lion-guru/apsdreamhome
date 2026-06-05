@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -94,7 +94,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <!-- Property Image -->
                         <div class="property-image-container">
                             <?php if ($property['featured_image']): ?>
-                                <img loading="lazy" src="<?= BASE_URL ?> class="img-fluid"><?= htmlspecialchars($property['featured_image']) ?>"
+                                <img /> class="img-fluid"><?= htmlspecialchars($property['featured_image']) ?>"
                                     class="card-img-top property-image"
                                     alt="<?= htmlspecialchars($property['title']) ?>">
                             <?php else: ?>
@@ -135,7 +135,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                             <!-- Property Price -->
                             <div class="property-price mb-3">
                                 <span class="h5 text-success font-weight-bold">
-                                    ₹<?= number_format($property['price']) ?>
+                                    â‚¹<?= number_format($property['price']) ?>
                                 </span>
                                 <?php if ($property['type']): ?>
                                     <span class="badge badge-info ml-2">

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $property['title'] . ' - APS Dream Home';
 include __DIR__ . '/../layouts/base.php';
 ?>
@@ -19,7 +19,7 @@ include __DIR__ . '/../layouts/base.php';
             <!-- Hero Image Section -->
             <div class="glass-card p-2 mb-4 overflow-hidden" data-gallery="property-<?= (int)($property['id'] ?? 0) ?>">
                 <div class="position-relative">
-                    <img loading="lazy" src="<?php echo $property_images[0]['image_path'] ?? $property['image'] ?? 'https://via.placeholder.com/1200x600'; ?>"
+                    <img />"
                         alt="<?php echo htmlspecialchars($property['title']); ?>"
                         data-caption="<?php echo htmlspecialchars($property['title']); ?>"
                         class="w-100 rounded-lg shadow-2xl property-image" id="main-gallery-image"
@@ -36,7 +36,7 @@ include __DIR__ . '/../layouts/base.php';
                 <?php if (!empty($property_images) && count($property_images) > 1): ?>
                     <div class="d-flex gap-2 mt-2 px-1 overflow-auto pb-2 scrollbar-hidden" data-gallery="property-<?= (int)($property['id'] ?? 0) ?>-thumbs">
                         <?php foreach ($property_images as $img): ?>
-                            <img loading="lazy" src="<?php echo $img['image_path']; ?>"
+                            <img />"
                                 alt="<?php echo htmlspecialchars($property['title']); ?>"
                                 data-caption="<?php echo htmlspecialchars($property['title']); ?>"
                                 class="rounded cursor-pointer thumbnail-hover"
@@ -109,7 +109,7 @@ include __DIR__ . '/../layouts/base.php';
                         <p><i class="bi bi-geo-alt me-2 text-primary"></i><?php echo htmlspecialchars($property['address'] ?? $property['location']); ?></p>
                         <div class="rounded-lg overflow-hidden border border-secondary" style="height: 300px;">
                             <!-- Mock Map -->
-                            <img loading="lazy" src="https://via.placeholder.com/800x300/1e293b/ffffff?text=Interactive+Map+Coming+Soon" class="w-100 h-100 object-fit-cover img-fluid">
+                            <img />
                         </div>
                     </div>
                 </div>
@@ -122,7 +122,7 @@ include __DIR__ . '/../layouts/base.php';
                 <!-- Pricing Card -->
                 <div class="glass-card p-4 mb-4">
                     <h5 class="text-white-50 small text-uppercase mb-1">Investment Amount</h5>
-                    <h2 class="text-white fw-bold mb-4">₹<?php echo number_format($property['price']); ?></h2>
+                    <h2 class="text-white fw-bold mb-4">â‚¹<?php echo number_format($property['price']); ?></h2>
 
                     <div class="d-grid gap-3">
                         <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#inquiryModal">
@@ -145,7 +145,7 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="glass-card p-4">
                     <h5 class="text-white h6 mb-3">Contact Property <?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Owner' : 'Specialist'; ?></h5>
                     <div class="d-flex align-items-center gap-3 mb-4">
-                        <img loading="lazy" src="https://via.placeholder.com/60/4f46e5/ffffff?text=<?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'OW' : 'AS'; ?> class="img-fluid">" class="rounded-circle shadow">
+                        <img /> class="img-fluid">" class="rounded-circle shadow">
                         <div class="w-100">
                             <h6 class="text-white mb-0"><?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Verified Owner' : 'APS Sales Team'; ?></h6>
 

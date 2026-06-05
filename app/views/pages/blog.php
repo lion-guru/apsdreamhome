@@ -1,4 +1,4 @@
-<!-- Hero Section -->
+﻿<!-- Hero Section -->
 <section class="blog-hero-section text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-2.jpg') ?>'); background-size: cover; background-position: center;">
     <div class="container">
         <div class="row justify-content-center">
@@ -81,7 +81,7 @@
                             $featuredImage = !empty($blog_posts[0]['featured_image']) ? $blog_posts[0]['featured_image'] : 'assets/images/blog-placeholder.jpg';
                             $featuredImageUrl = get_asset_url($featuredImage);
                             ?>
-                            <img loading="lazy" src="<?php echo htmlspecialchars($featuredImageUrl); ?>" class="img-fluid"
+                            <img />" class="img-fluid"
                                 class="card-img-top blog-image" alt="Featured Post">
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[0]['category'])); ?>
@@ -119,7 +119,7 @@
                 <div class="col-lg-4 col-md-6" data-category="<?php echo htmlspecialchars($blog_posts[$i]['category']); ?>">
                     <div class="card blog-card shadow-sm h-100">
                         <div class="position-relative">
-                            <img loading="lazy" src="<?php echo htmlspecialchars($blog_posts[$i]['featured_image'] ?? 'assets/images/blog-placeholder.jpg'); ?>" class="img-fluid"
+                            <img />" class="img-fluid"
                                 class="card-img-top blog-image" alt="Blog Post">
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[$i]['category'])); ?>

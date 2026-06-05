@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Property AI Assistant - APS Dream Home';
 $page_description = $page_description ?? 'AI Assistant for Property Information';
 $property = $property ?? null;
@@ -34,7 +34,7 @@ $base = $base ?? BASE_URL;
                         <?php if ($property): ?>
                         <div class="mb-3">
                             <?php if (!empty($property['image'])): ?>
-                            <img loading="lazy" src="<?= htmlspecialchars($property['image']) ?>" alt="<?= htmlspecialchars($property['title'] ?? 'Property') ?>" class="img-fluid rounded mb-3">
+                            <img />" alt="<?= htmlspecialchars($property['title'] ?? 'Property') ?>" class="img-fluid rounded mb-3">
                             <?php endif; ?>
                             <h4><?= htmlspecialchars($property['title'] ?? 'Untitled') ?></h4>
                             <p class="text-muted mb-1">
@@ -92,7 +92,7 @@ $base = $base ?? BASE_URL;
                     <div class="card-body p-0">
                         <div id="property-chat-messages" class="p-4" style="height: 450px; overflow-y: auto; background: #f8f9fa;">
                             <div class="text-center py-5">
-                                <div class="mb-3"><span class="display-1">🏠</span></div>
+                                <div class="mb-3"><span class="display-1">ðŸ </span></div>
                                 <h5>Ask about this property!</h5>
                                 <p class="text-muted">Get instant answers about pricing, location, amenities, and more.</p>
                             </div>

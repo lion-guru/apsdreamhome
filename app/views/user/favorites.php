@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('BASE_URL')) {
     define('BASE_URL', 'http://localhost/apsdreamhome/');
 }
@@ -57,7 +57,7 @@ if (!defined('BASE_URL')) {
                         <div class="property-card">
                             <!-- Property Image -->
                             <div class="property-image">
-                                <img loading="lazy" src="<?php echo BASE_URL . ($property['main_image'] ?? 'assets/images/no-image.jpg'); ?> class="img-fluid">"
+                                <img /> class="img-fluid">"
                                      alt="<?php echo htmlspecialchars($property['title']); ?>"
                                      class="img-fluid"
                                      onerror="this.src='<?php echo BASE_URL; ?>assets/images/no-image.jpg'">
@@ -120,7 +120,7 @@ if (!defined('BASE_URL')) {
 
                                 <div class="property-footer">
                                     <div class="property-price">
-                                        <span class="price-amount">₹<?php echo number_format($property['price']); ?></span>
+                                        <span class="price-amount">â‚¹<?php echo number_format($property['price']); ?></span>
                                     </div>
                                     <div class="property-actions">
                                         <button class="btn btn-outline-primary btn-sm favorite-toggle"

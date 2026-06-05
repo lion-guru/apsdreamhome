@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $extraHead = '<style>
     .property-card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: transform 0.2s; }
     .property-card:hover { transform: translateY(-3px); }
@@ -51,7 +51,7 @@ $extraHead = '<style>
                             </div>
 
                             <?php if (!empty($p['image'])): ?>
-                                <img loading="lazy" src="<?php echo BASE_URL; ?>/<?php echo htmlspecialchars($p['image']); ?>" class="img-fluid rounded mb-3" style="max-height: 180px; width: 100%; object-fit: cover;" alt="<?php echo htmlspecialchars($p['name']); ?>">
+                                <img />/<?php echo htmlspecialchars($p['image']); ?>" class="img-fluid rounded mb-3" style="max-height: 180px; width: 100%; object-fit: cover;" alt="<?php echo htmlspecialchars($p['name']); ?>">
                             <?php endif; ?>
 
                             <div class="row mb-3">

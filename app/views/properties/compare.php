@@ -1,4 +1,4 @@
-<div class="container-fluid py-4">
+﻿<div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="h3 mb-2"><?= htmlspecialchars($page_title ?? 'Compare Properties') ?></h1>
@@ -98,7 +98,7 @@
                                     <!-- Property Image -->
                                     <div class="property-image-wrapper" style="height: 200px; overflow: hidden;">
                                         <?php if ($property['primary_image']): ?>
-                                            <img loading="lazy" src="/<?= htmlspecialchars($property['primary_image']) ?>"
+                                            <img />"
                                                 class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         <?php else: ?>
@@ -116,7 +116,7 @@
 
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="h5 text-primary mb-0">
-                                                ₹<?= number_format($property['price']) ?>
+                                                â‚¹<?= number_format($property['price']) ?>
                                             </span>
                                             <span class="badge bg-<?= $property['status'] === 'available' ? 'success' : 'warning' ?>">
                                                 <?= ucfirst($property['status']) ?>

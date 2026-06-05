@@ -1,4 +1,4 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0">Associate Details</h4>
         <div>
@@ -17,7 +17,7 @@
                 <div class="card-body text-center">
                     <div class="avatar-lg mx-auto mb-3">
                         <?php if (!empty($user['photo'])): ?>
-                            <img loading="lazy" src="<?= htmlspecialchars($user['photo']) ?>" alt="Photo" class="rounded-circle" width="100" height="100" style="object-fit:cover;">
+                            <img />" alt="Photo" class="rounded-circle" width="100" height="100" style="object-fit:cover;">
                         <?php else: ?>
                             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width:100px;height:100px;font-size:36px;">
                                 <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>
@@ -28,7 +28,7 @@
                     <p class="text-muted mb-2"><?= htmlspecialchars($user['email'] ?? '') ?></p>
                     <p class="mb-2"><i class="fas fa-phone me-1"></i> <?= htmlspecialchars($user['phone'] ?? '') ?></p>
                     <p class="mb-1">
-                        <strong>Sponsor:</strong> <?= htmlspecialchars($user['sponsor_name'] ?? '—') ?>
+                        <strong>Sponsor:</strong> <?= htmlspecialchars($user['sponsor_name'] ?? 'â€”') ?>
                     </p>
                     <p class="mb-0">
                         <span class="badge bg-<?= match($user['level'] ?? '') { 'platinum' => 'dark', 'gold' => 'warning text-dark', 'silver' => 'secondary', default => 'info' } ?> fs-6">
@@ -60,7 +60,7 @@
                 <div class="col-md-3">
                     <div class="card bg-info text-white text-center">
                         <div class="card-body">
-                            <h3 class="mb-0">₹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
+                            <h3 class="mb-0">â‚¹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
                             <small>Total Earnings</small>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark text-center">
                         <div class="card-body">
-                            <h3 class="mb-0">₹<?= number_format($stats['pending_commission'] ?? 0) ?></h3>
+                            <h3 class="mb-0">â‚¹<?= number_format($stats['pending_commission'] ?? 0) ?></h3>
                             <small>Pending Commission</small>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                                 <?php else: ?>
                                     <?php foreach (array_slice($activities, 0, 5) as $activity): ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($activity['type'] ?? '—') ?></td>
+                                            <td><?= htmlspecialchars($activity['type'] ?? 'â€”') ?></td>
                                             <td><?= htmlspecialchars($activity['description'] ?? '') ?></td>
                                             <td><?= date('d M Y h:i A', strtotime($activity['created_at'] ?? 'now')) ?></td>
                                         </tr>

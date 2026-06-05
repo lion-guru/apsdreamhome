@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Session started by controller
 $page_title = 'Behavior Analysis Details';
 $page_description = 'Detailed view of customer behavior analysis';
@@ -23,7 +23,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/img/default-avatar.png" alt="Avatar" class="img-fluid rounded-circle">
+                        <img />/assets/img/default-avatar.png" alt="Avatar" class="img-fluid rounded-circle">
                     </div>
                     <div class="col-md-9">
                         <h4><?php echo htmlspecialchars($behavior['customer_name'] ?? 'Unknown'); ?></h4>

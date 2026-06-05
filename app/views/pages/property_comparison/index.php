@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Property Comparison';
 $page_heading = $page_heading ?? 'Property Comparison';
 $content = $content ?? '';
@@ -82,7 +82,7 @@ $view_count = $view_count ?? 0;
                 <?php foreach ($properties as $p): ?>
                     <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?>" style="background:linear-gradient(135deg, #667eea20 0%, #764ba220 100%);">
                         <?php if (!empty($p['image'])): ?>
-                            <img loading="lazy" src="<?= htmlspecialchars($p['image']) ?>" alt="" style="max-width:100%; max-height:100%;">
+                            <img />" alt="" style="max-width:100%; max-height:100%;">
                         <?php else: ?>
                             <i class="fas fa-home text-muted"></i>
                         <?php endif; ?>
@@ -109,7 +109,7 @@ $view_count = $view_count ?? 0;
                 <?php foreach ($properties as $p): ?>
                     <div><strong><?= htmlspecialchars(ucfirst($p['property_type'] ?? 'N/A')) ?></strong></div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -120,14 +120,14 @@ $view_count = $view_count ?? 0;
                         <?= htmlspecialchars($p['city'] ?? $p['address'] ?? 'N/A') ?>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
                 <div class="label"><i class="fas fa-rupee-sign me-1"></i> Price</div>
                 <?php foreach ($properties as $p): ?>
                     <div>
-                        <strong class="text-success">₹<?= number_format($p['price'] ?? 0) ?></strong>
+                        <strong class="text-success">â‚¹<?= number_format($p['price'] ?? 0) ?></strong>
                         <?php if (($comparison['cheapest'] ?? 0) > 0 && ($p['price'] ?? 0) == $comparison['cheapest']): ?>
                             <i class="fas fa-arrow-down text-success ms-1" title="Cheapest"></i>
                         <?php elseif (($comparison['priciest'] ?? 0) > 0 && ($p['price'] ?? 0) == $comparison['priciest']): ?>
@@ -135,7 +135,7 @@ $view_count = $view_count ?? 0;
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -148,7 +148,7 @@ $view_count = $view_count ?? 0;
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -157,29 +157,29 @@ $view_count = $view_count ?? 0;
                     $ps = (!empty($p['price']) && !empty($p['area_sqft']) && $p['area_sqft'] > 0) ? round($p['price'] / $p['area_sqft'], 2) : 0;
                 ?>
                     <div>
-                        <strong>₹<?= number_format($ps) ?></strong>
+                        <strong>â‚¹<?= number_format($ps) ?></strong>
                         <?php if (($comparison['best_value_id'] ?? null) == $p['id']): ?>
                             <span class="badge bg-success ms-1">Best</span>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
                 <div class="label"><i class="fas fa-bed me-1"></i> Bedrooms</div>
                 <?php foreach ($properties as $p): ?>
-                    <div><?= htmlspecialchars($p['bedrooms'] ?? '—') ?></div>
+                    <div><?= htmlspecialchars($p['bedrooms'] ?? 'â€”') ?></div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
                 <div class="label"><i class="fas fa-bath me-1"></i> Bathrooms</div>
                 <?php foreach ($properties as $p): ?>
-                    <div><?= htmlspecialchars($p['bathrooms'] ?? '—') ?></div>
+                    <div><?= htmlspecialchars($p['bathrooms'] ?? 'â€”') ?></div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -191,7 +191,7 @@ $view_count = $view_count ?? 0;
                         </span>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -203,7 +203,7 @@ $view_count = $view_count ?? 0;
                         </span>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -218,7 +218,7 @@ $view_count = $view_count ?? 0;
                         </a>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
         </div>
 
@@ -228,7 +228,7 @@ $view_count = $view_count ?? 0;
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
                             <p class="text-muted small mb-1">Cheapest</p>
-                            <h4 class="text-success mb-0">₹<?= number_format($comparison['cheapest'] ?? 0) ?></h4>
+                            <h4 class="text-success mb-0">â‚¹<?= number_format($comparison['cheapest'] ?? 0) ?></h4>
                         </div>
                     </div>
                 </div>
@@ -236,7 +236,7 @@ $view_count = $view_count ?? 0;
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
                             <p class="text-muted small mb-1">Most Expensive</p>
-                            <h4 class="text-danger mb-0">₹<?= number_format($comparison['priciest'] ?? 0) ?></h4>
+                            <h4 class="text-danger mb-0">â‚¹<?= number_format($comparison['priciest'] ?? 0) ?></h4>
                         </div>
                     </div>
                 </div>
@@ -244,7 +244,7 @@ $view_count = $view_count ?? 0;
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
                             <p class="text-muted small mb-1">Average Price</p>
-                            <h4 class="text-info mb-0">₹<?= number_format($comparison['avg_price'] ?? 0) ?></h4>
+                            <h4 class="text-info mb-0">â‚¹<?= number_format($comparison['avg_price'] ?? 0) ?></h4>
                         </div>
                     </div>
                 </div>

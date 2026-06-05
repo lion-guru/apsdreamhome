@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Budha City Kushinagar Project View - APS Dream Homes
  */
@@ -31,7 +31,7 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-6 mb-4 mb-md-0" data-aos="fade-right">
-                        <img loading="lazy" src="<?= get_asset_url('projects/budha-city-main.jpg', 'images') ?>" class="img-fluid rounded-4 shadow-lg" alt="Budha City Overview">
+                        <img />" class="img-fluid rounded-4 shadow-lg" alt="Budha City Overview">
                     </div>
                     <div class="col-md-6" data-aos="fade-left">
                         <h2 class="text-secondary double-down-line mb-4">OVERVIEW - Budha City</h2>
@@ -57,7 +57,7 @@
                         <?php foreach ($amenities as $amenity): ?>
                             <div class="col-md-3 col-sm-6" data-aos="zoom-in">
                                 <div class="amenity-card bg-white p-4 rounded-4 shadow-sm text-center h-100 transition-hover">
-                                    <img loading="lazy" src="<?= get_asset_url($amenity['image'], 'images') ?>" class="img-fluid mb-3 rounded-3" alt="<?= $amenity['alt_text'] ?>">
+                                    <img />" class="img-fluid mb-3 rounded-3" alt="<?= $amenity['alt_text'] ?>">
                                     <h5 class="mb-0"><?= $amenity['title'] ?></h5>
                                 </div>
                             </div>

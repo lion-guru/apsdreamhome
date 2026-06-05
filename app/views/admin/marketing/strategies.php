@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Marketing Strategies - APS Dream Home Admin
@@ -92,7 +92,7 @@ $page_description = 'Manage marketing strategies and campaigns';
                 <div class="col-xl-4 col-md-6">
                     <div class="card border-0 shadow-sm h-100">
                         <?php if (!empty($s['image_url'])): ?>
-                            <img loading="lazy" src="<?= htmlspecialchars($s['image_url']) ?>" class="card-img-top" alt="<?= htmlspecialchars($s['title'] ?? '') ?>" style="height: 180px; object-fit: cover;">
+                            <img />" class="card-img-top" alt="<?= htmlspecialchars($s['title'] ?? '') ?>" style="height: 180px; object-fit: cover;">
                         <?php else: ?>
                             <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
                                 <i class="fas fa-image fa-3x text-muted"></i>

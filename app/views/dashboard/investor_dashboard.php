@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Modernized Investor Dashboard
@@ -34,7 +34,7 @@ $investor['uimage'] = $investor['profile_image'] ?? null;
 // Fetch real stats from DB (with fallbacks)
 $stats = [
     'investments' => 0,
-    'returns' => '₹0.00',
+    'returns' => 'â‚¹0.00',
     'messages' => 0,
     'opportunities' => 0
 ];
@@ -59,7 +59,7 @@ ob_start();
     <div class="row mb-4 animate-fade-up">
         <div class="col-md-8 d-flex align-items-center">
             <div class="position-relative me-4">
-                <img loading="lazy" src="<?= !empty($investor['uimage']) ? h($investor['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($investor['uname']) . '&size=100&background=1e3a8a&color=fff' ?> class="img-fluid">"
+                <img /> class="img-fluid">"
                     alt="Profile" class="rounded-circle shadow-sm border border-3 border-white" style="width:100px; height:100px; object-fit:cover;">
                 <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
             </div>

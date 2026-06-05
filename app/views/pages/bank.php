@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Bank Details - APS Dream Home Component
  */
@@ -79,7 +79,7 @@
                     <div class="card-body p-0">
                         <div class="bank-details-wrapper text-center p-4 p-md-5">
                             <h4 class="fw-bold mb-4">Official Bank Account Details</h4>
-                            <img loading="lazy" src="<?= get_asset_url('bank.PNG', 'images') ?>" class="img-fluid rounded-4 shadow-sm border" alt="APS Dream Homes Bank Details" onerror="this.src='https://placehold.co/800x400?text=Bank+Details+Image'">
+                            <img />" class="img-fluid rounded-4 shadow-sm border" alt="APS Dream Homes Bank Details" onerror="this.src='https://placehold.co/800x400?text=Bank+Details+Image'">
                         </div>
                     </div>
                 </div>

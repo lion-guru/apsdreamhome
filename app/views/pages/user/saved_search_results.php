@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Saved Search Results';
 $current_page = 'saved-searches';
 $user = $user ?? [];
@@ -57,7 +57,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                             <?php
                             $imgSrc = !empty($p['image']) ? BASE_URL . '/assets/images/properties/' . htmlspecialchars($p['image']) : BASE_URL . '/assets/images/placeholder/property.svg';
                             ?>
-                            <img loading="lazy" src="<?= $imgSrc ?>" class="card-img-top"
+                            <img />" class="card-img-top"
                                  style="height: 200px; object-fit: cover;"
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <span class="badge bg-<?= ($p['listing_type'] ?? 'sell') === 'rent' ? 'info' : 'success' ?> position-absolute top-0 end-0 m-2">
@@ -75,7 +75,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                                 <?php endif; ?>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-success fw-bold fs-5">₹<?= number_format((float)($p['price'] ?? 0)) ?></span>
+                                <span class="text-success fw-bold fs-5">â‚¹<?= number_format((float)($p['price'] ?? 0)) ?></span>
                                 <a href="<?= BASE_URL ?>/listing/<?= (int)($p['id'] ?? 0) ?>" class="btn btn-sm btn-primary"><?= __('saved_res_view_details', null, 'View Details') ?></a>
                             </div>
                         </div>

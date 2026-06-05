@@ -1,10 +1,10 @@
-<?php
+﻿<?php
 /**
  * Lucknow Ram Nagri Project View - APS Dream Homes
  * Migrated from resources/views/Views/lucknow-ram-nagri.php
  */
 
-// init.php not found — helpers.php already loaded from bootstrap
+// init.php not found â€” helpers.php already loaded from bootstrap
 
 $page_title = 'Ram Nagri Lucknow | APS Dream Homes';
 $layout = 'modern';
@@ -78,7 +78,7 @@ ob_start();
                     <?php for($i=1; $i<=7; $i++): ?>
                         <div class="col-md-3 col-6">
                             <div class="card border-0 shadow-sm rounded-4 p-3 hover-lift">
-                                <img loading="lazy" src="<?= get_asset_url("amenities/$i.jpg", 'images') ?>" class="img-fluid rounded-3 mb-3" alt="Amenity <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>">
+                                <img />" class="img-fluid rounded-3 mb-3" alt="Amenity <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>">
                                 <p class="mb-0 fw-bold">Amenity <?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?></p>
                             </div>
                         </div>
@@ -92,5 +92,5 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-// Layout (modern.php) not found — render content directly
+// Layout (modern.php) not found â€” render content directly
 echo $content;

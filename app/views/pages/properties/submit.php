@@ -1,4 +1,4 @@
-<div class="page-banner" style="background-image: url('<?= get_asset_url("banner/submit-property-banner.jpg", "images") ?>')">
+﻿<div class="page-banner" style="background-image: url('<?= get_asset_url("banner/submit-property-banner.jpg", "images") ?>')">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -111,7 +111,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Price (G�)</label>
+                                <label class="form-label fw-bold">Price (Gé¦)</label>
                                 <input type="number" name="price" class="form-control" placeholder="Enter Price" value="<?= $is_edit ? h($property['price']) : '' ?>" required>
                             </div>
 
@@ -130,7 +130,7 @@
                             <div class="col-md-12">
                                 <label class="form-label fw-bold">Featured Image</label>
                                 <?php if($is_edit && !empty($property['pimage'])): ?>
-                                    <div class="mb-2"><img loading="lazy" src="<?= BASE_URL ?>public/uploads/property/<?= $property['pimage'] ?>" height="50" class="rounded border"></div>
+                                    <div class="mb-2"><img />public/uploads/property/<?= $property['pimage'] ?>" height="50" class="rounded border"></div>
                                 <?php endif; ?>
                                 <input type="file" class="form-control" name="aimage" <?= $is_edit ? '' : 'required' ?>>
                             </div>

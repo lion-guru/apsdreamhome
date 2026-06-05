@@ -1,4 +1,4 @@
-<div class="container mt-4">
+﻿<div class="container mt-4">
     <nav aria-label="breadcrumb"><ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
         <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/photo-gallery">Gallery</a></li>
@@ -6,7 +6,7 @@
     </ol></nav>
     <div class="row">
         <div class="col-md-8">
-            <img loading="lazy" src="<?php echo BASE_URL . '/' . htmlspecialchars($image['image_path'] ?? ''); ?>" class="img-fluid" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>">
+            <img />" class="img-fluid" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>">
         </div>
         <div class="col-md-4">
             <h3><?php echo htmlspecialchars($image['caption'] ?? 'Gallery Image'); ?></h3>

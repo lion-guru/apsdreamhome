@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $property = $data['property'] ?? null;
 $property_images = $data['property_images'] ?? [];
 $related = $data['related_properties'] ?? [];
@@ -23,7 +23,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                             <?php foreach ($images as $i => $img):
                             ?>
                                 <div class="carousel-item <?php echo $i === 0 ? 'active' : ''; ?>">
-                                    <img loading="lazy" src="<?php echo htmlspecialchars($img['image_path'] ?? $property['image_url'] ?? 'https://via.placeholder.com/800x400'); ?>"
+                                    <img />"
                                         class="d-block w-100 gallery-trigger" style="height: 400px; object-fit: cover; cursor: pointer;"
                                         alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>"
                                         onclick="openLightbox(<?php echo $i; ?>)">
@@ -43,7 +43,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                     <?php if (count($images) > 1): ?>
                     <div class="d-flex gap-1 mt-1 overflow-auto">
                         <?php foreach ($images as $i => $img): ?>
-                        <img loading="lazy" src="<?php echo htmlspecialchars($img['image_path']); ?>"
+                        <img />"
                             class="rounded" style="height: 60px; width: 80px; object-fit: cover; cursor: pointer; border: 2px solid <?php echo $i === 0 ? '#0d6efd' : 'transparent'; ?>;"
                             onclick="$('#propertyCarousel').carousel(<?php echo $i; ?>); openLightbox(<?php echo $i; ?>);"
                             alt="Thumbnail">
@@ -76,7 +76,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                         <div class="row mb-4">
                             <?php if (!empty($property['price'])): ?>
                                 <div class="col-md-4 text-center">
-                                    <h4 class="text-primary mb-0">₹<?php echo number_format($property['price']); ?></h4>
+                                    <h4 class="text-primary mb-0">â‚¹<?php echo number_format($property['price']); ?></h4>
                                     <small class="text-muted"><?php echo $property['price_type'] ?? 'Total Price'; ?></small>
                                 </div>
                             <?php endif; ?>
@@ -196,7 +196,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                         <div class="d-grid gap-2">
                             <?php if (isset($property) && !empty($property['price'])): ?>
                                 <a href="<?= BASE_URL ?>/payment/initiate?property_id=<?= $property['id'] ?? 0 ?>&amount=<?= $property['price'] ?? 0 ?>" class="btn btn-success btn-lg w-100 mb-2">
-                                    <i class="fas fa-credit-card me-2"></i>Buy Now - ₹<?= number_format($property['price'] ?? 0) ?>
+                                    <i class="fas fa-credit-card me-2"></i>Buy Now - â‚¹<?= number_format($property['price'] ?? 0) ?>
                                 </a>
                             <?php endif; ?>
                             <a href="tel:+919277121112" class="btn btn-success">
@@ -216,11 +216,11 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                                 <li class="list-group-item">
                                     <a href="/properties/<?php echo $rel['id']; ?>" class="text-decoration-none">
                                         <div class="d-flex">
-                                            <img loading="lazy" src="<?php echo htmlspecialchars($rel['image_url'] ?? 'https://via.placeholder.com/60'); ?>" class="img-fluid"
+                                            <img />" class="img-fluid"
                                                 class="rounded me-2" style="width: 60px; height: 45px; object-fit: cover;">
                                             <div>
                                                 <small class="fw-bold"><?php echo htmlspecialchars($rel['title'] ?? $rel['name'] ?? 'Property'); ?></small>
-                                                <br><small class="text-primary">₹<?php echo number_format($rel['price'] ?? 0); ?></small>
+                                                <br><small class="text-primary">â‚¹<?php echo number_format($rel['price'] ?? 0); ?></small>
                                             </div>
                                         </div>
                                     </a>

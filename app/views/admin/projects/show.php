@@ -1,4 +1,4 @@
-<?php $pageTitle = 'Project Details'; ?>
+﻿<?php $pageTitle = 'Project Details'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -48,7 +48,7 @@
             </div>
             <?php if ($project['image_url']): ?>
             <div class="card shadow-sm border-0">
-                <div class="card-body p-0"><img loading="lazy" src="<?= $project['image_url'] ?>" class="img-fluid rounded" alt="<?= $project['name'] ?>" style="width:100%"></div>
+                <div class="card-body p-0"><img />" class="img-fluid rounded" alt="<?= $project['name'] ?>" style="width:100%"></div>
             </div>
             <?php endif; ?>
         </div>
