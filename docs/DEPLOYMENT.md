@@ -846,4 +846,163 @@ docker stats
 
 ---
 
+## Appendix D: AWS S3 Storage Setup
+
+The application ships with a swappable storage layer (`App\Services\Storage\StorageManager`).
+By default it uses local disk; flipping `STORAGE_DRIVER=s3` routes every upload and backup
+through the `S3Storage` adapter (which uses AWS Signature V4 - no SDK dependency).
+
+### D.1 Create the S3 bucket
+
+1. **Open the S3 console** at <https://s3.console.aws.amazon.com/s3/>.
+2. Click **Create bucket** and configure:
+   - **Bucket name**: `apsdreamhome-uploads` (must be globally unique - pick your own).
+   - **Region**: same as your EC2/ECS region (e.g. `ap-south-1` for Mumbai, `us-east-1` for N. Virginia).
+   - **Object Ownership**: ACLs disabled (recommended).
+   - **Block Public Access**: ON for private buckets, OFF only if you serve via CloudFront.
+   - **Bucket Versioning**: Enabled (cheap insurance against accidental deletes).
+   - **Default encryption**: SSE-S3 (AES-256). Free, no performance cost.
+   - **Tags**: at minimum `Project=apsdreamhome`, `Env=production`.
+3. Click **Create bucket**.
+
+### D.2 Create an IAM user with least privilege
+
+**Never use root credentials.** Create a dedicated IAM user for the app:
+
+1. Open <https://console.aws.amazon.com/iam/> → **Users** → **Add users**.
+2. **User name**: `apsdreamhome-s3-app`.
+3. **Access type**: ✅ Programmatic access. ❌ Console access (not needed).
+4. **Permissions**: attach the following inline policy (replace `apsdreamhome-uploads` with your bucket name):
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": [
+           "s3:PutObject",
+           "s3:GetObject",
+           "s3:DeleteObject",
+           "s3:ListBucket",
+           "s3:HeadObject",
+           "s3:CopyObject",
+           "s3:AbortMultipartUpload",
+           "s3:ListMultipartUploadParts"
+         ],
+         "Resource": [
+           "arn:aws:s3:::apsdreamhome-uploads",
+           "arn:aws:s3:::apsdreamhome-uploads/*"
+         ]
+       }
+     ]
+   }
+   ```
+5. **Save** the Access Key ID and Secret Access Key shown on the confirmation page.
+   The secret is shown only once.
+
+### D.3 Configure CORS (only if browser-side PUTs to S3)
+
+The app uploads via the PHP backend, so CORS is **not required for normal operation**.
+If you later add direct browser uploads, add this CORS rule on the bucket:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration>
+  <CORSRule>
+    <AllowedOrigin>https://yourdomain.com</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedMethod>POST</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+    <ExposeHeader>ETag</ExposeHeader>
+    <MaxAgeSeconds>3000</MaxAgeSeconds>
+  </CORSRule>
+</CORSConfiguration>
+```
+
+### D.4 Lifecycle policy: auto-delete old backups (90 days)
+
+1. In the S3 console, open your bucket → **Management** → **Create lifecycle rule**.
+2. **Rule name**: `expire-old-backups`.
+3. **Scope**: Prefix `backups/`.
+4. **Lifecycle rule actions**:
+   - Transition objects to **Infrequent Access** after 30 days.
+   - Transition to **Glacier Instant Retrieval** after 60 days.
+   - **Expire** (delete) after 90 days.
+5. Save. The rule runs once per day.
+
+### D.5 CloudFront CDN in front of S3 (optional, recommended for media)
+
+For public read access (property images, blog thumbnails) put CloudFront in front:
+
+1. Open <https://console.aws.amazon.com/cloudfront/> → **Create distribution**.
+2. **Origin domain**: select your bucket (`apsdreamhome-uploads.s3.ap-south-1.amazonaws.com`).
+3. **Origin access**: **Origin access control settings (recommended)** → **Create new OAC**.
+   Copy the auto-generated bucket policy and paste it into the S3 bucket's permissions.
+4. **Viewer protocol policy**: **Redirect HTTP to HTTPS**.
+5. **Allowed HTTP methods**: GET, HEAD, OPTIONS.
+6. **Cache policy**: `CachingOptimized` (built-in) or a custom policy with `?v=` query strings respected.
+7. **Price class**: `Use all edge locations` for global, or `Use only North America and Europe` for ~30% cheaper.
+8. **Alternate domain name (CNAME)**: `cdn.yourdomain.com`. Add the certificate in ACM (`us-east-1`).
+9. **Default root object**: leave blank.
+10. Click **Create distribution**. Provisioning takes ~5 minutes.
+
+In your app, set the CDN URL via env (after update):
+
+```env
+AWS_CLOUDFRONT_DOMAIN=cdn.yourdomain.com
+```
+
+The `S3Storage::url()` method will return the CloudFront URL when this is set.
+
+### D.6 Cost estimation (rough)
+
+| Resource | Quantity (small) | Price (USD/mo, ap-south-1) |
+|----------|------------------|---------------------------|
+| S3 Standard storage | 100 GB | ~$2.30 |
+| S3 PUT/COPY/POST | 100K | ~$0.50 |
+| S3 GET | 1M | ~$0.40 |
+| CloudFront egress | 100 GB | ~$8.50 |
+| Glacier Instant | 50 GB (after 30d) | ~$0.80 |
+| **Total** | | **~$12.50** |
+
+For a small/medium production app, expect **$10-30/month** in storage + CDN costs.
+Enable the **AWS Free Tier** for the first 12 months (5 GB S3, 15 GB CloudFront, 15M requests).
+
+### D.7 Using S3-compatible services (MinIO, DigitalOcean Spaces, Cloudflare R2)
+
+The `S3Storage` adapter works with any S3-compatible service. Just set:
+
+```env
+STORAGE_DRIVER=s3
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=your-bucket
+AWS_ENDPOINT=https://nyc3.digitaloceanspaces.com   # or your MinIO/R2 endpoint
+AWS_S3_USE_PATH_STYLE=true                          # required for MinIO/Spaces
+```
+
+Path-style addressing is automatically enabled when `AWS_ENDPOINT` is set.
+
+### D.8 Verifying the setup
+
+1. Open `https://yourdomain.com/admin/storage` in your browser.
+2. The **AWS S3** card should show **Configured** with bucket + region.
+3. Click **Test Connection** → a 1-byte file is uploaded, fetched, and deleted.
+4. Click **View Bucket (first 10)** → you should see the test object's key briefly.
+5. Upload a property image via the admin UI → confirm it lands in S3.
+
+For end-to-end verification, run:
+
+```bash
+S3_TEST_MODE=true php testing/test_s3_storage.php
+```
+
+The suite runs 53 tests when no creds are set, and 70+ tests against real S3 with creds.
+Exit code 0 means all pass.
+
+---
+
 **Happy deploying!** Questions? Open an issue on GitHub or ping the DevOps channel.

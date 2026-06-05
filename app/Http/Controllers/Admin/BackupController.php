@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Services\BackupRestoreService;
 use App\Core\Database\Database;
+use App\Services\Storage\StorageManager;
 
 /**
  * Backup management UI + REST endpoints.
@@ -227,6 +228,116 @@ class BackupController extends AdminController
         } catch (\Exception $e) {
             $this->setFlash('error', 'Download failed: ' . $e->getMessage());
             $this->redirect('/admin/backup');
+        }
+    }
+
+    /**
+     * POST /admin/backup/to-s3
+     * Uploads an existing local backup to S3.
+     */
+    public function toS3()
+    {
+        $this->requireAdmin();
+        $id = (int) ($_POST['backup_id'] ?? $_GET['backup_id'] ?? 0);
+        if (!$id) {
+            $this->setFlash('error', 'Missing backup_id');
+            $this->redirect('/admin/backup');
+            return;
+        }
+        try {
+            $db = Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT id, file_path, status FROM system_backups WHERE id = ?");
+            $stmt->execute([$id]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$row || empty($row['file_path']) || !is_file($row['file_path'])) {
+                $this->setFlash('error', "Backup #{$id} file not found on local disk");
+                $this->redirect('/admin/backup');
+                return;
+            }
+
+            $storage = StorageManager::getInstance();
+            if (!$storage->isS3Enabled()) {
+                $this->setFlash('error', 'S3 is not configured or not enabled. Set STORAGE_DRIVER=s3 and AWS_* env vars.');
+                $this->redirect('/admin/backup');
+                return;
+            }
+
+            $localPath = $row['file_path'];
+            $key = 'backups/' . date('Y/m/d') . '/' . basename($localPath);
+            $result = $storage->put($key, file_get_contents($localPath), [
+                'ContentType'   => 'application/sql',
+                'Cache-Control' => 'private, no-cache',
+            ]);
+            if (empty($result['success'])) {
+                $this->setFlash('error', 'S3 upload failed: ' . ($result['error'] ?? 'unknown'));
+                $this->redirect('/admin/backup');
+                return;
+            }
+
+            // Persist S3 location on the row.
+            try {
+                $stmt = $db->prepare("UPDATE system_backups SET s3_key = ?, s3_uploaded_at = NOW() WHERE id = ?");
+                $stmt->execute([$key, $id]);
+            } catch (\Throwable $e) {
+                // column may not exist - log and continue
+                error_log('BackupController::toS3: column update failed: ' . $e->getMessage());
+            }
+
+            $this->setFlash('success', "Backup #{$id} uploaded to S3 as {$key} (" . $this->humanBytes($result['size'] ?? 0) . ")");
+        } catch (\Throwable $e) {
+            $this->setFlash('error', 'S3 upload failed: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/backup');
+    }
+
+    /**
+     * GET /admin/backup/from-s3
+     * Returns a JSON list of S3 backup objects under the backups/ prefix.
+     */
+    public function fromS3()
+    {
+        $this->requireAdmin();
+        try {
+            $storage = StorageManager::getInstance();
+            $prefix = trim($_GET['prefix'] ?? 'backups/', '/');
+            $files = $storage->listFiles($prefix . '/');
+            $this->jsonResponse([
+                'success' => true,
+                'driver'  => $storage->getDriverName(),
+                'prefix'  => $prefix,
+                'count'   => count($files),
+                'files'   => $files,
+            ]);
+        } catch (\Throwable $e) {
+            $this->jsonResponse([
+                'success' => false,
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /admin/backup/s3-download?key=...
+     * Returns a presigned URL for downloading an S3 backup object.
+     */
+    public function s3Download()
+    {
+        $this->requireAdmin();
+        $key = trim($_GET['key'] ?? '', '/');
+        if ($key === '') {
+            $this->jsonResponse(['success' => false, 'error' => 'Missing key'], 400);
+            return;
+        }
+        try {
+            $storage = StorageManager::getInstance();
+            $url = $storage->temporaryUrl($key, 30);
+            if ($url === null) {
+                $this->jsonResponse(['success' => false, 'error' => 'Could not generate URL'], 500);
+                return;
+            }
+            $this->jsonResponse(['success' => true, 'url' => $url, 'expires_in_minutes' => 30]);
+        } catch (\Throwable $e) {
+            $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
