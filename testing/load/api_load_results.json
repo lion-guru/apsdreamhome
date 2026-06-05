@@ -1,0 +1,26 @@
+{
+    "meta": {
+        "test_name": "APS Dream Home API Load",
+        "timestamp": "2026-06-05T13:20:09+02:00",
+        "base_url": "http://localhost/apsdreamhome",
+        "api_path": "/api/mobile/dashboard",
+        "iterations": 100,
+        "authenticated": true
+    },
+    "summary": {
+        "wall_time_s": 5.507,
+        "throughput_rps": 18.16,
+        "avg_ms": 55.1,
+        "p50_ms": 40.8,
+        "p95_ms": 107.9,
+        "p99_ms": 220.6,
+        "errors": 0,
+        "rate_limited": 70,
+        "first_429_at": 31,
+        "total_bytes": 6000
+    },
+    "status_distribution": {
+        "401": 30,
+        "429": 70
+    }
+}
