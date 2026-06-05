@@ -1,331 +1,295 @@
 # APS Dream Home
 
-## 🏠 Project Overview
+> **North India's complete real-estate platform** — properties, plots, MLM network, AI agents, finance & ops, all in one custom-built PHP MVC stack.
 
-APS Dream Home is a comprehensive real estate and MLM (Multi-Level Marketing) platform built with a custom PHP MVC architecture. The platform provides property management, agent services, customer relationship management, and a sophisticated MLM network system.
-
-## 🏗️ Architecture
-
-### **Custom MVC Framework**
-- **Framework**: Pure PHP Custom MVC (NOT Laravel)
-- **Database**: Custom PDO wrapper with prepared statements
-- **Configuration**: JSON-based configuration system
-- **Session**: Custom session management
-- **Security**: Enterprise-grade security with Argon2ID hashing
-- **Views**: Pure PHP with includes (NO Blade)
-
-### **Directory Structure**
-```
-apsdreamhome/
-├── app/
-│   ├── Core/                    # Custom framework core
-│   │   ├── Database/           # Custom database layer
-│   │   ├── Config.php          # Custom config system
-│   │   ├── Controller.php       # Custom base controller
-│   │   ├── Session/            # Custom session system
-│   │   └── Security/          # Custom security
-│   ├── Http/Controllers/       # Web controllers
-│   ├── Services/               # Business logic services
-│   ├── Models/                # Data models
-│   ├── Helpers/               # Helper functions
-│   └── views/                 # View files (.php only)
-├── config/
-│   ├── bootstrap.php           # Custom bootstrap
-│   ├── app_config.json        # JSON configuration
-│   └── database.php           # Database configuration
-├── database/                  # Database migrations and seeds
-├── public/                    # Public web assets
-├── storage/                   # File storage
-├── tests/                     # Test suites
-└── vendor/                     # Composer dependencies
-```
-
-## 🚀 Features
-
-### **Real Estate Management**
-- Property listing and management
-- Agent dashboard and performance tracking
-- Lead management and conversion tracking
-- Customer relationship management
-- Commission calculation and tracking
-
-### **MLM System**
-- Multi-level network management
-- Binary tree structure
-- Rank calculation and progression
-- Commission distribution (binary, unilevel, matrix)
-- Team performance analytics
-- Referral system
-
-### **Security Features**
-- Modern password hashing (Argon2ID)
-- CSRF token validation
-- Rate limiting with configurable windows
-- Input sanitization and validation
-- SQL injection prevention
-- XSS protection
-- IP blocking and monitoring
-- Security event logging
-
-### **Communication**
-- WhatsApp template management
-- Email notifications
-- Team messaging system
-- Multi-language support (English, Hindi, Spanish, French, Arabic)
-
-### **Admin Features**
-- Comprehensive admin dashboard
-- User management and permissions
-- System monitoring and health checks
-- Performance analytics and reporting
-- Security monitoring and alerts
-
-## 🛠️ Technical Stack
-
-### **Backend**
-- **Language**: PHP 8+
-- **Database**: MySQL with custom PDO wrapper
-- **Authentication**: Custom session-based authentication
-- **API**: RESTful API with JSON responses
-- **Caching**: File-based caching system
-
-### **Frontend**
-- **Mobile**: React Native
-- **Web**: Pure PHP with JavaScript
-- **Styling**: TailwindCSS
-- **Icons**: Lucide icons
-- **Charts**: Chart.js
-
-### **Development Tools**
-- **Package Manager**: Composer
-- **Testing**: PHPUnit
-- **Code Quality**: PHPStan
-- **Documentation**: Inline documentation
-
-## 📊 Project Status
-
-### **Migration Status**
-- **✅ Phase 5**: Core infrastructure migration completed
-- **✅ Phase 6A**: Critical infrastructure migration completed
-- **✅ Phase 6B**: Business logic migration completed
-- **✅ Phase 6C**: Utility migration completed
-- **✅ Phase 7**: Final cleanup and documentation completed
-
-### **Code Quality**
-- **Zero Laravel Dependencies**: Pure Custom MVC implementation
-- **Security Standards**: Enterprise-grade security implemented
-- **Error Handling**: Comprehensive exception handling
-- **Database Security**: Prepared statements everywhere
-- **Test Coverage**: Comprehensive test suites
-
-## 🚀 Installation
-
-### **Prerequisites**
-- PHP 8.0 or higher
-- MySQL 5.7 or higher
-- Composer
-- Web server (Apache/Nginx)
-
-### **Setup Instructions**
-1. **Clone Repository**
-   ```bash
-   git clone <repository-url>
-   cd apsdreamhome
-   ```
-
-2. **Install Dependencies**
-   ```bash
-   composer install
-   ```
-
-3. **Configure Environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database credentials
-   ```
-
-4. **Database Setup**
-   ```bash
-   # Import database schema
-   mysql -u root -p database_name < database/schema.sql
-   ```
-
-5. **Configure Web Server**
-   - Document root: `public/`
-   - Enable mod_rewrite (for Apache)
-   - Set up virtual host
-
-## 🔧 Configuration
-
-### **Environment Variables**
-```env
-APP_NAME=APS Dream Home
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://your-domain.com
-
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=apsdreamhome
-DB_USERNAME=root
-DB_PASSWORD=your_password
-```
-
-### **Application Configuration**
-Configuration is managed through `config/app_config.json`:
-- Database settings
-- Security settings
-- Cache configuration
-- MLM parameters
-- Email settings
-
-## 🧪 Testing
-
-### **Run Tests**
-```bash
-# Run all tests
-./vendor/bin/phpunit
-
-# Run specific test suite
-./vendor/bin/phpunit tests/Feature/
-
-# Run with coverage
-./vendor/bin/phpunit --coverage-html
-```
-
-### **Test Structure**
-```
-tests/
-├── Feature/          # Feature tests
-├── Unit/             # Unit tests
-└── Integration/       # Integration tests
-```
-
-## 📝 Development
-
-### **Code Standards**
-- PSR-4 autoloading
-- PSR-12 coding standards
-- Comprehensive inline documentation
-- Type hints where applicable
-- Error and exception handling
-
-### **Git Workflow**
-1. Create feature branch
-2. Make changes with comprehensive testing
-3. Commit with descriptive messages
-4. Create pull request
-5. Code review and merge
-
-### **Debugging**
-- Error logging to `logs/` directory
-- Debug mode via `.env` configuration
-- Performance monitoring
-- Security event tracking
-
-## 🔒 Security
-
-### **Implemented Security Measures**
-- **Authentication**: Argon2ID password hashing, session security
-- **Input Validation**: Comprehensive sanitization and validation
-- **CSRF Protection**: Token-based CSRF protection
-- **Rate Limiting**: Configurable rate limiting per IP/user
-- **SQL Injection Prevention**: Prepared statements everywhere
-- **XSS Protection**: Input filtering and output encoding
-- **IP Blocking**: Dynamic IP blocking for suspicious activities
-- **Security Monitoring**: Real-time security event logging
-
-### **Security Best Practices**
-- Regular security audits
-- Dependency updates
-- Environment-specific configurations
-- Secure password policies
-- Multi-factor authentication support
-
-## 📈 Performance
-
-### **Optimization Features**
-- Database query optimization
-- Caching layer for frequently accessed data
-- Lazy loading for large datasets
-- Efficient file handling
-- Memory management
-
-### **Monitoring**
-- Response time tracking
-- Database query performance
-- Memory usage monitoring
-- Error rate tracking
-
-## 🌐 API Documentation
-
-### **Authentication Endpoints**
-- `POST /api/auth/login` - User authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/logout` - User logout
-- `POST /api/auth/refresh` - Token refresh
-
-### **MLM Endpoints**
-- `GET /api/mlm/dashboard` - MLM dashboard data
-- `GET /api/mlm/network` - Network tree data
-- `POST /api/mlm/commission` - Add commission
-- `GET /api/mlm/commissions` - Get commission history
-
-### **Property Endpoints**
-- `GET /api/properties` - List properties
-- `POST /api/properties` - Create property
-- `PUT /api/properties/{id}` - Update property
-- `DELETE /api/properties/{id}` - Delete property
-
-## 📱 Mobile Applications
-
-### **React Native App**
-- Cross-platform mobile application
-- Real-time property listings
-- Agent dashboard on mobile
-- Push notifications
-- Offline mode support
-
-### **Features**
-- Property search and filtering
-- Agent communication
-- Document management
-- Location-based services
-
-## 🤝 Contributing
-
-### **Guidelines**
-1. Follow PSR standards
-2. Write comprehensive tests
-3. Update documentation
-4. Use semantic versioning
-5. Follow security best practices
-
-### **Pull Request Process**
-1. Fork repository
-2. Create feature branch
-3. Implement changes with tests
-4. Update documentation
-5. Submit pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Support
-
-### **Documentation**
-- API Documentation: `/docs/api`
-- Developer Guide: `/docs/developer`
-- Deployment Guide: `/docs/deployment`
-
-### **Contact**
-- Technical Support: support@apsdreamhome.com
-- Business Inquiries: info@apsdreamhome.com
-- Website: https://apsdreamhome.com
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Redis](https://img.shields.io/badge/Redis-7.x-DC382D?logo=redis&logoColor=white)](https://redis.io/)
+[![Docker](https://img.shields.io/badge/Docker-Production_Ready-2496ED?logo=docker&logoColor=white)](README.DOCKER.md)
+[![License](https://img.shields.io/badge/License-Proprietary-lightgrey)](#license)
 
 ---
 
-**Last Updated**: March 16, 2026  
-**Version**: 1.0.0  
-**Status**: Production Ready ✅
+## What Is APS Dream Home
+
+APS Dream Home is a **production-grade enterprise ERP** built specifically for real-estate and colony-development companies. It combines a customer-facing marketplace, an admin control panel, an MLM associate network, AI-powered agents, finance & HR modules, marketing automation, and a real-time WebSocket notification system.
+
+- **300+ controllers**, **700+ views**, **1,700+ routes**, **281+ database tables**.
+- **165 E2E checks** pass on every commit (Playwright master suite).
+- **Custom PHP 8.2 MVC framework** — no Laravel/Symfony, full control.
+- **Self-learning AI** (pattern + Bayesian + linear regression) — no OpenAI dependency.
+- **Multi-language UI** (English + Hindi) with 815 translation keys.
+
+---
+
+## Key Features
+
+### Customer Marketplace
+- Property browse with **8 advanced filters** (price, BHK, area, furnishing, etc.).
+- **Saved searches** with daily email-alert digest.
+- **Favorites** + **comparison tool** (up to 4 properties side-by-side).
+- **Property auctions** (English, Sealed, Dutch, Reserve types).
+- **Visit booking** with FOR-UPDATE locking (no double-booking).
+- **Reviews + testimonials** with admin moderation.
+- **AI chatbot** (Hindi + English, 102 trained intent patterns).
+- **Live chat** with human-agent handoff.
+- **Property submission** with image upload, auto-optimization, EXIF stripping.
+
+### Admin Panel
+- Role-based access for 8 user types (super-admin, admin, manager, employee, agent, associate, customer, farmer).
+- **Lead kanban** drag-and-drop pipeline with auto-scoring.
+- **Booking workflow** with payment tracking, refunds, installments.
+- **Finance** — invoices, GST returns, cash-flow projection, bank reconciliation.
+- **HRM** — attendance, payroll, leaves, recruitment, performance reviews.
+- **MLM management** — network tree, ranks, commission engine, payouts.
+- **Marketing** — multi-channel campaigns (email/SMS/WhatsApp/push), drip sequences.
+- **Reports** — sales funnel, agent performance, conversion, custom builder.
+- **Real-time analytics** dashboard refreshing every 60 seconds.
+- **Audit log** — tamper-proof trail of every admin action.
+- **System health** monitoring (PHP, DB, disk, memory, cache).
+
+### Platform
+- **Redis + file-cache fallback** (transparent, works without Redis installed).
+- **WebSocket server** (Ratchet) on port 8080 for real-time notifications.
+- **Mobile JWT API** under `/api/mobile/*`.
+- **REST API** with API keys, scopes, and rate-limiting.
+- **Webhooks** (HMAC-SHA256 signed) for external integrations.
+- **Cron automation** (daily reports, alerts, AI retraining).
+- **Bulk import/export** CSV (UTF-8 BOM for Excel).
+- **2FA / TOTP** (pure PHP, no library) with QR codes + 8 backup codes.
+- **Image optimization** — auto-resize to 1920px max, WebP sibling, EXIF stripped.
+- **GZIP + browser caching + ETag** (60-80% smaller responses).
+- **Lazy loading** on all images across 102 view files.
+- **HSTS + CSP + clickjacking protection** baked into `.htaccess`.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Language** | PHP 8.2+ (strict types, typed properties) |
+| **Web Server** | Apache 2.4+ (mod_rewrite, mod_deflate, mod_expires) |
+| **Database** | MySQL 8.0 (InnoDB, utf8mb4) |
+| **Cache** | Redis 7.x with file fallback (`storage/cache/`) |
+| **WebSocket** | Ratchet (PHP), port 8080 |
+| **JS Front-end** | Vanilla JS, Bootstrap 5.3.3, Font Awesome 6.5.1, Chart.js |
+| **Email** | PHP `mail()` or SMTP (configurable) |
+| **SMS / WhatsApp** | Twilio, Vapi, MSG91 (pluggable) |
+| **Payments** | Razorpay, Paytm, UPI direct |
+| **Testing** | Playwright (E2E), bare PHP scripts (unit) |
+| **Deployment** | Docker Compose (5 services + 2 sidecars) |
+| **CI / Hooks** | Git pre-commit (PHP syntax), pre-push (PHP syntax + tests) |
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- PHP **8.2+** with `pdo_mysql, mbstring, gd, openssl, curl, zip, intl, sockets`.
+- MySQL **8.0+** (or MariaDB 10.6+).
+- Apache 2.4+ with `mod_rewrite`.
+- (Optional) Redis 7.x.
+- (Optional) Composer for the Ratchet WebSocket server.
+
+### Local Install (Windows / XAMPP)
+
+```powershell
+# 1. Clone
+git clone <repo> C:\xampp\htdocs\apsdreamhome
+cd C:\xampp\htdocs\apsdreamhome
+
+# 2. Configure DB
+copy .env.example .env
+# Edit .env: DB_HOST=127.0.0.1, DB_PORT=3307, DB_DATABASE=apsdreamhome
+
+# 3. Create database
+& "C:\xampp\mysql\bin\mysql.exe" -h 127.0.0.1 -P 3307 -u root -e "CREATE DATABASE apsdreamhome CHARACTER SET utf8mb4"
+
+# 4. Import schema + data
+& "C:\xampp\mysql\bin\mysql.exe" -h 127.0.0.1 -P 3307 -u root apsdreamhome < database/apsdreamhome_backup_nofk.sql
+
+# 5. (Optional) Composer for WebSocket
+composer install
+
+# 6. Start
+# - Start Apache + MySQL from XAMPP Control Panel
+# - Visit http://localhost/apsdreamhome/
+```
+
+### Local Install (Linux / Ubuntu)
+
+```bash
+sudo apt install php8.2 php8.2-{mysql,mbstring,gd,curl,zip,intl,sockets} \
+                 mysql-server apache2 redis-server
+sudo a2enmod rewrite deflate expires headers
+git clone <repo> /var/www/html/apsdreamhome
+cd /var/www/html/apsdreamhome
+cp .env.example .env  # edit DB credentials
+mysql -u root -p < database/apsdreamhome_backup_nofk.sql
+composer install
+sudo systemctl restart apache2
+```
+
+### Production with Docker
+
+```bash
+cp production.env.example production.env  # edit secrets
+./deploy-to-production.sh
+make smoke-test
+```
+
+Full Docker guide: **[README.DOCKER.md](README.DOCKER.md)**.
+
+---
+
+## Architecture (Text Diagram)
+
+```
+                    ┌──────────────────────────────────────┐
+                    │           USER (Browser / App)        │
+                    └──────────────────┬───────────────────┘
+                                       │ HTTPS
+        ┌──────────────────────────────┴──────────────────────────────┐
+        │                       Nginx (TLS 1.3)                       │
+        │   • Rate-limiting (api: 10r/s, login: 5r/min, general: 30)  │
+        │   • GZIP + browser caching + HSTS + CSP                     │
+        └──────────────────────────────┬──────────────────────────────┘
+                                       │
+              ┌────────────────────────┼─────────────────────────┐
+              │                        │                         │
+              ▼                        ▼                         ▼
+   ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
+   │  PHP-Apache App  │    │  WebSocket (php) │    │   Static Assets   │
+   │  • Front Controller│   │  • Ratchet :8080  │    │  • /uploads      │
+   │  • MVC Router    │    │  • Real-time push │    │  • /assets       │
+   │  • 300+ Ctrls    │    └──────────────────┘    │  • Long cache    │
+   │  • Image Optimizer│                            └──────────────────┘
+   └────────┬─────────┘
+            │
+   ┌────────┴─────────┐
+   │   Services Layer  │  Auth · Cache · Notification · AI · Email · Webhook ·
+   │   (30+ services)  │  Audit · Bulk Ops · 2FA · Image · Saved Search · …
+   └────────┬─────────┘
+            │
+            ▼
+   ┌──────────────────┐         ┌──────────────────┐
+   │  MySQL 8 (InnoDB)│ ◄────► │ Redis 7 (Cache)  │  ←─ falls back to
+   │  281+ tables     │         │  Pub-sub events  │     file cache
+   └──────────────────┘         └──────────────────┘
+```
+
+### Front-Controller Flow
+
+1. Apache rewrites all requests to `public/index.php` (except static files).
+2. `index.php` boots the **Autoloader** (PSR-4 in `app/`, plus legacy class map).
+3. Starts **Session**, connects **Database**, loads **Router**.
+4. **Router** matches the URL against `routes/web.php` then `routes/api.php`.
+5. The matched **Controller@method** is instantiated and called.
+6. Controller uses **Services** for business logic, **Models** for data, **render()** for views.
+7. **Layout** (`base.php` / `admin.php` / `customer.php`) wraps the content.
+8. Response sent → Nginx → User.
+
+---
+
+## Documentation
+
+| Doc | Audience | Length |
+|-----|----------|--------|
+| **[User Guide](docs/USER_GUIDE.md)** | End customers | 2,000+ words |
+| **[Admin Manual](docs/ADMIN_MANUAL.md)** | Admins / managers / operations | 3,000+ words |
+| **[Developer Guide](docs/DEVELOPER_GUIDE.md)** | Engineers / new contributors | 1,500+ words |
+| **[API Reference](docs/API.md)** | API consumers / integrators | Full route list + protocols |
+| **[Docker Guide](README.DOCKER.md)** | DevOps / SREs | Production deployment |
+| **[AGENTS.md](AGENTS.md)** | Past contributors / changelog | Session-by-session history |
+
+---
+
+## Project Stats (as of June 2026)
+
+| Metric | Value |
+|--------|-------|
+| Database tables | **281+** |
+| Routes | **1,700+** (web.php + api.php) |
+| Controllers | **300+** |
+| Models | **146+** |
+| View files | **700+** |
+| Services | **30+** |
+| Translation keys | **815** (en + hi parity) |
+| E2E tests | **164/165 pass** (1 expected GodMode 403) |
+| Languages | English, Hindi |
+| Performance | **84.7% smaller** properties page after GZIP (142KB → 21.6KB) |
+| Image optimization | **79% smaller** JPEG, **91% smaller** WebP |
+
+---
+
+## Common Commands
+
+```powershell
+# Start XAMPP Apache + MySQL (Windows GUI)
+
+# Start WebSocket server (background)
+Start-Process -FilePath "C:\xampp\php\php.exe" `
+              -ArgumentList "websocket_server.php" `
+              -WorkingDirectory "C:\xampp\htdocs\apsdreamhome" -WindowStyle Hidden
+
+# Run E2E master test (164 checks)
+node testing/visual_tests/E2E_MASTER_TEST.mjs
+
+# PHP syntax check on all modified files
+git diff --name-only --diff-filter=AM HEAD | findstr ".php$" | ForEach-Object { php -l $_ }
+
+# Apply a new migration
+php scripts/<your-migration-script>.php
+
+# Flush all caches
+curl -X POST http://localhost/apsdreamhome/admin/cache/flush
+
+# Test the cron alert system
+php scripts/daily_alerts_cron.php
+```
+
+---
+
+## Contributing
+
+1. **Fork & branch**: `git checkout -b feature/your-feature`.
+2. **Read `AGENTS.md`** for project conventions and recent decisions.
+3. **Follow the patterns** in **[docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)**:
+   - `protected $db`, never `private`.
+   - Always call `parent::__construct()`.
+   - Auth in the controller, not the view.
+   - CSRF token on every POST.
+4. **PHP syntax must pass** (`php -l`) on every file.
+5. **E2E tests must pass** (164/165) before opening a PR.
+6. **Write a short, imperative commit message**: "Feature: ...", "Fix: ...", "Perf: ...".
+
+### Code Style
+
+- PSR-12 PHP coding standard.
+- 4-space indent (no tabs).
+- Use prepared statements; never concatenate SQL.
+- Always `htmlspecialchars()` user input in views.
+- Lazy-load images: `<img src="..." loading="lazy">`.
+- No emojis in committed code unless explicitly asked.
+
+---
+
+## Support
+
+- **Bug reports** → Open an issue on the internal tracker.
+- **Customer support** → support@apsdreamhome.com / +91 7007444842.
+- **Security disclosures** → security@apsdreamhome.com (PGP key on request).
+
+---
+
+## License
+
+Proprietary. © APS Group, 2025-2026. All rights reserved.
+Unauthorized copying, modification, or distribution is strictly prohibited.
+
+---
+
+**Built with care for the Indian real-estate industry.**
+**Last Updated:** June 5, 2026

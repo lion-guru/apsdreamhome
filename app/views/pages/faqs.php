@@ -310,6 +310,30 @@
     </div>
 </section>
 
+<!-- Comprehensive User Guide CTA -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-3 mb-lg-0">
+                <h3 class="mb-2 text-white">
+                    <i class="fas fa-book-open me-2"></i>Need more help?
+                </h3>
+                <p class="lead mb-0 text-white-50">
+                    Read our comprehensive <strong>User Guide</strong> with step-by-step tutorials on
+                    browsing properties, booking visits, saving searches, account settings, security, and more.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="<?php echo BASE_URL; ?>/docs/USER_GUIDE.md"
+                   class="btn btn-light btn-lg text-primary fw-bold"
+                   target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt me-2"></i>Open User Guide
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
 <style>
     .accordion-button {
         font-weight: 600;
