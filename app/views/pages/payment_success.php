@@ -1,6 +1,9 @@
 <?php
 $paymentId = $payment_id ?? '';
 $orderId   = $order_id   ?? '';
+$bookingId = (int)($booking_id ?? 0);
+$baseUrl   = defined('BASE_URL') ? BASE_URL : '';
+$receiptUrl = $bookingId > 0 ? $baseUrl . '/pdf/download/receipt/' . $bookingId : '';
 ?>
 <style>
 .success-shell { max-width: 640px; margin: 4rem auto; padding: 0 1rem; text-align: center; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -42,6 +45,11 @@ $orderId   = $order_id   ?? '';
             <a href="/user/bookings" class="btn-primary">
                 <i class="fas fa-list"></i> View My Bookings
             </a>
+            <?php if ($receiptUrl): ?>
+            <a href="<?= htmlspecialchars($receiptUrl, ENT_QUOTES, 'UTF-8') ?>" class="btn-secondary" target="_blank" rel="noopener">
+                <i class="fas fa-file-pdf"></i> Download Receipt
+            </a>
+            <?php endif; ?>
             <a href="/" class="btn-secondary">
                 <i class="fas fa-home"></i> Continue Browsing
             </a>

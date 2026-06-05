@@ -131,6 +131,9 @@ include __DIR__ . '/../layouts/base.php';
                         <button class="btn btn-outline-light btn-lg" onclick="shareProperty()">
                             <i class="bi bi-share me-2"></i>Share Property
                         </button>
+                        <a href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/pdf/download/brochure/<?php echo (int)($property['id'] ?? 0); ?>" class="btn btn-outline-light btn-lg" target="_blank" rel="noopener">
+                            <i class="bi bi-file-pdf me-2"></i>Download Brochure
+                        </a>
                     </div>
 
                     <div class="mt-4 pt-4 border-top border-white border-opacity-10 text-center">

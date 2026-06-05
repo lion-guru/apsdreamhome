@@ -2319,6 +2319,12 @@ $router->get('/admin/voice-agents/live', 'App\\Http\\Controllers\\Admin\\VoiceAg
 $router->post('/admin/voice-agents/transfer-call', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@transferCall');
 $router->post('/admin/voice-agents/hangup-call', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@hangupCall');
 
+// PDF Service (Cluster 2 - 2026-06-05)
+$router->get('/pdf/download/{type}/{id}',                          'App\\Http\\Controllers\\Front\\PdfController@download');
+$router->get('/admin/pdfs',                                        'App\\Http\\Controllers\\Front\\PdfController@adminIndex');
+$router->post('/admin/pdfs/generate',                              'App\\Http\\Controllers\\Front\\PdfController@adminGenerate');
+$router->get('/admin/pdfs/view/{type}/{id}',                       'App\\Http\\Controllers\\Front\\PdfController@adminView');
+
 // ═══════════════════════════════════════════════════
 // VOICE CALL SCHEDULER (Admin)
 // ═══════════════════════════════════════════════════
