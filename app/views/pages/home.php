@@ -7,7 +7,20 @@
                 <h1 class="fw-bold"><?= __('hero_title') ?></h1>
                 <p class="lead mb-4"><?= __('hero_subtitle') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-warning btn-lg"><?= __('hero_cta') ?></a>
+                    <?php
+                        // A/B test: homepage_cta — variant-aware hero CTA copy
+                        $heroVariant = $_SESSION['experiments']['homepage_cta'] ?? null;
+                        $heroCtaText = match ($heroVariant) {
+                            'urgent'   => 'Book Your Plot Now — Limited Inventory!',
+                            'family'   => 'Find Your Family\'s Dream Home Today',
+                            default    => __('hero_cta'),
+                        };
+                    ?>
+                    <a href="<?php echo BASE_URL; ?>/company/projects"
+                       class="btn btn-warning btn-lg"
+                       data-experiment="homepage_cta"
+                       data-variant="<?php echo htmlspecialchars((string) $heroVariant, ENT_QUOTES); ?>"
+                       id="hero-cta"><?= htmlspecialchars($heroCtaText) ?></a>
                     <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-outline-light btn-lg"><?= __('nav_post_property') ?></a>
                 </div>
             </div>
