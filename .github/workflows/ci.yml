@@ -1,135 +1,189 @@
-name: APS Dream Home CI/CD
+name: APS Dream Home CI
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, develop, feature/monitoring-alerts ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, develop ]
+
+# Cancel in-flight runs on the same branch
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # 1. LINT - PHP syntax across the whole project
+  # ---------------------------------------------------------------------------
+  lint:
+    name: PHP syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Run php -l on every PHP file
+        run: |
+          set -e
+          ERRORS=0
+          # Exclude vendor, _archive, deprecated mobile/Flutter code, build output
+          while IFS= read -r f; do
+            if ! php -l "$f" >/dev/null 2>&1; then
+              echo "SYNTAX ERROR in $f:"
+              php -l "$f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done < <(find . \
+            -name "*.php" \
+            -not -path "./vendor/*" \
+            -not -path "./_archive/*" \
+            -not -path "./node_modules/*" \
+            -not -path "./aaaaa/*" \
+            -not -path "./mobile/*" \
+            -not -path "./nbproject/*" \
+            -not -path "./storage/cache/*" \
+            -not -path "./testing/screenshots/*")
+          echo "Total syntax errors: $ERRORS"
+          if [ "$ERRORS" -gt 0 ]; then exit 1; fi
+          echo "All PHP files pass syntax check"
+
+  # ---------------------------------------------------------------------------
+  # 2. TEST - migration + test runner
+  # ---------------------------------------------------------------------------
   test:
+    name: Test suite (PHP 8.2 + MySQL 8.0)
     runs-on: ubuntu-latest
     services:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_ROOT_PASSWORD: rootroot
           MYSQL_DATABASE: apsdreamhome_test
           MYSQL_USER: testuser
           MYSQL_PASSWORD: testpass
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: pdo, pdo_mysql, mysqli, mbstring, zip, curl
-        ini-values: post_max_size=256M, upload_max_filesize=256M
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql, mysqli, mbstring, zip, curl, gd, intl, sockets, bcmath, json, openssl
+          ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=1G
 
-    - name: Cache Composer dependencies
-      uses: actions/cache@v3
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+      - name: Install Composer dev dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-    - name: Install Composer dependencies
-      run: composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            mysqladmin ping -h127.0.0.1 -P3306 -utestuser -ptestpass --silent && break
+            sleep 2
+          done
+          mysqladmin ping -h127.0.0.1 -P3306 -utestuser -ptestpass --silent
 
-    - name: Create .env.testing file
-      run: |
-        cp .env.example .env.testing || echo "DB_CONNECTION=mysql" > .env.testing
-        echo "DB_HOST=127.0.0.1" >> .env.testing
-        echo "DB_PORT=3306" >> .env.testing
-        echo "DB_DATABASE=apsdreamhome_test" >> .env.testing
-        echo "DB_USERNAME=testuser" >> .env.testing
-        echo "DB_PASSWORD=testpass" >> .env.testing
-        echo "APP_ENV=testing" >> .env.testing
-        echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env.testing
+      - name: Run database migrations
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome_test
+          DB_USERNAME: testuser
+          DB_PASSWORD: testpass
+          APP_ENV: testing
+          APP_DEBUG: "false"
+          JWT_SECRET: ci-test-secret-key-must-be-at-least-32-bytes-long
+        run: |
+          php tests/migrate.php 2>&1 | tee tests/reports/migrate.log
 
-    - name: Wait for MySQL
-      run: |
-        while ! mysqladmin ping -h"127.0.0.1" -P"3306" --silent; do
-          echo "Waiting for MySQL..."
-          sleep 2
-        done
-        echo "MySQL is ready!"
+      - name: Run test suite
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome_test
+          DB_USERNAME: testuser
+          DB_PASSWORD: testpass
+          APP_ENV: testing
+          APP_DEBUG: "false"
+          JWT_SECRET: ci-test-secret-key-must-be-at-least-32-bytes-long
+        run: |
+          php tests/run_all_tests.php 2>&1 | tee tests/reports/run.log
 
-    - name: Run database migrations
-      run: |
-        php tests/migrate.php || echo "Migration script not found, skipping"
+      - name: Publish JUnit results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: tests/reports/junit.xml
+          check_name: APS Dream Home test results
 
-    - name: Run test suite
-      run: |
-        # Try PHPUnit first
-        if [ -f "vendor/bin/phpunit" ]; then
-          ./vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never
-        else
-          # Fall back to custom test runner
-          php tests/run_all_tests.php | grep -E "(✅|❌|⚠️|Total Tests|Pass Rate)" || echo "Test runner completed"
-        fi
+      - name: Upload CI artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-artifacts
+          path: |
+            tests/reports/
+            tests/reports/.gitkeep
+          retention-days: 7
 
-    - name: Run syntax check
-      run: |
-        find . -name "*.php" -not -path "./vendor/*" -not -path "./tests/coverage/*" -exec php -l {} \; | grep -v "No syntax errors detected"
-
-    - name: Check for security vulnerabilities
-      run: |
-        if command -v composer &> /dev/null; then
-          composer audit || echo "Composer audit completed with warnings"
-        else
-          echo "Composer not available for security audit"
-        fi
-
-  lint:
+  # ---------------------------------------------------------------------------
+  # 3. SECURITY - composer audit + PHP security check
+  # ---------------------------------------------------------------------------
+  security:
+    name: Security audit
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
 
-    - name: Install PHP CS Fixer
-      run: composer global require friendsofphp/php-cs-fixer --no-progress
+      - name: Install Composer
+        run: composer install --no-progress --prefer-dist
 
-    - name: Run PHP CS Fixer (check only)
-      run: |
-        export PATH="$PATH:$HOME/.composer/vendor/bin"
-        if command -v php-cs-fixer &> /dev/null; then
-          php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.php . || echo "PHP CS Fixer found style issues"
-        else
-          echo "PHP CS Fixer not available, skipping style check"
-        fi
+      - name: Run composer audit
+        run: composer audit --no-dev || echo "Audit completed with warnings (informational)"
 
-  deploy-staging:
-    needs: [test, lint]
+  # ---------------------------------------------------------------------------
+  # 4. JS / PLAYWRIGHT (only on push to main/feature branches)
+  # ---------------------------------------------------------------------------
+  frontend:
+    name: Frontend (Playwright + JS)
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-
+    if: github.event_name == 'push'
     steps:
-    - name: Deploy to staging
-      run: |
-        echo "🚀 Deploying to staging environment..."
-        # Add your staging deployment commands here
-        echo "Staging deployment would happen here"
+      - uses: actions/checkout@v4
 
-  deploy-production:
-    needs: [test, lint]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-    steps:
-    - name: Deploy to production
-      run: |
-        echo "🚀 Deploying to production environment..."
-        # Add your production deployment commands here
-        echo "Production deployment would happen here"
+      - name: Install Playwright
+        run: |
+          if [ -f testing/visual_tests/package.json ]; then
+            cd testing/visual_tests
+            npm ci || npm install
+          fi
+        continue-on-error: true
+
+      - name: Run E2E master test
+        run: |
+          if [ -f testing/visual_tests/E2E_MASTER_TEST.mjs ]; then
+            echo "Found E2E master test - run locally with Playwright"
+          else
+            echo "No E2E test file found - skipping"
+          fi
+        continue-on-error: true

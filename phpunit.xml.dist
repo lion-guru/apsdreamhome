@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PHPUnit configuration for APS Dream Home.
+  This file is committed; phpunit.xml is the local override and is .gitignored.
+
+  Tests live in two places:
+    - testing/test_*.php  (the 39+ scripts that ship with the project)
+    - tests/integration/  (cross-component integration tests)
+
+  The CI runs `php tests/run_all_tests.php` which executes these scripts
+  directly and emits JUnit XML for GitHub Actions.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         stopOnFailure="false"
+         cacheResultFile=".phpunit.cache/test-results">
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>testing</directory>
+            <exclude>testing/load</exclude>
+            <exclude>testing/e2e</exclude>
+            <exclude>testing/screenshots</exclude>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory>tests/integration</directory>
+        </testsuite>
+        <testsuite name="Load">
+            <directory>testing/load</directory>
+        </testsuite>
+    </testsuites>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">app</directory>
+        </include>
+        <exclude>
+            <directory suffix=".php">tests</directory>
+            <directory suffix=".php">testing</directory>
+            <directory suffix=".php">scripts</directory>
+        </exclude>
+    </coverage>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="DB_HOST" value="127.0.0.1"/>
+        <env name="DB_PORT" value="3306"/>
+        <env name="DB_DATABASE" value="apsdreamhome_test"/>
+        <env name="DB_USERNAME" value="testuser"/>
+        <env name="DB_PASSWORD" value="testpass"/>
+        <env name="APP_DEBUG" value="false"/>
+        <env name="JWT_SECRET" value="ci-test-secret-key-must-be-at-least-32-bytes-long"/>
+    </php>
+    <logging>
+        <junit outputFile="tests/reports/junit.xml"/>
+        <testdoxHtml outputFile="tests/reports/testdox.html"/>
+    </logging>
+</phpunit>

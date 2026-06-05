@@ -1,0 +1,2 @@
+# CI artifacts (junit.xml, run.log, migrate.log) land here
+# This directory must exist for the TestRunner to write reports.
