@@ -1422,6 +1422,12 @@ $router->post('/admin/cache/flush',         'App\\Http\\Controllers\\Admin\\Cach
 $router->post('/admin/cache/redis/flush',   'App\\Http\\Controllers\\Admin\\CacheAdminController@flushRedis');
 $router->post('/admin/cache/test',          'App\\Http\\Controllers\\Admin\\CacheAdminController@test');
 
+// Admin Gateway Manager (Twilio + future gateways)
+$router->get('/admin/gateways',                       'App\\Http\\Controllers\\Admin\\GatewayTestController@index');
+$router->post('/admin/gateways/test-twilio',          'App\\Http\\Controllers\\Admin\\GatewayTestController@testTwilio');
+$router->post('/admin/gateways/test-whatsapp',        'App\\Http\\Controllers\\Admin\\GatewayTestController@testWhatsApp');
+$router->get('/admin/gateways/logs/{gateway}',         'App\\Http\\Controllers\\Admin\\GatewayTestController@logs');
+
 // Admin A/B Testing Framework
 $router->get('/admin/experiments',                  'App\\Http\\Controllers\\Admin\\ExperimentController@index');
 $router->get('/admin/experiments/create',           'App\\Http\\Controllers\\Admin\\ExperimentController@create');

@@ -2003,6 +2003,19 @@ class PageController extends BaseController
                         if (move_uploaded_file($_FILES['property_image']['tmp_name'], $targetPath)) {
                             \App\Core\ImageOptimizer::optimizeStatic($targetPath);
                             $imagePath = 'properties/' . $newName;
+                            // Mirror to StorageManager (S3 or local fallback).
+                            try {
+                                \App\Services\Storage\StorageManager::getInstance()->put(
+                                    'assets/images/' . $imagePath,
+                                    file_get_contents($targetPath),
+                                    [
+                                        'ContentType'   => mime_content_type($targetPath) ?: 'image/jpeg',
+                                        'Cache-Control' => 'public, max-age=31536000, immutable',
+                                    ]
+                                );
+                            } catch (\Throwable $e) {
+                                error_log('PageController::listPropertySubmit storage mirror: ' . $e->getMessage());
+                            }
                         }
                     }
                 }
