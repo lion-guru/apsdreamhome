@@ -54,8 +54,12 @@ if (!empty($properties) && is_array($properties)) {
         ];
     }
 }
-// Pass JSON-LD to render() (BaseController picks it up via $data['json_ld'])
-$json_ld = $jsonLd;
+// Pass JSON-LD to layout by injecting it into the $seo array (which was
+// already extracted from $data['seo'] in BaseController::render() before
+// this view file ran). Modifying $seo here makes the JSON-LD visible in
+// base.php / header.php <head>.
+$seo = is_array($seo ?? null) ? $seo : [];
+$seo['json_ld'] = $jsonLd;
 
 // SEO description / keywords (used by BaseController::generateSEO fallback)
 $meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties — plots, flats, villas, farmhouses — from APS Dream Home across India. Verified listings, transparent pricing, RERA compliant.';
@@ -292,7 +296,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                     $imgSrc = BASE_URL . '/assets/images/placeholder/property.svg';
                                 }
                             ?>
-                            <img src="<?= $imgSrc ?>"
+                            <img loading="lazy" src="<?= $imgSrc ?>"
                                  class="card-img-top"
                                  alt="<?= htmlspecialchars($property['name'] ?? '') ?>"
                                  style="height: 200px; object-fit: cover;"

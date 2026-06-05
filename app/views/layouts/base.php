@@ -244,7 +244,7 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
         <div class="ai-chat-popup" id="chatPopup">
             <div class="ai-chat-header">
                 <div class="ai-avatar">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="APS Assistant" onerror="this.style.display='none'">
+                    <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="APS Assistant" onerror="this.style.display='none'">
                     <span class="online-indicator"></span>
                 </div>
                 <div class="ai-header-info">

@@ -208,7 +208,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     <nav class="navbar navbar-expand-xl">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
-                <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo" style="height: 40px; width: auto; max-width: 130px;">
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo" style="height: 40px; width: auto; max-width: 130px;" loading="eager" fetchpriority="high">
             </a>
 
             <!-- Quick Search Bar (Typeahead) -->
