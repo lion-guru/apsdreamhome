@@ -129,7 +129,7 @@ foreach ($plots as $plot) {
                     <div class="col-lg-6">
                         <h5 class="fw-bold mb-3">Colony Layout Map</h5>
                         <div class="text-center">
-                            <img src="/assets/img/suryoday-colony-map-sample.jpg" alt="Suryoday Colony Map" class="plot-map-img mb-3 border img-fluid">
+                            <img loading="lazy" src="/assets/img/suryoday-colony-map-sample.jpg" alt="Suryoday Colony Map" class="plot-map-img mb-3 border img-fluid">
                             <div class="alert alert-info py-2 small">
                                 <i class="fas fa-info-circle me-2"></i>Map numbering matches the table. For an interactive experience, contact our sales team.
                             </div>

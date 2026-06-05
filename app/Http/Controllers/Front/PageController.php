@@ -2001,6 +2001,7 @@ class PageController extends BaseController
                         $newName = 'prop_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
                         $targetPath = $uploadDir . $newName;
                         if (move_uploaded_file($_FILES['property_image']['tmp_name'], $targetPath)) {
+                            \App\Core\ImageOptimizer::optimizeStatic($targetPath);
                             $imagePath = 'properties/' . $newName;
                         }
                     }

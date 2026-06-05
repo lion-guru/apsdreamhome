@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Core\Database\Database;
+use App\Core\ImageOptimizer;
 
 class PropertyImageController extends AdminController
 {
@@ -115,10 +116,13 @@ class PropertyImageController extends AdminController
             
             // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
+                // Optimize uploaded image (resize, strip EXIF, emit WebP)
+                (new ImageOptimizer())->optimize($filepath);
+
                 // Create thumbnail
                 $thumbFilename = 'thumb_' . $filename;
                 $this->createThumbnail($filepath, $this->uploadPath . $thumbFilename, 400, 300);
-                
+
                 // Create medium version
                 $mediumFilename = 'medium_' . $filename;
                 $this->createThumbnail($filepath, $this->uploadPath . $mediumFilename, 800, 600);
@@ -198,10 +202,13 @@ class PropertyImageController extends AdminController
         $filepath = $this->uploadPath . $filename;
         
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
+            // Optimize uploaded image (resize, strip EXIF, emit WebP)
+            (new ImageOptimizer())->optimize($filepath);
+
             // Create thumbnails
             $thumbFilename = 'thumb_' . $filename;
             $this->createThumbnail($filepath, $this->uploadPath . $thumbFilename, 400, 300);
-            
+
             $mediumFilename = 'medium_' . $filename;
             $this->createThumbnail($filepath, $this->uploadPath . $mediumFilename, 800, 600);
             

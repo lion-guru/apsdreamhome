@@ -122,7 +122,7 @@ class AdManagerService
         $html = '<div class="ad-slot ad-' . htmlspecialchars($slotKey) . '">';
         if (!empty($ad['image_url']) && !empty($ad['link_url'])) {
             $html .= '<a href="' . BASE_URL . '/ad-click/' . $ad['id'] . '" target="_blank" rel="sponsored">';
-            $html .= '<img src="' . htmlspecialchars($ad['image_url']) . '" alt="' . htmlspecialchars($ad['title']) . '" class="img-fluid">';
+            $html .= '<img loading="lazy" src="' . htmlspecialchars($ad['image_url']) . '" alt="' . htmlspecialchars($ad['title']) . '" class="img-fluid">';
             $html .= '</a>';
         } elseif (!empty($ad['content'])) {
             $html .= htmlspecialchars($ad['content']);

@@ -141,7 +141,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                         <i class="fas fa-star me-1"></i>Primary
                                     </span>
                                 <?php endif; ?>
-                                <img src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
+                                <img loading="lazy" src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
                                     alt="Property Image"
                                     class="card-img-top"
                                     style="height: 200px; object-fit: cover;"
@@ -202,7 +202,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center">
-                <img id="lightboxImage" src="" class="img-fluid" style="max-height: 80vh;">
+                <img loading="lazy" id="lightboxImage" src="" class="img-fluid" style="max-height: 80vh;">
             </div>
         </div>
     </div>
@@ -492,7 +492,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                             <span class="primary-badge"><i class="fas fa-star me-1"></i>Primary</span>
                                         <?php endif; ?>
 
-                                        <img src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
+                                        <img loading="lazy" src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
                                             alt="Property Image"
                                             onclick="openLightbox('<?php echo $base; ?>/<?php echo $image['image_path']; ?>')">
 
@@ -555,7 +555,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <img id="lightboxImage" src="" class="img-fluid" style="max-height: 80vh;">
+                    <img loading="lazy" id="lightboxImage" src="" class="img-fluid" style="max-height: 80vh;">
                 </div>
             </div>
         </div>

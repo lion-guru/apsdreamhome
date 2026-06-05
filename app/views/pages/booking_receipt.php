@@ -99,7 +99,7 @@
                 <i class="fas fa-check-circle text-success me-1"></i> Park Facing: <?= !empty($booking['park_facing']) ? 'Yes' : 'No' ?><br>
             </div>
             <div class="col-6 text-end">
-                <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="APS Dream Home" style="max-height:60px;" onerror="this.style.display='none'"><br>
+                <img loading="lazy" src="<?= BASE_URL ?>/assets/images/logo.png" alt="APS Dream Home" style="max-height:60px;" onerror="this.style.display='none'"><br>
                 <small class="text-muted">Authorized Signature</small>
             </div>
         </div>

@@ -637,6 +637,7 @@ class PropertyWorkflowController extends BaseController
                     $uploadPath = 'uploads/properties/' . $fileName;
                     
                     if (move_uploaded_file($tmpName, $uploadPath)) {
+                        \App\Core\ImageOptimizer::optimizeStatic($uploadPath);
                         $images[] = $uploadPath;
                     }
                 }

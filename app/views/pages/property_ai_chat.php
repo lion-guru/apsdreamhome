@@ -34,7 +34,7 @@ $base = $base ?? BASE_URL;
                         <?php if ($property): ?>
                         <div class="mb-3">
                             <?php if (!empty($property['image'])): ?>
-                            <img src="<?= htmlspecialchars($property['image']) ?>" alt="<?= htmlspecialchars($property['title'] ?? 'Property') ?>" class="img-fluid rounded mb-3">
+                            <img loading="lazy" src="<?= htmlspecialchars($property['image']) ?>" alt="<?= htmlspecialchars($property['title'] ?? 'Property') ?>" class="img-fluid rounded mb-3">
                             <?php endif; ?>
                             <h4><?= htmlspecialchars($property['title'] ?? 'Untitled') ?></h4>
                             <p class="text-muted mb-1">

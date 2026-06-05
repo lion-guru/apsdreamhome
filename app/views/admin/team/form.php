@@ -59,7 +59,7 @@
                     <label class="form-label">Photo</label>
                     <?php if ($isEdit && !empty($member['photo'])): ?>
                     <div class="mb-2">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/<?php echo htmlspecialchars($member['photo']); ?>" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
+                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/<?php echo htmlspecialchars($member['photo']); ?>" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
                     </div>
                     <?php endif; ?>
                     <input type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp">

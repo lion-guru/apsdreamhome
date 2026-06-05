@@ -11,7 +11,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm border-0">
                         <?php if (!empty($post['featured_image'])): ?>
-                            <img src="<?php echo htmlspecialchars($post['featured_image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" style="height: 200px; object-fit: cover;">
+                            <img loading="lazy" src="<?php echo htmlspecialchars($post['featured_image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" style="height: 200px; object-fit: cover;">
                         <?php else: ?>
                             <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                                 <i class="fas fa-newspaper fa-3x text-muted"></i>

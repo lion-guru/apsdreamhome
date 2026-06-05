@@ -50,7 +50,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <div class="col-md-2 col-sm-4">
                                 <div class="card border">
                                     <?php if (strpos($item['type'], 'image') !== false): ?>
-                                        <img src="<?php echo $base . '/' . $item['path']; ?>" class="card-img-top" style="height: 120px; object-fit: cover;">
+                                        <img loading="lazy" src="<?php echo $base . '/' . $item['path']; ?>" class="card-img-top" style="height: 120px; object-fit: cover;">
                                     <?php else: ?>
                                         <div class="bg-light d-flex align-items-center justify-content-center" style="height: 120px;">
                                             <i class="fas fa-file fa-2x text-muted"></i>

@@ -23,7 +23,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                             <?php foreach ($images as $i => $img):
                             ?>
                                 <div class="carousel-item <?php echo $i === 0 ? 'active' : ''; ?>">
-                                    <img src="<?php echo htmlspecialchars($img['image_path'] ?? $property['image_url'] ?? 'https://via.placeholder.com/800x400'); ?>"
+                                    <img loading="lazy" src="<?php echo htmlspecialchars($img['image_path'] ?? $property['image_url'] ?? 'https://via.placeholder.com/800x400'); ?>"
                                         class="d-block w-100 gallery-trigger" style="height: 400px; object-fit: cover; cursor: pointer;"
                                         alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>"
                                         onclick="openLightbox(<?php echo $i; ?>)">
@@ -43,7 +43,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                     <?php if (count($images) > 1): ?>
                     <div class="d-flex gap-1 mt-1 overflow-auto">
                         <?php foreach ($images as $i => $img): ?>
-                        <img src="<?php echo htmlspecialchars($img['image_path']); ?>"
+                        <img loading="lazy" src="<?php echo htmlspecialchars($img['image_path']); ?>"
                             class="rounded" style="height: 60px; width: 80px; object-fit: cover; cursor: pointer; border: 2px solid <?php echo $i === 0 ? '#0d6efd' : 'transparent'; ?>;"
                             onclick="$('#propertyCarousel').carousel(<?php echo $i; ?>); openLightbox(<?php echo $i; ?>);"
                             alt="Thumbnail">
@@ -57,7 +57,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                         <span class="lightbox-prev" onclick="changeLightbox(-1)">&#10094;</span>
                         <span class="lightbox-next" onclick="changeLightbox(1)">&#10095;</span>
                         <div class="lightbox-content">
-                            <img id="lightboxImage" src="" alt="Full size image">
+                            <img loading="lazy" id="lightboxImage" src="" alt="Full size image">
                             <div id="lightboxCounter" class="lightbox-counter"></div>
                         </div>
                     </div>
@@ -216,7 +216,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                                 <li class="list-group-item">
                                     <a href="/properties/<?php echo $rel['id']; ?>" class="text-decoration-none">
                                         <div class="d-flex">
-                                            <img src="<?php echo htmlspecialchars($rel['image_url'] ?? 'https://via.placeholder.com/60'); ?>" class="img-fluid"
+                                            <img loading="lazy" src="<?php echo htmlspecialchars($rel['image_url'] ?? 'https://via.placeholder.com/60'); ?>" class="img-fluid"
                                                 class="rounded me-2" style="width: 60px; height: 45px; object-fit: cover;">
                                             <div>
                                                 <small class="fw-bold"><?php echo htmlspecialchars($rel['title'] ?? $rel['name'] ?? 'Property'); ?></small>

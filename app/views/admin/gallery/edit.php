@@ -19,7 +19,7 @@
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Current Image</label>
                         <div class="border rounded p-3">
-                            <img src="<?php echo BASE_URL . '/' . $image['image_path']; ?>" class="img-thumbnail" style="max-height: 200px;" alt="Current image">
+                            <img loading="lazy" src="<?php echo BASE_URL . '/' . $image['image_path']; ?>" class="img-thumbnail" style="max-height: 200px;" alt="Current image">
                         </div>
                     </div>
                     <?php endif; ?>

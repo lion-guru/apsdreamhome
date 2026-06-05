@@ -46,7 +46,7 @@
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
-                    <img src="https://img.freepik.com/free-photo/living-room-interior-design_23-2148892625.jpg" alt="Interior Design" class="img-fluid rounded-4 shadow-lg">
+                    <img loading="lazy" src="https://img.freepik.com/free-photo/living-room-interior-design_23-2148892625.jpg" alt="Interior Design" class="img-fluid rounded-4 shadow-lg">
                     <div class="position-absolute bottom-0 end-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
                         <i class="fas fa-star text-warning me-1"></i> Award-Winning Designs
                     </div>
@@ -250,7 +250,7 @@ function planFurniture() {
             <?php foreach (array_slice($portfolio, 0, 6) as $item): ?>
                 <div class="col-lg-4 col-md-6">
                     <div class="portfolio-item">
-                        <img src="<?= htmlspecialchars($item['image'] ?? 'https://via.placeholder.com/400x300?text=Interior+Design') ?>" alt="<?= htmlspecialchars($item['title'] ?? 'Portfolio') ?>">
+                        <img loading="lazy" src="<?= htmlspecialchars($item['image'] ?? 'https://via.placeholder.com/400x300?text=Interior+Design') ?>" alt="<?= htmlspecialchars($item['title'] ?? 'Portfolio') ?>">
                         <div class="overlay">
                             <h5 class="mb-1"><?= htmlspecialchars($item['title'] ?? 'Project') ?></h5>
                             <small><?= htmlspecialchars($item['category'] ?? '') ?></small>

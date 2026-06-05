@@ -258,7 +258,7 @@ calcEMI();
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="project-card h-100">
                         <div class="position-relative overflow-hidden">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/projects/<?= $project['img'] ?>" class="w-100" style="height:190px;object-fit:cover;" alt="<?= $project['title'] ?>" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                            <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/<?= $project['img'] ?>" class="w-100" style="height:190px;object-fit:cover;" alt="<?= $project['title'] ?>" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <span class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?= $project['status'] ?></span>
                         </div>
                         <div class="card-body">
@@ -289,7 +289,7 @@ calcEMI();
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="project-card h-100">
                         <div class="position-relative overflow-hidden">
-                            <img src="<?php echo BASE_URL . $imgPath; ?>" class="w-100" style="height:190px;object-fit:cover;" alt="<?php echo htmlspecialchars($project['title']); ?>" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                            <img loading="lazy" src="<?php echo BASE_URL . $imgPath; ?>" class="w-100" style="height:190px;object-fit:cover;" alt="<?php echo htmlspecialchars($project['title']); ?>" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <span class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?php echo $project['status']; ?></span>
                         </div>
                         <div class="card-body">

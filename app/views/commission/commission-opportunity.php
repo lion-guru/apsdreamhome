@@ -96,7 +96,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.php">
-                <img src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="30" class="img-fluid">
+                <img loading="lazy" src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="30" class="img-fluid">
             </a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="index.php"><i class="fas fa-home"></i> Home</a>
@@ -214,14 +214,14 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
                 <div class="col-md-6">
                     <div class="visual-showcase">
                         <h4 class="mb-3">🎯 MLM Commission Structure</h4>
-                        <img src="assets/images/mlm/commission-visualization.jpg" alt="MLM Commission Structure" class="img-fluid rounded mb-3">
+                        <img loading="lazy" src="assets/images/mlm/commission-visualization.jpg" alt="MLM Commission Structure" class="img-fluid rounded mb-3">
                         <p class="text-muted">Build your network across 10 levels and earn from team performance. The more your team grows, the more you earn!</p>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="visual-showcase">
                         <h4 class="mb-3">💰 Earning Potential Visualization</h4>
-                        <img src="assets/images/portfolio/enhanced-design.jpg" alt="Earning Potential" class="img-fluid rounded mb-3">
+                        <img loading="lazy" src="assets/images/portfolio/enhanced-design.jpg" alt="Earning Potential" class="img-fluid rounded mb-3">
                         <p class="text-muted">See the potential earnings with our hybrid commission system. Combine direct sales with network building for maximum income!</p>
                     </div>
                 </div>
@@ -435,7 +435,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <img src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="40" class="mb-2 img-fluid">
+                    <img loading="lazy" src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="40" class="mb-2 img-fluid">
                     <p>Building dreams and creating wealth through innovative commission systems</p>
                 </div>
                 <div class="col-md-6 text-end">

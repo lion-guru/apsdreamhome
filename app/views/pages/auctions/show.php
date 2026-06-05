@@ -20,7 +20,7 @@ ob_start();
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
                 <?php if ($auction['image_url']): ?>
-                    <img src="<?= htmlspecialchars($auction['image_url']) ?>" class="card-img-top" alt="<?= htmlspecialchars($auction['title']) ?>" style="max-height: 400px; object-fit: cover;">
+                    <img loading="lazy" src="<?= htmlspecialchars($auction['image_url']) ?>" class="card-img-top" alt="<?= htmlspecialchars($auction['title']) ?>" style="max-height: 400px; object-fit: cover;">
                 <?php endif; ?>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">

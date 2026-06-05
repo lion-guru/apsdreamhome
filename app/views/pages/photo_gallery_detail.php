@@ -6,7 +6,7 @@
     </ol></nav>
     <div class="row">
         <div class="col-md-8">
-            <img src="<?php echo BASE_URL . '/' . htmlspecialchars($image['image_path'] ?? ''); ?>" class="img-fluid" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>">
+            <img loading="lazy" src="<?php echo BASE_URL . '/' . htmlspecialchars($image['image_path'] ?? ''); ?>" class="img-fluid" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>">
         </div>
         <div class="col-md-4">
             <h3><?php echo htmlspecialchars($image['caption'] ?? 'Gallery Image'); ?></h3>

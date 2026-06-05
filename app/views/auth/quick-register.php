@@ -191,7 +191,7 @@ function generateUserId() {
                     
                     <div class="mt-4 grid grid-cols-2 gap-3">
                         <a href="/auth/google?type=customer" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                            <img src="https://www.google.com/favicon.ico" class="w-5 h-5 mr-2 img-fluid">
+                            <img loading="lazy" src="https://www.google.com/favicon.ico" class="w-5 h-5 mr-2 img-fluid">
                             Google
                         </a>
                         <a href="/auth/facebook?type=customer" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">

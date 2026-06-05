@@ -73,7 +73,7 @@
                     <ul class="list-group list-group-flush">
                         <?php foreach ($participants as $p): ?>
                         <li class="list-group-item px-0 d-flex align-items-center">
-                            <img src="<?= $base ?? BASE_URL ?>/<?= ($p['avatar'] ?? 'assets/img/avatar.png') ?>" alt="" class="rounded-circle me-3" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='<?= $base ?? BASE_URL ?>assets/img/avatar.png'">
+                            <img loading="lazy" src="<?= $base ?? BASE_URL ?>/<?= ($p['avatar'] ?? 'assets/img/avatar.png') ?>" alt="" class="rounded-circle me-3" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='<?= $base ?? BASE_URL ?>assets/img/avatar.png'">
                             <div>
                                 <strong><?= ($p['name'] ?? 'User') ?></strong>
                                 <small class="d-block text-muted"><i class="fas fa-clock me-1"></i><?= ($p['joined_at'] ?? 'Just now') ?></small>
