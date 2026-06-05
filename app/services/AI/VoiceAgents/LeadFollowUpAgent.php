@@ -4,6 +4,7 @@ namespace App\Services\AI\VoiceAgents;
 
 use App\Services\AI\users\BaseAgent;
 use App\Services\Voice\VoiceCallService;
+use App\Services\Voice\TwilioVoiceService;
 use Exception;
 
 class LeadFollowUpAgent extends BaseAgent
@@ -404,5 +405,55 @@ class LeadFollowUpAgent extends BaseAgent
         }
 
         return 'no_change';
+    }
+
+    /**
+     * Execute a real outbound Twilio call to follow up on a lead.
+     * Wires this AI agent into TwilioVoiceService (Cluster 2 - 2026-06-05).
+     *
+     * @param int    $leadId
+     * @param string $phone        E.164 phone
+     * @param array  $context      { leadName, lastInquiry, daysSinceContact }
+     * @return array{success:bool,sid:?string,error:?string}
+     */
+    public function executeCall($leadId, $phone, array $context = [])
+    {
+        try {
+            $voice = new TwilioVoiceService();
+            $leadName = $context['leadName'] ?? 'there';
+
+            $baseUrl = $this->resolveBaseUrl();
+            $twimlUrl = $baseUrl . '/api/twilio/voice?type=follow_up&lead_id=' . $leadId;
+
+            $result = $voice->makeCall($phone, $twimlUrl, null, [
+                'record'      => true,
+                'leadId'      => $leadId,
+                'agentId'     => $this->agentId,
+                'sessionMeta' => [
+                    'agent' => $this->agentName,
+                    'kind'  => 'lead_followup',
+                    'context' => $context,
+                ],
+                'statusCallback' => $baseUrl . '/api/twilio/voice/status',
+            ]);
+
+            $this->logActivity('OUTBOUND_CALL_INITIATED', "Follow-up call to lead $leadId at $phone (SID: " . ($result['sid'] ?? 'none') . ")");
+            return $result;
+        } catch (\Throwable $e) {
+            error_log("LeadFollowUpAgent::executeCall failed: " . $e->getMessage());
+            return ['success' => false, 'sid' => null, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Resolve the public base URL Twilio should call back to.
+     */
+    protected function resolveBaseUrl()
+    {
+        if (!empty($_ENV['APP_URL'])) return rtrim($_ENV['APP_URL'], '/');
+        if (!empty($_ENV['BASE_URL_PUBLIC'])) return rtrim($_ENV['BASE_URL_PUBLIC'], '/');
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        return $scheme . '://' . $host;
     }
 }

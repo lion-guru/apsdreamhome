@@ -4,6 +4,7 @@ namespace App\Services\AI\VoiceAgents;
 
 use App\Services\AI\users\BaseAgent;
 use App\Services\Voice\VoiceCallService;
+use App\Services\Voice\TwilioVoiceService;
 use Exception;
 
 class PropertyInquiryAgent extends BaseAgent
@@ -319,5 +320,56 @@ class PropertyInquiryAgent extends BaseAgent
         $months = $years * 12;
         $factor = pow(1 + $monthlyRate, $months);
         return $principal * $monthlyRate * $factor / ($factor - 1);
+    }
+
+    /**
+     * Execute a real outbound Twilio call to answer a property inquiry.
+     * Wires this AI agent into TwilioVoiceService (Cluster 2 - 2026-06-05).
+     *
+     * @param int    $leadId
+     * @param string $phone        E.164 phone
+     * @param array  $context      { leadName, property }
+     * @return array{success:bool,sid:?string,error:?string}
+     */
+    public function executeCall($leadId, $phone, array $context = [])
+    {
+        try {
+            $voice = new TwilioVoiceService();
+            $property = $context['property'] ?? [];
+            $leadName = $context['leadName'] ?? 'Customer';
+
+            $baseUrl = $this->resolveBaseUrl();
+            $twimlUrl = $baseUrl . '/api/twilio/voice?type=property_inquiry&property_id=' . ($property['id'] ?? 0);
+
+            $result = $voice->makeCall($phone, $twimlUrl, null, [
+                'record'      => true,
+                'leadId'      => $leadId,
+                'agentId'     => $this->agentId,
+                'sessionMeta' => [
+                    'agent'    => $this->agentName,
+                    'kind'     => 'property_inquiry',
+                    'property' => $property,
+                ],
+                'statusCallback' => $baseUrl . '/api/twilio/voice/status',
+            ]);
+
+            $this->logActivity('OUTBOUND_CALL_INITIATED', "Property inquiry call to $phone (SID: " . ($result['sid'] ?? 'none') . ")");
+            return $result;
+        } catch (\Throwable $e) {
+            error_log("PropertyInquiryAgent::executeCall failed: " . $e->getMessage());
+            return ['success' => false, 'sid' => null, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Resolve the public base URL Twilio should call back to.
+     */
+    protected function resolveBaseUrl()
+    {
+        if (!empty($_ENV['APP_URL'])) return rtrim($_ENV['APP_URL'], '/');
+        if (!empty($_ENV['BASE_URL_PUBLIC'])) return rtrim($_ENV['BASE_URL_PUBLIC'], '/');
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        return $scheme . '://' . $host;
     }
 }
