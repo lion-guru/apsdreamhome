@@ -95,7 +95,7 @@ $router->get('/our-team', function () {
     header('Location: ' . BASE_URL . '/team', true, 301);
     exit;
 });
-$router->get('/testimonials', 'Front\\PageController@testimonials');
+// /testimonials is also defined at line 430 (Front\TestimonialsController@index) - the LATER route wins
 $router->get('/faq', 'Front\\PageController@faq');
 $router->get('/faqs', 'Front\\PageController@faqs');
 $router->get('/home', 'Front\\PageController@home');
@@ -114,8 +114,8 @@ $router->get('/news', 'Front\\PageController@news');
 $router->get('/blog', 'App\\Http\\Controllers\\Front\\BlogController@index');
 $router->get('/blog/{slug}', 'App\\Http\\Controllers\\Front\\BlogController@show');
 $router->get('/gallery', 'Front\\PageController@gallery');
-$router->get('/resell', 'Front\\PageController@resell');
-$router->get('/careers', 'Front\PageController@careers');
+// /resell is also defined at line 3183 (Front\ResellPropertyController@index) - the LATER route wins
+// /careers is also defined at line 3065 (Career\CareerController@index) - the LATER route wins
 $router->get('/coming-soon', 'Front\\PageController@comingSoon');
 $router->get('/become-associate', 'Front\\PageController@becomeAssociate');
 $router->get('/become_associate', function () {
@@ -263,7 +263,7 @@ $router->get('/admin/user-properties/verify/{id}', 'App\\Http\\Controllers\\Admi
 $router->post('/admin/user-properties/action', 'App\\Http\\Controllers\\Admin\\UserPropertyController@action');
 
 // Admin API Keys Management
-$router->get('/admin/api-keys', 'App\\Http\\Controllers\\Admin\\ApiKeyController@index');
+// /admin/api-keys is also defined at line 3119 (Admin\ApiKeyController@index shorthand) - the LATER route wins
 $router->get('/admin/api-keys/guide', 'App\\Http\\Controllers\\Admin\\ApiKeyController@guide');
 $router->get('/admin/api-keys/create', 'App\\Http\\Controllers\\Admin\\ApiKeyController@create');
 $router->post('/admin/api-keys/store', 'App\\Http\\Controllers\\Admin\\ApiKeyController@store');
@@ -415,7 +415,7 @@ $router->get('/admin/reviews/approve-testimonial', 'App\\Http\\Controllers\\Admi
 $router->get('/admin/reviews/reject-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@rejectTestimonial');
 $router->get('/admin/reviews/delete-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@deleteTestimonial');
 
-$router->get('/admin/visits', 'App\\Http\\Controllers\\Admin\\VisitController@index');
+// /admin/visits is also defined at line 463 (Admin\VisitController@index) - the LATER route wins
 $router->get('/admin/visits/confirm', 'App\\Http\\Controllers\\Admin\\VisitController@confirm');
 $router->get('/admin/visits/complete', 'App\\Http\\Controllers\\Admin\\VisitController@complete');
 $router->get('/admin/visits/cancel', 'App\\Http\\Controllers\\Admin\\VisitController@cancel');
@@ -1219,8 +1219,11 @@ $router->get('/admin/resell-properties/images/{id}', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/resell-properties/status/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@status');
 $router->get('/admin/resell-properties/commission/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@commission');
 
-// Include additional admin routes
-require_once __DIR__ . '/admin_routes.php';
+// Note: admin_routes.php was removed in Phase 3+4 cleanup (2026-06-05).
+// All admin routes are now defined in this file. Legacy admin_routes.php
+// only had a single redundant /admin/sales route that pointed to the same
+// controller as the one defined above at line 1723, so removing it has
+// no functional impact.
 
 // ============================================================
 // MISSING ADMIN ROUTES (FIXED)
