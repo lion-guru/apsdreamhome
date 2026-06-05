@@ -227,4 +227,216 @@ function getEmailTemplateManager() {
     return new EmailTemplateManager($db, $logger);
 }
 
-return getEmailTemplateManager();
+if (function_exists('container') && !class_exists('App\\Services\\Communication\\TemplateService', false)) {
+    return getEmailTemplateManager();
+}
+
+// =====================================================================
+// Modern TemplateService (App\Services\Communication\TemplateService)
+// Renders HTML email templates from app/views/emails/*.php
+// =====================================================================
+
+namespace App\Services\Communication;
+
+/**
+ * TemplateService
+ * Loads HTML email templates from app/views/emails/ and replaces
+ * {{var}} placeholders with values. Returns the rendered HTML string.
+ */
+class TemplateService
+{
+    /** @var string Absolute path to the email templates directory */
+    private string $templatesPath;
+
+    /** @var array In-memory cache of loaded templates */
+    private array $cache = [];
+
+    /** Catalog of supported templates (code => [subject, file]) */
+    public const CATALOG = [
+        'welcome' => [
+            'subject' => 'Welcome to APS Dream Home - Your Dream Property Awaits!',
+            'file'    => 'welcome.php',
+        ],
+        'password_reset' => [
+            'subject' => 'Reset Your Password - APS Dream Home',
+            'file'    => 'password_reset.php',
+        ],
+        'booking_confirmation' => [
+            'subject' => 'Booking Confirmed - APS Dream Home',
+            'file'    => 'booking_confirmation.php',
+        ],
+        'property_approved' => [
+            'subject' => 'Your Property Has Been Approved! - APS Dream Home',
+            'file'    => 'property_approved.php',
+        ],
+    ];
+
+    /**
+     * Default placeholder values for a given template code.
+     * Computed at call-time so dynamic values (year, date) stay fresh.
+     */
+    private function defaultsFor(string $code): array
+    {
+        $year = date('Y');
+        switch ($code) {
+            case 'welcome':
+                return [
+                    'name'             => 'Customer',
+                    'login_url'        => '/login',
+                    'logo_url'         => '/assets/images/logo.png',
+                    'unsubscribe_url'  => '/unsubscribe',
+                    'preferences_url'  => '/email-preferences',
+                    'year'             => $year,
+                ];
+            case 'password_reset':
+                return [
+                    'user_name'  => 'Customer',
+                    'reset_url'  => '/reset-password?token=abc',
+                    'expires_in' => '1 hour',
+                    'year'       => $year,
+                ];
+            case 'booking_confirmation':
+                return [
+                    'customer_name'     => 'Customer',
+                    'booking_id'        => 'BK-0000',
+                    'property_name'     => 'Your Property',
+                    'property_location' => 'Gorakhpur, UP',
+                    'booking_date'      => date('d M Y'),
+                    'amount'            => '0',
+                    'booking_url'       => '/user/bookings',
+                    'unsubscribe_url'   => '/unsubscribe',
+                    'year'              => $year,
+                ];
+            case 'property_approved':
+                return [
+                    'user_name'         => 'Customer',
+                    'property_name'     => 'Your Property',
+                    'property_location' => 'Gorakhpur, UP',
+                    'property_type'     => 'Plot',
+                    'property_area'     => '1000',
+                    'property_price'    => '25,00,000',
+                    'property_image'    => '/assets/images/property-placeholder.jpg',
+                    'property_url'      => '/properties',
+                    'unsubscribe_url'   => '/unsubscribe',
+                    'year'              => $year,
+                ];
+            default:
+                return ['year' => $year];
+        }
+    }
+
+    public function __construct(?string $templatesPath = null)
+    {
+        $this->templatesPath = $templatesPath
+            ?? (__DIR__ . '/../../views/emails');
+
+        if (!is_dir($this->templatesPath)) {
+            error_log('TemplateService: emails directory missing at ' . $this->templatesPath);
+        }
+    }
+
+    /**
+     * List all available template codes + metadata.
+     */
+    public function list(): array
+    {
+        $out = [];
+        foreach (self::CATALOG as $code => $meta) {
+            $filePath = $this->templatesPath . '/' . $meta['file'];
+            $out[] = [
+                'code'    => $code,
+                'subject' => $meta['subject'],
+                'file'    => $meta['file'],
+                'exists'  => is_file($filePath),
+                'size'    => is_file($filePath) ? filesize($filePath) : 0,
+                'vars'    => array_keys($this->defaultsFor($code)),
+            ];
+        }
+        return $out;
+    }
+
+    /**
+     * Render an HTML email template by code.
+     *
+     * @param string $code One of the codes defined in CATALOG
+     * @param array  $vars Associative array of {{var}} => value
+     * @return array{ok:bool, html?:string, subject?:string, error?:string, file?:string}
+     */
+    public function renderHtmlTemplate(string $code, array $vars = []): array
+    {
+        $code = preg_replace('/[^a-z0-9_]/', '', strtolower($code)) ?? '';
+
+        if (!isset(self::CATALOG[$code])) {
+            return ['ok' => false, 'error' => "Unknown template code: {$code}"];
+        }
+
+        $meta    = self::CATALOG[$code];
+        $file    = $this->templatesPath . '/' . $meta['file'];
+        $subject = $meta['subject'];
+
+        if (!is_file($file)) {
+            return ['ok' => false, 'error' => "Template file not found: {$file}", 'file' => $meta['file']];
+        }
+
+        // Merge defaults with caller-supplied vars (caller wins)
+        $merged = array_merge($this->defaultsFor($code), $vars);
+
+        // Build the HTML. Use a buffered include to capture the rendered file
+        // then run the placeholder replacement. ob_start/ob_get_clean also
+        // lets templates echo dynamic content if needed in the future.
+        $html = $this->loadFromCache($code, $file);
+        if ($html === null) {
+            $html = (string)file_get_contents($file);
+            $this->cache[$code] = $html;
+        }
+
+        $html = $this->replaceVars($html, $merged);
+
+        // Replace subject placeholders too
+        $resolvedSubject = $this->replaceVars($subject, $merged);
+
+        return [
+            'ok'      => true,
+            'html'    => $html,
+            'subject' => $resolvedSubject,
+            'file'    => $meta['file'],
+        ];
+    }
+
+    /**
+     * Replace {{var}} (or {{ var }}) in the HTML with provided values.
+     * HTML-escapes values by default to prevent XSS via template injection.
+     */
+    private function replaceVars(string $html, array $vars): string
+    {
+        foreach ($vars as $key => $value) {
+            $replacement = htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            // Match {{key}} with optional whitespace
+            $html = preg_replace(
+                '/\{\{\s*' . preg_quote((string)$key, '/') . '\s*\}\}/i',
+                $replacement,
+                $html
+            );
+        }
+        return $html;
+    }
+
+    /**
+     * Helper: returns the rendered HTML only (or empty string on failure).
+     */
+    public function render(string $code, array $vars = []): string
+    {
+        $result = $this->renderHtmlTemplate($code, $vars);
+        return $result['ok'] ? ($result['html'] ?? '') : '';
+    }
+
+    private function loadFromCache(string $code, string $file): ?string
+    {
+        return $this->cache[$code] ?? null;
+    }
+
+    public function clearCache(): void
+    {
+        $this->cache = [];
+    }
+}
