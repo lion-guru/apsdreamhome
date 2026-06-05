@@ -1422,6 +1422,16 @@ $router->post('/admin/cache/flush',         'App\\Http\\Controllers\\Admin\\Cach
 $router->post('/admin/cache/redis/flush',   'App\\Http\\Controllers\\Admin\\CacheAdminController@flushRedis');
 $router->post('/admin/cache/test',          'App\\Http\\Controllers\\Admin\\CacheAdminController@test');
 
+// Admin A/B Testing Framework
+$router->get('/admin/experiments',                  'App\\Http\\Controllers\\Admin\\ExperimentController@index');
+$router->get('/admin/experiments/create',           'App\\Http\\Controllers\\Admin\\ExperimentController@create');
+$router->post('/admin/experiments/store',           'App\\Http\\Controllers\\Admin\\ExperimentController@store');
+$router->get('/admin/experiments/{id}',             'App\\Http\\Controllers\\Admin\\ExperimentController@show');
+$router->post('/admin/experiments/{id}/end',        'App\\Http\\Controllers\\Admin\\ExperimentController@end');
+$router->post('/admin/experiments/{id}/delete',     'App\\Http\\Controllers\\Admin\\ExperimentController@delete');
+$router->get('/api/ab/variant/{name}',              'App\\Http\\Controllers\\Admin\\ExperimentController@getVariant');
+$router->post('/api/ab/track',                      'App\\Http\\Controllers\\Admin\\ExperimentController@track');
+
 // Admin Service Enquiries (alias for services)
 $router->get('/admin/services/enquiry', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
 

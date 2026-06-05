@@ -374,7 +374,7 @@ class ExperimentService
      *
      * @return array
      */
-    protected function chiSquare(array $results): array
+    public function chiSquare(array $results): array
     {
         $k = count($results);
         if ($k < 2) {

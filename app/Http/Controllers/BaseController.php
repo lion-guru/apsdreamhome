@@ -31,6 +31,20 @@ class BaseController
     }
 
     /**
+     * Run the ExperimentMiddleware (A/B testing variant assignment).
+     *
+     * Idempotent: ExperimentMiddleware::handle() is a static no-op after the
+     * first call in a request, so it's safe to invoke from every controller.
+     */
+    protected function runExperimentMiddleware(): void
+    {
+        if (class_exists('\\App\\Http\\Middleware\\ExperimentMiddleware')
+            && method_exists('\\App\\Http\\Middleware\\ExperimentMiddleware', 'handle')) {
+            \App\Http\Middleware\ExperimentMiddleware::handle();
+        }
+    }
+
+    /**
      * Alias for render()
      */
     public function view($view, $data = [])
@@ -88,6 +102,9 @@ class BaseController
                 }
             }
         }
+
+        // A/B testing: assign user to running experiments and auto-track view event
+        $this->runExperimentMiddleware();
 
         // Security: regenerate session ID periodically (every 5 minutes) to prevent fixation
         $this->initSessionSecurity();
