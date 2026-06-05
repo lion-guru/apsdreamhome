@@ -73,4 +73,91 @@ class BulkOperationsController extends AdminController
         echo $csv;
         exit;
     }
+
+    // ============================================================
+    // PROPERTY-SPECIFIC BULK IMPORT
+    // ============================================================
+    public function propertyImport()
+    {
+        $this->requireAdmin();
+        $this->data = array_merge($this->data, [
+            'page_title' => 'Bulk Property Import',
+            'preview' => $_SESSION['bulk_property_preview'] ?? null,
+            'result' => $_SESSION['bulk_property_result'] ?? null,
+            'csrf' => $this->getCsrfToken(),
+            'flash_success' => $_SESSION['flash_success'] ?? null,
+            'flash_error' => $_SESSION['flash_error'] ?? null,
+        ]);
+        unset($_SESSION['bulk_property_preview'], $_SESSION['bulk_property_result'], $_SESSION['flash_success'], $_SESSION['flash_error']);
+        return $this->render('admin/bulk/property_import', $this->data);
+    }
+
+    public function propertyImportUpload()
+    {
+        $this->requireAdmin();
+        if (empty($_FILES['csv']['tmp_name'])) {
+            $_SESSION['flash_error'] = 'No file uploaded';
+            header('Location: ' . BASE_URL . '/admin/bulk/property-import');
+            exit;
+        }
+        $content = file_get_contents($_FILES['csv']['tmp_name']);
+        if (strlen($content) > 10 * 1024 * 1024) {
+            $_SESSION['flash_error'] = 'File too large (max 10MB)';
+            header('Location: ' . BASE_URL . '/admin/bulk/property-import');
+            exit;
+        }
+        require_once __DIR__ . '/../../../Services/Bulk/PropertyImportService.php';
+        $svc = new \App\Services\Bulk\PropertyImportService($this->db);
+        $preview = $svc->previewImport($content);
+        $_SESSION['bulk_property_preview'] = $preview;
+        $_SESSION['bulk_property_csv'] = $content;
+        header('Location: ' . BASE_URL . '/admin/bulk/property-import');
+        exit;
+    }
+
+    public function propertyImportExecute()
+    {
+        $this->requireAdmin();
+        $content = $_SESSION['bulk_property_csv'] ?? '';
+        if ($content === '') {
+            $_SESSION['flash_error'] = 'No CSV content in session. Please re-upload.';
+            header('Location: ' . BASE_URL . '/admin/bulk/property-import');
+            exit;
+        }
+        $options = ['skip_duplicates' => !empty($_POST['skip_duplicates'])];
+        require_once __DIR__ . '/../../../Services/Bulk/PropertyImportService.php';
+        $svc = new \App\Services\Bulk\PropertyImportService($this->db);
+        $result = $svc->importCsv($content, $options);
+        unset($_SESSION['bulk_property_csv'], $_SESSION['bulk_property_preview']);
+        $_SESSION['bulk_property_result'] = $result;
+        if (!empty($result['ok'])) {
+            $_SESSION['flash_success'] = "Imported {$result['imported']} properties, skipped {$result['skipped']}";
+        } else {
+            $_SESSION['flash_error'] = $result['error'] ?? 'Import failed';
+        }
+        header('Location: ' . BASE_URL . '/admin/bulk/property-import');
+        exit;
+    }
+
+    public function propertyImportTemplate()
+    {
+        $this->requireAdmin();
+        require_once __DIR__ . '/../../../Services/Bulk/PropertyImportService.php';
+        $svc = new \App\Services\Bulk\PropertyImportService($this->db);
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="property_import_template.csv"');
+        echo $svc->getTemplate();
+        exit;
+    }
+
+    public function propertyImportSample()
+    {
+        $this->requireAdmin();
+        require_once __DIR__ . '/../../../Services/Bulk/PropertyImportService.php';
+        $svc = new \App\Services\Bulk\PropertyImportService($this->db);
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="property_import_sample.csv"');
+        echo $svc->getSampleCsv();
+        exit;
+    }
 }
