@@ -3,16 +3,20 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\CacheService;
+use App\Services\Cache\HotPathCacheService;
 use Exception;
 
 /**
  * Admin controller for inspecting, flushing and testing the cache layer.
  *
  * Routes (registered in routes/web.php):
- *   GET  /admin/cache           -> index()
- *   POST /admin/cache/flush     -> flush()
- *   POST /admin/cache/redis/flush -> flushRedis()
- *   POST /admin/cache/test      -> test()
+ *   GET  /admin/cache                  -> index()
+ *   POST /admin/cache/flush            -> flush()
+ *   POST /admin/cache/redis/flush      -> flushRedis()
+ *   POST /admin/cache/test             -> test()
+ *   GET  /admin/cache/stats            -> stats() (JSON)
+ *   POST /admin/cache/hotpath/flush    -> flushHotpath()
+ *   GET  /admin/cache/hotpath/stats    -> hotpathStats() (JSON)
  */
 class CacheAdminController extends AdminController
 {
@@ -32,6 +36,7 @@ class CacheAdminController extends AdminController
 
         $stats = CacheService::getStats();
         $test = CacheService::testConnection();
+        $hotpath = HotPathCacheService::getStats();
 
         return $this->render('admin/cache', [
             'page_title'   => 'Cache Management',
@@ -39,6 +44,7 @@ class CacheAdminController extends AdminController
             'stats'        => $stats,
             'test'         => $test,
             'driver'       => $test['driver'],
+            'hotpath'      => $hotpath,
         ]);
     }
 
@@ -50,6 +56,11 @@ class CacheAdminController extends AdminController
         $this->requireAdmin();
         try {
             CacheService::flushAll();
+            // Also drop hot-path keys (the wildcard pattern catches them).
+            HotPathCacheService::invalidatePropertyList();
+            HotPathCacheService::invalidateHeaderProjects();
+            HotPathCacheService::invalidateHomeFeatured();
+            HotPathCacheService::invalidateAdminDashboard();
             $this->setFlash('success', 'All cache layers flushed successfully.');
         } catch (Exception $e) {
             $this->setFlash('error', 'Flush failed: ' . $e->getMessage());
@@ -105,6 +116,40 @@ class CacheAdminController extends AdminController
         $this->requireAdmin();
         header('Content-Type: application/json');
         echo json_encode(CacheService::getStats());
+        exit;
+    }
+
+    /**
+     * Flush ONLY the hot-path cache keys (5 hot paths × any combo of pages/users).
+     * Does not touch generic admin_menu / header / unread / dashboard keys.
+     */
+    public function flushHotpath()
+    {
+        $this->requireAdmin();
+        try {
+            $dropped = 0;
+            $dropped += HotPathCacheService::invalidatePropertyList();
+            $dropped += HotPathCacheService::invalidateHeaderProjects();
+            $dropped += HotPathCacheService::invalidateHomeFeatured();
+            $dropped += HotPathCacheService::invalidateAdminDashboard();
+            // saved-searches counts are per-user, so we pattern-drop them.
+            $dropped += \App\Services\CacheService::invalidatePattern('saved_searches_count_');
+            $this->setFlash('success', "Hot-path cache flushed ({$dropped} keys dropped).");
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Hot-path flush failed: ' . $e->getMessage());
+        }
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');
+        exit;
+    }
+
+    /**
+     * JSON endpoint: returns per-path hot-path hit/miss stats.
+     */
+    public function hotpathStats()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+        echo json_encode(HotPathCacheService::getStats());
         exit;
     }
 }

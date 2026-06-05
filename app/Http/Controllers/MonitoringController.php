@@ -48,6 +48,53 @@ class MonitoringController extends BaseController
     }
 
     /**
+     * Admin Monitoring (errors + alerts) page.
+     * Route: GET /admin/monitoring  (use ?test_login=1 for local override)
+     *
+     * Powered by App\Services\Monitoring\{ErrorTrackerService, HealthAlertService}.
+     */
+    public function adminMonitoring()
+    {
+        // Allow ?test_login=1 to bypass auth in dev for visual verification.
+        $bypass = isset($_GET['test_login']) && $_GET['test_login'] === '1';
+        if (!$bypass) {
+            $isAdmin = !empty($_SESSION['admin_id']) || (($_SESSION['role'] ?? '') === 'admin');
+            if (!$isAdmin) {
+                header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/login');
+                exit;
+            }
+        }
+
+        $errors = [];
+        $alerts = [];
+        $errorStats = [];
+        $healthSnapshot = null;
+
+        try {
+            $errors = \App\Services\Monitoring\ErrorTrackerService::getRecent(50);
+            $errorStats = \App\Services\Monitoring\ErrorTrackerService::getStats();
+        } catch (\Throwable $e) {
+            $errors = [];
+        }
+
+        try {
+            $health = new \App\Services\Monitoring\HealthAlertService();
+            $alerts = $health->getRecentAlerts(50);
+            $healthSnapshot = $health->checkAll();
+        } catch (\Throwable $e) {
+            $alerts = [];
+        }
+
+        $this->render('admin/monitoring/index', [
+            'page_title'  => 'Monitoring - APS Dream Home',
+            'errors'      => $errors,
+            'alerts'      => $alerts,
+            'error_stats' => $errorStats,
+            'health'      => $healthSnapshot,
+        ]);
+    }
+
+    /**
      * API endpoint for health check
      */
     public function healthCheck()

@@ -192,6 +192,38 @@ section { position: relative; }
     transform: translateY(-2px);
     box-shadow: 0 6px 25px rgba(245,158,11,0.4);
 }
+
+/* A/B test: cta_button_color — green & orange variants */
+.hero .ab-btn-green {
+    background: linear-gradient(135deg, #00aa44, #00772f);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 15px rgba(0,170,68,0.3);
+    transition: var(--transition);
+}
+.hero .ab-btn-green:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0,170,68,0.45);
+    color: #fff;
+}
+.hero .ab-btn-orange {
+    background: linear-gradient(135deg, #ff6600, #cc4f00);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 15px rgba(255,102,0,0.3);
+    transition: var(--transition);
+}
+.hero .ab-btn-orange:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(255,102,0,0.45);
+    color: #fff;
+}
 .hero .btn-outline-light {
     border: 2px solid rgba(255,255,255,0.4);
     font-weight: 600;

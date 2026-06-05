@@ -2,8 +2,7 @@
 # APS Dream Home - Production Docker Compose
 # Multi-container stack: PHP-Apache app, WebSocket (Ratchet), MySQL, Redis, Nginx
 # =============================================================================
-
-version: "3.9"
+# Note: 'version' key removed (obsolete in Docker Compose v2)
 
 x-app-env: &app-env
   APP_ENV: ${APP_ENV:-production}
@@ -54,7 +53,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     image: apsdreamhome/app:${APP_VERSION:-latest}
-    container_name: apsdreamhome_app
+    # No container_name - required for replicas > 1 in production override
     restart: unless-stopped
     env_file:
       - .env
@@ -102,7 +101,7 @@ services:
       context: .
       dockerfile: docker/websocket/Dockerfile
     image: apsdreamhome/websocket:${APP_VERSION:-latest}
-    container_name: apsdreamhome_websocket
+    # No container_name - allows scaling via production override
     restart: unless-stopped
     env_file:
       - .env

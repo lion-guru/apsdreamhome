@@ -1,31 +1,53 @@
+<?php
+/**
+ * Generic maintenance page (used by MaintenanceModeMiddleware directly,
+ * but also available for /maintenance direct link).
+ */
+$message = $message ?? "We're performing scheduled maintenance. We'll be back soon. Thanks for your patience!";
+$eta = $eta ?? '';
+$logo = defined('BASE_URL') ? BASE_URL . '/assets/images/logo.png' : '/assets/images/logo.png';
+$contact = 'info@apsdreamhome.com';
+$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+http_response_code(503);
+header('Retry-After: 3600');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under Maintenance | APS Dream Home</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title>Be right back — APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-        .card{background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-        .icon{width:80px;height:80px;background:#e0f2fe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem;color:#0ea5e9}
-        h1{font-size:2rem;font-weight:700;color:#1e293b}
-        h2{font-size:1.1rem;color:#64748b;font-weight:400;margin:8px 0 16px}
-        p{color:#94a3b8;font-size:.9rem;margin-bottom:24px;line-height:1.6}
-        .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#4f46e5;color:#fff;text-decoration:none;border-radius:8px;font-weight:500;font-size:.9rem;transition:all .2s;margin:4px}
-        .btn:hover{background:#4338ca;transform:translateY(-1px)}
-        .logo-text{font-size:.8rem;color:#c7d2fe;margin-top:24px}
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; }
+        .card { border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .icon-circle { width: 100px; height: 100px; border-radius: 50%; background: #f8f9fa; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+        .icon-circle i { font-size: 3rem; color: #764ba2; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon"><i class="fas fa-tools"></i></div>
-        <h1>Under Maintenance</h1>
-        <h2>We'll be back soon</h2>
-        <p>We're performing scheduled maintenance to improve your experience. Please check back shortly.</p>
-        <div class="logo-text">APS Dream Home</div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <div class="card p-5 text-center">
+                    <div class="icon-circle"><i class="fas fa-cog fa-spin"></i></div>
+                    <h1 class="h2 mb-3">Be right back</h1>
+                    <p class="lead text-muted mb-4"><?= htmlspecialchars($message) ?></p>
+                    <?php if ($eta): ?>
+                        <p class="mb-4"><i class="far fa-clock text-primary me-2"></i>Estimated return: <strong><?= htmlspecialchars($eta) ?></strong></p>
+                    <?php endif; ?>
+                    <hr>
+                    <p class="small text-muted mb-0">
+                        Need help? <a href="mailto:<?= htmlspecialchars($contact) ?>"><?= htmlspecialchars($contact) ?></a>
+                    </p>
+                    <div class="mt-3">
+                        <a href="<?= $base ?>" class="text-muted small"><i class="fas fa-sync-alt me-1"></i>Try again</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

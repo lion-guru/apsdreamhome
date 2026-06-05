@@ -118,6 +118,30 @@ class Controller
         $this->db = $app->db();
         $this->session = $app->session();
         $this->app = $app;
+
+        $this->bootI18n();
+    }
+
+    /**
+     * Boot the i18n middleware (run on every request).
+     * Detects language from URL/session/cookie/header and primes the TranslationService.
+     */
+    protected function bootI18n(): void
+    {
+        if (php_sapi_name() === 'cli') {
+            return;
+        }
+        try {
+            if (!class_exists('\App\Services\TranslationService', false)) {
+                require_once dirname(__DIR__) . '/Services/TranslationService.php';
+            }
+            \App\Services\TranslationService::getInstance()->detectLanguage();
+        } catch (\Throwable $e) {
+            // i18n is non-critical; never break the request
+            if (function_exists('error_log')) {
+                @error_log('[i18n] boot failed: ' . $e->getMessage());
+            }
+        }
     }
 
     /**

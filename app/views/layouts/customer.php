@@ -294,7 +294,7 @@
                 <i class="fas fa-home"></i>
                 <span>APS Dream Home</span>
             </a>
-            <div class="sidebar-sub">My Account Portal</div>
+            <div class="sidebar-sub"><?= __('cust_sidebar_sub', null, 'My Account Portal') ?></div>
         </div>
 
         <!-- User Info Card -->
@@ -312,20 +312,20 @@
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/user/dashboard" class="sidebar-link <?php echo ($current_page ?? '') === 'dashboard' ? 'active' : ''; ?>">
                     <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
+                    <span><?= __('nav_dashboard', null, 'Dashboard') ?></span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/user/properties" class="sidebar-link <?php echo ($current_page ?? '') === 'properties' ? 'active' : ''; ?>">
                     <i class="fas fa-building"></i>
-                    <span>My Properties</span>
+                    <span><?= __('nav_my_properties', null, 'My Properties') ?></span>
                     <span class="sidebar-badge">3</span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/user/inquiries" class="sidebar-link <?php echo ($current_page ?? '') === 'inquiries' ? 'active' : ''; ?>">
                     <i class="fas fa-envelope"></i>
-                    <span>My Inquiries</span>
+                    <span><?= __('nav_my_inquiries', null, 'My Inquiries') ?></span>
                     <span class="sidebar-badge">5</span>
                 </a>
             </li>
@@ -337,25 +337,25 @@
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/properties" class="sidebar-link <?php echo ($current_page ?? '') === 'browse' ? 'active' : ''; ?>">
                     <i class="fas fa-search"></i>
-                    <span>Browse Properties</span>
+                    <span><?= __('nav_browse_properties', null, 'Browse Properties') ?></span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/list-property" class="sidebar-link <?php echo ($current_page ?? '') === 'post' ? 'active' : ''; ?>">
                     <i class="fas fa-plus-circle"></i>
-                    <span>Post Property</span>
+                    <span><?= __('nav_post_property', null, 'Post Property') ?></span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/financial-services" class="sidebar-link <?php echo ($current_page ?? '') === 'loan' ? 'active' : ''; ?>">
                     <i class="fas fa-hand-holding-usd"></i>
-                    <span>Home Loan</span>
+                    <span><?= __('nav_home_loan', null, 'Home Loan') ?></span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/interior-design" class="sidebar-link <?php echo ($current_page ?? '') === 'interior' ? 'active' : ''; ?>">
                     <i class="fas fa-couch"></i>
-                    <span>Interior Design</span>
+                    <span><?= __('nav_interior_design', null, 'Interior Design') ?></span>
                 </a>
             </li>
         </ul>
@@ -366,25 +366,25 @@
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/user/profile" class="sidebar-link <?php echo ($current_page ?? '') === 'profile' ? 'active' : ''; ?>">
                     <i class="fas fa-user-cog"></i>
-                    <span>My Profile</span>
+                    <span><?= __('nav_my_profile', null, 'My Profile') ?></span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/user/bank-details" class="sidebar-link <?php echo ($current_page ?? '') === 'bank' ? 'active' : ''; ?>">
                     <i class="fas fa-university"></i>
-                    <span>Bank Details</span>
+                    <span><?= __('cust_bank_details', null, 'Bank Details') ?></span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/user/settings" class="sidebar-link <?php echo ($current_page ?? '') === 'settings' ? 'active' : ''; ?>">
                     <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                    <span><?= __('nav_settings', null, 'Settings') ?></span>
                 </a>
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo BASE_URL; ?>/user/logout" class="sidebar-link text-danger">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
+                    <span><?= __('nav_logout', null, 'Logout') ?></span>
                 </a>
             </li>
         </ul>
@@ -398,7 +398,7 @@
                 <h1 class="page-title"><?php echo $page_title ?? 'Dashboard'; ?></h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/user/dashboard">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/user/dashboard"><?= __('nav_home', null, 'Home') ?></a></li>
                         <li class="breadcrumb-item active"><?php echo $page_title ?? 'Dashboard'; ?></li>
                     </ol>
                 </nav>

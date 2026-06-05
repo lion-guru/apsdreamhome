@@ -31,6 +31,20 @@ class BaseController
     }
 
     /**
+     * Run the ExperimentMiddleware (A/B testing variant assignment).
+     *
+     * Idempotent: ExperimentMiddleware::handle() is a static no-op after the
+     * first call in a request, so it's safe to invoke from every controller.
+     */
+    protected function runExperimentMiddleware(): void
+    {
+        if (class_exists('\\App\\Http\\Middleware\\ExperimentMiddleware')
+            && method_exists('\\App\\Http\\Middleware\\ExperimentMiddleware', 'handle')) {
+            \App\Http\Middleware\ExperimentMiddleware::handle();
+        }
+    }
+
+    /**
      * Alias for render()
      */
     public function view($view, $data = [])
@@ -52,6 +66,32 @@ class BaseController
         // Initialize database
         $this->db = \App\Core\Database\Database::getInstance();
 
+        // Monitoring: register global exception handler (once per process).
+        // Captures uncaught Throwables into monitoring_errors without breaking
+        // any existing handler that PHP installed earlier.
+        if (!defined('APS_MONITORING_HANDLER_REGISTERED')) {
+            define('APS_MONITORING_HANDLER_REGISTERED', true);
+            if (class_exists('\App\Services\Monitoring\ErrorTrackerService')) {
+                $previous = set_exception_handler(null);
+                set_exception_handler(function ($exception) use ($previous) {
+                    try {
+                        \App\Services\Monitoring\ErrorTrackerService::captureException($exception, [
+                            'url'    => $_SERVER['REQUEST_URI'] ?? null,
+                            'method' => $_SERVER['REQUEST_METHOD'] ?? null,
+                        ]);
+                    } catch (\Throwable $e) {
+                        // never let monitoring break the app
+                    }
+                    if (is_callable($previous)) {
+                        call_user_func($previous, $exception);
+                    } else {
+                        // Default rethrow so PHP prints/logs the error
+                        throw $exception;
+                    }
+                });
+            }
+        }
+
         // Initialize Localization Service (mlSupport) if available
         if (class_exists('\App\Services\Localization\LocalizationService')) {
             if (method_exists('\App\Services\Localization\LocalizationService', 'getInstance')) {
@@ -62,6 +102,9 @@ class BaseController
                 }
             }
         }
+
+        // A/B testing: assign user to running experiments and auto-track view event
+        $this->runExperimentMiddleware();
 
         // Security: regenerate session ID periodically (every 5 minutes) to prevent fixation
         $this->initSessionSecurity();

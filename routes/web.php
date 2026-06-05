@@ -95,7 +95,7 @@ $router->get('/our-team', function () {
     header('Location: ' . BASE_URL . '/team', true, 301);
     exit;
 });
-$router->get('/testimonials', 'Front\\PageController@testimonials');
+// /testimonials is also defined at line 430 (Front\TestimonialsController@index) - the LATER route wins
 $router->get('/faq', 'Front\\PageController@faq');
 $router->get('/faqs', 'Front\\PageController@faqs');
 $router->get('/home', 'Front\\PageController@home');
@@ -114,8 +114,8 @@ $router->get('/news', 'Front\\PageController@news');
 $router->get('/blog', 'App\\Http\\Controllers\\Front\\BlogController@index');
 $router->get('/blog/{slug}', 'App\\Http\\Controllers\\Front\\BlogController@show');
 $router->get('/gallery', 'Front\\PageController@gallery');
-$router->get('/resell', 'Front\\PageController@resell');
-$router->get('/careers', 'Front\PageController@careers');
+// /resell is also defined at line 3183 (Front\ResellPropertyController@index) - the LATER route wins
+// /careers is also defined at line 3065 (Career\CareerController@index) - the LATER route wins
 $router->get('/coming-soon', 'Front\\PageController@comingSoon');
 $router->get('/become-associate', 'Front\\PageController@becomeAssociate');
 $router->get('/become_associate', function () {
@@ -246,6 +246,29 @@ $router->get('/list-property', 'Front\\PageController@listProperty');
 $router->post('/list-property/submit', 'Front\\PageController@handlePropertyListing');
 $router->get('/properties/submit', 'Front\\PageController@propertySubmit');
 
+// Multi-step Property Listing Wizard (8 steps + draft + publish + image upload)
+if (file_exists(__DIR__ . '/../app/Http/Controllers/Front/PropertyListingWizardController.php')) {
+    $router->get('/list-property/step1', 'Front\\PropertyListingWizardController@step1');
+    $router->post('/list-property/step1', 'Front\\PropertyListingWizardController@saveStep1');
+    $router->get('/list-property/step2', 'Front\\PropertyListingWizardController@step2');
+    $router->post('/list-property/step2', 'Front\\PropertyListingWizardController@saveStep2');
+    $router->get('/list-property/step3', 'Front\\PropertyListingWizardController@step3');
+    $router->post('/list-property/step3', 'Front\\PropertyListingWizardController@saveStep3');
+    $router->get('/list-property/step4', 'Front\\PropertyListingWizardController@step4');
+    $router->post('/list-property/step4', 'Front\\PropertyListingWizardController@saveStep4');
+    $router->get('/list-property/step5', 'Front\\PropertyListingWizardController@step5');
+    $router->post('/list-property/step5', 'Front\\PropertyListingWizardController@saveStep5');
+    $router->get('/list-property/step6', 'Front\\PropertyListingWizardController@step6');
+    $router->post('/list-property/step6', 'Front\\PropertyListingWizardController@saveStep6');
+    $router->get('/list-property/step7', 'Front\\PropertyListingWizardController@step7');
+    $router->post('/list-property/step7', 'Front\\PropertyListingWizardController@saveStep7');
+    $router->get('/list-property/step8', 'Front\\PropertyListingWizardController@step8');
+    $router->post('/list-property/step8', 'Front\\PropertyListingWizardController@saveStep8');
+    $router->post('/list-property/publish', 'Front\\PropertyListingWizardController@publish');
+    $router->post('/list-property/save-draft', 'Front\\PropertyListingWizardController@saveDraft');
+    $router->post('/list-property/upload-image', 'Front\\PropertyListingWizardController@uploadImage');
+}
+
 // Form Handlers
 $router->post('/quick-inquiry', 'Front\\PageController@handleQuickInquiry');
 
@@ -263,10 +286,19 @@ $router->get('/admin/user-properties/verify/{id}', 'App\\Http\\Controllers\\Admi
 $router->post('/admin/user-properties/action', 'App\\Http\\Controllers\\Admin\\UserPropertyController@action');
 
 // Admin API Keys Management
-$router->get('/admin/api-keys', 'App\\Http\\Controllers\\Admin\\ApiKeyController@index');
+// /admin/api-keys is also defined at line 3119 (Admin\ApiKeyController@index shorthand) - the LATER route wins
 $router->get('/admin/api-keys/guide', 'App\\Http\\Controllers\\Admin\\ApiKeyController@guide');
 $router->get('/admin/api-keys/create', 'App\\Http\\Controllers\\Admin\\ApiKeyController@create');
 $router->post('/admin/api-keys/store', 'App\\Http\\Controllers\\Admin\\ApiKeyController@store');
+
+// Bulk Property Import (CSV)
+if (file_exists(__DIR__ . '/../app/Services/Bulk/PropertyImportService.php')) {
+    $router->get('/admin/bulk/property-import', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImport');
+    $router->post('/admin/bulk/property-import/upload', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImportUpload');
+    $router->post('/admin/bulk/property-import/execute', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImportExecute');
+    $router->get('/admin/bulk/property-import/template', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImportTemplate');
+    $router->get('/admin/bulk/property-import/sample', 'App\\Http\\Controllers\\Admin\\BulkOperationsController@propertyImportSample');
+}
 $router->get('/admin/api-keys/edit/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@edit');
 $router->post('/admin/api-keys/update/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@update');
 $router->get('/admin/api-keys/delete/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@delete');
@@ -354,6 +386,16 @@ $router->get('/admin/marketing-campaigns/show/{id}', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/marketing-campaigns/send/{id}', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@send');
 $router->get('/admin/marketing-campaigns/delete', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@delete');
 $router->get('/admin/marketing-campaigns/templates', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@templates');
+$router->get('/admin/marketing-campaigns/{id}/edit', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@edit');
+$router->post('/admin/marketing-campaigns/{id}/update', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@update');
+$router->post('/admin/marketing-campaigns/{id}/pause', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@pause');
+$router->post('/admin/marketing-campaigns/{id}/resume', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@resume');
+$router->post('/admin/marketing-campaigns/{id}/cancel', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@cancel');
+$router->post('/admin/marketing-campaigns/{id}/clone', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@clone');
+$router->post('/admin/marketing-campaigns/{id}/test-send', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@testSend');
+$router->post('/admin/marketing-campaigns/{id}/schedule', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@schedule');
+$router->get('/admin/marketing-campaigns/{id}/stats', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@stats');
+$router->get('/admin/marketing-campaigns/{id}/export', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@exportRecipients');
 
 $router->get('/admin/drip-campaigns', 'App\\Http\\Controllers\\Admin\\DripCampaignController@index');
 $router->get('/admin/drip-campaigns/create', 'App\\Http\\Controllers\\Admin\\DripCampaignController@create');
@@ -415,7 +457,7 @@ $router->get('/admin/reviews/approve-testimonial', 'App\\Http\\Controllers\\Admi
 $router->get('/admin/reviews/reject-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@rejectTestimonial');
 $router->get('/admin/reviews/delete-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@deleteTestimonial');
 
-$router->get('/admin/visits', 'App\\Http\\Controllers\\Admin\\VisitController@index');
+// /admin/visits is also defined at line 463 (Admin\VisitController@index) - the LATER route wins
 $router->get('/admin/visits/confirm', 'App\\Http\\Controllers\\Admin\\VisitController@confirm');
 $router->get('/admin/visits/complete', 'App\\Http\\Controllers\\Admin\\VisitController@complete');
 $router->get('/admin/visits/cancel', 'App\\Http\\Controllers\\Admin\\VisitController@cancel');
@@ -494,6 +536,23 @@ $router->get('/api/achievements/badges', 'App\\Http\\Controllers\\AchievementCon
 // Customer Auth
 $router->get('/register', 'Auth\\CustomerAuthController@register');
 $router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
+
+// Multi-step Registration Wizard (4 steps + OTP + skip)
+if (file_exists(__DIR__ . '/../app/Http/Controllers/Auth/RegistrationWizardController.php')) {
+    $router->get('/register/step1', 'Auth\\RegistrationWizardController@step1');
+    $router->post('/register/step1', 'Auth\\RegistrationWizardController@saveStep1');
+    $router->get('/register/step2', 'Auth\\RegistrationWizardController@step2');
+    $router->post('/register/step2', 'Auth\\RegistrationWizardController@saveStep2');
+    $router->get('/register/step3', 'Auth\\RegistrationWizardController@step3');
+    $router->post('/register/step3', 'Auth\\RegistrationWizardController@saveStep3');
+    $router->get('/register/step4', 'Auth\\RegistrationWizardController@step4');
+    $router->post('/register/step4', 'Auth\\RegistrationWizardController@saveStep4');
+    $router->post('/register/complete', 'Auth\\RegistrationWizardController@complete');
+    $router->post('/register/resend-otp', 'Auth\\RegistrationWizardController@resendOtp');
+    $router->post('/register/verify-otp', 'Auth\\RegistrationWizardController@verifyOtp');
+    $router->post('/register/skip', 'Auth\\RegistrationWizardController@skip');
+}
+
 $router->get('/login', 'Auth\\CustomerAuthController@login');
 $router->post('/login', 'Auth\\CustomerAuthController@authenticate');
 $router->get('/logout', 'Auth\\CustomerAuthController@logout');
@@ -872,6 +931,22 @@ $router->get('/admin/gallery/{id}/destroy', 'App\\Http\\Controllers\\Admin\\Gall
 // Admin Settings & System
 $router->get('/admin/settings', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 $router->post('/admin/settings', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/contact', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/contact', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/social', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/social', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/seo', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/seo', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/maintenance', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/maintenance', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->post('/admin/settings/maintenance/toggle', 'App\\Http\\Controllers\\Admin\\MaintenanceController@toggle');
+$router->post('/admin/settings/maintenance/ips/add', 'App\\Http\\Controllers\\Admin\\MaintenanceController@addIp');
+$router->post('/admin/settings/maintenance/ips/remove', 'App\\Http\\Controllers\\Admin\\MaintenanceController@removeIp');
+$router->get('/admin/settings/maintenance/status', 'App\\Http\\Controllers\\Admin\\MaintenanceController@status');
+$router->get('/admin/settings/sms', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
+$router->post('/admin/settings/sms', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');
+$router->get('/admin/settings/export', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@export');
+$router->get('/admin/settings/stats', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@getStats');
 $router->get('/admin/legal-pages', 'App\\Http\\Controllers\\Admin\\LegalPagesController@index');
 $router->post('/admin/legal-pages/update-terms', 'App\\Http\\Controllers\\Admin\\LegalPagesController@updateTerms');
 $router->post('/admin/legal-pages/update-privacy', 'App\\Http\\Controllers\\Admin\\LegalPagesController@updatePrivacy');
@@ -959,6 +1034,7 @@ $router->post('/admin/popups/create', 'App\\Http\\Controllers\\NotificationContr
 
 // Monitoring
 $router->get('/monitoring', 'App\\Http\\Controllers\\MonitoringController@dashboard');
+$router->get('/admin/monitoring', 'App\\Http\\Controllers\\MonitoringController@adminMonitoring');
 
 // Virtual Tour Routes
 $router->get('/virtual-tour', 'Tech\VirtualTourController@index');
@@ -1218,8 +1294,11 @@ $router->get('/admin/resell-properties/images/{id}', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/resell-properties/status/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@status');
 $router->get('/admin/resell-properties/commission/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@commission');
 
-// Include additional admin routes
-require_once __DIR__ . '/admin_routes.php';
+// Note: admin_routes.php was removed in Phase 3+4 cleanup (2026-06-05).
+// All admin routes are now defined in this file. Legacy admin_routes.php
+// only had a single redundant /admin/sales route that pointed to the same
+// controller as the one defined above at line 1723, so removing it has
+// no functional impact.
 
 // ============================================================
 // MISSING ADMIN ROUTES (FIXED)
@@ -1417,6 +1496,28 @@ $router->get('/admin/cache/stats',          'App\\Http\\Controllers\\Admin\\Cach
 $router->post('/admin/cache/flush',         'App\\Http\\Controllers\\Admin\\CacheAdminController@flush');
 $router->post('/admin/cache/redis/flush',   'App\\Http\\Controllers\\Admin\\CacheAdminController@flushRedis');
 $router->post('/admin/cache/test',          'App\\Http\\Controllers\\Admin\\CacheAdminController@test');
+$router->post('/admin/cache/hotpath/flush', 'App\\Http\\Controllers\\Admin\\CacheAdminController@flushHotpath');
+$router->get('/admin/cache/hotpath/stats',  'App\\Http\\Controllers\\Admin\\CacheAdminController@hotpathStats');
+
+// Admin Gateway Manager (Twilio + future gateways)
+$router->get('/admin/gateways',                       'App\\Http\\Controllers\\Admin\\GatewayTestController@index');
+$router->post('/admin/gateways/test-twilio',          'App\\Http\\Controllers\\Admin\\GatewayTestController@testTwilio');
+$router->post('/admin/gateways/test-whatsapp',        'App\\Http\\Controllers\\Admin\\GatewayTestController@testWhatsApp');
+$router->get('/admin/gateways/logs/{gateway}',         'App\\Http\\Controllers\\Admin\\GatewayTestController@logs');
+
+// Admin A/B Testing Framework
+$router->get('/admin/experiments',                  'App\\Http\\Controllers\\Admin\\ExperimentController@index');
+$router->get('/admin/experiments/create',           'App\\Http\\Controllers\\Admin\\ExperimentController@create');
+$router->post('/admin/experiments/store',           'App\\Http\\Controllers\\Admin\\ExperimentController@store');
+$router->get('/admin/experiments/{id}',             'App\\Http\\Controllers\\Admin\\ExperimentController@show');
+$router->get('/admin/experiments/{id}/results',     'App\\Http\\Controllers\\Admin\\ExperimentController@results');
+$router->post('/admin/experiments/{id}/set-winner', 'App\\Http\\Controllers\\Admin\\ExperimentController@setWinner');
+$router->post('/admin/experiments/{id}/end',        'App\\Http\\Controllers\\Admin\\ExperimentController@end');
+$router->get('/admin/experiments/{id}/export',      'App\\Http\\Controllers\\Admin\\ExperimentController@exportCsv');
+$router->post('/admin/experiments/{id}/delete',     'App\\Http\\Controllers\\Admin\\ExperimentController@delete');
+$router->post('/admin/experiments/seed-defaults',   'App\\Http\\Controllers\\Admin\\ExperimentController@seedDefaults');
+$router->get('/api/ab/variant/{name}',              'App\\Http\\Controllers\\Admin\\ExperimentController@getVariant');
+$router->post('/api/ab/track',                      'App\\Http\\Controllers\\Admin\\ExperimentController@track');
 
 // Admin Service Enquiries (alias for services)
 $router->get('/admin/services/enquiry', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
@@ -1751,7 +1852,9 @@ $router->post('/admin/accounting/store-expense', 'App\Http\Controllers\Admin\Acc
 $router->get('/admin/ai_settings', 'App\\Http\\Controllers\\Admin\\AISettingsController@index');
 
 // Marketing
-$router->get('/admin/email-templates', 'App\\Http\\Controllers\\Admin\\CampaignController@emailTemplates');
+$router->get('/admin/email-templates', 'App\\Http\\Controllers\\Admin\\EmailTemplateController@index');
+$router->get('/admin/email-templates/preview/{code}', 'App\\Http\\Controllers\\Admin\\EmailTemplateController@preview');
+$router->get('/admin/email-templates/test/{code}', 'App\\Http\\Controllers\\Admin\\EmailTemplateController@test');
 $router->get('/admin/email-templates/editor', 'App\\Http\\Controllers\\Admin\\CampaignController@templateEditor');
 $router->post('/admin/email-templates/save', 'App\\Http\\Controllers\\Admin\\CampaignController@saveTemplate');
 $router->get('/admin/email-logs', 'App\\Http\\Controllers\\Admin\\CampaignController@logs');
@@ -1878,6 +1981,15 @@ $router->post('/admin/backup/restore/{id}', 'App\\Http\\Controllers\\Admin\\Back
 $router->post('/admin/backup/upload', 'App\\Http\\Controllers\\Admin\\BackupController@upload');
 $router->get('/admin/backup/health', 'App\\Http\\Controllers\\Admin\\BackupController@health');
 $router->get('/admin/backup/download/{id}', 'App\\Http\\Controllers\\Admin\\BackupController@download');
+$router->post('/admin/backup/to-s3', 'App\\Http\\Controllers\\Admin\\BackupController@toS3');
+$router->get('/admin/backup/from-s3', 'App\\Http\\Controllers\\Admin\\BackupController@fromS3');
+$router->get('/admin/backup/s3-download', 'App\\Http\\Controllers\\Admin\\BackupController@s3Download');
+
+// Storage Gateway (admin UI)
+$router->get('/admin/storage', 'App\\Http\\Controllers\\Admin\\StorageGatewayController@index');
+$router->post('/admin/storage/test', 'App\\Http\\Controllers\\Admin\\StorageGatewayController@test');
+$router->get('/admin/storage/list', 'App\\Http\\Controllers\\Admin\\StorageGatewayController@listBucket');
+$router->post('/admin/storage/switch', 'App\\Http\\Controllers\\Admin\\StorageGatewayController@switchDriver');
 
 // Services
 $router->get('/admin/services/home-loan', 'App\\Http\\Controllers\\Admin\\ServiceController@homeLoan');
@@ -2202,6 +2314,16 @@ $router->get('/admin/voice-agents/scripts', 'App\\Http\\Controllers\\Admin\\Voic
 $router->get('/admin/voice-agents/extracted-leads', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@extractedLeads');
 $router->get('/admin/voice-agents/settings', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@settings');
 $router->get('/admin/voice-agents/oln', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@olnDashboard');
+// Live voice call monitor (Cluster 2 - 2026-06-05)
+$router->get('/admin/voice-agents/live', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@live');
+$router->post('/admin/voice-agents/transfer-call', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@transferCall');
+$router->post('/admin/voice-agents/hangup-call', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@hangupCall');
+
+// PDF Service (Cluster 2 - 2026-06-05)
+$router->get('/pdf/download/{type}/{id}',                          'App\\Http\\Controllers\\Front\\PdfController@download');
+$router->get('/admin/pdfs',                                        'App\\Http\\Controllers\\Front\\PdfController@adminIndex');
+$router->post('/admin/pdfs/generate',                              'App\\Http\\Controllers\\Front\\PdfController@adminGenerate');
+$router->get('/admin/pdfs/view/{type}/{id}',                       'App\\Http\\Controllers\\Front\\PdfController@adminView');
 
 // ═══════════════════════════════════════════════════
 // VOICE CALL SCHEDULER (Admin)
@@ -3113,6 +3235,18 @@ $router->get('/user/two-factor/recovery', 'User\\TwoFactorController@recovery');
 $router->post('/user/two-factor/recovery/verify', 'User\\TwoFactorController@verifyBackupCode');
 $router->get('/user/two-factor/disabled', 'User\\TwoFactorController@disabled');
 
+// Admin-side alias: `/admin/2fa` should be findable from bookmarks and
+// admin menu links even though the actual handler lives under /user/two-factor.
+// (Users with admin role share the same users table, so this just forwards.)
+$router->get('/admin/2fa', function () {
+    $base = defined('BASE_URL') ? BASE_URL : '';
+    header('Location: ' . $base . '/user/two-factor', true, 302);
+    exit;
+});
+
+$router->get('/admin/production-checklist', 'Admin\\ProductionChecklistController@index');
+$router->post('/admin/production-checklist/mark/{key}', 'Admin\\ProductionChecklistController@mark');
+
 $router->get('/admin/api-keys', 'Admin\\ApiKeyController@index');
 $router->post('/admin/api-keys/create', 'Admin\\ApiKeyController@create');
 $router->post('/admin/api-keys/revoke/{id}', 'Admin\\ApiKeyController@revoke');
@@ -3183,4 +3317,29 @@ $router->post('/resell/submit', 'Front\\ResellPropertyController@submit');
 $router->get('/resell/{id}', 'Front\\ResellPropertyController@show');
 
 
+// ============================================================
+// WEB PUSH NOTIFICATIONS (VAPID — RFC 8291/8292)
+// Public/sw.js is the service worker (registered from header.php).
+// Endpoints hit by the browser's PushManager.
+// ============================================================
+$router->post('/push/subscribe',   'App\\Http\\Controllers\\Front\\PushNotificationController@subscribe');
+$router->post('/push/unsubscribe', 'App\\Http\\Controllers\\Front\\PushNotificationController@unsubscribe');
+$router->post('/push/test',        'App\\Http\\Controllers\\Front\\PushNotificationController@test');
+$router->get('/push/vapid-key',    'App\\Http\\Controllers\\Front\\PushNotificationController@vapidPublicKey');
+
+// ============================================================
+// CHECKOUT + RAZORPAY FLOW
+// GET  /checkout/{bookingId}           — payment page
+// POST /checkout/process/{bookingId}   — create Razorpay order (AJAX)
+// POST /checkout/verify                — verify signature after checkout
+// GET  /checkout/success/{paymentId}   — receipt
+// GET  /checkout/failed                — failure page
+// POST /webhook/razorpay               — Razorpay server-side callback (HMAC)
+// ============================================================
+$router->get('/checkout/{bookingId}',              'App\\Http\\Controllers\\Front\\CheckoutController@checkout');
+$router->post('/checkout/process/{bookingId}',     'App\\Http\\Controllers\\Front\\CheckoutController@processPayment');
+$router->post('/checkout/verify',                  'App\\Http\\Controllers\\Front\\CheckoutController@verifyPayment');
+$router->get('/checkout/success/{paymentId}',      'App\\Http\\Controllers\\Front\\CheckoutController@paymentSuccess');
+$router->get('/checkout/failed',                   'App\\Http\\Controllers\\Front\\CheckoutController@paymentFailed');
+$router->post('/webhook/razorpay',                 'App\\Http\\Controllers\\Front\\CheckoutController@webhook');
 

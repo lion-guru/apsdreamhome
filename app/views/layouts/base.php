@@ -168,6 +168,8 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <!-- Core styles (cascade order matters: style.css before frontend.css) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
+    <!-- Image gallery lightbox -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/image-gallery.css" rel="stylesheet">
     <!-- Chatbot CSS (deferred, non-critical) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet"></noscript>
@@ -327,6 +329,8 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
+    <!-- Image gallery lightbox -->
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/image-gallery.js"></script>
     <!-- premium-header.js removed - functionality merged into header.php inline -->
 
     <!-- Utility JS -->

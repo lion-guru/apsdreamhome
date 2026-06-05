@@ -96,8 +96,8 @@ if (!defined('BASE_URL')) {
 $projectLocations = [];
 $allProjects = [];
 
-// Load from cache (Redis first, file fallback) — 5 minute TTL
-$cachedProjects = \App\Services\CacheService::getHeaderProjects(function () {
+// Load from hot-path cache (Redis first, file fallback) — 10 minute TTL
+$cachedProjects = \App\Services\Cache\HotPathCacheService::getHeaderProjects(function () {
     try {
         $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

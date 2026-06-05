@@ -90,6 +90,29 @@ class LiveChatService
                 $this->pdo->prepare("UPDATE chat_sessions SET first_response_at = COALESCE(first_response_at, NOW()) WHERE id = ?")
                     ->execute([$sessionId]);
             }
+
+            // WebSocket broadcast - real-time delivery to subscribers of chat_{sessionId}
+            // Failures are logged inside the broadcaster and never bubble up.
+            if (!$isInternal && $msgId) {
+                try {
+                    \App\Services\WebSocketBroadcaster::broadcastToChat((int)$sessionId, [
+                        'event' => 'message',
+                        'message_id' => (int)$msgId,
+                        'session_id' => (int)$sessionId,
+                        'sender_type' => $senderType,
+                        'sender_id' => (int)$senderId,
+                        'sender_name' => $senderName,
+                        'message' => $message,
+                        'message_type' => $messageType,
+                        'attachment' => $attachment,
+                        'is_internal' => (bool)$isInternal,
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log("LiveChat broadcast: " . $e->getMessage());
+                }
+            }
+
             return $msgId;
         } catch (\Throwable $e) {
             error_log("LiveChat sendMessage: " . $e->getMessage());

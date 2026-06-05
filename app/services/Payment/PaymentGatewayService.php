@@ -3,10 +3,16 @@
 namespace App\Services\Payment;
 
 use App\Core\Database\Database;
+use App\Services\Gateway\RazorpayService;
 
 /**
  * Payment Gateway Service
  * Multi-gateway integration: Razorpay, PayU, Stripe
+ *
+ * Razorpay logic is delegated to App\Services\Gateway\RazorpayService
+ * (the unified client). This class remains as a thin router / facade so
+ * legacy call-sites (createOrder, verifyPayment, processRefund, etc.)
+ * continue to work.
  */
 class PaymentGatewayService
 {
@@ -108,36 +114,66 @@ class PaymentGatewayService
     }
     
     /**
-     * Create Razorpay order
+     * Create Razorpay order — delegates to unified Gateway\RazorpayService
      */
     private function createRazorpayOrder(array $data): array
     {
-        $apiUrl = $this->config['api_url'] . '/orders';
-        
-        $payload = [
-            'amount' => $data['amount'] * 100, // Razorpay uses paise
-            'currency' => $data['currency'],
-            'receipt' => $data['order_id'],
-            'notes' => [
-                'user_id' => $data['user_id'],
-                'entity_type' => $data['entity_type'],
-                'entity_id' => $data['entity_id']
+        $svc = new RazorpayService();
+        $resp = $svc->createOrder(
+            (float)$data['amount'],
+            $data['currency'],
+            $data['order_id'],
+            [
+                'user_id'        => $data['user_id'],
+                'entity_type'    => $data['entity_type'],
+                'entity_id'      => $data['entity_id'],
+                'booking_id'     => $data['entity_id'],
+                'customer_name'  => $data['customer_name'] ?? null,
+                'customer_email' => $data['customer_email'] ?? null,
+                'customer_phone' => $data['customer_phone'] ?? null,
+                'description'    => $data['description'] ?? null,
             ]
-        ];
-        
-        // In production, make actual API call
-        // For now, simulate successful order creation
-        $razorpayOrderId = 'order_' . uniqid();
-        
+        );
+
+        if (!$resp['success']) {
+            return [
+                'success'         => false,
+                'order_id'        => $data['order_id'],
+                'gateway_order_id'=> null,
+                'amount'          => $data['amount'],
+                'currency'        => $data['currency'],
+                'key_id'          => $svc->getKeyId(),
+                'gateway'         => 'razorpay',
+                'error'           => $resp['error'] ?? 'Unknown error',
+            ];
+        }
+
         return [
-            'success' => true,
-            'order_id' => $data['order_id'],
-            'gateway_order_id' => $razorpayOrderId,
-            'amount' => $data['amount'],
-            'currency' => $data['currency'],
-            'key_id' => $this->config['key_id'],
-            'gateway' => 'razorpay'
+            'success'         => true,
+            'order_id'        => $data['order_id'],
+            'gateway_order_id'=> $resp['data']['id'] ?? null,
+            'amount'          => $resp['data']['amount'] / 100,
+            'currency'        => $resp['data']['currency'] ?? 'INR',
+            'key_id'          => $svc->getKeyId(),
+            'gateway'         => 'razorpay',
+            'data'            => $resp['data'],
         ];
+    }
+
+    /**
+     * Verify Razorpay payment signature — delegates to unified service
+     */
+    public function verifyRazorpaySignature(string $orderId, string $paymentId, string $signature): bool
+    {
+        return (new RazorpayService())->verifyPaymentSignature($orderId, $paymentId, $signature);
+    }
+
+    /**
+     * Verify Razorpay webhook signature — delegates to unified service
+     */
+    public function verifyRazorpayWebhook(string $payload, string $signature): bool
+    {
+        return (new RazorpayService())->verifyWebhookSignature($payload, $signature);
     }
     
     /**
@@ -405,10 +441,13 @@ class PaymentGatewayService
      */
     private function verifyWebhookSignature(string $gateway, array $payload, string $signature): bool
     {
-        // Implementation depends on gateway
-        // Razorpay: hash_hmac('sha256', $webhookBody, $secret)
-        // PayU: checksum verification
-        return true; // Simplified for now
+        if ($gateway === 'razorpay' && $signature) {
+            $body = json_encode($payload);
+            return (new RazorpayService())->verifyWebhookSignature($body, $signature);
+        }
+        // PayU / Stripe: full checksum implementation deferred.
+        // Returning false here so we don't silently accept unverified webhooks.
+        return false;
     }
     
     /**

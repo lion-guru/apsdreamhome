@@ -57,6 +57,22 @@ class UserController extends BaseController
         $stmt->execute([$user['email']]);
         $inquiries = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+        // ── Hot-path cache: saved-searches count for this user (30 sec TTL) ──
+        $savedSearchesCount = \App\Services\Cache\HotPathCacheService::getUserSavedSearchesCount(
+            (int) $user['id'],
+            function () use ($user) {
+                try {
+                    $stmt = $this->db->prepare("SELECT COUNT(*) AS cnt FROM saved_searches WHERE user_id = ?");
+                    $stmt->execute([(int) $user['id']]);
+                    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                    return (int) ($row['cnt'] ?? 0);
+                } catch (\Throwable $e) {
+                    error_log("UserController::dashboard - savedSearchesCount: " . $e->getMessage());
+                    return 0;
+                }
+            }
+        );
+
         // Fetch bookings (purchased plots/properties)
         $bookings = $this->db->fetchAll("
             SELECT b.*, 

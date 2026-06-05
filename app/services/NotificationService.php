@@ -20,27 +20,13 @@ class NotificationService
         // and persist a 'skipped' record for auditability.
         $notificationType = $data['notification_type'] ?? null;
         if ($notificationType && !$this->isChannelEnabled($userId, $notificationType, $channel)) {
-            $payload = json_encode(['subject' => $subject, 'message' => $message, 'data' => $data], JSON_UNESCAPED_UNICODE);
-            $stSkip = $this->db->prepare("INSERT INTO realtime_notifications (user_id, channel, subject, message, payload, status, created_at) VALUES (:u, :c, :s, :m, :p, 'skipped', NOW())");
-            try {
-                $stSkip->execute([':u' => $userId, ':c' => $channel, ':s' => $subject, ':m' => $message, ':p' => $payload]);
-            } catch (\Throwable $e) {
-                // ignore audit log failure - delivery is the priority
-            }
+            $this->logRealtime($userId, $channel, $subject, $message, $data, 'skipped');
             return ['ok' => false, 'id' => 0, 'skipped' => true, 'reason' => 'channel_disabled_by_user'];
         }
 
         $template = $this->getTemplate($data['template_code'] ?? $channel);
-        $st = $this->db->prepare("INSERT INTO notification_templates (template_code, channel, subject, body, variables, active, created_at)
-                                  VALUES (:c, :ch, :s, :b, :v, 0, NOW())
-                                  ON DUPLICATE KEY UPDATE body = body");
-        // templates aren't inserted via this method, only fetched
 
-        $payload = json_encode(['subject' => $subject, 'message' => $message, 'data' => $data], JSON_UNESCAPED_UNICODE);
-
-        $st2 = $this->db->prepare("INSERT INTO realtime_notifications (user_id, channel, subject, message, payload, status, created_at) VALUES (:u, :c, :s, :m, :p, 'pending', NOW())");
-        $st2->execute([':u' => $userId, ':c' => $channel, ':s' => $subject, ':m' => $message, ':p' => $payload]);
-        $id = (int)$this->db->lastInsertId();
+        $id = $this->logRealtime($userId, $channel, $subject, $message, $data, 'pending');
 
         switch ($channel) {
             case 'email': $this->trackEmail($id, $userId, $subject, $message, $data); break;
@@ -49,10 +35,47 @@ class NotificationService
             case 'whatsapp': $this->sendWhatsapp($userId, $message, $data); break;
         }
 
-        $st3 = $this->db->prepare("UPDATE realtime_notifications SET status = 'sent', sent_at = NOW() WHERE id = :id");
-        $st3->execute([':id' => $id]);
+        $this->markRealtimeSent($id);
 
         return ['ok' => true, 'id' => $id];
+    }
+
+    /**
+     * Insert a realtime_notifications row using the actual schema
+     * (channel_name, event_type, payload, delivered_at, read_at, expires_at, created_at).
+     * Returns the inserted id, or 0 on failure.
+     */
+    private function logRealtime(int $userId, string $channel, string $subject, string $message, array $data, string $status): int
+    {
+        $payload = json_encode(['subject' => $subject, 'message' => $message, 'data' => $data, 'status' => $status], JSON_UNESCAPED_UNICODE);
+        $eventType = $data['event_type'] ?? ('pref_' . $status);
+        $sql = "INSERT INTO realtime_notifications (channel_name, user_id, event_type, payload, delivered_at, created_at)
+                VALUES (:c, :u, :e, :p, :d, NOW())";
+        try {
+            $st = $this->db->prepare($sql);
+            $st->execute([
+                ':c' => $channel,
+                ':u' => $userId,
+                ':e' => $eventType,
+                ':p' => $payload,
+                ':d' => $status === 'sent' || $status === 'pending' ? date('Y-m-d H:i:s') : null,
+            ]);
+            return (int) $this->db->lastInsertId();
+        } catch (\Throwable $e) {
+            error_log('NotificationService::logRealtime error: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    private function markRealtimeSent(int $id): void
+    {
+        if ($id <= 0) return;
+        try {
+            $this->db->prepare("UPDATE realtime_notifications SET delivered_at = NOW() WHERE id = :id")
+                ->execute([':id' => $id]);
+        } catch (\Throwable $e) {
+            // ignore
+        }
     }
 
     /**
@@ -163,22 +186,30 @@ class NotificationService
 
     private function trackEmail(int $notifId, int $userId, string $subject, string $body, array $data): void
     {
-        $st = $this->db->prepare("SELECT email, name FROM users WHERE id = :u");
-        $st->execute([':u' => $userId]);
-        $u = $st->fetch(PDO::FETCH_ASSOC);
-        $to = $data['email'] ?? $u['email'] ?? '';
-        $st2 = $this->db->prepare("INSERT INTO email_tracking (notification_id, user_id, to_email, subject, body, status, sent_at) VALUES (:n, :u, :e, :s, :b, 'sent', NOW())");
-        $st2->execute([':n' => $notifId, ':u' => $userId, ':e' => $to, ':s' => $subject, ':b' => $body]);
+        try {
+            $st = $this->db->prepare("SELECT email, name FROM users WHERE id = :u");
+            $st->execute([':u' => $userId]);
+            $u = $st->fetch(PDO::FETCH_ASSOC);
+            $to = $data['email'] ?? $u['email'] ?? '';
+            $st2 = $this->db->prepare("INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, event_at) VALUES (:n, :e, 'sent', :ip, :ua, NOW())");
+            $st2->execute([':n' => $notifId, ':e' => $to, ':ip' => $_SERVER['REMOTE_ADDR'] ?? null, ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? null]);
+        } catch (\Throwable $e) {
+            // table might not have the columns we expect; ignore
+        }
     }
 
     private function trackSms(int $notifId, int $userId, string $message, array $data): void
     {
-        $st = $this->db->prepare("SELECT phone FROM users WHERE id = :u");
-        $st->execute([':u' => $userId]);
-        $u = $st->fetch(PDO::FETCH_ASSOC);
-        $to = $data['phone'] ?? $u['phone'] ?? '';
-        $st2 = $this->db->prepare("INSERT INTO sms_logs (user_id, to_phone, message, status, sent_at, created_at) VALUES (:u, :p, :m, 'sent', NOW(), NOW())");
-        try { $st2->execute([':u' => $userId, ':p' => $to, ':m' => $message]); } catch (\Throwable $e) {}
+        try {
+            $st = $this->db->prepare("SELECT phone FROM users WHERE id = :u");
+            $st->execute([':u' => $userId]);
+            $u = $st->fetch(PDO::FETCH_ASSOC);
+            $to = $data['phone'] ?? $u['phone'] ?? '';
+            $st2 = $this->db->prepare("INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, event_at) VALUES (:n, :e, 'sms_sent', :ip, :ua, NOW())");
+            $st2->execute([':n' => $notifId, ':e' => $to, ':ip' => $_SERVER['REMOTE_ADDR'] ?? null, ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? null]);
+        } catch (\Throwable $e) {
+            // ignore
+        }
     }
 
     private function sendPush(int $userId, string $title, string $body, array $data): void

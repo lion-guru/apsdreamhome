@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use App\Services\MaintenanceService;
+
+/**
+ * MaintenanceModeMiddleware
+ *
+ * Drops every non-admin, non-whitelisted request into a friendly
+ * "be right back" page when the site is in maintenance mode.
+ *
+ * Adheres to the project's BaseController middleware contract:
+ *  - handle($request, $next) -> response
+ *  - Returns the wrapped response (or the maintenance response) without
+ *    invoking $next() when blocked.
+ */
+class MaintenanceModeMiddleware
+{
+    public function handle($request = null, $next = null)
+    {
+        try {
+            $svc = new MaintenanceService();
+            if ($svc->isRequestAllowed()) {
+                return $next ? $next($request) : null;
+            }
+            $this->renderMaintenancePage($svc);
+            exit;
+        } catch (\Throwable $e) {
+            // If middleware fails, fail open (don't break the site)
+            return $next ? $next($request) : null;
+        }
+    }
+
+    private function renderMaintenancePage(MaintenanceService $svc): void
+    {
+        http_response_code(503);
+        header('Retry-After: 3600');
+        $message = $svc->getMessage();
+        $eta = $svc->getEta();
+        $logo = defined('BASE_URL') ? BASE_URL . '/assets/images/logo.png' : '/assets/images/logo.png';
+        $contact = 'info@apsdreamhome.com';
+        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>We'll be right back — APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; }
+        .card { border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .icon-circle { width: 100px; height: 100px; border-radius: 50%; background: #f8f9fa; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+        .icon-circle i { font-size: 3rem; color: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <div class="card p-5 text-center">
+                    <div class="icon-circle"><i class="fas fa-cog fa-spin"></i></div>
+                    <h1 class="h2 mb-3">We'll be right back</h1>
+                    <p class="lead text-muted mb-4"><?= htmlspecialchars($message) ?></p>
+                    <?php if ($eta): ?>
+                        <p class="mb-4"><i class="far fa-clock text-primary me-2"></i>Estimated return: <strong><?= htmlspecialchars($eta) ?></strong></p>
+                    <?php endif; ?>
+                    <hr>
+                    <p class="small text-muted mb-0">
+                        Need help? <a href="mailto:<?= htmlspecialchars($contact) ?>"><?= htmlspecialchars($contact) ?></a>
+                    </p>
+                    <div class="mt-3">
+                        <a href="<?= $base ?>" class="text-muted small"><i class="fas fa-sync-alt me-1"></i>Try again</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+        <?php
+    }
+}

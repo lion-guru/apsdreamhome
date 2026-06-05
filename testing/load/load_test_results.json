@@ -1,0 +1,211 @@
+{
+    "meta": {
+        "test_name": "APS Dream Home Load Test",
+        "timestamp": "2026-06-05T13:20:57+02:00",
+        "base_url": "http://localhost/apsdreamhome",
+        "concurrent_users": 100,
+        "requests_per_user": 10,
+        "target_total": 1000,
+        "duration_cap_s": 30,
+        "php_version": "8.2.12"
+    },
+    "totals": {
+        "completed": 1000,
+        "errors": 0,
+        "error_rate": 0,
+        "total_time_s": 19.48,
+        "throughput_rps": 51.33,
+        "total_bytes": 65051595,
+        "avg_bytes": 65051
+    },
+    "latency_summary": {
+        "count": 1000,
+        "min": 0.0356,
+        "max": 7.2353,
+        "avg": 1.7317,
+        "median": 1.4357,
+        "p50": 1.4357,
+        "p90": 3.1223,
+        "p95": 3.7894,
+        "p99": 4.7258,
+        "stddev": 1.0812
+    },
+    "status_distribution": {
+        "200": 701,
+        "302": 86,
+        "401": 110,
+        "404": 103
+    },
+    "per_endpoint": {
+        "/": {
+            "count": 82,
+            "min": 0.1104,
+            "max": 7.2353,
+            "avg": 1.7739,
+            "median": 1.4064,
+            "p50": 1.4064,
+            "p90": 3.2074,
+            "p95": 3.5516,
+            "p99": 7.2353,
+            "stddev": 1.1121,
+            "status": {
+                "200": 82
+            },
+            "avg_bytes": 159706,
+            "total_bytes": 13095892
+        },
+        "/properties": {
+            "count": 94,
+            "min": 0.3618,
+            "max": 4.8055,
+            "avg": 1.8552,
+            "median": 1.4897,
+            "p50": 1.4897,
+            "p90": 3.3707,
+            "p95": 3.9705,
+            "p99": 4.8055,
+            "stddev": 1.0152,
+            "status": {
+                "200": 94
+            },
+            "avg_bytes": 142107,
+            "total_bytes": 13358058
+        },
+        "/admin/dashboard?test_login=1": {
+            "count": 86,
+            "min": 0.0611,
+            "max": 3.2286,
+            "avg": 1.4295,
+            "median": 1.0435,
+            "p50": 1.0435,
+            "p90": 2.8265,
+            "p95": 2.9491,
+            "p99": 3.2286,
+            "stddev": 0.9052,
+            "status": {
+                "302": 86
+            },
+            "avg_bytes": 0,
+            "total_bytes": 0
+        },
+        "/api/mobile/dashboard": {
+            "count": 110,
+            "min": 0.1383,
+            "max": 3.339,
+            "avg": 1.3487,
+            "median": 1.0481,
+            "p50": 1.0481,
+            "p90": 2.7576,
+            "p95": 2.8265,
+            "p99": 3.3085,
+            "stddev": 0.8616,
+            "status": {
+                "401": 110
+            },
+            "avg_bytes": 74,
+            "total_bytes": 8140
+        },
+        "/auctions": {
+            "count": 107,
+            "min": 0.1311,
+            "max": 4.137,
+            "avg": 1.5125,
+            "median": 1.3557,
+            "p50": 1.3557,
+            "p90": 2.8265,
+            "p95": 2.8835,
+            "p99": 3.9868,
+            "stddev": 0.8372,
+            "status": {
+                "200": 107
+            },
+            "avg_bytes": 61489,
+            "total_bytes": 6579323
+        },
+        "/contact": {
+            "count": 112,
+            "min": 0.0956,
+            "max": 4.7191,
+            "avg": 1.9583,
+            "median": 1.5797,
+            "p50": 1.5797,
+            "p90": 3.2648,
+            "p95": 4.267,
+            "p99": 4.6615,
+            "stddev": 1.091,
+            "status": {
+                "200": 112
+            },
+            "avg_bytes": 70881,
+            "total_bytes": 7938672
+        },
+        "/about": {
+            "count": 111,
+            "min": 0.2134,
+            "max": 4.7258,
+            "avg": 1.6255,
+            "median": 1.4404,
+            "p50": 1.4404,
+            "p90": 2.827,
+            "p95": 3.3112,
+            "p99": 4.046,
+            "stddev": 0.9132,
+            "status": {
+                "200": 111
+            },
+            "avg_bytes": 65682,
+            "total_bytes": 7290702
+        },
+        "/services": {
+            "count": 103,
+            "min": 0.0902,
+            "max": 4.9015,
+            "avg": 1.7523,
+            "median": 1.417,
+            "p50": 1.417,
+            "p90": 3.109,
+            "p95": 3.6715,
+            "p99": 4.5052,
+            "stddev": 1.0511,
+            "status": {
+                "200": 103
+            },
+            "avg_bytes": 89288,
+            "total_bytes": 9196664
+        },
+        "/projects": {
+            "count": 92,
+            "min": 0.1738,
+            "max": 4.4555,
+            "avg": 1.8052,
+            "median": 1.3795,
+            "p50": 1.3795,
+            "p90": 3.0492,
+            "p95": 3.9505,
+            "p99": 4.4555,
+            "stddev": 1.0748,
+            "status": {
+                "200": 92
+            },
+            "avg_bytes": 80139,
+            "total_bytes": 7372788
+        },
+        "/user/login": {
+            "count": 103,
+            "min": 0.0356,
+            "max": 5.4011,
+            "avg": 2.2566,
+            "median": 2.4196,
+            "p50": 2.4196,
+            "p90": 4.2148,
+            "p95": 4.8853,
+            "p99": 5.2044,
+            "stddev": 1.4975,
+            "status": {
+                "404": 103
+            },
+            "avg_bytes": 2052,
+            "total_bytes": 211356
+        }
+    }
+}

@@ -1,8 +1,8 @@
 <!-- Hero Section -->
 <section class="testimonial-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
     <div class="container">
-        <h1 class="display-4 fw-bold">Client Testimonials</h1>
-        <p class="lead mb-0">What our clients say about us</p>
+        <h1 class="display-4 fw-bold"><?= __('testi_hero_title', null, 'Client Testimonials') ?></h1>
+        <p class="lead mb-0"><?= __('testi_hero_subtitle', null, 'What our clients say about us') ?></p>
     </div>
 </section>
 
@@ -39,8 +39,8 @@
         <?php endif; ?>
     <?php endforeach; ?>
 <?php else: ?>
-    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Testimonials</li>
+    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('nav_home', null, 'Home') ?></a></li>
+    <li class="breadcrumb-item active" aria-current="page"><?= __('testi_breadcrumb', null, 'Testimonials') ?></li>
 <?php endif; ?>
 </ol>
 </nav>
@@ -98,9 +98,9 @@
                 <div class="col-12 text-center py-5">
                     <div class="empty-state">
                         <i class="far fa-comments fa-4x text-muted mb-3"></i>
-                        <h3>No testimonials yet</h3>
-                        <p class="text-muted">Be the first to share your experience with us!</p>
-                        <a href="<?= BASE_URL ?>contact" class="btn btn-primary mt-3">Share Feedback</a>
+                        <h3><?= __('testi_empty_title', null, 'No testimonials yet') ?></h3>
+                        <p class="text-muted"><?= __('testi_empty_desc', null, 'Be the first to share your experience with us!') ?></p>
+                        <a href="<?= BASE_URL ?>contact" class="btn btn-primary mt-3"><?= __('testi_empty_btn', null, 'Share Feedback') ?></a>
                     </div>
                 </div>
             <?php endif; ?>
@@ -115,44 +115,44 @@
             <div class="col-lg-8">
                 <div class="card shadow-lg border-0">
                     <div class="card-header bg-primary text-white py-4">
-                        <h3 class="mb-0"><i class="fas fa-pen-fancy me-2"></i>Share Your Experience</h3>
-                        <p class="mb-0 opacity-75">Your feedback helps others make informed decisions</p>
+                        <h3 class="mb-0"><i class="fas fa-pen-fancy me-2"></i><?= __('testi_share_title', null, 'Share Your Experience') ?></h3>
+                        <p class="mb-0 opacity-75"><?= __('testi_share_subtitle', null, 'Your feedback helps others make informed decisions') ?></p>
                     </div>
                     <div class="card-body p-4">
                         <form id="testimonialForm" method="POST" action="<?php echo BASE_URL; ?>/testimonials/submit">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Full Name *</label>
+                                    <label class="form-label"><?= __('testi_lbl_name', null, 'Full Name') ?> *</label>
                                     <input type="text" name="name" class="form-control" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Email *</label>
+                                    <label class="form-label"><?= __('email_lbl', null, 'Email') ?> *</label>
                                     <input type="email" name="email" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Phone</label>
+                                    <label class="form-label"><?= __('phone_lbl', null, 'Phone') ?></label>
                                     <input type="tel" name="phone" class="form-control">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Location</label>
+                                    <label class="form-label"><?= __('testi_lbl_location', null, 'Location') ?></label>
                                     <input type="text" name="location" class="form-control" placeholder="e.g., Gorakhpur">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Property Type</label>
+                                    <label class="form-label"><?= __('testi_lbl_property_type', null, 'Property Type') ?></label>
                                     <select name="property_type" class="form-select">
-                                        <option value="">Select...</option>
-                                        <option value="Residential Plot">Residential Plot</option>
-                                        <option value="Villa">Villa</option>
-                                        <option value="Apartment">Apartment</option>
-                                        <option value="Commercial">Commercial</option>
+                                        <option value=""><?= __('testi_select', null, 'Select...') ?></option>
+                                        <option value="Residential Plot"><?= __('ptype_residential', null, 'Residential Plot') ?></option>
+                                        <option value="Villa"><?= __('ptype_villa', null, 'Villa') ?></option>
+                                        <option value="Apartment"><?= __('ptype_apartment', null, 'Apartment') ?></option>
+                                        <option value="Commercial"><?= __('ptype_commercial', null, 'Commercial') ?></option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Rating *</label>
+                                    <label class="form-label"><?= __('testi_lbl_rating', null, 'Rating') ?> *</label>
                                     <div class="star-rating">
                                         <?php for ($i = 5; $i >= 1; $i--): ?>
                                             <input type="radio" name="rating" id="star<?php echo $i; ?>" value="<?php echo $i; ?>" <?php echo $i === 5 ? 'checked' : ''; ?>>
@@ -162,22 +162,22 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Review Title *</label>
+                                <label class="form-label"><?= __('testi_lbl_review_title', null, 'Review Title') ?> *</label>
                                 <input type="text" name="title" class="form-control" placeholder="e.g., Best Investment Decision!" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Your Experience *</label>
+                                <label class="form-label"><?= __('testi_lbl_experience', null, 'Your Experience') ?> *</label>
                                 <textarea name="testimonial" class="form-control" rows="4" placeholder="Share your experience with APS Dream Homes..." required></textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Photo (Optional)</label>
+                                <label class="form-label"><?= __('testi_lbl_photo', null, 'Photo (Optional)') ?></label>
                                 <input type="file" name="photo" class="form-control" accept="image/*">
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg w-100">
-                                <i class="fas fa-paper-plane me-2"></i>Submit Review
+                                <i class="fas fa-paper-plane me-2"></i><?= __('testi_btn_submit', null, 'Submit Review') ?>
                             </button>
                             <p class="text-muted small mt-2 mb-0">
-                                <i class="fas fa-info-circle me-1"></i>Your review will be moderated before appearing publicly.
+                                <i class="fas fa-info-circle me-1"></i><?= __('testi_moderation_note', null, 'Your review will be moderated before appearing publicly.') ?>
                             </p>
                         </form>
                     </div>

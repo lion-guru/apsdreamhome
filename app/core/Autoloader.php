@@ -184,6 +184,10 @@ $autoloader->addClassMap('App\Http\Controllers\AIAssistantController', APP_ROOT 
 // Register misnamed-file controllers
 $autoloader->addClassMap('App\Http\Controllers\Api\MonitorController', APP_ROOT . '/app/Http/Controllers/Api/MonitorApiController.php');
 
+// Register BaseAgent (class is in Agents/ directory but namespace says 'users')
+$autoloader->addClassMap('App\Services\AI\users\BaseAgent', APP_ROOT . '/app/Services/AI/Agents/BaseAgent.php');
+$autoloader->addClassMap('App\Services\AI\users\AgentInterface', APP_ROOT . '/app/Services/AI/Agents/AgentInterface.php');
+
 // Register legacy managers for backward compatibility
 $autoloader->addClassMap('Cache', APP_ROOT . '/app/Core/Cache.php');
 $autoloader->addClassMap('RedisCache', APP_ROOT . '/app/Core/RedisCache.php');

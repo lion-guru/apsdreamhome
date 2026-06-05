@@ -129,6 +129,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                 </div>
                 <div class="card-body d-flex flex-column gap-2">
                     <form method="POST" action="<?= htmlspecialchars($baseUrl) ?>/admin/backup/create" onsubmit="return confirm('Create a full database backup now? This may take a few minutes.');">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-plus-circle me-1"></i> Create Full Backup Now
                         </button>
@@ -138,6 +139,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                     </button>
                     <div class="collapse mt-2" id="upload-panel">
                         <form method="POST" action="<?= htmlspecialchars($baseUrl) ?>/admin/backup/upload" enctype="multipart/form-data" class="border rounded p-3 bg-light">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                             <div class="mb-2">
                                 <label class="form-label small mb-1">Backup file (.sql or .sql.gz, max 500 MB)</label>
                                 <input type="file" name="backup_file" class="form-control form-control-sm" accept=".sql,.gz" required>
@@ -230,6 +232,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                                         <?php endif; ?>
                                         <?php if ($bStatus === 'completed' && $exists): ?>
                                             <form method="POST" action="<?= htmlspecialchars($baseUrl) ?>/admin/backup/restore/<?= $bid ?>" class="d-inline" onsubmit="return confirm('RESTORE backup #<?= $bid ?> ?\n\nThis will REPLACE current database content. Make sure you have a fresh backup first.');">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-warning" title="Restore">
                                                     <i class="fas fa-undo"></i>
                                                 </button>

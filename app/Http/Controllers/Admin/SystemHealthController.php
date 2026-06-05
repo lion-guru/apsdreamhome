@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Services\SystemHealthService;
+use App\Services\Monitoring\SystemHealthService;
 
 class SystemHealthController extends AdminController
 {
