@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = 'Add New Property';
 $active_page = 'properties';
 ?>
@@ -85,7 +85,7 @@ $active_page = 'properties';
                     <h5 class="mb-3"><i class="fas fa-rupee-sign"></i> Pricing & Location</h5>
 
                     <div class="mb-3">
-                        <label for="price" class="form-label">Price (₹) *</label>
+                        <label for="price" class="form-label">Price (â‚¹) *</label>
                         <input type="number" class="form-control" id="price" name="price" step="0.01" required>
                         <div class="form-text">Property price in Indian Rupees</div>
                     </div>
@@ -273,7 +273,7 @@ $active_page = 'properties';
                 reader.onload = function(e) {
                     previewHtml += `
                             <div class="col-md-3 mb-2">
-                                <img loading="lazy" src="${e.target.result}" class="img-fluid img-thumbnail" style="max-height: 150px;">
+                                <img />
                                 <div class="small text-muted">${file.name}</div>
                             </div>
                         `;

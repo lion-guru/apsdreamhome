@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Property Auctions';
 $page_heading = $page_heading ?? 'Property Auctions';
 $content = $content ?? '';
@@ -27,7 +27,7 @@ ob_start();
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                         <?php if ($a['image_url']): ?>
-                            <img loading="lazy" src="<?= htmlspecialchars($a['image_url']) ?>" class="card-img-top" alt="<?= htmlspecialchars($a['title']) ?>" style="height: 180px; object-fit: cover;">
+                            <img />" class="card-img-top" alt="<?= htmlspecialchars($a['title']) ?>" style="height: 180px; object-fit: cover;">
                         <?php else: ?>
                             <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 180px;">
                                 <i class="fas fa-gavel fa-3x"></i>
@@ -42,7 +42,7 @@ ob_start();
                             <div class="d-flex justify-content-between my-3">
                                 <div>
                                     <small class="text-muted d-block">Current Bid</small>
-                                    <strong class="text-success">₹<?= number_format($a['current_bid'] ?? $a['start_price']) ?></strong>
+                                    <strong class="text-success">â‚¹<?= number_format($a['current_bid'] ?? $a['start_price']) ?></strong>
                                 </div>
                                 <div>
                                     <small class="text-muted d-block">Bids</small>
@@ -75,7 +75,7 @@ ob_start();
                             <span class="badge bg-info mb-2">SCHEDULED</span>
                             <h6><?= htmlspecialchars($a['title']) ?></h6>
                             <p class="text-muted small">Starts: <?= date('M j, Y H:i', strtotime($a['starts_at'])) ?></p>
-                            <p class="mb-2"><strong>Start: ₹<?= number_format($a['start_price']) ?></strong></p>
+                            <p class="mb-2"><strong>Start: â‚¹<?= number_format($a['start_price']) ?></strong></p>
                             <a href="<?= BASE_URL ?>/auctions/<?= $a['id'] ?>" class="btn btn-outline-primary btn-sm w-100">View Details</a>
                         </div>
                     </div>
@@ -95,7 +95,7 @@ ob_start();
                         <div class="card-body">
                             <span class="badge bg-success mb-2">SOLD</span>
                             <h6><?= htmlspecialchars($a['title']) ?></h6>
-                            <p class="text-success mb-0"><strong>Final: ₹<?= number_format($a['winning_bid'] ?? 0) ?></strong></p>
+                            <p class="text-success mb-0"><strong>Final: â‚¹<?= number_format($a['winning_bid'] ?? 0) ?></strong></p>
                         </div>
                     </div>
                 </div>

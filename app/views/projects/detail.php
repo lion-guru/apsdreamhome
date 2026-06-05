@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -62,7 +62,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     <div class="col-md-4">
                         <div class="stat-item text-center">
                             <i class="fas fa-rupee-sign fa-2x mb-2"></i>
-                            <h4>₹<?= number_format($project['base_price'], 0) ?></h4>
+                            <h4>â‚¹<?= number_format($project['base_price'], 0) ?></h4>
                             <small>Starting Price</small>
                         </div>
                     </div>
@@ -100,7 +100,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Main Image -->
                 <div class="main-image-container">
                     <?php if (!empty($project['gallery_images'])): ?>
-                        <img loading="lazy" src="/uploads/projects/<?= htmlspecialchars($project['gallery_images'][0]) ?> class="img-fluid">"
+                        <img /> class="img-fluid">"
                              class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name']) ?>"
                              id="mainImage">
                     <?php else: ?>
@@ -148,7 +148,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                     </tr>
                                     <tr>
                                         <td><strong>Price per sqft:</strong></td>
-                                        <td>₹<?= number_format($project['price_per_sqft'] ?? 0) ?></td>
+                                        <td>â‚¹<?= number_format($project['price_per_sqft'] ?? 0) ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Possession:</strong></td>
@@ -256,7 +256,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                 <?php foreach ($project['gallery_images'] as $index => $image): ?>
                                     <div class="col-md-4 mb-3">
                                         <div class="gallery-item">
-                                            <img loading="lazy" src="/uploads/projects/<?= htmlspecialchars($image) ?> class="img-fluid">"
+                                            <img /> class="img-fluid">"
                                                  class="img-fluid rounded cursor-pointer"
                                                  onclick="openGallery(<?= htmlspecialchars($index, ENT_QUOTES, 'UTF-8') ?>)"
                                                  alt="Gallery Image <?= $index + 1 ?>">
@@ -296,7 +296,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             <h4><i class="fas fa-project-diagram me-2"></i>Project Layout</h4>
                         </div>
                         <div class="card-body text-center">
-                            <img loading="lazy" src="/uploads/projects/<?= htmlspecialchars($project['layout_map']) ?> class="img-fluid">"
+                            <img /> class="img-fluid">"
                                  class="img-fluid" alt="Project Layout"
                                  style="max-height: 600px;">
                         </div>
@@ -321,7 +321,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 
                         <div class="info-item mb-3">
                             <strong>Booking Amount:</strong>
-                            <span class="text-primary">₹<?= number_format($project['booking_amount'] ?? 0) ?></span>
+                            <span class="text-primary">â‚¹<?= number_format($project['booking_amount'] ?? 0) ?></span>
                         </div>
 
                         <?php if ($project['emi_available']): ?>
@@ -363,7 +363,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="loanAmount" class="form-label">Loan Amount (₹)</label>
+                            <label for="loanAmount" class="form-label">Loan Amount (â‚¹)</label>
                             <input type="number" class="form-control" id="loanAmount" placeholder="Enter loan amount">
                         </div>
                         <div class="mb-3">
@@ -564,8 +564,8 @@ function calculateEMI() {
     const emi = principal * rate * Math.pow(1 + rate, tenure) / (Math.pow(1 + rate, tenure) - 1);
     const totalAmount = emi * tenure;
 
-    document.getElementById('monthlyEMI').textContent = '₹' + Math.round(emi).toLocaleString();
-    document.getElementById('totalAmount').textContent = '₹' + Math.round(totalAmount).toLocaleString();
+    document.getElementById('monthlyEMI').textContent = 'â‚¹' + Math.round(emi).toLocaleString();
+    document.getElementById('totalAmount').textContent = 'â‚¹' + Math.round(totalAmount).toLocaleString();
     document.getElementById('emiResult').style.display = 'block';
 }
 

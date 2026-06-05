@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $gallery = $media['gallery'] ?? [];
 $layoutMap = $media['layout_map'] ?? null;
 $virtualTour = $media['virtual_tour'] ?? null;
@@ -25,7 +25,7 @@ $video = $media['video'] ?? null;
             <?php foreach ($gallery as $item): ?>
             <div class="col-md-4 col-sm-6">
                 <div class="microsite-gallery__item">
-                    <img src="<?php echo h($item['url'] ?? ''); ?>" alt="<?php echo h($item['alt'] ?? 'Project image'); ?>" loading="lazy">
+                    <img />" alt="<?php echo h($item['alt'] ?? 'Project image'); ?>" loading="lazy">
                     <?php if (!empty($item['caption'])): ?>
                     <div class="microsite-gallery__caption"><?php echo h($item['caption']); ?></div>
                     <?php endif; ?>
@@ -55,7 +55,7 @@ $video = $media['video'] ?? null;
             <?php if (!empty($layoutMap)): ?>
             <div class="col-lg-6">
                 <div class="microsite-media-card">
-                    <img src="<?php echo h($layoutMap); ?>" alt="Project layout map" class="img-fluid rounded" loading="lazy">
+                    <img />" alt="Project layout map" class="img-fluid rounded" loading="lazy">
                 </div>
             </div>
             <?php endif; ?>

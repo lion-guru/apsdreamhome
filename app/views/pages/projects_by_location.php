@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Projects by Location Page
  */
@@ -39,7 +39,7 @@ $locationName = ucfirst($location);
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 shadow-sm border-0 overflow-hidden">
                         <div class="position-relative" style="height: 200px;">
-                            <img loading="lazy" src="<?php echo BASE_URL . $imgPath; ?>" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                            <img />" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 start-0 m-2">
                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'primary'; ?>">
                                     <?php echo $project->status === 'active' ? 'Available' : 'Completed'; ?>

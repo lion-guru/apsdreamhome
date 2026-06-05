@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Session started by controller
 $page_title = 'Lead Assignment Approvals';
 $page_description = 'Manage lead assignment and reassignment approval requests';
@@ -95,7 +95,7 @@ $page_description = 'Manage lead assignment and reassignment approval requests';
                         <tr>
                             <th>Assignment #</th>
                             <th>Lead Name</th>
-                            <th>Requested By → To</th>
+                            <th>Requested By â†’ To</th>
                             <th>Type</th>
                             <th>Status</th>
                             <th>Priority</th>
@@ -147,7 +147,7 @@ $page_description = 'Manage lead assignment and reassignment approval requests';
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
-                                                <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/img/default-avatar.png" alt="Avatar" class="rounded-circle" width="32" height="32">
+                                                <img />/assets/img/default-avatar.png" alt="Avatar" class="rounded-circle" width="32" height="32">
                                             </div>
                                             <div class="flex-grow-1 ms-2">
                                                 <h6 class="mb-0"><?php echo htmlspecialchars($approval['lead_name'] ?? 'Unknown'); ?></h6>
@@ -157,7 +157,7 @@ $page_description = 'Manage lead assignment and reassignment approval requests';
                                     </td>
                                     <td>
                                         <small class="text-muted">
-                                            <?php echo htmlspecialchars($approval['requested_by_name'] ?? 'Unknown'); ?> → 
+                                            <?php echo htmlspecialchars($approval['requested_by_name'] ?? 'Unknown'); ?> â†’ 
                                             <?php echo htmlspecialchars($approval['requested_to_name'] ?? 'Unknown'); ?>
                                         </small>
                                     </td>

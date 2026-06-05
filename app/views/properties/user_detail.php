@@ -1,4 +1,4 @@
-<div class="container my-5">
+﻿<div class="container my-5">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
@@ -13,7 +13,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="position-relative">
                     <?php if (!empty($property['image'])): ?>
-                    <img loading="lazy" src="<?php echo BASE_URL . '/assets/images/' . htmlspecialchars($property['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($property['name'] ?? ''); ?>" style="height:400px;object-fit:cover;" onerror="this.parentElement.querySelector('.no-image-placeholder').style.display='flex'">
+                    <img />" class="card-img-top" alt="<?php echo htmlspecialchars($property['name'] ?? ''); ?>" style="height:400px;object-fit:cover;" onerror="this.parentElement.querySelector('.no-image-placeholder').style.display='flex'">
                     <?php endif; ?>
                     <div class="no-image-placeholder d-<?php echo empty($property['image']) ? 'flex' : 'none'; ?> align-items-center justify-content-center bg-light" style="height:400px;">
                         <div class="text-center text-muted">

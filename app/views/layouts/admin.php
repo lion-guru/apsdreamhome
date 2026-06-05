@@ -8,6 +8,9 @@
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/favicon.png">
     <meta name="description" content="<?php echo $page_description ?? 'Admin Panel'; ?>">
 
+    <!-- Skip to content link (a11y) -->
+    <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -17,6 +20,7 @@
 
     <!-- Admin CSS -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/frontend-enhancements.css" rel="stylesheet">
     <style>
         /* RBAC Sidebar section toggle styles */
         .sidebar-sec { padding:15px 15px 5px; font-size:.7rem; text-transform:uppercase; color:rgba(255,255,255,.4); font-weight:600; letter-spacing:.05em; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
@@ -139,6 +143,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Admin JS -->
     <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/admin.js"></script>
+    <!-- Frontend enhancements: a11y, forms, toasts, loading -->
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
 
     <!-- Real-time WebSocket Notifications -->
     <script>

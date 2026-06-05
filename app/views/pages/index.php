@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Homepage content (used within layouts/base.php)
 ?>
 <!-- Main Content -->
@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="hero-image animate-slide-in-right">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-1.jpg" alt="Dream Property" class="img-fluid rounded-3 shadow-lg">
+                        <img />/assets/images/hero/luxury-home-1.jpg" alt="Dream Property" class="img-fluid rounded-3 shadow-lg">
                     </div>
                 </div>
             </div>
@@ -104,11 +104,11 @@
                                 <label class="form-label">Price Range</label>
                                 <select class="form-select" name="price_range">
                                     <option value="">Any Price</option>
-                                    <option value="0-1000000">Under ₹10L</option>
-                                    <option value="1000000-5000000">₹10L - ₹50L</option>
-                                    <option value="5000000-10000000">₹50L - ₹1Cr</option>
-                                    <option value="10000000-50000000">₹1Cr - ₹5Cr</option>
-                                    <option value="50000000+">Above ₹5Cr</option>
+                                    <option value="0-1000000">Under â‚¹10L</option>
+                                    <option value="1000000-5000000">â‚¹10L - â‚¹50L</option>
+                                    <option value="5000000-10000000">â‚¹50L - â‚¹1Cr</option>
+                                    <option value="10000000-50000000">â‚¹1Cr - â‚¹5Cr</option>
+                                    <option value="50000000+">Above â‚¹5Cr</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -147,11 +147,11 @@
             <div class="row" id="featuredProjects">
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
+                        <img />/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
                         <div class="card-body">
                             <h5 class="card-title">Suyoday Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">Starting ₹7.5 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting â‚¹7.5 Lakhs</p>
                             <p class="small">Premium residential plots with modern infrastructure</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Ongoing</span>
@@ -162,11 +162,11 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
+                        <img />/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
                         <div class="card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">Starting ₹8.5 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting â‚¹8.5 Lakhs</p>
                             <p class="small">Premium residential plots in developing area</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Ongoing</span>
@@ -177,11 +177,11 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
+                        <img />/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
                         <div class="card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">Starting ₹6.5 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting â‚¹6.5 Lakhs</p>
                             <p class="small">Affordable residential plots with amenities</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-warning">Planned</span>
@@ -192,11 +192,11 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Budh Bihar Colony">
+                        <img />/assets/images/placeholder/property.svg" class="card-img-top" alt="Budh Bihar Colony">
                         <div class="card-body">
                             <h5 class="card-title">Budh Bihar Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Kushinagar</p>
-                            <p class="text-primary fw-bold">Starting ₹5.5 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting â‚¹5.5 Lakhs</p>
                             <p class="small">Integrated township at Premwaliya</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Ongoing</span>
@@ -207,11 +207,11 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Awadhpuri">
+                        <img />/assets/images/placeholder/property.svg" class="card-img-top" alt="Awadhpuri">
                         <div class="card-body">
                             <h5 class="card-title">Awadhpuri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Lucknow</p>
-                            <p class="text-primary fw-bold">Starting ₹12 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting â‚¹12 Lakhs</p>
                             <p class="small">20 bigha premium project at Safadarganj</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-info">Coming Soon</span>
@@ -246,11 +246,11 @@
                 <!-- Static Featured Properties -->
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
+                        <img />/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
                         <div class="card-body">
                             <h5 class="card-title">Suyoday Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">₹7.5 Lakhs</p>
+                            <p class="text-primary fw-bold">â‚¹7.5 Lakhs</p>
                             <p class="small">Premium residential plots with modern infrastructure</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Available</span>
@@ -261,11 +261,11 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
+                        <img />/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
                         <div class="card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">₹8.5 Lakhs</p>
+                            <p class="text-primary fw-bold">â‚¹8.5 Lakhs</p>
                             <p class="small">Premium residential plots in developing area</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Available</span>
@@ -276,11 +276,11 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
+                        <img />/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
                         <div class="card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">₹6.5 Lakhs</p>
+                            <p class="text-primary fw-bold">â‚¹6.5 Lakhs</p>
                             <p class="small">Affordable residential plots with amenities</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-warning">Planned</span>
@@ -337,7 +337,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="about-image">
-                        <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/hero-1.jpg" alt="About APS Dream Home" class="img-fluid rounded-3 shadow-lg">
+                        <img />/assets/images/hero-1.jpg" alt="About APS Dream Home" class="img-fluid rounded-3 shadow-lg">
                     </div>
                 </div>
             </div>

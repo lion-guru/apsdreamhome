@@ -1,4 +1,4 @@
-<style>
+﻿<style>
 :root { --primary: #6a1b9a; --secondary: #ff6f00; --accent: #00c853; }
 .interior-hero {
     background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%);
@@ -250,7 +250,7 @@ function planFurniture() {
             <?php foreach (array_slice($portfolio, 0, 6) as $item): ?>
                 <div class="col-lg-4 col-md-6">
                     <div class="portfolio-item">
-                        <img loading="lazy" src="<?= htmlspecialchars($item['image'] ?? 'https://via.placeholder.com/400x300?text=Interior+Design') ?>" alt="<?= htmlspecialchars($item['title'] ?? 'Portfolio') ?>">
+                        <img />" alt="<?= htmlspecialchars($item['title'] ?? 'Portfolio') ?>">
                         <div class="overlay">
                             <h5 class="mb-1"><?= htmlspecialchars($item['title'] ?? 'Project') ?></h5>
                             <small><?= htmlspecialchars($item['category'] ?? '') ?></small>
@@ -314,14 +314,14 @@ function planFurniture() {
                                     </select>
                                 </div>
                                 <div class="col-md-6"><label class="form-label fw-medium">Approx. Area (sq ft)</label><input type="number" name="area" class="form-control form-control-lg" placeholder="e.g. 1200"></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Budget Range (₹)</label>
+                                <div class="col-md-6"><label class="form-label fw-medium">Budget Range (â‚¹)</label>
                                     <select name="budget" class="form-select form-select-lg">
                                         <option value="">Select range</option>
-                                        <option value="50000">Under ₹50,000</option>
-                                        <option value="100000">₹50,000 - ₹1,00,000</option>
-                                        <option value="200000">₹1,00,000 - ₹2,00,000</option>
-                                        <option value="500000">₹2,00,000 - ₹5,00,000</option>
-                                        <option value="1000000">₹5,00,000+</option>
+                                        <option value="50000">Under â‚¹50,000</option>
+                                        <option value="100000">â‚¹50,000 - â‚¹1,00,000</option>
+                                        <option value="200000">â‚¹1,00,000 - â‚¹2,00,000</option>
+                                        <option value="500000">â‚¹2,00,000 - â‚¹5,00,000</option>
+                                        <option value="1000000">â‚¹5,00,000+</option>
                                     </select>
                                 </div>
                                 <div class="col-12"><label class="form-label fw-medium">Your Requirements</label><textarea name="message" rows="3" class="form-control" placeholder="Tell us about your interior design needs..."></textarea></div>

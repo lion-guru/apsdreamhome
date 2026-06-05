@@ -1,4 +1,4 @@
-<!-- Hero Section -->
+﻿<!-- Hero Section -->
 <section class="legal-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
     <div class="container">
         <h1 class="display-4 fw-bold">Legal Services</h1>
@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <img loading="lazy" src="<?= get_asset_url('assets/images/work.jpg') ?>" alt="Legal Services" class="img-fluid rounded shadow-lg">
+                <img />" alt="Legal Services" class="img-fluid rounded shadow-lg">
             </div>
         </div>
     </div>
@@ -98,7 +98,7 @@
                     ?>
                     <div class="col-md-6 col-lg-3 mb-4">
                         <div class="card h-100 border-0 shadow-sm team-card">
-                            <img loading="lazy" src="<?= htmlspecialchars($lawyerImageUrl) ?>" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name']) ?>"
+                            <img />" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name']) ?>"
                                 onerror="this.src='https://via.placeholder.com/300x300/667eea/ffffff?text=<?= substr($lawyer['name'], 0, 2) ?>'">
                             <div class="card-body text-center">
                                 <h5 class="card-title mb-1"><?= htmlspecialchars($lawyer['name']) ?></h5>

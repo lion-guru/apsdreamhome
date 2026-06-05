@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 
-// Google Analytics 4 (gtag.js) — id pulled from GA4_MEASUREMENT_ID env var.
+// Google Analytics 4 (gtag.js) â€” id pulled from GA4_MEASUREMENT_ID env var.
 // The placeholder 'G-PLACEHOLDER' is shown in the source for visibility so
 // the wiring is obviously present; replace it with a real ID (G-XXXXXXXXXX)
 // in .env to enable actual tracking. GA4 ignores unknown IDs at runtime.
@@ -96,7 +96,7 @@ if (!defined('BASE_URL')) {
 $projectLocations = [];
 $allProjects = [];
 
-// Load from hot-path cache (Redis first, file fallback) — 10 minute TTL
+// Load from hot-path cache (Redis first, file fallback) â€” 10 minute TTL
 $cachedProjects = \App\Services\Cache\HotPathCacheService::getHeaderProjects(function () {
     try {
         $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
@@ -208,7 +208,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     <nav class="navbar navbar-expand-xl">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
-                <img src="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo" style="height: 40px; width: auto; max-width: 130px;" loading="eager" fetchpriority="high">
+                <img />/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo" style="height: 40px; width: auto; max-width: 130px;" loading="eager" fetchpriority="high">
             </a>
 
             <!-- Quick Search Bar (Typeahead) -->
@@ -334,8 +334,8 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             <i class="fas fa-globe me-1"></i> <?= strtoupper($_SESSION['user_language'] ?? 'en') ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item <?= ($_SESSION['user_language'] ?? 'en') === 'en' ? 'active' : '' ?>" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">🇬🇧</span> English</a></li>
-                            <li><a class="dropdown-item <?= ($_SESSION['user_language'] ?? 'en') === 'hi' ? 'active' : '' ?>" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">🇮🇳</span> हिंदी</a></li>
+                            <li><a class="dropdown-item <?= ($_SESSION['user_language'] ?? 'en') === 'en' ? 'active' : '' ?>" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">ðŸ‡¬ðŸ‡§</span> English</a></li>
+                            <li><a class="dropdown-item <?= ($_SESSION['user_language'] ?? 'en') === 'hi' ? 'active' : '' ?>" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">ðŸ‡®ðŸ‡³</span> à¤¹à¤¿à¤‚à¤¦à¥€</a></li>
                         </ul>
                     </li>
                     <?php

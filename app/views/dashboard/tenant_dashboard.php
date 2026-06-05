@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Modernized Tenant Dashboard
@@ -59,7 +59,7 @@ ob_start();
     <div class="row mb-4 animate-fade-up">
         <div class="col-md-8 d-flex align-items-center">
             <div class="position-relative me-4">
-                <img loading="lazy" src="<?= !empty($tenant['uimage']) ? h($tenant['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($tenant['uname']) . '&size=100&background=1e3a8a&color=fff' ?> class="img-fluid">"
+                <img /> class="img-fluid">"
                     alt="Profile" class="rounded-circle shadow-sm border border-3 border-white" style="width:100px; height:100px; object-fit:cover;">
                 <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
             </div>
@@ -109,7 +109,7 @@ ob_start();
                 <div class="icon-box bg-warning-soft rounded-circle mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-receipt text-warning fs-4"></i>
                 </div>
-                <h3 class="fw-bold mb-1">₹<?= number_format($stats['total_paid']) ?></h3>
+                <h3 class="fw-bold mb-1">â‚¹<?= number_format($stats['total_paid']) ?></h3>
                 <p class="text-muted mb-0">Total Paid</p>
             </div>
         </div>

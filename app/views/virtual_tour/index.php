@@ -1,4 +1,4 @@
-<div class="container-fluid py-4">
+﻿<div class="container-fluid py-4">
     <?php $property = $property ?? []; $tour_data = $tour_data ?? []; $ar_enabled = $ar_enabled ?? false; ?>
     <div class="row mb-4">
         <div class="col-12">
@@ -69,7 +69,7 @@
                         <?php foreach ($tour_data['panoramas'] as $pano): ?>
                         <div class="col-md-4">
                             <div class="border rounded p-2 text-center">
-                                <img loading="lazy" src="<?= $base ?? BASE_URL ?>/<?= ($pano['thumbnail_path'] ?? $pano['file_path'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="img-fluid rounded mb-2" style="height:120px;width:100%;object-fit:cover;" onerror="this.src='<?= $base ?? BASE_URL ?>assets/img/no-image.jpg'">
+                                <img />/<?= ($pano['thumbnail_path'] ?? $pano['file_path'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="img-fluid rounded mb-2" style="height:120px;width:100%;object-fit:cover;" onerror="this.src='<?= $base ?? BASE_URL ?>assets/img/no-image.jpg'">
                                 <small class="text-muted text-capitalize d-block"><?= ($pano['panorama_type'] ?? 'interior') ?></small>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                     <h5><?= ($property['title'] ?? 'Property') ?></h5>
                     <p class="text-muted small"><?= ($property['city'] ?? '') ?>, <?= ($property['state'] ?? '') ?></p>
                     <hr>
-                    <div class="d-flex justify-content-between mb-2"><span>Price</span><strong>₹<?= number_format($property['price'] ?? 0) ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Price</span><strong>â‚¹<?= number_format($property['price'] ?? 0) ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Status</span><strong class="text-success"><?= ($property['status'] ?? 'Available') ?></strong></div>
                 </div>
             </div>

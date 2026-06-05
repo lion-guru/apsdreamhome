@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Resell Properties';
 $page_heading = $page_heading ?? 'Resell Properties Marketplace';
 $content = $content ?? '';
@@ -65,7 +65,7 @@ $content = $content ?? '';
         <div class="card shadow-sm h-100 hover-lift">
           <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:180px;">
             <?php if (!empty($p['images'][0]['image_url'])): ?>
-              <img loading="lazy" src="<?= htmlspecialchars($p['images'][0]['image_url']) ?>" class="w-100 h-100" style="object-fit:cover;" alt="">
+              <img />" class="w-100 h-100" style="object-fit:cover;" alt="">
             <?php else: ?>
               <i class="fas fa-home fa-4x text-muted"></i>
             <?php endif; ?>
@@ -77,7 +77,7 @@ $content = $content ?? '';
               <span class="badge bg-info text-white"><?= htmlspecialchars($p['property_type'] ?? 'N/A') ?></span>
               <span class="badge bg-success">Verified</span>
             </div>
-            <h3 class="text-primary mb-2">₹<?= number_format((float)($p['asking_price'] ?? 0), 0) ?></h3>
+            <h3 class="text-primary mb-2">â‚¹<?= number_format((float)($p['asking_price'] ?? 0), 0) ?></h3>
             <div class="d-flex justify-content-between text-muted small mb-3">
               <span><i class="fas fa-ruler-combined me-1"></i><?= htmlspecialchars($p['area_sqft'] ?? 0) ?> sqft</span>
               <?php if (!empty($p['bedrooms'])): ?>

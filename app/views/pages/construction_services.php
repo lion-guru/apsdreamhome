@@ -1,4 +1,4 @@
-<style>
+﻿<style>
 :root { --primary: #1a237e; --secondary: #ff6f00; --accent: #00c853; }
 .construction-hero {
     background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
@@ -185,7 +185,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="project-card card">
                             <?php if (!empty($p['image'])): ?>
-                                <img loading="lazy" src="<?= htmlspecialchars($p['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ?>">
+                                <img />" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ?>">
                             <?php else: ?>
                                 <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:200px"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
                             <?php endif; ?>
@@ -234,7 +234,7 @@
                                         <option value="turnkey">Turnkey Project</option>
                                     </select>
                                 </div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Budget Range (₹)</label><input type="number" name="budget" class="form-control form-control-lg" placeholder="Approximate budget"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium">Budget Range (â‚¹)</label><input type="number" name="budget" class="form-control form-control-lg" placeholder="Approximate budget"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium">Location</label><input type="text" name="location" class="form-control form-control-lg" placeholder="Project location"></div>
                                 <div class="col-12"><label class="form-label fw-medium">Project Details</label><textarea name="message" rows="4" class="form-control" placeholder="Describe your project requirements..."></textarea></div>
                                 <div class="col-12">

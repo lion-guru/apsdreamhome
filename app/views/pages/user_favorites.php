@@ -1,4 +1,4 @@
-<div class="container py-4">
+﻿<div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="fw-bold mb-1"><i class="fas fa-heart text-danger me-2"></i><?= __('user_favorites_heading') ?></h4>
@@ -15,7 +15,7 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                         <?php if (!empty($fav['image'])): ?>
-                            <img loading="lazy" src="<?= BASE_URL ?>/assets/images/properties/<?= htmlspecialchars($fav['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($fav['title'] ?? __('user_favorites_default_alt')) ?>" style="height: 180px; object-fit: cover;">
+                            <img />/assets/images/properties/<?= htmlspecialchars($fav['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($fav['title'] ?? __('user_favorites_default_alt')) ?>" style="height: 180px; object-fit: cover;">
                         <?php else: ?>
                             <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
                                 <i class="fas fa-home fa-3x text-muted opacity-25"></i>

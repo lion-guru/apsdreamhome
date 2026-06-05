@@ -1,4 +1,4 @@
-/**
+﻿/**
  * project - APS Dream Home Component
  * 
  * @package APS Dream Home
@@ -197,7 +197,7 @@ $project_id = $project_id ?? 0;
                             <div class="col-lg-4 col-md-6">
                                 <div class="photo-card animate-fade-up" style="animation-delay: <?php echo $index * 0.1; ?>s;">
                                     <div class="photo-container">
-                                        <img loading="lazy" src="<?php echo htmlspecialchars($image['url']); ?> class="img-fluid">" 
+                                        <img /> class="img-fluid">" 
                                              alt="<?php echo htmlspecialchars($image['title']); ?>"
                                              class="photo-image">
                                         <div class="photo-overlay">
@@ -320,7 +320,7 @@ $project_id = $project_id ?? 0;
         <div class="modal-content bg-dark">
             <div class="modal-body p-0">
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                <img loading="lazy" id="modalPhoto" src="" alt="" class="img-fluid w-100">
+                <img loading="lazy" id="modalPhoto" src="" />
             </div>
         </div>
     </div>

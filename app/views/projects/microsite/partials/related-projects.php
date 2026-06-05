@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (empty($related)) {
     return;
 }
@@ -22,7 +22,7 @@ $items = array_slice($related, 0, 3);
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 microsite-related-card">
                     <?php if (!empty($item['hero_image'])): ?>
-                    <img src="<?php echo h($item['hero_image']); ?>" class="card-img-top" alt="<?php echo h($item['project_name'] ?? 'Related project'); ?>" loading="lazy">
+                    <img />" class="card-img-top" alt="<?php echo h($item['project_name'] ?? 'Related project'); ?>" loading="lazy">
                     <?php endif; ?>
                     <div class="card-body">
                         <h3 class="h5 card-title"><?php echo h($item['project_name'] ?? 'Project'); ?></h3>

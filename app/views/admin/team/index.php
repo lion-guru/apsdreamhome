@@ -1,4 +1,4 @@
-<?php if (isset($_SESSION['success'])): ?>
+﻿<?php if (isset($_SESSION['success'])): ?>
 <div class="alert alert-success alert-dismissible fade show"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
 <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
 <?php endif; ?>
@@ -40,7 +40,7 @@
                         <td><?php echo $i + 1; ?></td>
                         <td>
                             <?php if (!empty($m['photo'])): ?>
-                            <img loading="lazy" src="<?php echo BASE_URL; ?>/assets/images/<?php echo htmlspecialchars($m['photo']); ?>" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:50%;">
+                            <img />/assets/images/<?php echo htmlspecialchars($m['photo']); ?>" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:50%;">
                             <?php else: ?>
                             <div style="width:40px;height:40px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;color:#6c757d;"><i class="fas fa-user"></i></div>
                             <?php endif; ?>

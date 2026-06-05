@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Project Detail Page
  * Display individual project/site details
@@ -345,7 +345,7 @@ if ($project) {
                 ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="<?php echo $baseUrl . $relImg; ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?php echo $baseUrl; ?>/assets/images/placeholder/property.svg'">
+                        <img />" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?php echo $baseUrl; ?>/assets/images/placeholder/property.svg'">
                         <div class="card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>
@@ -357,7 +357,7 @@ if ($project) {
             <?php else: ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="<?php echo $baseUrl; ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suryoday Colony" style="height: 150px; object-fit: cover;">
+                        <img />/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suryoday Colony" style="height: 150px; object-fit: cover;">
                         <div class="card-body">
                             <h6 class="card-title">Suryoday Colony</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -367,7 +367,7 @@ if ($project) {
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="<?php echo $baseUrl; ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunath Nagri" style="height: 150px; object-fit: cover;">
+                        <img />/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunath Nagri" style="height: 150px; object-fit: cover;">
                         <div class="card-body">
                             <h6 class="card-title">Raghunath Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -377,7 +377,7 @@ if ($project) {
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="<?php echo $baseUrl; ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri" style="height: 150px; object-fit: cover;">
+                        <img />/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri" style="height: 150px; object-fit: cover;">
                         <div class="card-body">
                             <h6 class="card-title">Braj Radha Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>

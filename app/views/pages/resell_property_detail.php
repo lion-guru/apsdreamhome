@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Property Details';
 $page_heading = $page_heading ?? 'Property Details';
 $content = $content ?? '';
@@ -29,7 +29,7 @@ $content = $content ?? '';
               <span class="badge bg-success">Verified</span>
               <span class="badge bg-<?= ($property['status'] ?? '') === 'active' ? 'success' : 'warning' ?>"><?= htmlspecialchars($property['status'] ?? '') ?></span>
             </div>
-            <h2 class="text-primary mb-4">₹<?= number_format((float)($property['asking_price'] ?? 0), 0) ?></h2>
+            <h2 class="text-primary mb-4">â‚¹<?= number_format((float)($property['asking_price'] ?? 0), 0) ?></h2>
 
             <div class="row g-3 mb-4">
               <div class="col-md-3"><div class="border rounded p-3 text-center"><i class="fas fa-ruler-combined fa-2x text-muted"></i><div class="mt-2 small text-muted">Area</div><strong><?= htmlspecialchars($property['area_sqft'] ?? 0) ?> sqft</strong></div></div>
@@ -74,7 +74,7 @@ $content = $content ?? '';
               <h5>Photos</h5>
               <div class="row g-2">
                 <?php foreach ($property['images'] as $img): ?>
-                  <div class="col-md-4"><img loading="lazy" src="<?= htmlspecialchars($img['image_url']) ?>" class="img-fluid rounded" alt=""></div>
+                  <div class="col-md-4"><img />" class="img-fluid rounded" alt=""></div>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -104,7 +104,7 @@ $content = $content ?? '';
             <div class="card-body">
               <h5 class="card-title text-success"><i class="fas fa-chart-line me-1"></i> AI Valuation</h5>
               <p class="text-muted small mb-2">Based on market data</p>
-              <h3 class="text-success">₹<?= number_format((float)($valuation['estimated_value'] ?? 0), 0) ?></h3>
+              <h3 class="text-success">â‚¹<?= number_format((float)($valuation['estimated_value'] ?? 0), 0) ?></h3>
               <small class="text-muted">Source: <?= htmlspecialchars($valuation['valuation_source'] ?? 'ai') ?></small>
             </div>
           </div>

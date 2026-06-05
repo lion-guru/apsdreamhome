@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = 'Premium Properties - APS Dream Home';
 include __DIR__ . '/../layouts/base.php';
 ?>
@@ -39,14 +39,14 @@ include __DIR__ . '/../layouts/base.php';
         <div class="col-md-6 col-lg-4 col-xl-3">
             <div class="glass-card h-100 property-card overflow-hidden">
                 <div class="position-relative">
-                    <img loading="lazy" src="<?php echo $property['image']; ?> class="img-fluid">" class="w-100" style="height: 240px; object-fit: cover;" alt="<?php echo $property['title']; ?>">
+                    <img /> class="img-fluid">" class="w-100" style="height: 240px; object-fit: cover;" alt="<?php echo $property['title']; ?>">
                     <div class="position-absolute top-0 start-0 p-3">
                         <span class="badge bg-primary glass-blur px-3 py-2">
                             <?php echo $property['featured'] ? 'Featured' : 'Premium'; ?>
                         </span>
                     </div>
                     <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark">
-                        <h4 class="text-white h5 mb-0">₹<?php echo number_format($property['price']); ?></h4>
+                        <h4 class="text-white h5 mb-0">â‚¹<?php echo number_format($property['price']); ?></h4>
                     </div>
                 </div>
                 
@@ -64,7 +64,7 @@ include __DIR__ . '/../layouts/base.php';
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-<?php echo $property['status'] == 'ready-to-move' ? 'success' : 'warning'; ?> small fw-bold uppercase">
-                            ● <?php echo ucfirst(str_replace('-', ' ', $property['status'])); ?>
+                            â— <?php echo ucfirst(str_replace('-', ' ', $property['status'])); ?>
                         </span>
                         <a href="/properties/<?php echo $property['id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Details</a>
                     </div>

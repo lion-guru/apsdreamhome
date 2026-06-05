@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $colony = $colony ?? [];
 $availablePlots = $availablePlots ?? [];
 $highlights = !empty($colony['key_highlights']) ? (json_decode($colony['key_highlights'], true) ?? []) : [];
@@ -50,7 +50,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                 <div class="row g-3">
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['total_plots'] ?? 0; ?></div><div class="lbl">Total Plots</div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['available_plots'] ?? 0; ?></div><div class="lbl">Available</div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num">₹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl">Starting Price</div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num">â‚¹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl">Starting Price</div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo count($amenities); ?>+</div><div class="lbl">Amenities</div></div></div>
                 </div>
             </div>
@@ -90,7 +90,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
         <div class="row g-5 align-items-center">
             <?php if ($colony['image_path'] ?? ''): ?>
             <div class="col-lg-6">
-                <img src="<?php echo BASE_URL . '/' . ltrim($colony['image_path'], '/'); ?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid rounded-4 shadow">
+                <img />" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid rounded-4 shadow">
             </div>
             <?php endif; ?>
             <div class="col-lg-<?php echo ($colony['image_path'] ?? '') ? '6' : '12'; ?>">
@@ -128,7 +128,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                         <span class="badge bg-success">Available</span>
                     </div>
                     <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo $p['area_sqft'] ?? 0; ?> sqft</p>
-                    <div class="price">₹<?php echo number_format($p['total_price'] ?? 0); ?></div>
+                    <div class="price">â‚¹<?php echo number_format($p['total_price'] ?? 0); ?></div>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -149,7 +149,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
             <?php foreach ($galleryImages as $img): ?>
             <div class="col-md-4 col-sm-6">
                 <a href="<?php echo BASE_URL . '/' . ltrim($img, '/'); ?>" data-lightbox="gallery">
-                    <img src="<?php echo BASE_URL . '/' . ltrim($img, '/'); ?>" alt="Gallery" class="gallery-img">
+                    <img />" alt="Gallery" class="gallery-img">
                 </a>
             </div>
             <?php endforeach; ?>

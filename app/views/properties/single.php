@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'];
@@ -103,14 +103,14 @@ try {
         <div class="col-lg-8">
             <div class="property-gallery">
                 <div class="gallery-main">
-                    <img loading="lazy" src="<?php echo htmlspecialchars($property_images[0]['image_path'] ?? 'https://via.placeholder.com/800x600/667eea/ffffff?text=Property+Image'); ?> class="img-fluid">"
+                    <img /> class="img-fluid">"
                          alt="<?php echo htmlspecialchars($property['title']); ?>"
                          class="gallery-main-img" id="mainImage">
                 </div>
                 <?php if (count($property_images) > 1): ?>
                 <div class="gallery-thumbnails mt-3">
                     <?php foreach ($property_images as $index => $image): ?>
-                    <img loading="lazy" src="<?php echo htmlspecialchars($image['image_path']); ?> class="img-fluid">"
+                    <img /> class="img-fluid">"
                          alt="Property view <?php echo $index + 1; ?>"
                          class="gallery-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>"
                          onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path']); ?>')">
@@ -127,9 +127,9 @@ try {
                     <h2 class="property-title mb-3"><?php echo htmlspecialchars($property['title']); ?></h2>
 
                     <div class="property-price mb-4">
-                        <span class="price-main">₹<?php echo number_format($property['price']); ?></span>
+                        <span class="price-main">â‚¹<?php echo number_format($property['price']); ?></span>
                         <?php if ($property['price_per_sqft']): ?>
-                        <span class="price-per-sqft">₹<?php echo number_format($property['price_per_sqft']); ?>/sq.ft</span>
+                        <span class="price-per-sqft">â‚¹<?php echo number_format($property['price_per_sqft']); ?>/sq.ft</span>
                         <?php endif; ?>
                     </div>
 
@@ -168,7 +168,7 @@ try {
                     <?php if ($property['agent_name']): ?>
                     <div class="agent-card">
                         <div class="agent-avatar">
-                            <img loading="lazy" src="<?php echo htmlspecialchars($property['agent_image'] ?? 'https://ui-avatars.com/api/?name=' . urlencode($property['agent_name'])); ?> class="img-fluid">"
+                            <img /> class="img-fluid">"
                                  alt="Agent" class="agent-img">
                         </div>
                         <div class="agent-info">
@@ -405,7 +405,7 @@ try {
                 <?php foreach ($related_properties as $related): ?>
                 <div class="col-md-4 mb-4">
                     <div class="card property-card h-100">
-                        <img loading="lazy" src="<?php echo htmlspecialchars($related['main_image'] ?? 'https://via.placeholder.com/400x250/667eea/ffffff?text=Property'); ?> class="img-fluid">"
+                        <img /> class="img-fluid">"
                              class="card-img-top" alt="<?php echo htmlspecialchars($related['title']); ?>">
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($related['title']); ?></h5>
@@ -416,7 +416,7 @@ try {
                                 <span><i class="fas fa-ruler-combined me-1"></i><?php echo number_format($related['area_sqft']); ?> sq.ft</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="fw-bold">₹<?php echo number_format($related['price']); ?></span>
+                                <span class="fw-bold">â‚¹<?php echo number_format($related['price']); ?></span>
                                 <a href="/property-details.php?id=<?php echo $related['id']; ?>" class="btn btn-primary btn-sm">View Details</a>
                             </div>
                         </div>

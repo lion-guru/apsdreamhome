@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * English Language File
+ * APS Dream Home - Real Estate CRM
+ */
 return array (
   '10_20l' => '₹10 - 20 Lakh',
   '20_50l' => '₹20 - 50 Lakh',
