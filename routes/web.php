@@ -3055,8 +3055,8 @@ $router->get('/property-workflow/buy/{id}', 'Property\\PropertyWorkflowControlle
 $router->get('/property-workflow/sell', 'Property\\PropertyWorkflowController@sell');
 $router->get('/property-workflow/schedule-visit/{id}', 'Property\\PropertyWorkflowController@scheduleVisit');
 
-// Admin Report Center (Admin\ReportController)
-$router->get('/admin/report-center', 'Admin\\ReportController@index');
+// Admin Report Center (Reports\ReportController)
+$router->get('/admin/report-center', 'App\\Http\\Controllers\\Reports\\ReportController@dashboard');
 
 // Careers Management (Career\CareerController)
 $router->get('/careers', 'Career\\CareerController@index');

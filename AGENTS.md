@@ -1,5 +1,40 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-05)
 
+## Session 2026-06-05 (Big Bang): Final Cleanup — All Phases + Features Complete
+
+### What Was Done
+Final cleanup and bug fix sprint that brought the project to zero regressions across all phases (1.1-1.5, 2a-2d, 5) and feature tests.
+
+### Bugs Fixed This Session
+1. **`/admin/users` 500** — Root cause: `routes/admin_routes.php` (loaded via `require_once` at `routes/web.php:1222`) was OVERRIDING the correct `UserController@index` route with a stale reference to a non-existent `Admin\CustomerController@index`. Fixed by cleaning up `admin_routes.php` to only contain routes that don't conflict with `web.php`.
+
+2. **`/admin/report-center` 500** — Route at `routes/web.php:3059` pointed to `Admin\ReportController@index` (class doesn't exist). Fixed to use `App\Http\Controllers\Reports\ReportController@dashboard` (verified method exists at line 27 of that file).
+
+3. **Debug `error_log` statements** — Removed from `routes/router.php` (lines 138, 184) and `app/Http/Controllers/Admin/UserController.php` (lines 26, 43, 52). These were added for debugging route resolution and were never cleaned up.
+
+4. **Test debris cleanup** — Removed 13 debug test files from `testing/` directory: `test_users_query.php`, `test_users_page.php`, `test_users_direct.php`, `test_users_trace.php`, `test_users_follow.php`, `test_users_proper.php`, `test_with_session.php`, `test_curl_cookies.php`, `test_controller_direct.php`, `test_login_headers.php`, `test_class.php`, `check_class.php`, `debug_broken.cjs`, `test_sess_format.php`.
+
+### Final State
+| Metric | Value |
+|--------|-------|
+| E2E test | **164/165 PASS** (1 expected GodMode 403) |
+| Translation unit tests | **24/24 PASS** |
+| Saved search unit tests | **PASS** (exit code 0) |
+| PHP syntax errors | 0 |
+| Hardcoded `localhost` URLs | 0 |
+| Real 500 errors | 0 |
+| Phases complete | 1.1, 1.2, 1.3, 1.4, 1.4b, 1.5, 2a, 2b, 2c, 2d, 5 |
+| Tags pushed | `phase-1.1-complete` → `phase-2d-complete` |
+| Features verified | live-chat-widget, gtag, cron scripts (backup_cron.php + setup_cron_tasks.ps1), 2FA UI (3 view files) |
+
+### Key Insight
+**routes/admin_routes.php is a footgun** — it's loaded via `require_once` in `web.php:1222` AFTER `web.php` defines its own `/admin/users` route at line 715. This means the include OVERRIDES the correct route with whatever admin_routes.php says. The file should be left empty or removed in a future refactor.
+
+### Commit
+`Session: Big Bang - all phases + features complete` (to be added at end of this session)
+
+---
+
 ## Session 2026-06-05: Phase 1.4b — View-Side session_start() Removal
 
 ### What Was Done
