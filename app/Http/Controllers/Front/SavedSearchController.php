@@ -91,6 +91,9 @@ class SavedSearchController extends BaseController
         try {
             $id = $this->service->saveSearch($userId, $name, $filters, $description, $emailAlerts ? 1 : 0);
 
+            // Hot-path: invalidate cached saved-searches count for this user.
+            \App\Services\Cache\HotPathCacheService::invalidateUserSavedSearches($userId);
+
             if ($isAjax) {
                 $this->json(['success' => true, 'id' => $id, 'name' => $name, 'redirect' => '/user/saved-searches']);
                 return;
@@ -172,6 +175,9 @@ class SavedSearchController extends BaseController
         try {
             $role = $this->service->resolveUserRole($userId);
             $deleted = $this->service->delete((int)$id, $userId, $role);
+
+            // Hot-path: invalidate cached saved-searches count for this user.
+            \App\Services\Cache\HotPathCacheService::invalidateUserSavedSearches($userId);
 
             if ($isAjax) {
                 $this->json(['success' => $deleted]);

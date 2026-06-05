@@ -182,6 +182,10 @@ class UserPropertyController extends AdminController
         // are now stale, so invalidate the dashboard cache and filter cache.
         \App\Services\CacheService::invalidateAdminDashboard();
         \App\Services\CacheService::invalidatePropertyFilters();
+        // Hot-path: drop the property listing pages and home featured properties
+        // since this user_property change can appear in either.
+        \App\Services\Cache\HotPathCacheService::invalidatePropertyList();
+        \App\Services\Cache\HotPathCacheService::invalidateHomeFeatured();
 
         redirect('/admin/user-properties?success=updated');
         exit;

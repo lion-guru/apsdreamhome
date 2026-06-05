@@ -15,15 +15,15 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
-            <h3 class="fw-bold mb-1"><i class="fas fa-bookmark text-primary me-2"></i>Saved Searches</h3>
-            <p class="text-muted mb-0">Save property searches to revisit them anytime and get email alerts on new matches.</p>
+            <h3 class="fw-bold mb-1"><i class="fas fa-bookmark text-primary me-2"></i><?= __('saved_page_title', null, 'Saved Searches') ?></h3>
+            <p class="text-muted mb-0"><?= __('saved_page_subtitle', null, 'Save property searches to revisit them anytime and get email alerts on new matches.') ?></p>
         </div>
         <div class="d-flex gap-2">
             <a href="<?= BASE_URL ?>/user/saved-searches/manage-alerts" class="btn btn-outline-primary rounded-pill px-3">
-                <i class="fas fa-bell me-2"></i>Manage Alerts
+                <i class="fas fa-bell me-2"></i><?= __('saved_btn_manage', null, 'Manage Alerts') ?>
             </a>
             <a href="<?= BASE_URL ?>/properties" class="btn btn-primary rounded-pill px-3 shadow-sm">
-                <i class="fas fa-search me-2"></i>New Search
+                <i class="fas fa-search me-2"></i><?= __('saved_btn_new', null, 'New Search') ?>
             </a>
         </div>
     </div>
@@ -50,7 +50,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <div class="stat-icon blue me-3"><i class="fas fa-bookmark"></i></div>
                         <div>
                             <div class="stat-value fs-3"><?= (int)($stats['my_searches'] ?? 0) ?></div>
-                            <div class="stat-label">Saved Searches</div>
+                            <div class="stat-label"><?= __('saved_stat_saved', null, 'Saved Searches') ?></div>
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <div class="stat-icon green me-3"><i class="fas fa-bell"></i></div>
                         <div>
                             <div class="stat-value fs-3"><?= (int)($stats['alerts_enabled'] ?? 0) ?></div>
-                            <div class="stat-label">Email Alerts Active</div>
+                            <div class="stat-label"><?= __('saved_stat_alerts_active', null, 'Email Alerts Active') ?></div>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <div class="stat-icon orange me-3"><i class="fas fa-paper-plane"></i></div>
                         <div>
                             <div class="stat-value fs-3"><?= count($alertLog) ?></div>
-                            <div class="stat-label">Alerts Sent (recent)</div>
+                            <div class="stat-label"><?= __('saved_stat_alerts_sent', null, 'Alerts Sent (recent)') ?></div>
                         </div>
                     </div>
                 </div>
@@ -87,7 +87,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <!-- Saved Searches List -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
-            <h5 class="mb-0"><i class="fas fa-list text-primary me-2"></i>My Saved Searches</h5>
+            <h5 class="mb-0"><i class="fas fa-list text-primary me-2"></i><?= __('saved_section_my', null, 'My Saved Searches') ?></h5>
         </div>
         <div class="card-body">
             <?php if (empty($searches)): ?>
@@ -95,9 +95,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 100px; height: 100px;">
                         <i class="fas fa-search-location fa-3x text-muted opacity-25"></i>
                     </div>
-                    <h5 class="fw-bold">No saved searches yet</h5>
-                    <p class="text-muted mx-auto" style="max-width: 400px;">Apply filters on the properties page and click "Save this search" to get notified when new properties match your criteria.</p>
-                    <a href="<?= BASE_URL ?>/properties" class="btn btn-primary rounded-pill px-4 mt-2">Start Searching</a>
+                    <h5 class="fw-bold"><?= __('saved_empty_title', null, 'No saved searches yet') ?></h5>
+                    <p class="text-muted mx-auto" style="max-width: 400px;"><?= __('saved_empty_desc', null, 'Apply filters on the properties page and click "Save this search" to get notified when new properties match your criteria.') ?></p>
+                    <a href="<?= BASE_URL ?>/properties" class="btn btn-primary rounded-pill px-4 mt-2"><?= __('saved_btn_start', null, 'Start Searching') ?></a>
                 </div>
             <?php else: ?>
                 <div class="row g-3">
@@ -143,24 +143,24 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                             <?php endif; ?>
 
                             <div class="small text-muted mb-2">
-                                <i class="fas fa-calendar me-1"></i>Saved <?= date('d M Y', strtotime($search['created_at'] ?? 'now')) ?>
+                                <i class="fas fa-calendar me-1"></i><?= __('saved_saved_on', null, 'Saved') ?> <?= date('d M Y', strtotime($search['created_at'] ?? 'now')) ?>
                                 <?php if (!empty($search['last_run_at'])): ?>
-                                    &middot; <i class="fas fa-clock me-1"></i>Last run <?= date('d M, H:i', strtotime($search['last_run_at'])) ?>
+                                    &middot; <i class="fas fa-clock me-1"></i><?= __('saved_last_run_short', null, 'Last run') ?> <?= date('d M, H:i', strtotime($search['last_run_at'])) ?>
                                 <?php endif; ?>
                                 <?php if (isset($search['result_count'])): ?>
-                                    &middot; <i class="fas fa-list me-1"></i><?= (int)$search['result_count'] ?> matches
+                                    &middot; <i class="fas fa-list me-1"></i><?= (int)$search['result_count'] ?> <?= __('saved_matches', null, 'matches') ?>
                                 <?php endif; ?>
                             </div>
 
                             <div class="d-flex gap-2 flex-wrap mt-2">
                                 <a href="<?= BASE_URL ?>/user/saved-searches/<?= (int)$search['id'] ?>/execute?to=properties" class="btn btn-sm btn-primary rounded-pill px-3" title="Run this search and view matches">
-                                    <i class="fas fa-play me-1"></i>Run
+                                    <i class="fas fa-play me-1"></i><?= __('saved_btn_run', null, 'Run') ?>
                                 </a>
                                 <a href="<?= BASE_URL ?>/properties?<?= htmlspecialchars($queryString) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Open in properties page">
-                                    <i class="fas fa-external-link-alt me-1"></i>Open
+                                    <i class="fas fa-external-link-alt me-1"></i><?= __('saved_btn_open', null, 'Open') ?>
                                 </a>
                                 <button type="button" class="btn btn-sm <?= $alertsOn ? 'btn-success' : 'btn-outline-success' ?> rounded-pill px-3 js-toggle-alerts" data-search-id="<?= (int)$search['id'] ?>" data-enabled="<?= $alertsOn ? '1' : '0' ?>">
-                                    <i class="fas fa-bell me-1"></i><?= $alertsOn ? 'Alerts On' : 'Enable Alerts' ?>
+                                    <i class="fas fa-bell me-1"></i><?= $alertsOn ? __('saved_btn_alerts_on', null, 'Alerts On') : __('saved_btn_alerts_enable', null, 'Enable Alerts') ?>
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 js-rename" data-search-id="<?= (int)$search['id'] ?>" data-current-name="<?= htmlspecialchars($search['name'] ?? '') ?>" title="Rename">
                                     <i class="fas fa-pen"></i>
@@ -181,18 +181,18 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <?php if (!empty($alertLog)): ?>
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
-            <h5 class="mb-0"><i class="fas fa-bell text-success me-2"></i>Recent Alert Activity</h5>
+            <h5 class="mb-0"><i class="fas fa-bell text-success me-2"></i><?= __('saved_recent_activity', null, 'Recent Alert Activity') ?></h5>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="bg-light">
-                        <tr>
-                            <th>Date</th>
-                            <th>Search</th>
-                            <th>Property</th>
-                            <th>Status</th>
-                        </tr>
+                            <tr>
+                                <th><?= __('saved_th_date', null, 'Date') ?></th>
+                                <th><?= __('saved_th_search', null, 'Search') ?></th>
+                                <th><?= __('saved_th_property', null, 'Property') ?></th>
+                                <th><?= __('saved_th_status', null, 'Status') ?></th>
+                            </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($alertLog as $log): ?>

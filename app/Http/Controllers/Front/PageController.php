@@ -39,13 +39,18 @@ class PageController extends BaseController
             'awards_won' => 25,
         ];
 
-        // Get featured projects from database
+        // Get featured projects from database (hot-path cached, 15 min TTL)
         $featured_properties = [];
         $all_projects = [];
         try {
-            $stmt = $this->db->prepare("SELECT * FROM sites WHERE status IN ('active', 'completed') ORDER BY site_name LIMIT 6");
-            $stmt->execute();
-            $all_projects = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            $cachedHome = \App\Services\Cache\HotPathCacheService::getHomeFeaturedProperties(
+                function () {
+                    $stmt = $this->db->prepare("SELECT * FROM sites WHERE status IN ('active', 'completed') ORDER BY site_name LIMIT 6");
+                    $stmt->execute();
+                    return $stmt->fetchAll(\PDO::FETCH_OBJ);
+                }
+            );
+            $all_projects = is_array($cachedHome) ? $cachedHome : [];
 
             // Map to featured format
             foreach ($all_projects as $project) {
@@ -263,6 +268,81 @@ class PageController extends BaseController
         $perPage = 12;
         $offset = ($page - 1) * $perPage;
 
+        // ── Hot-path cache: property listings (5 min TTL) ──
+        $filterHash = [
+            'q' => $keyword, 'type' => $type, 'listing' => $listingType,
+            'location' => $location, 'min_price' => $minPrice, 'max_price' => $maxPrice,
+            'bedrooms' => $bedrooms, 'bathrooms' => $bathrooms, 'furnished' => $furnished,
+            'year_built' => $yearBuilt, 'area_min' => $areaMin, 'area_max' => $areaMax,
+        ];
+        $cached = \App\Services\Cache\HotPathCacheService::getPropertyList(
+            $filterHash,
+            $page,
+            $perPage,
+            $sortBy,
+            function () use ($filterHash, $keyword, $type, $listingType, $location, $minPrice, $maxPrice, $bedrooms, $bathrooms, $furnished, $yearBuilt, $areaMin, $areaMax, $sortBy, $perPage, $offset) {
+                return $this->runPropertyListQuery(
+                    $keyword, $type, $listingType, $location,
+                    $minPrice, $maxPrice, $bedrooms, $bathrooms, $furnished,
+                    $yearBuilt, $areaMin, $areaMax, $sortBy, $perPage, $offset
+                );
+            }
+        );
+        $properties = $cached['properties'] ?? [];
+        $total = (int) ($cached['total'] ?? 0);
+
+        $totalPages = max(1, (int)ceil($total / $perPage));
+
+        // Fetch saved searches for logged-in users
+        $savedSearches = [];
+        if (!empty($_SESSION['user_id'])) {
+            try {
+                $svc = new \App\Services\SavedSearchService($this->db);
+                $savedSearches = $svc->getUserSearches((int)$_SESSION['user_id'], 'user_properties');
+            } catch (\Throwable $e) {
+                error_log("PageController::properties - savedSearches: " . $e->getMessage());
+            }
+        }
+
+        $data = [
+            'properties' => $properties,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
+            'type' => $type,
+            'listingType' => $listingType,
+            'location' => $location,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'bedrooms' => $bedrooms,
+            'bathrooms' => $bathrooms,
+            'furnished' => $furnished,
+            'yearBuilt' => $yearBuilt,
+            'areaMin' => $areaMin,
+            'areaMax' => $areaMax,
+            'keyword' => $keyword,
+            'sortBy' => $sortBy,
+            'savedSearches' => $savedSearches,
+            'property_types' => ['plot', 'house', 'flat', 'shop', 'farmhouse', 'land'],
+            'locations' => ['Gorakhpur', 'Lucknow', 'Kushinagar', 'Varanasi'],
+            'price_ranges' => ['Under 5 Lakhs', '5-10 Lakhs', '10-20 Lakhs', '20-50 Lakhs', '50+ Lakhs'],
+            'page_title' => 'Properties - APS Dream Home',
+            'page_description' => 'Browse properties for sale and rent'
+        ];
+
+        $this->render('pages/properties', $data);
+    }
+
+    /**
+     * Run the actual property list query (extracted for caching).
+     * Returns ['properties' => array, 'total' => int].
+     */
+    private function runPropertyListQuery(
+        string $keyword, string $type, string $listingType, string $location,
+        int $minPrice, int $maxPrice, int $bedrooms, int $bathrooms, string $furnished,
+        int $yearBuilt, int $areaMin, int $areaMax, string $sortBy,
+        int $perPage, int $offset
+    ): array {
         $properties = [];
         $total = 0;
 
@@ -391,46 +471,7 @@ class PageController extends BaseController
             $properties = array_slice($sampleProperties, $offset, $perPage);
         }
 
-        $totalPages = max(1, (int)ceil($total / $perPage));
-
-        // Fetch saved searches for logged-in users
-        $savedSearches = [];
-        if (!empty($_SESSION['user_id'])) {
-            try {
-                $svc = new \App\Services\SavedSearchService($this->db);
-                $savedSearches = $svc->getUserSearches((int)$_SESSION['user_id'], 'user_properties');
-            } catch (\Throwable $e) {
-                error_log("PageController::properties - savedSearches: " . $e->getMessage());
-            }
-        }
-
-        $data = [
-            'properties' => $properties,
-            'page' => $page,
-            'totalPages' => $totalPages,
-            'total' => $total,
-            'type' => $type,
-            'listingType' => $listingType,
-            'location' => $location,
-            'minPrice' => $minPrice,
-            'maxPrice' => $maxPrice,
-            'bedrooms' => $bedrooms,
-            'bathrooms' => $bathrooms,
-            'furnished' => $furnished,
-            'yearBuilt' => $yearBuilt,
-            'areaMin' => $areaMin,
-            'areaMax' => $areaMax,
-            'keyword' => $keyword,
-            'sortBy' => $sortBy,
-            'savedSearches' => $savedSearches,
-            'property_types' => ['plot', 'house', 'flat', 'shop', 'farmhouse', 'land'],
-            'locations' => ['Gorakhpur', 'Lucknow', 'Kushinagar', 'Varanasi'],
-            'price_ranges' => ['Under 5 Lakhs', '5-10 Lakhs', '10-20 Lakhs', '20-50 Lakhs', '50+ Lakhs'],
-            'page_title' => 'Properties - APS Dream Home',
-            'page_description' => 'Browse properties for sale and rent'
-        ];
-
-        $this->render('pages/properties', $data);
+        return ['properties' => $properties, 'total' => $total];
     }
 
     private function getSampleProperties()

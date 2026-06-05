@@ -458,6 +458,9 @@ class ProjectController extends AdminController
     {
         try {
             \App\Services\CacheService::invalidateHeaderProjects();
+            // Hot-path: also drop the home featured-properties bundle since
+            // it shares the underlying `sites` table with the projects dropdown.
+            \App\Services\Cache\HotPathCacheService::invalidateHomeFeatured();
         } catch (Exception $e) {
             error_log('Cache invalidation error: ' . $e->getMessage());
         }

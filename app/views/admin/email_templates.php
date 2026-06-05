@@ -18,7 +18,7 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
             <p class="text-muted mb-0">Brand-styled, responsive HTML emails sent from APS Dream Home.</p>
         </div>
         <a href="<?= htmlspecialchars($base_url) ?>/admin/dashboard" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-arrow-left me-1"></i>Back
+            <i class="fas fa-arrow-left me-1"></i><?= __('admin_btn_back', null, 'Back') ?>
         </a>
     </div>
 
@@ -48,26 +48,26 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
 
     <div class="card shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Available Templates (<?= count($templates) ?>)</h5>
-            <span class="badge bg-primary">Brand: #667eea → #764ba2</span>
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i><?= __('admin_tpl_available', null, 'Available Templates') ?> (<?= count($templates) ?>)</h5>
+            <span class="badge bg-primary"><?= __('admin_tpl_brand', null, 'Brand: #667eea → #764ba2') ?></span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 18%;">Code</th>
-                            <th style="width: 32%;">Subject</th>
-                            <th style="width: 20%;">File</th>
-                            <th style="width: 15%;">Variables</th>
-                            <th style="width: 15%;" class="text-end">Actions</th>
+                            <th style="width: 18%;"><?= __('admin_tpl_code', null, 'Code') ?></th>
+                            <th style="width: 32%;"><?= __('admin_tpl_subject', null, 'Subject') ?></th>
+                            <th style="width: 20%;"><?= __('admin_tpl_file', null, 'File') ?></th>
+                            <th style="width: 15%;"><?= __('admin_tpl_vars', null, 'Variables') ?></th>
+                            <th style="width: 15%;" class="text-end"><?= __('admin_tpl_actions', null, 'Actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php if (empty($templates)): ?>
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">
-                                No email templates found in the catalog.
+                                <?= __('admin_tpl_empty', null, 'No email templates found in the catalog.') ?>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -103,13 +103,13 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
                                        target="_blank"
                                        class="btn btn-sm btn-outline-info me-1"
                                        title="Preview rendered HTML in a new tab">
-                                        <i class="fas fa-eye me-1"></i>Preview
+                                        <i class="fas fa-eye me-1"></i><?= __('admin_btn_preview', null, 'Preview') ?>
                                     </a>
                                     <a href="<?= htmlspecialchars($base_url) ?>/admin/email-templates/test/<?= urlencode($tpl['code']) ?>"
                                        class="btn btn-sm btn-primary"
                                        title="Send a test email using default placeholder values"
                                        onclick="return confirm('Send a test email to <?= htmlspecialchars($admin_email ?: 'admin') ?>?');">
-                                        <i class="fas fa-paper-plane me-1"></i>Test Send
+                                        <i class="fas fa-paper-plane me-1"></i><?= __('admin_btn_test_send', null, 'Test Send') ?>
                                     </a>
                                 </td>
                             </tr>

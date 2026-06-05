@@ -8,11 +8,11 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="h3 mb-0 text-gray-800">Notifications</h2>
+                    <h2 class="h3 mb-0 text-gray-800"><?= __('user_notif_title', null, 'Notifications') ?></h2>
                     <form action="<?= BASE_URL ?>notifications" method="POST">
                         <?= csrf_field() ?>
                         <button type="submit" name="mark_all_read" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                            Mark all as read
+                            <?= __('user_notif_mark_all_read', null, 'Mark all as read') ?>
                         </button>
                     </form>
                 </div>
@@ -30,7 +30,7 @@
                     <?php if (empty($notifications)): ?>
                         <div class="text-center py-5 text-muted">
                             <i class="fas fa-bell-slash fa-3x mb-3 opacity-25"></i>
-                            <p class="mb-0">No notifications yet.</p>
+                            <p class="mb-0"><?= __('user_notif_empty', null, 'No notifications yet.') ?></p>
                         </div>
                     <?php else: ?>
                         <?php foreach ($notifications as $note): ?>
@@ -58,13 +58,13 @@
                                         <p class="mb-0 text-secondary"><?= h($note['message']) ?></p>
                                         <?php if (!empty($note['action_url'])): ?>
                                             <a href="<?= h($note['action_url']) ?>" class="btn btn-link btn-sm p-0 mt-2 text-decoration-none">
-                                                View Details <i class="fas fa-chevron-right ms-1 small"></i>
+                                                <?= __('user_notif_view_details', null, 'View Details') ?> <i class="fas fa-chevron-right ms-1 small"></i>
                                             </a>
                                         <?php endif; ?>
                                     </div>
                                     <?php if (!$note['is_read']): ?>
                                         <div class="flex-shrink-0">
-                                            <span class="badge bg-primary rounded-circle p-1"><span class="visually-hidden">New</span></span>
+                                            <span class="badge bg-primary rounded-circle p-1"><span class="visually-hidden"><?= __('user_notif_new_badge', null, 'New') ?></span></span>
                                         </div>
                                     <?php endif; ?>
                                 </div>
