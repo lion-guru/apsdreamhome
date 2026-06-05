@@ -63,6 +63,12 @@ class BaseController
             }
         }
 
+        // Security: regenerate session ID periodically (every 5 minutes) to prevent fixation
+        $this->initSessionSecurity();
+
+        // Security: set defense-in-depth HTTP headers on every response
+        $this->setSecurityHeaders();
+
         // Automated CSRF protection for POST requests (skip for public forms)
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$this->skipCsrfProtection()) {
             $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
@@ -70,6 +76,50 @@ class BaseController
                 \App\Core\ErrorHandler::render(403, "Invalid or missing CSRF token.");
                 exit;
             }
+        }
+    }
+
+    /**
+     * Regenerate session ID periodically to prevent session fixation attacks.
+     * Runs every 5 minutes (300s). On login, controllers should call
+     * session_regenerate_id(true) immediately (see auth controllers).
+     */
+    protected function initSessionSecurity(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return;
+        }
+        $regenerateInterval = 300; // 5 minutes
+        $now = time();
+        if (!isset($_SESSION['last_regenerate'])) {
+            $_SESSION['last_regenerate'] = $now;
+            return;
+        }
+        if ($now - (int)$_SESSION['last_regenerate'] > $regenerateInterval) {
+            session_regenerate_id(true);
+            $_SESSION['last_regenerate'] = $now;
+        }
+    }
+
+    /**
+     * Send defense-in-depth security HTTP headers on every response.
+     * Mirrors the .htaccess directives so headers are present even when
+     * the request bypasses Apache (CLI, internal includes, etc.).
+     */
+    protected function setSecurityHeaders(): void
+    {
+        if (headers_sent()) {
+            return;
+        }
+        header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: SAMEORIGIN');
+        header('Referrer-Policy: strict-origin-when-cross-origin');
+        header('X-XSS-Protection: 1; mode=block');
+        // HSTS only when over HTTPS
+        if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+            || (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)) {
+            header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
         }
     }
 

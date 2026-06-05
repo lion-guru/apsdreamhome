@@ -66,9 +66,14 @@ class CustomerAuthController extends BaseController
                     $_SESSION['pending_2fa_user'] = $user['id'];
                     $_SESSION['pending_2fa_secret'] = $user['two_factor_secret'];
                     $_SESSION['pending_2fa_role'] = $user['role'] ?? 'customer';
+                    session_regenerate_id(true); // Prevent session fixation on 2FA pending state
                     header('Location: ' . BASE_URL . '/user/two-factor/verify');
                     exit;
                 }
+
+                // Prevent session fixation: rotate session ID on successful login
+                session_regenerate_id(true);
+                $_SESSION['last_regenerate'] = time();
 
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
