@@ -20,16 +20,26 @@ class MobileApiController extends BaseController
 
     protected $apiAuthService;
     protected $syncService;
+    protected $jwtService;
 
     public function __construct()
     {
         parent::__construct();
         $this->apiAuthService = new \App\Services\Auth\ApiAuthService();
         $this->syncService = new \App\Services\SyncService();
+        $this->jwtService = new \App\Services\Auth\JWTAuthService();
 
         if (!$this->db) {
             error_log('MobileApiController: Failed to initialize database connection');
         }
+    }
+
+    /**
+     * Mobile API uses JWT (stateless) — no session-based CSRF.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**
@@ -1854,5 +1864,358 @@ class MobileApiController extends BaseController
         $user = $db->fetch("SELECT id, name, email, phone, created_at FROM users WHERE id = ?", [$userId]);
         echo json_encode(['success' => true, 'data' => $user ?: []]);
         exit;
+    }
+
+    // ============================================================
+    // V2 JWT-AUTH ENDPOINTS (Mobile API V2)
+    // ============================================================
+
+    /**
+     * Extract Bearer token from Authorization header.
+     * Returns null when missing or malformed.
+     */
+    private function extractBearerToken()
+    {
+        $header = $_SERVER['HTTP_AUTHORIZATION']
+            ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+            ?? null;
+        if (!$header && function_exists('apache_request_headers')) {
+            $headers = apache_request_headers();
+            foreach ($headers as $name => $value) {
+                if (strcasecmp($name, 'Authorization') === 0) {
+                    $header = $value;
+                    break;
+                }
+            }
+        }
+        if (!$header) {
+            return null;
+        }
+        if (stripos($header, 'Bearer ') === 0) {
+            return trim(substr($header, 7));
+        }
+        return null;
+    }
+
+    /**
+     * Authenticate the request with JWT and apply per-user rate limit.
+     * Sets $GLOBALS['api_user_id'] / $GLOBALS['api_user_role'] on success.
+     * Echoes JSON error + exits on failure.
+     */
+    private function authenticateAndRateLimit()
+    {
+        $token = $this->extractBearerToken();
+        if (!$token) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authorization Bearer token required', 'code' => 401]);
+            exit;
+        }
+
+        $payload = $this->jwtService->verifyToken($token);
+        if (!$payload) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Invalid or expired token', 'code' => 401]);
+            exit;
+        }
+
+        $userId = (int) ($payload['sub'] ?? 0);
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Token missing subject', 'code' => 401]);
+            exit;
+        }
+
+        $rateKey = 'mobile_user_' . $userId;
+        if (!$this->jwtService->rateLimit($rateKey, 60, 60)) {
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Rate limit exceeded. Max 60 requests per minute.',
+                'code' => 429,
+            ]);
+            exit;
+        }
+
+        $GLOBALS['api_user_id'] = $userId;
+        $GLOBALS['api_user_role'] = $payload['role'] ?? 'customer';
+        return $payload;
+    }
+
+    /**
+     * POST /api/mobile/auth/login
+     * Body: { "email": "...", "password": "..." }
+     */
+    public function loginV2()
+    {
+        $this->setCorsHeaders();
+        $raw = file_get_contents('php://input');
+        $data = json_decode($raw, true);
+        if (!is_array($data)) {
+            $data = $_POST;
+        }
+        $email = trim((string) ($data['email'] ?? ''));
+        $password = (string) ($data['password'] ?? '');
+
+        if ($email === '' || $password === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'email and password are required', 'code' => 400]);
+            return;
+        }
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare('SELECT id, name, email, role, status, password FROM users WHERE email = ? LIMIT 1');
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Invalid credentials', 'code' => 401]);
+                return;
+            }
+
+            $hash = $user['password'] ?? '';
+            $valid = $hash !== '' && (
+                password_verify($password, $hash)
+                || (\App\Core\Security::verifyPassword($password, $hash) ?? false)
+                || hash_equals($hash, $password)
+            );
+
+            if (!$valid) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Invalid credentials', 'code' => 401]);
+                return;
+            }
+
+            if (isset($user['status']) && $user['status'] === 'suspended') {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Account suspended', 'code' => 403]);
+                return;
+            }
+
+            $role = $user['role'] ?? 'customer';
+            $tokens = $this->jwtService->generateToken((int) $user['id'], $role);
+
+            echo json_encode([
+                'success' => true,
+                'access_token' => $tokens['access_token'],
+                'refresh_token' => $tokens['refresh_token'],
+                'token_type' => $tokens['token_type'],
+                'expires_in' => $tokens['expires_in'],
+                'user_id' => (int) $user['id'],
+                'role' => $role,
+                'name' => $user['name'] ?? '',
+                'email' => $user['email'] ?? $email,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::loginV2 failed: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Login failed: ' . $e->getMessage(), 'code' => 500]);
+        }
+    }
+
+    /**
+     * POST /api/mobile/auth/refresh
+     * Body: { "refresh_token": "<jwt>" }
+     */
+    public function refreshV2()
+    {
+        $this->setCorsHeaders();
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $refreshToken = (string) ($data['refresh_token'] ?? '');
+
+        if ($refreshToken === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'refresh_token required', 'code' => 400]);
+            return;
+        }
+
+        $tokens = $this->jwtService->refreshToken($refreshToken);
+        if (!$tokens) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Invalid or expired refresh token', 'code' => 401]);
+            return;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'access_token' => $tokens['access_token'],
+            'refresh_token' => $tokens['refresh_token'],
+            'token_type' => $tokens['token_type'] ?? 'Bearer',
+            'expires_in' => $tokens['expires_in'] ?? 86400,
+        ]);
+    }
+
+    /**
+     * GET /api/mobile/profile
+     * Requires Bearer token.
+     */
+    public function profileV2()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare('SELECT id, name, email, phone, role, status, created_at, updated_at, mlm_rank, mlm_points, wallet_balance FROM users WHERE id = ? LIMIT 1');
+            $stmt->execute([$GLOBALS['api_user_id']]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'User not found', 'code' => 404]);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $user,
+            ]);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Profile fetch failed: ' . $e->getMessage(), 'code' => 500]);
+        }
+    }
+
+    /**
+     * GET /api/mobile/properties
+     * Paginated (20 per page) user-scoped property list.
+     */
+    public function mobileProperties()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+        $userId = (int) $GLOBALS['api_user_id'];
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $countStmt = $pdo->prepare("SELECT COUNT(*) AS total FROM user_properties WHERE user_id = ?");
+            $countStmt->execute([$userId]);
+            $total = (int) $countStmt->fetchColumn();
+
+            $stmt = $pdo->prepare("
+                SELECT id, user_id, property_type, listing_type, address, area_sqft, price, status, created_at, updated_at
+                FROM user_properties
+                WHERE user_id = ?
+                ORDER BY created_at DESC
+                LIMIT {$perPage} OFFSET {$offset}
+            ");
+            $stmt->execute([$userId]);
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'properties' => $rows,
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $perPage,
+                        'total' => $total,
+                        'total_pages' => (int) ceil($total / $perPage),
+                    ],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Properties fetch failed: ' . $e->getMessage(), 'code' => 500]);
+        }
+    }
+
+    /**
+     * GET /api/mobile/dashboard
+     * Aggregated stats for the mobile home screen.
+     */
+    public function dashboardV2()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+
+        $stats = [
+            'property_count' => 0,
+            'lead_count' => 0,
+            'unread_notifications' => 0,
+            'wallet_balance' => 0,
+            'mlm_points' => 0,
+        ];
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            try {
+                $stmt = $pdo->prepare('SELECT COUNT(*) FROM user_properties WHERE user_id = ?');
+                $stmt->execute([$userId]);
+                $stats['property_count'] = (int) $stmt->fetchColumn();
+            } catch (\Throwable $e) {}
+
+            try {
+                $stmt = $pdo->prepare('SELECT COUNT(*) FROM leads WHERE created_by = ? OR source_id = ?');
+                $stmt->execute([$userId, $userId]);
+                $stats['lead_count'] = (int) $stmt->fetchColumn();
+            } catch (\Throwable $e) {}
+
+            try {
+                $stmt = $pdo->prepare('SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0');
+                $stmt->execute([$userId]);
+                $stats['unread_notifications'] = (int) $stmt->fetchColumn();
+            } catch (\Throwable $e) {}
+
+            try {
+                $stmt = $pdo->prepare('SELECT wallet_balance, mlm_points FROM users WHERE id = ? LIMIT 1');
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                if ($row) {
+                    $stats['wallet_balance'] = (float) ($row['wallet_balance'] ?? 0);
+                    $stats['mlm_points'] = (int) ($row['mlm_points'] ?? 0);
+                }
+            } catch (\Throwable $e) {}
+
+            echo json_encode([
+                'success' => true,
+                'data' => $stats,
+            ]);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Dashboard fetch failed: ' . $e->getMessage(), 'code' => 500]);
+        }
+    }
+
+    /**
+     * POST /api/mobile/notifications/register
+     * Body: { "device_token": "...", "platform": "android|ios|web", "device_id": "..." }
+     */
+    public function registerPushTokenV2()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $deviceToken = trim((string) ($data['device_token'] ?? ''));
+        $platform = trim((string) ($data['platform'] ?? 'android'));
+        $deviceId = trim((string) ($data['device_id'] ?? ''));
+
+        if ($deviceToken === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'device_token required', 'code' => 400]);
+            return;
+        }
+
+        $ok = $this->jwtService->registerPushToken(
+            (int) $GLOBALS['api_user_id'],
+            (string) $GLOBALS['api_user_role'],
+            $deviceToken,
+            $platform,
+            $deviceId ?: null
+        );
+
+        echo json_encode([
+            'success' => $ok,
+            'message' => $ok ? 'Push token registered' : 'Failed to register push token',
+        ]);
     }
 }
