@@ -224,4 +224,13 @@ $router->get('/api/monitor/errors', 'Api\\MonitorController@errors');
 $router->post('/api/twilio/voice', 'Api\TwilioVoiceWebhookController@voice');
 $router->post('/api/twilio/voice/status', 'Api\TwilioVoiceWebhookController@status');
 $router->post('/api/twilio/voice/recording', 'Api\TwilioVoiceWebhookController@recording');
+
+// ============================================================
+// Auto-generated API Documentation (Cluster 4 - 2026-06-05)
+// ============================================================
+// DocsController introspects the live Router and generates an OpenAPI 3.0 spec.
+// CSRF is bypassed for these GET endpoints (read-only, no state mutation).
+$router->get('/api/docs', 'App\Http\Controllers\Api\DocsController@index');
+$router->get('/api/docs/spec', 'App\Http\Controllers\Api\DocsController@spec');
+$router->get('/api/docs/list', 'App\Http\Controllers\Api\DocsController@list');
 $router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gather');
