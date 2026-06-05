@@ -3,12 +3,14 @@
  * @var array $stats     Cache statistics from CacheService::getStats()
  * @var array $test      Connection test result from CacheService::testConnection()
  * @var string $driver   'redis' or 'file (fallback)'
+ * @var array $hotpath   HotPathCacheService::getStats() payload
  * @var string $page_title
  * @var string $page_heading
  */
 $stats = $stats ?? [];
 $test  = $test  ?? [];
 $driver = $driver ?? 'unknown';
+$hotpath = $hotpath ?? ['paths' => [], 'total' => ['hits' => 0, 'misses' => 0, 'calls' => 0, 'hit_rate' => 0.0]];
 
 $redisInfo  = $stats['redis']  ?? [];
 $fileInfo   = $stats['file']   ?? [];
@@ -18,6 +20,15 @@ $available  = (bool)($stats['available'] ?? false);
 $host       = $stats['host'] ?? '127.0.0.1';
 $port       = $stats['port'] ?? 6379;
 $prefix     = $stats['prefix']?? 'apsdream_';
+
+// Hot path metadata
+$hotPathsMeta = [
+    'property_list'        => ['ttl' => 300,  'label' => 'Property Listings',     'icon' => 'fa-list'],
+    'header_projects'      => ['ttl' => 600,  'label' => 'Header Projects',       'icon' => 'fa-sitemap'],
+    'admin_dash_kpis'      => ['ttl' => 120,  'label' => 'Admin Dashboard KPIs',  'icon' => 'fa-tachometer-alt'],
+    'home_featured'        => ['ttl' => 900,  'label' => 'Home Featured',         'icon' => 'fa-home'],
+    'saved_searches_count' => ['ttl' => 30,   'label' => 'Saved Searches Count',  'icon' => 'fa-bookmark'],
+];
 
 // Flash messages from controller (BaseController::setFlash uses bare keys)
 $flashSuccess = $_SESSION['success'] ?? $_SESSION['flash_success'] ?? null;
@@ -189,6 +200,62 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                         </button>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hot-Path Cache Stats -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="fas fa-fire text-danger me-2"></i>Hot-Path Cache (per-path hit/miss)</h6>
+            <form method="POST" action="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/admin/cache/hotpath/flush') ?>" onsubmit="return confirm('Clear all hot-path cache keys?');" class="d-inline">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-trash me-1"></i>Clear Hot Path Cache
+                </button>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <?php foreach ($hotPathsMeta as $pathKey => $meta):
+                    $s = $hotpath['paths'][$pathKey] ?? ['hits' => 0, 'misses' => 0, 'calls' => 0, 'hit_rate' => 0.0];
+                    $total = (int)$s['calls'];
+                    $hits  = (int)$s['hits'];
+                    $miss  = (int)$s['misses'];
+                    $rate  = (float)$s['hit_rate'];
+                ?>
+                <div class="col-md-6 col-xl-4">
+                    <div class="border rounded p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1 small text-uppercase text-muted">
+                                    <i class="fas <?= htmlspecialchars($meta['icon']) ?> me-1"></i>
+                                    <?= htmlspecialchars($meta['label']) ?>
+                                </h6>
+                                <code class="small text-muted"><?= htmlspecialchars($pathKey) ?></code>
+                            </div>
+                            <span class="badge bg-info">TTL <?= (int)$meta['ttl'] ?>s</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-end">
+                            <div>
+                                <div class="h4 mb-0 fw-bold"><?= number_format($rate, 1) ?>%</div>
+                                <div class="small text-muted">hit rate</div>
+                            </div>
+                            <div class="text-end small">
+                                <div><span class="badge bg-success"><?= $hits ?> hits</span></div>
+                                <div class="mt-1"><span class="badge bg-warning text-dark"><?= $miss ?> misses</span></div>
+                                <div class="mt-1 text-muted"><?= $total ?> calls</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="row g-3 small text-muted">
+                <div class="col-6 col-md-3"><strong>Aggregate hits:</strong> <?= (int)($hotpath['total']['hits'] ?? 0) ?></div>
+                <div class="col-6 col-md-3"><strong>Aggregate misses:</strong> <?= (int)($hotpath['total']['misses'] ?? 0) ?></div>
+                <div class="col-6 col-md-3"><strong>Aggregate calls:</strong> <?= (int)($hotpath['total']['calls'] ?? 0) ?></div>
+                <div class="col-6 col-md-3"><strong>Aggregate hit rate:</strong> <?= number_format((float)($hotpath['total']['hit_rate'] ?? 0), 1) ?>%</div>
             </div>
         </div>
     </div>

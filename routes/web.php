@@ -246,6 +246,29 @@ $router->get('/list-property', 'Front\\PageController@listProperty');
 $router->post('/list-property/submit', 'Front\\PageController@handlePropertyListing');
 $router->get('/properties/submit', 'Front\\PageController@propertySubmit');
 
+// Multi-step Property Listing Wizard (8 steps + draft + publish + image upload)
+if (file_exists(__DIR__ . '/../app/Http/Controllers/Front/PropertyListingWizardController.php')) {
+    $router->get('/list-property/step1', 'Front\\PropertyListingWizardController@step1');
+    $router->post('/list-property/step1', 'Front\\PropertyListingWizardController@saveStep1');
+    $router->get('/list-property/step2', 'Front\\PropertyListingWizardController@step2');
+    $router->post('/list-property/step2', 'Front\\PropertyListingWizardController@saveStep2');
+    $router->get('/list-property/step3', 'Front\\PropertyListingWizardController@step3');
+    $router->post('/list-property/step3', 'Front\\PropertyListingWizardController@saveStep3');
+    $router->get('/list-property/step4', 'Front\\PropertyListingWizardController@step4');
+    $router->post('/list-property/step4', 'Front\\PropertyListingWizardController@saveStep4');
+    $router->get('/list-property/step5', 'Front\\PropertyListingWizardController@step5');
+    $router->post('/list-property/step5', 'Front\\PropertyListingWizardController@saveStep5');
+    $router->get('/list-property/step6', 'Front\\PropertyListingWizardController@step6');
+    $router->post('/list-property/step6', 'Front\\PropertyListingWizardController@saveStep6');
+    $router->get('/list-property/step7', 'Front\\PropertyListingWizardController@step7');
+    $router->post('/list-property/step7', 'Front\\PropertyListingWizardController@saveStep7');
+    $router->get('/list-property/step8', 'Front\\PropertyListingWizardController@step8');
+    $router->post('/list-property/step8', 'Front\\PropertyListingWizardController@saveStep8');
+    $router->post('/list-property/publish', 'Front\\PropertyListingWizardController@publish');
+    $router->post('/list-property/save-draft', 'Front\\PropertyListingWizardController@saveDraft');
+    $router->post('/list-property/upload-image', 'Front\\PropertyListingWizardController@uploadImage');
+}
+
 // Form Handlers
 $router->post('/quick-inquiry', 'Front\\PageController@handleQuickInquiry');
 
@@ -354,6 +377,16 @@ $router->get('/admin/marketing-campaigns/show/{id}', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/marketing-campaigns/send/{id}', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@send');
 $router->get('/admin/marketing-campaigns/delete', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@delete');
 $router->get('/admin/marketing-campaigns/templates', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@templates');
+$router->get('/admin/marketing-campaigns/{id}/edit', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@edit');
+$router->post('/admin/marketing-campaigns/{id}/update', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@update');
+$router->post('/admin/marketing-campaigns/{id}/pause', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@pause');
+$router->post('/admin/marketing-campaigns/{id}/resume', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@resume');
+$router->post('/admin/marketing-campaigns/{id}/cancel', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@cancel');
+$router->post('/admin/marketing-campaigns/{id}/clone', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@clone');
+$router->post('/admin/marketing-campaigns/{id}/test-send', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@testSend');
+$router->post('/admin/marketing-campaigns/{id}/schedule', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@schedule');
+$router->get('/admin/marketing-campaigns/{id}/stats', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@stats');
+$router->get('/admin/marketing-campaigns/{id}/export', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@exportRecipients');
 
 $router->get('/admin/drip-campaigns', 'App\\Http\\Controllers\\Admin\\DripCampaignController@index');
 $router->get('/admin/drip-campaigns/create', 'App\\Http\\Controllers\\Admin\\DripCampaignController@create');
@@ -494,6 +527,23 @@ $router->get('/api/achievements/badges', 'App\\Http\\Controllers\\AchievementCon
 // Customer Auth
 $router->get('/register', 'Auth\\CustomerAuthController@register');
 $router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
+
+// Multi-step Registration Wizard (4 steps + OTP + skip)
+if (file_exists(__DIR__ . '/../app/Http/Controllers/Auth/RegistrationWizardController.php')) {
+    $router->get('/register/step1', 'Auth\\RegistrationWizardController@step1');
+    $router->post('/register/step1', 'Auth\\RegistrationWizardController@saveStep1');
+    $router->get('/register/step2', 'Auth\\RegistrationWizardController@step2');
+    $router->post('/register/step2', 'Auth\\RegistrationWizardController@saveStep2');
+    $router->get('/register/step3', 'Auth\\RegistrationWizardController@step3');
+    $router->post('/register/step3', 'Auth\\RegistrationWizardController@saveStep3');
+    $router->get('/register/step4', 'Auth\\RegistrationWizardController@step4');
+    $router->post('/register/step4', 'Auth\\RegistrationWizardController@saveStep4');
+    $router->post('/register/complete', 'Auth\\RegistrationWizardController@complete');
+    $router->post('/register/resend-otp', 'Auth\\RegistrationWizardController@resendOtp');
+    $router->post('/register/verify-otp', 'Auth\\RegistrationWizardController@verifyOtp');
+    $router->post('/register/skip', 'Auth\\RegistrationWizardController@skip');
+}
+
 $router->get('/login', 'Auth\\CustomerAuthController@login');
 $router->post('/login', 'Auth\\CustomerAuthController@authenticate');
 $router->get('/logout', 'Auth\\CustomerAuthController@logout');
@@ -1421,6 +1471,8 @@ $router->get('/admin/cache/stats',          'App\\Http\\Controllers\\Admin\\Cach
 $router->post('/admin/cache/flush',         'App\\Http\\Controllers\\Admin\\CacheAdminController@flush');
 $router->post('/admin/cache/redis/flush',   'App\\Http\\Controllers\\Admin\\CacheAdminController@flushRedis');
 $router->post('/admin/cache/test',          'App\\Http\\Controllers\\Admin\\CacheAdminController@test');
+$router->post('/admin/cache/hotpath/flush', 'App\\Http\\Controllers\\Admin\\CacheAdminController@flushHotpath');
+$router->get('/admin/cache/hotpath/stats',  'App\\Http\\Controllers\\Admin\\CacheAdminController@hotpathStats');
 
 // Admin Gateway Manager (Twilio + future gateways)
 $router->get('/admin/gateways',                       'App\\Http\\Controllers\\Admin\\GatewayTestController@index');
