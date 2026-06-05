@@ -1,23 +1,54 @@
 <?php
+
+namespace App\Http\Middleware;
+
+use App\Services\MaintenanceService;
+
 /**
- * Generic maintenance page (used by MaintenanceModeMiddleware directly,
- * but also available for /maintenance direct link).
+ * MaintenanceModeMiddleware
+ *
+ * Drops every non-admin, non-whitelisted request into a friendly
+ * "be right back" page when the site is in maintenance mode.
+ *
+ * Adheres to the project's BaseController middleware contract:
+ *  - handle($request, $next) -> response
+ *  - Returns the wrapped response (or the maintenance response) without
+ *    invoking $next() when blocked.
  */
-$message = $message ?? "We're performing scheduled maintenance. We'll be back soon. Thanks for your patience!";
-$eta = $eta ?? '';
-$logo = defined('BASE_URL') ? BASE_URL . '/assets/images/logo.png' : '/assets/images/logo.png';
-$contact = 'info@apsdreamhome.com';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
-http_response_code(503);
-header('Retry-After: 3600');
-?>
+class MaintenanceModeMiddleware
+{
+    public function handle($request = null, $next = null)
+    {
+        try {
+            $svc = new MaintenanceService();
+            if ($svc->isRequestAllowed()) {
+                return $next ? $next($request) : null;
+            }
+            $this->renderMaintenancePage($svc);
+            exit;
+        } catch (\Throwable $e) {
+            // If middleware fails, fail open (don't break the site)
+            return $next ? $next($request) : null;
+        }
+    }
+
+    private function renderMaintenancePage(MaintenanceService $svc): void
+    {
+        http_response_code(503);
+        header('Retry-After: 3600');
+        $message = $svc->getMessage();
+        $eta = $svc->getEta();
+        $logo = defined('BASE_URL') ? BASE_URL . '/assets/images/logo.png' : '/assets/images/logo.png';
+        $contact = 'info@apsdreamhome.com';
+        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Be right back — APS Dream Home</title>
+    <title>We'll be right back — APS Dream Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -33,7 +64,7 @@ header('Retry-After: 3600');
             <div class="col-md-7 col-lg-6">
                 <div class="card p-5 text-center">
                     <div class="icon-circle"><i class="fas fa-cog fa-spin"></i></div>
-                    <h1 class="h2 mb-3">Be right back</h1>
+                    <h1 class="h2 mb-3">We'll be right back</h1>
                     <p class="lead text-muted mb-4"><?= htmlspecialchars($message) ?></p>
                     <?php if ($eta): ?>
                         <p class="mb-4"><i class="far fa-clock text-primary me-2"></i>Estimated return: <strong><?= htmlspecialchars($eta) ?></strong></p>
@@ -51,3 +82,6 @@ header('Retry-After: 3600');
     </div>
 </body>
 </html>
+        <?php
+    }
+}
