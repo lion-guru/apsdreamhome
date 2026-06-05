@@ -106,6 +106,13 @@ class BaseController
         // A/B testing: assign user to running experiments and auto-track view event
         $this->runExperimentMiddleware();
 
+        // Per-request correlation id for log entries (X-Request-Id if upstream provided)
+        if (class_exists('\App\Services\Log')) {
+            \App\Services\Log::setRequestId(
+                $_SERVER['HTTP_X_REQUEST_ID'] ?? null
+            );
+        }
+
         // Security: regenerate session ID periodically (every 5 minutes) to prevent fixation
         $this->initSessionSecurity();
 
@@ -158,6 +165,9 @@ class BaseController
         header('X-Frame-Options: SAMEORIGIN');
         header('Referrer-Policy: strict-origin-when-cross-origin');
         header('X-XSS-Protection: 1; mode=block');
+        if (class_exists('\App\Services\Log')) {
+            header('X-Request-Id: ' . \App\Services\Log::getRequestId());
+        }
         // HSTS only when over HTTPS
         if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
             || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
