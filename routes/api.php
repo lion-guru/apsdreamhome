@@ -100,6 +100,16 @@ $router->get('/api/ai/analyze/{id}', 'App\\Http\\Controllers\\AIAssistantControl
 // Monitoring API Routes
 $router->get('/api/monitoring/health', 'App\\Http\\Controllers\\MonitoringController@healthCheck');
 
+// ============================================================
+// MOBILE API V2 (JWT Auth)
+// ============================================================
+$router->post('/api/mobile/auth/login', 'Api\MobileApiController@loginV2');
+$router->post('/api/mobile/auth/refresh', 'Api\MobileApiController@refreshV2');
+$router->get('/api/mobile/profile', 'Api\MobileApiController@profileV2');
+$router->get('/api/mobile/properties', 'Api\MobileApiController@mobileProperties');
+$router->get('/api/mobile/dashboard', 'Api\MobileApiController@dashboardV2');
+$router->post('/api/mobile/notifications/register', 'Api\MobileApiController@registerPushTokenV2');
+
 // AI Dashboard API Routes
 $router->post('/api/ai-dashboard/training', 'App\\Http\\Controllers\\AIDashboardController@startTraining');
 $router->post('/api/ai-dashboard/reset', 'App\\Http\\Controllers\\AIDashboardController@resetMemory');
