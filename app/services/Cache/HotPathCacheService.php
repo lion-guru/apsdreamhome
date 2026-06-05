@@ -77,7 +77,9 @@ class HotPathCacheService
      */
     public static function invalidatePropertyList(): int
     {
-        $n = CacheService::invalidatePattern('properties_list_');
+        // Wildcard suffix — every property-list cache key is
+        // 'properties_list_<md5(filter+page+pp+sort)>'
+        $n = CacheService::invalidatePattern('properties_list_*');
         return $n;
     }
 
@@ -127,13 +129,9 @@ class HotPathCacheService
      */
     public static function invalidateAdminDashboard(?int $userId = null): int
     {
-        if ($userId === null) {
-            return CacheService::invalidatePattern('admin_dash_')
-                 + CacheService::invalidatePattern('admin_dash_kpis_');
-        }
-        // Drop the wildcard pattern because we don't know the role key.
-        $total = CacheService::invalidatePattern('admin_dash_')
-               + CacheService::invalidatePattern('admin_dash_kpis_');
+        // Wildcard suffix required — keys are 'admin_dash_kpis_<md5(role:userId)>'.
+        $total = CacheService::invalidatePattern('admin_dash_*')
+               + CacheService::invalidatePattern('admin_dash_kpis_*');
         return $total;
     }
 
@@ -233,10 +231,12 @@ class HotPathCacheService
     // ───────────────────────────────────────────────────────────────────
 
     /**
-     * Sentinel object used to distinguish "I haven't checked cache yet"
-     * from "real value is null" in {@see wrap()}.
+     * Sentinel marker used to distinguish "I haven't checked cache yet"
+     * from "real value is null" in {@see wrap()}. We use an array
+     * (not a stdClass) so it survives JSON round-trip through the
+     * file cache layer cleanly.
      */
-    private static ?object $missSentinel = null;
+    private const SENTINEL = ['__hotpath_miss__' => true];
 
     /**
      * Wraps {@see CacheService::cache()} and bumps the per-path hit/miss
@@ -245,9 +245,7 @@ class HotPathCacheService
      */
     private static function wrap(string $path, string $key, int $ttl, callable $callback)
     {
-        // Get a unique sentinel object per call to avoid clashes
-        $sentinel = new \stdClass();
-        $sentinel->__hotpath_miss = true;
+        $sentinel = self::SENTINEL;
 
         try {
             $value = CacheService::cache($key, $ttl, function () use ($path, $sentinel) {
@@ -262,7 +260,10 @@ class HotPathCacheService
         }
 
         // Sentinel == "miss"; fire the real callback and store the result.
-        if ($value === $sentinel) {
+        // Use array equality (not ===) because JSON round-trip preserves
+        // shape but not object identity.
+        $isMiss = (is_array($value) && isset($value['__hotpath_miss__']) && $value['__hotpath_miss__'] === true);
+        if ($isMiss) {
             try {
                 $value = $callback();
             } catch (\Throwable $e) {
@@ -270,7 +271,7 @@ class HotPathCacheService
                 $value = [];
             }
             try {
-                // Drop any cached null and re-store the real payload.
+                // Drop any cached sentinel and re-store the real payload.
                 CacheService::invalidate($key);
                 CacheService::cache($key, $ttl, function () use ($value) {
                     return $value;
