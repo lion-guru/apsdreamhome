@@ -43,10 +43,10 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # 1. TEST - PHP syntax + E2E
+  # 1. TEST - PHP syntax + test runner (uses new tests/migrate.php + run_all_tests.php)
   # ---------------------------------------------------------------------------
   test:
-    name: Test (PHP syntax + E2E)
+    name: Test (PHP syntax + test runner)
     runs-on: ubuntu-latest
     if: github.event_name != 'workflow_dispatch' || github.event.inputs.skip_tests != 'true'
 
@@ -78,6 +78,9 @@ jobs:
           extensions: pdo, pdo_mysql, mysqli, mbstring, zip, curl, gd, intl, sockets, bcmath
           ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=1G
 
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
       - name: Detect changed PHP files
         id: changed
         run: |
@@ -107,20 +110,26 @@ jobs:
 
       - name: PHP syntax check (whole project)
         run: |
-          find . -name "*.php" \
+          ERRORS=0
+          while IFS= read -r f; do
+            if ! php -l "$f" >/dev/null 2>&1; then
+              echo "SYNTAX ERROR in $f:"
+              php -l "$f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done < <(find . -name "*.php" \
             -not -path "./vendor/*" \
             -not -path "./_archive/*" \
             -not -path "./node_modules/*" \
             -not -path "./aaaaa/*" \
             -not -path "./mobile/*" \
             -not -path "./nbproject/*" \
-            -exec php -l {} \; 2>&1 | grep -v "No syntax errors detected" | tee /tmp/syntax-errors.txt
-          if [ -s /tmp/syntax-errors.txt ]; then
-            echo "SYNTAX ERRORS DETECTED:"
-            cat /tmp/syntax-errors.txt
+            -not -path "./storage/cache/*")
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "Total syntax errors: $ERRORS"
             exit 1
           fi
-          echo "All PHP files passed syntax check"
+          echo "All PHP files pass syntax check"
 
       - name: Bash syntax check (deploy scripts)
         run: |
@@ -143,7 +152,7 @@ jobs:
             sleep 2
           done
 
-      - name: Run E2E tests
+      - name: Run database migrations
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
@@ -152,21 +161,35 @@ jobs:
           DB_PASSWORD: rootroot
           APP_ENV: testing
           APP_DEBUG: "false"
-          APP_URL: http://localhost:8080
-        run: |
-          # Start PHP built-in server in background
-          php -S 127.0.0.1:8080 -t . > /tmp/php-server.log 2>&1 &
-          SERVER_PID=$!
-          sleep 3
-          # Run E2E
-          if [ -f "testing/visual_tests/E2E_MASTER_TEST.mjs" ]; then
-            cd testing/visual_tests
-            node E2E_MASTER_TEST.mjs || echo "E2E completed with errors (non-blocking)"
-            cd ../..
-          else
-            echo "E2E test file not found - skipping"
-          fi
-          kill $SERVER_PID 2>/dev/null || true
+          JWT_SECRET: ci-test-secret-key-must-be-at-least-32-bytes-long
+        run: php tests/migrate.php
+
+      - name: Run test suite
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome_test
+          DB_USERNAME: root
+          DB_PASSWORD: rootroot
+          APP_ENV: testing
+          APP_DEBUG: "false"
+          JWT_SECRET: ci-test-secret-key-must-be-at-least-32-bytes-long
+        run: php tests/run_all_tests.php
+
+      - name: Publish JUnit results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: tests/reports/junit.xml
+          check_name: Production deploy test results
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-test-reports
+          path: tests/reports/
+          retention-days: 14
 
   # ---------------------------------------------------------------------------
   # 2. BUILD - Docker images

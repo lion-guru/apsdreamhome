@@ -80,6 +80,15 @@ dist/
 # Dependencies
 vendor/
 
+# PHPUnit local override (committed file is phpunit.xml.dist)
+/phpunit.xml
+/.phpunit.cache/
+
+# CI artifacts
+tests/reports/*.log
+tests/reports/*.xml
+!tests/reports/.gitkeep
+
 # Legacy backup
 _backup_legacy_files/
 

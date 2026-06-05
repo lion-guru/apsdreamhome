@@ -1,0 +1,119 @@
+name: Weekly Code Health Scan
+
+# Runs once a week to catch dependency drift, security issues, and
+# code quality regressions that don't necessarily fail a single PR.
+
+on:
+  schedule:
+    # Sundays at 04:00 UTC
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+
+env:
+  PHP_VERSION: "8.2"
+
+jobs:
+  health-scan:
+    name: Weekly health scan
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootroot
+          MYSQL_DATABASE: apsdreamhome_test
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpass
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, json, pdo_mysql, curl, intl, sockets, gd
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist
+
+      - name: Composer audit
+        continue-on-error: true
+        run: composer audit --format=json --no-dev > composer-audit.json || echo '{"warnings":"audit failed"}' > composer-audit.json
+
+      - name: Run PHPStan
+        continue-on-error: true
+        run: |
+          if [ -f vendor/bin/phpstan ]; then
+            vendor/bin/phpstan analyse app --level=4 --no-progress --memory-limit=2G > phpstan.log 2>&1 || echo "PHPStan issues (informational)"
+          fi
+
+      - name: Run PHP_CodeSniffer
+        continue-on-error: true
+        run: |
+          if [ -f vendor/bin/phpcs ]; then
+            vendor/bin/phpcs --standard=PSR12 app/ --report=summary > phpcs.log 2>&1 || echo "PHPCS issues (informational)"
+          fi
+
+      - name: Count syntax errors
+        run: |
+          ERRORS=0
+          while IFS= read -r f; do
+            if ! php -l "$f" >/dev/null 2>&1; then
+              ERRORS=$((ERRORS + 1))
+            fi
+          done < <(find app -name "*.php" -not -path "./vendor/*")
+          echo "syntax_errors=$ERRORS" >> $GITHUB_OUTPUT
+          echo "Syntax errors: $ERRORS"
+
+      - name: Check for TODO/FIXME density
+        run: |
+          TOTAL=0
+          for dir in app routes scripts; do
+            if [ -d "$dir" ]; then
+              COUNT=$(grep -rE "TODO|FIXME|XXX" "$dir" --include="*.php" 2>/dev/null | wc -l || echo 0)
+              echo "  $dir: $COUNT"
+              TOTAL=$((TOTAL + COUNT))
+            fi
+          done
+          echo "total_todos=$TOTAL" >> $GITHUB_OUTPUT
+          echo "Total TODO/FIXME/XXX: $TOTAL"
+
+      - name: Post weekly summary to GitHub
+        if: always()
+        run: |
+          {
+            echo "## Weekly Code Health Scan"
+            echo ""
+            echo "**Date:** $(date -u +%Y-%m-%d)"
+            echo "**Commit:** ${{ github.sha }}"
+            echo ""
+            echo "### Metrics"
+            echo "- Syntax errors: ${syntax_errors:-0}"
+            echo "- Total TODO/FIXME/XXX: ${total_todos:-0}"
+            echo ""
+            echo "### Artifacts"
+            echo "- \`composer-audit.json\` — composer audit JSON"
+            echo "- \`phpstan.log\` — PHPStan static analysis"
+            echo "- \`phpcs.log\` — PHP_CodeSniffer style check"
+            echo ""
+            echo "Download artifacts below for full details."
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload weekly artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-scan-${{ github.run_number }}
+          path: |
+            composer-audit.json
+            phpstan.log
+            phpcs.log
+          retention-days: 90
+          if-no-files-found: ignore
