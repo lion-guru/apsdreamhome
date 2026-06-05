@@ -30,8 +30,8 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
 <div class="container-fluid p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-1"><i class="fas fa-bolt me-2 text-warning"></i>Cache Management</h4>
-            <p class="text-muted small mb-0">Inspect and control the Redis + file cache layers powering hot queries.</p>
+            <h4 class="fw-bold mb-1"><i class="fas fa-bolt me-2 text-warning"></i><?= __('admin_cache_title', null, 'Cache Management') ?></h4>
+            <p class="text-muted small mb-0"><?= __('admin_cache_subtitle', null, 'Inspect and control the Redis + file cache layers powering hot queries.') ?></p>
         </div>
         <div>
             <span class="badge bg-<?= $available ? 'success' : 'secondary' ?> fs-6">
@@ -66,7 +66,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="text-muted text-uppercase small mb-2">Cache Driver</h6>
+                            <h6 class="text-muted text-uppercase small mb-2"><?= __('admin_cache_driver', null, 'Cache Driver') ?></h6>
                             <h3 class="fw-bold mb-0"><?= htmlspecialchars(strtoupper($driver)) ?></h3>
                         </div>
                         <i class="fas fa-server fa-2x text-primary opacity-50"></i>
@@ -86,7 +86,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="text-muted text-uppercase small mb-2">Hit Rate</h6>
+                            <h6 class="text-muted text-uppercase small mb-2"><?= __('admin_cache_hit_rate', null, 'Hit Rate') ?></h6>
                             <h3 class="fw-bold mb-0"><?= number_format($hitRate, 1) ?>%</h3>
                         </div>
                         <i class="fas fa-chart-line fa-2x text-success opacity-50"></i>
@@ -104,7 +104,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="text-muted text-uppercase small mb-2">Redis Keys</h6>
+                            <h6 class="text-muted text-uppercase small mb-2"><?= __('admin_cache_redis_keys', null, 'Redis Keys') ?></h6>
                             <h3 class="fw-bold mb-0"><?= number_format((int)($redisInfo['size'] ?? 0)) ?></h3>
                         </div>
                         <i class="fas fa-key fa-2x text-info opacity-50"></i>
@@ -122,7 +122,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="text-muted text-uppercase small mb-2">File Cache</h6>
+                            <h6 class="text-muted text-uppercase small mb-2"><?= __('admin_cache_file_cache', null, 'File Cache') ?></h6>
                             <h3 class="fw-bold mb-0"><?= (int)($fileInfo['active_files'] ?? 0) ?></h3>
                         </div>
                         <i class="fas fa-folder-open fa-2x text-warning opacity-50"></i>

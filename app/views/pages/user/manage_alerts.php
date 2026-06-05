@@ -12,11 +12,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
-            <h3 class="fw-bold mb-1"><i class="fas fa-bell text-success me-2"></i>Manage Email Alerts</h3>
-            <p class="text-muted mb-0">Turn alerts on/off for your saved searches. You'll get an email when a new property matches your criteria.</p>
+            <h3 class="fw-bold mb-1"><i class="fas fa-bell text-success me-2"></i><?= __('alerts_title', null, 'Manage Email Alerts') ?></h3>
+            <p class="text-muted mb-0"><?= __('alerts_subtitle', null, "Turn alerts on/off for your saved searches. You'll get an email when a new property matches your criteria.") ?></p>
         </div>
         <a href="<?= BASE_URL ?>/user/saved-searches" class="btn btn-outline-primary rounded-pill">
-            <i class="fas fa-arrow-left me-1"></i>Back to Saved Searches
+            <i class="fas fa-arrow-left me-1"></i><?= __('alerts_back', null, 'Back to Saved Searches') ?>
         </a>
     </div>
 
@@ -36,23 +36,23 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <!-- Active Alerts -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
-            <h5 class="mb-0"><i class="fas fa-bell text-primary me-2"></i>Alert Subscriptions</h5>
+            <h5 class="mb-0"><i class="fas fa-bell text-primary me-2"></i><?= __('alerts_subscriptions', null, 'Alert Subscriptions') ?></h5>
         </div>
         <div class="card-body">
             <?php if (empty($searches)): ?>
                 <p class="text-muted text-center py-4 mb-0">
-                    You don't have any saved searches yet. <a href="<?= BASE_URL ?>/properties">Start searching</a> to set up alerts.
+                    <?= __('alerts_no_searches', null, "You don't have any saved searches yet.") ?> <a href="<?= BASE_URL ?>/properties"><?= __('alerts_start_searching', null, 'Start searching') ?></a> <?= __('alerts_to_setup', null, 'to set up alerts.') ?>
                 </p>
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="bg-light">
                             <tr>
-                                <th>Search Name</th>
-                                <th>Filters</th>
-                                <th>Last Run</th>
-                                <th>Email Alerts</th>
-                                <th>Action</th>
+                                <th><?= __('alerts_th_search', null, 'Search Name') ?></th>
+                                <th><?= __('alerts_th_filters', null, 'Filters') ?></th>
+                                <th><?= __('alerts_th_last_run', null, 'Last Run') ?></th>
+                                <th><?= __('alerts_th_email_alerts', null, 'Email Alerts') ?></th>
+                                <th><?= __('alerts_th_action', null, 'Action') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,7 +75,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                     <?php if (!empty($s['last_run_at'])): ?>
                                         <small><?= date('d M, H:i', strtotime($s['last_run_at'])) ?></small>
                                     <?php else: ?>
-                                        <small class="text-muted">Never</small>
+                                        <small class="text-muted"><?= __('alerts_never', null, 'Never') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -93,7 +93,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                 </td>
                                 <td>
                                     <a href="<?= BASE_URL ?>/user/saved-searches/<?= (int)$s['id'] ?>/execute?to=properties" class="btn btn-sm btn-outline-primary rounded-pill">
-                                        <i class="fas fa-play me-1"></i>Run
+                                        <i class="fas fa-play me-1"></i><?= __('alerts_btn_run', null, 'Run') ?>
                                     </a>
                                 </td>
                             </tr>
@@ -108,21 +108,21 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <!-- Alert Log -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
-            <h5 class="mb-0"><i class="fas fa-history text-info me-2"></i>Alert History</h5>
+            <h5 class="mb-0"><i class="fas fa-history text-info me-2"></i><?= __('alerts_history', null, 'Alert History') ?></h5>
         </div>
         <div class="card-body p-0">
             <?php if (empty($alertLog)): ?>
-                <p class="text-muted text-center py-4 mb-0">No alerts have been sent yet.</p>
+                <p class="text-muted text-center py-4 mb-0"><?= __('alerts_no_history', null, 'No alerts have been sent yet.') ?></p>
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>Sent At</th>
-                                <th>Search</th>
-                                <th>Property</th>
-                                <th>Status</th>
-                                <th>Error</th>
+                                <th><?= __('alerts_th_sent', null, 'Sent At') ?></th>
+                                <th><?= __('alerts_th_search', null, 'Search') ?></th>
+                                <th><?= __('alerts_th_property', null, 'Property') ?></th>
+                                <th><?= __('alerts_th_status', null, 'Status') ?></th>
+                                <th><?= __('alerts_th_error', null, 'Error') ?></th>
                             </tr>
                         </thead>
                         <tbody>

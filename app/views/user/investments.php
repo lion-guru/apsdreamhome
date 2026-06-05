@@ -6,11 +6,11 @@
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="h3 mb-0 text-gray-800 fw-bold">My Investments</h2>
+        <h2 class="h3 mb-0 text-gray-800 fw-bold"><?= __('user_inv_title', null, 'My Investments') ?></h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>dashboard" class="text-decoration-none">Dashboard</a></li>
-                <li class="breadcrumb-item active">Investments</li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>dashboard" class="text-decoration-none"><?= __('user_inv_breadcrumb_dashboard', null, 'Dashboard') ?></a></li>
+                <li class="breadcrumb-item active"><?= __('user_inv_breadcrumb_investments', null, 'Investments') ?></li>
             </ol>
         </nav>
     </div>
@@ -21,12 +21,12 @@
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4">Plot Number</th>
-                            <th>Project/Site</th>
-                            <th>Area</th>
-                            <th>Total Price</th>
-                            <th>Status</th>
-                            <th>Last Updated</th>
+                            <th class="ps-4"><?= __('user_inv_th_plot', null, 'Plot Number') ?></th>
+                            <th><?= __('user_inv_th_project', null, 'Project/Site') ?></th>
+                            <th><?= __('user_inv_th_area', null, 'Area') ?></th>
+                            <th><?= __('user_inv_th_total_price', null, 'Total Price') ?></th>
+                            <th><?= __('user_inv_th_status', null, 'Status') ?></th>
+                            <th><?= __('user_inv_th_updated', null, 'Last Updated') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,7 +34,7 @@
                             <tr>
                                 <td colspan="6" class="text-center py-5 text-muted">
                                     <i class="fas fa-chart-line fa-3x mb-3 d-block"></i>
-                                    No investments found.
+                                    <?= __('user_inv_empty', null, 'No investments found.') ?>
                                 </td>
                             </tr>
                         <?php else: ?>

@@ -107,12 +107,12 @@ $user_data['uphone'] = $user_data['phone'];
 <div class="container py-5 mt-5">
     <div class="row mb-5 animate-fade-up">
         <div class="col-md-8">
-            <h1 class="display-6 fw-bold text-primary">Edit Profile</h1>
-            <p class="text-muted">Keep your account information up to date.</p>
+            <h1 class="display-6 fw-bold text-primary"><?= __('user_edit_title', null, 'Edit Profile') ?></h1>
+            <p class="text-muted"><?= __('user_edit_subtitle', null, 'Keep your account information up to date.') ?></p>
         </div>
         <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end mt-4 mt-md-0">
             <a href="profile.php" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
-                <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                <i class="fas fa-arrow-left me-2"></i><?= __('user_edit_back', null, 'Back to Profile') ?>
             </a>
         </div>
     </div>
@@ -136,24 +136,24 @@ $user_data['uphone'] = $user_data['phone'];
         <div class="col-lg-7 animate-fade-up" style="animation-delay: 0.1s;">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-header bg-primary text-white p-4">
-                    <h5 class="mb-0 fw-bold"><i class="fas fa-user-circle me-2"></i>Basic Information</h5>
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-user-circle me-2"></i><?= __('user_edit_basic_info', null, 'Basic Information') ?></h5>
                 </div>
                 <div class="card-body p-4">
                     <form method="POST">
                         <div class="mb-3">
-                            <label class="form-label small text-muted">Full Name</label>
+                            <label class="form-label small text-muted"><?= __('user_edit_full_name', null, 'Full Name') ?></label>
                             <input type="text" name="name" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uname']) ?>" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small text-muted">Email Address</label>
+                            <label class="form-label small text-muted"><?= __('user_edit_email', null, 'Email Address') ?></label>
                             <input type="email" name="email" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uemail']) ?>" required>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label small text-muted">Phone Number</label>
+                            <label class="form-label small text-muted"><?= __('user_edit_phone', null, 'Phone Number') ?></label>
                             <input type="text" name="phone" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uphone'] ?? '') ?>">
                         </div>
                         <button type="submit" name="update_basic" class="btn btn-primary rounded-pill px-5 shadow-sm">
-                            Save Changes
+                            <?= __('user_edit_save_changes', null, 'Save Changes') ?>
                         </button>
                     </form>
                 </div>
@@ -164,24 +164,24 @@ $user_data['uphone'] = $user_data['phone'];
         <div class="col-lg-5 animate-fade-up" style="animation-delay: 0.2s;">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" id="password-section">
                 <div class="card-header bg-dark text-white p-4">
-                    <h5 class="mb-0 fw-bold"><i class="fas fa-lock me-2"></i>Change Password</h5>
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-lock me-2"></i><?= __('user_edit_change_password', null, 'Change Password') ?></h5>
                 </div>
                 <div class="card-body p-4">
                     <form method="POST">
                         <div class="mb-3">
-                            <label class="form-label small text-muted">Current Password</label>
+                            <label class="form-label small text-muted"><?= __('user_edit_current_password', null, 'Current Password') ?></label>
                             <input type="password" name="old_password" class="form-control border-0 bg-light rounded-3 p-3" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small text-muted">New Password</label>
+                            <label class="form-label small text-muted"><?= __('user_edit_new_password', null, 'New Password') ?></label>
                             <input type="password" name="new_password" class="form-control border-0 bg-light rounded-3 p-3" required>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label small text-muted">Confirm New Password</label>
+                            <label class="form-label small text-muted"><?= __('user_edit_confirm_password', null, 'Confirm New Password') ?></label>
                             <input type="password" name="confirm_password" class="form-control border-0 bg-light rounded-3 p-3" required>
                         </div>
                         <button type="submit" name="update_password" class="btn btn-dark rounded-pill px-5 shadow-sm w-100">
-                            Update Password
+                            <?= __('user_edit_update_password', null, 'Update Password') ?>
                         </button>
                     </form>
                 </div>
@@ -190,8 +190,8 @@ $user_data['uphone'] = $user_data['phone'];
             <div class="card border-0 shadow-sm rounded-4 bg-light">
                 <div class="card-body p-4 text-center">
                     <i class="fas fa-shield-alt text-primary fa-3x mb-3"></i>
-                    <h6 class="fw-bold">Security Tip</h6>
-                    <p class="small text-muted mb-0">Use a strong password with at least 8 characters, including numbers and symbols, to keep your account secure.</p>
+                    <h6 class="fw-bold"><?= __('user_edit_security_tip', null, 'Security Tip') ?></h6>
+                    <p class="small text-muted mb-0"><?= __('user_edit_security_tip_desc', null, 'Use a strong password with at least 8 characters, including numbers and symbols, to keep your account secure.') ?></p>
                 </div>
             </div>
         </div>

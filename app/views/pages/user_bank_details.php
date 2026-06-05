@@ -34,9 +34,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         <div class="col-lg-8">
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-university me-2"></i>Bank Account Details</h2>
+                <h2><i class="fas fa-university me-2"></i><?= __('bank_page_title', null, 'Bank Account Details') ?></h2>
                 <a href="/user/profile" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                    <i class="fas fa-arrow-left me-2"></i><?= __('bank_back_to_profile', null, 'Back to Profile') ?>
                 </a>
             </div>
 
@@ -60,37 +60,37 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 <div class="col-lg-7">
                     <div class="card shadow">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0"><i class="fas fa-plus me-2"></i><?= $bankAccount ? 'Update Bank Account' : 'Add Bank Account' ?></h5>
+                            <h5 class="mb-0"><i class="fas fa-plus me-2"></i><?= $bankAccount ? __('bank_form_update_title', null, 'Update Bank Account') : __('bank_form_add_title', null, 'Add Bank Account') ?></h5>
                         </div>
                         <div class="card-body">
                             <form action="/user/bank-details/save" method="POST" id="bankForm">
                                 <!-- Account Holder Name -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Account Holder Name *</label>
-                                    <input type="text" name="account_holder" class="form-control" 
-                                           value="<?= htmlspecialchars($bankAccount['account_holder'] ?? $_SESSION['user_name'] ?? '') ?>" 
-                                           placeholder="As per bank records" required>
+                                    <label class="form-label fw-bold"><?= __('bank_label_account_holder', null, 'Account Holder Name') ?> *</label>
+                                    <input type="text" name="account_holder" class="form-control"
+                                           value="<?= htmlspecialchars($bankAccount['account_holder'] ?? $_SESSION['user_name'] ?? '') ?>"
+                                           placeholder="<?= __('bank_ph_account_holder', null, 'As per bank records') ?>" required>
                                 </div>
 
                                 <!-- Account Number -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Account Number *</label>
-                                    <input type="text" name="account_number" id="account_number" class="form-control" 
-                                           value="<?= htmlspecialchars($bankAccount['account_number'] ?? '') ?>" 
-                                           placeholder="Enter account number" required>
-                                    <div class="form-text">We recommend adding account number only when receiving payments</div>
+                                    <label class="form-label fw-bold"><?= __('bank_label_account_number', null, 'Account Number') ?> *</label>
+                                    <input type="text" name="account_number" id="account_number" class="form-control"
+                                           value="<?= htmlspecialchars($bankAccount['account_number'] ?? '') ?>"
+                                           placeholder="<?= __('bank_ph_account_number', null, 'Enter account number') ?>" required>
+                                    <div class="form-text"><?= __('bank_help_account_number', null, 'We recommend adding account number only when receiving payments') ?></div>
                                 </div>
 
                                 <!-- IFSC Code with Auto-fill -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">IFSC Code *</label>
+                                    <label class="form-label fw-bold"><?= __('bank_label_ifsc', null, 'IFSC Code') ?> *</label>
                                     <div class="input-group">
-                                        <input type="text" name="ifsc_code" id="ifsc_code" class="form-control" 
-                                               value="<?= htmlspecialchars($bankAccount['ifsc_code'] ?? '') ?>" 
-                                               placeholder="e.g., SBIN0001234" 
+                                        <input type="text" name="ifsc_code" id="ifsc_code" class="form-control"
+                                               value="<?= htmlspecialchars($bankAccount['ifsc_code'] ?? '') ?>"
+                                               placeholder="<?= __('bank_ph_ifsc', null, 'e.g., SBIN0001234') ?>"
                                                style="text-transform: uppercase" maxlength="11" required>
                                         <button type="button" class="btn btn-outline-secondary" id="lookupIfsc">
-                                            <i class="fas fa-search"></i> Lookup
+                                            <i class="fas fa-search"></i> <?= __('bank_btn_lookup', null, 'Lookup') ?>
                                         </button>
                                     </div>
                                     <div class="form-text" id="ifscStatus"></div>
@@ -99,41 +99,41 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                 <!-- Bank Name (Auto-filled) -->
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Bank Name</label>
-                                        <input type="text" name="bank_name" id="bank_name" class="form-control" 
-                                               value="<?= htmlspecialchars($bankAccount['bank_name'] ?? '') ?>" 
-                                               placeholder="Auto-filled from IFSC" readonly>
+                                        <label class="form-label fw-bold"><?= __('bank_label_bank_name', null, 'Bank Name') ?></label>
+                                        <input type="text" name="bank_name" id="bank_name" class="form-control"
+                                               value="<?= htmlspecialchars($bankAccount['bank_name'] ?? '') ?>"
+                                               placeholder="<?= __('bank_ph_bank_name_autofill', null, 'Auto-filled from IFSC') ?>" readonly>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Branch Name</label>
-                                        <input type="text" name="branch_name" id="branch_name" class="form-control" 
-                                               value="<?= htmlspecialchars($bankAccount['branch_name'] ?? '') ?>" 
-                                               placeholder="Auto-filled from IFSC" readonly>
+                                        <label class="form-label fw-bold"><?= __('bank_label_branch_name', null, 'Branch Name') ?></label>
+                                        <input type="text" name="branch_name" id="branch_name" class="form-control"
+                                               value="<?= htmlspecialchars($bankAccount['branch_name'] ?? '') ?>"
+                                               placeholder="<?= __('bank_ph_branch_name_autofill', null, 'Auto-filled from IFSC') ?>" readonly>
                                     </div>
                                 </div>
 
                                 <!-- Account Type -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Account Type</label>
+                                    <label class="form-label fw-bold"><?= __('bank_label_account_type', null, 'Account Type') ?></label>
                                     <select name="account_type" class="form-select">
-                                        <option value="savings" <?= ($bankAccount['account_type'] ?? '') === 'savings' ? 'selected' : '' ?>>Savings Account</option>
-                                        <option value="current" <?= ($bankAccount['account_type'] ?? '') === 'current' ? 'selected' : '' ?>>Current Account</option>
-                                        <option value="od" <?= ($bankAccount['account_type'] ?? '') === 'od' ? 'selected' : '' ?>>Overdraft Account</option>
+                                        <option value="savings" <?= ($bankAccount['account_type'] ?? '') === 'savings' ? 'selected' : '' ?>><?= __('bank_account_type_savings', null, 'Savings Account') ?></option>
+                                        <option value="current" <?= ($bankAccount['account_type'] ?? '') === 'current' ? 'selected' : '' ?>><?= __('bank_account_type_current', null, 'Current Account') ?></option>
+                                        <option value="od" <?= ($bankAccount['account_type'] ?? '') === 'od' ? 'selected' : '' ?>><?= __('bank_account_type_overdraft', null, 'Overdraft Account') ?></option>
                                     </select>
                                 </div>
 
                                 <!-- UPI ID -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">UPI ID (Optional)</label>
-                                    <input type="text" name="upi_id" id="upi_id" class="form-control" 
-                                           value="<?= htmlspecialchars($bankAccount['upi_id'] ?? '') ?>" 
-                                           placeholder="e.g., yourname@okicici">
-                                    <div class="form-text">For instant payments via UPI</div>
+                                    <label class="form-label fw-bold"><?= __('bank_label_upi', null, 'UPI ID (Optional)') ?></label>
+                                    <input type="text" name="upi_id" id="upi_id" class="form-control"
+                                           value="<?= htmlspecialchars($bankAccount['upi_id'] ?? '') ?>"
+                                           placeholder="<?= __('bank_ph_upi', null, 'e.g., yourname@okicici') ?>">
+                                    <div class="form-text"><?= __('bank_help_upi', null, 'For instant payments via UPI') ?></div>
                                 </div>
 
                                 <!-- Submit -->
                                 <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-save me-2"></i><?= $bankAccount ? 'Update Bank Details' : 'Save Bank Details' ?>
+                                    <i class="fas fa-save me-2"></i><?= $bankAccount ? __('bank_btn_update', null, 'Update Bank Details') : __('bank_btn_save', null, 'Save Bank Details') ?>
                                 </button>
                             </form>
                         </div>
@@ -146,7 +146,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <?php if (!empty($allAccounts)): ?>
                     <div class="card shadow mb-4">
                         <div class="card-header bg-secondary text-white">
-                            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Saved Accounts</h5>
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i><?= __('bank_saved_accounts', null, 'Saved Accounts') ?></h5>
                         </div>
                         <div class="card-body">
                             <?php foreach ($allAccounts as $acc): ?>
@@ -161,7 +161,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                         <?php endif; ?>
                                     </div>
                                     <?php if ($acc['is_primary']): ?>
-                                    <span class="badge bg-primary">Primary</span>
+                                    <span class="badge bg-primary"><?= __('bank_badge_primary', null, 'Primary') ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -173,16 +173,16 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <!-- Info Box -->
                     <div class="card border-info">
                         <div class="card-body">
-                            <h6 class="text-info"><i class="fas fa-info-circle me-2"></i>Why Add Bank Details?</h6>
+                            <h6 class="text-info"><i class="fas fa-info-circle me-2"></i><?= __('bank_why_title', null, 'Why Add Bank Details?') ?></h6>
                             <ul class="mb-0 small">
-                                <li>Receive commission payments</li>
-                                <li>Get refunds for cancelled bookings</li>
-                                <li>Receive rental income</li>
-                                <li>Faster payments via UPI</li>
+                                <li><?= __('bank_why_commission', null, 'Receive commission payments') ?></li>
+                                <li><?= __('bank_why_refund', null, 'Get refunds for cancelled bookings') ?></li>
+                                <li><?= __('bank_why_rental', null, 'Receive rental income') ?></li>
+                                <li><?= __('bank_why_upi', null, 'Faster payments via UPI') ?></li>
                             </ul>
                             <hr>
                             <p class="small text-muted mb-0">
-                                <i class="fas fa-lock me-1"></i>Your bank details are encrypted and stored securely.
+                                <i class="fas fa-lock me-1"></i><?= __('bank_security_note', null, 'Your bank details are encrypted and stored securely.') ?>
                             </p>
                         </div>
                     </div>

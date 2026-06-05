@@ -3,9 +3,9 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h1 class="display-4 fw-bold mb-4">Real Estate Insights</h1>
-                <p class="lead mb-4">Stay updated with the latest trends, tips, and news in the real estate industry</p>
-                <p class="mb-0">From market analysis to investment strategies, our expert insights help you make informed decisions about your property journey.</p>
+                <h1 class="display-4 fw-bold mb-4"><?= __('blog_hero_title') ?></h1>
+                <p class="lead mb-4"><?= __('blog_hero_lead') ?></p>
+                <p class="mb-0"><?= __('blog_hero_desc') ?></p>
             </div>
         </div>
     </div>
@@ -25,8 +25,8 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Blog</li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('home') ?></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?= __('blog') ?></li>
                 <?php endif; ?>
             </ol>
         </nav>
@@ -38,12 +38,12 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 text-center">
-                <h3 class="mb-3">Subscribe to Our Newsletter</h3>
-                <p class="mb-4">Get the latest real estate insights and market updates delivered to your inbox</p>
+                <h3 class="mb-3"><?= __('blog_newsletter_title') ?></h3>
+                <p class="mb-4"><?= __('blog_newsletter_desc') ?></p>
                 <form class="d-flex gap-2">
-                    <input type="email" class="form-control" placeholder="Enter your email" required>
+                    <input type="email" class="form-control" placeholder="<?= __('blog_newsletter_ph_email') ?>" required>
                     <button type="submit" class="btn btn-light">
-                        <i class="fas fa-envelope me-1"></i>Subscribe
+                        <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>
                     </button>
                 </form>
             </div>
@@ -58,7 +58,7 @@
         <div class="row mb-5">
             <div class="col-12">
                 <div class="text-center">
-                    <button class="filter-btn active" data-category="all">All Posts</button>
+                    <button class="filter-btn active" data-category="all"><?= __('blog_filter_all') ?></button>
                     <?php foreach ($categories as $category): ?>
                         <button class="filter-btn" data-category="<?php echo htmlspecialchars($category['category']); ?>">
                             <?php echo ucfirst(htmlspecialchars($category['category'])); ?>
@@ -72,7 +72,7 @@
         <?php if (!empty($blog_posts)): ?>
             <div class="row mb-5">
                 <div class="col-12">
-                    <h3 class="mb-4">Featured Post</h3>
+                    <h3 class="mb-4"><?= __('blog_featured') ?></h3>
                 </div>
                 <div class="col-12">
                     <div class="card blog-card shadow-sm">
@@ -101,7 +101,7 @@
                             <h3 class="card-title mb-3"><?php echo htmlspecialchars($blog_posts[0]['title']); ?></h3>
                             <p class="card-text mb-3"><?php echo htmlspecialchars(substr($blog_posts[0]['excerpt'], 0, 200)) . '...'; ?></p>
                             <a href="blog-post.php?id=<?php echo $blog_posts[0]['id']; ?>" class="read-more-btn">
-                                <i class="fas fa-arrow-right me-1"></i>Read More
+                                <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
                             </a>
                         </div>
                     </div>
@@ -112,7 +112,7 @@
         <!-- All Posts -->
         <div class="row">
             <div class="col-12 mb-4">
-                <h3>Latest Posts</h3>
+                <h3><?= __('blog_latest') ?></h3>
             </div>
 
             <?php for ($i = 1; $i < count($blog_posts); $i++): ?>
@@ -141,7 +141,7 @@
                                 <?php echo htmlspecialchars(substr($blog_posts[$i]['excerpt'], 0, 100)) . '...'; ?>
                             </p>
                             <a href="blog-post.php?id=<?php echo $blog_posts[$i]['id']; ?>" class="read-more-btn btn-sm">
-                                <i class="fas fa-arrow-right me-1"></i>Read More
+                                <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
                             </a>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
         <div class="row mt-4">
             <div class="col-12 text-center">
                 <button class="btn btn-outline-primary btn-lg" id="loadMore">
-                    <i class="fas fa-plus me-2"></i>Load More Posts
+                    <i class="fas fa-plus me-2"></i><?= __('blog_load_more') ?>
                 </button>
             </div>
         </div>
@@ -165,37 +165,37 @@
     <div class="container">
         <div class="row">
             <div class="col-12 text-center mb-5">
-                <h3 class="fw-bold">Explore by Category</h3>
-                <p class="lead text-muted">Find articles that interest you most</p>
+                <h3 class="fw-bold"><?= __('blog_explore_title') ?></h3>
+                <p class="lead text-muted"><?= __('blog_explore_desc') ?></p>
             </div>
         </div>
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="card text-center p-4 h-100">
                     <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
-                    <h6>Market Trends</h6>
-                    <p class="small text-muted">Latest market analysis and price trends</p>
+                    <h6><?= __('blog_cat_market') ?></h6>
+                    <p class="small text-muted"><?= __('blog_cat_market_desc') ?></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card text-center p-4 h-100">
                     <i class="fas fa-coins fa-3x text-success mb-3"></i>
-                    <h6>Investment Tips</h6>
-                    <p class="small text-muted">Smart investment strategies and advice</p>
+                    <h6><?= __('blog_cat_investment') ?></h6>
+                    <p class="small text-muted"><?= __('blog_cat_investment_desc') ?></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card text-center p-4 h-100">
                     <i class="fas fa-home fa-3x text-info mb-3"></i>
-                    <h6>Buying Guide</h6>
-                    <p class="small text-muted">Complete guides for first-time buyers</p>
+                    <h6><?= __('blog_cat_buying') ?></h6>
+                    <p class="small text-muted"><?= __('blog_cat_buying_desc') ?></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card text-center p-4 h-100">
                     <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
-                    <h6>Legal & Finance</h6>
-                    <p class="small text-muted">Legal aspects and financing options</p>
+                    <h6><?= __('blog_cat_legal') ?></h6>
+                    <p class="small text-muted"><?= __('blog_cat_legal_desc') ?></p>
                 </div>
             </div>
         </div>

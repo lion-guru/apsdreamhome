@@ -10,8 +10,8 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
 <!-- Hero Section -->
 <section class="careers-hero bg-dark text-white py-5 mb-0 position-relative overflow-hidden">
     <div class="container py-5 mt-4 text-center" data-aos="fade-up">
-        <h1 class="display-3 fw-bold mb-3">Career Application</h1>
-        <p class="lead opacity-75 mx-auto">Take the first step towards a rewarding career in real estate</p>
+        <h1 class="display-3 fw-bold mb-3"><?= __('career_apply_hero_title', null, 'Career Application') ?></h1>
+        <p class="lead opacity-75 mx-auto"><?= __('career_apply_hero_subtitle', null, 'Take the first step towards a rewarding career in real estate') ?></p>
     </div>
 </section>
 
@@ -29,9 +29,9 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>careers">Careers</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Apply</li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('nav_home', null, 'Home') ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>careers"><?= __('careers_breadcrumb', null, 'Careers') ?></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?= __('career_apply_breadcrumb', null, 'Apply') ?></li>
                 <?php endif; ?>
             </ol>
         </nav>
@@ -45,8 +45,8 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="card-body p-5">
                         <div class="text-center mb-4">
-                            <h2 class="fw-bold text-dark">Ready to Join Our Team?</h2>
-                            <p class="text-muted">Fill out the form below and we'll get back to you soon.</p>
+                            <h2 class="fw-bold text-dark"><?= __('career_apply_cta_title', null, "Ready to Join Our Team?") ?></h2>
+                            <p class="text-muted"><?= __('career_apply_cta_desc', null, "Fill out the form below and we'll get back to you soon.") ?></p>
                         </div>
 
                         <?php if (isset($_SESSION['error'])): ?>
@@ -68,22 +68,22 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                         <form action="<?= BASE_URL ?>careers/apply" method="POST" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label fw-semibold">Full Name *</label>
+                                    <label for="name" class="form-label fw-semibold"><?= __('testi_lbl_name', null, 'Full Name') ?> *</label>
                                     <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label fw-semibold">Email Address *</label>
+                                    <label for="email" class="form-label fw-semibold"><?= __('career_apply_email_lbl', null, 'Email Address') ?> *</label>
                                     <input type="email" class="form-control" id="email" name="email" required>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="phone" class="form-label fw-semibold">Phone Number *</label>
+                                    <label for="phone" class="form-label fw-semibold"><?= __('career_apply_phone_lbl', null, 'Phone Number') ?> *</label>
                                     <input type="tel" class="form-control" id="phone" name="phone" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="position" class="form-label fw-semibold">Position Applied For *</label>
+                                    <label for="position" class="form-label fw-semibold"><?= __('career_apply_position_lbl', null, 'Position Applied For') ?> *</label>
                                     <select class="form-select" id="position" name="position" required>
                                         <option value="">Select Position</option>
                                         <option value="Sales Executive">Sales Executive</option>
@@ -98,24 +98,24 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                             </div>
 
                             <div class="mb-3">
-                                <label for="experience" class="form-label fw-semibold">Years of Experience</label>
+                                <label for="experience" class="form-label fw-semibold"><?= __('career_apply_experience_lbl', null, 'Years of Experience') ?></label>
                                 <input type="text" class="form-control" id="experience" name="experience" placeholder="e.g., 2-3 years">
                             </div>
 
                             <div class="mb-3">
-                                <label for="message" class="form-label fw-semibold">Cover Letter / Message</label>
+                                <label for="message" class="form-label fw-semibold"><?= __('career_apply_cover_lbl', null, 'Cover Letter / Message') ?></label>
                                 <textarea class="form-control" id="message" name="message" rows="5" placeholder="Tell us why you're interested in this position..."></textarea>
                             </div>
 
                             <div class="mb-4">
-                                <label for="resume" class="form-label fw-semibold">Resume/CV *</label>
+                                <label for="resume" class="form-label fw-semibold"><?= __('career_apply_resume_lbl', null, 'Resume/CV') ?> *</label>
                                 <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
-                                <div class="form-text">Accepted formats: PDF, DOC, DOCX (Max size: 5MB)</div>
+                                <div class="form-text"><?= __('career_apply_resume_hint', null, 'Accepted formats: PDF, DOC, DOCX (Max size: 5MB)') ?></div>
                             </div>
 
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">
-                                    <i class="fas fa-paper-plane me-2"></i>Submit Application
+                                    <i class="fas fa-paper-plane me-2"></i><?= __('career_apply_btn_submit', null, 'Submit Application') ?>
                                 </button>
                             </div>
                         </form>
@@ -125,13 +125,13 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                 <!-- Contact Information -->
                 <div class="card border-0 shadow-sm rounded-4 mt-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3">Other Ways to Apply</h5>
+                        <h5 class="fw-bold mb-3"><?= __('career_apply_other_ways', null, 'Other Ways to Apply') ?></h5>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fas fa-envelope text-primary me-3"></i>
                                     <div>
-                                        <strong>Email:</strong><br>
+                                        <strong><?= __('career_apply_email_lbl') ?>:</strong><br>
                                         <a href="mailto:hr@apsdreamhome.com">hr@apsdreamhome.com</a>
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fas fa-phone text-primary me-3"></i>
                                     <div>
-                                        <strong>Phone:</strong><br>
+                                        <strong><?= __('career_apply_phone_lbl') ?>:</strong><br>
                                         <a href="tel:+919876543210">+91 92771 21112</a>
                                     </div>
                                 </div>
@@ -149,8 +149,8 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                         <div class="d-flex align-items-center">
                             <i class="fas fa-map-marker-alt text-primary me-3"></i>
                             <div>
-                                <strong>Office:</strong><br>
-                                APS Dream Home, Kaushambi, Ghaziabad, Uttar Pradesh
+                                <strong><?= __('career_apply_office_lbl', null, 'Office') ?>:</strong><br>
+                                <?= __('career_apply_office_addr', null, 'APS Dream Home, Kaushambi, Ghaziabad, Uttar Pradesh') ?>
                             </div>
                         </div>
                     </div>

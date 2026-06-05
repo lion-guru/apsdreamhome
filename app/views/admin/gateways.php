@@ -31,7 +31,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
         </h1>
         <?php if (empty($logs_only)): ?>
             <a href="<?= $baseUrl ?>/admin/gateways/logs/twilio" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-list me-1"></i>View Twilio Logs
+                <i class="fas fa-list me-1"></i><?= __('admin_gw_twilio_logs', null, 'View Twilio Logs') ?>
             </a>
         <?php endif; ?>
     </div>
@@ -59,8 +59,8 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                     <i class="fas fa-list me-1"></i>
                     <?= htmlspecialchars(ucfirst($gateway)) ?> — last 100 calls
                 </h6>
-                <a href="<?= $baseUrl ?>/admin/gateways" class="btn btn-sm btn-secondary">
-                    <i class="fas fa-arrow-left me-1"></i>Back to cards
+                                <a href="<?= $baseUrl ?>/admin/gateways" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i><?= __('admin_btn_back_cards', null, 'Back to cards') ?>
                 </a>
             </div>
             <div class="card-body p-0">
@@ -69,19 +69,19 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Action</th>
-                                <th>Recipient</th>
-                                <th>Status</th>
+                                <th><?= __('admin_gw_th_action', null, 'Action') ?></th>
+                                <th><?= __('admin_gw_th_recipient', null, 'Recipient') ?></th>
+                                <th><?= __('admin_gw_th_status', null, 'Status') ?></th>
                                 <th>HTTP</th>
-                                <th>Duration</th>
-                                <th>Cost</th>
-                                <th>When</th>
-                                <th>Error</th>
+                                <th><?= __('admin_gw_th_duration', null, 'Duration') ?></th>
+                                <th><?= __('admin_gw_th_cost', null, 'Cost') ?></th>
+                                <th><?= __('admin_gw_th_when', null, 'When') ?></th>
+                                <th><?= __('admin_gw_th_error', null, 'Error') ?></th>
                             </tr>
                         </thead>
                         <tbody>
                         <?php if (empty($logs)): ?>
-                            <tr><td colspan="9" class="text-center text-muted py-4">No log entries yet.</td></tr>
+                            <tr><td colspan="9" class="text-center text-muted py-4"><?= __('admin_gw_no_logs', null, 'No log entries yet.') ?></td></tr>
                         <?php else: foreach ($logs as $row): ?>
                             <tr>
                                 <td><?= (int)$row['id'] ?></td>
@@ -118,9 +118,9 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                 <?= htmlspecialchars($card['name']) ?>
                             </h6>
                             <?php if ($card['configured']): ?>
-                                <span class="badge bg-success">Configured</span>
+                                <span class="badge bg-success"><?= __('admin_gw_configured', null, 'Configured') ?></span>
                             <?php else: ?>
-                                <span class="badge bg-secondary">Not configured</span>
+                                <span class="badge bg-secondary"><?= __('admin_gw_not_configured', null, 'Not configured') ?></span>
                             <?php endif; ?>
                         </div>
                         <div class="card-body">
@@ -133,28 +133,28 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                             <div class="row text-center mb-2">
                                 <div class="col">
                                     <div class="h5 mb-0"><?= (int)($t['total'] ?? 0) ?></div>
-                                    <div class="small text-muted">Calls (24h)</div>
+                                    <div class="small text-muted"><?= __('admin_gw_calls_24h', null, 'Calls (24h)') ?></div>
                                 </div>
                                 <div class="col">
                                     <div class="h5 mb-0 text-success"><?= (int)($t['success_count'] ?? 0) ?></div>
-                                    <div class="small text-muted">Success</div>
+                                    <div class="small text-muted"><?= __('admin_gw_success', null, 'Success') ?></div>
                                 </div>
                                 <div class="col">
                                     <div class="h5 mb-0 text-danger"><?= (int)$card['error_count'] ?></div>
-                                    <div class="small text-muted">Errors</div>
+                                    <div class="small text-muted"><?= __('admin_gw_errors', null, 'Errors') ?></div>
                                 </div>
                                 <div class="col">
                                     <div class="h5 mb-0">$<?= number_format((float)($t['total_cost'] ?? 0), 2) ?></div>
-                                    <div class="small text-muted">Cost</div>
+                                    <div class="small text-muted"><?= __('admin_gw_cost', null, 'Cost') ?></div>
                                 </div>
                             </div>
 
                             <hr/>
 
-                            <p class="small text-muted mb-2">Last 5 calls:</p>
+                            <p class="small text-muted mb-2"><?= __('admin_gw_last_5', null, 'Last 5 calls:') ?></p>
                             <ul class="list-group list-group-flush mb-2" style="max-height: 180px; overflow-y: auto;">
                                 <?php if (empty($card['last_5'])): ?>
-                                    <li class="list-group-item text-muted small">No calls yet.</li>
+                                    <li class="list-group-item text-muted small"><?= __('admin_gw_no_calls_yet', null, 'No calls yet.') ?></li>
                                 <?php else: foreach ($card['last_5'] as $row): ?>
                                     <li class="list-group-item p-2 d-flex justify-content-between align-items-center small">
                                         <span>
@@ -178,7 +178,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                         <input type="tel" name="phone" class="form-control" placeholder="+91xxxxxxxxxx"
                                                value="<?= htmlspecialchars($admin_phone) ?>" required>
                                         <button class="btn btn-primary" type="submit">
-                                            <i class="fas fa-paper-plane me-1"></i>Test
+                                            <i class="fas fa-paper-plane me-1"></i><?= __('admin_gw_btn_test', null, 'Test') ?>
                                         </button>
                                     </div>
                                 </form>
@@ -186,7 +186,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
 
                             <div class="d-flex justify-content-between mt-2">
                                 <a href="<?= $baseUrl ?>/admin/gateways/logs/<?= htmlspecialchars($card['key']) ?>" class="small">
-                                    <i class="fas fa-list me-1"></i>View logs
+                                    <i class="fas fa-list me-1"></i><?= __('admin_gw_view_logs', null, 'View logs') ?>
                                 </a>
                                 <?php if ($card['configured']): ?>
                                     <span class="small text-success">

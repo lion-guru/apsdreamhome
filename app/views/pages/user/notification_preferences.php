@@ -18,11 +18,11 @@ $channelMeta = [
 
 $frequency = $prefs['booking']['frequency'] ?? 'immediate';
 $frequencyOptions = [
-    'immediate' => 'Immediate',
-    'hourly'    => 'Hourly Digest',
-    'daily'     => 'Daily Digest',
-    'weekly'    => 'Weekly Digest',
-    'never'     => 'Never',
+    'immediate' => __('notif_freq_immediate', null, 'Immediate'),
+    'hourly'    => __('notif_freq_hourly', null, 'Hourly Digest'),
+    'daily'     => __('notif_freq_daily', null, 'Daily Digest'),
+    'weekly'    => __('notif_freq_weekly', null, 'Weekly Digest'),
+    'never'     => __('notif_freq_never', null, 'Never'),
 ];
 ?>
 
@@ -44,8 +44,8 @@ $frequencyOptions = [
     <div class="card-header bg-white py-3">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
-                <h4 class="mb-1"><i class="fas fa-bell text-primary me-2"></i>Notification Preferences</h4>
-                <p class="text-muted mb-0 small">Choose how and when you want to be notified for each type of activity.</p>
+                <h4 class="mb-1"><i class="fas fa-bell text-primary me-2"></i><?= __('notif_page_title', null, 'Notification Preferences') ?></h4>
+                <p class="text-muted mb-0 small"><?= __('notif_page_subtitle', null, 'Choose how and when you want to be notified for each type of activity.') ?></p>
             </div>
             <span class="badge bg-light text-dark border">
                 <i class="fas fa-user me-1"></i><?= htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'Customer') ?>
@@ -59,8 +59,8 @@ $frequencyOptions = [
         <div class="card-body">
             <!-- Communication Channels summary -->
             <div class="mb-4">
-                <h5 class="mb-3"><i class="fas fa-broadcast-tower me-2 text-info"></i>Communication Channels</h5>
-                <p class="text-muted small mb-3">Pick the delivery channels you'd like to receive notifications on. All channels are enabled by default - toggle any off to opt out.</p>
+                <h5 class="mb-3"><i class="fas fa-broadcast-tower me-2 text-info"></i><?= __('notif_channels_title', null, 'Communication Channels') ?></h5>
+                <p class="text-muted small mb-3"><?= __('notif_channels_desc', null, "Pick the delivery channels you'd like to receive notifications on. All channels are enabled by default - toggle any off to opt out.") ?></p>
                 <div class="row g-3">
                     <?php foreach ($channels as $ch):
                         $meta = $channelMeta[$ch] ?? ['label' => ucfirst($ch), 'icon' => 'fas fa-circle', 'color' => 'secondary'];
@@ -91,14 +91,14 @@ $frequencyOptions = [
 
             <!-- Notification Types matrix -->
             <div class="mb-4">
-                <h5 class="mb-3"><i class="fas fa-list-check me-2 text-success"></i>Notification Types</h5>
-                <p class="text-muted small mb-3">For each notification type, toggle the channels you want to receive it on.</p>
+                <h5 class="mb-3"><i class="fas fa-list-check me-2 text-success"></i><?= __('notif_types_title', null, 'Notification Types') ?></h5>
+                <p class="text-muted small mb-3"><?= __('notif_types_desc', null, 'For each notification type, toggle the channels you want to receive it on.') ?></p>
 
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th style="min-width:220px;">Notification Type</th>
+                                <th style="min-width:220px;"><?= __('notif_th_type', null, 'Notification Type') ?></th>
                                 <?php foreach ($channels as $ch):
                                     $meta = $channelMeta[$ch] ?? ['label' => ucfirst($ch), 'icon' => 'fas fa-circle'];
                                 ?>
@@ -146,8 +146,8 @@ $frequencyOptions = [
             <!-- Delivery Frequency -->
             <div class="row g-4">
                 <div class="col-md-6">
-                    <h5 class="mb-3"><i class="fas fa-clock me-2 text-warning"></i>Delivery Frequency</h5>
-                    <p class="text-muted small mb-2">How often would you like non-urgent notifications grouped together?</p>
+                    <h5 class="mb-3"><i class="fas fa-clock me-2 text-warning"></i><?= __('notif_freq_title', null, 'Delivery Frequency') ?></h5>
+                    <p class="text-muted small mb-2"><?= __('notif_freq_desc', null, 'How often would you like non-urgent notifications grouped together?') ?></p>
                     <select name="frequency" class="form-select" id="frequency-select">
                         <?php foreach ($frequencyOptions as $val => $label): ?>
                             <option value="<?= htmlspecialchars($val) ?>" <?= $frequency === $val ? 'selected' : '' ?>>
@@ -157,16 +157,16 @@ $frequencyOptions = [
                     </select>
                     <small class="text-muted d-block mt-1">
                         <i class="fas fa-info-circle"></i>
-                        "Immediate" sends each notification right away. Digest modes bundle notifications into a single message.
+                        <?= __('notif_freq_help', null, '"Immediate" sends each notification right away. Digest modes bundle notifications into a single message.') ?>
                     </small>
                 </div>
                 <div class="col-md-6">
-                    <h5 class="mb-3"><i class="fas fa-shield-alt me-2 text-success"></i>Your Privacy</h5>
+                    <h5 class="mb-3"><i class="fas fa-shield-alt me-2 text-success"></i><?= __('notif_privacy_title', null, 'Your Privacy') ?></h5>
                     <ul class="small text-muted mb-0 ps-3">
-                        <li>We never share your contact details with third parties.</li>
-                        <li>In-app notifications are always delivered regardless of these settings.</li>
-                        <li>You can change these preferences at any time.</li>
-                        <li>Critical security alerts (e.g. password changes) cannot be disabled.</li>
+                        <li><?= __('notif_privacy_share', null, 'We never share your contact details with third parties.') ?></li>
+                        <li><?= __('notif_privacy_inapp', null, 'In-app notifications are always delivered regardless of these settings.') ?></li>
+                        <li><?= __('notif_privacy_anytime', null, 'You can change these preferences at any time.') ?></li>
+                        <li><?= __('notif_privacy_security', null, 'Critical security alerts (e.g. password changes) cannot be disabled.') ?></li>
                     </ul>
                 </div>
             </div>
@@ -174,14 +174,14 @@ $frequencyOptions = [
 
         <div class="card-footer bg-white d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
             <a href="<?= BASE_URL ?>/user/dashboard" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                <i class="fas fa-arrow-left me-1"></i><?= __('notif_back_dashboard', null, 'Back to Dashboard') ?>
             </a>
             <div class="d-flex gap-2">
                 <button type="button" class="btn btn-outline-warning" id="reset-defaults">
-                    <i class="fas fa-undo me-1"></i>Reset to Defaults
+                    <i class="fas fa-undo me-1"></i><?= __('notif_btn_reset', null, 'Reset to Defaults') ?>
                 </button>
                 <button type="submit" class="btn btn-primary px-4">
-                    <i class="fas fa-save me-2"></i>Save Preferences
+                    <i class="fas fa-save me-2"></i><?= __('notif_btn_save', null, 'Save Preferences') ?>
                 </button>
             </div>
         </div>

@@ -5,16 +5,16 @@ $extraHead = '<style>
 ?>
 
 <div class="container py-5">
-    <h3 class="mb-4"><i class="fas fa-envelope me-2 text-success"></i>My Inquiries</h3>
+    <h3 class="mb-4"><i class="fas fa-envelope me-2 text-success"></i><?= __('user_inquiries_heading') ?></h3>
 
     <?php if (empty($inquiries)): ?>
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-                <h5 class="text-muted">No inquiries yet</h5>
-                <p class="text-muted">Start exploring properties to make inquiries!</p>
+                <h5 class="text-muted"><?= __('user_inquiries_empty_title') ?></h5>
+                <p class="text-muted"><?= __('user_inquiries_empty_desc') ?></p>
                 <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-primary">
-                    <i class="fas fa-search me-2"></i>Browse Properties
+                    <i class="fas fa-search me-2"></i><?= __('user_inquiries_browse_button') ?>
                 </a>
             </div>
         </div>
@@ -25,11 +25,11 @@ $extraHead = '<style>
                     <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                         <thead>
                             <tr>
-                                <th>Type</th>
-                                <th>Message</th>
-                                <th>Status</th>
-                                <th>Priority</th>
-                                <th>Date</th>
+                                <th><?= __('user_inquiries_col_type') ?></th>
+                                <th><?= __('user_inquiries_col_message') ?></th>
+                                <th><?= __('user_inquiries_col_status') ?></th>
+                                <th><?= __('user_inquiries_col_priority') ?></th>
+                                <th><?= __('user_inquiries_col_date') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,7 +37,7 @@ $extraHead = '<style>
                                 <tr>
                                     <td>
                                         <span class="badge bg-<?php echo ($inq['type'] ?? '') === 'property_listing' ? 'success' : 'info'; ?>">
-                                            <?php echo ucfirst(str_replace('_', ' ', $inq['type'] ?? 'General')); ?>
+                                            <?php echo ucfirst(str_replace('_', ' ', __((!empty($inq['type']) ? 'inq_type_' . $inq['type'] : 'inq_type_general'), null, ucfirst(str_replace('_', ' ', $inq['type'] ?? 'General'))))); ?>
                                         </span>
                                     </td>
                                     <td>
@@ -58,7 +58,7 @@ $extraHead = '<style>
                                             default => 'secondary'
                                         };
                                         ?>
-                                        <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst($inq['status'] ?? 'new'); ?></span>
+                                        <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst(__('inq_status_' . ($inq['status'] ?? 'new'))); ?></span>
                                     </td>
                                     <td>
                                         <?php
@@ -69,7 +69,7 @@ $extraHead = '<style>
                                             default => 'secondary'
                                         };
                                         ?>
-                                        <span class="badge bg-<?php echo $priorityClass; ?>"><?php echo ucfirst($inq['priority'] ?? 'Medium'); ?></span>
+                                        <span class="badge bg-<?php echo $priorityClass; ?>"><?php echo ucfirst(__('priority_' . ($inq['priority'] ?? 'medium'))); ?></span>
                                     </td>
                                     <td>
                                         <?php echo date('d M Y', strtotime($inq['created_at'])); ?>

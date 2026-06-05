@@ -7,9 +7,9 @@ $extraHead = '<style>
 
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <h3><i class="fas fa-building me-2 text-primary"></i>My Properties</h3>
+        <h3><i class="fas fa-building me-2 text-primary"></i><?= __('user_properties_heading') ?></h3>
         <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Post New Property
+            <i class="fas fa-plus me-2"></i><?= __('user_properties_button_post') ?>
         </a>
     </div>
 
@@ -17,10 +17,10 @@ $extraHead = '<style>
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-home fa-4x text-muted mb-3"></i>
-                <h5 class="text-muted">No properties posted yet</h5>
-                <p class="text-muted">Start by posting your first property for free!</p>
+                <h5 class="text-muted"><?= __('user_properties_empty_title') ?></h5>
+                <p class="text-muted"><?= __('user_properties_empty_desc') ?></p>
                 <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Post Property
+                    <i class="fas fa-plus me-2"></i><?= __('user_properties_button_post_property') ?>
                 </a>
             </div>
         </div>
@@ -34,7 +34,7 @@ $extraHead = '<style>
                                 <div>
                                     <h5 class="mb-1"><?php echo htmlspecialchars($p['name']); ?></h5>
                                     <p class="text-muted mb-0 small">
-                                        <i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($p['address'] ?? 'Location not specified'); ?>
+                                        <i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($p['address'] ?? __('user_properties_location_unspecified')); ?>
                                     </p>
                                 </div>
                                 <?php
@@ -47,7 +47,7 @@ $extraHead = '<style>
                                     default => 'secondary'
                                 };
                                 ?>
-                                <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst($p['status'] ?? 'pending'); ?></span>
+                                <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst(__('status_' . ($p['status'] ?? 'pending'))); ?></span>
                             </div>
 
                             <?php if (!empty($p['image'])): ?>
@@ -56,53 +56,53 @@ $extraHead = '<style>
 
                             <div class="row mb-3">
                                 <div class="col-4">
-                                    <small class="text-muted">Type</small>
-                                    <p class="mb-0 fw-bold"><?php echo ucfirst($p['property_type']); ?></p>
+                                    <small class="text-muted"><?= __('user_properties_label_type') ?></small>
+                                    <p class="mb-0 fw-bold"><?php echo ucfirst(__('ptype_' . ($p['property_type'] ?? 'other'))); ?></p>
                                 </div>
                                 <div class="col-4">
-                                    <small class="text-muted">For</small>
-                                    <p class="mb-0 fw-bold"><?php echo ucfirst($p['listing_type']); ?></p>
+                                    <small class="text-muted"><?= __('user_properties_label_for') ?></small>
+                                    <p class="mb-0 fw-bold"><?php echo ucfirst(__('listing_' . ($p['listing_type'] ?? 'sale'))); ?></p>
                                 </div>
                                 <div class="col-4">
-                                    <small class="text-muted">Price</small>
-                                    <p class="mb-0 fw-bold text-success">Rs.<?php echo number_format($p['price']); ?></p>
+                                    <small class="text-muted"><?= __('user_properties_label_price') ?></small>
+                                    <p class="mb-0 fw-bold text-success"><?= __('currency_inr') ?><?php echo number_format($p['price']); ?></p>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-4">
-                                    <small class="text-muted">Area</small>
-                                    <p class="mb-0"><?php echo number_format($p['area_sqft'] ?? 0); ?> sq ft</p>
+                                    <small class="text-muted"><?= __('user_properties_label_area') ?></small>
+                                    <p class="mb-0"><?php echo number_format($p['area_sqft'] ?? 0); ?> <?= __('unit_sqft') ?></p>
                                 </div>
                                 <div class="col-4">
-                                    <small class="text-muted">Views</small>
+                                    <small class="text-muted"><?= __('user_properties_label_views') ?></small>
                                     <p class="mb-0"><i class="fas fa-eye me-1"></i><?php echo $p['views'] ?? 0; ?></p>
                                 </div>
                                 <div class="col-4">
-                                    <small class="text-muted">Inquiries</small>
+                                    <small class="text-muted"><?= __('user_properties_label_inquiries') ?></small>
                                     <p class="mb-0"><i class="fas fa-envelope me-1"></i><?php echo $p['inquiries'] ?? 0; ?></p>
                                 </div>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
-                                    Posted: <?php echo date('d M Y', strtotime($p['created_at'])); ?>
+                                    <?= __('user_properties_posted_on', ['date' => date('d M Y', strtotime($p['created_at']))]) ?>
                                 </small>
                                 <?php if ($p['status'] === 'pending'): ?>
-                                    <span class="badge bg-warning">Under Review</span>
+                                    <span class="badge bg-warning"><?= __('user_properties_under_review') ?></span>
                                 <?php elseif ($p['status'] === 'approved'): ?>
-                                    <a href="<?php echo BASE_URL; ?>/listing/<?php echo $p['id']; ?>" class="btn btn-sm btn-outline-primary" target="_blank">View Listing <i class="fas fa-external-link-alt ms-1"></i></a>
+                                    <a href="<?php echo BASE_URL; ?>/listing/<?php echo $p['id']; ?>" class="btn btn-sm btn-outline-primary" target="_blank"><?= __('user_properties_view_listing') ?> <i class="fas fa-external-link-alt ms-1"></i></a>
                                 <?php elseif ($p['status'] === 'rejected'): ?>
-                                    <span class="badge bg-danger">Rejected</span>
+                                    <span class="badge bg-danger"><?= __('status_rejected') ?></span>
                                 <?php elseif ($p['status'] === 'verified'): ?>
-                                    <span class="badge bg-info">Verified</span>
+                                    <span class="badge bg-info"><?= __('status_verified') ?></span>
                                 <?php elseif ($p['status'] === 'sold'): ?>
-                                    <span class="badge bg-dark">Sold</span>
+                                    <span class="badge bg-dark"><?= __('status_sold') ?></span>
                                 <?php endif; ?>
                             </div>
                             <?php if (!empty($p['admin_notes'])): ?>
                             <div class="mt-3 p-3 bg-light rounded">
-                                <small class="text-muted d-block mb-1"><i class="fas fa-sticky-note me-1"></i>Admin Note:</small>
+                                <small class="text-muted d-block mb-1"><i class="fas fa-sticky-note me-1"></i><?= __('user_properties_admin_note') ?>:</small>
                                 <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($p['admin_notes'])); ?></p>
                             </div>
                             <?php endif; ?>

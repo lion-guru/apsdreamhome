@@ -3,11 +3,14 @@ $page_title = $page_title ?? '';
 if (session_status() === PHP_SESSION_NONE) {
     @session_start();
 }
+if (!function_exists('__')) {
+    require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
+}
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
-$page_title = $page_title ?? 'Forgot Password - APS Dream Home';
-$page_description = 'Reset your password with email or mobile number';
+$page_title = $page_title ?? __('forgot_password_page_title') . ' - APS Dream Home';
+$page_description = __('forgot_password_page_description');
 
 ?>
 
@@ -21,8 +24,8 @@ $page_description = 'Reset your password with email or mobile number';
                         <div class="forgot-icon">
                             <i class="fas fa-key"></i>
                         </div>
-                        <h2 class="forgot-title">Forgot Password?</h2>
-                        <p class="forgot-subtitle">Choose your preferred reset method</p>
+                        <h2 class="forgot-title"><?= __('forgot_password_title') ?></h2>
+                        <p class="forgot-subtitle"><?= __('forgot_password_subtitle') ?></p>
                     </div>
 
                     <?php if (isset($_SESSION['error'])): ?>
@@ -47,12 +50,12 @@ $page_description = 'Reset your password with email or mobile number';
                     <ul class="nav nav-tabs forgot-tabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#email-reset-tab" type="button" role="tab">
-                                <i class="fas fa-envelope me-2"></i>Email Reset
+                                <i class="fas fa-envelope me-2"></i><?= __('forgot_password_tab_email') ?>
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#mobile-reset-tab" type="button" role="tab">
-                                <i class="fas fa-mobile-alt me-2"></i>Mobile Reset
+                                <i class="fas fa-mobile-alt me-2"></i><?= __('forgot_password_tab_mobile') ?>
                             </button>
                         </li>
                     </ul>
@@ -67,22 +70,22 @@ $page_description = 'Reset your password with email or mobile number';
 
                                 <div class="mb-4">
                                     <label for="email" class="form-label">
-                                        <i class="fas fa-envelope me-2"></i>Email Address
+                                        <i class="fas fa-envelope me-2"></i><?= __('forgot_password_label_email') ?>
                                     </label>
                                     <input type="email" class="form-control form-control-lg" id="email" name="email" required
-                                        placeholder="Enter your registered email address" autocomplete="email">
+                                        placeholder="<?= __('forgot_password_ph_email') ?>" autocomplete="email">
                                     <div class="form-text">
                                         <i class="fas fa-info-circle me-1"></i>
-                                        Enter the email address associated with your APS Dream Home account
+                                        <?= __('forgot_password_hint_email') ?>
                                     </div>
                                 </div>
 
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-paper-plane me-2"></i>Send Reset Link
+                                        <i class="fas fa-paper-plane me-2"></i><?= __('forgot_password_button_send_link') ?>
                                     </button>
                                     <button type="button" class="btn btn-outline-secondary" onclick="switchToResetTab('mobile-reset-tab')">
-                                        <i class="fas fa-mobile-alt me-2"></i>Try Mobile Reset
+                                        <i class="fas fa-mobile-alt me-2"></i><?= __('forgot_password_button_try_mobile') ?>
                                     </button>
                                 </div>
                             </form>
@@ -96,7 +99,7 @@ $page_description = 'Reset your password with email or mobile number';
 
                                 <div class="mb-4">
                                     <label for="mobile" class="form-label">
-                                        <i class="fas fa-mobile-alt me-2"></i>Mobile Number
+                                        <i class="fas fa-mobile-alt me-2"></i><?= __('forgot_password_label_mobile') ?>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text">+91</span>
@@ -105,7 +108,7 @@ $page_description = 'Reset your password with email or mobile number';
                                     </div>
                                     <div class="form-text">
                                         <i class="fas fa-info-circle me-1"></i>
-                                        Enter the 10-digit mobile number registered with your account
+                                        <?= __('forgot_password_hint_mobile') ?>
                                     </div>
                                 </div>
 
@@ -113,17 +116,17 @@ $page_description = 'Reset your password with email or mobile number';
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="send-otp-mobile" name="send_otp">
                                         <label class="form-check-label" for="send-otp-mobile">
-                                            <i class="fas fa-key me-2"></i>Send OTP instead of reset link
+                                            <i class="fas fa-key me-2"></i><?= __('forgot_password_label_otp_instead') ?>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-paper-plane me-2"></i>Send Reset Link
+                                        <i class="fas fa-paper-plane me-2"></i><?= __('forgot_password_button_send_link') ?>
                                     </button>
                                     <button type="button" class="btn btn-outline-info" onclick="requestMobileOTP()">
-                                        <i class="fas fa-key me-2"></i>Send OTP
+                                        <i class="fas fa-key me-2"></i><?= __('forgot_password_button_send_otp') ?>
                                     </button>
                                 </div>
                             </form>
@@ -132,24 +135,24 @@ $page_description = 'Reset your password with email or mobile number';
 
                     <!-- Help Information -->
                     <div class="help-info">
-                        <h6><i class="fas fa-question-circle me-2"></i>Reset Information</h6>
+                        <h6><i class="fas fa-question-circle me-2"></i><?= __('forgot_password_help_heading') ?></h6>
                         <div class="help-content">
                             <div class="help-item">
                                 <i class="fas fa-envelope text-primary me-2"></i>
                                 <div>
-                                    <strong>Email Reset:</strong> You'll receive a secure reset link in your inbox
+                                    <strong><?= __('forgot_password_help_email_label') ?>:</strong> <?= __('forgot_password_help_email_desc') ?>
                                 </div>
                             </div>
                             <div class="help-item">
                                 <i class="fas fa-mobile-alt text-success me-2"></i>
                                 <div>
-                                    <strong>Mobile Reset:</strong> You'll receive OTP via SMS
+                                    <strong><?= __('forgot_password_help_mobile_label') ?>:</strong> <?= __('forgot_password_help_mobile_desc') ?>
                                 </div>
                             </div>
                             <div class="help-item">
                                 <i class="fas fa-clock text-warning me-2"></i>
                                 <div>
-                                    <strong>Delivery Time:</strong> Usually within 2-5 minutes
+                                    <strong><?= __('forgot_password_help_time_label') ?>:</strong> <?= __('forgot_password_help_time_desc') ?>
                                 </div>
                             </div>
                         </div>
@@ -160,12 +163,12 @@ $page_description = 'Reset your password with email or mobile number';
                         <div class="row">
                             <div class="col-md-6">
                                 <a href="<?= BASE_URL ?>auth/universal_login" class="quick-link">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Back to Login
+                                    <i class="fas fa-sign-in-alt me-2"></i><?= __('forgot_password_link_login') ?>
                                 </a>
                             </div>
                             <div class="col-md-6">
                                 <a href="<?= BASE_URL ?>auth/register" class="quick-link">
-                                    <i class="fas fa-user-plus me-2"></i>Create New Account
+                                    <i class="fas fa-user-plus me-2"></i><?= __('forgot_password_link_register') ?>
                                 </a>
                             </div>
                         </div>

@@ -16,12 +16,12 @@ $userDocuments = $userDocuments ?? [];
     <div class="card-body p-4">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h4 class="mb-2">Welcome back, <?php echo htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? 'Customer'); ?>!</h4>
-                <p class="mb-0 opacity-75">Manage your properties, track inquiries and purchases all in one place.</p>
+                <h4 class="mb-2"><?= __('dash_welcome_back', ['name' => htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? __('dash_default_customer'))], 'Welcome back, %s!') ?></h4>
+                <p class="mb-0 opacity-75"><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries and purchases all in one place.') ?></p>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
                 <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-light">
-                    <i class="fas fa-plus me-2"></i>Post Property
+                    <i class="fas fa-plus me-2"></i><?= __('dash_btn_post_property', null, 'Post Property') ?>
                 </a>
             </div>
         </div>
@@ -34,35 +34,35 @@ $userDocuments = $userDocuments ?? [];
         <div class="stat-card">
             <div class="stat-icon blue"><i class="fas fa-building"></i></div>
             <div class="stat-value"><?php echo $stats['total_properties']; ?></div>
-            <div class="stat-label">My Properties</div>
+            <div class="stat-label"><?= __('dash_stat_my_properties', null, 'My Properties') ?></div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-envelope"></i></div>
             <div class="stat-value"><?php echo $stats['active_inquiries']; ?></div>
-            <div class="stat-label">Active Inquiries</div>
+            <div class="stat-label"><?= __('dash_stat_active_inquiries', null, 'Active Inquiries') ?></div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-card">
             <div class="stat-icon orange"><i class="fas fa-file-invoice"></i></div>
             <div class="stat-value"><?php echo $stats['total_bookings']; ?></div>
-            <div class="stat-label">My Purchases</div>
+            <div class="stat-label"><?= __('dash_stat_my_purchases', null, 'My Purchases') ?></div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-card">
             <div class="stat-icon purple"><i class="fas fa-chart-bar"></i></div>
             <div class="stat-value"><?php echo $stats['total_inquiries']; ?></div>
-            <div class="stat-label">Total Inquiries</div>
+            <div class="stat-label"><?= __('dash_stat_total_inquiries', null, 'Total Inquiries') ?></div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
         <div class="stat-card">
             <div class="stat-icon red"><i class="fas fa-headset"></i></div>
             <div class="stat-value"><?php echo $stats['open_tickets']; ?><small class="text-muted fs-6">/<?php echo $stats['total_tickets']; ?></small></div>
-            <div class="stat-label">Open Tickets</div>
+            <div class="stat-label"><?= __('dash_stat_open_tickets', null, 'Open Tickets') ?></div>
         </div>
     </div>
 </div>
@@ -75,8 +75,8 @@ $userDocuments = $userDocuments ?? [];
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-file-invoice text-success me-2"></i>My Purchases</h5>
-                    <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary">View All</a>
+                    <h5 class="card-title mb-0"><i class="fas fa-file-invoice text-success me-2"></i><?= __('dash_section_my_purchases', null, 'My Purchases') ?></h5>
+                    <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -84,14 +84,14 @@ $userDocuments = $userDocuments ?? [];
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>Plot</th>
-                                <th>Colony</th>
-                                <th>Amount</th>
-                                <th>Token Paid</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Documents</th>
-                                <th>Action</th>
+                                <th><?= __('dash_th_plot', null, 'Plot') ?></th>
+                                <th><?= __('dash_th_colony', null, 'Colony') ?></th>
+                                <th><?= __('dash_th_amount', null, 'Amount') ?></th>
+                                <th><?= __('dash_th_token_paid', null, 'Token Paid') ?></th>
+                                <th><?= __('dash_th_status', null, 'Status') ?></th>
+                                <th><?= __('dash_th_date', null, 'Date') ?></th>
+                                <th><?= __('dash_th_documents', null, 'Documents') ?></th>
+                                <th><?= __('dash_th_action', null, 'Action') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,32 +115,32 @@ $userDocuments = $userDocuments ?? [];
                                 <td>
                                     ₹<?= number_format($tokenPaid) ?>
                                     <?php if ($tokenPaid > 0 && $tokenRequired > 0): ?>
-                                        <br><small class="text-muted"><?= round(($tokenPaid / $tokenRequired) * 100) ?>% of token</small>
+                                        <br><small class="text-muted"><?= round(($tokenPaid / $tokenRequired) * 100) ?>% <?= __('dash_pct_of_token', null, 'of token') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <span class="badge bg-<?= $badgeClass ?>"><?= ucfirst($bStatus) ?></span>
                                     <?php if ($bStatus === 'pending'): ?>
-                                        <br><small class="text-warning">Awaiting approval</small>
+                                        <br><small class="text-warning"><?= __('dash_awaiting_approval', null, 'Awaiting approval') ?></small>
                                     <?php elseif ($bStatus === 'confirmed'): ?>
-                                        <br><small class="text-success">Approved</small>
+                                        <br><small class="text-success"><?= __('dash_approved', null, 'Approved') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td><?= date('M d, Y', strtotime($b['created_at'] ?? $b['booking_date'] ?? 'now')) ?></td>
                                 <td>
                                     <div class="d-flex flex-column gap-1">
-                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/receipt" class="btn btn-outline-secondary btn-sm" title="Download Receipt"><i class="fas fa-print me-1"></i>Receipt</a>
+                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/receipt" class="btn btn-outline-secondary btn-sm" title="Download Receipt"><i class="fas fa-print me-1"></i><?= __('dash_btn_receipt', null, 'Receipt') ?></a>
                                         <?php if ($bStatus === 'confirmed' || $bStatus === 'completed'): ?>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" title="Download Allotment Letter" onclick="alert('Allotment letter will be available soon.')"><i class="fas fa-file-alt me-1"></i>Allotment</button>
-                                        <button type="button" class="btn btn-outline-success btn-sm" title="Download Agreement" onclick="alert('Sale agreement will be available soon.')"><i class="fas fa-file-contract me-1"></i>Agreement</button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" title="Download Allotment Letter" onclick="alert('Allotment letter will be available soon.')"><i class="fas fa-file-alt me-1"></i><?= __('dash_btn_allotment', null, 'Allotment') ?></button>
+                                        <button type="button" class="btn btn-outline-success btn-sm" title="Download Agreement" onclick="alert('Sale agreement will be available soon.')"><i class="fas fa-file-contract me-1"></i><?= __('dash_btn_agreement', null, 'Agreement') ?></button>
                                         <?php endif; ?>
                                     </div>
                                 </td>
                                 <td>
                                     <?php if ($bStatus === 'pending' && $tokenRequired > $tokenPaid): ?>
-                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/pay" class="btn btn-success btn-sm w-100 mb-1"><i class="fas fa-credit-card me-1"></i>Pay Token</a>
+                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/pay" class="btn btn-success btn-sm w-100 mb-1"><i class="fas fa-credit-card me-1"></i><?= __('dash_btn_pay_token', null, 'Pay Token') ?></a>
                                     <?php endif; ?>
-                                    <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/confirmation" class="btn btn-outline-info btn-sm w-100"><i class="fas fa-eye"></i> View</a>
+                                    <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/confirmation" class="btn btn-outline-info btn-sm w-100"><i class="fas fa-eye"></i> <?= __('dash_btn_view', null, 'View') ?></a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -155,16 +155,16 @@ $userDocuments = $userDocuments ?? [];
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-building text-primary me-2"></i>My Properties</h5>
-                    <a href="<?php echo BASE_URL; ?>/user/properties" class="btn btn-sm btn-outline-primary">View All</a>
+                    <h5 class="card-title mb-0"><i class="fas fa-building text-primary me-2"></i><?= __('dash_section_my_properties', null, 'My Properties') ?></h5>
+                    <a href="<?php echo BASE_URL; ?>/user/properties" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
                 </div>
             </div>
             <div class="card-body">
                 <?php if (empty($properties)): ?>
                     <div class="text-center py-4 text-muted">
                         <i class="fas fa-building fa-3x mb-3"></i>
-                        <p>No properties listed yet. Post your first property!</p>
-                        <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-primary btn-sm">Post Property</a>
+                        <p><?= __('dash_no_properties_yet', null, 'No properties listed yet. Post your first property!') ?></p>
+                        <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-primary btn-sm"><?= __('dash_btn_post_property', null, 'Post Property') ?></a>
                     </div>
                 <?php else: ?>
                 <div class="row g-3">
@@ -201,25 +201,25 @@ $userDocuments = $userDocuments ?? [];
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-envelope text-success me-2"></i>Recent Inquiries</h5>
-                    <a href="<?php echo BASE_URL; ?>/user/inquiries" class="btn btn-sm btn-outline-primary">View All</a>
+                    <h5 class="card-title mb-0"><i class="fas fa-envelope text-success me-2"></i><?= __('dash_section_recent_inquiries', null, 'Recent Inquiries') ?></h5>
+                    <a href="<?php echo BASE_URL; ?>/user/inquiries" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
                 </div>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($inquiries)): ?>
                     <div class="text-center py-4 text-muted">
                         <i class="fas fa-envelope fa-3x mb-3"></i>
-                        <p>No inquiries yet.</p>
+                        <p><?= __('dash_no_inquiries_yet', null, 'No inquiries yet.') ?></p>
                     </div>
                 <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>Subject</th>
-                                <th>Type</th>
-                                <th>Status</th>
-                                <th>Date</th>
+                                <th><?= __('dash_th_subject', null, 'Subject') ?></th>
+                                <th><?= __('dash_th_type', null, 'Type') ?></th>
+                                <th><?= __('dash_th_status', null, 'Status') ?></th>
+                                <th><?= __('dash_th_date', null, 'Date') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -246,13 +246,13 @@ $userDocuments = $userDocuments ?? [];
         <!-- Recent Payments -->
         <div class="card shadow-sm mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Recent Payments</h5>
-                <a href="<?= BASE_URL ?>/user/payments" class="btn btn-sm btn-outline-primary">View All</a>
+                <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i><?= __('dash_section_recent_payments', null, 'Recent Payments') ?></h5>
+                <a href="<?= BASE_URL ?>/user/payments" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="table-light"><tr><th>Date</th><th>Transaction</th><th>Amount</th><th>Status</th></tr></thead>
+                            <thead class="table-light"><tr><th><?= __('dash_th_date', null, 'Date') ?></th><th><?= __('dash_th_transaction', null, 'Transaction') ?></th><th><?= __('dash_th_amount', null, 'Amount') ?></th><th><?= __('dash_th_status', null, 'Status') ?></th></tr></thead>
                         <tbody>
                             <?php if (!empty($recentPayments)): foreach ($recentPayments as $pmt): ?>
                                 <tr>
@@ -262,7 +262,7 @@ $userDocuments = $userDocuments ?? [];
                                     <td><span class="badge bg-<?= ($pmt['status'] ?? '') === 'completed' ? 'success' : (($pmt['status'] ?? '') === 'pending' ? 'warning' : 'secondary') ?>"><?= htmlspecialchars($pmt['status'] ?? 'N/A') ?></span></td>
                                 </tr>
                             <?php endforeach; else: ?>
-                                <tr><td colspan="4" class="text-center text-muted py-3">No payments yet</td></tr>
+                                <tr><td colspan="4" class="text-center text-muted py-3"><?= __('dash_no_payments_yet', null, 'No payments yet') ?></td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -274,21 +274,21 @@ $userDocuments = $userDocuments ?? [];
         <!-- My Documents -->
         <div class="card shadow-sm mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-folder-open text-warning me-2"></i>My Documents</h5>
-                <a href="<?= BASE_URL ?>/user/documents" class="btn btn-sm btn-outline-primary">View All</a>
+                <h5 class="mb-0"><i class="fas fa-folder-open text-warning me-2"></i><?= __('dash_section_my_documents', null, 'My Documents') ?></h5>
+                <a href="<?= BASE_URL ?>/user/documents" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($userDocuments)): ?>
                     <div class="text-center py-4 text-muted">
                         <i class="fas fa-file-upload fa-3x mb-3"></i>
-                        <p>No documents uploaded yet. Upload your KYC documents.</p>
-                        <a href="<?= BASE_URL ?>/user/documents" class="btn btn-primary btn-sm">Upload Documents</a>
+                        <p><?= __('dash_no_documents_yet', null, 'No documents uploaded yet. Upload your KYC documents.') ?></p>
+                        <a href="<?= BASE_URL ?>/user/documents" class="btn btn-primary btn-sm"><?= __('dash_btn_upload_documents', null, 'Upload Documents') ?></a>
                     </div>
                 <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
-                            <tr><th>Document</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr>
+                            <tr><th><?= __('dash_th_document', null, 'Document') ?></th><th><?= __('dash_th_type', null, 'Type') ?></th><th><?= __('dash_th_status', null, 'Status') ?></th><th><?= __('dash_th_date', null, 'Date') ?></th><th><?= __('dash_th_action', null, 'Action') ?></th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($userDocuments as $doc): ?>
@@ -322,24 +322,24 @@ $userDocuments = $userDocuments ?? [];
         <?php if (!empty($referral_code)): ?>
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-gift text-danger me-2"></i>Refer & Earn</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-gift text-danger me-2"></i><?= __('dash_refer_earn_title', null, 'Refer & Earn') ?></h5>
             </div>
             <div class="card-body">
                 <div class="text-center mb-3">
                     <div class="display-6 fw-bold text-danger mb-1"><?= htmlspecialchars($referral_code) ?></div>
-                    <small class="text-muted">Your Referral Code</small>
+                    <small class="text-muted"><?= __('dash_your_referral_code', null, 'Your Referral Code') ?></small>
                 </div>
                 <div class="row text-center g-2 mb-3">
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-2">
                             <div class="fw-bold text-primary"><?= (int)$referral_count ?></div>
-                            <small class="text-muted">Referrals</small>
+                            <small class="text-muted"><?= __('dash_referrals', null, 'Referrals') ?></small>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-2">
                             <div class="fw-bold text-success">₹<?= number_format($referral_earnings, 2) ?></div>
-                            <small class="text-muted">Earnings</small>
+                            <small class="text-muted"><?= __('dash_earnings', null, 'Earnings') ?></small>
                         </div>
                     </div>
                 </div>
@@ -348,7 +348,7 @@ $userDocuments = $userDocuments ?? [];
                     <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link) ?>" readonly>
                     <button class="btn btn-outline-primary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('refLink').value);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='<i class=\'fas fa-copy\'></i>',2000)"><i class="fas fa-copy"></i></button>
                 </div>
-                <small class="text-muted d-block mb-2">Share this link to earn rewards</small>
+                    <small class="text-muted d-block mb-2"><?= __('dash_share_link_earn', null, 'Share this link to earn rewards') ?></small>
                 <div class="d-flex gap-2 justify-content-center">
                     <a href="https://wa.me/?text=<?= urlencode('Join APS Dream Home using my referral code: ' . $referral_code . ' - ' . $referral_link) ?>" target="_blank" class="btn btn-sm btn-success"><i class="fab fa-whatsapp"></i></a>
                     <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($referral_link) ?>" target="_blank" class="btn btn-sm btn-primary"><i class="fab fa-facebook"></i></a>
@@ -361,36 +361,36 @@ $userDocuments = $userDocuments ?? [];
 
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i>Account Info</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i><?= __('dash_section_account_info', null, 'Account Info') ?></h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Post New Property
+                        <i class="fas fa-plus me-2"></i><?= __('dash_btn_post_new_property', null, 'Post New Property') ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-primary">
-                        <i class="fas fa-search me-2"></i>Browse Properties
+                        <i class="fas fa-search me-2"></i><?= __('dash_btn_browse_properties', null, 'Browse Properties') ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>/plots" class="btn btn-outline-success">
-                        <i class="fas fa-vector-square me-2"></i>Browse Plots
+                        <i class="fas fa-vector-square me-2"></i><?= __('dash_btn_browse_plots', null, 'Browse Plots') ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>/user/inquiries" class="btn btn-outline-success">
-                        <i class="fas fa-envelope me-2"></i>My Inquiries
+                        <i class="fas fa-envelope me-2"></i><?= __('dash_btn_my_inquiries', null, 'My Inquiries') ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>/payment/history" class="btn btn-outline-success">
-                        <i class="fas fa-credit-card me-1"></i> Payment History
+                        <i class="fas fa-credit-card me-1"></i> <?= __('dash_btn_payment_history', null, 'Payment History') ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>/user/profile" class="btn btn-outline-info">
-                        <i class="fas fa-user me-2"></i>Edit Profile
+                        <i class="fas fa-user me-2"></i><?= __('dash_btn_edit_profile', null, 'Edit Profile') ?>
                     </a>
                     <a href="<?= BASE_URL ?>/dashboard/favorites" class="btn btn-outline-danger">
-                        <i class="fas fa-heart me-2"></i>My Favorites
+                        <i class="fas fa-heart me-2"></i><?= __('dash_btn_my_favorites', null, 'My Favorites') ?>
                     </a>
                     <a href="<?= BASE_URL ?>/user/book-site-visit" class="btn btn-outline-info">
-                        <i class="fas fa-calendar-check me-1"></i> Book Site Visit
+                        <i class="fas fa-calendar-check me-1"></i> <?= __('dash_btn_book_site_visit', null, 'Book Site Visit') ?>
                     </a>
                     <a href="<?= BASE_URL ?>/user/saved-searches" class="btn btn-outline-secondary">
-                        <i class="fas fa-search me-2"></i>Saved Searches
+                        <i class="fas fa-search me-2"></i><?= __('dash_btn_saved_searches', null, 'Saved Searches') ?>
                         <?php
                         // Show badge with count of saved searches
                         try {
@@ -405,16 +405,16 @@ $userDocuments = $userDocuments ?? [];
                         <?php endif; } catch (\Throwable $e) {} ?>
                     </a>
                     <a href="<?= BASE_URL ?>/user/saved-searches/manage-alerts" class="btn btn-outline-success">
-                        <i class="fas fa-bell me-2"></i>Manage Email Alerts
+                        <i class="fas fa-bell me-2"></i><?= __('dash_btn_manage_email_alerts', null, 'Manage Email Alerts') ?>
                     </a>
                     <a href="<?= BASE_URL ?>/user/notification-preferences" class="btn btn-outline-warning">
-                        <i class="fas fa-bell me-2"></i>Notification Settings
+                        <i class="fas fa-bell me-2"></i><?= __('dash_btn_notification_settings', null, 'Notification Settings') ?>
                     </a>
                     <a href="<?= BASE_URL ?>/user/referral" class="btn btn-outline-success">
-                        <i class="fas fa-gift me-2"></i>Refer & Earn
+                        <i class="fas fa-gift me-2"></i><?= __('dash_btn_refer_earn', null, 'Refer & Earn') ?>
                     </a>
                     <a href="<?= BASE_URL ?>/user/tickets" class="btn btn-outline-warning">
-                        <i class="fas fa-headset me-1"></i> My Tickets
+                        <i class="fas fa-headset me-1"></i> <?= __('dash_btn_my_tickets', null, 'My Tickets') ?>
                     </a>
                 </div>
             </div>
@@ -422,7 +422,7 @@ $userDocuments = $userDocuments ?? [];
 
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-concierge-bell text-info me-2"></i>Our Services</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-concierge-bell text-info me-2"></i><?= __('dash_section_our_services', null, 'Our Services') ?></h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">
@@ -430,8 +430,8 @@ $userDocuments = $userDocuments ?? [];
                         <a href="<?php echo BASE_URL; ?>/properties" class="text-decoration-none">
                             <div class="service-card text-center p-3 border rounded-3 h-100">
                                 <div class="service-icon mb-2 text-primary"><i class="fas fa-home fa-2x"></i></div>
-                                <h6 class="mb-1">Buy</h6>
-                                <small class="text-muted">Find your dream property</small>
+                                <h6 class="mb-1"><?= __('dash_service_buy', null, 'Buy') ?></h6>
+                                <small class="text-muted"><?= __('dash_service_buy_desc', null, 'Find your dream property') ?></small>
                             </div>
                         </a>
                     </div>
@@ -439,8 +439,8 @@ $userDocuments = $userDocuments ?? [];
                         <a href="<?php echo BASE_URL; ?>/list-property" class="text-decoration-none">
                             <div class="service-card text-center p-3 border rounded-3 h-100">
                                 <div class="service-icon mb-2 text-success"><i class="fas fa-building fa-2x"></i></div>
-                                <h6 class="mb-1">Sell</h6>
-                                <small class="text-muted">List your property</small>
+                                <h6 class="mb-1"><?= __('dash_service_sell', null, 'Sell') ?></h6>
+                                <small class="text-muted"><?= __('dash_service_sell_desc', null, 'List your property') ?></small>
                             </div>
                         </a>
                     </div>
@@ -448,8 +448,8 @@ $userDocuments = $userDocuments ?? [];
                         <a href="<?php echo BASE_URL; ?>/services" class="text-decoration-none">
                             <div class="service-card text-center p-3 border rounded-3 h-100">
                                 <div class="service-icon mb-2 text-info"><i class="fas fa-hand-holding-usd fa-2x"></i></div>
-                                <h6 class="mb-1">Services</h6>
-                                <small class="text-muted">Loan, Legal & more</small>
+                                <h6 class="mb-1"><?= __('dash_service_services', null, 'Services') ?></h6>
+                                <small class="text-muted"><?= __('dash_service_services_desc', null, 'Loan, Legal & more') ?></small>
                             </div>
                         </a>
                     </div>
@@ -457,8 +457,8 @@ $userDocuments = $userDocuments ?? [];
                         <a href="<?php echo BASE_URL; ?>/contact" class="text-decoration-none">
                             <div class="service-card text-center p-3 border rounded-3 h-100">
                                 <div class="service-icon mb-2 text-warning"><i class="fas fa-headset fa-2x"></i></div>
-                                <h6 class="mb-1">Support</h6>
-                                <small class="text-muted">Get help</small>
+                                <h6 class="mb-1"><?= __('dash_service_support', null, 'Support') ?></h6>
+                                <small class="text-muted"><?= __('dash_service_support_desc', null, 'Get help') ?></small>
                             </div>
                         </a>
                     </div>
@@ -468,23 +468,23 @@ $userDocuments = $userDocuments ?? [];
 
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i>Account Info</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i><?= __('dash_section_account_info', null, 'Account Info') ?></h5>
             </div>
             <div class="card-body">
                 <div class="small">
-                    <p class="mb-2"><strong><i class="fas fa-user me-1"></i>Name:</strong> <?php echo htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'N/A'); ?></p>
-                    <p class="mb-2"><strong><i class="fas fa-envelope me-1"></i>Email:</strong> <?php echo htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? 'N/A'); ?></p>
-                    <p class="mb-0"><strong><i class="fas fa-phone me-1"></i>Phone:</strong> <?php echo htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? 'N/A'); ?></p>
+                    <p class="mb-2"><strong><i class="fas fa-user me-1"></i><?= __('dash_label_name', null, 'Name') ?>:</strong> <?php echo htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'N/A'); ?></p>
+                    <p class="mb-2"><strong><i class="fas fa-envelope me-1"></i><?= __('dash_label_email', null, 'Email') ?>:</strong> <?php echo htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? 'N/A'); ?></p>
+                    <p class="mb-0"><strong><i class="fas fa-phone me-1"></i><?= __('dash_label_phone', null, 'Phone') ?>:</strong> <?php echo htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? 'N/A'); ?></p>
                 </div>
                 <a href="<?php echo BASE_URL; ?>/user/profile" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                    <i class="fas fa-edit me-1"></i>Edit Profile
+                    <i class="fas fa-edit me-1"></i><?= __('dash_btn_edit_profile', null, 'Edit Profile') ?>
                 </a>
             </div>
         </div>
 
         <div class="card border-0 shadow-sm mt-4 security-section">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-shield-alt text-success me-2"></i>Security</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-shield-alt text-success me-2"></i><?= __('dash_section_security', null, 'Security') ?></h5>
             </div>
             <div class="card-body">
                 <?php
@@ -503,23 +503,23 @@ $userDocuments = $userDocuments ?? [];
                     <div class="d-flex align-items-center mb-3">
                         <i class="fas fa-check-circle text-success fa-2x me-3"></i>
                         <div>
-                            <p class="mb-0 fw-bold text-success">2FA Enabled</p>
-                            <small class="text-muted">Your account is protected</small>
+                            <p class="mb-0 fw-bold text-success"><?= __('dash_2fa_enabled', null, '2FA Enabled') ?></p>
+                            <small class="text-muted"><?= __('dash_2fa_protected', null, 'Your account is protected') ?></small>
                         </div>
                     </div>
                     <a href="<?= BASE_URL ?>/user/two-factor" class="btn btn-sm btn-outline-primary w-100">
-                        <i class="fas fa-cog me-1"></i> Manage 2FA
+                        <i class="fas fa-cog me-1"></i> <?= __('dash_btn_manage_2fa', null, 'Manage 2FA') ?>
                     </a>
                 <?php else: ?>
                     <div class="d-flex align-items-center mb-3">
                         <i class="fas fa-exclamation-triangle text-warning fa-2x me-3"></i>
                         <div>
-                            <p class="mb-0 fw-bold text-warning">2FA Not Enabled</p>
-                            <small class="text-muted">Add an extra layer of security</small>
+                            <p class="mb-0 fw-bold text-warning"><?= __('dash_2fa_disabled', null, '2FA Not Enabled') ?></p>
+                            <small class="text-muted"><?= __('dash_2fa_extra_security', null, 'Add an extra layer of security') ?></small>
                         </div>
                     </div>
                     <a href="<?= BASE_URL ?>/user/two-factor" class="btn btn-sm btn-primary w-100">
-                        <i class="fas fa-shield-alt me-1"></i> Enable 2FA
+                        <i class="fas fa-shield-alt me-1"></i> <?= __('dash_btn_enable_2fa', null, 'Enable 2FA') ?>
                     </a>
                 <?php endif; ?>
             </div>
