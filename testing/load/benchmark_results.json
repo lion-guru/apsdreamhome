@@ -1,0 +1,107 @@
+{
+    "path": "/",
+    "url": "http://localhost/apsdreamhome/",
+    "iterations": 50,
+    "wall_time_s": 3.403,
+    "rps": 14.69,
+    "min_ms": 49.5,
+    "max_ms": 186.7,
+    "avg_ms": 68.1,
+    "median_ms": 56,
+    "stddev_ms": 31.1,
+    "p50_ms": 55.9,
+    "p75_ms": 61.8,
+    "p90_ms": 108.4,
+    "p95_ms": 158,
+    "p99_ms": 186.7,
+    "errors": 0,
+    "error_rate": 0,
+    "total_bytes": 7985300,
+    "avg_bytes": 159706,
+    "status_codes": {
+        "200": 50
+    },
+    "timestamp": "2026-06-05T13:19:49+02:00",
+    "histogram": [
+        {
+            "bucket": "  49.5-  56.3ms",
+            "count": 29
+        },
+        {
+            "bucket": "  56.3-  63.2ms",
+            "count": 11
+        },
+        {
+            "bucket": "  63.2-  70.0ms",
+            "count": 2
+        },
+        {
+            "bucket": "  70.0-  76.9ms",
+            "count": 1
+        },
+        {
+            "bucket": "  76.9-  83.8ms",
+            "count": 0
+        },
+        {
+            "bucket": "  83.8-  90.6ms",
+            "count": 0
+        },
+        {
+            "bucket": "  90.6-  97.5ms",
+            "count": 1
+        },
+        {
+            "bucket": "  97.5- 104.3ms",
+            "count": 0
+        },
+        {
+            "bucket": " 104.3- 111.2ms",
+            "count": 1
+        },
+        {
+            "bucket": " 111.2- 118.1ms",
+            "count": 0
+        },
+        {
+            "bucket": " 118.1- 124.9ms",
+            "count": 1
+        },
+        {
+            "bucket": " 124.9- 131.8ms",
+            "count": 1
+        },
+        {
+            "bucket": " 131.8- 138.6ms",
+            "count": 0
+        },
+        {
+            "bucket": " 138.6- 145.5ms",
+            "count": 0
+        },
+        {
+            "bucket": " 145.5- 152.4ms",
+            "count": 0
+        },
+        {
+            "bucket": " 152.4- 159.2ms",
+            "count": 1
+        },
+        {
+            "bucket": " 159.2- 166.1ms",
+            "count": 0
+        },
+        {
+            "bucket": " 166.1- 172.9ms",
+            "count": 1
+        },
+        {
+            "bucket": " 172.9- 179.8ms",
+            "count": 0
+        },
+        {
+            "bucket": " 179.8- 186.7ms",
+            "count": 1
+        }
+    ]
+}

@@ -1,0 +1,59 @@
+────────────────────────────────────────────────────────────────────────
+  APS DREAM HOME — LOAD TEST REPORT
+────────────────────────────────────────────────────────────────────────
+  Timestamp        : 2026-06-05T13:20:57+02:00
+  Base URL         : http://localhost/apsdreamhome
+  Concurrent users : 100
+  Requests / user  : 10
+  Target total     : 1,000
+  Wall time        : 19.48s
+
+  ── TOTALS ──
+  Completed        : 1,000
+  Errors (≥500)    : 0
+  Error rate       : 0.00%
+  Throughput       : 51.33 req/s
+  Total bytes      : 62.04MB
+  Avg response size: 63.5KB
+
+  ── LATENCY (seconds) ──
+  Count            : 1000
+  Min              : 35.6ms
+  Max              : 7,235.3ms
+  Avg              : 1,731.7ms
+  Median           : 1,435.7ms
+  P50              : 1,435.7ms
+  P90              : 3,122.3ms
+  P95              : 3,789.4ms
+  P99              : 4,725.8ms
+  Stddev           : 1,081.2ms
+
+  ── STATUS DISTRIBUTION ──
+  HTTP 200 :   701  ( 70.1%)
+  HTTP 302 :    86  (  8.6%)
+  HTTP 401 :   110  ( 11.0%)
+  HTTP 404 :   103  ( 10.3%)
+
+  ── PER-ENDPOINT ──
+  /
+      count=82  avg=1,773.9ms  p95=3,551.6ms  p99=7,235.3ms  max=7,235.3ms  avg_size=156.0KB
+  /properties
+      count=94  avg=1,855.2ms  p95=3,970.5ms  p99=4,805.5ms  max=4,805.5ms  avg_size=138.8KB
+  /admin/dashboard?test_login=1
+      count=86  avg=1,429.5ms  p95=2,949.1ms  p99=3,228.6ms  max=3,228.6ms  avg_size=0B
+  /api/mobile/dashboard
+      count=110  avg=1,348.7ms  p95=2,826.5ms  p99=3,308.5ms  max=3,339.0ms  avg_size=74B
+  /auctions
+      count=107  avg=1,512.5ms  p95=2,883.5ms  p99=3,986.8ms  max=4,137.0ms  avg_size=60.0KB
+  /contact
+      count=112  avg=1,958.3ms  p95=4,267.0ms  p99=4,661.5ms  max=4,719.1ms  avg_size=69.2KB
+  /about
+      count=111  avg=1,625.5ms  p95=3,311.2ms  p99=4,046.0ms  max=4,725.8ms  avg_size=64.1KB
+  /services
+      count=103  avg=1,752.3ms  p95=3,671.5ms  p99=4,505.2ms  max=4,901.5ms  avg_size=87.2KB
+  /projects
+      count=92  avg=1,805.2ms  p95=3,950.5ms  p99=4,455.5ms  max=4,455.5ms  avg_size=78.3KB
+  /user/login
+      count=103  avg=2,256.6ms  p95=4,885.3ms  p99=5,204.4ms  max=5,401.1ms  avg_size=2.0KB
+
+────────────────────────────────────────────────────────────────────────

@@ -1,0 +1,147 @@
+{
+    "meta": {
+        "test_name": "APS Dream Home DB Stress",
+        "timestamp": "2026-06-05T13:21:44+02:00",
+        "db": "root@127.0.0.1:3307/apsdreamhome",
+        "php_version": "8.2.12",
+        "pdo_driver": "mysql"
+    },
+    "select_stress": {
+        "tables_tested": 12,
+        "selects_per_table": 1000,
+        "total_selects": 12000,
+        "overall_avg_ms": 0.28,
+        "overall_p95_ms": 0.85,
+        "overall_p99_ms": 2.38,
+        "slow_queries_overall": 0,
+        "slow_threshold_ms": 100
+    },
+    "per_table": {
+        "user_properties": {
+            "count": 1000,
+            "errors": 1000,
+            "avg_ms": 0.11,
+            "p95_ms": 0.14,
+            "p99_ms": 0.52,
+            "max_ms": 1.5,
+            "slow_queries": 0
+        },
+        "leads": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.85,
+            "p95_ms": 3.18,
+            "p99_ms": 11.69,
+            "max_ms": 39.52,
+            "slow_queries": 0
+        },
+        "users": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.34,
+            "p95_ms": 1.58,
+            "p99_ms": 3.13,
+            "max_ms": 6.11,
+            "slow_queries": 0
+        },
+        "projects": {
+            "count": 1000,
+            "errors": 1000,
+            "avg_ms": 0.18,
+            "p95_ms": 0.46,
+            "p99_ms": 1.94,
+            "max_ms": 4.58,
+            "slow_queries": 0
+        },
+        "bookings": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.25,
+            "p95_ms": 0.74,
+            "p99_ms": 2.14,
+            "max_ms": 3.48,
+            "slow_queries": 0
+        },
+        "colonies": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.22,
+            "p95_ms": 0.66,
+            "p99_ms": 1.9,
+            "max_ms": 2.61,
+            "slow_queries": 0
+        },
+        "plots": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.25,
+            "p95_ms": 0.74,
+            "p99_ms": 2.03,
+            "max_ms": 3.42,
+            "slow_queries": 0
+        },
+        "properties": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.27,
+            "p95_ms": 0.73,
+            "p99_ms": 2.12,
+            "max_ms": 4.09,
+            "slow_queries": 0
+        },
+        "inquiries": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.23,
+            "p95_ms": 0.64,
+            "p99_ms": 2.12,
+            "max_ms": 2.93,
+            "slow_queries": 0
+        },
+        "notifications": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.24,
+            "p95_ms": 0.7,
+            "p99_ms": 1.97,
+            "max_ms": 2.33,
+            "slow_queries": 0
+        },
+        "payments": {
+            "count": 1000,
+            "errors": 0,
+            "avg_ms": 0.24,
+            "p95_ms": 0.74,
+            "p99_ms": 2.02,
+            "max_ms": 4.94,
+            "slow_queries": 0
+        },
+        "commissions": {
+            "count": 1000,
+            "errors": 1000,
+            "avg_ms": 0.16,
+            "p95_ms": 0.38,
+            "p99_ms": 1.84,
+            "max_ms": 3.55,
+            "slow_queries": 0
+        }
+    },
+    "write_stress": {
+        "inserts": {
+            "count": 100,
+            "ok": 100,
+            "errors": 0,
+            "avg_ms": 1.28,
+            "p95_ms": 2.83
+        },
+        "updates": {
+            "count": 100,
+            "ok": 100,
+            "errors": 0,
+            "avg_ms": 1.2,
+            "p95_ms": 2.62
+        }
+    },
+    "slow_queries": [],
+    "index_suggestions": []
+}
