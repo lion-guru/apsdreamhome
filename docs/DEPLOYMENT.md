@@ -904,7 +904,38 @@ through the `S3Storage` adapter (which uses AWS Signature V4 - no SDK dependency
 ### D.3 Configure CORS (only if browser-side PUTs to S3)
 
 The app uploads via the PHP backend, so CORS is **not required for normal operation**.
-If you later add direct browser uploads, add this CORS rule on the bucket:
+If you later add direct browser uploads (presigned-URL uploads, multipart from JS, etc.), apply the CORS
+rule below to the bucket.
+
+#### D.3.1 Quick way: use the helper script
+
+The repo ships `scripts/setup_s3_cors.php` which signs the bucket-level `?cors` API request
+for you (no aws-cli, no Python). Run it from the production server:
+
+```bash
+# Dry-run: print the XML that WOULD be applied
+php scripts/setup_s3_cors.php --show
+
+# Apply the default rule (GET, HEAD from your production domain)
+php scripts/setup_s3_cors.php \
+    --origin https://yourdomain.com \
+    --method GET \
+    --method HEAD
+
+# Verify it landed on the bucket
+php scripts/setup_s3_cors.php --check
+
+# Tear it down (removes ALL CORS rules on the bucket)
+php scripts/setup_s3_cors.php --remove
+```
+
+The script accepts multiple `--method` and `--origin` flags, refuses to apply a wildcard origin
+combined with mutating methods (PUT/POST/DELETE — browsers reject this), and logs every API
+call to the `gateway_logs` table with `gateway='aws_s3'`.
+
+#### D.3.2 Manual way: paste into the S3 console
+
+If you prefer the UI, open S3 → your bucket → **Permissions** → **Cross-origin resource sharing (CORS)** → **Edit** → paste:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1002,6 +1033,78 @@ S3_TEST_MODE=true php testing/test_s3_storage.php
 
 The suite runs 53 tests when no creds are set, and 70+ tests against real S3 with creds.
 Exit code 0 means all pass.
+
+---
+
+## Appendix E: Razorpay Webhook URL
+
+Razorpay will POST payment events to whatever URL you register in
+[dashboard.razorpay.com/app/webhooks](https://dashboard.razorpay.com/app/webhooks). Getting this right is
+critical: if Razorpay cannot reach the URL, your `payment_orders` table will sit in `status='created'`
+forever and the `payment_reconciliation_cron` will be the only thing keeping you honest.
+
+### E.1 Find the URL to register
+
+1. Open `/admin/gateways` in your browser (admin login required).
+2. Scroll to the **Razorpay Webhook URL** card.
+3. The URL is shown in a read-only field with a **Copy** button. Use the secret row's **Show** / **Copy** to
+   grab `RAZORPAY_WEBHOOK_SECRET` (the same one you put in `.env`).
+
+The URL is auto-derived as `BASE_URL . '/webhook/razorpay'`. If you are behind a CDN, a Cloudflare proxy,
+or a load balancer, override it by setting `WEBHOOK_PUBLIC_URL` in `.env`:
+
+```bash
+WEBHOOK_PUBLIC_URL=https://pay.yourdomain.com/webhook/razorpay
+```
+
+Restart Apache / FPM after editing `.env` so the new value is loaded.
+
+### E.2 Register in Razorpay
+
+1. In Razorpay, go to **Settings → Webhooks → Add new webhook**.
+2. **Webhook URL**: paste the URL from step 1.
+3. **Active Events**: at minimum, subscribe to:
+   - `payment.captured`
+   - `payment.failed`
+   - `refund.processed`
+   - `order.paid`
+4. **Secret**: paste the same value as `RAZORPAY_WEBHOOK_SECRET` in `.env`. The two MUST match — the
+   webhook handler verifies the signature with this exact string.
+5. Save.
+
+### E.3 Verify it works
+
+```bash
+# Hit the endpoint with a dummy payload — expect 400 (invalid signature)
+curl -X POST https://yourdomain.com/webhook/razorpay \
+    -H 'Content-Type: application/json' \
+    -H 'X-Razorpay-Signature: dummy' \
+    -d '{"event":"payment.captured"}'
+```
+
+Now trigger a real event from Razorpay (use the "Send test webhook" button in the dashboard). Check the
+`payment_webhook_logs` table:
+
+```sql
+SELECT id, event_type, signature_verified, processed, created_at
+FROM payment_webhook_logs
+ORDER BY id DESC LIMIT 5;
+```
+
+`signature_verified = 1` and `processed = 1` means the round-trip is working.
+
+If the test event returns a 4xx, the URL is reachable but signature is wrong — double-check the secret.
+If the request never arrives, the URL is wrong (typo, missing DNS, blocked by a WAF, or HTTPS is not
+set up on the webhook host).
+
+### E.4 The `/webhook/razorpay` route skips CSRF
+
+The webhook endpoint is the one POST route on the site that does NOT require a CSRF token. This is by
+design: the CSRF middleware would block Razorpay's server-to-server POST, and the HMAC-SHA256 signature
+check (`RazorpayService::verifyWebhookSignature`) provides equivalent authentication.
+
+If you ever add another payment gateway, replicate the pattern: skip CSRF, verify HMAC, log to
+`payment_webhook_logs`.
 
 ---
 

@@ -194,6 +194,22 @@ class CheckoutController extends BaseController
         $payload = json_decode($rawBody, true) ?: [];
         $event = $payload['event'] ?? 'unknown';
 
+        // Log the public webhook URL on the first hit of every process. This is
+        // useful in production to confirm Razorpay is hitting the right URL
+        // (especially if you have multiple environments behind a load balancer).
+        // The URL is either the explicit WEBHOOK_PUBLIC_URL env var or derived
+        // from BASE_URL + /webhook/razorpay.
+        $publicUrl = $_ENV['WEBHOOK_PUBLIC_URL'] ?? getenv('WEBHOOK_PUBLIC_URL') ?: '';
+        if ($publicUrl === '') {
+            $publicUrl = (defined('BASE_URL') ? BASE_URL : '') . '/webhook/razorpay';
+        }
+        static $urlLogged = false;
+        if (!$urlLogged) {
+            error_log(sprintf('[razorpay-webhook] receiving %s on %s (event=%s, valid=%s)',
+                $_SERVER['REQUEST_METHOD'] ?? 'POST', $publicUrl, $event, $valid ? 'yes' : 'no'));
+            $urlLogged = true;
+        }
+
         try {
             $db = Database::getInstance()->getConnection();
             $db->prepare("INSERT INTO payment_webhook_logs

@@ -228,5 +228,73 @@ TWILIO_TEST_MODE=true  # skip real API during local dev</pre>
                 </div>
             </div>
         </div>
+
+        <!-- ============== RAZORPAY WEBHOOK URL ============== -->
+        <?php
+            $webhookUrl = '';
+            $webhookConfigured = false;
+            if (!empty($_ENV['WEBHOOK_PUBLIC_URL']) || getenv('WEBHOOK_PUBLIC_URL')) {
+                $webhookUrl = rtrim((string)($_ENV['WEBHOOK_PUBLIC_URL'] ?: getenv('WEBHOOK_PUBLIC_URL')), '/');
+                $webhookConfigured = true;
+            } else {
+                $base = defined('BASE_URL') ? BASE_URL : '';
+                $webhookUrl = $base . '/webhook/razorpay';
+            }
+            $webhookSecret = (string)($_ENV['RAZORPAY_WEBHOOK_SECRET'] ?? getenv('RAZORPAY_WEBHOOK_SECRET') ?: '');
+            $webhookSecretSet = $webhookSecret !== '' && strpos($webhookSecret, 'xxxxx') === false;
+        ?>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow border-left-warning">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-warning">
+                            <i class="fas fa-link me-1"></i>Razorpay Webhook URL
+                        </h6>
+                        <?php if ($webhookConfigured): ?>
+                            <span class="badge bg-success">Custom URL set</span>
+                        <?php else: ?>
+                            <span class="badge bg-secondary">Auto-derived from BASE_URL</span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="card-body">
+                        <p class="small text-muted mb-2">
+                            Paste this URL into your <a href="https://dashboard.razorpay.com/app/webhooks" target="_blank" rel="noopener">Razorpay dashboard</a>
+                            (Settings &rarr; Webhooks &rarr; Add new webhook) along with the secret below. Razorpay will POST payment events here.
+                        </p>
+
+                        <label class="small text-muted mb-1">Webhook URL</label>
+                        <div class="input-group input-group-sm mb-3">
+                            <input type="text" id="razorpay-webhook-url" class="form-control font-monospace" readonly
+                                   value="<?= htmlspecialchars($webhookUrl) ?>">
+                            <button class="btn btn-outline-secondary" type="button"
+                                    onclick="var el=document.getElementById('razorpay-webhook-url'); el.select(); document.execCommand('copy'); this.innerHTML='<i class=\'fas fa-check me-1\'></i>Copied!'; setTimeout(()=>this.innerHTML='<i class=\'fas fa-copy me-1\'></i>Copy',1500);">
+                                <i class="fas fa-copy me-1"></i>Copy
+                            </button>
+                        </div>
+
+                        <label class="small text-muted mb-1">Webhook Secret (paste into Razorpay dashboard &rarr; "Secret" field)</label>
+                        <div class="input-group input-group-sm">
+                            <input type="<?= $webhookSecretSet ? 'password' : 'text' ?>" id="razorpay-webhook-secret" class="form-control font-monospace" readonly
+                                   value="<?= htmlspecialchars($webhookSecret ?: '(not set - put one in .env as RAZORPAY_WEBHOOK_SECRET)') ?>">
+                            <?php if ($webhookSecretSet): ?>
+                                <button class="btn btn-outline-secondary" type="button" onclick="var i=document.getElementById('razorpay-webhook-secret'); i.type = (i.type==='password'?'text':'password'); this.innerHTML=(i.type==='password'?'<i class=\'fas fa-eye me-1\'></i>Show':'<i class=\'fas fa-eye-slash me-1\'></i>Hide');">
+                                    <i class="fas fa-eye me-1"></i>Show
+                                </button>
+                                <button class="btn btn-outline-secondary" type="button"
+                                        onclick="var el=document.getElementById('razorpay-webhook-secret'); el.type='text'; el.select(); document.execCommand('copy'); this.innerHTML='<i class=\'fas fa-check me-1\'></i>Copied!';">
+                                    <i class="fas fa-copy me-1"></i>Copy
+                                </button>
+                            <?php endif; ?>
+                        </div>
+
+                        <p class="small text-muted mt-3 mb-0">
+                            <i class="fas fa-lightbulb me-1"></i>
+                            The URL is auto-derived from <code>BASE_URL</code> + <code>/webhook/razorpay</code>. To override (e.g. behind a CDN or proxy),
+                            set <code>WEBHOOK_PUBLIC_URL</code> in <code>.env</code> to the public-facing URL Razorpay should call.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     <?php endif; ?>
 </div>
