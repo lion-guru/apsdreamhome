@@ -419,6 +419,51 @@ class UserController extends BaseController
     }
 
     /**
+     * My Address Page
+     */
+    public function address()
+    {
+        @session_start();
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['flash_error'] = 'Please login first';
+            header('Location: ' . BASE_URL . '/login?redirect=/user/address');
+            exit;
+        }
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/address', ['page_title' => 'My Address - APS Dream Home', 'current_page' => 'address']);
+    }
+
+    /**
+     * Insurance Page
+     */
+    public function insurance()
+    {
+        @session_start();
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['flash_error'] = 'Please login first';
+            header('Location: ' . BASE_URL . '/login?redirect=/user/insurance');
+            exit;
+        }
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/insurance', ['page_title' => 'Insurance - APS Dream Home', 'current_page' => 'insurance']);
+    }
+
+    /**
+     * Investment Plans Page
+     */
+    public function investmentPlans()
+    {
+        @session_start();
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['flash_error'] = 'Please login first';
+            header('Location: ' . BASE_URL . '/login?redirect=/user/investment-plans');
+            exit;
+        }
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/investment_plans', ['page_title' => 'Investment Plans - APS Dream Home', 'current_page' => 'investment']);
+    }
+
+    /**
      * Save Bank Details
      */
     public function saveBankDetails()

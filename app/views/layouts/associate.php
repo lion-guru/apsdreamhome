@@ -527,136 +527,37 @@ function getRoleBasedSidebar($userRole)
             <div class="user-role"><?php echo htmlspecialchars($_SESSION['associate_role'] ?? 'Associate'); ?></div>
         </div>
 
-        <!-- Main Menu -->
-        <div class="sidebar-section">Main Menu</div>
+        <!-- RBAC-Driven Portal Menu (associate role) -->
+        <?php
+        use App\Services\PortalMenuService;
+        try {
+            $portalMenu = PortalMenuService::forSession();
+        } catch (\Throwable $e) {
+            $portalMenu = [];
+        }
+        $activeKey = $current_page ?? '';
+        foreach ($portalMenu as $section):
+            if (empty($section['items'])) continue;
+        ?>
+        <div class="sidebar-section"><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></div>
         <ul class="sidebar-menu">
+            <?php foreach ($section['items'] as $menuItem):
+                $isActive = ($activeKey === $menuItem['key']);
+                $isLogout = ($menuItem['key'] === 'logout');
+                $badge = $menuItem['badge'] ?? null;
+            ?>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/dashboard" class="sidebar-link <?php echo ($current_page ?? '') === 'dashboard' ? 'active' : ''; ?>">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
+                <a href="<?= BASE_URL . htmlspecialchars($menuItem['url']) ?>" class="sidebar-link <?= $isActive ? 'active' : '' ?> <?= $isLogout ? 'text-danger' : '' ?>" data-menu-key="<?= htmlspecialchars($menuItem['key']) ?>">
+                    <i class="<?= htmlspecialchars($menuItem['icon']) ?>"></i>
+                    <span><?= htmlspecialchars(__('menu_' . $menuItem['key'], null, $menuItem['label'])) ?></span>
+                    <?php if ($badge !== null && $badge > 0): ?>
+                    <span class="sidebar-badge"><?= (int)$badge ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/genealogy" class="sidebar-link <?php echo ($current_page ?? '') === 'genealogy' ? 'active' : ''; ?>">
-                    <i class="fas fa-sitemap"></i>
-                    <span>My Network</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/mlm-plan" class="sidebar-link <?php echo ($current_page ?? '') === 'mlm-plan' ? 'active' : ''; ?>">
-                    <i class="fas fa-trophy"></i>
-                    <span>Commission Plan</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/leads" class="sidebar-link <?php echo ($current_page ?? '') === 'leads' ? 'active' : ''; ?>">
-                    <i class="fas fa-users"></i>
-                    <span>My Leads</span>
-                </a>
-                <!-- Submenu for Leads -->
-                <ul class="submenu">
-                    <li class="submenu-item">
-                        <a href="<?php echo BASE_URL; ?>/associate/leads/add" class="submenu-link">
-                            <i class="fas fa-plus"></i>
-                            <span>Add Lead</span>
-                        </a>
-                    </li>
-                    <li class="submenu-item">
-                        <a href="<?php echo BASE_URL; ?>/associate/leads/all" class="submenu-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Leads</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/properties" class="sidebar-link <?php echo ($current_page ?? '') === 'properties' ? 'active' : ''; ?>">
-                    <i class="fas fa-building"></i>
-                    <span>My Properties</span>
-                </a>
-            </li>
+            <?php endforeach; ?>
         </ul>
-
-        <!-- Earnings -->
-        <div class="sidebar-section">Earnings</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/commissions" class="sidebar-link <?php echo ($current_page ?? '') === 'commissions' ? 'active' : ''; ?>">
-                    <i class="fas fa-rupee-sign"></i>
-                    <span>My Commissions</span>
-                </a>
-                <!-- Submenu for Commissions -->
-                <ul class="submenu">
-                    <li class="submenu-item">
-                        <a href="<?php echo BASE_URL; ?>/associate/commissions/history" class="submenu-link">
-                            <i class="fas fa-history"></i>
-                            <span>Commission History</span>
-                        </a>
-                    </li>
-                    <li class="submenu-item">
-                        <a href="<?php echo BASE_URL; ?>/associate/wallet/withdraw" class="submenu-link">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>Withdraw Commission</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-        <!-- Team Management -->
-        <div class="sidebar-section">Team Management</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/team" class="sidebar-link <?php echo ($current_page ?? '') === 'team' ? 'active' : ''; ?>">
-                    <i class="fas fa-users-cog"></i>
-                    <span>Team Management</span>
-                </a>
-                <!-- Submenu for Team -->
-                <ul class="submenu">
-                    <li class="submenu-item">
-                        <a href="<?php echo BASE_URL; ?>/associate/team/add" class="submenu-link">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Add Team Member</span>
-                        </a>
-                    </li>
-                    <li class="submenu-item">
-                        <a href="<?php echo BASE_URL; ?>/associate/team/performance" class="submenu-link">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Team Performance</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-        <!-- Account -->
-        <div class="sidebar-section">Account</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/profile" class="sidebar-link <?php echo ($current_page ?? '') === 'profile' ? 'active' : ''; ?>">
-                    <i class="fas fa-user-cog"></i>
-                    <span>My Profile</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/bank-details" class="sidebar-link <?php echo ($current_page ?? '') === 'bank-details' ? 'active' : ''; ?>">
-                    <i class="fas fa-university"></i>
-                    <span>Bank Details</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/settings" class="sidebar-link <?php echo ($current_page ?? '') === 'settings' ? 'active' : ''; ?>">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/associate/logout" class="sidebar-link text-danger">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </li>
-        </ul>
+        <?php endforeach; ?>
     </aside>
 
     <!-- Main Content -->

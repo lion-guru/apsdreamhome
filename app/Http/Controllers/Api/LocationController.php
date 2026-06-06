@@ -246,7 +246,7 @@ class LocationController extends BaseApiController
     /**
      * Helper: JSON response
      */
-    private function jsonResponse($data, $code = 200)
+    public function jsonResponse($data, $code = 200)
     {
         http_response_code($code);
         header('Content-Type: application/json');

@@ -311,88 +311,37 @@
             <div class="user-role"><?php echo htmlspecialchars($_SESSION['user_email'] ?? 'customer@example.com'); ?></div>
         </div>
 
-        <!-- Main Menu -->
-        <div class="sidebar-section">Main Menu</div>
+        <!-- RBAC-Driven Portal Menu -->
+        <?php
+        use App\Services\PortalMenuService;
+        try {
+            $portalMenu = PortalMenuService::forSession();
+        } catch (\Throwable $e) {
+            $portalMenu = [];
+        }
+        $activeKey = $current_page ?? '';
+        foreach ($portalMenu as $section):
+            if (empty($section['items'])) continue;
+        ?>
+        <div class="sidebar-section"><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></div>
         <ul class="sidebar-menu">
+            <?php foreach ($section['items'] as $menuItem):
+                $isActive = ($activeKey === $menuItem['key']);
+                $isLogout = ($menuItem['key'] === 'logout');
+                $badge = $menuItem['badge'] ?? null;
+            ?>
             <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/dashboard" class="sidebar-link <?php echo ($current_page ?? '') === 'dashboard' ? 'active' : ''; ?>">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span><?= __('nav_dashboard', null, 'Dashboard') ?></span>
+                <a href="<?= BASE_URL . htmlspecialchars($menuItem['url']) ?>" class="sidebar-link <?= $isActive ? 'active' : '' ?> <?= $isLogout ? 'text-danger' : '' ?>" data-menu-key="<?= htmlspecialchars($menuItem['key']) ?>">
+                    <i class="<?= htmlspecialchars($menuItem['icon']) ?>"></i>
+                    <span><?= htmlspecialchars(__('menu_' . $menuItem['key'], null, $menuItem['label'])) ?></span>
+                    <?php if ($badge !== null && $badge > 0): ?>
+                    <span class="sidebar-badge"><?= (int)$badge ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/properties" class="sidebar-link <?php echo ($current_page ?? '') === 'properties' ? 'active' : ''; ?>">
-                    <i class="fas fa-building"></i>
-                    <span><?= __('nav_my_properties', null, 'My Properties') ?></span>
-                    <span class="sidebar-badge">3</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/inquiries" class="sidebar-link <?php echo ($current_page ?? '') === 'inquiries' ? 'active' : ''; ?>">
-                    <i class="fas fa-envelope"></i>
-                    <span><?= __('nav_my_inquiries', null, 'My Inquiries') ?></span>
-                    <span class="sidebar-badge">5</span>
-                </a>
-            </li>
+            <?php endforeach; ?>
         </ul>
-
-        <!-- Services -->
-        <div class="sidebar-section">Services</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/properties" class="sidebar-link <?php echo ($current_page ?? '') === 'browse' ? 'active' : ''; ?>">
-                    <i class="fas fa-search"></i>
-                    <span><?= __('nav_browse_properties', null, 'Browse Properties') ?></span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/list-property" class="sidebar-link <?php echo ($current_page ?? '') === 'post' ? 'active' : ''; ?>">
-                    <i class="fas fa-plus-circle"></i>
-                    <span><?= __('nav_post_property', null, 'Post Property') ?></span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/financial-services" class="sidebar-link <?php echo ($current_page ?? '') === 'loan' ? 'active' : ''; ?>">
-                    <i class="fas fa-hand-holding-usd"></i>
-                    <span><?= __('nav_home_loan', null, 'Home Loan') ?></span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/interior-design" class="sidebar-link <?php echo ($current_page ?? '') === 'interior' ? 'active' : ''; ?>">
-                    <i class="fas fa-couch"></i>
-                    <span><?= __('nav_interior_design', null, 'Interior Design') ?></span>
-                </a>
-            </li>
-        </ul>
-
-        <!-- Account -->
-        <div class="sidebar-section">Account</div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/profile" class="sidebar-link <?php echo ($current_page ?? '') === 'profile' ? 'active' : ''; ?>">
-                    <i class="fas fa-user-cog"></i>
-                    <span><?= __('nav_my_profile', null, 'My Profile') ?></span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/bank-details" class="sidebar-link <?php echo ($current_page ?? '') === 'bank' ? 'active' : ''; ?>">
-                    <i class="fas fa-university"></i>
-                    <span><?= __('cust_bank_details', null, 'Bank Details') ?></span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/settings" class="sidebar-link <?php echo ($current_page ?? '') === 'settings' ? 'active' : ''; ?>">
-                    <i class="fas fa-cog"></i>
-                    <span><?= __('nav_settings', null, 'Settings') ?></span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo BASE_URL; ?>/user/logout" class="sidebar-link text-danger">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span><?= __('nav_logout', null, 'Logout') ?></span>
-                </a>
-            </li>
-        </ul>
+        <?php endforeach; ?>
     </aside>
 
     <!-- Main Content -->
