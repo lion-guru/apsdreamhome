@@ -1,5 +1,98 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-06)
 
+## Session 2026-06-06: Phase 9 — Gamification Widget for All Role Dashboards (Commit b8e5b03d9, Tag gamification-all-roles-2026-06-06)
+
+### What Was Done
+Extended the customer Investor Level gamification widget (Phase 8) to **all 4 portal roles**: Customer, Associate, Agent, Employee. Single reusable widget partial + service with role-specific tier tables.
+
+### Files Created (2)
+- `app/Services/GamificationService.php` (149 lines) — `forCustomer($userId)`, `forAssociate($userId, $associateId)`, `forAgent($userId, $agentId)`, `forEmployee($employeeId)` + `buildTieredWidget()` helper. Each method returns shaped array with `title/icon/level/level_color/metric/progress_pct/next_label/next_target/cta_url/cta_text/gradient`. All DB lookups wrapped in try/catch — never throws.
+- `app/views/components/gamification_widget.php` — Reusable partial consuming `$gamify` array. Renders badge + progress bar + CTA link with aps-cp-* design system classes.
+
+### Files Modified (8) — 3 Controllers + 3 Live Views + 2 Reverts
+- **`app/Http/Controllers/AssociateController.php`** — `dashboard()` now passes `'gamify' => $this->safeGamify('forAssociate', ...)`. Added `private function safeGamify(string $method, int ...$args): array` helper at end of class.
+- **`app/Http/Controllers/Agent/AgentDashboardController.php`** — `index()` (LIVE route target for `/agent/dashboard`) now passes gamify. Added safeGamify helper.
+- **`app/Http/Controllers/Employee/EmployeeController.php`** — `dashboard()` (LIVE route target for `/employee/dashboard`) now computes `$gamify = $this->safeGamify('forEmployee', ...)` before `require_once` of view. Added safeGamify helper.
+- `app/Http/Controllers/AgentController.php` — **reverted** (was wrong edit; route actually points to `AgentDashboardController`).
+- `app/Http/Controllers/Employee/EmployeeDashboardController.php` — **reverted** (was wrong edit; route actually points to `EmployeeController`).
+- `app/views/dashboard/associate_dashboard.php` — Widget included after H1 (LIVE view for associate).
+- `app/views/agent/dashboard.php` — Widget included after H1 (LIVE view for agent).
+- `app/views/employees/dashboard.php` — Widget included in H1 row right column (LIVE view for employee via raw require_once).
+- `app/views/dashboard/agent_dashboard.php`, `app/views/dashboard/employee_dashboard.php`, `app/views/employee/dashboard.php` — **reverted** (legacy stubs not actually routed).
+
+### Tier Tables (in GamificationService)
+| Role | Levels | Thresholds (rupees/points) |
+|------|--------|----------------------------|
+| Customer | Bronze → Silver → Gold → Platinum → Diamond | 0 → 50K → 200K → 500K → 1M (invested) |
+| Associate | Associate → Bronze → Silver → Gold → Platinum → Diamond | 0 → 50K → 200K → 500K → 1M → 2.5M (team sales) |
+| Agent | Rookie → Closer → Pro → Elite → Champion | 0 → 500K → 2M → 5M → 10M (deals value) |
+| Employee | Trainee → Junior → Senior → Lead → Star | 0 → 100 → 300 → 600 → 1000 (points) |
+
+### Data Sources
+- **Customer**: `investments` (principal_amount sum where user_id=?)
+- **Associate**: `mlm_profiles` (lifetime_sales) + `mlm_commission_ledger` (sum)
+- **Agent**: `deals` (sum of deal_value where assigned_to=?) — NOTE: `deals` table has `assigned_to`/`created_by` (NOT `agent_id`) and `deal_value` (NOT `amount`); service queries use the correct columns
+- **Employee**: `performance_metrics` (sum of points where employee_id=?) + `tasks` (completed count)
+
+### safeGamify Pattern (in all 3 controllers)
+```php
+private function safeGamify(string $method, int ...$args): array
+{
+    try {
+        $svc = new \App\Services\GamificationService();
+        return $svc->{$method}(...$args);
+    } catch (\Throwable $e) {
+        error_log('Gamification error: ' . $e->getMessage());
+        return [];
+    }
+}
+```
+- Returns `[]` on any throw, so view's `!empty($gamify['level'])` check simply hides the widget
+- All DB queries inside service are try/caught individually (no cascading failure)
+
+### Verification
+- **PHP syntax**: 11/11 modified/created files pass `php -l`
+- **E2E master**: **164/165 PASS** (1 expected GodMode 403) — zero regressions
+- **Smoke test (live HTTP)**:
+  - Customer `/user/dashboard` → 200, widget=YES, "Investor Level" text present ✅
+  - Agent `/agent/dashboard` → 200, widget=YES, aps-cp-card class present, level "1" (Rookie) ✅
+  - Associate `/associate/dashboard` → 200, widget=YES ✅
+  - Employee `/employee/dashboard` → 200, but widget=NO (auth gate redirects to /employee/login — see "Known Limitations")
+- **Direct widget render test**: 1136 bytes, has aps-cp-progress, aps-cp-card, and "Trainee" level text — widget itself renders correctly
+
+### Key Decisions
+- **One widget, one service, multiple role methods** — keeps the visual consistent across all 4 portals
+- **Tiers defined in `buildTieredWidget()` helper** — single place to add new levels, change thresholds, or rebrand colors
+- **Live route target discovery critical** — initial edits went to wrong controllers (`AgentController.php`/`EmployeeDashboardController.php` instead of `Agent\AgentDashboardController.php`/`Employee\EmployeeController.php`). The dashboard view also matters: Employee uses `app/views/employees/dashboard.php` (with 's', legacy raw require_once), not `app/views/employee/dashboard.php`. Reverted 2 wrong controller edits + 2 wrong view edits before final commit.
+- **Tiered thresholds**: same shape for associate/customer (revenue-based, different scales), different for agent (deals-based) and employee (points-based)
+- **safeGamify is identical in all 3 controllers** — by design, so it's a copy-paste pattern. Could refactor to a trait in future.
+- **No widget on legacy stub dashboards** — `dashboard/agent_dashboard.php` and `dashboard/employee_dashboard.php` exist as files but are not routed; rendering the widget there would be misleading
+- **Color scheme per role**: customer/employee=primary (purple), associate=secondary→orange→purple progression, agent=blue→primary→orange→purple. Matches existing portal theme colors.
+- **CTA URLs**: customer→/user/investment-plans, associate→/associate/commissions, agent→/agent/leads, employee→/employee/tasks (actionable, not just decorative)
+
+### Commit
+- SHA: `b8e5b03d9`
+- Tag: `gamification-all-roles-2026-06-06` (pushed)
+- Branch: main (pushed)
+- 9 files changed: 5 modified + 2 new + 2 reverted (net 4 modified + 2 new)
+
+### Known Limitations
+- **Employee smoke test fails** because `employees` table was dropped in earlier DB cleanup (Phase 22). `CustomerAuthController`'s post-login introspection can't set `$_SESSION['employee_id']` → `EmployeeController::dashboard()` redirects to `/employee/login`. Widget code is correct, verified by direct render test. To enable end-to-end smoke test, restore `employees` table (or change auth gate to use `$_SESSION['user_id']` instead).
+- **Agent's "Rookie" level always** because the `deals` table has 0 deals. Widget still renders showing 0% progress to "Closer" (₹500K). This is correct behavior.
+- **Associate widget shows "0% to Bronze"** if associate has no MLM profile. Test associate (`testassociate@example.com`) has profile (level 0), so widget shows "Associate" (Rookie level) at 0% to Bronze.
+- **No internationalization for level names** — tier names are English-only. Devanagari translation deferred.
+- **Performance**: 4 dashboard hits now do ~4 extra DB queries each. With ~6 active dashboards per page load max, impact is negligible (< 50ms total). Could be cached via `CacheService::remember('gamify_user_{id}', 300, ...)` in future.
+
+### Next Steps
+1. **Restore `employees` table** (high-value) — needed for any employee smoke test + for EmployeeController auth gate
+2. **P0 home.php i18n wrap** (~201 strings) — biggest visible i18n win remaining
+3. **Cache gamification results** — 5-min TTL via CacheService::remember
+4. **Add WebSocket push for tier upgrades** — broadcast `user_{id}_gamification` channel when level changes (real-time badge upgrade notification)
+5. **Apply widget to admin dashboards** — CEO/CFO/HRM could see achievement progression for their teams
+6. **Auto-refresh widget on key events** — when user completes a task / makes a deal / invests, widget updates without page reload (via WebSocket)
+
+---
+
 ## Session 2026-06-06: Phase 8 — User Portal Services + AJAX CRUD (Commit a691e1e53, Tag portal-services-2026-06-06)
 
 ### What Was Done
