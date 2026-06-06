@@ -37,6 +37,7 @@
                 <div class="card-header"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Extension</h5></div>
                 <div class="card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/associate-extensions/update-points/<?= $associate['id'] ?? 0 ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Points</label>
                             <input type="number" name="points" class="form-control" value="<?= (int)($associate['points'] ?? 0) ?>">

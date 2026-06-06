@@ -19,6 +19,7 @@
             <a href="<?= BASE_URL ?>admin/communication/test-email" class="btn btn-outline-primary btn-sm me-2"><i class="fas fa-envelope me-1"></i>Test Email</a>
             <a href="<?= BASE_URL ?>admin/communication/test-sms" class="btn btn-outline-success btn-sm me-2"><i class="fas fa-sms me-1"></i>Test SMS</a>
             <form method="post" action="<?= BASE_URL ?>admin/communication/process-queue" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="email_limit" value="20">
                 <input type="hidden" name="sms_limit" value="20">
                 <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-play me-1"></i>Process Queue</button>

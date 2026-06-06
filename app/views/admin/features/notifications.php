@@ -57,6 +57,7 @@ ob_start();
 
         <div class="tab-pane fade" id="send">
           <form method="POST" action="<?= BASE_URL ?>/api/v2/notification/send" class="card card-body">
+                              <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row g-2">
               <div class="col-md-3"><label>User ID</label><input name="user_id" type="number" class="form-control" required></div>
               <div class="col-md-3"><label>Channel</label>

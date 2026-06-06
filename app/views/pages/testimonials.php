@@ -120,6 +120,7 @@
                     </div>
                     <div class="card-body p-4">
                         <form id="testimonialForm" method="POST" action="<?php echo BASE_URL; ?>/testimonials/submit">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('testi_lbl_name', null, 'Full Name') ?> *</label>

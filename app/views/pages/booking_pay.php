@@ -32,6 +32,7 @@
                         <div class="col-md-6">
                             <h5>Payment Details</h5>
                             <form method="POST" action="<?= BASE_URL ?>/booking/pay/<?= $booking['id'] ?>">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-3">
                                     <label class="form-label">Amount (₹)</label>
                                     <div class="input-group">

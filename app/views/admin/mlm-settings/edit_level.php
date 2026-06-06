@@ -3,6 +3,7 @@
     <h4 class="mb-4"><i class="fas fa-edit text-primary me-2"></i>Edit Level: <?php echo htmlspecialchars($level['level_name'] ?? ''); ?></h4>
 
     <form method="POST" action="<?php echo BASE_URL; ?>/admin/mlm-settings/levels/update/<?php echo $level['id'] ?? 0; ?>" class="row g-4">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0">Basic Info</h6></div>

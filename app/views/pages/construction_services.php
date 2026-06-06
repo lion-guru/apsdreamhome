@@ -185,7 +185,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="project-card card">
                             <?php if (!empty($p['image'])): ?>
-                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ? />">
+                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ?>">
                             <?php else: ?>
                                 <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:200px"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
                             <?php endif; ?>
@@ -220,6 +220,7 @@
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-5">
                         <form action="<?= BASE_URL ?>/construction-services/inquiry" method="POST">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row g-3">
                                 <div class="col-md-6"><label class="form-label fw-medium">Your Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control form-control-lg" required></div>
                                 <div class="col-md-6"><label class="form-label fw-medium">Phone Number <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>

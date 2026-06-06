@@ -145,6 +145,7 @@ $acquisition = $acquisition ?? [];
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/land/acquisitions/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="acquisition_id" value="<?php echo $acquisition['id'] ?? 0; ?>">
                         <div class="mb-3">
                             <label class="form-label">Payment Status</label>

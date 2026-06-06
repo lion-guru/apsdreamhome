@@ -5,6 +5,7 @@
                 <div class="card-header"><h5 class="card-title mb-0">Create Event</h5></div>
                 <div class="card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/events/list/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Title</label>
                             <input type="text" name="title" class="form-control" required>

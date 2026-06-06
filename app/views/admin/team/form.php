@@ -11,6 +11,7 @@
     </div>
     <div class="card-body">
         <form method="POST" action="<?php echo BASE_URL; ?>/admin/team/<?php echo $isEdit ? 'update/' . $member['id'] : 'store'; ?>" enctype="multipart/form-data" class="needs-validation">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>

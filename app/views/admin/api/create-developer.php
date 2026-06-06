@@ -20,6 +20,7 @@ $page_title = $page_title ?? 'Create API Developer';
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/api/developers/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label for="dev_name" class="form-label">Developer Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="dev_name" name="dev_name" required

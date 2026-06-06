@@ -82,6 +82,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                         <div class="card-header bg-warning"><h5 class="mb-0"><i class="fas fa-file-signature"></i> Transfer Details</h5></div>
                         <div class="card-body">
                             <form method="POST" action="/admin/plots/<?= $plot['id'] ?? 0 ?>/transfer">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label fw-bold">New Owner <span class="text-danger">*</span></label>

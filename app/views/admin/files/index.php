@@ -176,6 +176,7 @@
                                     <i class="fas fa-download"></i>
                                 </a>
                                 <form action="/admin/files/delete/<?= $file['uuid'] ?>" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this file?')">
                                         <i class="fas fa-trash"></i>
                                     </button>

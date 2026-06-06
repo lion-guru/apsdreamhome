@@ -6,7 +6,7 @@
     </ol></nav>
     <div class="row">
         <div class="col-md-8">
-            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ? />">
+            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>">
         </div>
         <div class="col-md-4">
             <h3><?php echo htmlspecialchars($image['caption'] ?? 'Gallery Image'); ?></h3>

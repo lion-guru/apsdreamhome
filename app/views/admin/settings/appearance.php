@@ -8,6 +8,7 @@ $social = json_encode(json_decode($s['social_json'] ?? '[]', true), JSON_PRETTY_
         <div class="col-lg-10">
             <h3 class="mb-4">Appearance Settings</h3>
             <form method="post" action="<?php echo BASE_URL; ?>/admin/settings/appearance">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
                     <label class="form-label">Brand Name</label>
                     <input type="text" name="brand_name" class="form-control" value="<?php echo h($s['brand_name'] ?? ''); ?>">

@@ -30,6 +30,7 @@ $visits = $visits ?? [];
                             <?php endif; ?>
                             <?php if (in_array($v['status'], ['scheduled', 'confirmed'])): ?>
                                 <form method="POST" action="<?= BASE_URL ?>/visit/cancel" class="mt-2" onsubmit="return confirm('Cancel this visit?')">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="id" value="<?= $v['id'] ?>">
                                     <input type="hidden" name="reason" value="Cancelled by customer">
                                     <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times me-1"></i> Cancel Visit</button>

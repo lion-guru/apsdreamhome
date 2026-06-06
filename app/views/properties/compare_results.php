@@ -110,7 +110,7 @@
                 <div class="position-relative">
                     <?php if ($property['primary_image']): ?>
                     <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
-                         class="card-img-top" alt="<?= htmlspecialchars($property['title']) ? />"
+                         class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
                          style="height: 200px; object-fit: cover;">
                     <?php else: ?>
                     <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">

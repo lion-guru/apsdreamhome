@@ -15,6 +15,7 @@ ob_start();
         </a>
     </div>
     <form method="POST" action="<?= BASE_URL ?>/admin/nps/store">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <div class="row g-3">

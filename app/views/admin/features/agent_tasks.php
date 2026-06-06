@@ -8,6 +8,7 @@ ob_start();
   <h1 class="h3 mb-4"><i class="fas fa-robot me-2"></i>Agent Tasks & Workflows</h1>
 
   <form method="POST" action="<?= BASE_URL ?>/api/v2/agent/tasks/process" class="mb-3">
+                      <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <button class="btn btn-primary"><i class="fas fa-play me-1"></i> Process Pending Tasks</button>
   </form>
 

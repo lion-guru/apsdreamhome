@@ -18,6 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white"><h5 class="mb-0">Add Training Data</h5></div>
                     <div class="card-body">
                         <form method="post" action="<?php echo $base; ?>/admin/chatbot/train/store">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
                                 <label class="form-label">Intent</label>
                                 <input type="text" name="intent" class="form-control" placeholder="e.g., property_inquiry" required>

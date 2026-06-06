@@ -31,6 +31,7 @@
             </div>
             <div class="card-body">
                 <form action="/associate/settings/update" method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Name</label>
                         <input type="text" class="form-control" value="<?php echo htmlspecialchars($associate_name); ?>" readonly>
@@ -60,6 +61,7 @@
             </div>
             <div class="card-body">
                 <form action="/associate/settings/notifications" method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" name="email_leads" id="email_leads" <?php echo $notifications['email_leads'] ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="email_leads">
@@ -102,6 +104,7 @@
             </div>
             <div class="card-body">
                 <form action="/associate/settings/password" method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Current Password</label>
                         <input type="password" name="current_password" class="form-control" required>

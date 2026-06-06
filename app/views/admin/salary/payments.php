@@ -65,6 +65,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="post" action="<?= BASE_URL ?>/admin/salary/payments/bulk">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header bg-secondary text-white"><h5 class="modal-title"><i class="fas fa-tasks me-1"></i>Bulk Process Payments</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <p>Generate pending payments for all users with active salary structures.</p>

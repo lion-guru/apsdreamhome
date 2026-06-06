@@ -10,6 +10,7 @@
                 <div class="card-header bg-warning"><i class="fas fa-plus"></i> Add Bonus</div>
                 <div class="card-body">
                     <form method="post" action="/admin/commission/bonuses/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Associate</label>
                             <select name="associate_id" class="form-select" required>
                                 <option value="">Select</option>

@@ -11,6 +11,7 @@
                 <div class="card-header bg-white"><h5 class="mb-0">Send Broadcast</h5></div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/whatsapp-broadcast">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Audience <span class="text-danger">*</span></label>
                             <select name="audience" class="form-select" required>

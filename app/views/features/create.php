@@ -6,6 +6,7 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <form method="post" action="<?= $base ?? BASE_URL ?>/features/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Feature Name <span class="text-danger">*</span></label>

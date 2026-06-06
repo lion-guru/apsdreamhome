@@ -10,6 +10,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h2 class="h3 mb-0 text-gray-800"><?= __('user_notif_title', null, 'Notifications') ?></h2>
                     <form action="<?= BASE_URL ?>notifications" method="POST">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <?= csrf_field() ?>
                         <button type="submit" name="mark_all_read" class="btn btn-outline-primary btn-sm rounded-pill px-3">
                             <?= __('user_notif_mark_all_read', null, 'Mark all as read') ?>

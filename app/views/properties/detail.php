@@ -25,7 +25,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                                 <div class="carousel-item <?php echo $i === 0 ? 'active' : ''; ?>">
                                     <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
                                         class="d-block w-100 gallery-trigger" style="height: 400px; object-fit: cover; cursor: pointer;"
-                                        alt="<?php echo htmlspecialchars($property['title'] ?? ''); ? />"
+                                        alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>"
                                         onclick="openLightbox(<?php echo $i; ?>)">
                                 </div>
                             <?php endforeach; ?>
@@ -44,7 +44,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                     <div class="d-flex gap-1 mt-1 overflow-auto">
                         <?php foreach ($images as $i => $img): ?>
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
-                            class="rounded" style="height: 60px; width: 80px; object-fit: cover; cursor: pointer; border: 2px solid <?php echo $i === 0 ? '#0d6efd' : 'transparent'; ? />;"
+                            class="rounded" style="height: 60px; width: 80px; object-fit: cover; cursor: pointer; border: 2px solid <?php echo $i === 0 ? '#0d6efd' : 'transparent'; ?>;"
                             onclick="$('#propertyCarousel').carousel(<?php echo $i; ?>); openLightbox(<?php echo $i; ?>);"
                             alt="Thumbnail">
                         <?php endforeach; ?>
@@ -171,6 +171,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                     </div>
                     <div class="card-body">
                         <form action="/contact" method="POST">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
                             <div class="mb-3">
                                 <label class="form-label">Your Name</label>
@@ -269,6 +270,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                     <hr>
                     <h6 class="mb-3">Write a Review</h6>
                     <form action="/property/review" method="POST">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="property_id" value="<?php echo $property['id'] ?? 0; ?>">
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">

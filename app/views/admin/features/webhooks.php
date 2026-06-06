@@ -8,6 +8,7 @@ ob_start();
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0"><i class="fas fa-plug me-2"></i>Webhooks</h1>
     <form method="post" action="<?= BASE_URL ?>/admin/webhooks/process" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
       <button type="submit" class="btn btn-outline-primary btn-sm"><i class="fas fa-paper-plane"></i> Process Pending</button>
     </form>
   </div>
@@ -40,6 +41,7 @@ ob_start();
     <div class="card-header bg-white"><h5 class="mb-0">Add New Endpoint</h5></div>
     <div class="card-body">
       <form method="post" action="<?= BASE_URL ?>/admin/webhooks/create">
+                          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-2">
           <div class="col-md-3"><input type="text" name="name" class="form-control" placeholder="Name (e.g. Slack Alerts)" required></div>
           <div class="col-md-4"><input type="url" name="url" class="form-control" placeholder="https://example.com/webhook" required></div>
@@ -95,12 +97,14 @@ ob_start();
                 <td><small><?= htmlspecialchars($ep['created_at']) ?></small></td>
                 <td>
                   <form method="post" action="<?= BASE_URL ?>/admin/webhooks/toggle/<?= $ep['id'] ?>" class="d-inline">
+                                      <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="active" value="<?= ($ep['is_active'] ?? 0) ? 0 : 1 ?>">
                     <button class="btn btn-sm btn-outline-<?= ($ep['is_active'] ?? 0) ? 'warning' : 'success' ?>" title="Toggle">
                       <i class="fas fa-<?= ($ep['is_active'] ?? 0) ? 'pause' : 'play' ?>"></i>
                     </button>
                   </form>
                   <form method="post" action="<?= BASE_URL ?>/admin/webhooks/delete/<?= $ep['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this endpoint?')">
+                                      <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                   </form>
                 </td>

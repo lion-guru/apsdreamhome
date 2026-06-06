@@ -15,6 +15,7 @@
             <div class="card">
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/projects/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <h5 class="mb-3">Basic Information</h5>
                         <div class="row">
                             <div class="col-md-6">

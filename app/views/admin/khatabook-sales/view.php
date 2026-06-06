@@ -32,6 +32,7 @@
                 <div class="card-header"><h5 class="mb-0">Actions</h5></div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/khatabook-sales/delete/<?= $sale['id'] ?>" onsubmit="return confirm('Delete this record?')">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button class="btn btn-danger w-100 mb-2"><i class="fas fa-trash me-1"></i>Delete Record</button>
                     </form>
                     <a href="<?= BASE_URL ?>/admin/khatabook-sales" class="btn btn-outline-secondary w-100"><i class="fas fa-list me-1"></i>All Records</a>

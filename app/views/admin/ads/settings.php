@@ -16,6 +16,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/ads/save-settings">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
                     <label for="adsense_publisher_id" class="form-label"><i class="fab fa-google me-1"></i>AdSense Publisher ID</label>
                     <input type="text" class="form-control" id="adsense_publisher_id" name="adsense_publisher_id"

@@ -126,6 +126,7 @@ $isDelayed = $currentStatus === 'delayed';
             <div class="card-header"><h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Schedule Handover</h5></div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/<?= $booking['id'] ?>/schedule">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-2">
                         <label class="form-label">Possession Date</label>
                         <input type="date" class="form-control" name="possession_date" value="<?= date('Y-m-d', strtotime('+7 days')) ?>" required>
@@ -143,6 +144,7 @@ $isDelayed = $currentStatus === 'delayed';
             <div class="card-header"><h5 class="mb-0"><i class="fas fa-check-double"></i> Mark Handed Over</h5></div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/<?= $booking['id'] ?>/handover">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="row g-2 mb-2">
                         <div class="col-6">
                             <label class="form-label">Handover Date</label>
@@ -222,6 +224,7 @@ $isDelayed = $currentStatus === 'delayed';
                 <?php if ($currentStatus === 'handed_over'): ?>
                 <div class="collapse <?= ($focus_section ?? '') === 'defects' ? 'show' : '' ?>" id="reportDefectForm">
                     <form method="POST" action="<?= BASE_URL ?>/admin/possession/defects/<?= $booking['id'] ?>/report" class="mb-3 p-3 bg-light rounded">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2">
                             <label class="form-label">Defect Type</label>
                             <select class="form-select" name="defect_type">
@@ -280,6 +283,7 @@ $isDelayed = $currentStatus === 'delayed';
                                 <?php endif; ?>
                                 <?php if ($d['status'] === 'open' || $d['status'] === 'in_progress'): ?>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/possession/defects/resolve/<?= $d['id'] ?>" class="mt-2">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <input type="hidden" name="defect_id" value="<?= $d['id'] ?>">
                                         <div class="input-group input-group-sm">
                                             <input type="text" class="form-control" name="resolution_notes" placeholder="Resolution notes..." required>

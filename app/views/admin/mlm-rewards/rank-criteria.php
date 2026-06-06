@@ -74,6 +74,7 @@ $criteria = $criteria ?? [];
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="<?= BASE_URL ?>/admin/mlm/rank-criteria/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="id" id="criteriaId" value="0">
                 <div class="modal-header">
                     <h5 class="modal-title" id="criteriaModalTitle"><i class="fas fa-plus me-2"></i>Add Rank Criteria</h5>

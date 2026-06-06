@@ -6,6 +6,7 @@
     <div class="row">
         <div class="col-lg-8">
             <form method="POST" action="<?= $base ?? BASE_URL ?>/marketing/settings">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">General Settings</h5></div>
                     <div class="card-body">

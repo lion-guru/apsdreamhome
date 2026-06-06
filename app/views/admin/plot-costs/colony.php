@@ -84,6 +84,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
         </div>
         <div class="card-body">
             <form action="/admin/plot-costs/add-cost" method="POST" class="row g-3">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="colony_id" value="<?= $colony['id'] ?>">
                 
                 <div class="col-md-3">
@@ -177,6 +178,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
         </div>
         <div class="card-body">
             <form action="/admin/plot-costs/calculate" method="POST" class="row g-3 align-items-end">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="colony_id" value="<?= $colony['id'] ?>">
                 
                 <div class="col-md-4">

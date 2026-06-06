@@ -48,6 +48,7 @@
             <div class="card-header">Bulk Schedule</div>
             <div class="card-body">
                 <form method="post" action="<?= BASE_URL ?>admin/voice-users/schedule">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Phone Numbers (one per line)</label>
                         <textarea name="phones" class="form-control" rows="4" placeholder="+919999999999&#10;+918888888888"></textarea>

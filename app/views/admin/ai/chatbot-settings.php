@@ -12,6 +12,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </div>
 
         <form method="post" action="<?php echo $base; ?>/admin/chatbot/settings">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row g-4">
                 <div class="col-md-8">
                     <div class="card border-0 shadow-sm mb-4">

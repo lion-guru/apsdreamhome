@@ -101,6 +101,7 @@ $isCancelled = $currentStatus === 'cancelled';
                 <p class="text-muted">Status: <strong><?= $currentStep >= 1 ? ($currentStep > 1 ? 'Collected &#10003;' : 'Pending') : 'Not started' ?></strong></p>
                 <?php if ($currentStep <= 1 && !$isCancelled): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/registry/<?= $booking['id'] ?>/documents">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2">
                             <label class="form-label">Notes</label>
                             <textarea class="form-control" name="notes" rows="2" placeholder="Document details, IDs collected..."><?= htmlspecialchars($booking['registry_notes'] ?? '') ?></textarea>
@@ -121,6 +122,7 @@ $isCancelled = $currentStatus === 'cancelled';
                 </table>
                 <?php if ($currentStep <= 2 && $currentStep >= 1 && !$isCancelled): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/registry/<?= $booking['id'] ?>/stamp-duty">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <label class="form-label">Stamp Duty (&#8377;)</label>
@@ -153,6 +155,7 @@ $isCancelled = $currentStatus === 'cancelled';
                 </table>
                 <?php if ($currentStep <= 3 && $currentStep >= 2 && !$isCancelled): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/registry/<?= $booking['id'] ?>/appointment">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <label class="form-label">Appointment Date & Time</label>
@@ -183,6 +186,7 @@ $isCancelled = $currentStatus === 'cancelled';
                 </table>
                 <?php if ($currentStep <= 4 && $currentStep >= 3 && !$isCancelled): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/registry/<?= $booking['id'] ?>/register">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <label class="form-label">Registry Number</label>
@@ -220,6 +224,7 @@ $isCancelled = $currentStatus === 'cancelled';
                 <?php endif; ?>
                 <?php if ($currentStep >= 4 && !$isCancelled): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/registry/<?= $booking['id'] ?>/mutation">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-2 mb-2">
                             <div class="col-4">
                                 <label class="form-label">Status</label>

@@ -10,6 +10,7 @@
                 <div class="card-header bg-success text-white"><i class="fas fa-plus"></i> Add Level</div>
                 <div class="card-body">
                     <form method="post" action="/admin/commission/associate/structure/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Level Number</label><input type="number" name="level_number" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Level Name</label><input type="text" name="level_name" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Commission %</label><input type="number" step="0.01" name="commission_percentage" class="form-control" required></div>

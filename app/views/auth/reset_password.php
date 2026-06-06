@@ -44,6 +44,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
                     <?php endif; ?>
 
                     <form action="<?= BASE_URL ?>/reset-password" method="POST" class="reset-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="token" value="<?php echo htmlspecialchars($token ?? ''); ?>">
 
                         <div class="mb-4">

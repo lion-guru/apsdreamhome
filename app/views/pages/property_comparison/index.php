@@ -55,6 +55,7 @@ $view_count = $view_count ?? 0;
             <?php endif; ?>
             <?php if ($count > 0): ?>
                 <form method="POST" action="<?= BASE_URL ?>/property-comparison/clear" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Clear all?')">
                         <i class="fas fa-trash me-1"></i> Clear All
                     </button>
@@ -87,6 +88,7 @@ $view_count = $view_count ?? 0;
                             <i class="fas fa-home text-muted"></i>
                         <?php endif; ?>
                         <form method="POST" action="<?= BASE_URL ?>/property-comparison/remove" style="position:absolute; top:5px; right:5px;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="property_id" value="<?= $p['id'] ?>">
                             <button type="submit" class="btn btn-sm btn-danger" style="padding: 2px 8px;" title="Remove">
                                 <i class="fas fa-times"></i>

@@ -22,6 +22,7 @@ $content = $content ?? '';
       <?php endif; ?>
 
       <form method="POST" class="card shadow-sm">
+                          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="card-body">
           <div class="row g-3">
             <div class="col-md-12">

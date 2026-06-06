@@ -105,6 +105,7 @@
                     <div class="card-header bg-white"><h5 class="mb-0">Record Payment</h5></div>
                     <div class="card-body">
                         <form method="POST" action="<?= BASE_URL ?>/admin/mlm-realestate/bookings/payment">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
                             <div class="mb-2"><input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount (₹)" required></div>
                             <div class="mb-2">
@@ -131,6 +132,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $status['booking']['id'] ?>/reject">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header">
                     <h5 class="modal-title">Reject Booking #<?= $status['booking']['id'] ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -16,6 +16,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Transfer Details</h5></div>
                 <div class="card-body">
                     <form method="post">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">New Owner Blockchain Address</label>
                             <input type="text" name="new_owner_address" class="form-control font-monospace" placeholder="0x..." required>

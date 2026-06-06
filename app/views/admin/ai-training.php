@@ -471,6 +471,7 @@ $categories = [
         <div class="form-card" id="add-qa">
             <h4 class="mb-4"><i class="fas fa-plus-circle me-2 text-primary"></i>Add New Q&A Pattern</h4>
             <form method="POST">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="action" value="add_qa">
                 <div class="row">
                     <div class="col-md-4">
@@ -532,6 +533,7 @@ $categories = [
                 <?php foreach ($knowledgeBase as $qa): ?>
                     <div class="qa-item">
                         <form method="POST" class="row">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="action" value="update_qa">
                             <input type="hidden" name="id" value="<?php echo $qa['id']; ?>">
 
@@ -593,6 +595,7 @@ $categories = [
         <div class="form-card" id="bulk-import">
             <h4 class="mb-4"><i class="fas fa-file-import me-2 text-primary"></i>Bulk Import Q&A</h4>
             <form method="POST">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="action" value="bulk_import">
                 <div class="mb-3">
                     <label class="form-label">Format: Question | Answer | Keywords (optional)</label>

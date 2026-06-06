@@ -107,6 +107,7 @@ $extraHead = '<style>
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <form method="post" action="<?= BASE_URL ?>/user/tickets/create">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="modal-header">
                         <h5 class="modal-title"><i class="fas fa-plus-circle me-2 text-primary"></i>Raise a Support Ticket</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

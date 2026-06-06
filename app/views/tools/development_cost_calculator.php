@@ -367,6 +367,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                     </h4>
 
                                     <form method="post" action="">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <!-- Basic Project Info -->
                                         <div class="mb-4">
                                             <label class="form-label">

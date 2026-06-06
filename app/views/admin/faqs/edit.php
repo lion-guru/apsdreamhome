@@ -7,6 +7,7 @@
                 </div>
                 <div class="card-body">
                     <form action="<?php echo BASE_URL; ?>/admin/faqs/<?php echo $faq['id']; ?>/update" method="POST">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Question</label>
                             <input type="text" name="question" class="form-control" value="<?php echo htmlspecialchars($faq['question']); ?>" required>

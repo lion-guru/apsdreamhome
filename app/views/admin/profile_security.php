@@ -46,6 +46,7 @@ unset($_SESSION['success'], $_SESSION['error']);
             </div>
             <div class="card-body">
                 <form action="<?php echo BASE_URL; ?>/admin/profile/change-password" method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Current Password</label>
                         <div class="input-group">

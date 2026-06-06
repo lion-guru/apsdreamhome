@@ -8,6 +8,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/user/book-site-visit">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Property/Project <span class="text-danger">*</span></label>
                             <select name="property_id" class="form-select" required>

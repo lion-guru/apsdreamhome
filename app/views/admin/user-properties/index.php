@@ -155,6 +155,7 @@
                                             </a>
                                             <?php if ($p['status'] === 'pending'): ?>
                                                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action" class="d-inline" onsubmit="return confirm('Approve this property?');">
+                                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                     <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
                                                     <input type="hidden" name="action" value="approve">
                                                     <button type="submit" class="btn btn-success btn-sm" title="Approve">
@@ -162,6 +163,7 @@
                                                     </button>
                                                 </form>
                                                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action" class="d-inline" onsubmit="return confirm('Reject this property?');">
+                                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                     <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
                                                     <input type="hidden" name="action" value="reject">
                                                     <button type="submit" class="btn btn-danger btn-sm" title="Reject">

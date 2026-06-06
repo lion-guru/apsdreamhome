@@ -42,6 +42,7 @@ $rewards = $rewards ?? [];
                                 <td>
                                     <a href="<?= $base ?>/admin/loyalty/rewards/<?= $r['id'] ?? 0 ?>/edit" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
                                     <form method="POST" action="<?= $base ?>/admin/loyalty/rewards/<?= $r['id'] ?? 0 ?>/delete" style="display:inline" onsubmit="return confirm('Delete this reward?')">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                                     </form>
                                 </td>

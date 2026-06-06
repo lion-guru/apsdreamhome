@@ -17,6 +17,7 @@
                     <div class="alert alert-info"><strong>Payment:</strong> ₹<?= number_format($payment['amount'] ?? 0) ?> via <?= htmlspecialchars($payment['gateway'] ?? '-') ?> on <?= htmlspecialchars($payment['created_at'] ?? '-') ?></div>
                     <?php endif; ?>
                     <form method="post" action="<?= BASE_URL ?>payments/refund">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Transaction ID <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="transaction_id" value="<?= htmlspecialchars($payment['transaction_id'] ?? '') ?>" required placeholder="Enter transaction ID">

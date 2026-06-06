@@ -17,6 +17,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                 </div>
                 <div class="card-body">
                     <form method="post" action="<?php echo $base; ?>/admin/whatsapp/settings">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Phone Number ID <span class="text-danger">*</span></label>
                             <input type="text" name="whatsapp_phone_number_id" class="form-control"
@@ -66,6 +67,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                 </div>
                 <div class="card-body">
                     <form method="post" action="<?php echo $base; ?>/admin/whatsapp/test">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Phone Number <span class="text-danger">*</span></label>
                             <input type="text" name="test_phone" class="form-control" placeholder="+919XXXXXXXXX" required>

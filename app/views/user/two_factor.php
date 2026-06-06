@@ -28,6 +28,7 @@ $content = $content ?? '';
               <p class="mb-0">Your account is protected with TOTP-based two-factor authentication.</p>
             </div>
             <form method="post" action="<?= BASE_URL ?>/user/two-factor/disable" onsubmit="return confirm('Disable 2FA? Your account will be less secure.')">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
               <button type="submit" class="btn btn-danger"><i class="fas fa-times"></i> Disable 2FA</button>
             </form>
           <?php else: ?>
@@ -48,6 +49,7 @@ $content = $content ?? '';
 
                 <h6 class="mb-3">Step 3: Enter Code</h6>
                 <form method="post" action="<?= BASE_URL ?>/user/two-factor/enable">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                   <div class="mb-2">
                     <input type="text" name="code" class="form-control form-control-lg text-center" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autofocus>
                     <small class="text-muted">Current code: <strong><?= $current_otp ?></strong> (changes every 30s)</small>

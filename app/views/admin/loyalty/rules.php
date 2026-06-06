@@ -41,6 +41,7 @@ $rules = $rules ?? [];
                                 <td>
                                     <a href="<?= $base ?>/admin/commission/edit_rule/<?= $rule['id'] ?? 0 ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
                                     <form method="POST" action="<?= $base ?>/admin/commission/rules/<?= $rule['id'] ?? 0 ?>/delete" style="display:inline" onsubmit="return confirm('Delete this rule?')">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                                     </form>
                                 </td>

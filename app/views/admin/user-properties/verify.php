@@ -105,6 +105,7 @@
                     </div>
                     <div class="card-body">
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="id" value="<?php echo $property['id']; ?>">
                             <input type="hidden" name="action" value="approve">
                             <div class="mb-3">
@@ -116,6 +117,7 @@
                             </button>
                         </form>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="id" value="<?php echo $property['id']; ?>">
                             <input type="hidden" name="action" value="reject">
                             <button type="submit" class="btn btn-outline-danger w-100">
@@ -141,6 +143,7 @@
                     <div class="card-body">
                         <p class="text-muted mb-0">This property has been rejected.</p>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action" class="mt-3">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="id" value="<?php echo $property['id']; ?>">
                             <input type="hidden" name="action" value="approve">
                             <button type="submit" class="btn btn-outline-success w-100">

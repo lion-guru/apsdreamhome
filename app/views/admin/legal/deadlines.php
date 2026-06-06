@@ -144,6 +144,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/legal/deadlines/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Title <span class="text-danger">*</span></label>
                             <input type="text" name="title" class="form-control" required>

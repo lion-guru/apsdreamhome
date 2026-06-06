@@ -45,6 +45,7 @@ $page_title = $page_title ?? 'Shift Types';
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="<?= BASE_URL ?>/admin/hr/shifts/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Add Shift Type</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -28,6 +28,7 @@ $extraHead = '<style>
                     <?php endif; ?>
 
                     <form method="POST">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('user_profile_label_name') ?> *</label>

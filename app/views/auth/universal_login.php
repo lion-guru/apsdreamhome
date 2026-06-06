@@ -68,6 +68,7 @@ $active_page = 'login';
                         <!-- Email Login Tab -->
                         <div class="tab-pane fade show active" id="email-tab" role="tabpanel">
                             <form action="<?= BASE_URL ?>auth/login" method="POST" class="login-form">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <input type="hidden" name="login_type" value="email">
 
                                 <div class="mb-3">
@@ -114,6 +115,7 @@ $active_page = 'login';
                         <!-- Mobile Login Tab -->
                         <div class="tab-pane fade" id="mobile-tab" role="tabpanel">
                             <form action="<?= BASE_URL ?>auth/login" method="POST" class="login-form">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <input type="hidden" name="login_type" value="mobile">
 
                                 <div class="mb-3">

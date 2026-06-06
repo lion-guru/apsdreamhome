@@ -10,6 +10,7 @@
     </nav>
     <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-cog me-2"></i>Payment Settings</h4></div>
     <form method="post" action="<?= BASE_URL ?>payments/settings">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-4">

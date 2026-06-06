@@ -105,10 +105,12 @@
                                 <td class="text-end pe-4">
                                     <?php if (($r['status'] ?? '') === 'pending'): ?>
                                         <form method="POST" action="<?= BASE_URL ?>/admin/property-features/reviews/update-status/<?= $r['id'] ?>" class="d-inline">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <input type="hidden" name="status" value="approved">
                                             <button type="submit" class="btn btn-sm btn-success" title="Approve"><i class="fas fa-check"></i></button>
                                         </form>
                                         <form method="POST" action="<?= BASE_URL ?>/admin/property-features/reviews/update-status/<?= $r['id'] ?>" class="d-inline">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <input type="hidden" name="status" value="rejected">
                                             <button type="submit" class="btn btn-sm btn-danger" title="Reject"><i class="fas fa-times"></i></button>
                                         </form>

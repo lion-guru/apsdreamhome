@@ -15,6 +15,7 @@ $isEdit = $reward !== null;
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Reward Details</h6></div>
                 <div class="card-body">
                     <form method="POST" action="<?= $base ?>/admin/loyalty/rewards/<?= $isEdit ? ($reward['id'] . '/update') : 'store' ?>" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Reward Name <span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($reward['name'] ?? '') ?>" required>

@@ -48,6 +48,7 @@
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add Entry</h5></div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/market-data/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><input type="text" name="location" class="form-control form-control-sm" placeholder="Location *" required></div>
                         <div class="mb-2">
                             <select name="property_type" class="form-select form-select-sm" required>

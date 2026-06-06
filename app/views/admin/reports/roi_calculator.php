@@ -15,6 +15,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="card-body">
                     <form method="POST" action="/admin/reports/roi-calculator">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Property Price (₹)</label>
                             <input type="number" name="property_price" class="form-control" 

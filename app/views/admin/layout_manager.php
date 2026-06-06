@@ -74,6 +74,7 @@ $settings = $layoutManager->getLayoutSettings();
                 <?php endif; ?>
 
                 <form method="POST" action="/admin/layout-manager">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="row">
                         <!-- Layout Type Selection -->
                         <div class="col-md-6">

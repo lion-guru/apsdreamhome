@@ -15,6 +15,7 @@
                     <?php endif; ?>
 
                     <form method="POST" action="<?= ($base ?? BASE_URL) ?>register" class="needs-validation" novalidate>
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label small">Full Name <span class="text-danger">*</span></label>

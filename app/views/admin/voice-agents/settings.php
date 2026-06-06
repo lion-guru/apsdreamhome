@@ -50,6 +50,7 @@
 
                         <div class="col-auto">
                             <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/settings" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <input type="hidden" name="agent_id" value="<?= htmlspecialchars($agent['agent_id']) ?>">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="small"><?= (int)($agent['current_calls'] ?? 0) ?>/<?= (int)($agent['max_concurrent_calls'] ?? 5) ?></span>
@@ -88,6 +89,7 @@
                     }
                     ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/settings">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Provider</label>
                             <select name="voice_provider" class="form-select">
@@ -136,6 +138,7 @@
                     }
                     ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/settings">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label small fw-bold">Calling Hours Start</label>

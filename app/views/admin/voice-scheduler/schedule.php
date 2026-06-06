@@ -10,6 +10,7 @@
             <div class="card-header"><i class="fas fa-phone-alt me-2"></i>New Call Schedule</div>
             <div class="card-body">
                 <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/store">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Select Lead <span class="text-danger">*</span></label>
                         <select name="lead_id" class="form-select" id="leadSelect" required>

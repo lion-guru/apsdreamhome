@@ -13,6 +13,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">File Upload</h6></div>
                 <div class="card-body">
                     <form method="POST" action="<?= $base ?>/admin/files/upload" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Select File <span class="text-danger">*</span></label>
                             <input type="file" name="file" class="form-control" required>

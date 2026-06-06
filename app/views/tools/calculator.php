@@ -44,6 +44,7 @@
                         <div class="col-md-5 bg-white p-4 p-lg-5">
                             <h4 class="fw-bold mb-4">Calculate EMI</h4>
                             <form action="<?= BASE_URL ?>calc" method="POST">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-4">
                                     <label class="form-label small fw-bold text-muted">Loan Amount (₹)</label>
                                     <div class="input-group">

@@ -35,6 +35,7 @@
                     ?>
 
                     <form action="<?= $action_url ?>" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <?= csrf_field(); ?>
                         <div class="row g-3">
                             <div class="col-md-12">

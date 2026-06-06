@@ -73,6 +73,7 @@ $land_records = $land_records ?? [];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="POST" action="<?php echo BASE_URL; ?>/admin/land/records/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Land Title <span class="text-danger">*</span></label>

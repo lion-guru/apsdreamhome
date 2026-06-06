@@ -19,6 +19,7 @@
                             <i class="fas fa-bell me-2"></i> <?= __('user_settings_nav_notifications', null, 'Notifications') ?>
                         </a>
                         <form action="<?php echo BASE_URL; ?>logout" method="POST" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <button type="submit" class="list-group-item list-group-item-action py-3 text-danger border-0 w-100 text-start">
                                 <i class="fas fa-sign-out-alt me-2"></i> <?= __('user_settings_nav_logout', null, 'Logout') ?>
                             </button>
@@ -51,6 +52,7 @@
                 </div>
                 <div class="card-body">
                     <form action="<?php echo BASE_URL; ?>dashboard/settings/update-security" method="POST">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-4">
                             <label class="form-label fw-bold"><?= __('user_settings_email_notif', null, 'Email Notifications') ?></label>
                             <div class="form-check form-switch">
@@ -103,6 +105,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('user_settings_modal_cancel', null, 'Cancel') ?></button>
                 <form action="<?php echo BASE_URL; ?>dashboard/delete-account" method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button type="submit" class="btn btn-danger"><?= __('user_settings_modal_confirm', null, 'Yes, Delete Account') ?></button>
                 </form>
             </div>

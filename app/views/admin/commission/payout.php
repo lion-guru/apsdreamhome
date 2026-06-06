@@ -38,6 +38,7 @@ $total_amount = $total_amount ?? 0;
                 <p class="text-muted text-center py-4"><i class="fas fa-check-circle fa-2x d-block mb-2 text-success"></i>No pending payouts to process.</p>
             <?php else: ?>
                 <form method="POST" action="<?= $base ?>/admin/commission/payout">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Select users for Payout</label>
                         <select name="agent_ids[]" class="form-select" multiple size="5">

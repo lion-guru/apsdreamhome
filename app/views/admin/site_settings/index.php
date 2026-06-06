@@ -41,6 +41,7 @@ $page_title = 'Site Settings';
     <?php endif; ?>
 
     <form method="POST" action="<?php echo $baseUrl; ?>/admin/settings" id="settingsForm">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <!-- General Settings -->
         <div class="card mb-4">
             <div class="card-header">

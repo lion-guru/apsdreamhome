@@ -32,6 +32,7 @@ $company = $company ?? [];
         </div>
         <div class="card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/company/settings/update">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-4">
                     <div class="col-md-6">
                         <label class="form-label">Company Name <span class="text-danger">*</span></label>

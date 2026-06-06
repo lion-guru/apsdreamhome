@@ -103,6 +103,7 @@
             </div>
             <div class="card-body">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/services/update-status">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
                     <div class="mb-3">
                         <select name="status" class="form-select">

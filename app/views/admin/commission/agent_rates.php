@@ -10,6 +10,7 @@
                 <div class="card-header bg-primary text-white"><i class="fas fa-plus"></i> Add Rate</div>
                 <div class="card-body">
                     <form method="post" action="/admin/commission/agent-rates/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Min Sqft</label><input type="number" name="min_sqft" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Max Sqft</label><input type="number" name="max_sqft" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Commission Per Sqft (&#8377;)</label><input type="number" step="0.01" name="commission_per_sqft" class="form-control" required></div>

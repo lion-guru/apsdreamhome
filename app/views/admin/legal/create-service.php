@@ -22,6 +22,7 @@ $page_title = $page_title ?? 'Add Legal Service';
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/legal/services/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label">Title <span class="text-danger">*</span></label>
