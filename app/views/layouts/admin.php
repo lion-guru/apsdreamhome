@@ -21,11 +21,31 @@
     <!-- Admin CSS -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend-enhancements.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/customer-pages.css" rel="stylesheet">
     <style>
         /* RBAC Sidebar section toggle styles */
-        .sidebar-sec { padding:15px 15px 5px; font-size:.7rem; text-transform:uppercase; color:rgba(255,255,255,.4); font-weight:600; letter-spacing:.05em; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
-        .sidebar-sec-arrow { font-size:.6rem; transition:transform .25s; color:rgba(255,255,255,.3) }
-        .sidebar-sec-arrow.collapsed { transform:rotate(-90deg) }
+        .sidebar-sec {
+            padding: 15px 15px 5px;
+            font-size: .7rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .4);
+            font-weight: 600;
+            letter-spacing: .05em;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-sec-arrow {
+            font-size: .6rem;
+            transition: transform .25s;
+            color: rgba(255, 255, 255, .3)
+        }
+
+        .sidebar-sec-arrow.collapsed {
+            transform: rotate(-90deg)
+        }
     </style>
 </head>
 
@@ -60,7 +80,8 @@
         $stmt = $db->query("SELECT COUNT(*) as cnt FROM inquiries WHERE DATE(created_at) = CURDATE()");
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         $newInquiriesCount = $row['cnt'] ?? 0;
-    } catch (\Exception $e) { /* silent */ }
+    } catch (\Exception $e) { /* silent */
+    }
     ?>
 
     <!-- Main Content -->
@@ -106,9 +127,13 @@
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a href="<?php echo $base; ?>/admin/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a></li>
                         <li><a href="<?php echo $base; ?>/admin/profile/security" class="dropdown-item"><i class="fas fa-shield-alt"></i> Security</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a href="<?php echo $base; ?>/admin/settings" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a href="<?php echo $base; ?>/admin/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -156,126 +181,79 @@
     <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-system.js"></script>
 
     <script>
-    // AJAX Navigation for Sidebar - sidebar remains fixed, only content updates
-    // Guard: only initialize once per page (prevents double-registration after reRunScripts)
-    if (!window._adminAjaxNavInitialized) {
-    window._adminAjaxNavInitialized = true;
-    (function() {
-        var baseUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>';
+        // AJAX Navigation for Sidebar - sidebar remains fixed, only content updates
+        // Guard: only initialize once per page (prevents double-registration after reRunScripts)
+        if (!window._adminAjaxNavInitialized) {
+            window._adminAjaxNavInitialized = true;
+            (function() {
+                var baseUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>';
 
-        function updateActiveSidebar(url) {
-            document.querySelectorAll('.sidebar-link').forEach(function(link) {
-                var href = link.getAttribute('href');
-                link.classList.remove('active');
-                if (!href) return;
-                // Match exact or sub-path after base
-                if (url === href || (href !== baseUrl + '/admin/dashboard' && url.indexOf(href) === 0) || (href.indexOf('?') > -1 && url.indexOf(href.substring(0, href.indexOf('?'))) === 0)) {
-                    link.classList.add('active');
+                function updateActiveSidebar(url) {
+                    document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                        var href = link.getAttribute('href');
+                        if (href && (url === href || url.startsWith(href + '/'))) {
+                            link.classList.add('active');
+                        } else {
+                            link.classList.remove('active');
+                        }
+                    });
                 }
-            });
-        }
 
-        function reRunScripts(container) {
-            container.querySelectorAll('script').forEach(function(oldScript) {
-                var newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(function(attr) {
-                    newScript.setAttribute(attr.name, attr.value);
-                });
-                newScript.textContent = oldScript.textContent;
-                oldScript.parentNode.replaceChild(newScript, oldScript);
-            });
-        }
-
-        function findContent(doc) {
-            // Try id first, then class fallback
-            var el = doc.getElementById('page-content');
-            if (!el) el = doc.querySelector('.page-content');
-            return el;
-        }
-
-        function navigateTo(url, pushState) {
-            if (pushState !== false) {
-                history.pushState({ url: url }, '', url);
-            }
-
-            var loadingEl = document.getElementById('page-content') || document.querySelector('.page-content');
-            if (loadingEl) loadingEl.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2 text-muted">Loading...</p></div>';
-
-            fetch(url)
-                .then(function(response) {
-                    if (!response.ok) throw new Error('Page load failed: ' + response.status);
-                    return response.text();
-                })
-                .then(function(html) {
-                    var parser = new DOMParser();
-                    var doc = parser.parseFromString(html, 'text/html');
-
-                    var newContent = findContent(doc);
-                    var currentContent = document.getElementById('page-content') || document.querySelector('.page-content');
-                    if (newContent && currentContent) {
-                        currentContent.innerHTML = newContent.innerHTML;
-                    } else {
-                        // Fallback: full page reload
-                        window.location.href = url;
-                        return;
+                function loadContent(url, pushState) {
+                    if (pushState !== false) {
+                        history.pushState({
+                            url: url
+                        }, '', url);
                     }
-
-                    // Update breadcrumb: try #breadcrumb-title first, then .breadcrumb
-                    var newBreadcrumb = doc.getElementById('breadcrumb-title') || doc.querySelector('.breadcrumb');
-                    var currentBreadcrumb = document.getElementById('breadcrumb-title') || document.querySelector('.breadcrumb');
-                    if (newBreadcrumb && currentBreadcrumb) {
-                        currentBreadcrumb.innerHTML = newBreadcrumb.innerHTML;
-                    }
-
                     updateActiveSidebar(url);
-                    reRunScripts(currentContent);
-                    document.title = doc.title || 'APS Dream Home - Admin';
-                })
-                .catch(function(err) {
-                    console.error('AJAX navigation error:', err);
-                    window.location.href = url;
+
+                    fetch(url, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(function(r) {
+                            return r.text();
+                        })
+                        .then(function(html) {
+                            var parser = new DOMParser();
+                            var doc = parser.parseFromString(html, 'text/html');
+                            var newContent = doc.getElementById('page-content');
+                            var newTitle = doc.getElementById('breadcrumb-title');
+                            if (newContent) {
+                                document.getElementById('page-content').innerHTML = newContent.innerHTML;
+                                // Re-initialize any scripts in the new content
+                                if (typeof reRunScripts === 'function') reRunScripts();
+                            }
+                            if (newTitle) {
+                                document.getElementById('breadcrumb-title').textContent = newTitle.textContent;
+                                document.title = newTitle.textContent + ' - APS Dream Home Admin';
+                            }
+                        })
+                        .catch(function(err) {
+                            console.error('AJAX nav error:', err);
+                        });
+                }
+
+                // Handle browser back/forward
+                window.addEventListener('popstate', function(e) {
+                    if (e.state && e.state.url) {
+                        loadContent(e.state.url, false);
+                    }
                 });
+
+                // Intercept sidebar links
+                document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        var href = this.getAttribute('href');
+                        if (href && href.startsWith('/') && !href.includes('/logout')) {
+                            e.preventDefault();
+                            loadContent(href);
+                        }
+                    });
+                });
+            })();
         }
-
-        // Intercept sidebar link clicks
-        document.addEventListener('click', function(e) {
-            var link = e.target.closest('.sidebar-link');
-            if (!link) return;
-
-            // Allow logout, external links, target="_blank" to behave normally
-            if (link.getAttribute('target') === '_blank') return;
-            if (link.getAttribute('href') && link.getAttribute('href').indexOf('/logout') !== -1) return;
-            if (link.getAttribute('href') && link.getAttribute('href').indexOf('://') !== -1 && link.getAttribute('href').indexOf(window.location.hostname) === -1) return;
-
-            e.preventDefault();
-            var href = link.getAttribute('href');
-            if (href) navigateTo(href);
-        });
-
-        // Handle browser back/forward
-        window.addEventListener('popstate', function(e) {
-            if (e.state && e.state.url) {
-                navigateTo(e.state.url, false);
-            }
-        });
-
-        // Intercept sidebar subsection links (not primary sidebar-link)
-        document.addEventListener('click', function(e) {
-            var link = e.target.closest('.dropdown-item');
-            if (!link) return;
-            if (link.getAttribute('target') === '_blank') return;
-            if (link.getAttribute('href') && link.getAttribute('href').indexOf('/logout') !== -1) return;
-            var href = link.getAttribute('href');
-            if (!href || href.indexOf('#') === 0) return;
-
-            // Only intercept if it contains /admin/ path
-            if (href.indexOf(baseUrl + '/admin/') === 0 || href.indexOf('/admin/') === 0) {
-                e.preventDefault();
-                navigateTo(href);
-            }
-        });
-    })();
-    }
     </script>
 </body>
 
