@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (class_exists('\App\Helpers\SecurityHelper')) {
     \App\Helpers\SecurityHelper::setSecurityHeaders();
 }
@@ -145,6 +145,12 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
+
+    <!-- Scroll fix -->
+    <style>
+        html, body { height: auto !important; overflow-y: auto !important; overflow-x: hidden; }
+        #main-content { height: auto !important; overflow-y: auto !important; }
+    </style>
 
     <!-- Extra head content from views -->
     <?php if (!empty($extraHead)) echo $extraHead; ?>
