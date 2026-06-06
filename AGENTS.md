@@ -1,5 +1,101 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-06)
 
+## Session 2026-06-06: Phase 8 — User Portal Services + AJAX CRUD (Commit a691e1e53, Tag portal-services-2026-06-06)
+
+### What Was Done
+Continued from Phase 7 (RBAC menu + KYC + Insurance + Address stubs). Wired up 3 new services, 1 new controller, 6 new tables, 3 rebuilt views, AJAX CSRF pattern, gamification widget, and cross-role session keys.
+
+### Files Created (5)
+- `app/Services/InsuranceService.php` — listPlans/getPlan/getUserPolicies/getStats/enrol (PDO + env-config fallback)
+- `app/Services/InvestmentService.php` — listPlans/getUserInvestments/getStats/invest/updateInvestorLevel/computeLevel (5 tiers: Bronze→Silver→Gold→Platinum→Diamond)
+- `app/Services/AddressService.php` — listForUser/get/create/update/delete/setPrimary/lookupByPincode
+- `app/Http/Controllers/Front/PortalController.php` — 9 methods: insurance, insuranceEnrol, investmentPlans, invest, address, addressCreate, addressUpdate, addressDelete, addressSetPrimary, pincodeLookup
+- `scripts/create_user_portal_tables.php` — 6 tables + 5 insurance plans + 4 investment plans seed
+
+### Database Schema (6 new tables)
+- `user_addresses` — id, user_id, label, address_type ENUM(home|office|billing|shipping|other), address_line1/2, city, state, pincode, country, phone, is_primary, timestamps
+- `insurance_plans` — id, plan_code UNIQUE, plan_name, plan_category ENUM, description, coverage_amount, premium_monthly/yearly, features JSON, insurer, is_featured, is_active, display_order
+- `insurance_policies` — id, user_id, plan_id, policy_number UNIQUE, nominee_name/relation, sum_insured, premium_amount, start/end_date, status ENUM(active|expired|cancelled|pending), payment_status
+- `investment_plans` — id, plan_code UNIQUE, plan_name, plan_category ENUM(sip|lumpsum|recurring_deposit|gold|real_estate_fund|crypto), min/max_amount, expected_return_pct, tenure_months, risk_level
+- `investments` — id, user_id, plan_id, investment_ref UNIQUE, principal_amount, current_value, units_held, monthly_amount, sip_date, start/maturity_date, status ENUM, auto_invest
+- `investor_levels` — id, user_id, level_name, total_invested, total_returns, xp_points, next_level_threshold, last_updated
+
+### Seeded Data
+- 5 insurance plans: HOME-SHIELD, FAMILY-HEALTH, LIFE-SECURE, VEHICLE-COVER, TRAVEL-SAFE
+- 4 investment plans: PROP-SIP (min ₹500), RE-FUND (min ₹50K), RECURRING-FD (min ₹1K), GOLD-SAVER (min ₹100)
+
+### Files Modified (8)
+- `app/views/pages/user/insurance.php` — REBUILT with: 4-stat grid (Home/Health/Term Life/Active Policies), policies table, available plans grid with enrol buttons, AJAX modal
+- `app/views/pages/user/investment_plans.php` — REBUILT with: 4-stat countup grid, investor level card with progress bar, investments table, plan grid with invest buttons, AJAX modal
+- `app/views/pages/user/address.php` — REBUILT with: add/edit modal, AJAX CRUD, pincode auto-lookup (500ms debounce), type icons/colors, primary badge, set-primary button
+- `app/views/pages/user_dashboard.php` — ADDED investor level gamification widget (Silver/Gold/Platinum/Diamond badge + progress bar + upgrade link)
+- `app/Http/Controllers/Front/UserController.php` — Added `safeInvestorStats(int $userId)` helper + passes `investor_stats` to dashboard render
+- `app/Http/Controllers/Auth/CustomerAuthController.php` — After login: looks up `employees.user_id` for employee role → `$_SESSION['employee_id']`; looks up `associates.user_id` for agent/associate role → `$_SESSION['associate_id']` / `$_SESSION['agent_id']`
+- `assets/js/customer-pages.js` — Added `CP.injectCsrf()` (auto-fills all empty `csrf_token` inputs from meta tag) + `CP.fetchCsrf()` (returns token for AJAX handlers)
+- `routes/web.php` — Added 7 new routes:
+  - `POST /user/insurance/enrol`
+  - `POST /user/investment-plans/invest`
+  - `POST /user/address/store`
+  - `POST /user/address/update`
+  - `POST /user/address/delete`
+  - `POST /user/address/primary`
+  - `GET  /api/address/pincode`
+
+### Bugs Fixed Mid-Phase
+1. **`$userId` undefined in dashboard** — Controller used `$userId` but variable was `$user['id']`. Fixed to `(int)$user['id']`.
+2. **`verifyCsrf()` undefined method** — Method is `validateCsrfToken($token)` on BaseController. Changed all 6 PortalController methods to read token from `$_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN']` and pass to `validateCsrfToken()`.
+3. **Investment service read `$_POST['amount']` but form sent `principal_amount`** — Fixed: `$data['amount'] ?? $data['principal_amount'] ?? 0`.
+
+### Live Verification (PowerShell)
+- POST `/user/insurance/enrol` with plan_id=1, nominee, date → `200 {"success":true,"policy_id":"1","policy_number":"APS-INS-20260606-5700"}` ✅
+- POST `/user/investment-plans/invest` with plan_id=4 (GOLD-SAVER), ₹1000, SIP=5 → `200 {"success":true,"investment_id":"1","investment_ref":"APS-INV-20260606-8117"}` ✅
+- POST `/user/address/store` with Home address, pincode 273001 → `200 {"success":true,"id":1}` ✅
+- GET `/api/address/pincode?pincode=99999` → `200 {"found":false,"pincode":"99999","message":"No data. Enter manually."}` ✅
+- Dashboard `/user/dashboard` 200, shows "Investor Level" widget with "Silver" badge + 2% progress bar ✅
+
+### AJAX CSRF Pattern (NEW)
+- Layout sets `$_SESSION['csrf_token']` and emits `<meta name="csrf-token">`
+- Views emit `<input name="csrf_token" value="">` (empty by design)
+- `CP.injectCsrf()` runs on DOMContentLoaded, auto-fills all `csrf_token` inputs from meta tag
+- `CP.fetchCsrf()` for AJAX handlers that need to manually set `FormData`
+- Why empty-by-design: the layout runs **after** the view's ob_get_clean(), so PHP-side `$_SESSION['csrf_token']` is empty at form-render time. JS bridge from meta is the clean solution.
+
+### CSRF Exclusion Pattern (Controllers)
+```php
+$token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+if (!$this->validateCsrfToken($token)) {
+    $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+    return;
+}
+```
+
+### Cross-Role Session Key Pattern (NEW)
+- After successful customer login, the controller now introspects `users.role` and looks up extension tables
+- Employee role → `$_SESSION['employee_id'] = (int)employees.id WHERE user_id = ?`
+- Agent/Associate role → `$_SESSION['associate_id'] = (int)associates.id WHERE user_id = ?` (also `agent_id` for agent role)
+- All wrapped in try/catch — never blocks login on missing extension records
+- Future: `/employee/dashboard` and `/agent/dashboard` can now use `$_SESSION['employee_id']` / `$_SESSION['agent_id']` without re-querying
+
+### Commit
+- SHA: `a691e1e53`
+- Tag: `portal-services-2026-06-06` (pushed)
+- 12 files changed: 8 modified + 5 new
+- E2E: 164/165 pass (1 expected GodMode 403) — zero regressions
+
+### Known Limitations
+- Pincode lookup uses fuzzy match from existing user addresses (no government API integration)
+- Investment service computes current_value = principal_amount (no live price updates — would need daily cron)
+- Insurance enrol doesn't auto-generate payment (next phase: integrate with payment gateway)
+- Address primary toggle is exclusive (only one primary per user) — enforced in service
+
+### Next Steps
+1. Auto-payment for insurance enrol + investment (Razorpay integration)
+2. Daily cron to update investment `current_value` based on plan expected return
+3. KYC verification integration (PAN/Aadhaar with government/3rd-party API)
+4. Address-from-pincode integration with India Post API (replace fuzzy match)
+5. Wrap remaining views with `__()` (P0 home.php, P2 user_dashboard, P3 about/services/testimonials)
+6. Phase 9: Apply gamification widget to associate/agent dashboards (rank, team count, network size)
+
 ## Session 2026-06-06: Pending Fixes Big-Bang — 5 Long-Standing Issues Resolved (Commit 3ee65bd47)
 
 ### What Was Done
