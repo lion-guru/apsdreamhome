@@ -141,10 +141,10 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-    <!-- Local CSS (header first, then core styles) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend-enhancements.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/customer-pages.css" rel="stylesheet">
+    <!-- Consolidated APS CSS Bundles -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
 
     <!-- Extra head content from views -->
     <?php if (!empty($extraHead)) echo $extraHead; ?>
@@ -167,14 +167,9 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
         })();
     </script>
 
-    <!-- Core styles (cascade order matters: style.css before frontend.css) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
-    <!-- Image gallery lightbox -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/image-gallery.css" rel="stylesheet">
-    <!-- Chatbot CSS (deferred, non-critical) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet"></noscript>
+    <!-- Page-specific styles (deferred, non-critical) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css" rel="stylesheet"></noscript>
 
 
 </head>
