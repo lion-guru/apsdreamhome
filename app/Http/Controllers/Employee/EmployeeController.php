@@ -83,10 +83,23 @@ class EmployeeController extends BaseController
         $employeeId = $_SESSION['employee_id'];
         $dashboardData = $this->getEmployeeDashboardData($employeeId);
 
+        $gamify = $this->safeGamify('forEmployee', (int)$employeeId);
+
         // Include dashboard view
         $dashboardView = __DIR__ . '/../../../views/employees/dashboard.php';
         if (file_exists($dashboardView)) { require_once $dashboardView; }
         else { echo "<h2>Employee Dashboard</h2><p>Welcome, employee #$employeeId</p>"; }
+    }
+
+    private function safeGamify(string $method, int ...$args): array
+    {
+        try {
+            $svc = new \App\Services\GamificationService();
+            return $svc->{$method}(...$args);
+        } catch (\Throwable $e) {
+            error_log('Gamification error: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**

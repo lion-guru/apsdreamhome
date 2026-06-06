@@ -49,6 +49,8 @@ $data = $data ?? [];
                 </div>
             </div>
 
+            </div>
+
             <!-- Stats Cards -->
             <div class="row mb-4">
                 <div class="col-xl-3 col-md-6 mb-4">

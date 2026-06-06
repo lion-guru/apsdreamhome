@@ -11,6 +11,7 @@
         <h4 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Employee Dashboard</h4>
         <span class="text-muted small"><i class="far fa-calendar-alt me-1"></i><?= date('l, F j, Y') ?></span>
     </div>
+
     <div class="row g-3 mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm h-100">

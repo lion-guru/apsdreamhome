@@ -202,7 +202,8 @@ class AssociateController extends BaseController
             'recent_commissions' => $recentCommissions,
             'activities' => $activities,
             'referral_code' => $referralCode,
-            'associate_name' => $associateName
+            'associate_name' => $associateName,
+            'gamify' => $this->safeGamify('forAssociate', (int)$userId, (int)($_SESSION['associate_id'] ?? 0)),
         ], 'layouts/associate');
     }
 
@@ -780,5 +781,16 @@ class AssociateController extends BaseController
             'user_profile' => $userProfile,
             'current_page' => 'mlm-plan'
         ], 'layouts/associate');
+    }
+
+    private function safeGamify(string $method, int ...$args): array
+    {
+        try {
+            $svc = new \App\Services\GamificationService();
+            return $svc->{$method}(...$args);
+        } catch (\Throwable $e) {
+            error_log('Gamification error: ' . $e->getMessage());
+            return [];
+        }
     }
 }

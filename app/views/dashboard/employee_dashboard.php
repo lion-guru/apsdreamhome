@@ -37,6 +37,7 @@ $stats = [
 <body>
 <div class="container py-5">
     <h1 class="mb-4">Welcome, <?php echo $employee_name; ?>!</h1>
+
     <!-- Stats Cards -->
     <div class="dashboard-stats">
         <div class="stat-box">
