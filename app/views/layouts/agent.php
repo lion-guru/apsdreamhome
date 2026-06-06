@@ -1,13 +1,14 @@
 <?php
 use App\Services\PortalMenuService;
+// session is already started by the framework
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'Employee Portal - APS Dream Home'; ?></title>
-    <meta name="description" content="<?php echo $page_description ?? 'Employee Portal'; ?>">
+    <title><?php echo $page_title ?? 'Agent Portal - APS Dream Home'; ?></title>
+    <meta name="description" content="<?php echo $page_description ?? 'Agent Portal'; ?>">
 
     <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
 
@@ -22,17 +23,17 @@ use App\Services\PortalMenuService;
 
         .sidebar {
             position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
-            background: linear-gradient(180deg, #7c2d12 0%, #9a3412 100%);
+            background: linear-gradient(180deg, #064e3b 0%, #065f46 100%);
             z-index: 1000; overflow-y: auto; transition: transform 0.3s ease;
         }
         .sidebar::-webkit-scrollbar { width: 4px; }
         .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
         .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-logo { color: #fff; font-size: 1.1rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .sidebar-logo i { font-size: 1.3rem; color: #fdba74; }
+        .sidebar-logo i { font-size: 1.3rem; color: #6ee7b7; }
         .sidebar-sub { color: rgba(255,255,255,0.5); font-size: 0.7rem; margin-top: 4px; }
         .user-card { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff; }
-        .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 10px; }
+        .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #34d399 0%, #10b981 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 10px; }
         .user-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 3px; }
         .user-role { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
         .sidebar-section { padding: 15px 20px 5px; font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.05em; }
@@ -51,7 +52,7 @@ use App\Services\PortalMenuService;
         .btn-icon { width: 40px; height: 40px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
         .btn-icon:hover { background: #f1f5f9; color: #1e293b; }
         .content-wrapper { padding: 25px; }
-        .sidebar-toggle { display: none; position: fixed; top: 20px; left: 20px; z-index: 1001; width: 45px; height: 45px; background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); border: none; border-radius: 10px; color: #fff; font-size: 1.2rem; cursor: pointer; }
+        .sidebar-toggle { display: none; position: fixed; top: 20px; left: 20px; z-index: 1001; width: 45px; height: 45px; background: linear-gradient(135deg, #10b981 0%, #047857 100%); border: none; border-radius: 10px; color: #fff; font-size: 1.2rem; cursor: pointer; }
         @media (max-width: 1024px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.show { transform: translateX(0); }
@@ -72,7 +73,7 @@ use App\Services\PortalMenuService;
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="<?php echo BASE_URL; ?>" class="sidebar-logo">
-                <i class="fas fa-briefcase"></i>
+                <i class="fas fa-handshake"></i>
                 <span>APS Dream Home</span>
             </a>
             <div class="sidebar-sub"><?= htmlspecialchars(PortalMenuService::roleLabel()) ?></div>
@@ -82,8 +83,8 @@ use App\Services\PortalMenuService;
             <div class="user-avatar">
                 <i class="fas fa-user-tie"></i>
             </div>
-            <div class="user-name"><?php echo htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['employee_name'] ?? 'Employee'); ?></div>
-            <div class="user-role"><?php echo htmlspecialchars($_SESSION['user_email'] ?? $_SESSION['employee_email'] ?? 'employee@example.com'); ?></div>
+            <div class="user-name"><?php echo htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['agent_name'] ?? 'Agent'); ?></div>
+            <div class="user-role"><?php echo htmlspecialchars($_SESSION['user_email'] ?? $_SESSION['agent_email'] ?? 'agent@example.com'); ?></div>
         </div>
 
         <?php
@@ -120,10 +121,10 @@ use App\Services\PortalMenuService;
     <main class="main-content">
         <header class="top-header">
             <div>
-                <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Employee Portal'); ?></h1>
+                <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Agent Portal'); ?></h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/employee/dashboard">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/agent/dashboard">Home</a></li>
                         <li class="breadcrumb-item active"><?php echo $page_title ?? 'Dashboard'; ?></li>
                     </ol>
                 </nav>
