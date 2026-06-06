@@ -133,6 +133,9 @@ class UserController extends BaseController
         $referralCount = 0;
         $referralEarnings = 0;
         $referralLink = $referralCode ? (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . $referralCode : '';
+        $twoFactorEnabled = false;
+        $savedCount = 0;
+
         try {
             $stmt = $this->db->prepare("SELECT direct_referrals FROM mlm_profiles WHERE user_id = ?");
             $stmt->execute([$user['id']]);
@@ -146,8 +149,20 @@ class UserController extends BaseController
             if ($wallet) {
                 $referralEarnings = (float)($wallet['referral_earnings'] ?? 0);
             }
+            // 2FA status
+            $stmt = $this->db->prepare("SELECT two_factor_enabled FROM users WHERE id = ?");
+            $stmt->execute([$user['id']]);
+            $tf = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($tf) {
+                $twoFactorEnabled = !empty($tf['two_factor_enabled']);
+            }
+            // Saved searches count
+            $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM saved_searches WHERE user_id = ?");
+            $stmt->execute([$user['id']]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $savedCount = (int)($row['cnt'] ?? 0);
         } catch (\Exception $e) {
-                    error_log("UserController.php: " . $e->getMessage());
+            error_log("UserController.php: " . $e->getMessage());
         }
 
         $data = [
@@ -175,6 +190,8 @@ class UserController extends BaseController
             'referral_earnings' => $referralEarnings,
             'unread_notifications' => $unreadNotifCount,
             'investor_stats' => $this->safeInvestorStats((int)$user['id']),
+            'twoFactorEnabled' => $twoFactorEnabled,
+            'savedCount' => $savedCount,
         ];
 
         $this->layout = 'layouts/customer';
