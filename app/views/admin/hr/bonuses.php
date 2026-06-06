@@ -15,7 +15,7 @@ $page_title = $page_title ?? 'Employee Bonuses';
                 </thead>
                 <tbody>
                     <?php if (empty($bonuses ?? [])): ?>
-                        <tr><td colspan="7" class="text-center text-muted py-4">No bonuses recorded</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No bonuses recorded</td></tr>
                     <?php else: ?>
                         <?php foreach ($bonuses as $b): ?>
                             <tr>

@@ -31,7 +31,7 @@
                             <td><button class="btn btn-sm btn-outline-primary assign-btn" data-lead-id="<?= $lead['id'] ?>">Assign</button></td>
                         </tr>
                         <?php endforeach; else: ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No leads to assign</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No leads to assign</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

@@ -63,7 +63,7 @@ $leaveBalance = $leaveBalance ?? [
                     </thead>
                     <tbody>
                         <?php if (empty($leaves)): ?>
-                            <tr><td colspan="7" class="text-center text-muted py-4">No leave applications found.</td></tr>
+                            <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No leave applications found.</td></tr>
                         <?php else: ?>
                             <?php foreach ($leaves as $l): ?>
                                 <tr>

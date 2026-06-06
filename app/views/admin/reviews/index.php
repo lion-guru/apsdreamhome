@@ -80,7 +80,7 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php if (empty($reviews)): ?>
-                            <tr><td colspan="9" class="text-center text-muted py-4">No reviews yet</td></tr>
+                            <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No reviews yet</td></tr>
                         <?php else: ?>
                             <?php foreach ($reviews as $r): ?>
                                 <tr>
@@ -167,7 +167,7 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php if (empty($testimonials)): ?>
-                            <tr><td colspan="9" class="text-center text-muted py-4">No testimonials yet</td></tr>
+                            <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No testimonials yet</td></tr>
                         <?php else: ?>
                             <?php foreach ($testimonials as $t): ?>
                                 <tr>

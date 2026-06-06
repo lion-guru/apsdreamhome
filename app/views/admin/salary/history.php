@@ -26,7 +26,7 @@
                     </tr></thead>
                     <tbody>
                         <?php if (empty($history ?? [])): ?>
-                            <tr><td colspan="7" class="text-center text-muted py-4">No history records</td></tr>
+                            <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No history records</td></tr>
                         <?php else: ?>
                             <?php foreach ($history as $h): ?>
                             <tr>

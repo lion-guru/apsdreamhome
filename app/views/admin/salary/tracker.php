@@ -42,7 +42,7 @@
                     </tr></thead>
                     <tbody>
                         <?php if (empty($tracker ?? [])): ?>
-                            <tr><td colspan="12" class="text-center text-muted py-4">No tracker records</td></tr>
+                            <tr><td colspan="12" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No tracker records</td></tr>
                         <?php else: ?>
                             <?php foreach ($tracker as $t): ?>
                             <tr>

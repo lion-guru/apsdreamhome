@@ -95,7 +95,7 @@ $byStatus = $stats['by_status'] ?? [];
                     </thead>
                     <tbody>
                         <?php if (empty($recipients)): ?>
-                            <tr><td colspan="6" class="text-center text-muted py-4">No recipients yet</td></tr>
+                            <tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No recipients yet</td></tr>
                         <?php else: foreach ($recipients as $r):
                             $statusClass = ['sent' => 'info', 'delivered' => 'success', 'opened' => 'primary', 'clicked' => 'warning', 'failed' => 'danger', 'bounced' => 'danger'][$r['status']] ?? 'secondary';
                         ?>

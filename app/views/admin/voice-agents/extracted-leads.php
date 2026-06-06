@@ -111,7 +111,7 @@
                     </thead>
                     <tbody>
                         <?php if (empty($leads)): ?>
-                        <tr><td colspan="9" class="text-center text-muted py-4">No extracted leads found</td></tr>
+                        <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No extracted leads found</td></tr>
                         <?php else: ?>
                         <?php foreach ($leads as $lead): ?>
                         <tr>

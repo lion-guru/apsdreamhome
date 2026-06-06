@@ -38,7 +38,7 @@
                     </tr></thead>
                     <tbody>
                         <?php if (empty($payments ?? [])): ?>
-                            <tr><td colspan="10" class="text-center text-muted py-4">No payments found</td></tr>
+                            <tr><td colspan="10" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No payments found</td></tr>
                         <?php else: ?>
                             <?php foreach ($payments as $p): ?>
                             <tr>

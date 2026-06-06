@@ -79,7 +79,7 @@
                     </thead>
                     <tbody>
                         <?php if (empty($calls)): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No call records found</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No call records found</td></tr>
                         <?php else: ?>
                         <?php foreach ($calls as $call): ?>
                         <tr>

@@ -143,7 +143,7 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php if (empty($subscriptions)): ?>
-                            <tr><td colspan="12" class="text-center text-muted py-4">No subscriptions yet</td></tr>
+                            <tr><td colspan="12" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No subscriptions yet</td></tr>
                         <?php else: ?>
                             <?php foreach ($subscriptions as $sub): ?>
                                 <tr>

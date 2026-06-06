@@ -41,7 +41,7 @@ $es = $edit_structure ?? [];
                 </thead>
                 <tbody>
                     <?php if (empty($structures ?? [])): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No salary structures</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No salary structures</td></tr>
                     <?php else: ?>
                         <?php foreach ($structures as $s): ?>
                             <tr>

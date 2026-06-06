@@ -39,7 +39,7 @@ $page_title = $page_title ?? 'Leave Applications';
                 </thead>
                 <tbody>
                     <?php if (empty($leaves)): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No leave applications</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No leave applications</td></tr>
                     <?php else: ?>
                         <?php foreach ($leaves as $l): ?>
                             <tr>
