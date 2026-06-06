@@ -297,6 +297,12 @@ class CacheService
         return self::cache('property_filters_all', 3600, $callback);
     }
 
+    public static function getGamification(string $role, int $primaryId, int $secondaryId, callable $callback): array
+    {
+        $key = 'gamify_' . $role . '_' . $primaryId . '_' . $secondaryId;
+        return self::cache($key, 300, $callback);
+    }
+
     /**
      * Invalidate hooks — call these from places that mutate the underlying data.
      */
@@ -324,5 +330,12 @@ class CacheService
     public static function invalidatePropertyFilters(): int
     {
         return self::invalidate('property_filters_all');
+    }
+
+    public static function invalidateGamification(string $role, int $primaryId, int $secondaryId = 0): int
+    {
+        $key = 'gamify_' . $role . '_' . $primaryId . '_' . $secondaryId;
+        self::invalidate($key);
+        return 1;
     }
 }

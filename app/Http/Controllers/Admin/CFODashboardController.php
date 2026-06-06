@@ -26,6 +26,7 @@ class CFODashboardController extends AdminController
      */
     public function index()
     {
+        error_log("CFO index() REACHED, admin_id=" . ($_SESSION['admin_id'] ?? 'none') . ", admin_role=" . ($_SESSION['admin_role'] ?? 'none'));
         try {
             // Get financial overview (booking_payments has no status column)
             try {
@@ -88,11 +89,32 @@ class CFODashboardController extends AdminController
 
             // Get recent financial activities
             $activities = $this->db->fetchAll(
-                "SELECT id, activity_type as type, description, created_at
+                "SELECT id, action as type, description, created_at
                  FROM activity_logs_unified 
                  ORDER BY created_at DESC 
                  LIMIT 10"
             );
+
+            // Get top performers (gamification)
+            $top_performers = [];
+            try {
+                $svc = new \App\Services\GamificationService();
+                $top_associate = $svc->getTopAssociate();
+                $top_agent = $svc->getTopAgent();
+                $top_employee = $svc->getTopEmployee();
+                $top_performers = [
+                    'associate' => $top_associate,
+                    'agent' => $top_agent,
+                    'employee' => $top_employee
+                ];
+            } catch (\Throwable $e) {
+                error_log('Top performers error: ' . $e->getMessage());
+                $top_performers = [
+                    'associate' => ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'],
+                    'agent' => ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'],
+                    'employee' => ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A']
+                ];
+            }
 
             $financial_overview = [
                 'total_revenue' => $bp_revenue['total'],
@@ -107,11 +129,13 @@ class CFODashboardController extends AdminController
                 'expense_stats' => $expense_stats,
                 'commission_stats' => $commission_stats,
                 'profit_analysis' => $profit_analysis,
-                'activities' => $activities
+                'activities' => $activities,
+                'top_performers' => $top_performers
             ];
 
             return $this->render('admin/dashboards/cfo');
         } catch (Exception $e) {
+            error_log("CFO Dashboard Exception: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             $this->loggingService->error("CFO Dashboard Error: " . $e->getMessage());
             $this->setFlash('error', 'Dashboard loading failed');
             return $this->redirect('admin/dashboard');

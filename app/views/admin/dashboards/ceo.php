@@ -41,6 +41,37 @@
                     <h3>₹<?php echo number_format(floatval($commission_stats['total_commissions'] ?? 0) ?? 0); ?></h3>
                     <p class="text-muted mb-0">Avg: ₹<?php echo number_format(floatval($commission_stats['avg_commission'] ?? 0) ?? 0); ?></p>
                 </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Top Performers -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Performers</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <?php
+                        $tp = $top_performers ?? [];
+                        foreach (['associate' => 'Top Associate', 'agent' => 'Top Agent', 'employee' => 'Top Employee'] as $key => $title) {
+                            $p = $tp[$key] ?? ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
+                            $icon = match($key) { 'associate' => 'fa-users', 'agent' => 'fa-user-tie', 'employee' => 'fa-user-cog' };
+                            echo '<div class="col-md-4">';
+                            echo '<div class="card h-100 border-start border-primary border-3">';
+                            echo '<div class="card-body text-center">';
+                            echo '<i class="fas ' . $icon . ' fa-2x text-primary mb-2"></i>';
+                            echo '<h6 class="text-muted mb-1">' . $title . '</h6>';
+                            echo '<h4 class="mb-1">' . htmlspecialchars($p['name'] ?? 'N/A') . '</h4>';
+                            echo '<span class="badge bg-primary mb-2">' . htmlspecialchars($p['level'] ?? 'N/A') . '</span>';
+                            echo '<p class="text-muted small mb-0">' . htmlspecialchars($p['metric'] ?? 'N/A') . '</p>';
+                            echo '</div></div></div>';
+                        }
+                        ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -69,6 +69,27 @@ class CEODashboardController extends AdminController
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
             );
 
+            // Get top performers (gamification)
+            $top_performers = [];
+            try {
+                $svc = new \App\Services\GamificationService();
+                $top_associate = $svc->getTopAssociate();
+                $top_agent = $svc->getTopAgent();
+                $top_employee = $svc->getTopEmployee();
+                $top_performers = [
+                    'associate' => $top_associate,
+                    'agent' => $top_agent,
+                    'employee' => $top_employee
+                ];
+            } catch (\Throwable $e) {
+                error_log('Top performers error: ' . $e->getMessage());
+                $top_performers = [
+                    'associate' => ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'],
+                    'agent' => ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'],
+                    'employee' => ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A']
+                ];
+            }
+
             // Get recent activities
             $activities = $this->db->fetchAll(
                 "SELECT * FROM activity_logs_unified 
@@ -82,7 +103,8 @@ class CEODashboardController extends AdminController
                 'revenue_stats' => $revenue_stats,
                 'team_stats' => $team_stats,
                 'commission_stats' => $commission_stats,
-                'activities' => $activities
+                'activities' => $activities,
+                'top_performers' => $top_performers
             ];
 
             return $this->render('admin/dashboards/ceo');

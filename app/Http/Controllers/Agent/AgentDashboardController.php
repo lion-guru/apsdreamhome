@@ -360,8 +360,18 @@ class AgentDashboardController extends BaseController
     private function safeGamify(string $method, int ...$args): array
     {
         try {
-            $svc = new \App\Services\GamificationService();
-            return $svc->{$method}(...$args);
+            $role = strtolower(str_replace('for', '', $method));
+            $cacheKey1 = $args[0] ?? 0;
+            $cacheKey2 = $args[1] ?? 0;
+            return \App\Services\CacheService::getGamification(
+                $role,
+                (int)$cacheKey1,
+                (int)$cacheKey2,
+                function () use ($method, $args) {
+                    $svc = new \App\Services\GamificationService();
+                    return $svc->{$method}(...$args);
+                }
+            );
         } catch (\Throwable $e) {
             error_log('Gamification error: ' . $e->getMessage());
             return [];

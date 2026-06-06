@@ -772,8 +772,15 @@ class UserController extends BaseController
     private function safeInvestorStats(int $userId): array
     {
         try {
-            $svc = new \App\Services\InvestmentService();
-            return $svc->getStats($userId);
+            return \App\Services\CacheService::getGamification(
+                'customer_investor',
+                $userId,
+                0,
+                function () use ($userId) {
+                    $svc = new \App\Services\InvestmentService();
+                    return $svc->getStats($userId);
+                }
+            );
         } catch (\Throwable $e) {
             error_log('Investor stats error: ' . $e->getMessage());
             return ['level' => 'Bronze', 'next_level' => 'Silver', 'progress_pct' => 0, 'next_threshold' => 50000, 'total_invested' => 0, 'total' => 0, 'active' => 0, 'principal' => 0, 'current_value' => 0, 'returns' => 0];
