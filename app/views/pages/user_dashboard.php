@@ -10,21 +10,7 @@ $user = $user ?? [];
 $userDocuments = $userDocuments ?? [];
 $recentPayments = $recentPayments ?? [];
 $savedCount = $savedCount ?? 0;
-
-$db = \App\Core\Database\Database::getInstance();
-try {
-    $cntStmt = $db->prepare("SELECT COUNT(*) as cnt FROM saved_searches WHERE user_id = ?");
-    $cntStmt->execute([$_SESSION['user_id'] ?? 0]);
-    $savedCount = (int)($cntStmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
-} catch (\Throwable $e) {}
-
-try {
-    $secStmt = $db->prepare("SELECT two_factor_enabled FROM users WHERE id = ?");
-    $secStmt->execute([$_SESSION['user_id'] ?? 0]);
-    $twoFactorEnabled = !empty($secStmt->fetch(\PDO::FETCH_ASSOC)['two_factor_enabled']);
-} catch (\Throwable $e) {
-    $twoFactorEnabled = !empty($user['two_factor_enabled']);
-}
+$twoFactorEnabled = $twoFactorEnabled ?? false;
 ?>
 
 <div class="aps-cp-hero">
