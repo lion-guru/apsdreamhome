@@ -62,7 +62,7 @@
     ?>
 
     <!-- Sidebar (DB-driven via rbac_sidebar.php) -->
-    <?php include __DIR__ . '/../admin/layouts/rbac_sidebar.php'; ?>
+    <?php include_once __DIR . '/../admin/layouts/rbac_sidebar.php'; ?>
 
     <?php
     // Live notification/message counts from DB
@@ -258,3 +258,4 @@
 </body>
 
 </html>
+
