@@ -6,6 +6,8 @@
 
 // Auth handled by UserController::bankDetails() (checks $_SESSION['user_id'])
 
+$page_title = $page_title ?? __('bank_page_title', null, 'Bank Account Details');
+
 $db = \App\Core\Database\Database::getInstance();
 $userId = $_SESSION['user_id'];
 
@@ -157,7 +159,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                         <strong><?= htmlspecialchars($acc['bank_name'] ?? 'Bank') ?></strong>
                                         <br>
                                         <small class="text-muted">A/C: <?= htmlspecialchars(substr($acc['account_number'], 0, 4)) ?>****<?= htmlspecialchars(substr($acc['account_number'], -4)) ?></small>
-                                        <?php if ($acc['upi_id']): ?>
+                                        <?php if (!empty($acc['upi_id'])): ?>
                                         <br><small class="text-success"><i class="fas fa-check me-1"></i>UPI: <?= htmlspecialchars($acc['upi_id']) ?></small>
                                         <?php endif; ?>
                                     </div>
