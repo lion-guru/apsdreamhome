@@ -51,7 +51,8 @@ class AgentDashboardController extends BaseController
                 'agent_stats' => $agentStats,
                 'recent_leads' => $recentLeads,
                 'assigned_properties' => $assignedProperties,
-                'commission_summary' => $commissionSummary
+                'commission_summary' => $commissionSummary,
+                'gamify' => $this->safeGamify('forAgent', (int)$userId, (int)($_SESSION['agent_id'] ?? $userId)),
             ]);
         } catch (Exception $e) {
             error_log("Agent Dashboard Error: " . $e->getMessage());
@@ -354,5 +355,16 @@ class AgentDashboardController extends BaseController
     public function profile()
     {
         return $this->redirect('/agent/dashboard');
+    }
+
+    private function safeGamify(string $method, int ...$args): array
+    {
+        try {
+            $svc = new \App\Services\GamificationService();
+            return $svc->{$method}(...$args);
+        } catch (\Throwable $e) {
+            error_log('Gamification error: ' . $e->getMessage());
+            return [];
+        }
     }
 }

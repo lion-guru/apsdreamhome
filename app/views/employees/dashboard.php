@@ -268,9 +268,14 @@ $activities = $dashboardData['activities'] ?? [];
                             Employee Dashboard
                         </h1>
                         <p class="lead mb-0">
-                            Welcome back, <?php echo htmlspecialchars($employee['name'] ?? 'Employee'); ?>! 
+                            Welcome back, <?php echo htmlspecialchars($employee['name'] ?? 'Employee'); ?>!
                             Here's your workspace overview.
                         </p>
+                    </div>
+                    <div class="col-md-4">
+                        <?php $gamify = $gamify ?? []; if (!empty($gamify) && !empty($gamify['level'])): ?>
+                            <?php include __DIR__ . '/../components/gamification_widget.php'; ?>
+                        <?php endif; ?>
                     </div>
                     <div class="col-md-4 text-end">
                         <div class="d-flex flex-column align-items-end">

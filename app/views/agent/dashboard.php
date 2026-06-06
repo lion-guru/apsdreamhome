@@ -16,6 +16,14 @@ $commission_summary = $commission_summary ?? [];
         </div>
     </div>
 
+    <?php $gamify = $gamify ?? []; if (!empty($gamify) && !empty($gamify['level'])): ?>
+    <div class="row mt-3">
+        <div class="col-12">
+            <?php include __DIR__ . '/../components/gamification_widget.php'; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <div class="row mt-4">
         <!-- Stats Cards -->
         <div class="col-md-3 mb-4">

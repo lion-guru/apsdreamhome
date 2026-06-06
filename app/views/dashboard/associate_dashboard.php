@@ -19,6 +19,8 @@ $stats = $stats ?? [
 $recent_leads = $recent_leads ?? [];
 $recent_commissions = $recent_commissions ?? [];
 $activities = $activities ?? [];
+
+$gamify = $gamify ?? [];
 ?>
 
 <!-- Referral Code Banner -->
@@ -42,6 +44,15 @@ $activities = $activities ?? [];
         </a>
     </div>
 </div>
+
+<!-- Gamification Widget -->
+<?php if (!empty($gamify) && !empty($gamify['level'])): ?>
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <?php include __DIR__ . '/../components/gamification_widget.php'; ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- Quick Stats Row -->
 <div class="row g-3 mb-4">

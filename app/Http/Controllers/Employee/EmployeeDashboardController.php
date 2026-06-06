@@ -75,7 +75,7 @@ class EmployeeDashboardController extends BaseController
                 'performance' => $performance,
                 'schedule' => $schedule,
                 'communications' => $communications,
-                'role_specific_data' => $this->getRoleSpecificData()
+                'role_specific_data' => $this->getRoleSpecificData(),
             ]);
 
         } catch (Exception $e) {
