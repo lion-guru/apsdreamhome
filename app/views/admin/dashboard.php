@@ -96,7 +96,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     
     <div class="col-md-6 col-xl-3">
         <div class="aps-cp-stat aps-cp-stat--blue">
-            <div class="stat-icon success"><i class="fas fa-building"></i></div>
+            <div class="aps-cp-stat-icon"><i class="fas fa-building"></i></div>
             <div class="aps-cp-stat-body">
                 <div class="aps-cp-stat-label"><?= __('admin_stat_properties', null, 'Properties') ?></div>
                 <div class="aps-cp-stat-value"><?php echo number_format($stats['total_properties']); ?></div>
@@ -106,18 +106,18 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     
     <div class="col-md-6 col-xl-3">
         <div class="aps-cp-stat aps-cp-stat--blue">
-            <div class="stat-icon warning"><i class="fas fa-bullseye"></i></div>
+            <div class="aps-cp-stat-icon"><i class="fas fa-bullseye"></i></div>
             <div class="aps-cp-stat-body">
                 <div class="aps-cp-stat-label"><?= __('admin_stat_leads', null, 'Total Leads') ?></div>
                 <div class="aps-cp-stat-value"><?php echo number_format($stats['total_leads']); ?></div>
-                <div class="stat-change up"><i class="fas fa-arrow-up"></i> <?php echo $stats['new_leads_today']; ?> <?= __('admin_today', null, 'today') ?></div>
+                <div class="aps-cp-stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo $stats['new_leads_today']; ?> <?= __('admin_today', null, 'today') ?></div>
             </div>
         </div>
     </div>
     
     <div class="col-md-6 col-xl-3">
         <div class="aps-cp-stat aps-cp-stat--blue">
-            <div class="stat-icon info"><i class="fas fa-network-wired"></i></div>
+            <div class="aps-cp-stat-icon"><i class="fas fa-network-wired"></i></div>
             <div class="aps-cp-stat-body">
                 <div class="aps-cp-stat-label">users</div>
                 <div class="aps-cp-stat-value"><?php echo number_format($stats['total_associates']); ?></div>
@@ -130,7 +130,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
 <div class="row g-4 mb-4">
     <div class="col-md-6 col-xl-3">
         <div class="aps-cp-stat aps-cp-stat--blue">
-            <div class="stat-icon purple"><i class="fas fa-rupee-sign"></i></div>
+            <div class="aps-cp-stat-icon"><i class="fas fa-rupee-sign"></i></div>
             <div class="aps-cp-stat-body">
                 <div class="aps-cp-stat-label"><?= __('admin_stat_revenue', null, 'Revenue (30 Days)') ?></div>
                 <div class="aps-cp-stat-value">₹<?php echo number_format($stats['revenue_month'], 2); ?></div>
@@ -150,7 +150,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     
     <div class="col-md-6 col-xl-3">
         <div class="aps-cp-stat aps-cp-stat--blue">
-            <div class="stat-icon warning"><i class="fas fa-file-contract"></i></div>
+            <div class="aps-cp-stat-icon"><i class="fas fa-file-contract"></i></div>
             <div class="aps-cp-stat-body">
                 <div class="aps-cp-stat-label">Pending Bookings</div>
                 <div class="aps-cp-stat-value"><?php echo number_format($stats['pending_bookings']); ?></div>
@@ -160,7 +160,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     
     <div class="col-md-6 col-xl-3">
         <div class="aps-cp-stat aps-cp-stat--blue">
-            <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+            <div class="aps-cp-stat-icon"><i class="fas fa-check-circle"></i></div>
             <div class="aps-cp-stat-body">
                 <div class="aps-cp-stat-label"><?= __('admin_stat_system', null, 'System Status') ?></div>
                 <div class="stat-value text-success">Online</div>
