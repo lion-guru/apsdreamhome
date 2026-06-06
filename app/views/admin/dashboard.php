@@ -232,7 +232,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                                                 <div class="fw-medium"><?php echo htmlspecialchars($lead['name'] ?? 'Unknown'); ?></div>
                                                 <small class="text-muted"><?php echo htmlspecialchars($lead['email'] ?? ''); ?></small>
                                             </div>
-                                            <span class="badge bg-<?php echo $lead['status'] === 'hot' ? 'danger' : ($lead['status'] === 'warm' ? 'warning' : 'secondary'); ?>">
+                                            <?php $statusColor = $lead['status'] === 'hot' ? 'danger' : ($lead['status'] === 'warm' ? 'warning' : 'secondary'); ?>
+                                            <span class="badge bg-<?php echo $statusColor; ?>">
                                                 <?php echo ucfirst($lead['status'] ?? 'new'); ?>
                                             </span>
                                         </div>
