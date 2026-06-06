@@ -34,11 +34,46 @@
 - **Smoke test**: Customer KYC form shows document upload fields, admin KYC views render correctly
 
 ### Pending (Next Priority)
-1. **CSS consolidation** — Merge 50+ CSS files, remove duplicates
-2. **i18n completion** — home.php (~201 strings), admin pages
-3. **Real KYC API** — NSDL PAN verification, UIDAI Aadhaar e-KYC integration
-4. **Mobile responsiveness** — Admin portal mobile fixes
-5. **CSS consolidation** — Merge 50+ CSS files, remove duplicates
+1. **i18n completion** — home.php (~201 strings), admin pages
+2. **Real KYC API** — NSDL PAN verification, UIDAI Aadhaar e-KYC integration
+3. **Mobile responsiveness** — Admin portal mobile fixes
+4. **Admin portal CSS modernization** — Replace Bootstrap with aps-cp-* design system
+
+---
+
+## Session 2026-06-06 (CSS Consolidation): 16 CSS files → 4 consolidated bundles (Commit 93de3cb8c)
+
+### What Was Done
+Consolidated 16 individual CSS files (160 KB total) into 4 optimized bundles, reducing HTTP requests from 16 to 4.
+
+### Files Created (4)
+- `assets/css/consolidated/aps-core.css` (52 KB) — `style.css` + `frontend.css` + `frontend-enhancements.css` (design system foundation: variables, reset, typography, utilities)
+- `assets/css/consolidated/aps-components.css` (51 KB) — `customer-pages.css` + `notification-system.css` + `image-gallery.css` + `image-uploader.css` + `live-chat-widget.css` (reusable UI components)
+- `assets/css/consolidated/aps-layout.css` (25 KB) — `header.css` + `mobile-responsive.css` + `modern-style.css` + `advanced-features.css` (layout utilities, grid, flex, header, sidebar)
+- `assets/css/consolidated/aps-pages.css` (58 KB) — `chatbot.css` + `ai-chat.css` + `ai-chat-enhanced.css` + `ai-features.css` + `live-chat-widget.css` + `notification-system.css` + `image-gallery.css` + `image-uploader.css` + `employee.css` + `ai-features.css` (page-specific styles)
+
+### Files Modified (3)
+- `app/views/layouts/base.php` — Updated to load 4 consolidated bundles instead of 8 individual files
+- `app/views/layouts/customer.php` — Updated to load 4 consolidated bundles instead of 4 individual files, removed duplicate inline styles
+- `scripts/consolidate_css.ps1` — Consolidation script for future use
+
+### Key Changes
+- Reduced CSS HTTP requests from 16 → 4 (75% reduction)
+- Removed duplicate inline styles from `customer.php` layout (sidebar styles now in `aps-components.css`)
+- Maintained proper cascade order: `aps-core.css` → `aps-components.css` → `aps-layout.css` → `aps-pages.css` (deferred)
+- Page-specific styles (`aps-pages.css`) loaded with `media="print" onload="this.media='all'"` for non-blocking load
+
+### Verification
+- **PHP syntax**: All modified files pass `php -l`
+- **E2E master**: **164/165 PASS** (1 expected GodMode 403) — zero regressions
+- **Smoke test**: All 4 bundles loaded, sidebar styles intact, APS design classes (`aps-cp-*`) present
+
+### Pending (Next Priority)
+1. **i18n completion** — home.php (~201 strings), admin pages
+2. **Real KYC API** — NSDL PAN verification, UIDAI Aadhaar e-KYC integration
+3. **Mobile responsiveness** — Admin portal mobile fixes
+4. **Admin portal CSS modernization** — Replace Bootstrap with aps-cp-* design system
+
 
 ---
 
