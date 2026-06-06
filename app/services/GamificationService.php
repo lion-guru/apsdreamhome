@@ -110,6 +110,82 @@ class GamificationService
         return $this->buildTieredWidget('Performance Tier', 'fa-star', $score, $thresholds, 'Performance Score (12 mo): ' . number_format($score) . ' pts', '/employee/performance', 'View Details', 'linear-gradient(135deg, #fff 0%, #fed7aa 100%)');
     }
 
+    public function getTopAssociate(): array
+    {
+        try {
+            $pdo = $this->resolvePdo();
+            $stmt = $pdo->prepare("
+                SELECT a.name, a.level, a.lifetime_sales, u.id
+                FROM associates a
+                JOIN users u ON u.id = a.user_id
+                WHERE a.lifetime_sales IS NOT NULL AND a.lifetime_sales > 0
+                ORDER BY a.lifetime_sales DESC
+                LIMIT 1
+            ");
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ?: ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
+        } catch (\Throwable $e) {
+            return ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
+        }
+    }
+
+    public function getTopAgent(): array
+    {
+        try {
+            $pdo = $this->resolvePdo();
+            $stmt = $pdo->prepare("
+                SELECT u.name, a.level, COALESCE(SUM(d.deal_value), 0) as total_deals
+                FROM users u
+                JOIN agents a ON a.user_id = u.id
+                LEFT JOIN deals d ON d.assigned_to = u.id
+                WHERE u.role = 'agent'
+                GROUP BY u.id, u.name, a.level
+                ORDER BY total_deals DESC
+                LIMIT 1
+            ");
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ?: ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
+        } catch (\Throwable $e) {
+            return ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
+        }
+    }
+
+    public function getTopEmployee(): array
+    {
+        try {
+            $pdo = $this->resolvePdo();
+            $stmt = $pdo->prepare("
+                SELECT u.name, COALESCE(SUM(pm.points), 0) as total_points
+                FROM users u
+                JOIN employees e ON e.user_id = u.id
+                LEFT JOIN performance_metrics pm ON pm.employee_id = e.id
+                WHERE u.role = 'employee'
+                GROUP BY u.id, u.name
+                ORDER BY total_points DESC
+                LIMIT 1
+            ");
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $row['level'] = $this->getEmployeeLevelName($row['total_points']);
+            }
+            return $row ?: ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
+        } catch (\Throwable $e) {
+            return ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
+        }
+    }
+
+    private function getEmployeeLevelName(int $points): string
+    {
+        if ($points >= 1000) return 'Star';
+        if ($points >= 600) return 'Lead';
+        if ($points >= 300) return 'Senior';
+        if ($points >= 100) return 'Junior';
+        return 'Trainee';
+    }
+
     private function buildTieredWidget(string $title, string $icon, float $value, array $thresholds, string $metric, string $ctaUrl, string $ctaText, string $gradient): array
     {
         $current = $thresholds[0];
