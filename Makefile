@@ -262,6 +262,34 @@ clean: down ## Stop stack and remove generated files
 	rm -rf storage/cache/* storage/logs/*.log storage/.migrated
 	@echo "$(GREEN)Clean complete.$(NC)"
 
+.PHONY: cleanup-artifacts
+cleanup-artifacts: ## Remove regeneratable build artifacts (Flutter, .dart_tool, runtime cache)
+	@echo "$(YELLOW)Removing regeneratable build artifacts...$(NC)"
+	rm -rf mobile/apsdreamhome_app_v2/android/build
+	rm -rf mobile/apsdreamhome_app_v2/android/.gradle
+	rm -rf mobile/apsdreamhome_app_v2/build
+	rm -rf mobile/apsdreamhome_app_v2/.dart_tool
+	rm -rf mobile/apsdreamhome_app_v2/ios/Pods
+	rm -rf storage/cache/*
+	@echo "$(GREEN)Build artifacts removed. Disk space freed.$(NC)"
+
+.PHONY: cleanup-artifacts-dryrun
+cleanup-artifacts-dryrun: ## Show what cleanup-artifacts would remove
+	@echo "$(YELLOW)Would remove:$(NC)"
+	@for p in mobile/apsdreamhome_app_v2/android/build \
+	         mobile/apsdreamhome_app_v2/android/.gradle \
+	         mobile/apsdreamhome_app_v2/build \
+	         mobile/apsdreamhome_app_v2/.dart_tool \
+	         mobile/apsdreamhome_app_v2/ios/Pods \
+	         storage/cache/*; do \
+		if [ -e "$$p" ]; then \
+			sz=$$(du -sh "$$p" 2>/dev/null | cut -f1); \
+			echo "  [exists] $$p ($$sz)"; \
+		else \
+			echo "  [skip]   $$p (not found)"; \
+		fi; \
+	done
+
 # =============================================================================
 # Production
 # =============================================================================
