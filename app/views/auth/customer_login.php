@@ -357,13 +357,17 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                 <?php else: ?>
                     <div class="input-icon-wrapper">
                         <input type="text" class="form-control" id="identity" name="identity"
-                            placeholder="<?= __('email_or_phone') ?>" required autofocus>
+                            placeholder="<?= __('email_or_phone') ?>" required autofocus
+                            autocomplete="username"
+                            aria-label="<?= __('email_or_phone') ?>">
                         <i class="fas fa-user input-icon"></i>
                     </div>
 
                     <div class="input-icon-wrapper password-wrapper">
                         <input type="password" class="form-control" id="password" name="password"
-                            placeholder="<?= __('password') ?>" required>
+                            placeholder="<?= __('password') ?>" required
+                            autocomplete="current-password"
+                            aria-label="<?= __('password') ?>">
                         <i class="fas fa-lock input-icon"></i>
                         <button type="button" class="toggle-password" onclick="togglePassword()"
                             aria-label="Toggle password visibility">
