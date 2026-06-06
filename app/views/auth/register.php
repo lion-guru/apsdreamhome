@@ -17,23 +17,23 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                            <div class="input-group"><span class="input-group-text"><i class="fas fa-user"></i></span><input type="text" class="form-control" name="name" required placeholder="Your full name"></div>
+                            <div class="input-group"><span class="input-group-text"><i class="fas fa-user"></i></span><input type="text" class="form-control" name="name" required placeholder="Your full name" autocomplete="name"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                            <div class="input-group"><span class="input-group-text"><i class="fas fa-envelope"></i></span><input type="email" class="form-control" name="email" required placeholder="email@example.com"></div>
+                            <div class="input-group"><span class="input-group-text"><i class="fas fa-envelope"></i></span><input type="email" class="form-control" name="email" required placeholder="email@example.com" autocomplete="email"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                            <div class="input-group"><span class="input-group-text"><i class="fas fa-phone"></i></span><input type="tel" class="form-control" name="phone" required placeholder="+91 9XXXXXXXX"></div>
+                            <div class="input-group"><span class="input-group-text"><i class="fas fa-phone"></i></span><input type="tel" class="form-control" name="phone" required placeholder="+91 9XXXXXXXX" autocomplete="tel"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password <span class="text-danger">*</span></label>
-                            <div class="input-group"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" name="password" required minlength="6" placeholder="At least 6 characters"></div>
+                            <div class="input-group"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" name="password" required minlength="6" placeholder="At least 6 characters" autocomplete="new-password"></div>
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                            <div class="input-group"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" name="confirm_password" required placeholder="Repeat password"></div>
+                            <div class="input-group"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" name="confirm_password" required placeholder="Repeat password" autocomplete="new-password"></div>
                         </div>
                         <div class="form-check mb-4">
                             <input class="form-check-input" type="checkbox" name="agree" id="agree" required>
