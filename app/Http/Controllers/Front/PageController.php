@@ -2155,10 +2155,10 @@ class PageController extends BaseController
 
                 try {
                     $inqStmt = $this->db->prepare("
-                        INSERT INTO inquiries (name, email, phone, message, type, status, priority, posted_by, posted_by_type, created_at) 
-                        VALUES (?, ?, ?, ?, 'property_listing', 'new', 'medium', ?, ?, NOW())
+                        INSERT INTO inquiries (name, email, phone, message, type, status, priority, user_id, created_at)
+                        VALUES (?, ?, ?, ?, 'property', 'pending', 'medium', ?, NOW())
                     ");
-                    $inqStmt->execute([$name, $email, $phone, $message, $postedBy, $postedByType]);
+                    $inqStmt->execute([$name, $email, $phone, $message, $postedBy]);
                 } catch (\Exception $e2) {
                     error_log("Inquiry save error: " . $e2->getMessage());
                 }

@@ -2,87 +2,135 @@
 $page_title = $page_title ?? 'My Dashboard';
 $current_page = 'dashboard';
 
-// Data from controller (with safe fallbacks)
 $stats = $stats ?? ['total_properties' => 0, 'active_inquiries' => 0, 'total_bookings' => 0, 'total_inquiries' => 0, 'total_tickets' => 0, 'open_tickets' => 0];
 $properties = $properties ?? [];
 $inquiries = $inquiries ?? [];
 $bookings = $bookings ?? [];
 $user = $user ?? [];
 $userDocuments = $userDocuments ?? [];
+$recentPayments = $recentPayments ?? [];
+$savedCount = $savedCount ?? 0;
+
+$db = \App\Core\Database\Database::getInstance();
+try {
+    $cntStmt = $db->prepare("SELECT COUNT(*) as cnt FROM saved_searches WHERE user_id = ?");
+    $cntStmt->execute([$_SESSION['user_id'] ?? 0]);
+    $savedCount = (int)($cntStmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
+} catch (\Throwable $e) {}
+
+try {
+    $secStmt = $db->prepare("SELECT two_factor_enabled FROM users WHERE id = ?");
+    $secStmt->execute([$_SESSION['user_id'] ?? 0]);
+    $twoFactorEnabled = !empty($secStmt->fetch(\PDO::FETCH_ASSOC)['two_factor_enabled']);
+} catch (\Throwable $e) {
+    $twoFactorEnabled = !empty($user['two_factor_enabled']);
+}
 ?>
 
-<!-- Welcome Banner -->
-<div class="card border-0 shadow-sm mb-4 bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div class="card-body p-4">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h4 class="mb-2"><?= __('dash_welcome_back', ['name' => htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? __('dash_default_customer'))], 'Welcome back, %s!') ?></h4>
-                <p class="mb-0 opacity-75"><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries and purchases all in one place.') ?></p>
-            </div>
-            <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-light">
+<div class="aps-cp-hero">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h2><i class="fas fa-hand-sparkles me-2"></i><?= __('dash_welcome_back', ['name' => htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? '')], 'Welcome back, %s!') ?></h2>
+            <p><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries, bookings and payments — all in one place.') ?></p>
+        </div>
+        <div class="col-md-4 mt-3 mt-md-0">
+            <div class="aps-cp-hero-actions justify-content-md-end">
+                <a href="<?= BASE_URL ?>/list-property" class="btn btn-light">
                     <i class="fas fa-plus me-2"></i><?= __('dash_btn_post_property', null, 'Post Property') ?>
+                </a>
+                <a href="<?= BASE_URL ?>/properties" class="btn btn-outline-light">
+                    <i class="fas fa-search me-2"></i><?= __('dash_btn_browse', null, 'Browse') ?>
                 </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Quick Stats -->
-<div class="row g-4 mb-4">
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card">
-            <div class="stat-icon blue"><i class="fas fa-building"></i></div>
-            <div class="stat-value"><?php echo $stats['total_properties']; ?></div>
-            <div class="stat-label"><?= __('dash_stat_my_properties', null, 'My Properties') ?></div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4 col-sm-6">
+        <div class="aps-cp-stat aps-cp-stat--blue">
+            <div class="aps-cp-stat-icon"><i class="fas fa-building"></i></div>
+            <div class="aps-cp-stat-body">
+                <div class="aps-cp-stat-value" data-aps-count="<?= (int)$stats['total_properties'] ?>">0</div>
+                <div class="aps-cp-stat-label">
+                    <?= __('dash_stat_my_properties', null, 'My Properties') ?>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card">
-            <div class="stat-icon green"><i class="fas fa-envelope"></i></div>
-            <div class="stat-value"><?php echo $stats['active_inquiries']; ?></div>
-            <div class="stat-label"><?= __('dash_stat_active_inquiries', null, 'Active Inquiries') ?></div>
+    <div class="col-md-4 col-sm-6">
+        <div class="aps-cp-stat aps-cp-stat--green">
+            <div class="aps-cp-stat-icon"><i class="fas fa-envelope"></i></div>
+            <div class="aps-cp-stat-body">
+                <div class="aps-cp-stat-value" data-aps-count="<?= (int)$stats['active_inquiries'] ?>">0</div>
+                <div class="aps-cp-stat-label">
+                    <?= __('dash_stat_active_inquiries', null, 'Active Inquiries') ?>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card">
-            <div class="stat-icon orange"><i class="fas fa-file-invoice"></i></div>
-            <div class="stat-value"><?php echo $stats['total_bookings']; ?></div>
-            <div class="stat-label"><?= __('dash_stat_my_purchases', null, 'My Purchases') ?></div>
+    <div class="col-md-4 col-sm-6">
+        <div class="aps-cp-stat aps-cp-stat--orange">
+            <div class="aps-cp-stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+            <div class="aps-cp-stat-body">
+                <div class="aps-cp-stat-value" data-aps-count="<?= (int)$stats['total_bookings'] ?>">0</div>
+                <div class="aps-cp-stat-label">
+                    <?= __('dash_stat_my_purchases', null, 'My Purchases') ?>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card">
-            <div class="stat-icon purple"><i class="fas fa-chart-bar"></i></div>
-            <div class="stat-value"><?php echo $stats['total_inquiries']; ?></div>
-            <div class="stat-label"><?= __('dash_stat_total_inquiries', null, 'Total Inquiries') ?></div>
+    <div class="col-md-4 col-sm-6">
+        <div class="aps-cp-stat aps-cp-stat--purple">
+            <div class="aps-cp-stat-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="aps-cp-stat-body">
+                <div class="aps-cp-stat-value" data-aps-count="<?= (int)$stats['total_inquiries'] ?>">0</div>
+                <div class="aps-cp-stat-label">
+                    <?= __('dash_stat_total_inquiries', null, 'Total Inquiries') ?>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card">
-            <div class="stat-icon red"><i class="fas fa-headset"></i></div>
-            <div class="stat-value"><?php echo $stats['open_tickets']; ?><small class="text-muted fs-6">/<?php echo $stats['total_tickets']; ?></small></div>
-            <div class="stat-label"><?= __('dash_stat_open_tickets', null, 'Open Tickets') ?></div>
+    <div class="col-md-4 col-sm-6">
+        <div class="aps-cp-stat aps-cp-stat--red">
+            <div class="aps-cp-stat-icon"><i class="fas fa-headset"></i></div>
+            <div class="aps-cp-stat-body">
+                <div class="aps-cp-stat-value">
+                    <span data-aps-count="<?= (int)$stats['open_tickets'] ?>">0</span>
+                    <span class="text-muted fs-6">/<span data-aps-count="<?= (int)$stats['total_tickets'] ?>">0</span></span>
+                </div>
+                <div class="aps-cp-stat-label">
+                    <?= __('dash_stat_open_tickets', null, 'Open Tickets') ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="aps-cp-stat aps-cp-stat--indigo">
+            <div class="aps-cp-stat-icon"><i class="fas fa-bookmark"></i></div>
+            <div class="aps-cp-stat-body">
+                <div class="aps-cp-stat-value" data-aps-count="<?= (int)$savedCount ?>">0</div>
+                <div class="aps-cp-stat-label">
+                    <?= __('dash_stat_saved_searches', null, 'Saved Searches') ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="row g-4">
-    <!-- Left Column -->
     <div class="col-lg-8">
-        <!-- My Purchases (Bookings) -->
+
         <?php if (!empty($bookings)): ?>
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-0 py-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-file-invoice text-success me-2"></i><?= __('dash_section_my_purchases', null, 'My Purchases') ?></h5>
-                    <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
-                </div>
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-file-invoice-dollar text-success"></i> <?= __('dash_section_my_purchases', null, 'My Purchases') ?></h5>
+                <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
-            <div class="card-body p-0">
+            <div class="aps-cp-card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="bg-light">
+                    <table class="aps-cp-table">
+                        <thead>
                             <tr>
                                 <th><?= __('dash_th_plot', null, 'Plot') ?></th>
                                 <th><?= __('dash_th_colony', null, 'Colony') ?></th>
@@ -90,23 +138,21 @@ $userDocuments = $userDocuments ?? [];
                                 <th><?= __('dash_th_token_paid', null, 'Token Paid') ?></th>
                                 <th><?= __('dash_th_status', null, 'Status') ?></th>
                                 <th><?= __('dash_th_date', null, 'Date') ?></th>
-                                <th><?= __('dash_th_documents', null, 'Documents') ?></th>
-                                <th><?= __('dash_th_action', null, 'Action') ?></th>
+                                <th class="text-end"><?= __('dash_th_action', null, 'Action') ?></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($bookings as $b): ?>
-                            <?php
-                            $bStatus = $b['status'] ?? 'pending';
-                            $badgeClass = match($bStatus) {
-                                'confirmed','completed' => 'success',
-                                'cancelled' => 'danger',
-                                'pending' => 'warning',
-                                default => 'secondary'
-                            };
-                            $tokenPaid = (float)($b['amount'] ?? 0);
-                            $totalAmt = (float)($b['total_amount'] ?? 0);
-                            $tokenRequired = $totalAmt * 0.25;
+                            <?php foreach ($bookings as $b):
+                                $bStatus = $b['status'] ?? 'pending';
+                                $badgeClass = match($bStatus) {
+                                    'confirmed', 'completed' => 'success',
+                                    'cancelled' => 'danger',
+                                    'pending' => 'warning',
+                                    default => 'secondary'
+                                };
+                                $tokenPaid = (float)($b['amount'] ?? 0);
+                                $totalAmt = (float)($b['total_amount'] ?? 0);
+                                $tokenRequired = $totalAmt * 0.25;
                             ?>
                             <tr>
                                 <td><strong>#<?= htmlspecialchars($b['plot_number'] ?? $b['property_id'] ?? 'N/A') ?></strong></td>
@@ -127,20 +173,15 @@ $userDocuments = $userDocuments ?? [];
                                     <?php endif; ?>
                                 </td>
                                 <td><?= date('M d, Y', strtotime($b['created_at'] ?? $b['booking_date'] ?? 'now')) ?></td>
-                                <td>
-                                    <div class="d-flex flex-column gap-1">
-                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/receipt" class="btn btn-outline-secondary btn-sm" title="Download Receipt"><i class="fas fa-print me-1"></i><?= __('dash_btn_receipt', null, 'Receipt') ?></a>
-                                        <?php if ($bStatus === 'confirmed' || $bStatus === 'completed'): ?>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" title="Download Allotment Letter" onclick="alert('Allotment letter will be available soon.')"><i class="fas fa-file-alt me-1"></i><?= __('dash_btn_allotment', null, 'Allotment') ?></button>
-                                        <button type="button" class="btn btn-outline-success btn-sm" title="Download Agreement" onclick="alert('Sale agreement will be available soon.')"><i class="fas fa-file-contract me-1"></i><?= __('dash_btn_agreement', null, 'Agreement') ?></button>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                                <td>
+                                <td class="text-end">
                                     <?php if ($bStatus === 'pending' && $tokenRequired > $tokenPaid): ?>
-                                        <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/pay" class="btn btn-success btn-sm w-100 mb-1"><i class="fas fa-credit-card me-1"></i><?= __('dash_btn_pay_token', null, 'Pay Token') ?></a>
+                                        <a href="<?= BASE_URL ?>/booking/<?= (int)$b['id'] ?>/pay" class="aps-cp-icon-btn" title="<?= __('dash_btn_pay_token', null, 'Pay Token') ?>" style="width:auto; padding: 0 0.6rem;">
+                                            <i class="fas fa-credit-card me-1"></i><?= __('dash_btn_pay_token', null, 'Pay Token') ?>
+                                        </a>
                                     <?php endif; ?>
-                                    <a href="<?= BASE_URL ?>/booking/<?= $b['id'] ?>/confirmation" class="btn btn-outline-info btn-sm w-100"><i class="fas fa-eye"></i> <?= __('dash_btn_view', null, 'View') ?></a>
+                                    <a href="<?= BASE_URL ?>/booking/<?= (int)$b['id'] ?>/confirmation" class="aps-cp-icon-btn" title="<?= __('dash_btn_view', null, 'View') ?>">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -150,56 +191,54 @@ $userDocuments = $userDocuments ?? [];
             </div>
         </div>
         <?php else: ?>
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-file-invoice text-success me-2"></i><?= __('dash_section_my_purchases', null, 'My Purchases') ?></h5>
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-file-invoice-dollar text-success"></i> <?= __('dash_section_my_purchases', null, 'My Purchases') ?></h5>
             </div>
-            <div class="card-body">
-                <div class="aps-empty-state">
-                    <i class="fas fa-file-invoice fa-3x" aria-hidden="true"></i>
-                    <p class="mb-2"><?= __('dash_no_bookings_yet', null, 'No bookings yet. Start browsing properties to make your first booking.') ?></p>
-                    <a href="<?= BASE_URL ?>/properties" class="btn btn-sm btn-primary"><?= __('dash_browse_properties', null, 'Browse Properties') ?></a>
+            <div class="aps-cp-card-body">
+                <div class="aps-cp-empty">
+                    <div class="aps-cp-empty-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <h5><?= __('dash_no_bookings_title', null, 'No purchases yet') ?></h5>
+                    <p><?= __('dash_no_bookings_yet', null, 'Start browsing properties to make your first booking.') ?></p>
+                    <a href="<?= BASE_URL ?>/properties" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i><?= __('dash_browse_properties', null, 'Browse Properties') ?>
+                    </a>
                 </div>
             </div>
         </div>
         <?php endif; ?>
 
-        <!-- My Properties -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-0 py-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-building text-primary me-2"></i><?= __('dash_section_my_properties', null, 'My Properties') ?></h5>
-                    <a href="<?php echo BASE_URL; ?>/user/properties" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
-                </div>
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-building text-primary"></i> <?= __('dash_section_my_properties', null, 'My Properties') ?></h5>
+                <a href="<?= BASE_URL ?>/user/properties" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
-            <div class="card-body">
+            <div class="aps-cp-card-body">
                 <?php if (empty($properties)): ?>
-                    <div class="text-center py-4 text-muted">
-                        <i class="fas fa-building fa-3x mb-3"></i>
-                        <p><?= __('dash_no_properties_yet', null, 'No properties listed yet. Post your first property!') ?></p>
-                        <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-primary btn-sm"><?= __('dash_btn_post_property', null, 'Post Property') ?></a>
+                    <div class="aps-cp-empty">
+                        <div class="aps-cp-empty-icon"><i class="fas fa-building"></i></div>
+                        <h5><?= __('dash_no_properties_title', null, 'No properties listed') ?></h5>
+                        <p><?= __('dash_no_properties_yet', null, 'Post your first property for free.') ?></p>
+                        <a href="<?= BASE_URL ?>/list-property" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i><?= __('dash_btn_post_property', null, 'Post Property') ?>
+                        </a>
                     </div>
                 <?php else: ?>
                 <div class="row g-3">
                     <?php foreach (array_slice($properties, 0, 4) as $property): ?>
                         <div class="col-md-6">
-                            <div class="property-card border rounded-3 p-3">
-                                <div class="d-flex gap-3">
-                                    <div class="property-image bg-light rounded-3" style="width: 80px; height: 80px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-home fa-2x text-muted"></i>
+                            <div class="aps-cp-card" style="border: 1px solid var(--aps-cp-border);">
+                                <div class="d-flex gap-3 p-3">
+                                    <div class="aps-cp-stat-icon" style="width: 56px; height: 56px; background: var(--aps-cp-primary-light);">
+                                        <i class="fas fa-home"></i>
                                     </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1"><?php echo htmlspecialchars($property['property_type'] ?? $property['title'] ?? 'Property'); ?></h6>
-                                        <p class="text-muted mb-1 small"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['address'] ?? $property['location'] ?? ''); ?></p>
-                                        <p class="mb-2"><strong>₹<?php echo number_format($property['price'] ?? 0); ?></strong></p>
-                                        <span class="badge bg-<?php echo ($property['status'] ?? '') === 'approved' || ($property['status'] ?? '') === 'active' ? 'success' : 'warning'; ?>">
-                                            <?php echo ucfirst($property['status'] ?? 'pending'); ?>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <h6 class="mb-1 text-truncate"><?= htmlspecialchars($property['property_type'] ?? $property['title'] ?? 'Property') ?></h6>
+                                        <p class="text-muted mb-1 small text-truncate"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['address'] ?? $property['location'] ?? '') ?></p>
+                                        <p class="mb-2"><strong>₹<?= number_format($property['price'] ?? 0) ?></strong></p>
+                                        <span class="badge bg-<?= ($property['status'] ?? '') === 'approved' || ($property['status'] ?? '') === 'active' ? 'success' : 'warning' ?>">
+                                            <?= ucfirst($property['status'] ?? 'pending') ?>
                                         </span>
-                                        <?php if (($property['status'] ?? '') === 'approved' && !empty($property['id'])): ?>
-                                        <a href="<?php echo BASE_URL; ?>/listing/<?php echo $property['id']; ?>" class="btn btn-sm btn-outline-primary mt-1" target="_blank">
-                                            <i class="fas fa-external-link-alt"></i> View
-                                        </a>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -210,25 +249,23 @@ $userDocuments = $userDocuments ?? [];
             </div>
         </div>
 
-        <!-- Recent Inquiries -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-envelope text-success me-2"></i><?= __('dash_section_recent_inquiries', null, 'Recent Inquiries') ?></h5>
-                    <a href="<?php echo BASE_URL; ?>/user/inquiries" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
-                </div>
+        <div class="aps-cp-card">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-envelope text-success"></i> <?= __('dash_section_recent_inquiries', null, 'Recent Inquiries') ?></h5>
+                <a href="<?= BASE_URL ?>/user/inquiries" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
-            <div class="card-body p-0">
+            <div class="aps-cp-card-body p-0">
                 <?php if (empty($inquiries)): ?>
-                    <div class="aps-empty-state">
-                        <i class="fas fa-envelope fa-3x" aria-hidden="true"></i>
-                        <p class="mb-2"><?= __('dash_no_inquiries_yet', null, 'No inquiries yet.') ?></p>
-                        <a href="<?= BASE_URL ?>/properties" class="btn btn-sm btn-primary"><?= __('dash_browse_properties', null, 'Browse Properties') ?></a>
+                    <div class="aps-cp-empty">
+                        <div class="aps-cp-empty-icon"><i class="fas fa-envelope"></i></div>
+                        <h5><?= __('dash_no_inquiries_title', null, 'No inquiries yet') ?></h5>
+                        <p><?= __('dash_no_inquiries_yet', null, 'Start exploring and reach out to property owners.') ?></p>
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-primary"><?= __('dash_browse_properties', null, 'Browse Properties') ?></a>
                     </div>
                 <?php else: ?>
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="bg-light">
+                    <table class="aps-cp-table">
+                        <thead>
                             <tr>
                                 <th><?= __('dash_th_subject', null, 'Subject') ?></th>
                                 <th><?= __('dash_th_type', null, 'Type') ?></th>
@@ -239,14 +276,14 @@ $userDocuments = $userDocuments ?? [];
                         <tbody>
                             <?php foreach ($inquiries as $inquiry): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($inquiry['subject'] ?? $inquiry['message'] ?? 'Inquiry'); ?></td>
-                                    <td><?php echo htmlspecialchars($inquiry['type'] ?? 'General'); ?></td>
+                                    <td><?= htmlspecialchars($inquiry['subject'] ?? $inquiry['message'] ?? 'Inquiry') ?></td>
+                                    <td><?= htmlspecialchars($inquiry['type'] ?? 'General') ?></td>
                                     <td>
-                                        <span class="badge bg-<?php echo ($inquiry['status'] ?? '') === 'replied' ? 'success' : (($inquiry['status'] ?? '') === 'pending' ? 'warning' : 'info'); ?>">
-                                            <?php echo ucfirst($inquiry['status'] ?? 'pending'); ?>
+                                        <span class="badge bg-<?= ($inquiry['status'] ?? '') === 'replied' ? 'success' : (($inquiry['status'] ?? '') === 'pending' ? 'warning' : 'info') ?>">
+                                            <?= ucfirst($inquiry['status'] ?? 'pending') ?>
                                         </span>
                                     </td>
-                                    <td><?php echo date('M d', strtotime($inquiry['created_at'] ?? 'now')); ?></td>
+                                    <td><?= date('M d', strtotime($inquiry['created_at'] ?? 'now')) ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -257,102 +294,28 @@ $userDocuments = $userDocuments ?? [];
         </div>
     </div>
 
-        <!-- Recent Payments -->
-        <div class="card shadow-sm mt-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i><?= __('dash_section_recent_payments', null, 'Recent Payments') ?></h5>
-                <a href="<?= BASE_URL ?>/user/payments" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                            <thead class="table-light"><tr><th><?= __('dash_th_date', null, 'Date') ?></th><th><?= __('dash_th_transaction', null, 'Transaction') ?></th><th><?= __('dash_th_amount', null, 'Amount') ?></th><th><?= __('dash_th_status', null, 'Status') ?></th></tr></thead>
-                        <tbody>
-                            <?php if (!empty($recentPayments)): foreach ($recentPayments as $pmt): ?>
-                                <tr>
-                                    <td><?= date('d M Y', strtotime($pmt['created_at'] ?? '')) ?></td>
-                                    <td><small><?= htmlspecialchars(substr($pmt['transaction_id'] ?? $pmt['receipt'] ?? '', 0, 20)) ?></small></td>
-                                    <td><strong>₹<?= number_format($pmt['amount'] ?? 0, 2) ?></strong></td>
-                                    <td><span class="badge bg-<?= ($pmt['status'] ?? '') === 'completed' ? 'success' : (($pmt['status'] ?? '') === 'pending' ? 'warning' : 'secondary') ?>"><?= htmlspecialchars($pmt['status'] ?? 'N/A') ?></span></td>
-                                </tr>
-                            <?php endforeach; else: ?>
-                                <tr><td colspan="4" class="text-center text-muted py-3"><?= __('dash_no_payments_yet', null, 'No payments yet') ?></td></tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-        <!-- My Documents -->
-        <div class="card shadow-sm mt-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-folder-open text-warning me-2"></i><?= __('dash_section_my_documents', null, 'My Documents') ?></h5>
-                <a href="<?= BASE_URL ?>/user/documents" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
-            </div>
-            <div class="card-body p-0">
-                <?php if (empty($userDocuments)): ?>
-                    <div class="aps-empty-state">
-                        <i class="fas fa-file-upload fa-3x" aria-hidden="true"></i>
-                        <p class="mb-2"><?= __('dash_no_documents_yet', null, 'No documents uploaded yet. Upload your KYC documents.') ?></p>
-                        <a href="<?= BASE_URL ?>/user/documents" class="btn btn-sm btn-primary"><?= __('dash_btn_upload_documents', null, 'Upload Documents') ?></a>
-                    </div>
-                <?php else: ?>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr><th><?= __('dash_th_document', null, 'Document') ?></th><th><?= __('dash_th_type', null, 'Type') ?></th><th><?= __('dash_th_status', null, 'Status') ?></th><th><?= __('dash_th_date', null, 'Date') ?></th><th><?= __('dash_th_action', null, 'Action') ?></th></tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($userDocuments as $doc): ?>
-                            <tr>
-                                <td><?= htmlspecialchars(ucfirst($doc['document_type'] ?? 'Other')) ?> <?= !empty($doc['document_number']) ? '<small class="text-muted">(' . htmlspecialchars($doc['document_number']) . ')</small>' : '' ?></td>
-                                <td><span class="badge bg-info"><?= htmlspecialchars(strtoupper($doc['file_type'] ?? 'N/A')) ?></span></td>
-                                <td>
-                                    <?php $vStatus = $doc['verification_status'] ?? 'pending'; ?>
-                                    <span class="badge bg-<?= $vStatus === 'verified' ? 'success' : ($vStatus === 'rejected' ? 'danger' : 'warning') ?>">
-                                        <?= ucfirst($vStatus) ?>
-                                    </span>
-                                </td>
-                                <td><small><?= date('d M Y', strtotime($doc['created_at'] ?? 'now')) ?></small></td>
-                                <td>
-                                    <?php if (!empty($doc['file_path'])): ?>
-                                        <a href="<?= BASE_URL . htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fas fa-download"></i></a>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-
-    <!-- Right Column -->
     <div class="col-lg-4">
+
         <?php if (!empty($referral_code)): ?>
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-gift text-danger me-2"></i><?= __('dash_refer_earn_title', null, 'Refer & Earn') ?></h5>
+        <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);">
+            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(245, 158, 11, 0.2);">
+                <h5><i class="fas fa-gift text-warning"></i> <?= __('dash_refer_earn_title', null, 'Refer & Earn') ?></h5>
             </div>
-            <div class="card-body">
+            <div class="aps-cp-card-body">
                 <div class="text-center mb-3">
-                    <div class="display-6 fw-bold text-danger mb-1"><?= htmlspecialchars($referral_code) ?></div>
+                    <div class="display-6 fw-bold text-warning mb-1" style="letter-spacing: 0.1em;"><?= htmlspecialchars($referral_code) ?></div>
                     <small class="text-muted"><?= __('dash_your_referral_code', null, 'Your Referral Code') ?></small>
                 </div>
                 <div class="row text-center g-2 mb-3">
                     <div class="col-6">
-                        <div class="bg-light rounded-3 p-2">
-                            <div class="fw-bold text-primary"><?= (int)$referral_count ?></div>
+                        <div class="bg-white rounded-3 p-2 border">
+                            <div class="fw-bold text-primary fs-5" data-aps-count="<?= (int)$referral_count ?>">0</div>
                             <small class="text-muted"><?= __('dash_referrals', null, 'Referrals') ?></small>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="bg-light rounded-3 p-2">
-                            <div class="fw-bold text-success">₹<?= number_format($referral_earnings, 2) ?></div>
+                        <div class="bg-white rounded-3 p-2 border">
+                            <div class="fw-bold text-success fs-5">₹<?= number_format((float)($referral_earnings ?? 0), 2) ?></div>
                             <small class="text-muted"><?= __('dash_earnings', null, 'Earnings') ?></small>
                         </div>
                     </div>
@@ -360,174 +323,176 @@ $userDocuments = $userDocuments ?? [];
                 <?php if (!empty($referral_link)): ?>
                 <div class="input-group input-group-sm mb-2">
                     <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link) ?>" readonly>
-                    <button class="btn btn-outline-primary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('refLink').value);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='<i class=\'fas fa-copy\'></i>',2000)"><i class="fas fa-copy"></i></button>
+                    <button class="btn btn-outline-warning" type="button" data-aps-copy="#refLink" aria-label="Copy referral link">
+                        <i class="fas fa-copy"></i>
+                    </button>
                 </div>
-                    <small class="text-muted d-block mb-2"><?= __('dash_share_link_earn', null, 'Share this link to earn rewards') ?></small>
-                <div class="d-flex gap-2 justify-content-center">
-                    <a href="https://wa.me/?text=<?= urlencode('Join APS Dream Home using my referral code: ' . $referral_code . ' - ' . $referral_link) ?>" target="_blank" class="btn btn-sm btn-success"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($referral_link) ?>" target="_blank" class="btn btn-sm btn-primary"><i class="fab fa-facebook"></i></a>
-                    <a href="mailto:?subject=Join APS Dream Home&body=Use my referral code <?= $referral_code ?> to register: <?= urlencode($referral_link) ?>" class="btn btn-sm btn-secondary"><i class="fas fa-envelope"></i></a>
+                <div class="d-flex gap-2 justify-content-center mt-3">
+                    <a href="https://wa.me/?text=<?= urlencode('Join APS Dream Home using my referral code: ' . $referral_code . ' - ' . $referral_link) ?>" target="_blank" class="aps-cp-icon-btn" style="background: #25d366; color: #fff; border-color: #25d366;" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($referral_link) ?>" target="_blank" class="aps-cp-icon-btn" style="background: #1877f2; color: #fff; border-color: #1877f2;" title="Share on Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="mailto:?subject=<?= urlencode('Join APS Dream Home') ?>&body=<?= urlencode('Use my referral code ' . $referral_code . ' to register: ' . $referral_link) ?>" class="aps-cp-icon-btn" title="Share via Email"><i class="fas fa-envelope"></i></a>
                 </div>
                 <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>
 
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i><?= __('dash_section_account_info', null, 'Account Info') ?></h5>
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-bolt text-primary"></i> <?= __('dash_section_quick_actions', null, 'Quick Actions') ?></h5>
             </div>
-            <div class="card-body">
+            <div class="aps-cp-card-body">
                 <div class="d-grid gap-2">
-                    <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i><?= __('dash_btn_post_new_property', null, 'Post New Property') ?>
+                    <a href="<?= BASE_URL ?>/list-property" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-plus"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_post_new_property', null, 'Post New Property') ?></p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_post_desc', null, 'List your property for free') ?></p>
+                        </div>
                     </a>
-                    <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-primary">
-                        <i class="fas fa-search me-2"></i><?= __('dash_btn_browse_properties', null, 'Browse Properties') ?>
+                    <a href="<?= BASE_URL ?>/user/bookings" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_my_bookings', null, 'My Bookings') ?></p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_bookings_desc', null, 'Track purchase & payment status') ?></p>
+                        </div>
                     </a>
-                    <a href="<?php echo BASE_URL; ?>/plots" class="btn btn-outline-success">
-                        <i class="fas fa-vector-square me-2"></i><?= __('dash_btn_browse_plots', null, 'Browse Plots') ?>
+                    <a href="<?= BASE_URL ?>/user/inquiries" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_my_inquiries', null, 'My Inquiries') ?></p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_inquiries_desc', null, 'See responses from owners') ?></p>
+                        </div>
                     </a>
-                    <a href="<?php echo BASE_URL; ?>/user/inquiries" class="btn btn-outline-success">
-                        <i class="fas fa-envelope me-2"></i><?= __('dash_btn_my_inquiries', null, 'My Inquiries') ?>
+                    <a href="<?= BASE_URL ?>/user/favorites" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-heart"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_my_favorites', null, 'My Favorites') ?></p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_favorites_desc', null, 'Saved properties you love') ?></p>
+                        </div>
                     </a>
-                    <a href="<?php echo BASE_URL; ?>/payment/history" class="btn btn-outline-success">
-                        <i class="fas fa-credit-card me-1"></i> <?= __('dash_btn_payment_history', null, 'Payment History') ?>
+                    <a href="<?= BASE_URL ?>/user/saved-searches" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-search"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_saved_searches', null, 'Saved Searches') ?>
+                                <?php if ($savedCount > 0): ?>
+                                <span class="aps-cp-quick-action-badge"><?= $savedCount ?></span>
+                                <?php endif; ?>
+                            </p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_saved_desc', null, 'Get alerts for new properties') ?></p>
+                        </div>
                     </a>
-                    <a href="<?php echo BASE_URL; ?>/user/profile" class="btn btn-outline-info">
-                        <i class="fas fa-user me-2"></i><?= __('dash_btn_edit_profile', null, 'Edit Profile') ?>
+                    <a href="<?= BASE_URL ?>/user/saved-searches/manage-alerts" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-bell"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_manage_email_alerts', null, 'Email Alerts') ?></p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_alerts_desc', null, 'Manage notification preferences') ?></p>
+                        </div>
                     </a>
-                    <a href="<?= BASE_URL ?>/dashboard/favorites" class="btn btn-outline-danger">
-                        <i class="fas fa-heart me-2"></i><?= __('dash_btn_my_favorites', null, 'My Favorites') ?>
+                    <a href="<?= BASE_URL ?>/user/referral" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-gift"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_refer_earn', null, 'Refer & Earn') ?></p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_refer_desc', null, 'Earn rewards per signup') ?></p>
+                        </div>
                     </a>
-                    <a href="<?= BASE_URL ?>/user/book-site-visit" class="btn btn-outline-info">
-                        <i class="fas fa-calendar-check me-1"></i> <?= __('dash_btn_book_site_visit', null, 'Book Site Visit') ?>
-                    </a>
-                    <a href="<?= BASE_URL ?>/user/saved-searches" class="btn btn-outline-secondary">
-                        <i class="fas fa-search me-2"></i><?= __('dash_btn_saved_searches', null, 'Saved Searches') ?>
-                        <?php
-                        // Show badge with count of saved searches
-                        try {
-                            $cntStmt = $this->db ?? \App\Core\Database\Database::getInstance()->getConnection();
-                            $cntStmt2 = $cntStmt->prepare("SELECT COUNT(*) as cnt FROM saved_searches WHERE user_id = ?");
-                            $cntStmt2->execute([$_SESSION['user_id'] ?? 0]);
-                            $cntRow = $cntStmt2->fetch(\PDO::FETCH_ASSOC);
-                            $savedCount = (int)($cntRow['cnt'] ?? 0);
-                            if ($savedCount > 0):
-                        ?>
-                            <span class="badge bg-primary ms-1"><?= $savedCount ?></span>
-                        <?php endif; } catch (\Throwable $e) {} ?>
-                    </a>
-                    <a href="<?= BASE_URL ?>/user/saved-searches/manage-alerts" class="btn btn-outline-success">
-                        <i class="fas fa-bell me-2"></i><?= __('dash_btn_manage_email_alerts', null, 'Manage Email Alerts') ?>
-                    </a>
-                    <a href="<?= BASE_URL ?>/user/notification-preferences" class="btn btn-outline-warning">
-                        <i class="fas fa-bell me-2"></i><?= __('dash_btn_notification_settings', null, 'Notification Settings') ?>
-                    </a>
-                    <a href="<?= BASE_URL ?>/user/referral" class="btn btn-outline-success">
-                        <i class="fas fa-gift me-2"></i><?= __('dash_btn_refer_earn', null, 'Refer & Earn') ?>
-                    </a>
-                    <a href="<?= BASE_URL ?>/user/tickets" class="btn btn-outline-warning">
-                        <i class="fas fa-headset me-1"></i> <?= __('dash_btn_my_tickets', null, 'My Tickets') ?>
+                    <a href="<?= BASE_URL ?>/user/tickets" class="aps-cp-quick-action">
+                        <div class="aps-cp-quick-action-icon"><i class="fas fa-headset"></i></div>
+                        <div class="aps-cp-quick-action-body">
+                            <p class="aps-cp-quick-action-title"><?= __('dash_btn_my_tickets', null, 'My Tickets') ?></p>
+                            <p class="aps-cp-quick-action-desc"><?= __('dash_quick_tickets_desc', null, 'Get help from support') ?></p>
+                        </div>
                     </a>
                 </div>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-concierge-bell text-info me-2"></i><?= __('dash_section_our_services', null, 'Our Services') ?></h5>
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-concierge-bell text-info"></i> <?= __('dash_section_our_services', null, 'Our Services') ?></h5>
             </div>
-            <div class="card-body">
-                <div class="row g-3">
+            <div class="aps-cp-card-body">
+                <div class="row g-2">
                     <div class="col-6">
-                        <a href="<?php echo BASE_URL; ?>/properties" class="text-decoration-none">
-                            <div class="service-card text-center p-3 border rounded-3 h-100">
-                                <div class="service-icon mb-2 text-primary"><i class="fas fa-home fa-2x"></i></div>
-                                <h6 class="mb-1"><?= __('dash_service_buy', null, 'Buy') ?></h6>
-                                <small class="text-muted"><?= __('dash_service_buy_desc', null, 'Find your dream property') ?></small>
-                            </div>
+                        <a href="<?= BASE_URL ?>/properties" class="aps-cp-service">
+                            <div class="aps-cp-service-icon"><i class="fas fa-home"></i></div>
+                            <div class="aps-cp-service-title"><?= __('dash_service_buy', null, 'Buy') ?></div>
+                            <div class="aps-cp-service-desc"><?= __('dash_service_buy_desc', null, 'Find your dream property') ?></div>
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="<?php echo BASE_URL; ?>/list-property" class="text-decoration-none">
-                            <div class="service-card text-center p-3 border rounded-3 h-100">
-                                <div class="service-icon mb-2 text-success"><i class="fas fa-building fa-2x"></i></div>
-                                <h6 class="mb-1"><?= __('dash_service_sell', null, 'Sell') ?></h6>
-                                <small class="text-muted"><?= __('dash_service_sell_desc', null, 'List your property') ?></small>
-                            </div>
+                        <a href="<?= BASE_URL ?>/list-property" class="aps-cp-service">
+                            <div class="aps-cp-service-icon"><i class="fas fa-building"></i></div>
+                            <div class="aps-cp-service-title"><?= __('dash_service_sell', null, 'Sell') ?></div>
+                            <div class="aps-cp-service-desc"><?= __('dash_service_sell_desc', null, 'List your property') ?></div>
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="<?php echo BASE_URL; ?>/services" class="text-decoration-none">
-                            <div class="service-card text-center p-3 border rounded-3 h-100">
-                                <div class="service-icon mb-2 text-info"><i class="fas fa-hand-holding-usd fa-2x"></i></div>
-                                <h6 class="mb-1"><?= __('dash_service_services', null, 'Services') ?></h6>
-                                <small class="text-muted"><?= __('dash_service_services_desc', null, 'Loan, Legal & more') ?></small>
-                            </div>
+                        <a href="<?= BASE_URL ?>/services" class="aps-cp-service">
+                            <div class="aps-cp-service-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                            <div class="aps-cp-service-title"><?= __('dash_service_services', null, 'Services') ?></div>
+                            <div class="aps-cp-service-desc"><?= __('dash_service_services_desc', null, 'Loan, Legal & more') ?></div>
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="<?php echo BASE_URL; ?>/contact" class="text-decoration-none">
-                            <div class="service-card text-center p-3 border rounded-3 h-100">
-                                <div class="service-icon mb-2 text-warning"><i class="fas fa-headset fa-2x"></i></div>
-                                <h6 class="mb-1"><?= __('dash_service_support', null, 'Support') ?></h6>
-                                <small class="text-muted"><?= __('dash_service_support_desc', null, 'Get help') ?></small>
-                            </div>
+                        <a href="<?= BASE_URL ?>/contact" class="aps-cp-service">
+                            <div class="aps-cp-service-icon"><i class="fas fa-headset"></i></div>
+                            <div class="aps-cp-service-title"><?= __('dash_service_support', null, 'Support') ?></div>
+                            <div class="aps-cp-service-desc"><?= __('dash_service_support_desc', null, 'Get help') ?></div>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-user-check text-purple me-2"></i><?= __('dash_section_account_info', null, 'Account Info') ?></h5>
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-user text-purple"></i> <?= __('dash_section_account_info', null, 'Account Info') ?></h5>
             </div>
-            <div class="card-body">
-                <div class="small">
-                    <p class="mb-2"><strong><i class="fas fa-user me-1"></i><?= __('dash_label_name', null, 'Name') ?>:</strong> <?php echo htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'N/A'); ?></p>
-                    <p class="mb-2"><strong><i class="fas fa-envelope me-1"></i><?= __('dash_label_email', null, 'Email') ?>:</strong> <?php echo htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? 'N/A'); ?></p>
-                    <p class="mb-0"><strong><i class="fas fa-phone me-1"></i><?= __('dash_label_phone', null, 'Phone') ?>:</strong> <?php echo htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? 'N/A'); ?></p>
+            <div class="aps-cp-card-body">
+                <div class="d-flex flex-column gap-2 small">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user text-muted me-2" style="width: 16px;"></i>
+                        <strong class="me-2"><?= __('dash_label_name', null, 'Name') ?>:</strong>
+                        <span class="text-truncate"><?= htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'N/A') ?></span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-envelope text-muted me-2" style="width: 16px;"></i>
+                        <strong class="me-2"><?= __('dash_label_email', null, 'Email') ?>:</strong>
+                        <span class="text-truncate"><?= htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? 'N/A') ?></span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-phone text-muted me-2" style="width: 16px;"></i>
+                        <strong class="me-2"><?= __('dash_label_phone', null, 'Phone') ?>:</strong>
+                        <span class="text-truncate"><?= htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? 'N/A') ?></span>
+                    </div>
                 </div>
-                <a href="<?php echo BASE_URL; ?>/user/profile" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                <a href="<?= BASE_URL ?>/user/profile" class="btn btn-outline-primary btn-sm w-100 mt-3">
                     <i class="fas fa-edit me-1"></i><?= __('dash_btn_edit_profile', null, 'Edit Profile') ?>
                 </a>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm mt-4 security-section">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-shield-alt text-success me-2"></i><?= __('dash_section_security', null, 'Security') ?></h5>
+        <div class="aps-cp-card" style="background: <?= $twoFactorEnabled ? 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)' : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' ?>;">
+            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <h5><i class="fas fa-shield-alt <?= $twoFactorEnabled ? 'text-success' : 'text-warning' ?>"></i> <?= __('dash_section_security', null, 'Security') ?></h5>
             </div>
-            <div class="card-body">
-                <?php
-                    $twoFactorEnabled = false;
-                    try {
-                        $secPdo = $this->db ?? \App\Core\Database\Database::getInstance()->getConnection();
-                        $secStmt = $secPdo->prepare("SELECT two_factor_enabled FROM users WHERE id = ?");
-                        $secStmt->execute([$_SESSION['user_id'] ?? 0]);
-                        $secRow = $secStmt->fetch(\PDO::FETCH_ASSOC);
-                        $twoFactorEnabled = !empty($secRow['two_factor_enabled']);
-                    } catch (\Throwable $e) {
-                        $twoFactorEnabled = !empty($user['two_factor_enabled']);
-                    }
-                ?>
+            <div class="aps-cp-card-body">
                 <?php if ($twoFactorEnabled): ?>
                     <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-check-circle text-success fa-2x me-3"></i>
-                        <div>
+                        <div class="aps-cp-stat-icon" style="background: var(--aps-cp-success-light); color: var(--aps-cp-success);"><i class="fas fa-check-circle"></i></div>
+                        <div class="ms-3">
                             <p class="mb-0 fw-bold text-success"><?= __('dash_2fa_enabled', null, '2FA Enabled') ?></p>
                             <small class="text-muted"><?= __('dash_2fa_protected', null, 'Your account is protected') ?></small>
                         </div>
                     </div>
-                    <a href="<?= BASE_URL ?>/user/two-factor" class="btn btn-sm btn-outline-primary w-100">
+                    <a href="<?= BASE_URL ?>/user/two-factor" class="btn btn-sm btn-outline-success w-100">
                         <i class="fas fa-cog me-1"></i> <?= __('dash_btn_manage_2fa', null, 'Manage 2FA') ?>
                     </a>
                 <?php else: ?>
                     <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-exclamation-triangle text-warning fa-2x me-3"></i>
-                        <div>
+                        <div class="aps-cp-stat-icon" style="background: var(--aps-cp-warning-light); color: var(--aps-cp-warning);"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="ms-3">
                             <p class="mb-0 fw-bold text-warning"><?= __('dash_2fa_disabled', null, '2FA Not Enabled') ?></p>
                             <small class="text-muted"><?= __('dash_2fa_extra_security', null, 'Add an extra layer of security') ?></small>
                         </div>
@@ -540,19 +505,3 @@ $userDocuments = $userDocuments ?? [];
         </div>
     </div>
 </div>
-
-<style>
-.stat-card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.1); border:1px solid #e2e8f0; height:100%; }
-.stat-icon { width:50px; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:15px; }
-.stat-icon.blue { background:rgba(59,130,246,0.1); color:#3b82f6; }
-.stat-icon.green { background:rgba(16,185,129,0.1); color:#10b981; }
-.stat-icon.orange { background:rgba(245,158,11,0.1); color:#f59e0b; }
-.stat-icon.purple { background:rgba(139,92,246,0.1); color:#8b5cf6; }
-.stat-icon.red { background:rgba(239,68,68,0.1); color:#ef4444; }
-.stat-value { font-size:1.75rem; font-weight:700; color:#1e293b; margin-bottom:5px; }
-.stat-label { font-size:0.875rem; color:#64748b; }
-.property-card { transition:all 0.2s ease; }
-.property-card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.1); }
-.service-card { transition:all 0.2s ease; }
-.service-card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.1); transform:translateY(-2px); }
-</style>
