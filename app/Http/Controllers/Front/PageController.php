@@ -24,7 +24,9 @@ class PageController extends BaseController
                 $pageTitle = $row['title'];
                 $pageContent = $row['content'];
             }
-         } catch (\Exception $e) { error_log('PageController loadPageContent: ' . $e->getMessage()); }
+        } catch (\Exception $e) {
+            error_log('PageController loadPageContent: ' . $e->getMessage());
+        }
         return [$pageTitle, $pageContent];
     }
 
@@ -54,18 +56,22 @@ class PageController extends BaseController
 
             // Map to featured format
             foreach ($all_projects as $project) {
-                $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));
+                if (!is_object($project)) {
+                    continue;
+                }
+                $siteName = $project->site_name ?? '';
+                $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $siteName));
                 $featured_properties[] = [
-                    'id' => $project->id,
-                    'title' => $project->site_name,
+                    'id' => $project->id ?? null,
+                    'title' => $siteName,
                     'location' => ($project->district ?? '') . ', ' . ($project->state ?? ''),
                     'city' => $project->district ?? '',
                     'price' => 'Starting from â‚¹5.5 Lakhs',
                     'slug' => $slug,
                     'type' => ucfirst($project->site_type ?? 'Residential'),
                     'status' => ($project->status === 'active') ? 'Available' : 'Completed',
-                    'total_area' => $project->total_area,
-                    'description' => $project->description
+                    'total_area' => $project->total_area ?? null,
+                    'description' => $project->description ?? null
                 ];
             }
         } catch (\Exception $e) {
@@ -125,7 +131,7 @@ class PageController extends BaseController
                         ]);
                     } catch (\Exception $e) {
                         // WhatsApp notification is best-effort
-                                error_log("PageController.php: " . $e->getMessage());
+                        error_log("PageController.php: " . $e->getMessage());
                     }
                 } catch (\Exception $e) {
                     $error = 'Failed to submit. Please try again or call us directly.';
@@ -209,8 +215,8 @@ class PageController extends BaseController
                     ->execute([$leadId, $serviceId]);
 
                 echo json_encode(['success' => true, 'message' => 'Thank you! We will contact you shortly.']);
-                    error_log("PageController.php: " . $e->getMessage());
-        } else {
+                error_log("PageController.php: " . $e->getMessage());
+            } else {
                 error_log("Service interest error: " . $e->getMessage());
                 echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again.']);
             }
@@ -270,10 +276,18 @@ class PageController extends BaseController
 
         // ── Hot-path cache: property listings (5 min TTL) ──
         $filterHash = [
-            'q' => $keyword, 'type' => $type, 'listing' => $listingType,
-            'location' => $location, 'min_price' => $minPrice, 'max_price' => $maxPrice,
-            'bedrooms' => $bedrooms, 'bathrooms' => $bathrooms, 'furnished' => $furnished,
-            'year_built' => $yearBuilt, 'area_min' => $areaMin, 'area_max' => $areaMax,
+            'q' => $keyword,
+            'type' => $type,
+            'listing' => $listingType,
+            'location' => $location,
+            'min_price' => $minPrice,
+            'max_price' => $maxPrice,
+            'bedrooms' => $bedrooms,
+            'bathrooms' => $bathrooms,
+            'furnished' => $furnished,
+            'year_built' => $yearBuilt,
+            'area_min' => $areaMin,
+            'area_max' => $areaMax,
         ];
         $cached = \App\Services\Cache\HotPathCacheService::getPropertyList(
             $filterHash,
@@ -282,9 +296,21 @@ class PageController extends BaseController
             $sortBy,
             function () use ($filterHash, $keyword, $type, $listingType, $location, $minPrice, $maxPrice, $bedrooms, $bathrooms, $furnished, $yearBuilt, $areaMin, $areaMax, $sortBy, $perPage, $offset) {
                 return $this->runPropertyListQuery(
-                    $keyword, $type, $listingType, $location,
-                    $minPrice, $maxPrice, $bedrooms, $bathrooms, $furnished,
-                    $yearBuilt, $areaMin, $areaMax, $sortBy, $perPage, $offset
+                    $keyword,
+                    $type,
+                    $listingType,
+                    $location,
+                    $minPrice,
+                    $maxPrice,
+                    $bedrooms,
+                    $bathrooms,
+                    $furnished,
+                    $yearBuilt,
+                    $areaMin,
+                    $areaMax,
+                    $sortBy,
+                    $perPage,
+                    $offset
                 );
             }
         );
@@ -338,10 +364,21 @@ class PageController extends BaseController
      * Returns ['properties' => array, 'total' => int].
      */
     private function runPropertyListQuery(
-        string $keyword, string $type, string $listingType, string $location,
-        int $minPrice, int $maxPrice, int $bedrooms, int $bathrooms, string $furnished,
-        int $yearBuilt, int $areaMin, int $areaMax, string $sortBy,
-        int $perPage, int $offset
+        string $keyword,
+        string $type,
+        string $listingType,
+        string $location,
+        int $minPrice,
+        int $maxPrice,
+        int $bedrooms,
+        int $bathrooms,
+        string $furnished,
+        int $yearBuilt,
+        int $areaMin,
+        int $areaMax,
+        string $sortBy,
+        int $perPage,
+        int $offset
     ): array {
         $properties = [];
         $total = 0;
@@ -436,7 +473,7 @@ class PageController extends BaseController
 
             // Apply filters to sample data
             if ($keyword !== '') {
-                $sampleProperties = array_filter($sampleProperties, function($p) use ($keyword) {
+                $sampleProperties = array_filter($sampleProperties, function ($p) use ($keyword) {
                     return stripos($p['name'] ?? '', $keyword) !== false
                         || stripos($p['location'] ?? '', $keyword) !== false
                         || stripos($p['description'] ?? '', $keyword) !== false;
@@ -1118,7 +1155,9 @@ class PageController extends BaseController
             try {
                 $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
                 $sStmt->execute([$this->db->lastInsertId(), "Budget: â‚¹{$budget}, Location: {$location}, Type: {$project_type}"]);
-            } catch (\Exception $e) { error_log('PageController constructionInquiry service interests: ' . $e->getMessage()); }
+            } catch (\Exception $e) {
+                error_log('PageController constructionInquiry service interests: ' . $e->getMessage());
+            }
 
             $_SESSION['flash_success'] = 'Thank you! We will contact you shortly regarding your construction project.';
         } catch (\Exception $e) {
@@ -2141,8 +2180,8 @@ class PageController extends BaseController
                         ]);
                         $propertyId = $this->db->lastInsertId();
                         $savedToUserProperties = true;
-                            error_log("PageController.php: " . $e1->getMessage());
-                }
+                        error_log("PageController.php: " . $e1->getMessage());
+                    }
                 }
 
                 // Also save to inquiries for CRM tracking
@@ -2458,7 +2497,7 @@ class PageController extends BaseController
         try {
             $this->db->query("UPDATE document_gallery SET downloads_count = downloads_count + 1 WHERE id = ?", [$id]);
         } catch (\Exception $e) {
-                    error_log("PageController.php: " . $e->getMessage());
+            error_log("PageController.php: " . $e->getMessage());
         }
 
         $filePath = __DIR__ . '/../../../../assets/' . $doc['file_path'];
@@ -2518,7 +2557,7 @@ class PageController extends BaseController
         try {
             $this->db->query("UPDATE user_properties SET views = views + 1 WHERE id = ?", [$id]);
         } catch (\Exception $e) {
-                    error_log("PageController.php: " . $e->getMessage());
+            error_log("PageController.php: " . $e->getMessage());
         }
 
         $data = [
@@ -2617,7 +2656,9 @@ class PageController extends BaseController
             }
             $colonyStats = [
                 'total_colonies' => count($colonies),
-                'total_area' => array_sum(array_map(function($c) { return intval($c['available_plots']) * 1200; }, $colonies)) . ' sqft',
+                'total_area' => array_sum(array_map(function ($c) {
+                    return intval($c['available_plots']) * 1200;
+                }, $colonies)) . ' sqft',
                 'total_plots' => $totalPlots,
                 'cities_covered' => count(array_unique(array_column($colonies, 'district_name')))
             ];
@@ -2703,3 +2744,7 @@ class PageController extends BaseController
         exit;
     }
 }
+
+
+
+
