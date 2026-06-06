@@ -103,17 +103,12 @@ try {
         <div class="col-lg-8">
             <div class="property-gallery">
                 <div class="gallery-main">
-                    <img /> class="img-fluid">"
-                         alt="<?php echo htmlspecialchars($property['title']); ?>"
-                         class="gallery-main-img" id="mainImage">
+                    <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" class="gallery-main-img" id="mainImage" loading="lazy">
                 </div>
                 <?php if (count($property_images) > 1): ?>
                 <div class="gallery-thumbnails mt-3">
                     <?php foreach ($property_images as $index => $image): ?>
-                    <img /> class="img-fluid">"
-                         alt="Property view <?php echo $index + 1; ?>"
-                         class="gallery-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>"
-                         onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path']); ?>')">
+                    <img src="<?= htmlspecialchars($image['image_path']) ?>" alt="Property view <?php echo $index + 1; ?>" class="gallery-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>" onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path']); ?>')" loading="lazy">
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
@@ -168,8 +163,7 @@ try {
                     <?php if ($property['agent_name']): ?>
                     <div class="agent-card">
                         <div class="agent-avatar">
-                            <img /> class="img-fluid">"
-                                 alt="Agent" class="agent-img">
+                            <img src="<?= !empty($property['agent_image']) ? htmlspecialchars($property['agent_image']) : (BASE_URL . '/assets/images/agents/default.jpg') ?>" alt="Agent" class="agent-img">
                         </div>
                         <div class="agent-info">
                             <h6 class="agent-name"><?php echo htmlspecialchars($property['agent_name']); ?></h6>
@@ -405,8 +399,7 @@ try {
                 <?php foreach ($related_properties as $related): ?>
                 <div class="col-md-4 mb-4">
                     <div class="card property-card h-100">
-                        <img /> class="img-fluid">"
-                             class="card-img-top" alt="<?php echo htmlspecialchars($related['title']); ?>">
+                        <img src="<?= !empty($related['image_path']) ? htmlspecialchars($related['image_path']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" class="card-img-top" alt="<?php echo htmlspecialchars($related['title']); ?>" loading="lazy">
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($related['title']); ?></h5>
                             <p class="card-text text-muted"><?php echo htmlspecialchars($related['address']); ?></p>

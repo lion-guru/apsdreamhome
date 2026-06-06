@@ -82,7 +82,7 @@ $view_count = $view_count ?? 0;
                 <?php foreach ($properties as $p): ?>
                     <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?>" style="background:linear-gradient(135deg, #667eea20 0%, #764ba220 100%);">
                         <?php if (!empty($p['image'])): ?>
-                            <img />" alt="" style="max-width:100%; max-height:100%;">
+                            <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['title'] ?? '') ?>" style="max-width:100%; max-height:100%;">
                         <?php else: ?>
                             <i class="fas fa-home text-muted"></i>
                         <?php endif; ?>

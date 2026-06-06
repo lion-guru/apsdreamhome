@@ -90,7 +90,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
         <div class="row g-5 align-items-center">
             <?php if ($colony['image_path'] ?? ''): ?>
             <div class="col-lg-6">
-                <img />" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid rounded-4 shadow">
+                <img src="<?= BASE_URL ?>/<?php echo htmlspecialchars($colony['image_path'] ?? ''); ?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid rounded-4 shadow" loading="lazy">
             </div>
             <?php endif; ?>
             <div class="col-lg-<?php echo ($colony['image_path'] ?? '') ? '6' : '12'; ?>">
@@ -149,7 +149,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
             <?php foreach ($galleryImages as $img): ?>
             <div class="col-md-4 col-sm-6">
                 <a href="<?php echo BASE_URL . '/' . ltrim($img, '/'); ?>" data-lightbox="gallery">
-                    <img />" alt="Gallery" class="gallery-img">
+                    <img src="<?php echo BASE_URL . '/' . htmlspecialchars(ltrim($img, '/')); ?>" alt="Gallery" class="gallery-img" loading="lazy">
                 </a>
             </div>
             <?php endforeach; ?>

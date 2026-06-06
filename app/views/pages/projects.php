@@ -31,7 +31,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100 project-card">
                     <div class="position-relative overflow-hidden" style="height: 220px;">
                         <?php if (!empty($project->image_path ?? $project['image_path'] ?? '')): ?>
-                        <img />image_path ?? $project['image_path']) ?>" class="card-img-top h-100" style="object-fit: cover;" alt="<?= htmlspecialchars($project->name ?? $project['name'] ?? 'Project') ?>">
+                        <img src="<?= htmlspecialchars($project->image_path ?? $project['image_path'] ?? '') ?>" class="card-img-top h-100" style="object-fit: cover;" alt="<?= htmlspecialchars($project->name ?? $project['name'] ?? 'Project') ?>" loading="lazy">
                         <?php else: ?>
                         <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center h-100">
                             <i class="fas fa-building fa-4x text-secondary" style="opacity:0.3;"></i>

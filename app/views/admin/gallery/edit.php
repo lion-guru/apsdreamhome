@@ -19,7 +19,7 @@
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Current Image</label>
                         <div class="border rounded p-3">
-                            <img />" class="img-thumbnail" style="max-height: 200px;" alt="Current image">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-thumbnail" style="max-height: 200px;" alt="Current image" />
                         </div>
                     </div>
                     <?php endif; ?>

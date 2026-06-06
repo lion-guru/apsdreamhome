@@ -250,7 +250,7 @@ function planFurniture() {
             <?php foreach (array_slice($portfolio, 0, 6) as $item): ?>
                 <div class="col-lg-4 col-md-6">
                     <div class="portfolio-item">
-                        <img />" alt="<?= htmlspecialchars($item['title'] ?? 'Portfolio') ?>">
+                        <img src="<?= htmlspecialchars($item['image'] ?? '') ?>" alt="<?= htmlspecialchars($item['title'] ?? 'Portfolio') ?>" loading="lazy">
                         <div class="overlay">
                             <h5 class="mb-1"><?= htmlspecialchars($item['title'] ?? 'Project') ?></h5>
                             <small><?= htmlspecialchars($item['category'] ?? '') ?></small>

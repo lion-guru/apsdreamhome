@@ -100,9 +100,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Main Image -->
                 <div class="main-image-container">
                     <?php if (!empty($project['gallery_images'])): ?>
-                        <img /> class="img-fluid">"
-                             class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name']) ?>"
-                             id="mainImage">
+                        <img src="<?= htmlspecialchars($project['gallery_images'][0] ?? $project['gallery_images']) ?>" class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name']) ?>" id="mainImage" loading="lazy">
                     <?php else: ?>
                         <img loading="lazy" src="/assets/images/no-project-image.jpg"
                              class="img-fluid rounded shadow" alt="No Image Available"
@@ -256,10 +254,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                 <?php foreach ($project['gallery_images'] as $index => $image): ?>
                                     <div class="col-md-4 mb-3">
                                         <div class="gallery-item">
-                                            <img /> class="img-fluid">"
-                                                 class="img-fluid rounded cursor-pointer"
-                                                 onclick="openGallery(<?= htmlspecialchars($index, ENT_QUOTES, 'UTF-8') ?>)"
-                                                 alt="Gallery Image <?= $index + 1 ?>">
+                                            <img src="<?= htmlspecialchars($image) ?>" class="img-fluid rounded cursor-pointer" onclick="openGallery(<?= htmlspecialchars($index, ENT_QUOTES, 'UTF-8') ?>)" alt="Gallery Image <?= $index + 1 ?>" loading="lazy">
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -296,9 +291,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             <h4><i class="fas fa-project-diagram me-2"></i>Project Layout</h4>
                         </div>
                         <div class="card-body text-center">
-                            <img /> class="img-fluid">"
-                                 class="img-fluid" alt="Project Layout"
-                                 style="max-height: 600px;">
+                            <img src="<?= htmlspecialchars($project['layout_map']) ?>" class="img-fluid" alt="Project Layout" style="max-height: 600px;" loading="lazy">
                         </div>
                     </div>
                 <?php endif; ?>

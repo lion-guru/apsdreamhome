@@ -94,9 +94,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <!-- Property Image -->
                         <div class="property-image-container">
                             <?php if ($property['featured_image']): ?>
-                                <img /> class="img-fluid"><?= htmlspecialchars($property['featured_image']) ?>"
-                                    class="card-img-top property-image"
-                                    alt="<?= htmlspecialchars($property['title']) ?>">
+                                <img src="<?= htmlspecialchars($property['featured_image']) ?>" class="card-img-top property-image" alt="<?= htmlspecialchars($property['title']) ?>" loading="lazy">
                             <?php else: ?>
                                 <div class="property-image-placeholder">
                                     <i class="fas fa-home fa-3x text-muted"></i>

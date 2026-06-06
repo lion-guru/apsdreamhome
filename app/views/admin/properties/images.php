@@ -141,11 +141,11 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                         <i class="fas fa-star me-1"></i>Primary
                                     </span>
                                 <?php endif; ?>
-                                <img />/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
+                                <img src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
                                     alt="Property Image"
                                     class="card-img-top"
                                     style="height: 200px; object-fit: cover;"
-                                    onclick="openLightbox('<?php echo $base; ?>/<?php echo $image['image_path']; ?>')">
+                                    onclick="openLightbox('<?php echo $base; ?>/<?php echo $image['image_path']; ?>')" loading="lazy">
                                 <div class="card-body p-2">
                                     <input type="text"
                                         class="form-control form-control-sm mb-2"
@@ -202,7 +202,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center">
-                <img />
+                <img id="lightboxImage" src="" alt="Preview" class="img-fluid">
             </div>
         </div>
     </div>
@@ -492,9 +492,9 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                             <span class="primary-badge"><i class="fas fa-star me-1"></i>Primary</span>
                                         <?php endif; ?>
 
-                                        <img />/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
+                                        <img src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
                                             alt="Property Image"
-                                            onclick="openLightbox('<?php echo $base; ?>/<?php echo $image['image_path']; ?>')">
+                                            onclick="openLightbox('<?php echo $base; ?>/<?php echo $image['image_path']; ?>')" loading="lazy">
 
                                         <div class="p-3">
                                             <input type="text"
@@ -555,7 +555,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <img />
+                    <img id="lightboxImage2" src="" alt="Preview" class="img-fluid">
                 </div>
             </div>
         </div>

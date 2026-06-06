@@ -31,7 +31,7 @@
         <div class="card border-0 shadow-sm h-100">
             <div class="position-relative" style="height: 200px; overflow: hidden;">
                 <?php if (!empty($image['image_path'])): ?>
-                <img />" class="card-img-top" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ? />" style="width: 100%; height: 100%; object-fit: cover;">
                 <?php else: ?>
                 <div class="bg-light d-flex align-items-center justify-content-center h-100">
                     <i class="fas fa-image fa-3x text-muted"></i>

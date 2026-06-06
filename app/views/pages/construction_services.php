@@ -185,7 +185,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="project-card card">
                             <?php if (!empty($p['image'])): ?>
-                                <img />" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ?>">
+                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ? />">
                             <?php else: ?>
                                 <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:200px"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
                             <?php endif; ?>

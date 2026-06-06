@@ -98,8 +98,8 @@
                                     <!-- Property Image -->
                                     <div class="property-image-wrapper" style="height: 200px; overflow: hidden;">
                                         <?php if ($property['primary_image']): ?>
-                                            <img />"
-                                                class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
+                                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
+                                                class="card-img-top" alt="<?= htmlspecialchars($property['title']) ? />"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         <?php else: ?>
                                             <div class="bg-light d-flex align-items-center justify-content-center h-100">

@@ -96,7 +96,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                     <h5 class="mb-0">Customer Photo</h5>
                 </div>
                 <div class="card-body">
-                    <img />" alt="Customer" class="img-fluid rounded" style="max-height: 300px;">
+                    <img src="<?= $base ?>/<?= htmlspecialchars($t['photo_path'] ?? '') ?>" alt="Customer" class="img-fluid rounded" style="max-height: 300px;">
                 </div>
             </div>
             <?php endif; ?>

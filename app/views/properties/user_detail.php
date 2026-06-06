@@ -13,7 +13,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="position-relative">
                     <?php if (!empty($property['image'])): ?>
-                    <img />" class="card-img-top" alt="<?php echo htmlspecialchars($property['name'] ?? ''); ?>" style="height:400px;object-fit:cover;" onerror="this.parentElement.querySelector('.no-image-placeholder').style.display='flex'">
+                    <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo htmlspecialchars($property['name'] ?? ''); ?>" style="height:400px;object-fit:cover;" onerror="this.parentElement.querySelector('.no-image-placeholder').style.display='flex'">
                     <?php endif; ?>
                     <div class="no-image-placeholder d-<?php echo empty($property['image']) ? 'flex' : 'none'; ?> align-items-center justify-content-center bg-light" style="height:400px;">
                         <div class="text-center text-muted">

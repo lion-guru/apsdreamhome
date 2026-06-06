@@ -130,7 +130,7 @@
                             <div class="col-md-12">
                                 <label class="form-label fw-bold">Featured Image</label>
                                 <?php if($is_edit && !empty($property['pimage'])): ?>
-                                    <div class="mb-2"><img />public/uploads/property/<?= $property['pimage'] ?>" height="50" class="rounded border"></div>
+                                    <div class="mb-2"><img src="<?= BASE_URL ?>/public/uploads/property/<?= htmlspecialchars($property['pimage']) ?>" height="50" class="rounded border" alt="Property image"></div>
                                 <?php endif; ?>
                                 <input type="file" class="form-control" name="aimage" <?= $is_edit ? '' : 'required' ?>>
                             </div>
