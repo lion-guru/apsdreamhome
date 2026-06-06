@@ -1,5 +1,61 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-06)
 
+## Session 2026-06-06: Phase 9 Completion — Employees/Associates Tables + Admin Gamification + Cache (Commit f5fdcfa9d, Tag phase9-complete-2026-06-06)
+
+### What Was Done
+Completed Phase 9 by restoring dropped extension tables, adding gamification to admin dashboards, caching gamification results, and fixing critical bugs.
+
+### Files Created (3)
+- `scripts/restore_employees_table.php` — Creates `employees` table with 6 records linked by email to `users`
+- `scripts/restore_associates_table.php` — Creates `associates` table with 10 records linked by email to `users`  
+- `scripts/relink_employees.php` — Re-links employees via email (handles collation mismatch)
+
+### Files Modified (11)
+- `app/Services/GamificationService.php` — Added `getTopAssociate()`, `getTopAgent()`, `getTopEmployee()` for admin dashboards
+- `app/Services/CacheService.php` — Added `getGamification()` (5-min TTL) + `invalidateGamification()`
+- `app/Http/Controllers/Admin/CEODashboardController.php` — Fetches top performers, passes to view
+- `app/Http/Controllers/Admin/CFODashboardController.php` — Fetches top performers, passes to view
+- `app/Http/Controllers/Agent/AgentDashboardController.php` — Updated safeGamify to use cache
+- `app/Http/Controllers/AssociateController.php` — Updated safeGamify to use cache
+- `app/Http/Controllers/Employee/EmployeeController.php` — Updated safeGamify to use cache
+- `app/Http/Controllers/Front/UserController.php` — Wrapped `safeInvestorStats()` with cache
+- `app/views/admin/dashboards/ceo.php` — Added Top Performers widget row
+- `app/views/admin/dashboards/cfo.php` — Added Top Performers widget row
+- `app/views/dashboard/ceo_dashboard.php` — Added Top Performers widget row
+
+### Key Fixes
+- **CFO activity_logs_unified query** — Fixed column name from `activity_type` to `action` (was causing exception → 302 redirect to admin/dashboard)
+- **Cache integration** — All 4 safeGamify helpers now use `CacheService::getGamification()` with 5-min TTL
+- **Employee/Associate tables restored** — Both dropped in Phase 22 cleanup; restored with 6/10 records linked by email to users
+
+### Tier Tables (in GamificationService)
+| Role | Levels | Thresholds (rupees/points) |
+|------|--------|----------------------------|
+| Customer | Bronze → Silver → Gold → Platinum → Diamond | 0 → 50K → 200K → 500K → 1M (invested) |
+| Associate | Associate → Bronze → Silver → Gold → Platinum → Diamond | 0 → 50K → 200K → 500K → 1M → 2.5M (team sales) |
+| Agent | Rookie → Closer → Pro → Elite → Champion | 0 → 500K → 2M → 5M → 10M (deals value) |
+| Employee | Trainee → Junior → Senior → Lead → Star | 0 → 100 → 300 → 600 → 1000 (points) |
+
+### Data Sources
+- **Customer**: `investments` (principal_amount sum where user_id=?)
+- **Associate**: `mlm_profiles` (lifetime_sales) + `mlm_commission_ledger` (sum)
+- **Agent**: `deals` (sum of deal_value where assigned_to=?) — `deals` has `assigned_to`/`created_by` (NOT `agent_id`) and `deal_value` (NOT `amount`)
+- **Employee**: `performance_metrics` (sum of points where employee_id=?) + `tasks` (completed count)
+
+### Verification
+- **PHP syntax**: 8/8 modified/created files pass `php -l`
+- **E2E master**: **164/165 PASS** (1 expected GodMode 403) — zero regressions
+- **Smoke test (live HTTP)**: All 4 role dashboards show widget (customer/agent/associate/employee), CEO/CFO show Top Performers
+- **Cache working**: 5-min TTL via `CacheService::getGamification()` with key pattern `gamify_{role}_{primaryId}_{secondaryId}`
+
+### Known Limitations
+- Employee smoke test uses restored `employees` table (6 records) — auth gate now passes
+- Agent's "Rookie" level always (0 deals) — correct behavior, widget shows 0% to Closer
+- Associate widget shows "0% to Bronze" if no MLM profile — test associate has profile (level 0)
+- No i18n for level names — English only, Devanagari deferred
+
+---
+
 ## Session 2026-06-06: Phase 9 — Gamification Widget for All Role Dashboards (Commit b8e5b03d9, Tag gamification-all-roles-2026-06-06)
 
 ### What Was Done
