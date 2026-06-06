@@ -1,0 +1,99 @@
+<?php
+namespace App\Services;
+
+use PDO;
+
+class InsuranceService
+{
+    private PDO $pdo;
+
+    public function __construct(?PDO $pdo = null)
+    {
+        if ($pdo) {
+            $this->pdo = $pdo;
+            return;
+        }
+        $this->pdo = $this->resolvePdo();
+    }
+
+    public function listPlans(?string $category = null, bool $featuredOnly = false): array
+    {
+        $sql = "SELECT * FROM insurance_plans WHERE is_active = 1";
+        $params = [];
+        if ($category) {
+            $sql .= " AND plan_category = ?";
+            $params[] = $category;
+        }
+        if ($featuredOnly) {
+            $sql .= " AND is_featured = 1";
+        }
+        $sql .= " ORDER BY display_order, plan_name";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as &$r) {
+            $r['features'] = $r['features'] ? json_decode($r['features'], true) : [];
+        }
+        return $rows;
+    }
+
+    public function getPlan(int $planId): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM insurance_plans WHERE id = ? LIMIT 1");
+        $stmt->execute([$planId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) return null;
+        $row['features'] = $row['features'] ? json_decode($row['features'], true) : [];
+        return $row;
+    }
+
+    public function getUserPolicies(int $userId): array
+    {
+        $stmt = $this->pdo->prepare("SELECT p.*, pl.plan_name, pl.plan_category FROM insurance_policies p JOIN insurance_plans pl ON p.plan_id = pl.id WHERE p.user_id = ? ORDER BY p.created_at DESC");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getStats(int $userId): array
+    {
+        $rows = $this->pdo->prepare("SELECT pl.plan_category, COUNT(*) as cnt FROM insurance_policies p JOIN insurance_plans pl ON p.plan_id = pl.id WHERE p.user_id = ? AND p.status = 'active' GROUP BY pl.plan_category");
+        $rows->execute([$userId]);
+        $out = ['home' => 0, 'health' => 0, 'term_life' => 0, 'vehicle' => 0, 'travel' => 0, 'total' => 0];
+        foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $cat = $r['plan_category'];
+            $out[$cat] = (int)$r['cnt'];
+            $out['total'] += (int)$r['cnt'];
+        }
+        return $out;
+    }
+
+    public function enrol(int $userId, int $planId, array $data): array
+    {
+        $plan = $this->getPlan($planId);
+        if (!$plan) return ['success' => false, 'error' => 'Plan not found'];
+
+        $policyNumber = 'APS-INS-' . date('Ymd') . '-' . str_pad((string)random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+        $startDate = $data['start_date'] ?? date('Y-m-d');
+        $endDate = date('Y-m-d', strtotime($startDate . ' + 1 year'));
+        $nomineeName = $data['nominee_name'] ?? null;
+        $nomineeRelation = $data['nominee_relation'] ?? null;
+        $sumInsured = (float)($data['sum_insured'] ?? $plan['coverage_amount']);
+        $premium = (float)($plan['premium_yearly'] ?? 0);
+
+        $stmt = $this->pdo->prepare("INSERT INTO insurance_policies (user_id, plan_id, policy_number, nominee_name, nominee_relation, sum_insured, premium_amount, start_date, end_date, status, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending')");
+        $stmt->execute([$userId, $planId, $policyNumber, $nomineeName, $nomineeRelation, $sumInsured, $premium, $startDate, $endDate]);
+        return ['success' => true, 'policy_id' => $this->pdo->lastInsertId(), 'policy_number' => $policyNumber];
+    }
+
+    private function resolvePdo(): PDO
+    {
+        $config = [
+            'host' => $_ENV['DB_HOST'] ?? '127.0.0.1',
+            'port' => $_ENV['DB_PORT'] ?? '3307',
+            'dbname' => $_ENV['DB_DATABASE'] ?? 'apsdreamhome',
+            'user' => $_ENV['DB_USERNAME'] ?? 'root',
+            'pass' => $_ENV['DB_PASSWORD'] ?? '',
+        ];
+        return new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['dbname']}", $config['user'], $config['pass'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    }
+}

@@ -296,6 +296,26 @@ try {
 
     <div class="col-lg-4">
 
+        <?php
+        $invStats = $investor_stats ?? ['level' => 'Bronze', 'next_level' => 'Silver', 'progress_pct' => 0, 'next_threshold' => 50000, 'total_invested' => 0];
+        $lvl = $invStats['level'] ?? 'Bronze';
+        $lvlColor = match($lvl) { 'Diamond' => 'indigo', 'Platinum' => 'purple', 'Gold' => 'orange', 'Silver' => 'secondary', default => 'primary' };
+        ?>
+        <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #ede9fe 100%);">
+            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
+                <h5><i class="fas fa-trophy" style="color:#8b5cf6"></i> <?= __('dash_investor_level', null, 'Investor Level') ?></h5>
+            </div>
+            <div class="aps-cp-card-body text-center">
+                <div class="display-5 fw-bold mb-1" style="color: var(--aps-cp-<?= $lvlColor ?>);"><?= htmlspecialchars($lvl) ?></div>
+                <small class="text-muted d-block mb-3">Total Invested: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
+                <div class="aps-cp-progress" style="height:12px;">
+                    <div class="aps-cp-progress-bar" style="width:<?= (float)($invStats['progress_pct'] ?? 0) ?>%; background: linear-gradient(90deg, #4f46e5, #8b5cf6);"></div>
+                </div>
+                <p class="text-muted small mt-2 mb-0">Invest ₹<?= number_format((float)($invStats['next_threshold'] ?? 50000)) ?> more to reach <strong><?= htmlspecialchars($invStats['next_level'] ?? 'Silver') ?></strong></p>
+                <a href="<?= BASE_URL ?>/user/investment-plans" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary mt-3"><i class="fas fa-arrow-up"></i> Upgrade</a>
+            </div>
+        </div>
+
         <?php if (!empty($referral_code)): ?>
         <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);">
             <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(245, 158, 11, 0.2);">

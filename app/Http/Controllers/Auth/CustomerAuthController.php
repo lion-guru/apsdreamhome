@@ -99,6 +99,30 @@ class CustomerAuthController extends BaseController
                 $_SESSION['role'] = $user['role'] ?? 'customer';
                 $_SESSION['logged_in'] = true;
 
+                $resolvedRole = $_SESSION['role'];
+                if (in_array($resolvedRole, ['employee'], true)) {
+                    try {
+                        $empStmt = $db->prepare("SELECT id FROM employees WHERE user_id = ? LIMIT 1");
+                        $empStmt->execute([$user['id']]);
+                        $emp = $empStmt->fetch(\PDO::FETCH_ASSOC);
+                        if ($emp) {
+                            $_SESSION['employee_id'] = (int)$emp['id'];
+                        }
+                    } catch (\Throwable $e) {}
+                } elseif (in_array($resolvedRole, ['agent', 'associate'], true)) {
+                    try {
+                        $assStmt = $db->prepare("SELECT id FROM associates WHERE user_id = ? LIMIT 1");
+                        $assStmt->execute([$user['id']]);
+                        $ass = $assStmt->fetch(\PDO::FETCH_ASSOC);
+                        if ($ass) {
+                            $_SESSION['associate_id'] = (int)$ass['id'];
+                            if ($resolvedRole === 'agent') {
+                                $_SESSION['agent_id'] = (int)$ass['id'];
+                            }
+                        }
+                    } catch (\Throwable $e) {}
+                }
+
                 require_once __DIR__ . '/../../../services/AuditService.php';
                 try { (new \App\Services\AuditService($db))->log('login', (int)$user['id'], $user['role'] ?? 'customer', 'user', (int)$user['id'], 'User logged in'); } catch (\Throwable $e) {}
 

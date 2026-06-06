@@ -340,6 +340,15 @@ $router->get('/user/insurance', 'Front\\UserController@insurance');
 $router->get('/user/investment-plans', 'Front\\UserController@investmentPlans');
 $router->get('/user/kyc', 'Front\\KycController@index');
 $router->post('/user/kyc/submit', 'Front\\KycController@submit');
+
+// Portal: Insurance / Investment / Address (Phase 8 do-next-all)
+$router->post('/user/insurance/enrol', 'Front\\PortalController@insuranceEnrol');
+$router->post('/user/investment-plans/invest', 'Front\\PortalController@invest');
+$router->post('/user/address/store', 'Front\\PortalController@addressCreate');
+$router->post('/user/address/update', 'Front\\PortalController@addressUpdate');
+$router->post('/user/address/delete', 'Front\\PortalController@addressDelete');
+$router->post('/user/address/primary', 'Front\\PortalController@addressSetPrimary');
+$router->get('/api/address/pincode', 'Front\\PortalController@pincodeLookup');
 $router->post('/user/notification-settings', 'Front\\UserController@updateNotificationSettings');
 $router->get('/user/notification-preferences', 'Front\\NotificationPreferenceController@index');
 $router->post('/user/notification-preferences', 'Front\\NotificationPreferenceController@update');

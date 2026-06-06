@@ -505,11 +505,27 @@
         });
     };
 
+    CP.injectCsrf = function() {
+        var meta = document.querySelector('meta[name="csrf-token"]');
+        if (!meta) return;
+        var token = meta.getAttribute('content');
+        if (!token) return;
+        document.querySelectorAll('input[name="csrf_token"]').forEach(function(input) {
+            if (!input.value) input.value = token;
+        });
+    };
+
+    CP.fetchCsrf = function() {
+        var meta = document.querySelector('meta[name="csrf-token"]');
+        return meta ? meta.getAttribute('content') : '';
+    };
+
     // ----- Boot -----
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() { CP.init(); CP.initConfirmDelete(); });
+        document.addEventListener('DOMContentLoaded', function() { CP.init(); CP.initConfirmDelete(); CP.injectCsrf(); });
     } else {
         CP.init();
         CP.initConfirmDelete();
+        CP.injectCsrf();
     }
 })();

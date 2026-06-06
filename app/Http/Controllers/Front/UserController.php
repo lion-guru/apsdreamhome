@@ -174,6 +174,7 @@ class UserController extends BaseController
             'referral_count' => $referralCount,
             'referral_earnings' => $referralEarnings,
             'unread_notifications' => $unreadNotifCount,
+            'investor_stats' => $this->safeInvestorStats((int)$user['id']),
         ];
 
         $this->layout = 'layouts/customer';
@@ -766,5 +767,16 @@ class UserController extends BaseController
         // Redirect legacy calls to the new controller
         $controller = new \App\Http\Controllers\Front\SavedSearchController();
         $controller->destroy($id);
+    }
+
+    private function safeInvestorStats(int $userId): array
+    {
+        try {
+            $svc = new \App\Services\InvestmentService();
+            return $svc->getStats($userId);
+        } catch (\Throwable $e) {
+            error_log('Investor stats error: ' . $e->getMessage());
+            return ['level' => 'Bronze', 'next_level' => 'Silver', 'progress_pct' => 0, 'next_threshold' => 50000, 'total_invested' => 0, 'total' => 0, 'active' => 0, 'principal' => 0, 'current_value' => 0, 'returns' => 0];
+        }
     }
 }
