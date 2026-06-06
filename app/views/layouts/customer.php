@@ -399,7 +399,7 @@
         <!-- Top Header -->
         <header class="top-header">
             <div>
-                <h1 class="page-title"><?php echo $page_title ?? 'Dashboard'; ?></h1>
+                <h1 class="page-title"><?php echo preg_replace('/\s*-\s*APS Dream Home\s*$/', '', $page_title ?? 'Dashboard'); ?></h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/user/dashboard"><?= __('nav_home', null, 'Home') ?></a></li>
