@@ -1,6 +1,4 @@
-<?php
-
-error_reporting(E_ALL);
+<?php header('Content-Type: text/html; charset=UTF-8'); error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Define constants only if not already defined
@@ -124,3 +122,4 @@ if (file_exists(CORE_PATH . '/SystemIntegration.php')) {
 if (file_exists(APP_PATH . '/helpers.php')) {
     require_once APP_PATH . '/helpers.php';
 }
+
