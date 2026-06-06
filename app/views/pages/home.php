@@ -1,10 +1,11 @@
-﻿<!-- Hero Section -->
-<section class="hero" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+﻿<main id="main-content">
+<!-- Hero Section -->
+<section class="hero" aria-labelledby="hero-title" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-7 text-white">
                 <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);"><?= __('trusted_by') ?> 500+ Families</span>
-                <h1 class="fw-bold"><?= __('hero_title') ?></h1>
+                <h1 id="hero-title" class="fw-bold"><?= __('hero_title') ?></h1>
                 <p class="lead mb-4"><?= __('hero_subtitle') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
                     <?php
@@ -170,11 +171,11 @@
 </section>
 
 <!-- EMI Calculator Section -->
-<section class="py-5 emi-section">
+<section class="py-5 emi-section" aria-labelledby="emi-title">
     <div class="container">
         <div class="text-center mb-5">
             <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.08);">Free Tool</span>
-            <h2 class="fw-bold text-white"><?= __('emi_calculator') ?></h2>
+            <h2 id="emi-title" class="fw-bold text-white"><?= __('emi_calculator') ?></h2>
             <p class="text-white-50" style="font-size:1.05rem;"><?= __('emi_subtitle') ?></p>
         </div>
         <div class="row justify-content-center">
@@ -257,11 +258,11 @@ calcEMI();
 </script>
 
 <!-- Our Projects -->
-<section class="py-5 bg-light">
+<section class="py-5 bg-light" aria-labelledby="projects-title">
     <div class="container">
         <div class="text-center mb-5">
             <span class="section-label">Our Portfolio</span>
-            <h2 class="fw-bold"><?= __('section_our_projects') ?></h2>
+            <h2 id="projects-title" class="fw-bold"><?= __('section_our_projects') ?></h2>
             <p class="section-subtitle"><?= __('projects_subtitle') ?></p>
         </div>
         <div class="row">
@@ -332,11 +333,11 @@ calcEMI();
 </section>
 
 <!-- Services -->
-<section class="py-5" style="background:#f8fafc;">
+<section class="py-5" style="background:#f8fafc;" aria-labelledby="services-title">
     <div class="container">
         <div class="text-center mb-5">
             <span class="section-label">Our Expertise</span>
-            <h2 class="fw-bold"><?= __('our_services') ?></h2>
+            <h2 id="services-title" class="fw-bold"><?= __('our_services') ?></h2>
             <p class="section-subtitle"><?= __('services_tagline') ?></p>
         </div>
         <div class="row g-4">
@@ -570,12 +571,12 @@ function openServiceModal(service) {
 </script>
 
 <!-- Why Choose Us -->
-<section class="py-5 bg-light">
+<section class="py-5 bg-light" aria-labelledby="why-choose-title">
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
                 <span class="section-label">Why Us</span>
-                <h2 class="fw-bold mb-4"><?= __('section_why_choose_us') ?></h2>
+                <h2 id="why-choose-title" class="fw-bold mb-4"><?= __('section_why_choose_us') ?></h2>
                 <div class="checklist-item">
                     <div class="check-icon"><i class="fas fa-check"></i></div>
                     <div>
@@ -1474,5 +1475,6 @@ function mCalcVal() {
         </div>
     </div>
 </section>
+</main>
 
 <!-- WhatsApp float moved to base.php layout -->
