@@ -1,5 +1,47 @@
 # APS Dream Home - Agent Rules & Project Status (Updated 2026-06-06)
 
+## Session 2026-06-06 (Latest): Admin KYC + Document Upload + User Dashboard Fixes
+
+### What Was Done
+1. **User Dashboard Fix** — Moved inline DB calls from view to controller, passed `twoFactorEnabled` and `savedCount` properly
+2. **Admin KYC Management** — Full CRUD for KYC requests in admin panel (list, show, approve/reject with rejection reason)
+3. **Customer KYC Document Upload** — Added required PAN card + Aadhaar front/back upload to KYC form
+3. **KYC Backend** — File upload handling, secure storage in `assets/uploads/kyc/`, document paths stored in `kyc_requests` table
+4. **Admin KYC Views** — Updated to work with `kyc_requests` table (index, show with document preview, pending list, approve/reject with rejection reason)
+
+### Files Created (3)
+- `scripts/create_kyc_requests_table.php` — Creates `kyc_requests` table with FK to users
+- `scripts/add_kyc_documents_columns.php` — Adds document columns (pan_document, aadhaar_front/back_document, verified_by, verified_at, rejection_reason)
+- `scripts/add_kyc_documents_columns.php` — Adds document columns (pan_document, aadhaar_front/back_document, verified_by, verified_at, rejection_reason)
+
+### Files Modified (8)
+- `app/Http/Controllers/Front/UserController.php` — Pass `twoFactorEnabled`, `savedCount` to dashboard view
+- `app/Http/Controllers/Front/KycController.php` — Handle file uploads in submit(), store document paths
+- `app/Http/Controllers/Admin/KycController.php` — Use `kyc_requests` table, support approve/reject with rejection reason
+- `app/views/pages/user/kyc.php` — Add document upload fields (PAN, Aadhaar front/back)
+- `app/views/pages/user_dashboard.php` — Remove inline DB calls, use controller-passed vars
+- `app/views/admin/kyc/index.php` — Show KYC requests list with PAN/Aadhaar/name
+- `app/views/admin/kyc/show.php` — Show KYC details with document previews, approve/reject form
+- `app/views/admin/kyc/pending.php` — Pending KYC list with verify action
+
+### Database
+- `kyc_requests` table created with FK to users
+- Document columns added: pan_document, aadhaar_front_document, aadhaar_back_document, verified_by, verified_at, rejection_reason
+
+### Verification
+- **PHP syntax**: All modified files pass `php -l`
+- **E2E master**: **164/165 PASS** (1 expected GodMode 403) — zero regressions
+- **Smoke test**: Customer KYC form shows document upload fields, admin KYC views render correctly
+
+### Pending (Next Priority)
+1. **CSS consolidation** — Merge 50+ CSS files, remove duplicates
+2. **i18n completion** — home.php (~201 strings), admin pages
+3. **Real KYC API** — NSDL PAN verification, UIDAI Aadhaar e-KYC integration
+4. **Mobile responsiveness** — Admin portal mobile fixes
+5. **CSS consolidation** — Merge 50+ CSS files, remove duplicates
+
+---
+
 ## Session 2026-06-06: Phase 9 Completion — Employees/Associates Tables + Admin Gamification + Cache (Commit f5fdcfa9d, Tag phase9-complete-2026-06-06)
 
 ### What Was Done
