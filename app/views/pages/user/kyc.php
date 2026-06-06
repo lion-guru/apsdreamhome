@@ -61,7 +61,7 @@ ob_start();
         <h3>Submit / Update KYC</h3>
     </div>
     <div class="aps-cp-card-body">
-        <form id="kycForm" class="aps-cp-form" data-ajax="true" action="<?= BASE_URL ?>/user/kyc/submit" method="POST">
+        <form id="kycForm" class="aps-cp-form" data-ajax="true" action="<?= BASE_URL ?>/user/kyc/submit" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
             <div class="aps-cp-form-section">
@@ -76,9 +76,27 @@ ob_start();
             </div>
 
             <div class="aps-cp-form-section">
+                <label class="aps-cp-label" for="pan_document">PAN Card Document <span class="text-danger">*</span></label>
+                <input type="file" id="pan_document" name="pan_document" class="aps-cp-input" accept="image/*,application/pdf" required>
+                <small class="aps-cp-help">Upload PAN card image (JPG, PNG, PDF). Max 5MB.</small>
+            </div>
+
+            <div class="aps-cp-form-section">
                 <label class="aps-cp-label" for="aadhaar_number">Aadhaar Number</label>
                 <input type="text" id="aadhaar_number" name="aadhaar_number" class="aps-cp-input" pattern="[0-9]{12}" placeholder="123412341234" maxlength="12" required>
                 <small class="aps-cp-help">12-digit Aadhaar. Will be verified via UIDAI.</small>
+            </div>
+
+            <div class="aps-cp-form-section">
+                <label class="aps-cp-label" for="aadhaar_front_document">Aadhaar Front <span class="text-danger">*</span></label>
+                <input type="file" id="aadhaar_front_document" name="aadhaar_front_document" class="aps-cp-input" accept="image/*,application/pdf" required>
+                <small class="aps-cp-help">Upload Aadhaar front side (JPG, PNG, PDF). Max 5MB.</small>
+            </div>
+
+            <div class="aps-cp-form-section">
+                <label class="aps-cp-label" for="aadhaar_back_document">Aadhaar Back <span class="text-danger">*</span></label>
+                <input type="file" id="aadhaar_back_document" name="aadhaar_back_document" class="aps-cp-input" accept="image/*,application/pdf" required>
+                <small class="aps-cp-help">Upload Aadhaar back side (JPG, PNG, PDF). Max 5MB.</small>
             </div>
 
             <div class="aps-cp-form-section">
