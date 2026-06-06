@@ -31,7 +31,7 @@ $month = $month ?? date('Y-m');
                     </thead>
                     <tbody>
                         <?php if (empty($attendance)): ?>
-                            <tr><td colspan="5" class="text-center text-muted py-4">No attendance records found for this month.</td></tr>
+                            <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No attendance records found for this month.</td></tr>
                         <?php else: ?>
                             <?php foreach ($attendance as $a): ?>
                                 <tr>

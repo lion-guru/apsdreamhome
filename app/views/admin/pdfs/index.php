@@ -95,7 +95,7 @@ $flash = $flash ?? [];
                 </thead>
                 <tbody>
                     <?php if (empty($recent)): ?>
-                        <tr><td colspan="4" class="text-center text-muted py-4">No PDFs generated yet.</td></tr>
+                        <tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No PDFs generated yet.</td></tr>
                     <?php endif; ?>
                     <?php foreach ($recent as $f): ?>
                         <tr>

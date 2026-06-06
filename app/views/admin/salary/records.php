@@ -23,7 +23,7 @@
                     </tr></thead>
                     <tbody>
                         <?php if (empty($records ?? [])): ?>
-                            <tr><td colspan="11" class="text-center text-muted py-4">No records found</td></tr>
+                            <tr><td colspan="11" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No records found</td></tr>
                         <?php else: ?>
                             <?php foreach ($records as $r): ?>
                             <tr>

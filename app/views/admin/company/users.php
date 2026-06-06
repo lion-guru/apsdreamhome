@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                     <?php if (empty($users)): ?>
-                        <tr><td colspan="7" class="text-center text-muted py-4">No company users found.</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-users fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No company users found.</td></tr>
                     <?php else: ?>
                         <?php foreach ($users as $u): ?>
                             <tr>

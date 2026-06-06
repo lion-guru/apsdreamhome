@@ -18,7 +18,7 @@
                 </thead>
                 <tbody>
                     <?php if (empty($employees)): ?>
-                        <tr><td colspan="5" class="text-center text-muted py-4">No employees found.</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No employees found.</td></tr>
                     <?php else: ?>
                         <?php foreach ($employees as $e): ?>
                             <tr>

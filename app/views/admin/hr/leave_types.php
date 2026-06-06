@@ -15,7 +15,7 @@ $page_title = $page_title ?? 'Leave Types';
                 </thead>
                 <tbody>
                     <?php if (empty($types ?? [])): ?>
-                        <tr><td colspan="7" class="text-center text-muted py-4">No leave types</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No leave types</td></tr>
                     <?php else: ?>
                         <?php foreach ($types as $t): ?>
                             <tr>

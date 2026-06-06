@@ -90,7 +90,7 @@
                             </thead>
                             <tbody>
                                 <?php if (empty($emails)): ?>
-                                <tr><td colspan="7" class="text-center text-muted py-4">No email queue items</td></tr>
+                                <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No email queue items</td></tr>
                                 <?php else: ?>
                                 <?php foreach ($emails as $e): ?>
                                 <tr>
@@ -144,7 +144,7 @@
                             </thead>
                             <tbody>
                                 <?php if (empty($sms_items)): ?>
-                                <tr><td colspan="6" class="text-center text-muted py-4">No SMS queue items</td></tr>
+                                <tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No SMS queue items</td></tr>
                                 <?php else: ?>
                                 <?php foreach ($sms_items as $s): ?>
                                 <tr>

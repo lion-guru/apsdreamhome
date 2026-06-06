@@ -74,7 +74,7 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php if (empty($visits)): ?>
-                            <tr><td colspan="7" class="text-center text-muted py-4">No visits scheduled</td></tr>
+                            <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No visits scheduled</td></tr>
                         <?php else: ?>
                             <?php foreach ($visits as $v): ?>
                                 <tr>

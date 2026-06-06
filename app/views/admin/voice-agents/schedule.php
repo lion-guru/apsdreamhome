@@ -68,7 +68,7 @@
                             </thead>
                             <tbody>
                                 <?php if (empty($schedule_items)): ?>
-                                <tr><td colspan="8" class="text-center text-muted py-4">No scheduled calls</td></tr>
+                                <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No scheduled calls</td></tr>
                                 <?php else: ?>
                                 <?php foreach ($schedule_items as $item): ?>
                                 <tr>

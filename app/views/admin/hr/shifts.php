@@ -15,7 +15,7 @@ $page_title = $page_title ?? 'Shift Types';
                 </thead>
                 <tbody>
                     <?php if (empty($shifts ?? [])): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No shift types</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No shift types</td></tr>
                     <?php else: ?>
                         <?php foreach ($shifts as $s): ?>
                             <tr>

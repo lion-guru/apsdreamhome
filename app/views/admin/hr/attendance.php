@@ -45,7 +45,7 @@ $page_title = $page_title ?? 'Attendance';
                 </thead>
                 <tbody>
                     <?php if (empty($records)): ?>
-                        <tr><td colspan="6" class="text-center text-muted py-4">No attendance records for this date</td></tr>
+                        <tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No attendance records for this date</td></tr>
                     <?php else: ?>
                         <?php foreach ($records as $r): ?>
                             <tr>

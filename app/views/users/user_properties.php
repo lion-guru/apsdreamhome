@@ -24,7 +24,7 @@ $properties = $properties ?? [];
                     </thead>
                     <tbody>
                         <?php if (empty($properties)): ?>
-                            <tr><td colspan="6" class="text-center text-muted py-4">No properties listed yet.</td></tr>
+                            <tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No properties listed yet.</td></tr>
                         <?php else: ?>
                             <?php foreach ($properties as $p): ?>
                                 <tr>

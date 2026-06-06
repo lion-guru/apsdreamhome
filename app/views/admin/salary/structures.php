@@ -39,7 +39,7 @@
                     </tr></thead>
                     <tbody>
                         <?php if (empty($structures ?? [])): ?>
-                            <tr><td colspan="13" class="text-center text-muted py-4">No salary structures defined</td></tr>
+                            <tr><td colspan="13" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No salary structures defined</td></tr>
                         <?php else: ?>
                             <?php foreach ($structures as $s): ?>
                             <tr>

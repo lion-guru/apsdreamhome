@@ -103,7 +103,7 @@
                         </tr>
                         <?php endforeach; ?>
                         <?php if (empty($bookings)): ?>
-                        <tr><td colspan="10" class="text-center text-muted py-4">No bookings found</td></tr>
+                        <tr><td colspan="10" class="text-center text-muted py-4"><i class="fas fa-calendar fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No bookings found</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

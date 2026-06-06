@@ -21,7 +21,7 @@
                         </thead>
                         <tbody>
                             <?php if (empty($upcomingCalls)): ?>
-                                <tr><td colspan="6" class="text-center text-muted py-4">No upcoming calls.</td></tr>
+                                <tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No upcoming calls.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($upcomingCalls as $c): ?>
                                     <tr>

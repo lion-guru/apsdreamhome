@@ -79,7 +79,7 @@ $isAssign = ($mode ?? '') === 'assign';
                     </thead>
                     <tbody>
                         <?php if (empty($schedule ?? [])): ?>
-                            <tr><td colspan="7" class="text-center text-muted py-4">No shifts scheduled for this date</td></tr>
+                            <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No shifts scheduled for this date</td></tr>
                         <?php else: ?>
                             <?php foreach ($schedule as $s): ?>
                                 <tr>

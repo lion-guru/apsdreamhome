@@ -71,7 +71,7 @@
                     </tr></thead>
                     <tbody>
                         <?php if (empty($payments ?? [])): ?>
-                            <tr><td colspan="9" class="text-center text-muted py-4">No payments match the selected filters</td></tr>
+                            <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No payments match the selected filters</td></tr>
                         <?php else: ?>
                             <?php foreach ($payments as $p): ?>
                             <tr>

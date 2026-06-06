@@ -54,7 +54,7 @@
                         </thead>
                         <tbody>
                             <?php if (empty($features)): ?>
-                                <tr><td colspan="5" class="text-center text-muted py-4">No features data.</td></tr>
+                                <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No features data.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($features as $f): ?>
                                     <tr>

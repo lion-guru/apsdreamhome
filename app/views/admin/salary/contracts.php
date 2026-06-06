@@ -12,7 +12,7 @@
                     </tr></thead>
                     <tbody>
                         <?php if (empty($contracts ?? [])): ?>
-                            <tr><td colspan="10" class="text-center text-muted py-4">No contracts found</td></tr>
+                            <tr><td colspan="10" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No contracts found</td></tr>
                         <?php else: ?>
                             <?php foreach ($contracts as $c): ?>
                             <tr>

@@ -15,7 +15,7 @@ $page_title = $page_title ?? 'KPI Definitions';
                 </thead>
                 <tbody>
                     <?php if (empty($kpis ?? [])): ?>
-                        <tr><td colspan="6" class="text-center text-muted py-4">No KPI definitions</td></tr>
+                        <tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No KPI definitions</td></tr>
                     <?php else: ?>
                         <?php foreach ($kpis as $k): ?>
                             <tr>

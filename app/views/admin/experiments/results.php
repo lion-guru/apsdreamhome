@@ -157,7 +157,7 @@ foreach ($results as $variant => $r) {
                 </thead>
                 <tbody>
                     <?php if (empty($results)): ?>
-                        <tr><td colspan="5" class="text-center text-muted py-4">No data yet. Need impressions/clicks to compute stats.</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No data yet. Need impressions/clicks to compute stats.</td></tr>
                     <?php else: foreach ($results as $variant => $r):
                         $u = (int)($r['users'] ?? 0);
                         $c = (int)($r['conversions'] ?? 0);

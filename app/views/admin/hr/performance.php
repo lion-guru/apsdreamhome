@@ -15,7 +15,7 @@ $page_title = $page_title ?? 'Performance Reviews';
                 </thead>
                 <tbody>
                     <?php if (empty($reviews ?? [])): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No reviews yet</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No reviews yet</td></tr>
                     <?php else: ?>
                         <?php foreach ($reviews as $r): ?>
                             <tr>

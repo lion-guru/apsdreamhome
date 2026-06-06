@@ -34,7 +34,7 @@ $department = $department ?? '';
             </thead>
             <tbody>
                 <?php if (empty($users)): ?>
-                    <tr><td colspan="8" class="text-center text-muted py-4">No users found.</td></tr>
+                    <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-users fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No users found.</td></tr>
                 <?php else: ?>
                     <?php foreach ($users as $emp): ?>
                         <tr>

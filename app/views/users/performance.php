@@ -69,7 +69,7 @@ $weeks = $weeks ?? [];
                     </thead>
                     <tbody>
                         <?php if (empty($metrics)): ?>
-                            <tr><td colspan="5" class="text-center text-muted py-4">No performance data available.</td></tr>
+                            <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No performance data available.</td></tr>
                         <?php else: ?>
                             <?php foreach ($metrics as $m): ?>
                                 <tr>

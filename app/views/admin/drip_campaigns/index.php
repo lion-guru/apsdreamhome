@@ -93,7 +93,7 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php if (empty($campaigns)): ?>
-                            <tr><td colspan="9" class="text-center text-muted py-4">No campaigns yet</td></tr>
+                            <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No campaigns yet</td></tr>
                         <?php else: ?>
                             <?php foreach ($campaigns as $c): ?>
                                 <tr>
