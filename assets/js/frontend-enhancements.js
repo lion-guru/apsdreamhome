@@ -516,4 +516,45 @@
     } else {
         APS.init();
     }
+
+    // ----- Page loader (top progress bar on navigation) -----
+    APS.pageLoader = {
+        el: null,
+        show: function() {
+            if (this.el) return;
+            this.el = document.createElement('div');
+            this.el.className = 'aps-page-loader';
+            this.el.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(this.el);
+        },
+        hide: function() {
+            if (!this.el) return;
+            this.el.classList.add('is-hidden');
+            var self = this;
+            setTimeout(function() {
+                if (self.el && self.el.parentNode) {
+                    self.el.parentNode.removeChild(self.el);
+                }
+                self.el = null;
+            }, 350);
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var inFlight = 0;
+        var origFetch = window.fetch;
+        if (typeof origFetch === 'function') {
+            window.fetch = function() {
+                inFlight++;
+                APS.pageLoader.show();
+                return origFetch.apply(this, arguments).finally(function() {
+                    inFlight--;
+                    if (inFlight === 0) APS.pageLoader.hide();
+                });
+            };
+        }
+        // Also hide on full page load
+        window.addEventListener('pageshow', function() { APS.pageLoader.hide(); });
+        window.addEventListener('load', function() { APS.pageLoader.hide(); });
+    });
 })();

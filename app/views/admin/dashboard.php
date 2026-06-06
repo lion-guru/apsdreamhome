@@ -239,9 +239,15 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <?php endforeach; ?>
                 </div>
                 <?php else: ?>
-                <div class="text-center py-4 text-muted">No leads found</div>
+                <div class="aps-empty-state">
+                    <i class="fas fa-user-plus fa-3x" aria-hidden="true"></i>
+                    <p class="mb-0">No leads found</p>
+                </div>
                 <?php endif; } catch (\Exception $e) { ?>
-                <div class="text-center py-4 text-muted">Unable to load leads</div>
+                <div class="aps-empty-state">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning" aria-hidden="true"></i>
+                    <p class="mb-0">Unable to load leads</p>
+                </div>
                 <?php } ?>
             </div>
         </div>
