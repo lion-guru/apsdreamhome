@@ -295,15 +295,16 @@ calcEMI();
             <?php endforeach; ?>
         <?php else: ?>
                 <?php foreach (array_slice($featured_properties, 0, 4) as $project): 
-                    $slug = $project['slug'] ?? strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project['title']));
+                    $slug = $projectTitle = $project['title'] ?? '';
+                    $slug = $project['slug'] ?? strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $projectTitle));
                     $imgPath = '/assets/images/projects/';
-                    if (stripos($project['title'], 'Suryoday') !== false) {
+                    if ($projectTitle && stripos($projectTitle, 'Suryoday') !== false) {
                         $imgPath .= 'gorakhpur/suryoday.jpg';
-                    } elseif (stripos($project['title'], 'Raghunath') !== false) {
+                    } elseif ($projectTitle && stripos($projectTitle, 'Raghunath') !== false) {
                         $imgPath .= 'gorakhpur/raghunath nagri motiram.JPG';
-                    } elseif (stripos($project['title'], 'Braj') !== false) {
+                    } elseif ($projectTitle && stripos($projectTitle, 'Braj') !== false) {
                         $imgPath .= 'gorakhpur/suryoday1.jpeg';
-                    } elseif (stripos($project['title'], 'Budh') !== false) {
+                    } elseif ($projectTitle && stripos($projectTitle, 'Budh') !== false) {
                         $imgPath .= 'kushinagar/budh-bihar.jpg';
                     } else {
                         $imgPath .= 'placeholder/property.svg';
@@ -316,7 +317,7 @@ calcEMI();
                             <span class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?php echo $project['status']; ?></span>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($project['title']); ?></h5>
+                            <h5 class="card-title"><?php echo htmlspecialchars($project['title'] ?? ''); ?></h5>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($project['city']); ?></p>
                             <p class="price"><?php echo $project['price']; ?></p>
                             <a href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>" class="btn btn-outline-primary btn-sm px-4"><?= __('view_details') ?></a>
