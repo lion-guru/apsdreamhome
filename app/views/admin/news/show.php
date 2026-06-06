@@ -15,7 +15,7 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
         <div class="col-lg-8">
             <div class="card shadow mb-4">
                 <?php if (!empty($news['image'])): ?>
-                <img />/<?= htmlspecialchars($news['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" style="max-height:400px;object-fit:cover">
+                <img src="<?= $base ?>/<?= htmlspecialchars($news['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" style="max-height:400px;object-fit:cover">
                 <?php endif; ?>
                 <div class="card-body">
                     <h2 class="card-title"><?= htmlspecialchars($news['title'] ?? '') ?></h2>

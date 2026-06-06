@@ -121,7 +121,7 @@
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('imagePreview').innerHTML = '<img />';
+                document.getElementById('imagePreview').innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" alt="Preview">';
             };
             reader.readAsDataURL(file);
         }

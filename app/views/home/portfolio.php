@@ -10,9 +10,9 @@
             <?php foreach ($portfolio as $project): ?>
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="portfolio-item">
-                    <img /> class="img-fluid">" 
-                         alt="<?php echo h($project['title']); ?>" 
-                         class="img-fluid" 
+                    <img src="<?php echo h($project['image']); ?>"
+                         alt="<?php echo h($project['title']); ?>"
+                         class="img-fluid"
                          loading="lazy">
                     <div class="portfolio-info">
                         <h4><?php echo h($project['title']); ?></h4>

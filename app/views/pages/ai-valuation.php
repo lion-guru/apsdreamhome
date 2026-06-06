@@ -120,8 +120,8 @@ $content = $content ?? '';
                                     <div class="row g-0">
                                         <div class="col-4">
                                             <?php if ($property['primary_image']): ?>
-                                                <img />"
-                                                    class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="">
+                                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
+                                                    class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="" />
                                             <?php else: ?>
                                                 <div class="bg-light h-100 d-flex align-items-center justify-content-center">
                                                     <i class="fas fa-home text-muted fa-2x"></i>

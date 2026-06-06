@@ -24,7 +24,7 @@
         <!-- Left: Plot Image / Map -->
         <div class="col-lg-7 mb-4">
             <?php if (!empty($plot['image_path'])): ?>
-                <img />" alt="Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?>" class="plot-gallery-img">
+                <img src="<?= htmlspecialchars($plot['image_path']) ?>" alt="Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?>" class="plot-gallery-img">
             <?php else: ?>
                 <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center" style="height:350px">
                     <div class="text-center text-muted">

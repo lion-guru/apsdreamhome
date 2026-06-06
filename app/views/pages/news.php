@@ -69,9 +69,9 @@
                                 $imagePath = !empty($news['image']) ? $news['image'] : 'assets/images/property-placeholder.jpg';
                                 $imageUrl = get_asset_url($imagePath);
                                 ?>
-                                <img />"
+                                <img src="<?= htmlspecialchars($imageUrl) ?>"
                                     alt="<?= htmlspecialchars($news['title'] ?? '') ?>"
-                                    class="img-fluid w-100" style="height:200px;object-fit:cover;">
+                                    class="img-fluid w-100" style="height:200px;object-fit:cover;" loading="lazy">
                                 <?php if (!empty($news['category'])): ?>
                                 <div class="news-category position-absolute top-0 start-0 m-3">
                                     <span class="badge bg-primary"><?= htmlspecialchars($news['category']) ?></span>

@@ -385,7 +385,7 @@
             <div class="team-card" data-category="<?php echo $catSlug; ?>">
                 <div class="team-card-photo">
                     <?php if ($hasPhoto): ?>
-                    <img />" alt="<?php echo htmlspecialchars($m->name); ?>" loading="lazy">
+                    <img src="<?= $photoUrl ?>" alt="<?php echo htmlspecialchars($m->name); ?>" loading="lazy">
                     <?php else: ?>
                     <div class="placeholder-icon"><i class="fas fa-user-tie"></i></div>
                     <?php endif; ?>

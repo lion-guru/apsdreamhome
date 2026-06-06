@@ -129,7 +129,7 @@
                                     <?= htmlspecialchars($prop->status ?? 'Available') ?>
                                 </span>
 
-                                <img />image) ? get_asset_url($prop->image) : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80' ?>" class="card-img-top resell-card-img img-fluid" alt="<?= htmlspecialchars($prop->title) ?>">
+                                <img src="<?= !empty($prop->image) ? htmlspecialchars(get_asset_url($prop->image)) : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80' ?>" class="card-img-top resell-card-img img-fluid" alt="<?= htmlspecialchars($prop->title) ?>" loading="lazy">
 
                                 <div class="price-badge position-absolute bottom-0 start-0 bg-dark text-white px-3 py-2 rounded-end-3 mb-3">
                                     â‚¹<?= number_format($prop->price) ?>

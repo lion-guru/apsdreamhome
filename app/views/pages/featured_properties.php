@@ -25,7 +25,7 @@ $featuredProperties = [
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="position-relative">
-                        <img />" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name']) ?>" style="height:220px;object-fit:cover;">
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name']) ? />" style="height:220px;object-fit:cover;">
                         <span class="badge bg-success position-absolute top-0 start-0 m-3">Featured</span>
                     </div>
                     <div class="card-body">

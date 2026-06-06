@@ -65,7 +65,7 @@ $content = $content ?? '';
         <div class="card shadow-sm h-100 hover-lift">
           <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:180px;">
             <?php if (!empty($p['images'][0]['image_url'])): ?>
-              <img />" class="w-100 h-100" style="object-fit:cover;" alt="">
+              <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100" style="object-fit:cover;" alt="" />
             <?php else: ?>
               <i class="fas fa-home fa-4x text-muted"></i>
             <?php endif; ?>

@@ -23,9 +23,9 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                             <?php foreach ($images as $i => $img):
                             ?>
                                 <div class="carousel-item <?php echo $i === 0 ? 'active' : ''; ?>">
-                                    <img />"
+                                    <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
                                         class="d-block w-100 gallery-trigger" style="height: 400px; object-fit: cover; cursor: pointer;"
-                                        alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>"
+                                        alt="<?php echo htmlspecialchars($property['title'] ?? ''); ? />"
                                         onclick="openLightbox(<?php echo $i; ?>)">
                                 </div>
                             <?php endforeach; ?>
@@ -43,8 +43,8 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                     <?php if (count($images) > 1): ?>
                     <div class="d-flex gap-1 mt-1 overflow-auto">
                         <?php foreach ($images as $i => $img): ?>
-                        <img />"
-                            class="rounded" style="height: 60px; width: 80px; object-fit: cover; cursor: pointer; border: 2px solid <?php echo $i === 0 ? '#0d6efd' : 'transparent'; ?>;"
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
+                            class="rounded" style="height: 60px; width: 80px; object-fit: cover; cursor: pointer; border: 2px solid <?php echo $i === 0 ? '#0d6efd' : 'transparent'; ? />;"
                             onclick="$('#propertyCarousel').carousel(<?php echo $i; ?>); openLightbox(<?php echo $i; ?>);"
                             alt="Thumbnail">
                         <?php endforeach; ?>
@@ -216,8 +216,8 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                                 <li class="list-group-item">
                                     <a href="/properties/<?php echo $rel['id']; ?>" class="text-decoration-none">
                                         <div class="d-flex">
-                                            <img />" class="img-fluid"
-                                                class="rounded me-2" style="width: 60px; height: 45px; object-fit: cover;">
+                                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid"
+                                                class="rounded me-2" style="width: 60px; height: 45px; object-fit: cover;" />
                                             <div>
                                                 <small class="fw-bold"><?php echo htmlspecialchars($rel['title'] ?? $rel['name'] ?? 'Property'); ?></small>
                                                 <br><small class="text-primary">â‚¹<?php echo number_format($rel['price'] ?? 0); ?></small>

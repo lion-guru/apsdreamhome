@@ -15,10 +15,10 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                         <?php if (!empty($fav['image'])): ?>
-                            <img />/assets/images/properties/<?= htmlspecialchars($fav['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($fav['title'] ?? __('user_favorites_default_alt')) ?>" style="height: 180px; object-fit: cover;">
+                            <img src="<?= BASE_URL ?>/assets/images/properties/<?= htmlspecialchars($fav['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($fav['title'] ?? __('user_favorites_default_alt')) ?>" style="height: 180px; object-fit: cover;" loading="lazy">
                         <?php else: ?>
                             <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-                                <i class="fas fa-home fa-3x text-muted opacity-25"></i>
+                                <i class="fas fa-home fa-3x text-muted opacity-25" aria-hidden="true"></i>
                             </div>
                         <?php endif; ?>
                         <div class="card-body p-3">
@@ -41,13 +41,11 @@
             <?php endforeach; ?>
         </div>
     <?php else: ?>
-        <div class="text-center py-5">
-            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 100px; height: 100px;">
-                <i class="fas fa-heart fa-3x text-muted opacity-25"></i>
-            </div>
-            <h5 class="fw-bold"><?= __('user_favorites_empty_title') ?></h5>
-            <p class="text-muted mx-auto" style="max-width: 400px;"><?= __('user_favorites_empty_desc') ?></p>
-            <a href="<?= BASE_URL ?>/properties" class="btn btn-primary rounded-pill px-4 mt-2"><?= __('user_favorites_browse_button') ?></a>
+        <div class="aps-empty-state" role="status">
+            <i class="fas fa-heart aps-empty-state-icon" aria-hidden="true"></i>
+            <h5 class="aps-empty-state-title"><?= __('user_favorites_empty_title') ?></h5>
+            <p class="aps-empty-state-message text-muted"><?= __('user_favorites_empty_desc') ?></p>
+            <a href="<?= BASE_URL ?>/properties" class="btn btn-primary rounded-pill px-4 aps-empty-state-action"><?= __('user_favorites_browse_button') ?></a>
         </div>
     <?php endif; ?>
 </div>

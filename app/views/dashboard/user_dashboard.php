@@ -124,7 +124,7 @@ ob_start();
                                         <tr>
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
-                                                    <img /> class="img-fluid">"
+                                                    <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>"
                                                         alt="Property" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                                     <div>
                                                         <h6 class="mb-0 fw-bold"><?= h($property['title']) ?></h6>
@@ -212,7 +212,7 @@ ob_start();
                 <h5 class="fw-bold mb-4">Profile Summary</h5>
                 <div class="text-center mb-4">
                     <div class="position-relative d-inline-block">
-                        <img /> class="img-fluid">"
+                        <img src="<?= !empty($user_avatar) ? htmlspecialchars($user_avatar) : (BASE_URL . '/assets/images/default-avatar.png') ?>"
                             alt="Profile" class="rounded-circle shadow-sm border border-4 border-light" style="width: 100px; height: 100px; object-fit: cover;">
                         <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
                     </div>

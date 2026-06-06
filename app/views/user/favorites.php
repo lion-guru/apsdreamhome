@@ -57,10 +57,7 @@ if (!defined('BASE_URL')) {
                         <div class="property-card">
                             <!-- Property Image -->
                             <div class="property-image">
-                                <img /> class="img-fluid">"
-                                     alt="<?php echo htmlspecialchars($property['title']); ?>"
-                                     class="img-fluid"
-                                     onerror="this.src='<?php echo BASE_URL; ?>assets/images/no-image.jpg'">
+                                <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/no-image.jpg') ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" class="img-fluid" onerror="this.src='<?= BASE_URL ?>assets/images/no-image.jpg'" loading="lazy">
                                 <div class="property-overlay">
                                     <div class="property-actions">
                                         <button class="btn btn-danger btn-sm remove-favorite"

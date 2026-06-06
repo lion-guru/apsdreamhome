@@ -25,7 +25,7 @@ $video = $media['video'] ?? null;
             <?php foreach ($gallery as $item): ?>
             <div class="col-md-4 col-sm-6">
                 <div class="microsite-gallery__item">
-                    <img />" alt="<?php echo h($item['alt'] ?? 'Project image'); ?>" loading="lazy">
+                    <img src="<?= BASE_URL ?>/<?php echo h($item['src'] ?? $item['image'] ?? $item['url'] ?? ''); ?>" alt="<?php echo h($item['alt'] ?? 'Project image'); ?>" loading="lazy">
                     <?php if (!empty($item['caption'])): ?>
                     <div class="microsite-gallery__caption"><?php echo h($item['caption']); ?></div>
                     <?php endif; ?>
@@ -55,7 +55,7 @@ $video = $media['video'] ?? null;
             <?php if (!empty($layoutMap)): ?>
             <div class="col-lg-6">
                 <div class="microsite-media-card">
-                    <img />" alt="Project layout map" class="img-fluid rounded" loading="lazy">
+                    <img src="<?= BASE_URL ?>/<?php echo h($layoutMap); ?>" alt="Project layout map" class="img-fluid rounded" loading="lazy">
                 </div>
             </div>
             <?php endif; ?>

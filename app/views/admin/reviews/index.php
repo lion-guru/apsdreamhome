@@ -174,7 +174,7 @@ ob_start();
                                     <td>
                                         <strong><?= htmlspecialchars($t['customer_name']) ?></strong>
                                         <?php if (!empty($t['client_photo'])): ?>
-                                            <br><img />" class="rounded-circle mt-1" style="width:30px;height:30px;">
+                                            <br><img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="rounded-circle mt-1" style="width:30px;height:30px;" />
                                         <?php endif; ?>
                                     </td>
                                     <td>

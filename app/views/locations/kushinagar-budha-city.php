@@ -76,7 +76,7 @@ ob_start();
                 </div>
                 <div class="col-lg-5 mt-5 mt-lg-0">
                     <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                        <img />" class="img-fluid" alt="Budha City Kushinagar">
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid" alt="Budha City Kushinagar" />
                         <div class="card-body bg-white text-center py-3">
                             <span class="fw-bold text-primary"><i class="fas fa-gem me-2"></i>Premium Development in Kushinagar</span>
                         </div>
@@ -94,7 +94,7 @@ ob_start();
                     <?php foreach ($amenities as $amenity): ?>
                         <div class="col-lg-3 col-md-6">
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-lift h-100">
-                                <img />" class="card-img-top" alt="<?= h($amenity['alt_text']) ?>" style="height: 200px; object-fit: cover;">
+                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= h($amenity['alt_text']) ? />" style="height: 200px; object-fit: cover;">
                                 <div class="card-body text-center p-3">
                                     <h6 class="fw-bold mb-0"><?= h($amenity['title']) ?></h6>
                                 </div>
