@@ -11,6 +11,7 @@ class LayoutManager {
     }
     
     public function getLayoutSettings() {
+        $result = null;
         try {
             $result = $this->db->fetch("SELECT * FROM layout_settings WHERE id = 1");
         } catch (\Throwable $e) {

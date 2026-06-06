@@ -1800,4 +1800,6 @@ return array (
   'your_name' => 'Your Name',
   'your_phone' => 'Your Phone',
   'your_referral_code' => 'Your Referral Code',
+  'two_factor_enter_code' => 'Enter the 6-digit code from your authenticator app.',
+  'register_continue' => 'Continue',
 );

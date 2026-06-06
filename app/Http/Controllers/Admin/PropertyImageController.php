@@ -43,9 +43,9 @@ class PropertyImageController extends AdminController
         
         // Get property details
         $property = $this->db->fetchOne(
-            "SELECT p.*, u.name as owner_name, u.email as owner_email 
-             FROM properties p 
-             LEFT JOIN users u ON p.user_id = u.id 
+            "SELECT p.*, u.name as owner_name, u.email as owner_email
+             FROM properties p
+             LEFT JOIN users u ON p.created_by = u.id
              WHERE p.id = ?",
             [$propertyId]
         );

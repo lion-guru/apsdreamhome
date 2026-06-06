@@ -323,8 +323,8 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                 <?php if ($isTwoFactorStep): ?>
                     <div class="alert alert-info small mb-3" role="alert">
                         <i class="fas fa-shield-alt me-1"></i>
-                        <strong>Two-factor authentication required.</strong>
-                        Enter the 6-digit code from your authenticator app.
+                        <strong><?= __('two_factor_required') ?></strong>
+                        <?= __('two_factor_enter_code') ?>
                     </div>
 
                     <div class="input-icon-wrapper">
@@ -347,12 +347,12 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
 
                     <div class="form-options">
                         <a href="<?= BASE_URL ?>/user/two-factor/recovery" class="forgot-link">
-                            <i class="fas fa-key me-1"></i>Use backup code instead
+                            <i class="fas fa-key me-1"></i><?= __('use_backup_code') ?>
                         </a>
                     </div>
 
                     <button type="submit" class="btn-login">
-                        <i class="fas fa-shield-alt me-2"></i>Verify
+                        <i class="fas fa-shield-alt me-2"></i><?= __('verify_btn') ?>
                     </button>
                 <?php else: ?>
                     <div class="input-icon-wrapper">

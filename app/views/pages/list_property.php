@@ -330,16 +330,16 @@ document.addEventListener('DOMContentLoaded', function() {
     stateSelect.addEventListener('change', async function() {
         const stateId = this.value;
         if (!stateId) {
-            districtSelect.innerHTML = '<option value="">Select State First...</option>';
+            districtSelect.innerHTML = '<option value=""><?= __("select_state_first") ?>...</option>';
             districtSelect.disabled = true;
             return;
         }
         districtSelect.disabled = true;
-        districtSelect.innerHTML = '<option value="">Loading...</option>';
+        districtSelect.innerHTML = '<option value=""><?= __("page_loading") ?></option>';
         try {
             const resp = await fetch(BASE_URL + '/api/locations/districts?state_id=' + stateId);
             const districts = await resp.json();
-            districtSelect.innerHTML = '<option value="">Select District...</option>';
+            districtSelect.innerHTML = '<option value=""><?= __("select_district_dotdot") ?></option>';
             districts.forEach(d => {
                 const opt = document.createElement('option');
                 opt.value = d.name;
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
             districtSelect.disabled = false;
         } catch(e) {
             console.error('Error loading districts:', e);
-            districtSelect.innerHTML = '<option value="">Error loading</option>';
+            districtSelect.innerHTML = '<option value=""><?= __("error_loading") ?></option>';
         }
     });
 

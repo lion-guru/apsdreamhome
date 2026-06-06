@@ -94,8 +94,11 @@ class SecurityHelper
         $csp .= "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; ";
         $csp .= "frame-src 'self' https://www.google.com; ";
         $csp .= "connect-src 'self' https:;";
+        $csp .= "report-uri " . (defined('BASE_URL') ? BASE_URL : '') . "/csp-report";
+        $csp .= "report-to csp-endpoint";
 
         header("Content-Security-Policy: " . $csp);
+        header("Reporting-Endpoints: csp-endpoint=\"" . (defined('BASE_URL') ? BASE_URL : '') . "/csp-report\"");
 
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
             header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
