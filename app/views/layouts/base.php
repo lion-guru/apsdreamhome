@@ -144,6 +144,7 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <!-- Local CSS (header first, then core styles) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend-enhancements.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/customer-pages.css" rel="stylesheet">
 
     <!-- Extra head content from views -->
     <?php if (!empty($extraHead)) echo $extraHead; ?>
@@ -332,6 +333,7 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
     <!-- Frontend enhancements: a11y, forms, toasts, loading -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
     <!-- Image gallery lightbox -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/image-gallery.js"></script>
     <!-- premium-header.js removed - functionality merged into header.php inline -->
