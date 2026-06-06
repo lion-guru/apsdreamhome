@@ -42,6 +42,7 @@
                         <tr><th>Verified At</th><td><?= htmlspecialchars($d['verified_at'] ?? '—') ?></td></tr>
                     </table>
                     <form method="post" action="<?= BASE_URL ?>/admin/kyc/verify/<?= $d['id'] ?? 0 ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Action</label>
                             <select name="status" class="form-select">

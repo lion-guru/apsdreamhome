@@ -14,6 +14,7 @@
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-calculator me-2"></i>EMI Calculator</h5></div>
                 <div class="card-body">
                     <form method="post" action="<?= BASE_URL ?>payments/emi-calculator">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Loan Amount (₹)</label>
                             <input type="number" class="form-control" name="loan_amount" id="loan_amount" value="<?= htmlspecialchars($_POST['loan_amount'] ?? 500000) ?>" min="1000" step="1000">

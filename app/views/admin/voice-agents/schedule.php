@@ -97,6 +97,7 @@
                                             <i class="fas fa-calendar"></i>
                                         </button>
                                         <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/cancel" style="display:inline">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <input type="hidden" name="schedule_id" value="<?= $item['id'] ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this call?')">
                                                 <i class="fas fa-times"></i>
@@ -122,6 +123,7 @@
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/bulk">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Select Leads</label>
                             <div style="max-height:200px;overflow-y:auto">
@@ -175,6 +177,7 @@
                     <h6 class="fw-bold"><i class="fas fa-robot me-1"></i> Auto-Assign Leads</h6>
                     <p class="small text-muted">Automatically assign pending leads to available users</p>
                     <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/auto-assign">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button type="submit" class="btn btn-info w-100" onclick="return confirm('Auto-assign pending leads to users?')">
                             <i class="fas fa-magic me-1"></i> Auto-Assign Leads to users
                         </button>
@@ -189,6 +192,7 @@
 <div class="modal fade" id="rescheduleModal" tabindex="-1">
     <div class="modal-dialog">
         <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/reschedule">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Reschedule Call</h5>

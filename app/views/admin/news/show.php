@@ -52,12 +52,14 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-danger">Actions</h6></div>
                 <div class="card-body">
                     <form method="POST" action="<?= $base ?>/admin/news/<?= $news['id'] ?? 0 ?>/toggle-status" class="mb-2">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button type="submit" class="btn btn-<?= ($news['status'] ?? 'draft') === 'published' ? 'warning' : 'success' ?> w-100">
                             <i class="fas fa-<?= ($news['status'] ?? 'draft') === 'published' ? 'eye-slash' : 'eye' ?> me-1"></i>
                             <?= ($news['status'] ?? 'draft') === 'published' ? 'Unpublish' : 'Publish' ?>
                         </button>
                     </form>
                     <form method="POST" action="<?= $base ?>/admin/news/<?= $news['id'] ?? 0 ?>/delete" onsubmit="return confirm('Delete this article?')">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button type="submit" class="btn btn-danger w-100"><i class="fas fa-trash me-1"></i>Delete</button>
                     </form>
                 </div>

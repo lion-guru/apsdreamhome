@@ -56,6 +56,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="fas fa-clock me-2"></i>Pending Calls / Queue</span>
                 <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/process" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-play me-1"></i>Process Queue</button>
                 </form>
             </div>

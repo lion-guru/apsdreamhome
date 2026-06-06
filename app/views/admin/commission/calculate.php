@@ -13,6 +13,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Calculate Commission</h6></div>
                 <div class="card-body">
                     <form method="POST" action="<?= $base ?>/admin/commission/calculate">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Agent Name</label>
                             <input type="text" name="agent_name" class="form-control" placeholder="Enter agent name" required>

@@ -10,6 +10,7 @@
                 <div class="card-header bg-success text-white"><i class="fas fa-plus"></i> Add Level</div>
                 <div class="card-body">
                     <form method="post" action="/admin/commission/mlm/levels/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Plan ID</label><input type="number" name="plan_id" class="form-control" value="1" required></div>
                         <div class="mb-2"><label class="form-label">Level</label><input type="number" name="level" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>

@@ -17,6 +17,7 @@ $page_description = $page_description ?? 'Login to your APS Dream Home account';
                         </div>
 
                         <form action="<?php echo BASE_URL; ?>/login" method="POST">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email Address</label>
                                 <input type="email" class="form-control" id="email" name="email" required>

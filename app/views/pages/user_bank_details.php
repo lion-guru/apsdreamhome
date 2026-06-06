@@ -64,6 +64,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         </div>
                         <div class="card-body">
                             <form action="/user/bank-details/save" method="POST" id="bankForm">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <!-- Account Holder Name -->
                                 <div class="mb-3">
                                     <label class="form-label fw-bold"><?= __('bank_label_account_holder', null, 'Account Holder Name') ?> *</label>

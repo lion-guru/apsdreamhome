@@ -43,6 +43,7 @@
                 <div class="card-body">
                     <?php if (($contract['status'] ?? '') === 'active'): ?>
                         <form method="post" action="<?= BASE_URL ?>/admin/salary/contracts/terminate/<?= $contract['id'] ?>" onsubmit="return confirm('Terminate this contract permanently?')">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <button type="submit" class="btn btn-danger w-100"><i class="fas fa-ban me-1"></i>Terminate Contract</button>
                         </form>
                     <?php elseif (($contract['status'] ?? '') === 'terminated'): ?>

@@ -325,6 +325,7 @@
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/settings">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="max_attempts" value="3">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Follow-up Cadence (Days)</label>

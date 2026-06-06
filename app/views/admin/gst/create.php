@@ -6,6 +6,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/gst/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Customer</label>

@@ -77,6 +77,7 @@ $dispute = $dispute ?? [];
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/legal/disputes/update/<?php echo $dispute['id'] ?? 0; ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">

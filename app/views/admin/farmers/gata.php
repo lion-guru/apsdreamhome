@@ -48,6 +48,7 @@ $gataRecords = $gata_records ?? [];
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="post" action="<?php echo BASE_URL; ?>/admin/farmers/gata/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header"><h5 class="modal-title">Add Gata Record</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3">

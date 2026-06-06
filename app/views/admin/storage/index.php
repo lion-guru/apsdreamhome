@@ -73,10 +73,12 @@ $localCount = (int) ($info['local_count'] ?? 0);
                 <div class="k">Driver switch</div>
                 <div class="v">
                     <form method="post" action="<?= $base ?>/admin/storage/switch" style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="driver" value="local">
                         <button class="btn btn-secondary" type="submit" <?= $info['configured_driver'] === 'local' ? 'disabled' : '' ?>>Use Local</button>
                     </form>
                     <form method="post" action="<?= $base ?>/admin/storage/switch" style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="driver" value="s3">
                         <button class="btn btn-secondary" type="submit" <?= $info['configured_driver'] === 's3' ? 'disabled' : '' ?>>Use S3</button>
                     </form>
@@ -102,6 +104,7 @@ $localCount = (int) ($info['local_count'] ?? 0);
                 </div>
                 <div class="actions">
                     <form method="post" action="<?= $base ?>/admin/storage/test" style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button class="btn" type="submit">Test Connection</button>
                     </form>
                     <a class="btn btn-secondary" href="<?= $base ?>/admin/storage/list?prefix=&limit=10" target="_blank">View Bucket (first 10)</a>

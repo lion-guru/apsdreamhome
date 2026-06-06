@@ -14,6 +14,7 @@
                     <div class="alert alert-danger"><?php foreach ($errors as $e): ?><p class="mb-0"><?= htmlspecialchars($e) ?></p><?php endforeach; ?></div>
                     <?php endif; ?>
                     <form method="post" action="<?= BASE_URL ?>admin/locations/colonies/edit/<?= $colony['id'] ?? 0 ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Colony Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($colony['name'] ?? '') ?>" required>

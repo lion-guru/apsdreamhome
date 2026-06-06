@@ -207,6 +207,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="/employee/record-attendance" method="POST" id="attendanceForm">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-body">
                     <input type="hidden" name="action" id="attendanceAction">
 

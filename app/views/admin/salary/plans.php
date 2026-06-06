@@ -29,6 +29,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <form method="post" action="<?= BASE_URL ?>/admin/salary/plans/update/<?= $p['id'] ?>">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="modal-header bg-warning"><h5 class="modal-title"><i class="fas fa-edit me-1"></i>Edit Plan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                             <div class="modal-body">
                                 <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= htmlspecialchars($p['name'] ?? '') ?>" required></div>
@@ -60,6 +61,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="post" action="<?= BASE_URL ?>/admin/salary/plans/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header bg-primary text-white"><h5 class="modal-title"><i class="fas fa-plus me-1"></i>New Salary Plan</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>

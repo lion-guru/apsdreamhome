@@ -33,6 +33,7 @@
             <div class="booking-form-section">
                 <h5 class="fw-bold mb-3"><i class="fas fa-file-signature"></i> Booking Details</h5>
                 <form method="POST" action="<?= BASE_URL ?>/plot/book">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="plot_id" value="<?= $plot['id'] ?>">
 
                     <div class="mb-3">

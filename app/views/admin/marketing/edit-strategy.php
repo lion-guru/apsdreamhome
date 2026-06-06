@@ -23,6 +23,7 @@ $s = $strategy ?? [];
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/marketing/strategies/update/<?= $s['id'] ?? 0 ?>">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
                     <label class="form-label">Title <span class="text-danger">*</span></label>
                     <input type="text" name="title" class="form-control" required value="<?= htmlspecialchars($s['title'] ?? '') ?>" placeholder="Enter strategy title">

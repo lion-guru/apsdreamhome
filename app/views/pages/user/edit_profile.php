@@ -140,6 +140,7 @@ $user_data['uphone'] = $user_data['phone'];
                 </div>
                 <div class="card-body p-4">
                     <form method="POST">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label small text-muted"><?= __('user_edit_full_name', null, 'Full Name') ?></label>
                             <input type="text" name="name" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uname']) ?>" required>
@@ -168,6 +169,7 @@ $user_data['uphone'] = $user_data['phone'];
                 </div>
                 <div class="card-body p-4">
                     <form method="POST">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label small text-muted"><?= __('user_edit_current_password', null, 'Current Password') ?></label>
                             <input type="password" name="old_password" class="form-control border-0 bg-light rounded-3 p-3" required>

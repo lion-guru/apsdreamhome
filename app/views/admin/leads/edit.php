@@ -45,6 +45,7 @@ $assignees = $assignees ?? [];
         </div>
         <div class="card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>/update">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Full Name *</label>

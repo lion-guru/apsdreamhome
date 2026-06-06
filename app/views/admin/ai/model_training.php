@@ -59,6 +59,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="fas fa-cubes me-2"></i>ML Models</h5>
                         <form method="POST" action="<?php echo $base; ?>/admin/ai/model-training" class="m-0">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <button type="submit" class="btn btn-primary btn-sm">
                                 <i class="fas fa-sync me-2"></i>Train All Models
                             </button>

@@ -92,7 +92,7 @@ $page_description = 'Manage marketing strategies and campaigns';
                 <div class="col-xl-4 col-md-6">
                     <div class="card border-0 shadow-sm h-100">
                         <?php if (!empty($s['image_url'])): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($s['title'] ?? '') ? />" style="height: 180px; object-fit: cover;">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($s['title'] ?? '') ?>" style="height: 180px; object-fit: cover;">
                         <?php else: ?>
                             <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
                                 <i class="fas fa-image fa-3x text-muted"></i>
@@ -118,6 +118,7 @@ $page_description = 'Manage marketing strategies and campaigns';
                                     <i class="fas fa-edit me-1"></i>Edit
                                 </a>
                                 <form method="post" action="<?= BASE_URL ?>/admin/marketing/strategies/toggle/<?= $s['id'] ?>" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm <?= ($s['active'] ?? 0) ? 'btn-outline-warning' : 'btn-outline-success' ?>">
                                         <i class="fas <?= ($s['active'] ?? 0) ? 'fa-pause' : 'fa-play' ?> me-1"></i>
                                         <?= ($s['active'] ?? 0) ? 'Deactivate' : 'Activate' ?>

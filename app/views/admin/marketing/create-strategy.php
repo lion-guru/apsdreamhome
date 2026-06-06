@@ -22,6 +22,7 @@ $page_description = 'Create a new marketing strategy';
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/marketing/strategies/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
                     <label class="form-label">Title <span class="text-danger">*</span></label>
                     <input type="text" name="title" class="form-control" required placeholder="Enter strategy title">

@@ -32,6 +32,7 @@ ob_start();
             <p class="text-muted">Enter one of the 8-character backup codes you saved when you enabled 2FA. Each code works only once.</p>
 
             <form method="post" action="<?= BASE_URL ?>/user/two-factor/recovery/verify" id="recoveryForm" autocomplete="off">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
               <div class="mb-3">
                 <label for="code" class="form-label fw-bold">Backup Code</label>
                 <input

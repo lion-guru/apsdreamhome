@@ -66,6 +66,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                         <?php endif; ?>
 
                         <form action="<?= BASE_URL ?>careers/apply" method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label fw-semibold"><?= __('testi_lbl_name', null, 'Full Name') ?> *</label>

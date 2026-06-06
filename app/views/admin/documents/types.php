@@ -18,6 +18,7 @@
                 <div class="card-header"><i class="fas fa-plus me-2"></i>Add Document Type</div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Name <span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control" required>
@@ -66,6 +67,7 @@
                                             <td>
                                                 <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#editType<?= (int)$t['id'] ?>"><i class="fas fa-edit"></i></button>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/delete/<?= (int)$t['id'] ?>" style="display:inline" onsubmit="return confirm('Delete this type?');">
+                                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             </td>
@@ -73,6 +75,7 @@
                                         <tr class="collapse" id="editType<?= (int)$t['id'] ?>">
                                             <td colspan="5" class="bg-light">
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/update/<?= (int)$t['id'] ?>" class="row g-2">
+                                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                     <div class="col-md-3"><input type="text" name="name" class="form-control form-control-sm" value="<?= htmlspecialchars($t['name'] ?? '') ?>" required></div>
                                                     <div class="col-md-2"><input type="text" name="slug" class="form-control form-control-sm" value="<?= htmlspecialchars($t['slug'] ?? '') ?>"></div>
                                                     <div class="col-md-3">

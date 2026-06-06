@@ -3,6 +3,7 @@
     <h4 class="mb-0">Voice Agent Settings</h4>
 </div>
 <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <div class="row">
         <div class="col-md-6">
             <div class="card mb-3">

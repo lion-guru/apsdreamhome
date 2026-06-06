@@ -14,6 +14,7 @@
                     <div class="alert alert-danger"><i class="fas fa-exclamation-circle me-1"></i><?= htmlspecialchars($error) ?></div>
                     <?php endif; ?>
                     <form method="post" action="<?= BASE_URL ?>register">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Full Name <span class="text-danger">*</span></label>
                             <div class="input-group"><span class="input-group-text"><i class="fas fa-user"></i></span><input type="text" class="form-control" name="name" required placeholder="Your full name"></div>

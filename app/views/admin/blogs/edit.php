@@ -7,6 +7,7 @@
                 </div>
                 <div class="card-body">
                     <form action="<?php echo BASE_URL; ?>/admin/blogs/<?php echo $blog['id']; ?>/update" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="mb-3">

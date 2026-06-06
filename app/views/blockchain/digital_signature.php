@@ -16,6 +16,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Apply Digital Signature</h5></div>
                 <div class="card-body">
                     <form method="post">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Digital Signature</label>
                             <textarea name="signature" class="form-control font-monospace" rows="4" placeholder="Paste your digital signature or use signature pad..." required></textarea>

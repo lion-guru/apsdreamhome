@@ -14,6 +14,7 @@
                 <div class="card">
                     <div class="card-body">
                         <form method="POST" action="/inquiry">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">

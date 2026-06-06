@@ -19,6 +19,7 @@ ob_start();
       <div class="card shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between"><strong>Blocked IPs</strong>
           <form method="POST" action="<?= BASE_URL ?>/api/v2/security/ip/unblock" class="d-flex">
+                              <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <input name="ip" class="form-control form-control-sm me-1" placeholder="IP" required>
             <button class="btn btn-sm btn-success">Unblock</button>
           </form>

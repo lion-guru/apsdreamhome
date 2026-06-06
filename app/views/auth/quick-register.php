@@ -161,6 +161,7 @@ function generateUserId() {
                 </h2>
                 
                 <form method="POST" class="space-y-4">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="action" value="send_otp">
                     
                     <div>
@@ -211,6 +212,7 @@ function generateUserId() {
                 </h2>
                 
                 <form method="POST" class="space-y-4">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="action" value="verify_otp">
                     
                     <div>

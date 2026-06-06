@@ -28,6 +28,7 @@ if (!defined('BASE_URL')) {
                     <?php endif; ?>
 
                     <form action="/change-password" method="POST">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label for="current_password" class="form-label">Current Password *</label>
                             <input type="password" class="form-control" id="current_password" name="current_password" required>
@@ -84,4 +85,4 @@ if (!defined('BASE_URL')) {
     });
 </script>
 
-<?php include BASE_URL . 'app/views/includes/footer.php'; ?>
+<?php include BASE_URL . 'app/views/includes/footer.php'; ?>

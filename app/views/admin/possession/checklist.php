@@ -56,6 +56,7 @@ $active_page = 'possession';
                         <?php foreach ($checklist_items as $item): ?>
                             <div class="checklist-item <?= $item['is_completed'] ? 'completed' : '' ?>">
                                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>/complete" class="d-flex align-items-center gap-3 w-100">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
                                     <input type="hidden" name="is_completed" value="<?= $item['is_completed'] ? 0 : 1 ?>">
                                     <button type="submit" class="btn btn-sm <?= $item['is_completed'] ? 'btn-success' : 'btn-outline-secondary' ?>" style="border-radius:50%; width:32px; height:32px; padding:0;">
@@ -84,6 +85,7 @@ $active_page = 'possession';
             <div class="card-header"><h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add Item</h5></div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>/add">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-2">
                         <label class="form-label">Item Name</label>
                         <input type="text" class="form-control" name="item_name" placeholder="e.g. Water connection checked" required>
@@ -116,6 +118,7 @@ $active_page = 'possession';
                         <?php if (!in_array(strtolower($s), $existingNames)): ?>
                             <li class="mb-1">
                                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>/add" style="display:inline;">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="item_name" value="<?= htmlspecialchars($s) ?>">
                                     <button type="submit" class="btn btn-sm btn-outline-success"><i class="fas fa-plus"></i></button>
                                     <small><?= htmlspecialchars($s) ?></small>

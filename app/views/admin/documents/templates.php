@@ -18,6 +18,7 @@
                 <div class="card-header"><i class="fas fa-plus me-2"></i>Create Template</div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/documents/templates/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Template Name <span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control" required>
@@ -78,6 +79,7 @@
                                             <td>
                                                 <a href="<?= BASE_URL ?>/admin/documents/templates/edit/<?= (int)$t['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/documents/templates/delete/<?= (int)$t['id'] ?>" style="display:inline" onsubmit="return confirm('Delete this template?');">
+                                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             </td>

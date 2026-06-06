@@ -15,6 +15,7 @@ ob_start();
   </div>
 
   <form method="POST" action="<?= BASE_URL ?>/api/v2/finance/gst" class="card card-body mb-4">
+                      <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <h5>GST Calculator</h5>
     <div class="row g-2">
       <div class="col-md-3"><label>Amount</label><input name="amount" type="number" step="0.01" class="form-control" required></div>

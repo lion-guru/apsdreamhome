@@ -31,6 +31,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             </div>
                             
                             <form action="<?php echo $base . $action; ?>" method="POST" onsubmit="return validateForm()">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-3">
                                     <label class="form-label">New Password *</label>
                                     <div class="input-group">

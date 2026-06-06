@@ -93,6 +93,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
         </div>
         <div class="card-body">
             <form action="<?php echo $base; ?>/admin/properties/images/upload" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
 
                 <div class="row">
@@ -156,6 +157,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                     <div class="d-flex gap-1">
                                         <?php if (!$image['is_primary']): ?>
                                             <form method="POST" action="<?php echo $base; ?>/admin/properties/images/set-primary" class="d-inline">
+                                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                 <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
                                                 <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-warning">
@@ -165,6 +167,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                         <?php endif; ?>
 
                                         <form method="POST" action="<?php echo $base; ?>/admin/properties/images/delete" class="d-inline" onsubmit="return confirm('Delete this image?')">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
                                             <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -446,6 +449,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                     </div>
                     <div class="card-body">
                         <form action="<?php echo $base; ?>/admin/properties/images/upload" method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
 
                             <div class="row">
@@ -506,6 +510,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                             <div class="image-actions">
                                                 <?php if (!$image['is_primary']): ?>
                                                     <form method="POST" action="<?php echo $base; ?>/admin/properties/images/set-primary" class="d-inline">
+                                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                         <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
                                                         <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
                                                         <button type="submit" class="btn btn-outline-warning btn-sm">
@@ -517,6 +522,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                                 <?php endif; ?>
 
                                                 <form method="POST" action="<?php echo $base; ?>/admin/properties/images/delete" class="d-inline" onsubmit="return confirm('Delete this image?')">
+                                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                     <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
                                                     <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
                                                     <button type="submit" class="btn btn-outline-danger btn-sm">

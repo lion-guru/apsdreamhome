@@ -131,12 +131,14 @@ $tasks = $tasks ?? [];
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="/admin/scheduler/task/<?= $task['id'] ?? 0 ?>/run" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Run this task now?')">
                                         <i class="fas fa-play"></i>
                                     </button>
                                 </form>
                                 <?php if (!($task['is_system'] ?? true)): ?>
                                 <form action="/admin/scheduler/task/<?= $task['id'] ?>/delete" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this task?')">
                                         <i class="fas fa-trash"></i>
                                     </button>

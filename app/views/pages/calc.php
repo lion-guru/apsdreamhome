@@ -38,6 +38,7 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
             <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100" data-aos="fade-right">
                 <h4 class="fw-bold text-dark mb-4">Calculate Your EMI</h4>
                 <form action="" method="post">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-4">
                         <label class="form-label fw-medium text-secondary">Loan Amount (₹)</label>
                         <div class="input-group">

@@ -3,6 +3,7 @@
         <h1 class="h3 mb-0"><?= htmlspecialchars($pageTitle ?? 'Feature Settings') ?></h1>
     </div>
     <form method="post" action="<?= $base ?? BASE_URL ?>/features/settings/update">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm h-100">

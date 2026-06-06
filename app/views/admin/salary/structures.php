@@ -8,6 +8,7 @@
         <div class="card-header bg-warning text-white"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Structure #<?= $edit_structure['id'] ?> - <?= htmlspecialchars($edit_structure['employee_name'] ?? '') ?></h5></div>
         <div class="card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/salary/structures/update/<?= $edit_structure['id'] ?>">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">
                     <div class="col-md-4 mb-3"><label class="form-label">Basic Salary</label><input type="number" step="0.01" name="basic_salary" class="form-control" value="<?= $edit_structure['basic_salary'] ?? 0 ?>" required></div>
                     <div class="col-md-4 mb-3"><label class="form-label">HRA</label><input type="number" step="0.01" name="hra" class="form-control" value="<?= $edit_structure['hra'] ?? 0 ?>"></div>
@@ -70,6 +71,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="post" action="<?= BASE_URL ?>/admin/salary/structures/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header bg-primary text-white"><h5 class="modal-title"><i class="fas fa-plus me-1"></i>New Salary Structure</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Employee</label>

@@ -57,7 +57,7 @@
                         <?php foreach ($amenities as $amenity): ?>
                             <div class="col-md-3 col-sm-6" data-aos="zoom-in">
                                 <div class="amenity-card bg-white p-4 rounded-4 shadow-sm text-center h-100 transition-hover">
-                                    <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid mb-3 rounded-3" alt="<?= $amenity['alt_text'] ? />">
+                                    <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid mb-3 rounded-3" alt="<?= $amenity['alt_text'] ?>">
                                     <h5 class="mb-0"><?= $amenity['title'] ?></h5>
                                 </div>
                             </div>

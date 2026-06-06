@@ -7,6 +7,7 @@
     <div class="card shadow-sm">
         <div class="card-body p-4">
             <form method="POST" class="row g-3">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="col-md-6">
                     <label class="form-label">Slot Key <span class="text-danger">*</span></label>
                     <input type="text" name="slot_key" class="form-control" value="<?= htmlspecialchars($ad['slot_key'] ?? '') ?>" required placeholder="e.g. header_banner, sidebar_ad">

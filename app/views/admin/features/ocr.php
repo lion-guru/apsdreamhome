@@ -8,6 +8,7 @@ ob_start();
   <h1 class="h3 mb-4"><i class="fas fa-file-alt me-2"></i>OCR & Document Classification</h1>
 
   <form method="POST" action="<?= BASE_URL ?>/api/v2/ocr/report" class="card card-body mb-4">
+                      <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <h5>Generate Report</h5>
     <div class="row g-2">
       <div class="col-md-3">

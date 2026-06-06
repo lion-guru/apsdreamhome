@@ -130,6 +130,7 @@ ob_start();
                                 <?php else: ?>
                                     <tr><td colspan="9" class="bg-light">
                                         <form method="POST" action="<?= BASE_URL ?>/admin/reviews/respond" class="d-flex gap-2 ps-4">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <input type="hidden" name="id" value="<?= $r['id'] ?>">
                                             <input type="text" class="form-control form-control-sm" name="response" placeholder="Add a public response to this review...">
                                             <button type="submit" class="btn btn-sm btn-outline-primary">Reply</button>

@@ -16,6 +16,7 @@
     <div class="row">
         <div class="col-lg-8">
             <form method="POST" action="<?= $base ?? BASE_URL ?>metaverse/customize-property/<?= ($virtual_property['id'] ?? '') ?>">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <?php foreach (($customization_options['colors'] ?? []) as $category => $options): ?>
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white border-0">

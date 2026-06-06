@@ -19,6 +19,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-body p-4">
                         <?php if (!empty($user)): ?>
                             <form action="<?php echo $base . $action; ?>" method="POST">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Full Name *</label>

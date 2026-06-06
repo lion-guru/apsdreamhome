@@ -14,6 +14,7 @@
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Initiate New Payment</h5></div>
                 <div class="card-body">
                     <form method="post" action="<?= BASE_URL ?>payments/initiate">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Payment Purpose <span class="text-danger">*</span></label>
                             <select class="form-select" name="purpose" required>

@@ -19,6 +19,7 @@
                     </div>
 
                     <form method="POST" action="<?= BASE_URL ?>/admin/projects/status/<?php echo $_GET['id'] ?? ''; ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label for="status" class="form-label">Project Status</label>
                             <select class="form-select" id="status" name="status" required>

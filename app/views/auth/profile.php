@@ -23,6 +23,7 @@
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Profile</h6></div>
                 <div class="card-body">
                     <form method="post" action="<?= BASE_URL ?>user/profile">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Full Name</label>
                             <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>

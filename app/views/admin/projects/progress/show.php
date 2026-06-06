@@ -55,6 +55,7 @@
                 <div class="card-header"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Progress</h5></div>
                 <div class="card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/projects/progress/update/<?= $project['id'] ?? 0 ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Progress %</label>
                             <input type="number" name="progress_pct" class="form-control" min="0" max="100" value="<?= (int)($project['progress_pct'] ?? 0) ?>">
@@ -79,6 +80,7 @@
                 <div class="card-header"><h5 class="mb-0"><i class="fas fa-users me-2"></i>Team & Budget</h5></div>
                 <div class="card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/projects/progress/budget/<?= $project['id'] ?? 0 ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Project Budget (₹)</label>
                             <input type="number" name="project_budget" class="form-control" step="0.01" value="<?= (float)($project['project_budget'] ?? 0) ?>">

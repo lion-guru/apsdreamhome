@@ -19,6 +19,7 @@ ob_start();
     </div>
 
     <form method="POST" action="<?= BASE_URL ?>/admin/marketing-campaigns/store">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-3">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-3">

@@ -35,6 +35,7 @@
                 <?php if ($call['status'] === 'pending'): ?>
                 <div class="mt-3">
                     <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/process" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="limit" value="1">
                         <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-play me-1"></i>Process Now</button>
                     </form>
@@ -130,6 +131,7 @@
 <div class="modal fade" id="rescheduleModal" tabindex="-1">
     <div class="modal-dialog"><div class="modal-content">
         <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/reschedule">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <input type="hidden" name="schedule_id" value="<?= $call['id'] ?>">
             <div class="modal-header"><h5 class="modal-title">Reschedule Call</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
@@ -147,6 +149,7 @@
 <div class="modal fade" id="cancelModal" tabindex="-1">
     <div class="modal-dialog"><div class="modal-content">
         <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/cancel">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <input type="hidden" name="schedule_id" value="<?= $call['id'] ?>">
             <div class="modal-header"><h5 class="modal-title">Cancel Call</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body"><p>Are you sure you want to cancel this scheduled call?</p></div>

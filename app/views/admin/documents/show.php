@@ -6,6 +6,7 @@
             <a href="<?= BASE_URL ?>/admin/documents" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
             <a href="<?= !empty($document['file_path']) ? BASE_URL . '/admin/documents/download/' . (int)($document['id'] ?? 0) : '#' ?>" class="btn btn-success <?= empty($document['file_path']) ? 'disabled' : '' ?>"><i class="fas fa-download me-1"></i>Download</a>
             <form method="POST" action="<?= BASE_URL ?>/admin/documents/delete/<?= (int)($document['id'] ?? 0) ?>" style="display:inline" onsubmit="return confirm('Delete this document permanently?');">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Delete</button>
             </form>
         </div>

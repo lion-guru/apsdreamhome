@@ -7,6 +7,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Input</h5></div>
                 <div class="card-body">
                     <form method="post" action="<?= ($base ?? BASE_URL) ?>iot/roi-calculator">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Property Value (₹)</label>
                             <input type="number" name="property_value" class="form-control" placeholder="e.g. 5000000" required>

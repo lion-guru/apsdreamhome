@@ -98,7 +98,7 @@
                     ?>
                     <div class="col-md-6 col-lg-3 mb-4">
                         <div class="card h-100 border-0 shadow-sm team-card">
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name']) ? />"
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name']) ?>"
                                 onerror="this.src='https://via.placeholder.com/300x300/667eea/ffffff?text=<?= substr($lawyer['name'], 0, 2) ?>'">
                             <div class="card-body text-center">
                                 <h5 class="card-title mb-1"><?= htmlspecialchars($lawyer['name']) ?></h5>

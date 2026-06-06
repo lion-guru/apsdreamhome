@@ -101,6 +101,7 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
                             <td>
                                 <?php if ($p['status'] === 'pending'): ?>
                                 <form method="POST" action="<?php echo BASE_URL; ?>/employee/user-properties/action" class="action-form">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
                                     <input type="hidden" name="action" value="verify">
                                     <button type="submit" class="btn btn-sm btn-info" onclick="return confirm('Mark as verified?')"><i class="fas fa-check"></i></button>
@@ -108,11 +109,13 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
                                 <?php endif; ?>
                                 <?php if (in_array($p['status'] ?? '', ['pending', 'verified'])): ?>
                                 <form method="POST" action="<?php echo BASE_URL; ?>/employee/user-properties/action" class="action-form">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
                                     <input type="hidden" name="action" value="approve">
                                     <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Approve this listing?')"><i class="fas fa-thumbs-up"></i></button>
                                 </form>
                                 <form method="POST" action="<?php echo BASE_URL; ?>/employee/user-properties/action" class="action-form">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
                                     <input type="hidden" name="action" value="reject">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject this listing?')"><i class="fas fa-thumbs-down"></i></button>
@@ -120,6 +123,7 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
                                 <?php endif; ?>
                                 <?php if (($p['status'] ?? '') === 'approved'): ?>
                                 <form method="POST" action="<?php echo BASE_URL; ?>/employee/user-properties/action" class="action-form">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
                                     <input type="hidden" name="action" value="mark_sold">
                                     <button type="submit" class="btn btn-sm btn-dark" onclick="return confirm('Mark as sold?')"><i class="fas fa-tag"></i></button>

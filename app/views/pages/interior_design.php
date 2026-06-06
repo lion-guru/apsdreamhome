@@ -299,6 +299,7 @@ function planFurniture() {
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-5">
                         <form action="<?= BASE_URL ?>/service-interest" method="POST">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="service_type" value="interior">
                             <div class="row g-3">
                                 <div class="col-md-6"><label class="form-label fw-medium">Your Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control form-control-lg" required></div>

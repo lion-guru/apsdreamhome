@@ -42,6 +42,7 @@ $GLOBALS['_html_doc_started'] = true;
                         <?php endif; ?>
 
                         <form method="POST" action="<?php echo BASE_URL; ?>/farmer/login">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-4">
                                 <label class="form-label fw-semibold">Registered Phone Number</label>
                                 <div class="input-group">

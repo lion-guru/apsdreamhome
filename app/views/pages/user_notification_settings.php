@@ -20,6 +20,7 @@
             <p class="text-muted mb-4">Choose how you want to be notified for each type of activity.</p>
 
             <form method="POST" action="<?php echo BASE_URL; ?>/user/notification-settings">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-light">

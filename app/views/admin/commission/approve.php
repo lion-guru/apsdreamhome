@@ -34,6 +34,7 @@ $commissions = $commissions ?? [];
                                 <td><?= htmlspecialchars($c['created_at'] ?? $c['date'] ?? '') ?></td>
                                 <td>
                                     <form method="POST" action="<?= $base ?>/admin/commission/action" style="display:inline">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <input type="hidden" name="id" value="<?= $c['id'] ?? '' ?>">
                                         <button type="submit" name="action" value="approve" class="btn btn-sm btn-success"><i class="fas fa-check me-1"></i>Approve</button>
                                         <button type="submit" name="action" value="reject" class="btn btn-sm btn-danger" onclick="return confirm('Reject this commission?')"><i class="fas fa-times me-1"></i>Reject</button>

@@ -15,6 +15,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
             <form method="POST" action="/admin/careers/store">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
                     <div class="col-md-8"><label class="form-label">Job Title <span class="text-danger">*</span></label><input type="text" name="title" class="form-control" required></div>
                     <div class="col-md-4"><label class="form-label">Department</label><input type="text" name="department" class="form-control"></div>

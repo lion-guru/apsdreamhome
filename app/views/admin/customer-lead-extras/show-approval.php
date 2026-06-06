@@ -146,6 +146,7 @@ $page_description = 'Detailed view of lead assignment approval request';
                         <!-- Approval Form (only show if pending) -->
                         <?php if ($approval['status'] === 'pending'): ?>
                             <form method="POST" action="<?php echo BASE_URL; ?>/admin/customer-lead/approvals/update-status/<?php echo $approval['id']; ?>">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-3">
                                     <label class="form-label">Update Status</label>
                                     <select class="form-select" name="status" required>

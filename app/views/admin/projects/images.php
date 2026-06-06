@@ -18,6 +18,7 @@
             <div class="card">
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/projects/images/upload/<?php echo $project['id'] ?? ''; ?>" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">

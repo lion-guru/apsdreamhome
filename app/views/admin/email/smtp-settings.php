@@ -43,6 +43,7 @@ $smtp = $smtp ?? [
     </div>
 
     <form method="post" action="<?= BASE_URL ?>admin/settings/smtp-save">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <?= \App\Helpers\SecurityHelper::csrfField() ?>
         <div class="row g-4">
             <div class="col-lg-8">

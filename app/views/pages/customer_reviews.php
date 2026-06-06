@@ -72,6 +72,7 @@ $reviews = [
                     <div class="card-body p-5">
                         <h3 class="text-center mb-4">Share Your Experience</h3>
                         <form method="POST" action="/apsdreamhome/contact">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Your Name</label>

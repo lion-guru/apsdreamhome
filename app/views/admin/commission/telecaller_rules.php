@@ -10,6 +10,7 @@
                 <div class="card-header" style="background:#6f42c1;color:white;"><i class="fas fa-plus"></i> Add Rule</div>
                 <div class="card-body">
                     <form method="post" action="/admin/commission/telecaller/rules/store">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Rule Name</label><input type="text" name="rule_name" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Commission Type</label>
                             <select name="commission_type" class="form-select">

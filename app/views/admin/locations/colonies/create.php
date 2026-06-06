@@ -19,6 +19,7 @@
                     <?php endif; ?>
                     
                     <form method="POST" action="/admin/locations/colonies/create" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">

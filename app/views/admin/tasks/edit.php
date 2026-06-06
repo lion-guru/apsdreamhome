@@ -16,6 +16,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
             <form method="POST" action="/admin/tasks/update/<?= $task['id'] ?? 0 ?>">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
                     <div class="col-md-8"><label class="form-label">Title <span class="text-danger">*</span></label><input type="text" name="title" class="form-control" value="<?= $task['title'] ?? '' ?>" required></div>
                     <div class="col-md-4"><label class="form-label">Priority</label><select name="priority" class="form-select"><option value="low" <?= ($task['priority'] ?? '') === 'low' ? 'selected' : '' ?>>Low</option><option value="medium" <?= ($task['priority'] ?? '') === 'medium' ? 'selected' : '' ?>>Medium</option><option value="high" <?= ($task['priority'] ?? '') === 'high' ? 'selected' : '' ?>>High</option></select></div>

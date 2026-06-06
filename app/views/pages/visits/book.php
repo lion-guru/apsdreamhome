@@ -58,6 +58,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
     <?php endif; ?>
 
     <form method="POST" action="<?= BASE_URL ?>/visit/store" id="visitForm">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <input type="hidden" name="property_id" value="<?= $property_id ?>">
         <input type="hidden" name="visit_date" id="selectedDate">
         <input type="hidden" name="visit_time" id="selectedTime">

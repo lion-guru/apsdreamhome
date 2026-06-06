@@ -14,6 +14,7 @@
                     <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                     <?php endif; ?>
                     <form method="post" action="<?= BASE_URL ?>farmers">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <h6 class="border-bottom pb-2 mb-3"><i class="fas fa-user me-2"></i>Personal Information</h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">

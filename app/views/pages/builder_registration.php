@@ -73,6 +73,7 @@ $current_year = date('Y');
             </div>
 
             <form method="POST">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-building me-1"></i>Company Name *</label>

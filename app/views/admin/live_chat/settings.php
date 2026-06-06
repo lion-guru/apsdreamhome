@@ -11,6 +11,7 @@ ob_start();
         <a href="<?= BASE_URL ?>/admin/live-chat" class="btn btn-light"><i class="fas fa-arrow-left me-1"></i> Back</a>
     </div>
     <form method="POST" action="<?= BASE_URL ?>/admin/live-chat/settings">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <div class="row g-3">

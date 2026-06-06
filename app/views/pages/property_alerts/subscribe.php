@@ -43,6 +43,7 @@ $logged_in = $logged_in ?? false;
                 </div>
                 <div class="card-body p-4">
                     <form method="POST" action="<?= BASE_URL ?>/property-alerts/subscribe">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <h6 class="text-uppercase text-muted small mb-3"><i class="fas fa-user me-2"></i>Your Information</h6>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">

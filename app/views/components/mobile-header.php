@@ -59,6 +59,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form method="POST" action="<?php echo BASE_URL; ?>logout" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="dropdown-item">
                                     <i class="bi bi-box-arrow-right me-2"></i>Logout
                                 </button>
@@ -181,6 +182,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="POST" action="<?php echo BASE_URL; ?>logout" class="d-inline">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="dropdown-item text-danger">
                                             <i class="bi bi-box-arrow-right me-2"></i>Logout
                                         </button>
@@ -300,6 +302,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                         </li>
                         <li class="nav-item">
                             <form method="POST" action="<?php echo BASE_URL; ?>logout">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent">
                                     <i class="bi bi-box-arrow-right me-2"></i>Logout
                                 </button>

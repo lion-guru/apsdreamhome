@@ -22,6 +22,7 @@
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?= $base ?? BASE_URL ?>metaverse/create-space">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Space Name</label>

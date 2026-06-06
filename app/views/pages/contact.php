@@ -45,6 +45,7 @@ $contactError = $contact_error ?? '';
                     </div>
                     <div class="card-body p-4">
                         <form action="<?php echo BASE_URL; ?>/contact" method="POST">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
                                 <label for="name" class="form-label fw-bold"><?php echo __('your_name'); ?> *</label>
                                 <input type="text" name="name" id="name" class="form-control" placeholder="<?php echo __('your_name_placeholder'); ?>" required>

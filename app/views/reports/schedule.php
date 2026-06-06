@@ -8,6 +8,7 @@
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Schedule a Report</h5></div>
                 <div class="card-body">
                     <form method="post" action="<?= BASE_URL ?>reports/schedule">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Report Type <span class="text-danger">*</span></label>
                             <select class="form-select" name="type" required>

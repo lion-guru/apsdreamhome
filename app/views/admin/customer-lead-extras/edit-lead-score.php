@@ -21,6 +21,7 @@ $page_description = 'Manually adjust lead score';
             </div>
             <div class="card-body">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/customer-lead/lead-scores/update/<?php echo $leadScore['id']; ?>">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">

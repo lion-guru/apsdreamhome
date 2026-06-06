@@ -75,6 +75,7 @@
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Status</h5></div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/maintenance/update-status/<?= $r['id'] ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <select name="status" class="form-select mb-3">
                             <option value="open" <?= ($r['status'] ?? '') === 'open' ? 'selected' : '' ?>>Open</option>
                             <option value="in_progress" <?= ($r['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
@@ -90,6 +91,7 @@
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-user-cog me-2"></i>Assign To</h5></div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/maintenance/assign/<?= $r['id'] ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <select name="assigned_to" class="form-select mb-3">
                             <option value="">-- Select Staff --</option>
                             <?php foreach ($staff as $s): ?>

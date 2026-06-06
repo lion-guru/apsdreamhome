@@ -49,6 +49,7 @@ include __DIR__ . '/../layouts/header.php'; ?>
                     </div>
 
                     <form action="/payment/process" method="POST" id="payment-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
 
                         <div class="mb-3">

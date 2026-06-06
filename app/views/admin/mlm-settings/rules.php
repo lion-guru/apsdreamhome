@@ -25,6 +25,7 @@
                     <td><?php echo htmlspecialchars($r['mlm_rank']); ?></td>
                     <td>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/mlm-settings/rules/update/<?php echo $r['id']; ?>" class="d-flex align-items-center gap-2">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="number" step="0.01" name="rate_percentage" value="<?php echo $r['rate_percentage']; ?>" class="form-control form-control-sm" style="width:80px">
                     </td>
                     <td><?php echo $r['priority']; ?></td>

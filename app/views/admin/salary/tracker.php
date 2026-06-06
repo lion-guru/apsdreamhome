@@ -65,6 +65,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <form method="post" action="<?= BASE_URL ?>/admin/salary/tracker/update/<?= $t['id'] ?>">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <div class="modal-header bg-primary text-white"><h5 class="modal-title">Update Tracker</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                                             <div class="modal-body">
                                                 <p><strong><?= htmlspecialchars($t['employee_name'] ?? '') ?></strong> - <?= date('F', mktime(0,0,0,$t['month']??1,1)) ?> <?= $t['year'] ?? '' ?></p>

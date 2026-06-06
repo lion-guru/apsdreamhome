@@ -18,6 +18,7 @@
                         <div class="alert alert-danger"><?= implode('<br>', array_map('htmlspecialchars', $errors)) ?></div>
                     <?php endif; ?>
                     <form method="POST" action="<?= BASE_URL ?>/payment/process">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Amount (₹)</label>
                             <input type="number" name="amount" class="form-control form-control-lg" required step="0.01" value="<?= htmlspecialchars($_POST['amount'] ?? $amount ?? '') ?>">

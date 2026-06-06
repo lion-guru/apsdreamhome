@@ -110,6 +110,7 @@
                     <hr>
                     <h6 class="fw-bold mb-3"><i class="fas fa-paper-plane me-2"></i>Send Inquiry</h6>
                     <form method="POST" action="<?php echo BASE_URL; ?>/property/inquire">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
                         <div class="mb-3">
                             <input type="text" name="name" class="form-control" placeholder="Your Name *" required value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">

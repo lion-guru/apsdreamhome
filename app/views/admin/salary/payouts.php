@@ -50,6 +50,7 @@
                                 <td>
                                     <?php if (($po['status'] ?? '') === 'pending'): ?>
                                     <form method="post" action="<?= BASE_URL ?>/admin/salary/payouts/process/<?= $po['id'] ?>" class="d-inline">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <input type="text" name="reference_no" placeholder="REF-..." class="form-control form-control-sm d-inline" style="width:100px">
                                         <button type="submit" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></button>
                                     </form>
@@ -68,6 +69,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="post" action="<?= BASE_URL ?>/admin/salary/payouts/create">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header bg-primary text-white"><h5 class="modal-title"><i class="fas fa-plus me-1"></i>Create Payout Batch</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Payment Method</label>
