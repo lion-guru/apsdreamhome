@@ -3343,3 +3343,12 @@ $router->get('/checkout/success/{paymentId}',      'App\\Http\\Controllers\\Fron
 $router->get('/checkout/failed',                   'App\\Http\\Controllers\\Front\\CheckoutController@paymentFailed');
 $router->post('/webhook/razorpay',                 'App\\Http\\Controllers\\Front\\CheckoutController@webhook');
 
+// ============================================================
+// CSP report-uri endpoint
+// ============================================================
+// POST /csp-report          — browser reports Content-Security-Policy violations
+// GET  /admin/csp-violations — admin dashboard for CSP reports
+// ============================================================
+$router->post('/csp-report',                          'App\\Http\\Controllers\\CspReportController@report');
+$router->get('/admin/csp-violations',                'App\\Http\\Controllers\\CspReportController@list');
+

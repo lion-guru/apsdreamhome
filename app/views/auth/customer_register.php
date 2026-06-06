@@ -102,7 +102,7 @@ $base = BASE_URL;
                     </div>
                     <?php if ($formVariant === 'minimal'): ?>
                         <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
-                            <i class="fas fa-arrow-right me-2"></i>Continue
+                            <i class="fas fa-arrow-right me-2"></i><?= __('register_continue') ?>
                         </button>
                         <button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;display:none">
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>

@@ -1800,4 +1800,6 @@ return array (
   'your_name' => 'आपका नाम',
   'your_phone' => 'आपका फ़ोन',
   'your_referral_code' => 'आपका रेफ़रल कोड',
+  'two_factor_enter_code' => 'अपने ऑथेंटिकेटर ऐप से 6-अंकीय कोड दर्ज करें।',
+  'register_continue' => 'जारी रखें',
 );
