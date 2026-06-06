@@ -149,6 +149,19 @@ $userDocuments = $userDocuments ?? [];
                 </div>
             </div>
         </div>
+        <?php else: ?>
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title mb-0"><i class="fas fa-file-invoice text-success me-2"></i><?= __('dash_section_my_purchases', null, 'My Purchases') ?></h5>
+            </div>
+            <div class="card-body">
+                <div class="aps-empty-state">
+                    <i class="fas fa-file-invoice fa-3x" aria-hidden="true"></i>
+                    <p class="mb-2"><?= __('dash_no_bookings_yet', null, 'No bookings yet. Start browsing properties to make your first booking.') ?></p>
+                    <a href="<?= BASE_URL ?>/properties" class="btn btn-sm btn-primary"><?= __('dash_browse_properties', null, 'Browse Properties') ?></a>
+                </div>
+            </div>
+        </div>
         <?php endif; ?>
 
         <!-- My Properties -->
@@ -207,9 +220,10 @@ $userDocuments = $userDocuments ?? [];
             </div>
             <div class="card-body p-0">
                 <?php if (empty($inquiries)): ?>
-                    <div class="text-center py-4 text-muted">
-                        <i class="fas fa-envelope fa-3x mb-3"></i>
-                        <p><?= __('dash_no_inquiries_yet', null, 'No inquiries yet.') ?></p>
+                    <div class="aps-empty-state">
+                        <i class="fas fa-envelope fa-3x" aria-hidden="true"></i>
+                        <p class="mb-2"><?= __('dash_no_inquiries_yet', null, 'No inquiries yet.') ?></p>
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-sm btn-primary"><?= __('dash_browse_properties', null, 'Browse Properties') ?></a>
                     </div>
                 <?php else: ?>
                 <div class="table-responsive">
@@ -279,10 +293,10 @@ $userDocuments = $userDocuments ?? [];
             </div>
             <div class="card-body p-0">
                 <?php if (empty($userDocuments)): ?>
-                    <div class="text-center py-4 text-muted">
-                        <i class="fas fa-file-upload fa-3x mb-3"></i>
-                        <p><?= __('dash_no_documents_yet', null, 'No documents uploaded yet. Upload your KYC documents.') ?></p>
-                        <a href="<?= BASE_URL ?>/user/documents" class="btn btn-primary btn-sm"><?= __('dash_btn_upload_documents', null, 'Upload Documents') ?></a>
+                    <div class="aps-empty-state">
+                        <i class="fas fa-file-upload fa-3x" aria-hidden="true"></i>
+                        <p class="mb-2"><?= __('dash_no_documents_yet', null, 'No documents uploaded yet. Upload your KYC documents.') ?></p>
+                        <a href="<?= BASE_URL ?>/user/documents" class="btn btn-sm btn-primary"><?= __('dash_btn_upload_documents', null, 'Upload Documents') ?></a>
                     </div>
                 <?php else: ?>
                 <div class="table-responsive">
