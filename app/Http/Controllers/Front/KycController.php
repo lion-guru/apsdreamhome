@@ -48,6 +48,44 @@ class KycController extends BaseController
         $name = trim($_POST['legal_name'] ?? '');
         $dob = $_POST['dob'] ?? null;
 
+        // Handle file uploads
+        $uploadDir = __DIR__ . '/../../../assets/uploads/kyc/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        $documents = [];
+
+        foreach (['pan_document', 'aadhaar_front_document', 'aadhaar_back_document'] as $field) {
+            if (!isset($_FILES[$field]) || $_FILES[$field]['error'] !== UPLOAD_ERR_OK) {
+                $this->json(['success' => false, 'error' => ucfirst(str_replace('_', ' ', $field)) . ' is required'], 400);
+                return;
+            }
+            if (!in_array($_FILES[$field]['type'], $allowedTypes)) {
+                $this->json(['success' => false, 'error' => ucfirst(str_replace('_', ' ', $field)) . ' must be JPG, PNG, or PDF'], 400);
+                return;
+            }
+            if ($_FILES[$field]['size'] > $maxSize) {
+                $this->json(['success' => false, 'error' => ucfirst(str_replace('_', ' ', $field)) . ' must be under 5MB'], 400);
+                return;
+            }
+            $ext = pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION);
+            $filename = $field . '_' . $userId . '_' . time() . '.' . $ext;
+            $destPath = $uploadDir . $filename;
+            if (!move_uploaded_file($_FILES[$field]['tmp_name'], $destPath)) {
+                $this->json(['success' => false, 'error' => 'Failed to upload ' . ucfirst(str_replace('_', ' ', $field))], 500);
+                return;
+            }
+            $documents[$field] = 'assets/uploads/kyc/' . $filename;
+        }
+
+        $pan = strtoupper(trim($_POST['pan_number'] ?? ''));
+        $aadhaar = preg_replace('/\D/', '', $_POST['aadhaar_number'] ?? '');
+        $name = trim($_POST['legal_name'] ?? '');
+        $dob = $_POST['dob'] ?? null;
+
         $service = new KYCService();
         $panResult = $service->verifyPAN($pan, $name);
         $aadhaarResult = $service->verifyAadhaar($aadhaar);
@@ -58,9 +96,24 @@ class KycController extends BaseController
         elseif (empty($aadhaarResult['success'])) { $status = 'rejected'; $reason = $aadhaarResult['message'] ?? 'Aadhaar verification failed'; }
 
         try {
-            $stmt = $this->db->prepare("INSERT INTO kyc_requests (user_id, pan_number, aadhaar_number, legal_name, dob, status, reason, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW()) ON DUPLICATE KEY UPDATE pan_number=VALUES(pan_number), aadhaar_number=VALUES(aadhaar_number), legal_name=VALUES(legal_name), dob=VALUES(dob), status=VALUES(status), reason=VALUES(reason), updated_at=NOW()");
-            $stmt->execute([$userId, $pan, $aadhaar, $name, $dob, $status, $reason]);
-            $this->json(['success' => true, 'status' => $status, 'message' => $status === 'pending' ? 'KYC submitted. Under review.' : $reason]);
+            $stmt = $this->db->prepare("
+                INSERT INTO kyc_requests (user_id, pan_number, aadhaar_number, legal_name, dob, status, reason, 
+                    pan_document, aadhaar_front_document, aadhaar_back_document, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+                ON DUPLICATE KEY UPDATE 
+                    pan_number=VALUES(pan_number), aadhaar_number=VALUES(aadhaar_number), 
+                    legal_name=VALUES(legal_name), dob=VALUES(dob), status=VALUES(status), 
+                    reason=VALUES(reason), pan_document=VALUES(pan_document), 
+                    aadhaar_front_document=VALUES(aadhaar_front_document), 
+                    aadhaar_back_document=VALUES(aadhaar_back_document), updated_at=NOW()
+            ");
+            $stmt->execute([
+                $userId, $pan, $aadhaar, $name, $dob, $status, $reason,
+                $documents['pan_document'],
+                $documents['aadhaar_front_document'],
+                $documents['aadhaar_back_document']
+            ]);
+            $this->json(['success' => true, 'status' => $status, 'message' => $status === 'pending' ? 'KYC submitted with documents. Under review.' : $reason]);
         } catch (\Throwable $e) {
             $this->json(['success' => false, 'error' => 'Could not save KYC: ' . $e->getMessage()], 500);
         }
