@@ -2743,6 +2743,89 @@ class PageController extends BaseController
         header('Location: ' . $referer);
         exit;
     }
+
+    /**
+     * Interactive Plot Layout Map — SVG grid with status colors
+     */
+    public function plotMap()
+    {
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+        if (strpos($requestUri, '/admin/') !== false || strpos($requestUri, 'admin') !== false) {
+            $this->requireAdmin();
+        }
+
+        $colonies = [];
+        $allPlots = [];
+        $colonyStats = [];
+        $totalStats = ['available' => 0, 'booked' => 0, 'sold' => 0, 'blocked' => 0, 'total' => 0];
+
+        try {
+            $colStmt = $this->db->query("SELECT id, name FROM colonies WHERE is_active = 1 ORDER BY id");
+            $colonies = $colStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            error_log('PageController::plotMap colonies: ' . $e->getMessage());
+        }
+
+        foreach ($colonies as &$colony) {
+            $colony['plots'] = [];
+            $colony['stats'] = ['available' => 0, 'booked' => 0, 'sold' => 0, 'blocked' => 0, 'total' => 0];
+            try {
+                $pStmt = $this->db->prepare(
+                    "SELECT p.id, p.colony_id, p.plot_number, p.block, p.area_sqft, p.width_ft, p.length_ft,
+                            p.total_price, p.status, p.facing, p.corner_plot, p.park_facing,
+                            c.name AS colony_name,
+                            (SELECT psh.changed_at FROM plot_status_history psh WHERE psh.plot_id = p.id ORDER BY psh.changed_at DESC LIMIT 1) AS last_status_change
+                     FROM plots p
+                     JOIN colonies c ON c.id = p.colony_id
+                     WHERE p.colony_id = ? AND p.is_active = 1
+                     ORDER BY p.block, p.plot_number"
+                );
+                $pStmt->execute([$colony['id']]);
+                $plots = $pStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+                foreach ($plots as &$plot) {
+                    $status = $plot['status'];
+                    if ($status === 'available') {
+                        $plot['display_status'] = 'Available';
+                        $plot['color'] = '#10b981';
+                        $colony['stats']['available']++;
+                        $totalStats['available']++;
+                    } elseif ($status === 'booked' || $status === 'reserved') {
+                        $plot['display_status'] = ucfirst($status);
+                        $plot['color'] = '#f59e0b';
+                        $colony['stats']['booked']++;
+                        $totalStats['booked']++;
+                    } elseif ($status === 'sold') {
+                        $plot['display_status'] = 'Sold';
+                        $plot['color'] = '#ef4444';
+                        $colony['stats']['sold']++;
+                        $totalStats['sold']++;
+                    } else {
+                        $plot['display_status'] = ucfirst($status);
+                        $plot['color'] = '#6b7280';
+                        $colony['stats']['blocked']++;
+                        $totalStats['blocked']++;
+                    }
+                    $plot['width_ft'] = $plot['width_ft'] ?? 30;
+                    $plot['length_ft'] = $plot['length_ft'] ?? 40;
+                    $colony['stats']['total']++;
+                    $totalStats['total']++;
+                }
+                $colony['plots'] = $plots;
+            } catch (\Exception $e) {
+                error_log('PageController::plotMap plots colony ' . $colony['id'] . ': ' . $e->getMessage());
+            }
+            $colonyStats[$colony['id']] = $colony['stats'];
+        }
+        unset($plot, $colony);
+
+        $this->render('pages/plot_layout', [
+            'page_title' => 'Plot Layout Map',
+            'colonies' => $colonies,
+            'colony_stats' => $colonyStats,
+            'total_stats' => $totalStats,
+        ]);
+    }
 }
 
 

@@ -165,6 +165,7 @@ $router->get('/user/investments', 'Front\\PageController@userInvestments');
 $router->get('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->post('/builder-registration', 'Front\\PageController@builderRegistration');
 $router->get('/plots-availability', 'Front\\PageController@plotsAvailability');
+$router->get('/plots/layout', 'Front\\PageController@plotMap');
 $router->get('/map', 'App\\Http\\Controllers\\MapController@index');
 $router->get('/gallery/{id}', 'App\\Http\\Controllers\\GalleryController@project');
 
@@ -870,6 +871,7 @@ $router->get('/admin/plots/create', 'App\\Http\\Controllers\\Admin\\PlotManageme
 $router->post('/admin/plots', 'App\\Http\\Controllers\\Admin\\PlotManagementController@store');
 $router->get('/admin/plots/check-availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@checkAvailability');
 $router->post('/admin/plots/bulk-price-update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@bulkPriceUpdate');
+$router->get('/admin/plots/layout', 'Front\\PageController@plotMap');
 $router->get('/admin/plots/availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@availability');
 $router->get('/admin/plots/availability-data', 'App\\Http\\Controllers\\Admin\\PlotManagementController@availabilityData');
 $router->get('/admin/plots/{id}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@show');
