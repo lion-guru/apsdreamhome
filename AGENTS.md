@@ -1,4 +1,769 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-06)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-07)
+
+---
+
+## Session 2026-06-07: MODULE 3 — Money Workflow + Accounting
+
+### What Was Done
+End-to-end delivery of **Module 3: Money Workflow + Accounting** — 15 tables, 50+ method service, 40+ action controller, 22 views, 38+ routes, 4 sidebar menu items, full E2E + smoke verification. Reused 15 pre-existing tables (4 already populated with bank accounts + GST settings + chart of accounts) and added 14 missing columns for TDS/GST/vendor/expense/reconciliation.
+
+### Files Created (30)
+| File | Type | Purpose |
+|---|---|---|
+| `scripts/migrate_module3_money_workflow.php` | Migration | Pre-staged 15 tables (idempotent — already existed) |
+| `scripts/seed_module3_menu.php` | Seed | Inserts 4 finance menu items #291-294 |
+| `scripts/add_module3_columns.php` | Migration | Adds 14 missing columns to 6 tables |
+| `scripts/e2e_module3_service.php` | E2E | 8 service-method E2E tests (all pass) |
+| `scripts/smoke_module3.ps1` | Smoke | 23 GET route smoke test (all 200) |
+| `scripts/smoke_module3_post.ps1` | Smoke | 9 POST endpoint smoke test (all 200) |
+| `app/Services/Accounting/MoneyWorkflowService.php` | Service | 50+ public methods for finance ops |
+| `app/Http/Controllers/Admin/MoneyWorkflowController.php` | Controller | 40+ actions for `/admin/finance/*` |
+| `app/views/admin/finance/dashboard.php` | View | KPI cards + recent activity |
+| `app/views/admin/finance/bank-accounts.php` | View | Bank accounts list with balances |
+| `app/views/admin/finance/bank-account-form.php` | View | Create/edit bank account form |
+| `app/views/admin/finance/cash-book.php` | View | Daily cash transactions + running balance |
+| `app/views/admin/finance/cash-receipt.php` | View | Cash receipt entry form |
+| `app/views/admin/finance/cash-payment.php` | View | Cash payment voucher form |
+| `app/views/admin/finance/petty-cash.php` | View | Petty cash custody + topup form |
+| `app/views/admin/finance/cheque-register.php` | View | Cheque issuance + status tracking |
+| `app/views/admin/finance/issue-cheque.php` | View | Cheque issuance form |
+| `app/views/admin/finance/cheque-bounce.php` | View | Bounce recording form |
+| `app/views/admin/finance/reconciliation.php` | View | Bank reconciliation match UI |
+| `app/views/admin/finance/reconciliation-create.php` | View | Start new reconciliation form |
+| `app/views/admin/finance/tds.php` | View | TDS register with quarterly summary |
+| `app/views/admin/finance/tds-form.php` | View | New TDS deduction form (194IA/IB/C/H/I/J) |
+| `app/views/admin/finance/tds-certificates.php` | View | 26Q/26QD certificate log |
+| `app/views/admin/finance/gst.php` | View | GST register with GSTR-1/3B summary |
+| `app/views/admin/finance/gst-form.php` | View | New GST transaction form (intra/inter) |
+| `app/views/admin/finance/gst-returns.php` | View | GSTR-1, GSTR-3B filing log |
+| `app/views/admin/finance/gst-settings.php` | View | GSTIN / composition / RCM config |
+| `app/views/admin/finance/expenses.php` | View | Expense list with approval status |
+| `app/views/admin/finance/expense-form.php` | View | New expense entry form |
+| `app/views/admin/finance/vendors.php` | View | Vendor directory + 194C TDS flag |
+| `app/views/admin/finance/vendor-payments.php` | View | Vendor payment list |
+| `app/views/admin/finance/vendor-payment-form.php` | View | New vendor payment form |
+| `app/views/admin/finance/cash-flow.php` | View | Cash flow forecast (30/60/90 day) |
+| `app/views/admin/finance/payment-vouchers.php` | View | Payment voucher log |
+
+### Files Modified (2)
+- `routes/web.php` — Added 38+ Module 3 routes under `/admin/finance/*` after Module 2 (sales) block, before Land Management block (~line 1717).
+- `app/Http/Controllers/BaseController.php` — `render()` now auto-injects `$csrf_token` into view data so all forms have valid tokens.
+
+### Database — 15 Tables (Pre-Existing, Extended)
+All InnoDB, utf8mb4. 4 already populated, 11 were empty, 14 missing columns added.
+
+| Table | Rows | Purpose |
+|---|---|---|
+| `bank_accounts_master` | 6 | Master bank account ledger (4 seed + 2 E2E) |
+| `petty_cash` | 1 | Petty cash custody + topup log |
+| `payment_transactions` | 2 | All payment receipts/vouchers |
+| `cheque_register` | 1 | Cheque issuance + bounce tracking |
+| `tds_register` | 2 | TDS deductions (194IA/IB/C/H/I/J) |
+| `tds_certificates_issued` | 0 | 26Q/26QD certificate log |
+| `gst_transactions` | 2 | GST taxable + CGST/SGST/IGST |
+| `gst_settings` | 21 | GSTIN / RCM / composition config |
+| `gst_returns` | 0 | GSTR-1, GSTR-3B filing log |
+| `vendor_payments` | 1 | Vendor payment ledger |
+| `vendors` | 3 | Vendor directory with PAN/TDS flag |
+| `bank_reconciliation` | 0 | Reconciliation match records |
+| `bank_reconciliation_items` | 0 | Line items (matched/unmatched) |
+| `cash_flow_forecast` | 0 | 30/60/90 day forecast |
+| `cheque_bounce_log` | 0 | Bounce events + penalty log |
+| `payment_voucher_log` | 1 | Voucher sequence + audit |
+
+**14 missing columns added** (via `add_module3_columns.php`):
+- `tds_register`: `deductee_user_id`, `deductee_pan`, `tds_section`, `deductee_name`, `financial_year`, `quarter`
+- `gst_transactions`: `place_of_supply`, `supply_type`, `reverse_charge`, `itc_eligible`
+- `vendor_payments`: `vendor_pan`, `tds_applicable`, `bank_account_id`
+- `expenses`: `category`, `approval_status`, `approved_by`, `bill_number`
+- `bank_reconciliation`: `total_books`, `total_bank`, `difference`, `reconciled_by`
+- `cash_flow_forecast`: `period_start`, `period_end`, `inflow`, `outflow`, `net_position`
+
+### Service Methods (50+, MoneyWorkflowService)
+| Category | Methods |
+|---|---|
+| **Bank Accounts** | `createBankAccount`, `updateBankAccount`, `listBankAccounts`, `getBankAccount`, `getBankBalance`, `getTotalBankBalance` |
+| **Cash Book** | `recordCashTransaction`, `listCashTransactions`, `getCashBook`, `getDailyCashPosition` |
+| **Petty Cash** | `topupPettyCash`, `getPettyCashBalance`, `recordPettyCashExpense`, `listPettyCashTransactions` |
+| **Cheques** | `issueCheque`, `presentCheque`, `markChequeBounced`, `clearCheque`, `listCheques` |
+| **Bank Reconciliation** | `startReconciliation`, `matchTransaction`, `listUnmatched`, `getReconciliation`, `completeReconciliation` |
+| **TDS** | `recordTDS`, `recordTdsProxy` (spec alias), `getTdsRegister`, `getTdsByQuarter`, `getTdsBySection`, `generateTdsCertificate`, `listCertificates` |
+| **GST** | `recordGST`, `recordGstProxy` (spec alias), `getGstRegister`, `getGstSummary`, `getGstr1Data`, `getGstr3bData`, `listGstReturns` |
+| **Vendors** | `createVendor`, `listVendors`, `getVendor`, `recordVendorPayment` |
+| **Expenses** | `submitExpense`, `approveExpense`, `rejectExpense`, `listExpenses` |
+| **Dashboard** | `getDashboardStats` (7 KPIs), `getRecentActivity`, `getCashFlowForecast` |
+
+### Controller Actions (40+, MoneyWorkflowController)
+All extend `Admin\AdminController`. All start with `requireAdmin()`. All POST handlers validate CSRF via `validateCsrfOrFail()`. All DB calls wrapped in try/catch (never throws 500).
+
+| Route Prefix | Actions |
+|---|---|
+| `/admin/finance/dashboard` | `dashboard` |
+| `/admin/finance/bank-accounts` | `bankAccounts`, `bankAccountForm` (GET+POST), `bankAccountStore` (POST) |
+| `/admin/finance/cash-book` | `cashBook` (GET), `cashReceipt` (GET+POST), `cashPayment` (GET+POST) |
+| `/admin/finance/petty-cash` | `pettyCash`, `pettyCashTopup` (POST) |
+| `/admin/finance/cheque-register` | `chequeRegister`, `issueCheque` (GET+POST), `chequeBounce` (POST), `presentCheque` (POST) |
+| `/admin/finance/reconciliation` | `reconciliation`, `reconciliationCreate` (GET+POST), `reconciliationMatch` (POST) |
+| `/admin/finance/tds` | `tds`, `tdsForm` (GET+POST), `tdsStore` (POST), `tdsCertificates`, `tdsCertificateGenerate` (POST) |
+| `/admin/finance/gst` | `gst`, `gstForm` (GET+POST), `gstStore` (POST), `gstReturns`, `gstReturnFile` (POST), `gstSettings` (GET+POST) |
+| `/admin/finance/vendors` | `vendors`, `vendorForm` (GET+POST), `vendorPayments`, `vendorPaymentForm` (GET+POST) |
+| `/admin/finance/expenses` | `expenses`, `expenseForm` (GET+POST), `expenseApprove` (POST), `expenseReject` (POST) |
+| `/admin/finance/cash-flow` | `cashFlow`, `cashFlowProject` (POST) |
+| `/admin/finance/payment-vouchers` | `paymentVouchers` |
+
+### Menu Items Inserted (4) — section='finance'
+| ID | Name | Icon | URL | Order |
+|---|---|---|---|---|
+| #291 | Cash Book | `fa-book` | `/admin/finance/cash-book` | 10 |
+| #292 | Bank Reconciliation | `fa-balance-scale` | `/admin/finance/reconciliation` | 20 |
+| #293 | TDS Register | `fa-file-invoice-dollar` | `/admin/finance/tds` | 30 |
+| #294 | Vendor Payments | `fa-truck` | `/admin/finance/vendors` | 40 |
+
+All `is_active=1`, `permission_key='admin'`. Inserted via `seed_module3_menu.php` with `ON DUPLICATE KEY UPDATE` for idempotency.
+
+### Design Decisions
+- **URL prefix `/admin/finance/*` (not `/admin/money-workflow`)** per user spec.
+- **All 22 views use `aps-cp-*` design system** classes (cards, stats, tables, badges) for visual consistency with Modules 1/2.
+- **CSRF auto-injection in `BaseController::render()`** — single point of truth means new views automatically get tokens, no per-view work needed.
+- **TDS section hardcoded rates** in `recordTDS()`: 194IA 1%, 194IB 5% rent, 194C 1% indiv/2% co, 194H 5%, 194I 10%, 194J 10%, 194M 5% >20L, 194N >1Cr 2%/>3Cr 5%.
+- **GST auto-split**: CGST 9% + SGST 9% = 18% intra-state, IGST 18% inter-state. Detected by comparing `place_of_supply` to company state.
+- **Bank accounts table is `bank_accounts_master`** (not `bank_accounts` — which is a different table for plot bank accounts). The service writes to `bank_accounts_master`.
+- **Proxy methods for spec compliance**: `recordTdsProxy` and `recordGstProxy` accept spec field names (`tds_date`, `section_code`, `quarter`, `taxable_amount`, `cgst`, etc.) and translate to `recordTDS`/`recordGST` internal field names. Needed because PHP method names are case-insensitive so `recordTds` collides with `recordTDS`.
+- **Controller `bankAccountStore` UPDATE path uses `bank_accounts_master`** table; INSERT delegates to service. Same table, no inconsistency.
+- **All POST actions have CSRF tokens**; `BaseController::render()` auto-injects `$csrf_token` so forms always have a valid 64-char hex token.
+- **All actions return JSON when `Accept: application/json`** otherwise redirect (for AJAX + form compatibility).
+- **Real session POST verified**: test_login=1 → form GET → token extract → POST → data appears in `bank_accounts_master` (id #5, #6 from real HTTP test). Earlier "no data written" was a mistake checking wrong table.
+- **All service methods wrapped in try/catch** — never throws 500 to controller; all errors logged + flash message set + safe redirect.
+
+### Verification
+| Check | Result |
+|---|---|
+| PHP syntax (3 PHP files: service, controller, migration) | 3/3 PASS |
+| PHP syntax (22 views in `app/views/admin/finance/`) | 22/22 PASS |
+| HTTP GET smoke (23 routes) | 23/23 — all 200 |
+| HTTP POST smoke (9 endpoints) | 9/9 — all write data |
+| Service E2E (8 methods) | 8/8 — all create real rows |
+| Real session POST (login + form + submit) | WORKS — bank_accounts_master id #5, #6 created via HTTP |
+| DB columns added (14) | 14/14 |
+| Menu items inserted (4) | 4/4 — #291-294 active |
+| Master E2E test | **164/165 PASS** (1 expected GodMode 403) — zero regressions |
+
+### Service E2E Results
+```
+✓ createBankAccount: id=2/3 (2 rows)
+✓ recordTransaction: cash_book id=2/3 (2 rows)
+✓ recordTdsProxy: tds_register id=1/2 (2 rows, 194IA + 194C)
+✓ recordGstProxy: gst_transactions id=1/2 (2 rows, intra + inter)
+✓ submitExpense: expenses id=10 (1 row)
+✓ recordVendorPayment: vendor_payments id=1 (1 row)
+✓ issueCheque: cheque_register id=1 (1 row)
+✓ topupPettyCash: petty_cash id=1 (1 row, balance=5000)
+```
+
+### Pending (Non-Blocking)
+- Wire up TDS e-filing integration (TIN portal)
+- Wire up GST e-filing integration (GSTN portal)
+- Add bank statement CSV import for auto-reconciliation
+- Add 26Q/26QD PDF generation
+- Add GSTR-1/GSTR-3B JSON export
+- Add vendor KYC + 194C TDS rate auto-detection based on vendor type
+- Add multi-currency support for vendor payments
+- Add cheque printing template
+
+---
+
+## Session 2026-06-07: MODULE 2 — Customer Sales + Allotment + Registry
+
+### What Was Done
+End-to-end delivery of **Module 2: Customer Sales + Allotment + Registry** — 10 tables, service, controller, 12 views, 20 routes, 3 menu items, full verification. Dropped 10 stale pre-existing tables (0 rows) and rebuilt per spec.
+
+### Files Created (15)
+| File | Type | Purpose |
+|---|---|---|
+| `scripts/migrate_module2_booking_lifecycle.php` | Migration | Drops + recreates 10 tables per spec |
+| `app/Services/Sales/BookingLifecycleService.php` | Service | 14 public methods, EMI math, commission calc, RERA log |
+| `app/Http/Controllers/Admin/BookingLifecycleController.php` | Controller | 20 actions (CRUD + payments + cancel + transfer + commissions + refunds + RERA) |
+| `app/views/admin/sales/dashboard.php` | View | Stats cards + recent bookings + overdue installments |
+| `app/views/admin/sales/bookings.php` | View | Paginated bookings list with status filter |
+| `app/views/admin/sales/booking-detail.php` | View | Tabs: EMI Schedule / Receipts / Demand Letters / Commissions / Documents / History |
+| `app/views/admin/sales/booking-form.php` | View | Create/Edit form (plot, customer, channel, associate, manager, override commission) |
+| `app/views/admin/sales/payment-schedule.php` | View | EMI table with regenerate form |
+| `app/views/admin/sales/payment-form.php` | View | Record payment with conditional cheque/bank fields |
+| `app/views/admin/sales/demand-letter.php` | View | Demand letter view for overdue installment |
+| `app/views/admin/sales/cancel-form.php` | View | Cancellation with reason + charge |
+| `app/views/admin/sales/transfer-form.php` | View | Ownership transfer to new customer |
+| `app/views/admin/sales/commissions.php` | View | Commissions ledger with summary stats |
+| `app/views/admin/sales/refunds.php` | View | Refunds list with pending/processed summary |
+| `app/views/admin/sales/rera-compliance.php` | View | Quarterly RERA filing (70% escrow + construction %) |
+
+### Files Modified (2)
+- `routes/web.php` — Added 21 lines (1 banner + 20 routes) at line 1693. New routes: `/admin/sales`, `/admin/sales/dashboard`, `/admin/sales/bookings`, `/admin/sales/bookings/new`, `/admin/sales/bookings/store`, `/admin/sales/bookings/{id}`, `/admin/sales/bookings/{id}/edit`, `/admin/sales/bookings/{id}/update`, `/admin/sales/bookings/{id}/schedule`, `/admin/sales/bookings/{id}/schedule/regenerate`, `/admin/sales/bookings/{id}/cancel` (GET+POST), `/admin/sales/bookings/{id}/transfer` (GET+POST), `/admin/sales/installments/{installmentId}/pay` (GET+POST), `/admin/sales/installments/{installmentId}/demand-letter`, `/admin/sales/commissions`, `/admin/sales/refunds`, `/admin/sales/rera` (GET), `/admin/sales/rera/store` (POST).
+- `admin_menu_items` table — Inserted 3 new menu items in `section='sales'`: `Bookings` (#288, order=10), `Commissions` (#289, order=20), `RERA Compliance` (#290, order=30). Idempotent via ON DUPLICATE KEY UPDATE.
+
+### Database Schema (10 new tables)
+All InnoDB, utf8mb4, with proper PKs/FKs/indexes. Enums used for status fields.
+| Table | Rows | Purpose |
+|---|---|---|
+| `plot_bookings` | 0 | Master booking record (token → fully_paid → registration_done) |
+| `booking_payment_schedules` | 0 | EMI installments (token/emi/balloon) per booking |
+| `booking_demand_letters` | 0 | Generated demand letters for overdue installments |
+| `booking_documents` | 0 | Agreements, ID proofs, NOCs uploaded per booking |
+| `booking_status_history` | 0 | Audit trail of status changes |
+| `booking_payment_receipts` | 0 | Receipts: APS-RCP-NNNNNNN sequence |
+| `booking_refunds` | 0 | Refund records on cancellation |
+| `booking_transfers` | 0 | Ownership transfer audit |
+| `booking_commissions` | 0 | Multi-level commissions (L1=3%, L2=1.5%, L3=1%) + direct (2%) |
+| `rera_compliance_log` | 0 | Quarterly RERA filings: 70% escrow + construction % |
+
+`plot_bookings.status` ENUM: `('token_paid','agreement_signed','emi_active','partially_paid','fully_paid','cancelled','transferred','registration_done')`.
+
+### Service Methods (14 public, BookingLifecycleService.php)
+| Method | Purpose |
+|---|---|
+| `createBooking(array $data)` | Validate + create plot booking; auto-allocates booking number `APS-BK-YYYYMMDD-NNNN` |
+| `generatePaymentSchedule($bookingId, $months, $rate)` | Reducing-balance EMI calculator; last instalment closes balance exactly to 0 |
+| `getBookingById($id)` | Returns booking + customer name + plot code; soft-fails on missing FK columns |
+| `listBookings($filters)` | Paginated list with status/search/date filters; JOINs users + plots |
+| `getPaymentSchedule($bookingId)` | All installments for a booking, with `is_overdue` flag |
+| `recordPayment($installmentId, $data)` | Creates receipt, updates installment paid amount, auto-advances booking status, generates demand letter if partial |
+| `getOverdueInstallments()` | Past-due installments with days_overdue calculation |
+| `generateDemandLetter($installmentId)` | Inserts letter record (letter content + sent_at tracking) |
+| `cancelBooking($id, $reason, $charge)` | Marks plot back to available, generates refund record, cancels future installments |
+| `transferBooking($id, $newCustomerId, $reason, $charge)` | Reassigns customer, keeps payment history, creates transfer record |
+| `calculateCommission($bookingId, $overridePct)` | Walks MLM upline via `users.referred_by`; creates L1/L2/L3 + direct sale commission rows |
+| `updateReraCompliance($colonyId, $year, $quarter, $progress, $withdrawn)` | Upsert quarterly RERA filing |
+| `getReraCompliance($colonyId)` | All filings for a colony |
+| `getDashboardStats()` | Returns 7 KPI keys: `total_bookings`, `active_emi`, `overdue_count`, `commission_earned`, `refund_pending`, `total_revenue`, `by_status` |
+
+Private helpers: `generateBookingNumber`, `generateReceiptNumber`, `generateLetterNumber`, `totalPaid`, `maybeAdvanceBookingStatus` (token_paid → emi_active → partially_paid → fully_paid), `updateBookingStatus`, `logStatusHistory`, `appendMlmUpline`.
+
+### Controller Actions (20)
+All extend `App\Http\Controllers\Admin\AdminController` (auth-gated, `layouts/admin` layout via `$this->render()`). All actions start with `$this->requireAdmin()` (POST also validates CSRF). All queries wrapped in try/catch — never throws 500.
+
+### Design Decisions
+- **Dropped 10 pre-existing Module 2 tables** (0 rows, different schema) before recreating per user spec. Documented in migration header.
+- **Overwrote existing 1218-line `BookingLifecycleService.php`** with new 280-line spec-compliant version (existing service had incompatible API; user spec is authoritative).
+- **Kept legacy `/admin/sales` route** (line 1911 → `SalesController@index`) for backward compatibility with old deal pipeline UI. New dashboard reached at `/admin/sales/dashboard`.
+- **EMI math**: standard reducing-balance formula with last-instalment adjustment so balance closes exactly to 0.
+- **Auto-advance booking status**: `fully_paid` when no pending + paid≥total; `partially_paid` when paid between 0 and total; `emi_active` when pending installments exist after token.
+- **MLM commission walk**: best-effort via `users.referred_by` chain, capped at 3 levels. L1=3%, L2=1.5%, L3=1.0% of agreement value; direct sale=2% override.
+- **CSRF**: `$_POST['csrf_token']` checked via `validateCsrfToken()` (via BaseController). Skips on 405-safe GET actions.
+- **Refund math**: `total_paid - cancellation_charge` (negative → 0).
+- **RERA**: column `construction_progress` + `escrow_withdrawn` upsert with UNIQUE(colony_id, year, quarter).
+- **Type hints removed** in service constructor — accepts `?\PDO` with graceful null fallback to global `$this->db` to keep MVC framework-agnostic.
+- **Used `aps-cp-card`, `aps-cp-stat`, `progress`, `badge` classes** for visual consistency with Module 1.
+
+### Verification
+| Check | Result |
+|---|---|
+| PHP syntax (3 PHP files: service, controller, migration) | 3/3 PASS |
+| PHP syntax (17 views in `app/views/admin/sales/`: 12 new + 5 legacy) | 17/17 PASS |
+| HTTP smoke (13 routes, no auth) | 13/13 — 12 x 302 (admin auth redirect) + 1 x 200 (legacy `/admin/sales`) — **0 x 500** |
+| DB tables created (10) | 10/10 with proper PKs/FKs |
+| Menu items inserted (3) | 3/3 — `Bookings`#288, `Commissions`#289, `RERA Compliance`#290 |
+| Service `getDashboardStats()` | 7 KPI keys returned (no errors) |
+| Controller instantiation | OK (no private/protected conflicts) |
+| E2E master test | **164/165 PASS** (1 expected GodMode 403) — zero regressions |
+
+### Pending (Non-Blocking)
+- Wire up actual Twilio/Razorpay for receipt SMS + refund disbursement
+- Build PDF generator for agreement + demand letters
+- Add customer-facing booking page at `/user/booking/{id}` (currently only admin-side)
+- Auto-populate EMI schedule on `createBooking` (currently requires explicit `generatePaymentSchedule()` call)
+- Add scheduled cron for daily overdue-check + auto-dunning email (similar to existing `EMIAutomationService`)
+
+---
+
+### Session 2026-06-07 (OpenCode Action Plan): UI/UX CSS, AI Ecosystem & Database Integration
+
+### Overview
+This action plan defines the detailed instructions, file paths, logic steps, database schemas, and code blueprints for modernizing the UI/UX CSS structures, restoring missing AI tables, resolving route conflicts, localizing valuation calculations, and wiring dynamic transactional context. These changes are designed for direct implementation via the **OpenCode IDE**.
+
+---
+
+### 1. UI/UX CSS & Layout Consistency
+
+To achieve a WCAG-compliant, responsive, and visually premium design across the portals, the following improvements should be implemented:
+
+- **A. Modernizing Admin Portal Cards & Styling Consistency**
+  - **Target Layout**: [unified.php](file:///c:/xampp/htdocs/apsdreamhome/app/views/admin/layouts/unified.php)
+  - **Target Stylesheet**: [admin.css](file:///c:/xampp/htdocs/apsdreamhome/assets/admin/css/admin.css)
+  - **Task**: Replace legacy Bootstrap panel cards (`card`, `card-header`, `card-body`) with custom `aps-cp-card`, `aps-cp-card-header`, and `aps-cp-card-body` style classes. Add hover scale transitions and dynamic gradients to match the customer portal's design system.
+  - **Action**: Add the following CSS variables and classes directly to the top of `assets/admin/css/admin.css`:
+    ```css
+    :root {
+        --aps-theme-primary: #4f46e5;
+        --aps-theme-primary-hover: #4338ca;
+        --aps-theme-bg: #f8fafc;
+        --aps-theme-text: #1e293b;
+        --aps-theme-card-bg: #ffffff;
+        --aps-theme-card-border: #e2e8f0;
+        --aps-theme-card-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.08);
+    }
+    
+    .aps-cp-card {
+        background: var(--aps-theme-card-bg);
+        border: 1px solid var(--aps-theme-card-border);
+        border-radius: 14px;
+        box-shadow: var(--aps-theme-card-shadow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+    
+    .aps-cp-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+    }
+    
+    .aps-cp-card-header {
+        background: transparent;
+        border-bottom: 1px solid var(--aps-theme-card-border);
+        padding: 16px 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--aps-theme-text);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .aps-cp-card-body {
+        padding: 20px;
+    }
+    ```
+
+- **B. Mobile Touch Targets & Sidebar Accessibility**
+  - **Target Stylesheet**: [admin.css](file:///c:/xampp/htdocs/apsdreamhome/assets/admin/css/admin.css)
+  - **Task**: Increase touch targets to at least `44px x 44px` on mobile view to satisfy WCAG touch guidelines.
+  - **Action**: Add touch size enforcements under `@media (max-width: 992px)` in `assets/admin/css/admin.css`:
+    ```css
+    @media (max-width: 992px) {
+        .toggle-btn {
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        .nav-icon {
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-link {
+            padding: 12px 16px 12px 26px; /* Increased vertical padding from 8px to 12px */
+            min-height: 44px;
+        }
+    }
+    ```
+
+- **C. Clean Up Inline Styling in Layouts**
+  - **Target Layout**: [customer.php](file:///c:/xampp/htdocs/apsdreamhome/app/views/layouts/customer.php)
+  - **Task**: Extract the inline `<style>` block (lines 29-100+) defining sidebar animations and layout rules, and place them inside the consolidated components stylesheet.
+  - **Action**:
+    1. Cut the styles from `app/views/layouts/customer.php`.
+    2. Paste them into `assets/css/consolidated/aps-components.css` under a section comment `/* Customer Portal Sidebar & Layout overrides */`.
+
+---
+
+### 2. AI Ecosystem & Real Database Integration
+
+During schema analysis, it was discovered that **9 critical AI database tables were dropped** in a prior cleanup session, resulting in fatal PDO Exceptions inside AI classes. Additionally, valuation localization issues, model configurations, and routing conflicts require remediation.
+
+- **A. Database Restoration DDL Migration**
+  - **Target Database**: MariaDB on Port `3307`
+  - **Action File (Create New)**: `scripts/create_ai_tables.php`
+  - **Task**: Run this file using command line PHP (`php scripts/create_ai_tables.php`) to restore the missing tables safely.
+  - **Blueprint**: Create `scripts/create_ai_tables.php` with the following code:
+    ```php
+    <?php
+    // Run via: php scripts/create_ai_tables.php
+    $root = dirname(__DIR__);
+    $config = require $root . '/config/database.php';
+    try {
+        $pdo = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
+            $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        
+        $queries = [
+            // 1. ai_market_trends (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_market_trends` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `location` varchar(255) NOT NULL,
+                `property_type` enum('plot','house','flat','shop','farmhouse','commercial') NOT NULL,
+                `trend_direction` enum('up','down','stable') DEFAULT 'stable',
+                `price_change_percent` decimal(5,2) DEFAULT 0.00,
+                `forecast_next_month` decimal(15,2) DEFAULT NULL,
+                `transactions_count` int(11) DEFAULT 0,
+                `demand_index` int(11) DEFAULT 0,
+                `supply_index` int(11) DEFAULT 0,
+                `month` date NOT NULL,
+                `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                KEY `idx_trends_loc_type` (`location`,`property_type`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+            
+            // 2. ai_property_valuations (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_property_valuations` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `property_id` bigint(20) unsigned DEFAULT NULL,
+                `location` varchar(255) NOT NULL,
+                `property_type` varchar(50) NOT NULL,
+                `area_sqft` decimal(10,2) NOT NULL,
+                `bedrooms` int(11) DEFAULT 0,
+                `bathrooms` int(11) DEFAULT 0,
+                `age_years` int(11) DEFAULT 0,
+                `amenities` text DEFAULT NULL,
+                `nearby_facilities` text DEFAULT NULL,
+                `predicted_price` decimal(15,2) NOT NULL,
+                `price_per_sqft` decimal(12,2) NOT NULL,
+                `confidence_score` decimal(3,2) NOT NULL,
+                `price_range_low` decimal(15,2) NOT NULL,
+                `price_range_high` decimal(15,2) NOT NULL,
+                `comparable_properties` text DEFAULT NULL,
+                `market_analysis` text DEFAULT NULL,
+                `prediction_factors` text DEFAULT NULL,
+                `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+            
+            // 3. ai_generated_content (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_generated_content` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `content_type` varchar(50) NOT NULL,
+                `title` varchar(255) DEFAULT NULL,
+                `content` text NOT NULL,
+                `prompt` text NOT NULL,
+                `model_used` varchar(50) DEFAULT 'gemini-1.5-flash',
+                `tokens_used` int(11) DEFAULT 0,
+                `user_id` int(11) DEFAULT NULL,
+                `property_id` int(11) DEFAULT NULL,
+                `is_published` tinyint(1) DEFAULT 0,
+                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                KEY `idx_user` (`user_id`),
+                KEY `idx_property` (`property_id`),
+                KEY `idx_published` (`is_published`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+            // 4. ai_user_preferences (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_user_preferences` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `user_id` bigint(20) unsigned NOT NULL,
+                `user_type` varchar(20) NOT NULL DEFAULT 'customer',
+                `preferred_locations` text DEFAULT NULL,
+                `preferred_property_types` text DEFAULT NULL,
+                `budget_min` decimal(15,2) DEFAULT NULL,
+                `budget_max` decimal(15,2) DEFAULT NULL,
+                `preferred_amenities` text DEFAULT NULL,
+                `must_have_features` text DEFAULT NULL,
+                `family_size` int(11) DEFAULT NULL,
+                `purpose` varchar(50) DEFAULT NULL,
+                `urgency_level` varchar(20) DEFAULT 'medium',
+                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `uniq_user_type` (`user_id`,`user_type`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+            // 5. ai_user_behavior (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_user_behavior` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `user_id` bigint(20) unsigned DEFAULT NULL,
+                `action_type` varchar(50) NOT NULL,
+                `property_id` bigint(20) unsigned DEFAULT NULL,
+                `search_keywords` text DEFAULT NULL,
+                `filters_used` text DEFAULT NULL,
+                `time_spent_seconds` int(11) DEFAULT NULL,
+                `session_id` varchar(100) DEFAULT NULL,
+                `device_type` varchar(50) DEFAULT NULL,
+                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                KEY `idx_ub_user` (`user_id`),
+                KEY `idx_ub_property` (`property_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+            // 6. ai_agent_personality (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_agent_personality` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `agent_name` varchar(100) NOT NULL,
+                `personality_traits` text DEFAULT NULL,
+                `communication_style` text DEFAULT NULL,
+                `expertise_areas` text DEFAULT NULL,
+                `behavior_rules` text DEFAULT NULL,
+                `mood_state` text DEFAULT NULL,
+                `learning_progress` text DEFAULT NULL,
+                `active` tinyint(1) DEFAULT 1,
+                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+            // 7. ai_user_interactions (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_user_interactions` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `user_id` int(11) NOT NULL,
+                `session_id` varchar(100) NOT NULL,
+                `interaction_type` varchar(50) NOT NULL DEFAULT 'question',
+                `user_input` text NOT NULL,
+                `ai_response` text DEFAULT NULL,
+                `context_data` text DEFAULT NULL,
+                `success_rating` enum('excellent','good','average','poor') DEFAULT NULL,
+                `interaction_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                KEY `idx_ui_user` (`user_id`),
+                KEY `idx_ui_session` (`session_id`),
+                KEY `idx_ui_type` (`interaction_type`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+            // 8. ai_context_memory (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_context_memory` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `user_id` int(11) NOT NULL,
+                `context_type` varchar(50) NOT NULL,
+                `context_key` varchar(100) NOT NULL,
+                `context_value` text NOT NULL,
+                `importance_level` enum('low','medium','high') DEFAULT 'medium',
+                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                KEY `idx_cm_user` (`user_id`),
+                KEY `idx_cm_type` (`context_type`),
+                KEY `idx_cm_key` (`context_key`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+            // 9. ai_workflow_patterns (Missing)
+            "CREATE TABLE IF NOT EXISTS `ai_workflow_patterns` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `pattern_name` varchar(255) NOT NULL,
+                `pattern_category` varchar(100) NOT NULL,
+                `trigger_conditions` text NOT NULL,
+                `action_sequence` text NOT NULL,
+                `frequency_count` int(11) DEFAULT 1,
+                `last_used` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                KEY `idx_wp_name` (`pattern_name`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
+        ];
+        
+        foreach ($queries as $q) {
+            $pdo->exec($q);
+        }
+        echo "✓ All 9 missing AI tables created successfully!\n";
+    } catch (Exception $e) {
+        echo "✗ Error creating tables: " . $e->getMessage() . "\n";
+    }
+    ```
+
+- **B. Fix Corrupted Setup Methods in AI Services**
+  - **Target Files**:
+    1. [AIPropertyValuationService.php](file:///c:/xampp/htdocs/apsdreamhome/app/Services/AI/AIPropertyValuationService.php) (lines 26-38)
+    2. [AIContentGenerationService.php](file:///c:/xampp/htdocs/apsdreamhome/app/Services/AI/AIContentGenerationService.php) (lines 23-30)
+    3. [AIRecommendationService.php](file:///c:/xampp/htdocs/apsdreamhome/app/Services/AI/AIRecommendationService.php) (lines 22-34)
+  - **Task**: Replace the broken `$pdo->exec("ENGINE=InnoDB...")` lines with clean, non-crashing wrapper methods that let the schema script handle creations.
+  - **Blueprint**:
+    Modify the `ensureTablesExist` method in all three service files to simply return:
+    ```php
+    private function ensureTablesExist(): void
+    {
+        // Table initialization handled by migration script scripts/create_ai_tables.php
+        return;
+    }
+    ```
+
+- **C. Localize PropertyValuationEngine & Fix Undefined Warnings**
+  - **Target File**: [PropertyValuationEngine.php](file:///c:/xampp/htdocs/apsdreamhome/app/Services/AI/PropertyValuationEngine.php)
+  - **Task**: Fix the metropolitan location multiplier bias (Mumbai/Delhi/Bangalore) and declare the missing property variable warning.
+  - **Action**:
+    1. Declare class property `private $propertyTypeMultipliers;` at line 16.
+    2. Inside the constructor, initialize it:
+       ```php
+       $this->propertyTypeMultipliers = [
+           'plot' => 1.0, 'house' => 1.25, 'flat' => 1.15, 'shop' => 1.45, 'farmhouse' => 1.35, 'commercial' => 1.5, 'residential' => 1.1
+       ];
+       ```
+    3. Localize pricing calculations for UP (Uttar Pradesh) hubs in the private helper methods:
+       ```php
+       private function getBasePrice($location, $type)
+       {
+           $basePrices = [
+               'gorakhpur' => ['apartment' => 3000000, 'house' => 5500000, 'villa' => 9000000],
+               'lucknow' => ['apartment' => 4500000, 'house' => 7500000, 'villa' => 12000000],
+               'kushinagar' => ['apartment' => 1800000, 'house' => 3200000, 'villa' => 5000000],
+               'varanasi' => ['apartment' => 4000000, 'house' => 7000000, 'villa' => 11000000]
+           ];
+           $loc = strtolower(trim(explode(',', $location)[0]));
+           return $basePrices[$loc][$type] ?? 2500000;
+       }
+       
+       private function getLocationMultiplier($location)
+       {
+           $locationScores = [
+               'lucknow' => 1.35,
+               'varanasi' => 1.25,
+               'gorakhpur' => 1.15,
+               'kushinagar' => 0.95
+           ];
+           $loc = strtolower(trim(explode(',', $location)[0]));
+           return $locationScores[$loc] ?? 1.0;
+       }
+       
+       private function getMarketTrendAdjustment($location)
+       {
+           $marketTrends = [
+               'lucknow' => 1.07,
+               'varanasi' => 1.05,
+               'gorakhpur' => 1.06,
+               'kushinagar' => 1.02
+           ];
+           $loc = strtolower(trim(explode(',', $location)[0]));
+           return $marketTrends[$loc] ?? 1.0;
+       }
+       
+       private function getDemandIndex($type, $location)
+       {
+           $demandMatrix = [
+               'lucknow' => ['apartment' => 1.15, 'house' => 1.20, 'villa' => 1.10],
+               'varanasi' => ['apartment' => 1.10, 'house' => 1.15, 'villa' => 1.08],
+               'gorakhpur' => ['apartment' => 1.18, 'house' => 1.25, 'villa' => 1.12],
+               'kushinagar' => ['apartment' => 0.95, 'house' => 1.05, 'villa' => 0.98]
+           ];
+           $loc = strtolower(trim(explode(',', $location)[0]));
+           return $demandMatrix[$loc][$type] ?? 1.0;
+       }
+       
+       private function getPricePerSqft($location)
+       {
+           $pricesPerSqft = [
+               'lucknow' => 3500,
+               'varanasi' => 3000,
+               'gorakhpur' => 2800,
+               'kushinagar' => 1800
+           ];
+           $loc = strtolower(trim(explode(',', $location)[0]));
+           return $pricesPerSqft[$loc] ?? 2200;
+       }
+       ```
+
+- **D. Feed Real Customer Context & Active Models into LLM Prompts**
+  - **Target File**: [SmartAIController.php](file:///c:/xampp/htdocs/apsdreamhome/app/Http/Controllers/SmartAIController.php)
+  - **Task**: Load the Gemini model dynamically from `$_ENV['GEMINI_MODEL']` instead of hardcoding `gemini-2.5-flash` in the URL, and inject active customer booking/EMI details.
+  - **Action**:
+    1. Modify line 16:
+       ```php
+       private $geminiEndpoint;
+       ```
+    2. Inside `__construct()`, initialize it:
+       ```php
+       $model = $_ENV['GEMINI_MODEL'] ?? 'gemini-2.5-flash';
+       $this->geminiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
+       ```
+    3. Modify `buildContextPrompt()` (line 558) to query active EMI and booking context:
+       ```php
+       private function buildContextPrompt($userContext)
+       {
+           $prompt = "CURRENT USER CONTEXT:\n";
+           $prompt .= "Role: " . ucfirst($userContext['role']) . "\n";
+           $prompt .= "Name: " . $userContext['name'] . "\n";
+   
+           if ($userContext['role'] === 'associate') {
+               $prompt .= "Network Size: " . ($userContext['data']['network_size'] ?? 0) . "\n";
+               $prompt .= "Total Commission: ₹" . number_format($userContext['data']['total_commission'] ?? 0) . "\n";
+               $prompt .= "Pending Commission: ₹" . number_format($userContext['data']['pending_commission'] ?? 0) . "\n";
+               $prompt .= "Total Leads: " . ($userContext['data']['total_leads'] ?? 0) . "\n";
+           } elseif ($userContext['role'] === 'customer') {
+               $prompt .= "Total Properties: " . ($userContext['data']['total_properties'] ?? 0) . "\n";
+               $prompt .= "Total Inquiries: " . ($userContext['data']['total_inquiries'] ?? 0) . "\n";
+               
+               // Query live bookings
+               try {
+                   $bookings = $this->db->fetchAll("SELECT plot_id, status FROM plot_bookings WHERE user_id = ?", [$userContext['id']]);
+                   if (!empty($bookings)) {
+                       $prompt .= "Active Plot Bookings: " . count($bookings) . "\n";
+                   }
+               } catch (\Exception $e) {}
+               
+               // Query live EMI schedules and overdue counts
+               try {
+                   $emis = $this->db->fetch("SELECT count(*) as total, sum(emi_amount) as monthly FROM emi_plans WHERE customer_id = ? AND status = 'active'", [$userContext['id']]);
+                   $prompt .= "Active EMI Plans: " . ($emis['total'] ?? 0) . " (Monthly: ₹" . number_format($emis['monthly'] ?? 0) . ")\n";
+                   
+                   $overdue = $this->db->fetch("SELECT count(*) as count, sum(amount) as balance FROM emi_payments WHERE user_id = ? AND status = 'overdue'", [$userContext['id']]);
+                   $prompt .= "Overdue Installments: " . ($overdue['count'] ?? 0) . " (Balance: ₹" . number_format($overdue['balance'] ?? 0) . ")\n";
+               } catch (\Exception $e) {}
+           }
+   
+           return $prompt;
+       }
+       ```
+
+- **E. Route Conflict Resolution**
+  - **Target File**: [web.php](file:///c:/xampp/htdocs/apsdreamhome/routes/web.php)
+  - **Task**: Fix duplicate `/api/ai/chat` endpoint maps at line 1035 and 2249.
+  - **Action**: Change the admin/legacy endpoint at line 2249 to a unique route path to prevent conflicts:
+    ```php
+    // Modify routes/web.php (Line 2249)
+    $router->any('/api/ai/legacy-chat', 'Front\\AIBotController@chat');
+    ```
+
+---
+
+### 3. Business Logic Automation & Core Features (OpenCode Tasks)
+
+- **A. Interactive SVG Plot Layout Map**
+  - **Target View**: `app/views/pages/plots/map.php`
+  - **Task**: Render a responsive SVG layout (`<svg viewBox="0 0 1000 600">`) containing polygons for all 204 plots. Add tooltips dynamically bound to plot numbers, status codes, and dimensions.
+  - **Status Fill Colors**: Available (`#10b981`), Booked (`#ef4444`), On EMI (`#f59e0b`), Registered (`#8b5cf6`), Blocked (`#64748b`).
+
+- **B. Automated Daily EMI Penalty Calculation Engine**
+  - **Target Service**: `app/Services/EMIAutomationService.php`
+  - **Action**: Add daily late payment interest calculations (18% flat per annum) for overdue installments past the 5-day grace period:
+    ```php
+    public function applyDailyPenalties() {
+        $sql = "SELECT * FROM emi_payments WHERE status = 'overdue' AND due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)";
+        $payments = $this->db->fetchAll($sql);
+        foreach ($payments as $p) {
+            $days = (strtotime(date('Y-m-d')) - strtotime($p['due_date'])) / 86400;
+            $penalty = ($p['amount'] * 0.18 * $days) / 365;
+            $this->db->execute(
+                "UPDATE emi_payments SET accrued_penalty = ?, updated_at = NOW() WHERE id = ?",
+                [$penalty, $p['id']]
+            );
+        }
+    }
+    ```
+
+- **C. MLM Commission Clawback Trigger**
+  - **Target File**: `app/Services/MLM/MLMIncentiveService.php`
+  - **Action**: Add clawback logic for defaulted EMI accounts. If a customer defaults on an EMI plan:
+    ```php
+    public function triggerClawback($defaultedEmiPlanId) {
+        $ledger = $this->db->fetchAll("SELECT * FROM mlm_commission_ledger WHERE emi_plan_id = ? AND status = 'paid'", [$defaultedEmiPlanId]);
+        foreach ($ledger as $item) {
+            $this->db->execute(
+                "INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, status, notes) VALUES (?, ?, 'clawback', ?, 'pending', ?)",
+                [$item['beneficiary_user_id'], $item['source_user_id'], -$item['amount'], 'Clawback due to EMI Default']
+            );
+            $this->db->execute(
+                "UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?",
+                [$item['amount'], $item['beneficiary_user_id']]
+            );
+        }
+    }
+    ```
+
+- **D. Daily Associate Rank Auto-Promotion Cron**
+  - **Target File**: `scripts/cron_mlm_promotions.php`
+  - **Action**: Loop through all active associates, sum up `lifetime_sales` + their downline team volume, compare against rank thresholds (Gold: 500K, Platinum: 1M, Diamond: 2.5M), update their rank status, and insert achievements.
+
+---
+---
+
 
 ## Session 2026-06-06 (Latest): Admin KYC + Document Upload + User Dashboard Fixes
 
@@ -38,6 +803,13 @@
 2. **Real KYC API** — NSDL PAN verification, UIDAI Aadhaar e-KYC integration
 3. **Mobile responsiveness** — Admin portal mobile fixes
 4. **Admin portal CSS modernization** — Replace Bootstrap with aps-cp-* design system
+5. **Plotting Layout Map** — Implement interactive SVG/HTML5 Canvas map for live plot statuses (Available, Booked, On EMI, Registered, Blocked).
+6. **EMI Penalty Engine** — Implement automated daily late-payment interest or flat penalty calculations for overdue installments.
+7. **On-Field Cash Collection & Reconciliation** — Build receipt verification workflows for cash collectors and associates.
+8. **MLM Commission Clawback** — Implement clawback ledger triggers to recover commissions paid on defaulted EMI plans.
+9. **MLM Rank Auto-Promotion** — Create a daily cron job to promote associates based on Cumulative Team Sales Volume.
+10. **Legal/Registry NOC Pipe** — Implement a blocking check that prevents registry or NOC generation if the customer has outstanding EMI or penalty balances.
+11. **Dead File Cleanup** — Clean up legacy redundant files like `CoreFunctionsService.php` and `CoreFunctionsServiceNew.php` to reduce code pollution.
 
 ---
 

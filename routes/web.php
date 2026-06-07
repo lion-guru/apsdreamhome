@@ -744,12 +744,18 @@ $router->post('/admin/login', 'App\\Http\\Controllers\\Auth\\AdminAuthController
 $router->get('/admin/logout', 'App\\Http\\Controllers\\Auth\\AdminAuthController@logout');
 
 // Admin Dashboard (single route - uses RoleBasedDashboardController)
-$router->get('/admin', 'App\\Http\\Controllers\\RoleBasedDashboardController@index');
+$router->get('/admin', function() {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
 $router->get('/admin/dashboard', 'App\\Http\\Controllers\\RoleBasedDashboardController@index');
 $router->get('/admin/enterprise_dashboard', 'App\\Http\\Controllers\\RoleBasedDashboardController@enterpriseDashboard');
 
 // Admin root route fix
-$router->get('/admin/', 'App\\Http\\Controllers\\RoleBasedDashboardController@index');
+$router->get('/admin/', function() {
+    header('Location: ' . BASE_URL . '/admin/dashboard');
+    exit;
+});
 
 // Role-specific dashboards
 $router->get('/admin/dashboard/agent', 'App\\Http\\Controllers\\RoleBasedDashboardController@agent');
@@ -1642,6 +1648,152 @@ $router->get('/admin/agent-dashboard/performance', 'App\\Http\\Controllers\\Admi
 $router->get('/admin/agent-dashboard/network', 'App\\Http\\Controllers\\Admin\\AgentDashboardController@getNetworkTree');
 
 // ============================================================
+// MODULE 1: LAND ACQUISITION + PLOT INVENTORY
+// ============================================================
+
+$router->get('/admin/land-inventory/leads', 'App\\Http\\Controllers\\Admin\\LandInventoryController@leads');
+$router->get('/admin/land-inventory/leads/new', 'App\\Http\\Controllers\\Admin\\LandInventoryController@leadForm');
+$router->post('/admin/land-inventory/leads/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@leadStore');
+$router->get('/admin/land-inventory/leads/{id}', 'App\\Http\\Controllers\\Admin\\LandInventoryController@leadDetail');
+$router->get('/admin/land-inventory/leads/{id}/edit', 'App\\Http\\Controllers\\Admin\\LandInventoryController@leadForm');
+$router->post('/admin/land-inventory/leads/{id}/update', 'App\\Http\\Controllers\\Admin\\LandInventoryController@leadUpdate');
+$router->post('/admin/land-inventory/leads/{id}/advance', 'App\\Http\\Controllers\\Admin\\LandInventoryController@leadAdvance');
+
+$router->get('/admin/land-inventory/leads/{id}/visits', 'App\\Http\\Controllers\\Admin\\LandInventoryController@visits');
+$router->post('/admin/land-inventory/leads/{id}/visits/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@visitStore');
+
+$router->get('/admin/land-inventory/leads/{id}/documents', 'App\\Http\\Controllers\\Admin\\LandInventoryController@documents');
+$router->post('/admin/land-inventory/leads/{id}/documents/upload', 'App\\Http\\Controllers\\Admin\\LandInventoryController@documentUpload');
+
+$router->get('/admin/land-inventory/leads/{id}/opinions', 'App\\Http\\Controllers\\Admin\\LandInventoryController@opinions');
+$router->post('/admin/land-inventory/leads/{id}/opinions/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@opinionStore');
+
+$router->post('/admin/land-inventory/leads/{id}/register', 'App\\Http\\Controllers\\Admin\\LandInventoryController@registerSubmit');
+
+$router->get('/admin/land-inventory/acquisitions', 'App\\Http\\Controllers\\Admin\\LandInventoryController@acquisitions');
+$router->get('/admin/land-inventory/acquisitions/{id}', 'App\\Http\\Controllers\\Admin\\LandInventoryController@acquisitionDetail');
+$router->get('/admin/land-inventory/acquisitions/{id}/register', 'App\\Http\\Controllers\\Admin\\LandInventoryController@registerForm');
+
+$router->get('/admin/land-inventory/acquisitions/{id}/payments', 'App\\Http\\Controllers\\Admin\\LandInventoryController@payments');
+$router->get('/admin/land-inventory/acquisitions/{id}/payments/new', 'App\\Http\\Controllers\\Admin\\LandInventoryController@paymentForm');
+$router->post('/admin/land-inventory/acquisitions/{id}/payments/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@paymentStore');
+$router->get('/admin/land-inventory/acquisitions/{id}/payments/edit/{pid}', 'App\\Http\\Controllers\\Admin\\LandInventoryController@paymentForm');
+$router->post('/admin/land-inventory/acquisitions/{id}/payments/update/{pid}', 'App\\Http\\Controllers\\Admin\\LandInventoryController@paymentUpdate');
+
+$router->get('/admin/land-inventory/colonies/{colonyId}/costs', 'App\\Http\\Controllers\\Admin\\LandInventoryController@developmentCosts');
+$router->get('/admin/land-inventory/colonies/{colonyId}/costs/new', 'App\\Http\\Controllers\\Admin\\LandInventoryController@developmentCostForm');
+$router->post('/admin/land-inventory/colonies/{colonyId}/costs/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@developmentCostStore');
+
+$router->get('/admin/land-inventory/colonies/{colonyId}/layouts', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layouts');
+$router->get('/admin/land-inventory/colonies/{colonyId}/layouts/create', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layoutForm');
+$router->post('/admin/land-inventory/colonies/{colonyId}/layouts/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layoutStore');
+
+$router->get('/admin/land-inventory/brokers', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokers');
+$router->post('/admin/land-inventory/brokers/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokerStore');
+
+// ============================================================
+// MODULE 2: CUSTOMER SALES + ALLOTMENT + REGISTRY
+// ============================================================
+$router->get('/admin/sales',                                       'App\\Http\\Controllers\\Admin\\BookingLifecycleController@index');
+$router->get('/admin/sales/dashboard',                            'App\\Http\\Controllers\\Admin\\BookingLifecycleController@index');
+$router->get('/admin/sales/bookings',                             'App\\Http\\Controllers\\Admin\\BookingLifecycleController@bookings');
+$router->get('/admin/sales/bookings/new',                         'App\\Http\\Controllers\\Admin\\BookingLifecycleController@createBookingForm');
+$router->post('/admin/sales/bookings/store',                      'App\\Http\\Controllers\\Admin\\BookingLifecycleController@createBookingStore');
+$router->get('/admin/sales/bookings/{id}',                        'App\\Http\\Controllers\\Admin\\BookingLifecycleController@bookingDetail');
+$router->get('/admin/sales/bookings/{id}/edit',                   'App\\Http\\Controllers\\Admin\\BookingLifecycleController@editBooking');
+$router->post('/admin/sales/bookings/{id}/update',                'App\\Http\\Controllers\\Admin\\BookingLifecycleController@updateBooking');
+$router->get('/admin/sales/bookings/{id}/schedule',               'App\\Http\\Controllers\\Admin\\BookingLifecycleController@paymentSchedule');
+$router->post('/admin/sales/bookings/{id}/schedule/regenerate',   'App\\Http\\Controllers\\Admin\\BookingLifecycleController@regenerateSchedule');
+$router->post('/admin/sales/bookings/{id}/cancel',                'App\\Http\\Controllers\\Admin\\BookingLifecycleController@cancelBookingStore');
+$router->get('/admin/sales/bookings/{id}/cancel',                 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@cancelBookingForm');
+$router->post('/admin/sales/bookings/{id}/transfer',              'App\\Http\\Controllers\\Admin\\BookingLifecycleController@transferBookingStore');
+$router->get('/admin/sales/bookings/{id}/transfer',               'App\\Http\\Controllers\\Admin\\BookingLifecycleController@transferBookingForm');
+$router->get('/admin/sales/installments/{installmentId}/pay',      'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentForm');
+$router->post('/admin/sales/installments/{installmentId}/pay',     'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentStore');
+$router->get('/admin/sales/installments/{installmentId}/demand-letter', 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@demandLetter');
+$router->get('/admin/sales/commissions',                          'App\\Http\\Controllers\\Admin\\BookingLifecycleController@commissions');
+$router->get('/admin/sales/refunds',                              'App\\Http\\Controllers\\Admin\\BookingLifecycleController@refunds');
+$router->get('/admin/sales/rera',                                 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@reraCompliance');
+$router->post('/admin/sales/rera/store',                          'App\\Http\\Controllers\\Admin\\BookingLifecycleController@reraComplianceStore');
+
+// ============================================================
+// MODULE 3: MONEY WORKFLOW + ACCOUNTING
+// URL prefix: /admin/finance/*
+// All actions delegate to App\Http\Controllers\Admin\MoneyWorkflowController.
+// ============================================================
+
+$router->get('/admin/finance',                                                    'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@dashboard');
+$router->get('/admin/finance/dashboard',                                          'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@dashboard');
+
+// Bank accounts
+$router->get('/admin/finance/bank-accounts',                                      'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@bankAccounts');
+$router->get('/admin/finance/bank-account-form',                                  'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@bankAccountForm');
+$router->get('/admin/finance/bank-account-form/{id}',                             'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@bankAccountForm');
+$router->post('/admin/finance/bank-account-store',                                'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@bankAccountStore');
+
+// Daily cash book
+$router->get('/admin/finance/cash-book',                                          'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@cashBook');
+$router->get('/admin/finance/transaction-form',                                   'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@transactionForm');
+$router->post('/admin/finance/transaction-store',                                 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@transactionStore');
+
+// Petty cash
+$router->get('/admin/finance/petty-cash',                                         'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@pettyCash');
+$router->post('/admin/finance/petty-topup',                                       'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@pettyTopup');
+$router->post('/admin/finance/petty-expense',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@pettyExpense');
+
+// Cheques
+$router->get('/admin/finance/cheques',                                            'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@cheques');
+$router->get('/admin/finance/cheque-issue',                                       'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@chequeIssue');
+$router->post('/admin/finance/cheque-store',                                      'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@chequeStore');
+$router->post('/admin/finance/cheque-status',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@chequeStatus');
+
+// Bank reconciliation
+$router->get('/admin/finance/reconciliation',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliation');
+$router->get('/admin/finance/reconciliation-match',                               'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationMatch');
+$router->get('/admin/finance/reconciliation-match/{id}',                          'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationMatch');
+$router->post('/admin/finance/reconciliation-create',                             'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationCreate');
+$router->post('/admin/finance/reconciliation-item-match',                         'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationItemMatch');
+$router->post('/admin/finance/reconciliation-complete',                           'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationComplete');
+
+// TDS
+$router->get('/admin/finance/tds',                                                'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@tds');
+$router->get('/admin/finance/tds-record',                                         'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@tdsRecord');
+$router->post('/admin/finance/tds-store',                                         'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@tdsStore');
+$router->get('/admin/finance/tds-certificates',                                   'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@tdsCertificates');
+$router->post('/admin/finance/tds-certificate-store',                             'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@tdsCertificateStore');
+
+// GST
+$router->get('/admin/finance/gst',                                                'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@gst');
+$router->get('/admin/finance/gst-summary',                                        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@gstRecord');
+$router->post('/admin/finance/gst-store',                                         'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@gstStore');
+
+// Expenses
+$router->get('/admin/finance/expenses',                                           'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@expenses');
+$router->get('/admin/finance/expense-form',                                       'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@expenseForm');
+$router->get('/admin/finance/expense-form/{id}',                                  'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@expenseForm');
+$router->post('/admin/finance/expense-store',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@expenseStore');
+$router->post('/admin/finance/expense-approve',                                   'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@expenseApprove');
+$router->post('/admin/finance/expense-reject',                                    'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@expenseReject');
+
+// Vendors
+$router->get('/admin/finance/vendors',                                            'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@vendors');
+$router->get('/admin/finance/vendor-payment',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@vendorPayment');
+$router->post('/admin/finance/vendor-payment-store',                              'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@vendorPaymentStore');
+
+// Cash flow forecast
+$router->get('/admin/finance/forecast',                                           'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@forecast');
+
+// Demand letter templates
+$router->get('/admin/finance/templates',                                          'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@templates');
+$router->get('/admin/finance/template-form',                                      'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@templateForm');
+$router->get('/admin/finance/template-form/{id}',                                 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@templateForm');
+$router->post('/admin/finance/template-store',                                    'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@templateStore');
+$router->post('/admin/finance/template-delete',                                   'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@templateDelete');
+
+// Voucher audit log
+$router->get('/admin/finance/voucher-log',                                        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@voucherLog');
+
+// ============================================================
 // ADMIN LAND MANAGEMENT
 // ============================================================
 
@@ -2246,7 +2398,7 @@ $router->post('/api/ai/predict-price', 'Front\\AIBotController@predictPrice');
 $router->get('/api/ai/recommend', 'Front\\AIBotController@recommend');
 $router->post('/api/ai/retrain', 'Front\\AIBotController@retrain');
 $router->get('/api/ai/stats', 'Front\\AIBotController@stats');
-$router->any('/api/ai/chat', 'Front\\AIBotController@chat');
+$router->any('/api/ai/legacy-chat', 'Front\\AIBotController@chat');
 
 // ═══════════════════════════════════════════════════
 // COMPANY SETTINGS
