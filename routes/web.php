@@ -3518,3 +3518,26 @@ $router->post('/webhook/razorpay',                 'App\\Http\\Controllers\\Fron
 $router->post('/csp-report',                          'App\\Http\\Controllers\\CspReportController@report');
 $router->get('/admin/csp-violations',                'App\\Http\\Controllers\\CspReportController@list');
 
+// ============================================================
+// MODULE 4: MLM COMMISSION ENGINE + RANK SYSTEM
+// All routes under /admin/mlm/* — require admin auth.
+// ============================================================
+$router->get('/admin/mlm/dashboard',                              'App\\Http\\Controllers\\Admin\\MLMCommissionController@dashboard');
+$router->get('/admin/mlm/commissions',                            'App\\Http\\Controllers\\Admin\\MLMCommissionController@commissions');
+$router->get('/admin/mlm/commissions/{id}',                       'App\\Http\\Controllers\\Admin\\MLMCommissionController@commissionDetail');
+$router->get('/admin/mlm/payouts',                                'App\\Http\\Controllers\\Admin\\MLMCommissionController@payouts');
+$router->get('/admin/mlm/payouts/batches',                        'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutBatches');
+$router->get('/admin/mlm/payouts/batches/create',                 'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutBatchCreate');
+$router->post('/admin/mlm/payouts/batches/create',                'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutBatchStore');
+$router->get('/admin/mlm/payouts/batches/{id}',                   'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutBatchView');
+$router->post('/admin/mlm/payouts/batches/{id}/approve',          'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutBatchApprove');
+$router->get('/admin/mlm/payouts/{id}/mark-paid',                 'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutPaidForm');
+$router->post('/admin/mlm/payouts/{id}/mark-paid',                'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutMarkPaid');
+$router->get('/admin/mlm/associate-ranks',                        'App\\Http\\Controllers\\Admin\\MLMCommissionController@associateRanks');
+$router->get('/admin/mlm/associate-ranks/{id}',                   'App\\Http\\Controllers\\Admin\\MLMCommissionController@associateRankView');
+$router->post('/admin/mlm/associate-ranks/{id}/promote',          'App\\Http\\Controllers\\Admin\\MLMCommissionController@manualPromote');
+$router->get('/admin/mlm/rank-benefits',                          'App\\Http\\Controllers\\Admin\\MLMCommissionController@rankBenefits');
+$router->get('/admin/mlm/clawbacks',                              'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbacks');
+$router->get('/admin/mlm/clawbacks/{id}',                         'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbackView');
+$router->get('/admin/mlm/cron-log',                               'App\\Http\\Controllers\\Admin\\MLMCommissionController@cronLog');
+$router->get('/admin/mlm/api/rank-distribution',                  'App\\Http\\Controllers\\Admin\\MLMCommissionController@apiRankDistribution');
