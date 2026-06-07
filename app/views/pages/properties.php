@@ -62,7 +62,7 @@ $seo = is_array($seo ?? null) ? $seo : [];
 $seo['json_ld'] = $jsonLd;
 
 // SEO description / keywords (used by BaseController::generateSEO fallback)
-$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties â€” plots, flats, villas, farmhouses â€” from APS Dream Home across India. Verified listings, transparent pricing, RERA compliant.';
+$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties — plots, flats, villas, farmhouses — from APS Dream Home across India. Verified listings, transparent pricing, RERA compliant.';
 $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' . implode(', ', array_filter([
     $currentFilters['location'] ?? null,
     $currentFilters['type'] ?? null
@@ -247,21 +247,21 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
                 <!-- Price range -->
                 <div class="col-md-2">
-                    <label for="min_price" class="form-label small fw-semibold"><?= __('min_price') ?> (â‚¹)</label>
+                    <label for="min_price" class="form-label small fw-semibold"><?= __('min_price') ?> (₹)</label>
                     <select class="form-select form-select-sm" id="min_price" name="min_price">
                         <option value="">No Min</option>
                         <?php foreach ([100000=>'1L', 500000=>'5L', 1000000=>'10L', 2000000=>'20L', 5000000=>'50L', 10000000=>'1Cr', 20000000=>'2Cr'] as $val => $label): ?>
-                            <option value="<?= $val ?>" <?= ($_GET['min_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>â‚¹<?= $label ?></option>
+                            <option value="<?= $val ?>" <?= ($_GET['min_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>₹<?= $label ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-md-2">
-                    <label for="max_price" class="form-label small fw-semibold"><?= __('max_price') ?> (â‚¹)</label>
+                    <label for="max_price" class="form-label small fw-semibold"><?= __('max_price') ?> (₹)</label>
                     <select class="form-select form-select-sm" id="max_price" name="max_price">
                         <option value="">No Max</option>
                         <?php foreach ([500000=>'5L', 1000000=>'10L', 2000000=>'20L', 5000000=>'50L', 10000000=>'1Cr', 20000000=>'2Cr', 50000000=>'5Cr'] as $val => $label): ?>
-                            <option value="<?= $val ?>" <?= ($_GET['max_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>â‚¹<?= $label ?></option>
+                            <option value="<?= $val ?>" <?= ($_GET['max_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>₹<?= $label ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -286,7 +286,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     <!-- Properties Grid -->
     <div class="row" id="propertiesContainer" data-experiment="property_card_layout" data-variant="<?= htmlspecialchars($_SESSION['experiments']['property_card_layout'] ?? 'current', ENT_QUOTES) ?>">
         <?php
-            // A/B test: property_card_layout â€” 'compact' variant = 4 per row (col-lg-3)
+            // A/B test: property_card_layout — 'compact' variant = 4 per row (col-lg-3)
             $cardLayout = $_SESSION['experiments']['property_card_layout'] ?? 'current';
             $cardColClass = $cardLayout === 'compact' ? 'col-lg-3 col-md-6' : 'col-lg-4 col-md-6';
             $cardClass    = $cardLayout === 'compact' ? 'property-card property-card-compact h-100' : 'property-card h-100';
@@ -347,7 +347,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <span class="text-success fw-bold fs-5">â‚¹<?= number_format((float)($property['price'] ?? 0)) ?></span>
+                                    <span class="text-success fw-bold fs-5">₹<?= number_format((float)($property['price'] ?? 0)) ?></span>
                                     <?php if (($property['listing_type'] ?? 'sell') === 'rent'): ?>
                                         <span class="text-muted">/month</span>
                                     <?php endif; ?>

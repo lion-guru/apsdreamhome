@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 
-// Google Analytics 4 (gtag.js) â€” id pulled from GA4_MEASUREMENT_ID env var.
+// Google Analytics 4 (gtag.js) — id pulled from GA4_MEASUREMENT_ID env var.
 // The placeholder 'G-PLACEHOLDER' is shown in the source for visibility so
 // the wiring is obviously present; replace it with a real ID (G-XXXXXXXXXX)
 // in .env to enable actual tracking. GA4 ignores unknown IDs at runtime.
@@ -96,7 +96,7 @@ if (!defined('BASE_URL')) {
 $projectLocations = [];
 $allProjects = [];
 
-// Load from hot-path cache (Redis first, file fallback) â€” 10 minute TTL
+// Load from hot-path cache (Redis first, file fallback) — 10 minute TTL
 $cachedProjects = \App\Services\Cache\HotPathCacheService::getHeaderProjects(function () {
     try {
         $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
@@ -536,7 +536,7 @@ try {
 }
 ?>
 
-<link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/header.css" rel="stylesheet">
+
 <style>
     /* Premium Header Styling */
     .premium-header {
@@ -1010,6 +1010,6 @@ function quickSearchSubmit(e) {
 </script>
 
 <script src="<?php echo BASE_URL; ?>/js/visitor-tracking.js" defer></script>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/live-chat-widget.css">
+
 <script src="<?= BASE_URL ?>/assets/js/live-chat-widget.js" defer></script>
 <?php if (!defined('LIVE_CHAT_WIDGET_INCLUDED')) { define('LIVE_CHAT_WIDGET_INCLUDED', true); include __DIR__ . '/../components/live_chat_widget.php'; } ?>

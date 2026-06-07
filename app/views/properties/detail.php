@@ -76,7 +76,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                         <div class="row mb-4">
                             <?php if (!empty($property['price'])): ?>
                                 <div class="col-md-4 text-center">
-                                    <h4 class="text-primary mb-0">â‚¹<?php echo number_format($property['price']); ?></h4>
+                                    <h4 class="text-primary mb-0">₹<?php echo number_format($property['price']); ?></h4>
                                     <small class="text-muted"><?php echo $property['price_type'] ?? 'Total Price'; ?></small>
                                 </div>
                             <?php endif; ?>
@@ -197,7 +197,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                         <div class="d-grid gap-2">
                             <?php if (isset($property) && !empty($property['price'])): ?>
                                 <a href="<?= BASE_URL ?>/payment/initiate?property_id=<?= $property['id'] ?? 0 ?>&amount=<?= $property['price'] ?? 0 ?>" class="btn btn-success btn-lg w-100 mb-2">
-                                    <i class="fas fa-credit-card me-2"></i>Buy Now - â‚¹<?= number_format($property['price'] ?? 0) ?>
+                                    <i class="fas fa-credit-card me-2"></i>Buy Now - ₹<?= number_format($property['price'] ?? 0) ?>
                                 </a>
                             <?php endif; ?>
                             <a href="tel:+919277121112" class="btn btn-success">
@@ -221,7 +221,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                                                 class="rounded me-2" style="width: 60px; height: 45px; object-fit: cover;" />
                                             <div>
                                                 <small class="fw-bold"><?php echo htmlspecialchars($rel['title'] ?? $rel['name'] ?? 'Property'); ?></small>
-                                                <br><small class="text-primary">â‚¹<?php echo number_format($rel['price'] ?? 0); ?></small>
+                                                <br><small class="text-primary">₹<?php echo number_format($rel['price'] ?? 0); ?></small>
                                             </div>
                                         </div>
                                     </a>

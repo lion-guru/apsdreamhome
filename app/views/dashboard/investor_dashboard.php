@@ -34,7 +34,7 @@ $investor['uimage'] = $investor['profile_image'] ?? null;
 // Fetch real stats from DB (with fallbacks)
 $stats = [
     'investments' => 0,
-    'returns' => 'â‚¹0.00',
+    'returns' => '₹0.00',
     'messages' => 0,
     'opportunities' => 0
 ];

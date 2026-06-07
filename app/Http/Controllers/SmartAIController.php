@@ -13,7 +13,7 @@ use App\Core\Database\Database;
 class SmartAIController extends BaseController
 {
     private $geminiApiKey;
-    private $geminiEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+    private $geminiEndpoint;
     private $openrouterApiKey;
     private $openrouterModel = 'anthropic/claude-3.5-haiku';
     private $huggingfaceApiKey;
@@ -23,6 +23,9 @@ class SmartAIController extends BaseController
     public function __construct()
     {
         parent::__construct();
+
+        $model = $_ENV['GEMINI_MODEL'] ?? 'gemini-2.5-flash';
+        $this->geminiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
 
         // Load Gemini API key from multiple sources
         $this->geminiApiKey = $_ENV['GEMINI_API_KEY'] ?? getenv('GEMINI_API_KEY') ?: '';
@@ -72,7 +75,7 @@ class SmartAIController extends BaseController
     }
 
     /**
-     * CSRF check is disabled for API controllers â€” handled by router for /api/ routes
+     * CSRF check is disabled for API controllers — handled by router for /api/ routes
      */
     protected function skipCsrfProtection(): bool
     {
@@ -445,7 +448,7 @@ class SmartAIController extends BaseController
         if (strpos($msg, 'hello') !== false || strpos($msg, 'hi') !== false || strpos($msg, 'namaste') !== false || strpos($msg, 'namaskar') !== false) {
             if ($role === 'associate') {
                 $commission = number_format($userContext['data']['total_commission'] ?? 0);
-                return "ðŸ‘‹ Namaste {$name}! Aapka APS Dream Home associate dashboard mein swagat hai!\n\nðŸ’° Aapki total commission: â‚¹{$commission}\nðŸ‘¥ Network size: " . ($userContext['data']['network_size'] ?? 0) . "\n\nMain aapki kya madad kar sakta hoon?";
+                return "ðŸ‘‹ Namaste {$name}! Aapka APS Dream Home associate dashboard mein swagat hai!\n\nðŸ’° Aapki total commission: ₹{$commission}\nðŸ‘¥ Network size: " . ($userContext['data']['network_size'] ?? 0) . "\n\nMain aapki kya madad kar sakta hoon?";
             } elseif ($role === 'customer') {
                 return "ðŸ‘‹ Hello {$name}! APS Dream Home mein aapka swagat hai!\n\nðŸ  Aapki properties: " . ($userContext['data']['total_properties'] ?? 0) . "\n\nMain aapki kya help kar sakta hoon? Buy, sell, rent ya kuch aur?";
             } else {
@@ -455,7 +458,7 @@ class SmartAIController extends BaseController
 
         // Intent detection
         if (strpos($msg, 'buy') !== false || strpos($msg, 'kharid') !== false || strpos($msg, 'plot') !== false || strpos($msg, 'ghar') !== false || strpos($msg, 'makan') !== false) {
-            return "ðŸŽ¯ *Perfect! Aap buy karna chahte hain.*\n\nðŸ  Main projects:\nðŸ“ *Suryoday Colony* - Gorakhpur (Premium)\nðŸ“ *Raghunath City Center* - Gorakhpur\nðŸ“ *Braj Radha Enclave* - Lucknow\nðŸ“ *Budh Bihar Colony* - Kushinagar\n\nðŸ’° *Starting from â‚¹5.5 Lakh*\n\nKaunsa location prefer karenge aap? Ya budget bataiye?";
+            return "ðŸŽ¯ *Perfect! Aap buy karna chahte hain.*\n\nðŸ  Main projects:\nðŸ“ *Suryoday Colony* - Gorakhpur (Premium)\nðŸ“ *Raghunath City Center* - Gorakhpur\nðŸ“ *Braj Radha Enclave* - Lucknow\nðŸ“ *Budh Bihar Colony* - Kushinagar\n\nðŸ’° *Starting from ₹5.5 Lakh*\n\nKaunsa location prefer karenge aap? Ya budget bataiye?";
         }
 
         if (strpos($msg, 'sell') !== false || strpos($msg, 'bech') !== false || strpos($msg, 'list') !== false || strpos($msg, 'post') !== false) {
@@ -463,23 +466,23 @@ class SmartAIController extends BaseController
         }
 
         if (strpos($msg, 'price') !== false || strpos($msg, 'rate') !== false || strpos($msg, 'cost') !== false || strpos($msg, 'kitna') !== false || strpos($msg, 'paisa') !== false) {
-            return "ðŸ’° *Pricing Details:*\n\nðŸ  *Residential Plots:*\nâ€¢ Suryoday Colony: â‚¹5.5L - â‚¹15L\nâ€¢ Raghunath City: â‚¹8L - â‚¹20L\nâ€¢ Budh Bihar: â‚¹4L - â‚¹10L\n\nðŸ¢ *Commercial:*\nâ€¢ Raghunath City Center: â‚¹15L - â‚¹50L\n\nðŸ¡ *Houses:*\nâ€¢ Starting â‚¹25L onwards\n\nBudget bataiye, main best options suggest karunga!";
+            return "ðŸ’° *Pricing Details:*\n\nðŸ  *Residential Plots:*\n• Suryoday Colony: ₹5.5L - ₹15L\n• Raghunath City: ₹8L - ₹20L\n• Budh Bihar: ₹4L - ₹10L\n\nðŸ¢ *Commercial:*\n• Raghunath City Center: ₹15L - ₹50L\n\nðŸ¡ *Houses:*\n• Starting ₹25L onwards\n\nBudget bataiye, main best options suggest karunga!";
         }
 
         if (strpos($msg, 'loan') !== false || strpos($msg, 'finance') !== false || strpos($msg, 'emi') !== false || strpos($msg, 'bank') !== false) {
-            return "ðŸ¦ *Home Loan Facility Available!*\n\nâœ… Instant approval\nâœ… Low interest rates (8.5% onwards)\nâœ… Flexible EMI options\nâœ… 20 years tenure\n\nðŸ“‹ Required Documents:\nâ€¢ Aadhaar & PAN\nâ€¢ Income Proof\nâ€¢ Bank Statements (6 months)\nâ€¢ Property Documents\n\nðŸ‘‰ Apply now: " . BASE_URL . "/financial-services\n\nLoan amount kitna chahiye aapko?";
+            return "ðŸ¦ *Home Loan Facility Available!*\n\nâœ… Instant approval\nâœ… Low interest rates (8.5% onwards)\nâœ… Flexible EMI options\nâœ… 20 years tenure\n\nðŸ“‹ Required Documents:\n• Aadhaar & PAN\n• Income Proof\n• Bank Statements (6 months)\n• Property Documents\n\nðŸ‘‰ Apply now: " . BASE_URL . "/financial-services\n\nLoan amount kitna chahiye aapko?";
         }
 
         if (strpos($msg, 'commission') !== false && $role === 'associate') {
             $total = number_format($userContext['data']['total_commission'] ?? 0);
             $pending = number_format($userContext['data']['pending_commission'] ?? 0);
-            return "ðŸ’° *Aapki Commission Details:*\n\nâœ… Total Earned: â‚¹{$total}\nâ³ Pending: â‚¹{$pending}\n\nðŸ’¡ *Commission Structure:*\nâ€¢ Direct Sale: 2%\nâ€¢ Level 1 Referral: 1%\nâ€¢ Level 2 Referral: 0.5%\n\nAur leads add karein commission badhane ke liye! ðŸ‘¥";
+            return "ðŸ’° *Aapki Commission Details:*\n\nâœ… Total Earned: ₹{$total}\nâ³ Pending: ₹{$pending}\n\nðŸ’¡ *Commission Structure:*\n• Direct Sale: 2%\n• Level 1 Referral: 1%\n• Level 2 Referral: 0.5%\n\nAur leads add karein commission badhane ke liye! ðŸ‘¥";
         }
 
         if (strpos($msg, 'network') !== false || strpos($msg, 'team') !== false || strpos($msg, 'referral') !== false) {
             if ($role === 'associate') {
                 $size = $userContext['data']['network_size'] ?? 0;
-                return "ðŸ‘¥ *Aapka Network:*\n\nTotal users: {$size}\n\nðŸ”— *Referral Link:*\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\nðŸ“± Social media par share karein:\nâ€¢ WhatsApp\nâ€¢ Facebook\nâ€¢ Instagram\n\nJitne zyada referrals, utna zyada commission! ðŸ’°";
+                return "ðŸ‘¥ *Aapka Network:*\n\nTotal users: {$size}\n\nðŸ”— *Referral Link:*\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\nðŸ“± Social media par share karein:\n• WhatsApp\n• Facebook\n• Instagram\n\nJitne zyada referrals, utna zyada commission! ðŸ’°";
             }
         }
 
@@ -533,7 +536,7 @@ PROJECT KNOWLEDGE:
 - Company: APS Dream Home - Premium Real Estate in UP
 - Locations: Gorakhpur, Kushinagar, Lucknow, Varanasi
 - Projects: Suryoday Colony, Raghunath Nagri, Braj Radha Nagri, Budh Bihar Colony
-- Price Range: â‚¹5.5 Lakh to â‚¹50 Lakh
+- Price Range: ₹5.5 Lakh to ₹50 Lakh
 - Services: Buy, Sell, Rent, Home Loan, Legal, Interior Design
 
 PERSONALITY:
@@ -565,12 +568,29 @@ EOT;
 
         if ($userContext['role'] === 'associate') {
             $prompt .= "Network Size: " . ($userContext['data']['network_size'] ?? 0) . "\n";
-            $prompt .= "Total Commission: â‚¹" . number_format($userContext['data']['total_commission'] ?? 0) . "\n";
-            $prompt .= "Pending Commission: â‚¹" . number_format($userContext['data']['pending_commission'] ?? 0) . "\n";
+            $prompt .= "Total Commission: ₹" . number_format($userContext['data']['total_commission'] ?? 0) . "\n";
+            $prompt .= "Pending Commission: ₹" . number_format($userContext['data']['pending_commission'] ?? 0) . "\n";
             $prompt .= "Total Leads: " . ($userContext['data']['total_leads'] ?? 0) . "\n";
         } elseif ($userContext['role'] === 'customer') {
             $prompt .= "Total Properties: " . ($userContext['data']['total_properties'] ?? 0) . "\n";
             $prompt .= "Total Inquiries: " . ($userContext['data']['total_inquiries'] ?? 0) . "\n";
+            
+            // Query live bookings
+            try {
+                $bookings = $this->db->fetchAll("SELECT plot_id, status FROM plot_bookings WHERE user_id = ?", [$userContext['id']]);
+                if (!empty($bookings)) {
+                    $prompt .= "Active Plot Bookings: " . count($bookings) . "\n";
+                }
+            } catch (\Exception $e) {}
+            
+            // Query live EMI schedules and overdue counts
+            try {
+                $emis = $this->db->fetch("SELECT count(*) as total, sum(emi_amount) as monthly FROM emi_plans WHERE customer_id = ? AND status = 'active'", [$userContext['id']]);
+                $prompt .= "Active EMI Plans: " . ($emis['total'] ?? 0) . " (Monthly: ₹" . number_format($emis['monthly'] ?? 0) . ")\n";
+                
+                $overdue = $this->db->fetch("SELECT count(*) as count, sum(amount) as balance FROM emi_payments WHERE user_id = ? AND status = 'overdue'", [$userContext['id']]);
+                $prompt .= "Overdue Installments: " . ($overdue['count'] ?? 0) . " (Balance: ₹" . number_format($overdue['balance'] ?? 0) . ")\n";
+            } catch (\Exception $e) {}
         }
 
         return $prompt;

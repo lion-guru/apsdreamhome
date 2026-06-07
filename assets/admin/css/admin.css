@@ -30,6 +30,46 @@
     --danger: #ef4444;
     --info: #3b82f6;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    /* APS Theme variables */
+    --aps-theme-primary: #4f46e5;
+    --aps-theme-primary-hover: #4338ca;
+    --aps-theme-bg: #f8fafc;
+    --aps-theme-text: #1e293b;
+    --aps-theme-card-bg: #ffffff;
+    --aps-theme-card-border: #e2e8f0;
+    --aps-theme-card-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.08);
+}
+
+.aps-cp-card {
+    background: var(--aps-theme-card-bg);
+    border: 1px solid var(--aps-theme-card-border);
+    border-radius: 14px;
+    box-shadow: var(--aps-theme-card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.aps-cp-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+}
+
+.aps-cp-card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--aps-theme-card-border);
+    padding: 16px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--aps-theme-text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.aps-cp-card-body {
+    padding: 20px;
 }
 
 /* ===== RESET & BASE ===== */
@@ -422,6 +462,28 @@ img { max-width: 100%; }
     .sidebar.show { transform: translateX(0); }
     .main-content { margin-left: 0; }
     .toggle-btn { display: block; }
+    
+    .toggle-btn {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+    }
+    
+    .nav-icon {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .sidebar-link {
+        padding: 12px 16px 12px 26px; /* Increased vertical padding from 8px to 12px */
+        min-height: 44px;
+    }
 }
 @media (max-width: 768px) {
     .page-content { padding: 16px; }

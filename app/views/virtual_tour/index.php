@@ -87,7 +87,7 @@
                     <h5><?= ($property['title'] ?? 'Property') ?></h5>
                     <p class="text-muted small"><?= ($property['city'] ?? '') ?>, <?= ($property['state'] ?? '') ?></p>
                     <hr>
-                    <div class="d-flex justify-content-between mb-2"><span>Price</span><strong>â‚¹<?= number_format($property['price'] ?? 0) ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Price</span><strong>₹<?= number_format($property['price'] ?? 0) ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Status</span><strong class="text-success"><?= ($property['status'] ?? 'Available') ?></strong></div>
                 </div>
             </div>

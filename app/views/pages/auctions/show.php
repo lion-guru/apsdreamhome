@@ -33,7 +33,7 @@ ob_start();
                         <div class="text-end">
                             <small class="text-muted d-block">Time Left</small>
                             <h3 class="text-danger" data-countdown="<?= date('c', strtotime($auction['ends_at'])) ?>">
-                                <i class="fas fa-clock"></i> <span class="cd-text">â€”</span>
+                                <i class="fas fa-clock"></i> <span class="cd-text">—</span>
                             </h3>
                         </div>
                     </div>
@@ -53,26 +53,26 @@ ob_start();
                     <div class="row g-2 mb-3">
                         <div class="col-md-4">
                             <small class="text-muted d-block">Starting Price</small>
-                            <strong>â‚¹<?= number_format($auction['start_price']) ?></strong>
+                            <strong>₹<?= number_format($auction['start_price']) ?></strong>
                         </div>
                         <div class="col-md-4">
                             <small class="text-muted d-block">Current Bid</small>
-                            <strong class="text-success">â‚¹<?= number_format($auction['current_bid'] ?? $auction['start_price']) ?></strong>
+                            <strong class="text-success">₹<?= number_format($auction['current_bid'] ?? $auction['start_price']) ?></strong>
                         </div>
                         <div class="col-md-4">
                             <small class="text-muted d-block">Bid Increment</small>
-                            <strong>â‚¹<?= number_format($auction['bid_increment']) ?></strong>
+                            <strong>₹<?= number_format($auction['bid_increment']) ?></strong>
                         </div>
                         <?php if ($auction['buy_now_price']): ?>
                             <div class="col-md-4">
                                 <small class="text-muted d-block">Buy Now</small>
-                                <strong class="text-primary">â‚¹<?= number_format($auction['buy_now_price']) ?></strong>
+                                <strong class="text-primary">₹<?= number_format($auction['buy_now_price']) ?></strong>
                             </div>
                         <?php endif; ?>
                         <?php if ($auction['reserve_price']): ?>
                             <div class="col-md-4">
                                 <small class="text-muted d-block">Reserve</small>
-                                <strong>â‚¹<?= number_format($auction['reserve_price']) ?></strong>
+                                <strong>₹<?= number_format($auction['reserve_price']) ?></strong>
                             </div>
                         <?php endif; ?>
                         <div class="col-md-4">
@@ -87,7 +87,7 @@ ob_start();
                                 <?php if ($auction['deposit_amount'] && !$has_deposit): ?>
                                     <div class="alert alert-warning">
                                         <i class="fas fa-info-circle me-1"></i>
-                                        A deposit of <strong>â‚¹<?= number_format($auction['deposit_amount']) ?></strong> is required to bid.
+                                        A deposit of <strong>₹<?= number_format($auction['deposit_amount']) ?></strong> is required to bid.
                                         <button class="btn btn-sm btn-warning ms-2" id="depositBtn">Pay Deposit</button>
                                     </div>
                                 <?php endif; ?>
@@ -99,7 +99,7 @@ ob_start();
                                         <input type="number" name="amount" id="bidAmount" class="form-control" step="0.01" min="<?= ($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment'] ?>" placeholder="Enter bid amount" required>
                                         <button type="submit" class="btn btn-primary"><i class="fas fa-gavel me-1"></i> Bid</button>
                                     </form>
-                                    <small class="text-muted">Minimum bid: â‚¹<?= number_format(($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment']) ?></small>
+                                    <small class="text-muted">Minimum bid: ₹<?= number_format(($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment']) ?></small>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -129,7 +129,7 @@ ob_start();
                                     <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['placed_at'])) ?></small>
                                 </div>
                                 <div class="text-end">
-                                    <strong>â‚¹<?= number_format($b['bid_amount']) ?></strong>
+                                    <strong>₹<?= number_format($b['bid_amount']) ?></strong>
                                     <?php if ($b['status'] === 'winning'): ?>
                                         <br><span class="badge bg-success">Winning</span>
                                     <?php elseif ($b['status'] === 'outbid'): ?>
@@ -178,7 +178,7 @@ document.getElementById('bidForm')?.addEventListener('submit', async function(e)
     if (data.error) {
         alert('âŒ ' + data.error);
     } else {
-        alert('âœ… Bid placed! â‚¹' + data.amount);
+        alert('âœ… Bid placed! ₹' + data.amount);
         location.reload();
     }
 });

@@ -235,7 +235,7 @@
                                         <option value="turnkey">Turnkey Project</option>
                                     </select>
                                 </div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Budget Range (â‚¹)</label><input type="number" name="budget" class="form-control form-control-lg" placeholder="Approximate budget"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium">Budget Range (₹)</label><input type="number" name="budget" class="form-control form-control-lg" placeholder="Approximate budget"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium">Location</label><input type="text" name="location" class="form-control form-control-lg" placeholder="Project location"></div>
                                 <div class="col-12"><label class="form-label fw-medium">Project Details</label><textarea name="message" rows="4" class="form-control" placeholder="Describe your project requirements..."></textarea></div>
                                 <div class="col-12">

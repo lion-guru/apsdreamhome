@@ -25,16 +25,8 @@ class AIPropertyValuationService
      */
     private function ensureTablesExist(): void
     {
-        $pdo = $this->database->getConnection();
-        
-        // AI valuations
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        
-        // AI training data
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        
-        // Market trends
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // Table initialization handled by migration script scripts/create_ai_tables.php
+        return;
     }
     
     /**

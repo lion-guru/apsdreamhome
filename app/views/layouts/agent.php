@@ -14,8 +14,10 @@ use App\Services\PortalMenuService;
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend-enhancements.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/customer-pages.css" rel="stylesheet">
+    <!-- Consolidated APS CSS Bundles -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }

@@ -265,6 +265,11 @@ class BaseController
             $data['seo'] = $this->generateSEO($data);
         }
 
+        // Auto-inject CSRF token into every rendered view (so forms always have a valid token)
+        if (!isset($data['csrf_token'])) {
+            $data['csrf_token'] = $this->getCsrfToken();
+        }
+
         // Extract data to variables
         extract($data);
 

@@ -220,7 +220,7 @@ class LeadDeal extends Model
             'EUR' => 'â‚¬',
             'GBP' => 'Â£',
             'JPY' => 'Â¥',
-            'INR' => 'â‚¹',
+            'INR' => '₹',
             'AUD' => 'A$',
             'CAD' => 'C$',
             'CHF' => 'CHF ',

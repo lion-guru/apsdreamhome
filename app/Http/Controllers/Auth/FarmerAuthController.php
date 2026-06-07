@@ -27,7 +27,7 @@ class FarmerAuthController extends BaseController
         $this->layout = false;
         ob_start();
         extract(compact('error'));
-        $viewPath = __DIR__ . '/../../views/farmer/login.php';
+        $viewPath = __DIR__ . '/../../../views/farmer/login.php';
         if (file_exists($viewPath)) include $viewPath;
         echo ob_get_clean();
     }

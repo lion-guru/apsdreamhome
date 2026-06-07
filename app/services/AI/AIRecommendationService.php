@@ -21,16 +21,8 @@ class AIRecommendationService
     
     private function ensureTablesExist(): void
     {
-        $pdo = $this->database->getConnection();
-        
-        // User preferences for recommendations
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        
-        // Recommendation history
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        
-        // User behavior tracking
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // Table initialization handled by migration script scripts/create_ai_tables.php
+        return;
     }
     
     /**

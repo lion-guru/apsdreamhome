@@ -29,6 +29,7 @@ if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $script = dirname($_SERVER['SCRIPT_NAME']);
+    $script = str_replace('\\', '/', $script);
     // Remove /public if it exists in the path
     if (substr($script, -7) === '/public') {
         $script = substr($script, 0, -7);

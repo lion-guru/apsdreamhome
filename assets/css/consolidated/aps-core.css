@@ -1123,7 +1123,7 @@ section { position: relative; }
     box-shadow: 0 6px 25px rgba(245,158,11,0.4);
 }
 
-/* A/B test: cta_button_color â€” green & orange variants */
+/* A/B test: cta_button_color — green & orange variants */
 .hero .ab-btn-green {
     background: linear-gradient(135deg, #00aa44, #00772f);
     border: none;

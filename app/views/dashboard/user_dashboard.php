@@ -134,7 +134,7 @@ ob_start();
                                             </td>
                                             <td><span class="badge bg-light text-dark fw-normal"><?= ucfirst(h($property['type'])) ?></span></td>
                                             <td><i class="fas fa-map-marker-alt text-muted me-1 small"></i><?= h($property['city']) ?></td>
-                                            <td class="fw-bold text-primary">â‚¹<?= number_format($property['price']) ?></td>
+                                            <td class="fw-bold text-primary">₹<?= number_format($property['price']) ?></td>
                                             <td>
                                                 <?php
                                                 $status_class = 'bg-success';
