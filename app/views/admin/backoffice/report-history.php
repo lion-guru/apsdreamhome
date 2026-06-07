@@ -1,0 +1,34 @@
+<?php $history = $history ?? []; $report_id = $report_id ?? 0; ?>
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Report History</h1>
+    <div>
+      <a href="<?= BASE_URL ?>/admin/backoffice/reports/<?= $report_id ?>/run" class="btn btn-primary btn-sm"><i class="fas fa-play me-1"></i>Run Report</a>
+      <a href="<?= BASE_URL ?>/admin/backoffice/reports" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+    </div>
+  </div>
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>#</th><th>Executed By</th><th>Start</th><th>End</th><th>Rows</th><th>Status</th><th>Error</th></tr></thead>
+        <tbody>
+          <?php if (empty($history)): ?>
+            <tr><td colspan="7" class="text-center text-muted py-4">No execution history</td></tr>
+          <?php else: ?>
+            <?php foreach ($history as $h): ?>
+              <tr>
+                <td><?= $h['id'] ?? '' ?></td>
+                <td><?= htmlspecialchars($h['executed_by_name'] ?? '') ?></td>
+                <td><?= $h['start_time'] ?? '' ?></td>
+                <td><?= $h['end_time'] ?? '-' ?></td>
+                <td><?= $h['row_count'] ?? 0 ?></td>
+                <td><span class="badge bg-<?= ($h['status'] ?? '') === 'completed' ? 'success' : (($h['status'] ?? '') === 'failed' ? 'danger' : 'warning') ?>"><?= ucfirst($h['status'] ?? '') ?></span></td>
+                <td class="text-danger small"><?= htmlspecialchars($h['error_message'] ?? '') ?></td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -3541,3 +3541,51 @@ $router->get('/admin/mlm/clawbacks',                              'App\\Http\\Co
 $router->get('/admin/mlm/clawbacks/{id}',                         'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbackView');
 $router->get('/admin/mlm/cron-log',                               'App\\Http\\Controllers\\Admin\\MLMCommissionController@cronLog');
 $router->get('/admin/mlm/api/rank-distribution',                  'App\\Http\\Controllers\\Admin\\MLMCommissionController@apiRankDistribution');
+
+// ============================================================
+// MODULE 5: BACKOFFICE + DAILY OPERATIONS
+// URL prefix: /admin/backoffice/*
+// All actions delegate to App\Http\Controllers\Admin\BackofficeController.
+// ============================================================
+$router->get('/admin/backoffice',                                    'App\\Http\\Controllers\\Admin\\BackofficeController@index');
+
+// Attendance
+$router->get('/admin/backoffice/attendance',                         'App\\Http\\Controllers\\Admin\\BackofficeController@attendance');
+$router->post('/admin/backoffice/attendance/record',                 'App\\Http\\Controllers\\Admin\\BackofficeController@attendanceRecord');
+$router->get('/admin/backoffice/attendance/monthly',                 'App\\Http\\Controllers\\Admin\\BackofficeController@attendanceMonthly');
+$router->get('/admin/backoffice/attendance/monthly/export',          'App\\Http\\Controllers\\Admin\\BackofficeController@attendanceMonthlyReport');
+
+// Leaves
+$router->get('/admin/backoffice/leaves',                             'App\\Http\\Controllers\\Admin\\BackofficeController@leaves');
+$router->post('/admin/backoffice/leaves/{id}/approve',               'App\\Http\\Controllers\\Admin\\BackofficeController@leaveApprove');
+$router->post('/admin/backoffice/leaves/{id}/reject',                'App\\Http\\Controllers\\Admin\\BackofficeController@leaveReject');
+$router->get('/admin/backoffice/leaves/history',                     'App\\Http\\Controllers\\Admin\\BackofficeController@leaveHistory');
+
+// Payslips
+$router->get('/admin/backoffice/payslips',                           'App\\Http\\Controllers\\Admin\\BackofficeController@payslips');
+$router->post('/admin/backoffice/payslips/generate',                 'App\\Http\\Controllers\\Admin\\BackofficeController@payslipGenerate');
+$router->get('/admin/backoffice/payslips/{id}',                      'App\\Http\\Controllers\\Admin\\BackofficeController@payslipView');
+
+// Leads
+$router->get('/admin/backoffice/leads',                              'App\\Http\\Controllers\\Admin\\BackofficeController@leads');
+$router->get('/admin/backoffice/leads/create',                       'App\\Http\\Controllers\\Admin\\BackofficeController@leadCreate');
+$router->post('/admin/backoffice/leads/store',                       'App\\Http\\Controllers\\Admin\\BackofficeController@leadStore');
+$router->get('/admin/backoffice/leads/{id}',                         'App\\Http\\Controllers\\Admin\\BackofficeController@leadDetail');
+$router->get('/admin/backoffice/leads/{id}/edit',                    'App\\Http\\Controllers\\Admin\\BackofficeController@leadEdit');
+$router->post('/admin/backoffice/leads/{id}/update',                 'App\\Http\\Controllers\\Admin\\BackofficeController@leadUpdate');
+$router->post('/admin/backoffice/leads/{id}/activity',               'App\\Http\\Controllers\\Admin\\BackofficeController@leadAddActivity');
+$router->post('/admin/backoffice/leads/{id}/advance',                'App\\Http\\Controllers\\Admin\\BackofficeController@leadAdvanceStage');
+
+// Operations
+$router->get('/admin/backoffice/operations',                         'App\\Http\\Controllers\\Admin\\BackofficeController@operations');
+$router->get('/admin/backoffice/operations/create',                  'App\\Http\\Controllers\\Admin\\BackofficeController@operationsCreate');
+$router->post('/admin/backoffice/operations/store',                  'App\\Http\\Controllers\\Admin\\BackofficeController@operationsStore');
+
+// Reports
+$router->get('/admin/backoffice/reports',                            'App\\Http\\Controllers\\Admin\\BackofficeController@reports');
+$router->get('/admin/backoffice/reports/{id}/run',                   'App\\Http\\Controllers\\Admin\\BackofficeController@reportsRun');
+$router->post('/admin/backoffice/reports/{id}/run',                  'App\\Http\\Controllers\\Admin\\BackofficeController@reportsRun');
+$router->get('/admin/backoffice/reports/{id}/history',               'App\\Http\\Controllers\\Admin\\BackofficeController@reportsHistory');
+
+// API
+$router->get('/admin/backoffice/api/lead-summary',                   'App\\Http\\Controllers\\Admin\\BackofficeController@apiLeadSummary');
