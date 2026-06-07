@@ -1,0 +1,108 @@
+<?php
+/** @var array $booking */
+/** @var array $schedule */
+$booking = $booking ?? [];
+$schedule = $schedule ?? [];
+$csrf_token = $csrf_token ?? '';
+$base = defined('BASE_URL') ? BASE_URL : '';
+$totalDue  = 0.0; $totalPaid = 0.0;
+foreach ($schedule as $s) {
+    $totalDue  += (float)($s['amount_due']  ?? 0);
+    $totalPaid += (float)($s['amount_paid'] ?? 0);
+}
+?>
+<div class="aps-cp-card mb-3">
+    <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
+        <h5 class="m-0">
+            <i class="fas fa-calendar-alt me-2"></i>Payment Schedule — <?= htmlspecialchars((string)($booking['booking_number'] ?? '')) ?>
+        </h5>
+        <div>
+            <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-link"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        </div>
+    </div>
+    <div class="aps-cp-card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-md-3">
+                <div class="text-muted small">Total Due</div>
+                <div class="fw-bold">&#8377;<?= number_format($totalDue) ?></div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Total Paid</div>
+                <div class="fw-bold text-success">&#8377;<?= number_format($totalPaid) ?></div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Outstanding</div>
+                <div class="fw-bold text-danger">&#8377;<?= number_format(max(0, $totalDue - $totalPaid)) ?></div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Installments</div>
+                <div class="fw-bold"><?= count($schedule) ?></div>
+            </div>
+        </div>
+
+        <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/schedule/regenerate" class="row g-2 mb-3 align-items-end">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
+            <div class="col-md-3">
+                <label class="form-label small">Tenure (months)</label>
+                <input type="number" name="tenure_months" value="12" class="form-control form-control-sm" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Rate % p.a.</label>
+                <input type="number" step="0.01" name="rate_per_annum" value="10.0" class="form-control form-control-sm" required>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-sm btn-warning" type="submit"
+                        onclick="return confirm('This will REPLACE the existing schedule. Continue?');">
+                    <i class="fas fa-sync me-1"></i>Regenerate
+                </button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Due Date</th>
+                        <th>Type</th>
+                        <th class="text-end">Principal</th>
+                        <th class="text-end">Interest</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-end">Paid</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($schedule)): ?>
+                        <tr><td colspan="9" class="text-center text-muted py-3">No schedule generated</td></tr>
+                    <?php else: foreach ($schedule as $i => $s):
+                        $rowClass = !empty($s['is_overdue']) ? 'table-danger' : '';
+                    ?>
+                        <tr class="<?= $rowClass ?>">
+                            <td><?= (int)($s['installment_number'] ?? ($i + 1)) ?></td>
+                            <td><?= htmlspecialchars((string)($s['due_date'] ?? '')) ?></td>
+                            <td><?= htmlspecialchars((string)($s['installment_type'] ?? '')) ?></td>
+                            <td class="text-end">&#8377;<?= number_format((float)($s['principal_component'] ?? 0)) ?></td>
+                            <td class="text-end">&#8377;<?= number_format((float)($s['interest_component'] ?? 0)) ?></td>
+                            <td class="text-end">&#8377;<?= number_format((float)($s['amount_due'] ?? 0)) ?></td>
+                            <td class="text-end text-success">&#8377;<?= number_format((float)($s['amount_paid'] ?? 0)) ?></td>
+                            <td>
+                                <?php
+                                $st = $s['status'] ?? 'pending';
+                                $cls = ['paid'=>'success', 'overdue'=>'danger', 'partial'=>'warning', 'cleared'=>'success'][$st] ?? 'secondary';
+                                ?>
+                                <span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st) ?></span>
+                            </td>
+                            <td>
+                                <?php if ($st !== 'paid'): ?>
+                                    <a class="btn btn-sm btn-success" href="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/pay">Pay</a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

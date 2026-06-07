@@ -9,14 +9,14 @@
                 <p class="lead mb-4"><?= __('hero_subtitle') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
                     <?php
-                        // A/B test: homepage_cta â€” variant-aware hero CTA copy
+                        // A/B test: homepage_cta — variant-aware hero CTA copy
                         $heroVariant = $_SESSION['experiments']['homepage_cta'] ?? null;
                         $heroCtaText = match ($heroVariant) {
-                            'urgent'   => 'Book Your Plot Now â€” Limited Inventory!',
+                            'urgent'   => 'Book Your Plot Now — Limited Inventory!',
                             'family'   => 'Find Your Family\'s Dream Home Today',
                             default    => __('hero_cta'),
                         };
-                        // A/B test: cta_button_color â€” variant-aware hero CTA color
+                        // A/B test: cta_button_color — variant-aware hero CTA color
                         $ctaColorVariant = $_SESSION['experiments']['cta_button_color'] ?? 'blue';
                         $ctaColorClass = match ($ctaColorVariant) {
                             'green'  => 'ab-btn-green',
@@ -72,11 +72,11 @@
                             <div class="mb-3">
                                 <select name="budget" class="form-select">
                                     <option value="">Budget</option>
-                                    <option value="under_5l">Under â‚¹5 Lakh</option>
-                                    <option value="5_10l">â‚¹5-10 Lakh</option>
-                                    <option value="10_20l">â‚¹10-20 Lakh</option>
-                                    <option value="20_50l">â‚¹20-50 Lakh</option>
-                                    <option value="above_50l">Above â‚¹50 Lakh</option>
+                                    <option value="under_5l">Under ₹5 Lakh</option>
+                                    <option value="5_10l">₹5-10 Lakh</option>
+                                    <option value="10_20l">₹10-20 Lakh</option>
+                                    <option value="20_50l">₹20-50 Lakh</option>
+                                    <option value="above_50l">Above ₹50 Lakh</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-gradient w-100 btn-lg">
@@ -185,11 +185,11 @@
                         <div class="row g-4">
                             <div class="col-md-7">
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold">Loan Amount: <span id="loanAmtDisplay" class="text-primary">â‚¹50,00,000</span></label>
+                                    <label class="form-label fw-bold">Loan Amount: <span id="loanAmtDisplay" class="text-primary">₹50,00,000</span></label>
                                     <input type="range" class="form-range" id="loanAmount" min="100000" max="50000000" step="100000" value="5000000" oninput="calcEMI()">
                                     <div class="d-flex justify-content-between small text-muted">
-                                        <span>â‚¹1 Lakh</span>
-                                        <span>â‚¹5 Crore</span>
+                                        <span>₹1 Lakh</span>
+                                        <span>₹5 Crore</span>
                                     </div>
                                 </div>
                                 <div class="mb-4">
@@ -212,15 +212,15 @@
                             <div class="col-md-5">
                                 <div class="result-card bg-dark text-white">
                                     <p class="text-white-50 mb-1 small text-uppercase" style="letter-spacing:0.08em;">Your Monthly EMI</p>
-                                    <p class="display-4 fw-bold mb-0" id="emiResult" style="color:#818cf8;">â‚¹42,426</p>
+                                    <p class="display-4 fw-bold mb-0" id="emiResult" style="color:#818cf8;">₹42,426</p>
                                     <hr class="border-secondary my-3">
                                     <div class="d-flex justify-content-between">
                                         <span class="text-white-50">Total Interest</span>
-                                        <span class="fw-bold text-white" id="totalInterest">â‚¹51,82,240</span>
+                                        <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
                                     </div>
                                     <div class="d-flex justify-content-between mt-2">
                                         <span class="text-white-50">Total Payment</span>
-                                        <span class="fw-bold text-white" id="totalPayment">â‚¹1,01,82,240</span>
+                                        <span class="fw-bold text-white" id="totalPayment">₹1,01,82,240</span>
                                     </div>
                                 </div>
                             </div>
@@ -239,19 +239,19 @@ function calcEMI() {
     const R = parseFloat(document.getElementById('interestRate').value) / 12 / 100;
     const N = parseFloat(document.getElementById('loanTenure').value) * 12;
 
-    document.getElementById('loanAmtDisplay').textContent = 'â‚¹' + P.toLocaleString('en-IN');
+    document.getElementById('loanAmtDisplay').textContent = '₹' + P.toLocaleString('en-IN');
     document.getElementById('rateDisplay').textContent = document.getElementById('interestRate').value + '%';
     document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' Years';
 
     if (R === 0) {
-        document.getElementById('emiResult').textContent = 'â‚¹' + Math.round(P / N).toLocaleString('en-IN');
+        document.getElementById('emiResult').textContent = '₹' + Math.round(P / N).toLocaleString('en-IN');
     } else {
         const emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
         const totalPay = emi * N;
         const totalInt = totalPay - P;
-        document.getElementById('emiResult').textContent = 'â‚¹' + Math.round(emi).toLocaleString('en-IN');
-        document.getElementById('totalInterest').textContent = 'â‚¹' + Math.round(totalInt).toLocaleString('en-IN');
-        document.getElementById('totalPayment').textContent = 'â‚¹' + Math.round(totalPay).toLocaleString('en-IN');
+        document.getElementById('emiResult').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+        document.getElementById('totalInterest').textContent = '₹' + Math.round(totalInt).toLocaleString('en-IN');
+        document.getElementById('totalPayment').textContent = '₹' + Math.round(totalPay).toLocaleString('en-IN');
     }
 }
 calcEMI();
@@ -271,10 +271,10 @@ calcEMI();
             if (!$hasProjects):
                 // Fallback projects from database
                 $fallbackProjects = [
-                    ['title' => 'Suryoday Heights Phase 1', 'city' => 'Gorakhpur', 'price' => 'Starting â‚¹5.5 Lakhs', 'slug' => 'suryoday-colony', 'status' => 'Available', 'img' => 'gorakhpur/suryoday.jpg'],
-                    ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => 'Starting â‚¹7.5 Lakhs', 'slug' => 'raghunath-nagri', 'status' => 'Available', 'img' => 'gorakhpur/raghunath nagri motiram.JPG'],
-                    ['title' => 'Braj Radha Enclave', 'city' => 'Lucknow', 'price' => 'Starting â‚¹12 Lakhs', 'slug' => 'braj-radha-nagri', 'status' => 'Available', 'img' => 'gorakhpur/suryoday1.jpeg'],
-                    ['title' => 'Budh Bihar Colony', 'city' => 'Kushinagar', 'price' => 'Starting â‚¹3.5 Lakhs', 'slug' => 'budh-bihar-colony', 'status' => 'Available', 'img' => 'kushinagar/budh-bihar.jpg'],
+                    ['title' => 'Suryoday Heights Phase 1', 'city' => 'Gorakhpur', 'price' => 'Starting ₹5.5 Lakhs', 'slug' => 'suryoday-colony', 'status' => 'Available', 'img' => 'gorakhpur/suryoday.jpg'],
+                    ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => 'Starting ₹7.5 Lakhs', 'slug' => 'raghunath-nagri', 'status' => 'Available', 'img' => 'gorakhpur/raghunath nagri motiram.JPG'],
+                    ['title' => 'Braj Radha Enclave', 'city' => 'Lucknow', 'price' => 'Starting ₹12 Lakhs', 'slug' => 'braj-radha-nagri', 'status' => 'Available', 'img' => 'gorakhpur/suryoday1.jpeg'],
+                    ['title' => 'Budh Bihar Colony', 'city' => 'Kushinagar', 'price' => 'Starting ₹3.5 Lakhs', 'slug' => 'budh-bihar-colony', 'status' => 'Available', 'img' => 'kushinagar/budh-bihar.jpg'],
                 ];
                 foreach ($fallbackProjects as $project):
             ?>
@@ -349,7 +349,7 @@ calcEMI();
                             <i class="fas fa-hand-holding-usd fa-2x" style="color:#10b981;"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Home Loan</h5>
-                        <p class="text-muted small">SBI, HDFC, ICICI, PNB, Axis â€” best rates, easy processing, doorstep service.</p>
+                        <p class="text-muted small">SBI, HDFC, ICICI, PNB, Axis — best rates, easy processing, doorstep service.</p>
                         <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Starting 8.5% p.a.</span>
                     </div>
                 </div>
@@ -361,7 +361,7 @@ calcEMI();
                             <i class="fas fa-gavel fa-2x" style="color:#6366f1;"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Legal Services</h5>
-                        <p class="text-muted small">Registry, Mutation, Sale Deed, Agreement â€” complete property documentation legally verified.</p>
+                        <p class="text-muted small">Registry, Mutation, Sale Deed, Agreement — complete property documentation legally verified.</p>
                         <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">100% Legal</span>
                     </div>
                 </div>
@@ -373,8 +373,8 @@ calcEMI();
                             <i class="fas fa-couch fa-2x" style="color:#f59e0b;"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Interior Design</h5>
-                        <p class="text-muted small">Modular kitchen, wardrobe, false ceiling, flooring â€” complete home interiors.</p>
-                        <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">â‚¹249/sqft</span>
+                        <p class="text-muted small">Modular kitchen, wardrobe, false ceiling, flooring — complete home interiors.</p>
+                        <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">₹249/sqft</span>
                     </div>
                 </div>
             </div>
@@ -453,13 +453,13 @@ function openServiceModal(service) {
             color: 'linear-gradient(135deg, #10b981, #059669)',
             icon: 'fa-hand-holding-usd',
             title: 'Home Loan Assistance',
-            subtitle: 'Best rates from all major banks â€” SBI, HDFC, ICICI, PNB, Axis, Kotak',
+            subtitle: 'Best rates from all major banks — SBI, HDFC, ICICI, PNB, Axis, Kotak',
             html: '<div class="row g-4">' +
                 '<div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-success me-2"></i>Why Choose Us?</h6>' +
                 '<ul class="list-unstyled"><li class="mb-2"><i class="fas fa-check text-success me-2"></i>Free loan consultation & eligibility check</li>' +
                 '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Compare rates from 12+ banks</li>' +
                 '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Documentation & processing support</li>' +
-                '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Doorstep service â€” aapke ghar aayenge</li>' +
+                '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Doorstep service — aapke ghar aayenge</li>' +
                 '<li class="mb-2"><i class="fas fa-check text-success me-2"></i>Loan pre-approval in 24 hours</li></ul>' +
                 '<div class="bg-light rounded p-3 mt-3"><h6 class="fw-bold mb-2">Current Interest Rates</h6>' +
                 '<div class="d-flex justify-content-between mb-1"><span>SBI</span><span class="fw-bold text-success">8.50%</span></div>' +
@@ -494,7 +494,7 @@ function openServiceModal(service) {
             color: 'linear-gradient(135deg, #f59e0b, #d97706)',
             icon: 'fa-couch',
             title: 'Interior Design',
-            subtitle: 'Turnkey interiors â€” modern, modular, affordable',
+            subtitle: 'Turnkey interiors — modern, modular, affordable',
             html: '<div class="row g-4">' +
                 '<div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-warning me-2"></i>Services Include</h6>' +
                 '<ul class="list-unstyled"><li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Modular kitchen design & installation</li>' +
@@ -503,9 +503,9 @@ function openServiceModal(service) {
                 '<li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Wall painting, wallpaper & textures</li>' +
                 '<li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Complete home furnishing</li></ul>' +
                 '<div class="bg-light rounded p-3 mt-3"><h6 class="fw-bold mb-2">Starting Prices</h6>' +
-                '<div class="d-flex justify-content-between mb-1"><span>Basic</span><span class="fw-bold text-warning">â‚¹249/sqft</span></div>' +
-                '<div class="d-flex justify-content-between mb-1"><span>Standard</span><span class="fw-bold text-warning">â‚¹399/sqft</span></div>' +
-                '<div class="d-flex justify-content-between"><span>Premium</span><span class="fw-bold text-warning">â‚¹599/sqft</span></div></div></div>' +
+                '<div class="d-flex justify-content-between mb-1"><span>Basic</span><span class="fw-bold text-warning">₹249/sqft</span></div>' +
+                '<div class="d-flex justify-content-between mb-1"><span>Standard</span><span class="fw-bold text-warning">₹399/sqft</span></div>' +
+                '<div class="d-flex justify-content-between"><span>Premium</span><span class="fw-bold text-warning">₹599/sqft</span></div></div></div>' +
                 '<div class="col-md-5"><div class="bg-warning bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">' +
                 '<i class="fas fa-paint-roller fa-3x text-warning mb-3"></i><h5 class="fw-bold">Free Estimate</h5>' +
                 '<p class="text-muted small">Get a free interior design estimate</p></div></div></div>'
@@ -636,7 +636,7 @@ function openServiceModal(service) {
         <div class="text-center mb-5">
             <span class="section-label" style="background:rgba(245,158,11,0.1);color:#d97706;">Why Real Estate?</span>
             <h2 class="fw-bold">Land, Plot ya Property Mein Paisa Kyo Lagayein?</h2>
-            <p class="section-subtitle">Compare real estate with other investment options â€” results speak louder than words!</p>
+            <p class="section-subtitle">Compare real estate with other investment options — results speak louder than words!</p>
         </div>
 
         <!-- Investment Comparison Chart -->
@@ -731,7 +731,7 @@ function openServiceModal(service) {
                             </div>
                             <div>
                                 <h6>Passive Income</h6>
-                                <p>Rent out property for monthly income. Unlike gold or FD, real estate gives dual benefits â€” growth + income.</p>
+                                <p>Rent out property for monthly income. Unlike gold or FD, real estate gives dual benefits — growth + income.</p>
                             </div>
                         </div>
                     </div>
@@ -772,11 +772,11 @@ function openServiceModal(service) {
                             <div class="col-md-4">
                                 <label class="form-label text-white-50 small">Investment Amount</label>
                                 <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()">
-                                    <option value="500000">â‚¹5 Lakh</option>
-                                    <option value="1000000" selected>â‚¹10 Lakh</option>
-                                    <option value="2500000">â‚¹25 Lakh</option>
-                                    <option value="5000000">â‚¹50 Lakh</option>
-                                    <option value="10000000">â‚¹1 Crore</option>
+                                    <option value="500000">₹5 Lakh</option>
+                                    <option value="1000000" selected>₹10 Lakh</option>
+                                    <option value="2500000">₹25 Lakh</option>
+                                    <option value="5000000">₹50 Lakh</option>
+                                    <option value="10000000">₹1 Crore</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -790,27 +790,27 @@ function openServiceModal(service) {
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-white-50 small">&nbsp;</label>
-                                <div class="fw-bold h4 mb-0 pt-1" id="growthResult">â‚¹40,45,558</div>
+                                <div class="fw-bold h4 mb-0 pt-1" id="growthResult">₹40,45,558</div>
                             </div>
                         </div>
                         <div class="mt-3">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="small text-white-50">Real Estate (18% CAGR)</span>
-                                <span class="small fw-bold text-success" id="reValue">â‚¹52,33,855</span>
+                                <span class="small fw-bold text-success" id="reValue">₹52,33,855</span>
                             </div>
                             <div class="progress mb-2" style="height: 6px;">
                                 <div class="progress-bar bg-success" id="reBar" style="width: 100%"></div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="small text-white-50">FD (6% CAGR)</span>
-                                <span class="small fw-bold text-warning" id="fdValue">â‚¹17,90,848</span>
+                                <span class="small fw-bold text-warning" id="fdValue">₹17,90,848</span>
                             </div>
                             <div class="progress mb-2" style="height: 6px;">
                                 <div class="progress-bar bg-warning" id="fdBar" style="width: 34%"></div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="small text-white-50">Gold (9% CAGR)</span>
-                                <span class="small fw-bold text-primary" id="goldValue">â‚¹23,67,364</span>
+                                <span class="small fw-bold text-primary" id="goldValue">₹23,67,364</span>
                             </div>
                             <div class="progress mb-0" style="height: 6px;">
                                 <div class="progress-bar bg-primary" id="goldBar" style="width: 45%"></div>
@@ -845,10 +845,10 @@ function calcGrowth() {
 
     const maxVal = Math.max(re, fd, gold);
 
-    document.getElementById('reValue').textContent = 'â‚¹' + Math.round(re).toLocaleString('en-IN');
-    document.getElementById('fdValue').textContent = 'â‚¹' + Math.round(fd).toLocaleString('en-IN');
-    document.getElementById('goldValue').textContent = 'â‚¹' + Math.round(gold).toLocaleString('en-IN');
-    document.getElementById('growthResult').textContent = 'â‚¹' + Math.round(re).toLocaleString('en-IN');
+    document.getElementById('reValue').textContent = '₹' + Math.round(re).toLocaleString('en-IN');
+    document.getElementById('fdValue').textContent = '₹' + Math.round(fd).toLocaleString('en-IN');
+    document.getElementById('goldValue').textContent = '₹' + Math.round(gold).toLocaleString('en-IN');
+    document.getElementById('growthResult').textContent = '₹' + Math.round(re).toLocaleString('en-IN');
 
     document.getElementById('reBar').style.width = (re / maxVal * 100) + '%';
     document.getElementById('fdBar').style.width = (fd / maxVal * 100) + '%';
@@ -869,7 +869,7 @@ calcGrowth();
     <div class="container">
         <div class="text-center mb-5">
             <span class="section-label">Free Tools</span>
-            <h2 class="fw-bold">Real Estate Tools â€” Bilkul Free!</h2>
+            <h2 class="fw-bold">Real Estate Tools — Bilkul Free!</h2>
             <p class="section-subtitle">Apna property calculate karein, compare karein aur smart decision lein</p>
         </div>
         <div class="row g-4">
@@ -880,7 +880,7 @@ calcGrowth();
                             <i class="fas fa-calculator fa-2x text-primary"></i>
                         </div>
                         <h5 class="fw-bold">EMI Calculator</h5>
-                        <p class="text-muted small mb-0">Home loan, car loan â€” kisi bhi loan ka monthly EMI nikaalein. Principal, interest aur total payment dekhein.</p>
+                        <p class="text-muted small mb-0">Home loan, car loan — kisi bhi loan ka monthly EMI nikaalein. Principal, interest aur total payment dekhein.</p>
                     </div>
                 </div>
             </div>
@@ -891,7 +891,7 @@ calcGrowth();
                             <i class="fas fa-arrow-trend-up fa-2x text-success"></i>
                         </div>
                         <h5 class="fw-bold">Investment Calculator</h5>
-                        <p class="text-muted small mb-0">Real Estate vs FD vs Gold â€” kaunsa investment better hai? 5, 10, 15 saal ka growth compare karein.</p>
+                        <p class="text-muted small mb-0">Real Estate vs FD vs Gold — kaunsa investment better hai? 5, 10, 15 saal ka growth compare karein.</p>
                     </div>
                 </div>
             </div>
@@ -913,7 +913,7 @@ calcGrowth();
                             <i class="fas fa-vector-square fa-2x text-info"></i>
                         </div>
                         <h5 class="fw-bold">Plot Size Converter</h5>
-                        <p class="text-muted small mb-0">Square feet, square meter, acre, hectare, bigha, gaj â€” sabhi units mein plot size convert karein.</p>
+                        <p class="text-muted small mb-0">Square feet, square meter, acre, hectare, bigha, gaj — sabhi units mein plot size convert karein.</p>
                     </div>
                 </div>
             </div>
@@ -986,14 +986,14 @@ function openToolModal(tool) {
             color: 'linear-gradient(135deg, #667eea, #764ba2)',
             icon: 'fa-calculator',
             title: 'EMI Calculator',
-            subtitle: 'Home loan, car loan â€” monthly EMI instantly',
+            subtitle: 'Home loan, car loan — monthly EMI instantly',
             html: getEMICalculator()
         },
         investment: {
             color: 'linear-gradient(135deg, #11998e, #38ef7d)',
             icon: 'fa-arrow-trend-up',
             title: 'Investment Calculator',
-            subtitle: 'Real Estate vs FD vs Gold â€” compare growth',
+            subtitle: 'Real Estate vs FD vs Gold — compare growth',
             html: getInvestmentCalculator()
         },
         stamp: {
@@ -1040,7 +1040,7 @@ function openToolModal(tool) {
 function getEMICalculator() {
     return '<div class="row g-4">' +
         '<div class="col-md-7">' +
-            '<div class="mb-3"><label class="form-label fw-bold">Loan Amount: <span class="text-primary" id="mEmiAmt">â‚¹50,00,000</span></label>' +
+            '<div class="mb-3"><label class="form-label fw-bold">Loan Amount: <span class="text-primary" id="mEmiAmt">₹50,00,000</span></label>' +
             '<input type="range" class="form-range" min="100000" max="50000000" step="100000" value="5000000" oninput="mCalcEMI()"></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">Interest Rate: <span class="text-primary" id="mEmiRate">8.5%</span></label>' +
             '<input type="range" class="form-range" min="5" max="20" step="0.1" value="8.5" oninput="mCalcEMI()"></div>' +
@@ -1048,9 +1048,9 @@ function getEMICalculator() {
             '<input type="range" class="form-range" min="1" max="30" step="1" value="20" oninput="mCalcEMI()"></div></div>' +
         '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">Monthly EMI</p>' +
-            '<p class="display-5 fw-bold mb-0 text-warning" id="mEmiResult">â‚¹42,426</p><hr class="border-secondary my-3">' +
-            '<div class="d-flex justify-content-between"><span class="text-white-50">Total Interest</span><span class="fw-bold" id="mEmiInterest">â‚¹51,82,240</span></div>' +
-            '<div class="d-flex justify-content-between mt-2"><span class="text-white-50">Total Payment</span><span class="fw-bold" id="mEmiTotal">â‚¹1,01,82,240</span></div>' +
+            '<p class="display-5 fw-bold mb-0 text-warning" id="mEmiResult">₹42,426</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between"><span class="text-white-50">Total Interest</span><span class="fw-bold" id="mEmiInterest">₹51,82,240</span></div>' +
+            '<div class="d-flex justify-content-between mt-2"><span class="text-white-50">Total Payment</span><span class="fw-bold" id="mEmiTotal">₹1,01,82,240</span></div>' +
         '</div></div></div>';
 }
 
@@ -1059,18 +1059,18 @@ function getInvestmentCalculator() {
         '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold">Investment Amount</label>' +
             '<select class="form-select" id="mInvAmt" onchange="mCalcInv()">' +
-                '<option value="500000">â‚¹5 Lakh</option><option value="1000000" selected>â‚¹10 Lakh</option>' +
-                '<option value="2500000">â‚¹25 Lakh</option><option value="5000000">â‚¹50 Lakh</option><option value="10000000">â‚¹1 Crore</option></select></div>' +
+                '<option value="500000">₹5 Lakh</option><option value="1000000" selected>₹10 Lakh</option>' +
+                '<option value="2500000">₹25 Lakh</option><option value="5000000">₹50 Lakh</option><option value="10000000">₹1 Crore</option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">Time Period</label>' +
             '<select class="form-select" id="mInvYrs" onchange="mCalcInv()">' +
                 '<option value="5">5 Years</option><option value="10" selected>10 Years</option>' +
                 '<option value="15">15 Years</option><option value="20">20 Years</option></select></div>' +
             '<div class="mt-3">' +
-            '<div class="d-flex justify-content-between mb-1"><span>Real Estate <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">â‚¹52,33,855</span></div>' +
+            '<div class="d-flex justify-content-between mb-1"><span>Real Estate <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">₹52,33,855</span></div>' +
             '<div class="progress mb-2" style="height:6px"><div class="progress-bar bg-success" id="mInvREBar" style="width:100%"></div></div>' +
-            '<div class="d-flex justify-content-between mb-1"><span>FD <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">â‚¹17,90,848</span></div>' +
+            '<div class="d-flex justify-content-between mb-1"><span>FD <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">₹17,90,848</span></div>' +
             '<div class="progress mb-2" style="height:6px"><div class="progress-bar bg-warning" id="mInvFDBar" style="width:34%"></div></div>' +
-            '<div class="d-flex justify-content-between"><span>Gold <span class="text-primary">(9%)</span></span><span class="fw-bold text-primary" id="mInvGold">â‚¹23,67,364</span></div>' +
+            '<div class="d-flex justify-content-between"><span>Gold <span class="text-primary">(9%)</span></span><span class="fw-bold text-primary" id="mInvGold">₹23,67,364</span></div>' +
             '<div class="progress" style="height:6px"><div class="progress-bar bg-primary" id="mInvGoldBar" style="width:45%"></div></div></div></div>' +
         '<div class="col-md-5 text-center d-flex flex-column justify-content-center">' +
             '<div class="bg-success bg-opacity-10 rounded-4 p-4"><i class="fas fa-trophy fa-3x text-success mb-3"></i>' +
@@ -1095,11 +1095,11 @@ function getStampDutyCalculator() {
                 '<option value="male">Male (Male Name)</option><option value="female">Female (Female Name)</option>' +
                 '<option value="joint">Joint (Male+Female)</option></select></div></div>' +
         '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Property Price</span><span class="fw-bold" id="mStampBase">â‚¹50,00,000</span></div>' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Stamp Duty (5%)</span><span class="fw-bold text-warning" id="mStampDuty">â‚¹2,50,000</span></div>' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Registration (1%)</span><span class="fw-bold text-info" id="mStampReg">â‚¹50,000</span></div>' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Property Price</span><span class="fw-bold" id="mStampBase">₹50,00,000</span></div>' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Stamp Duty (5%)</span><span class="fw-bold text-warning" id="mStampDuty">₹2,50,000</span></div>' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Registration (1%)</span><span class="fw-bold text-info" id="mStampReg">₹50,000</span></div>' +
             '<hr class="border-secondary my-2">' +
-            '<div class="d-flex justify-content-between"><span class="text-white-50">Total Cost</span><span class="fw-bold text-success fs-5" id="mStampTotal">â‚¹53,00,000</span></div>' +
+            '<div class="d-flex justify-content-between"><span class="text-white-50">Total Cost</span><span class="fw-bold text-success fs-5" id="mStampTotal">₹53,00,000</span></div>' +
         '</div></div></div>';
 }
 
@@ -1137,8 +1137,8 @@ function getLoanEligibility() {
                 '<option value="5">5 Years</option><option value="10">10 Years</option><option value="15">15 Years</option><option value="20" selected>20 Years</option><option value="25">25 Years</option><option value="30">30 Years</option></select></div></div></div>' +
         '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">You Are Eligible For</p>' +
-            '<p class="display-5 fw-bold mb-0 text-success" id="mEligResult">â‚¹27,23,250</p><hr class="border-secondary my-3">' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Max EMI</span><span class="fw-bold" id="mEligMaxEmi">â‚¹27,000</span></div>' +
+            '<p class="display-5 fw-bold mb-0 text-success" id="mEligResult">₹27,23,250</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Max EMI</span><span class="fw-bold" id="mEligMaxEmi">₹27,000</span></div>' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">FOIR Ratio</span><span class="fw-bold" id="mEligFoir">45%</span></div>' +
         '</div></div></div>';
 }
@@ -1162,8 +1162,8 @@ function getPropertyValuation() {
             '<select class="form-select" id="mValFurn" onchange="mCalcVal()"><option value="0.9">Unfurnished</option><option value="1" selected>Semi-Furnished</option><option value="1.2">Fully Furnished</option></select></div></div></div>' +
         '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">Estimated Market Value</p>' +
-            '<p class="display-5 fw-bold mb-0 text-warning" id="mValResult">â‚¹22,50,000</p><hr class="border-secondary my-3">' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Per Sq Ft</span><span class="fw-bold" id="mValPsf">â‚¹1,500</span></div>' +
+            '<p class="display-5 fw-bold mb-0 text-warning" id="mValResult">₹22,50,000</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">Per Sq Ft</span><span class="fw-bold" id="mValPsf">₹1,500</span></div>' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">Confidence</span><span class="fw-bold text-success" id="mValConf">High</span></div>' +
         '</div></div></div>';
 }
@@ -1332,7 +1332,7 @@ function mCalcVal() {
         <div class="text-center mb-5">
             <span class="section-label" style="background:rgba(239,68,68,0.08);color:#dc2626;">Career Opportunity</span>
             <h2 class="fw-bold">APS Dream Home Ke Saath Kyo Judein?</h2>
-            <p class="section-subtitle">Real Estate mein ek nayi shuruaat â€” Salary + Commission + Insurance ke saath!</p>
+            <p class="section-subtitle">Real Estate mein ek nayi shuruaat — Salary + Commission + Insurance ke saath!</p>
         </div>
 
         <div class="row g-4 mb-5">
@@ -1345,11 +1345,11 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2">Fixed Monthly Salary</h5>
                         <p class="text-muted small">Real estate mein aam taur par sirf commission milta hai. Lekin APS Dream Home users ko <strong style="color:#ef4444;">fixed monthly salary</strong> bhi di jaati hai!</p>
                         <div class="bg-light rounded-3 p-3 mt-3">
-                            <div class="d-flex justify-content-between mb-1"><span class="small">Starter: <strong>â‚¹5,000/mo</strong></span><span class="small text-muted">â‚¹15L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small">Basic: <strong>â‚¹5,000/mo</strong></span><span class="small text-muted">â‚¹30L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small">Professional: <strong>â‚¹8,000/mo</strong></span><span class="small text-muted">â‚¹50L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small">Executive: <strong>â‚¹12,000/mo</strong></span><span class="small text-muted">â‚¹75L target</span></div>
-                            <div class="d-flex justify-content-between"><span class="small">Elite: <strong>â‚¹20,000/mo</strong></span><span class="small text-muted">â‚¹1Cr target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small">Starter: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹15L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small">Basic: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹30L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small">Professional: <strong>₹8,000/mo</strong></span><span class="small text-muted">₹50L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small">Executive: <strong>₹12,000/mo</strong></span><span class="small text-muted">₹75L target</span></div>
+                            <div class="d-flex justify-content-between"><span class="small">Elite: <strong>₹20,000/mo</strong></span><span class="small text-muted">₹1Cr target</span></div>
                         </div>
                     </div>
                 </div>
@@ -1363,9 +1363,9 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2">Free Insurance Cover</h5>
                         <p class="text-muted small">Company aapke parivar ki suraksha ka khayal rakhti hai. Sabhi users ko <strong style="color:#10b981;">free health aur life insurance</strong> cover diya jaata hai.</p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Health Insurance: <strong>â‚¹5 Lakh</strong></span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Life Cover: <strong>â‚¹10 Lakh</strong></span>
-                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i>Accidental Cover: <strong>â‚¹5 Lakh</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Health Insurance: <strong>₹5 Lakh</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Life Cover: <strong>₹10 Lakh</strong></span>
+                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i>Accidental Cover: <strong>₹5 Lakh</strong></span>
                         </div>
                     </div>
                 </div>
@@ -1395,7 +1395,7 @@ function mCalcVal() {
                             <i class="fas fa-graduation-cap fa-2x" style="color:#06b6d4;"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Free Training & Certification</h5>
-                        <p class="text-muted small">Real estate experience nahi hai? Koi baat nahi! Company aapko <strong style="color:#06b6d4;">free training</strong> degi â€” property knowledge, negotiation skills, aur sales techniques.</p>
+                        <p class="text-muted small">Real estate experience nahi hai? Koi baat nahi! Company aapko <strong style="color:#06b6d4;">free training</strong> degi — property knowledge, negotiation skills, aur sales techniques.</p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>7-Day Induction Program</span>
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Monthly Skill Workshops</span>
@@ -1411,7 +1411,7 @@ function mCalcVal() {
                             <i class="fas fa-users-between-lines fa-2x" style="color:#4f46e5;"></i>
                         </div>
                         <h5 class="fw-bold mb-2">MLM Network Benefits</h5>
-                        <p class="text-muted small">Naye users join karwaiye aur unki sales par <strong style="color:#4f46e5;">residual commission</strong> paayein. 10 rank structure â€” har rank ke saath badti hai earning!</p>
+                        <p class="text-muted small">Naye users join karwaiye aur unki sales par <strong style="color:#4f46e5;">residual commission</strong> paayein. 10 rank structure — har rank ke saath badti hai earning!</p>
                         <div class="bg-light rounded-3 p-3 mt-3" style="max-height:160px;overflow-y:auto;">
                             <div class="small mb-1"><span class="text-warning me-1">ðŸ‘‘</span>Associate: <strong>5%</strong></div>
                             <div class="small mb-1"><span class="text-secondary me-1">ðŸ‘‘</span>Bronze: <strong>7%</strong></div>
