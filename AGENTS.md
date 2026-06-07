@@ -5453,4 +5453,83 @@ Performed comprehensive analysis of 4 architectural layers:
 | Remaining: self-contained HTML views | 5 |
 | E2E pass rate | 128/129 |
 
+---
+
+## Session 2026-06-07: MODULE 5 — Backoffice + Daily Operations
+
+### What Was Done
+End-to-end delivery of **Module 5: Backoffice + Daily Operations** — 8 tables, 11-method service, controller, 17 views, 30 routes, 6 menu items, full verification.
+
+### Files Created (21)
+| File | Type | Purpose |
+|---|---|---|
+| `scripts/migrate_module5_backoffice.php` | Migration | Creates 8 tables + seeds 8 report definitions |
+| `scripts/seed_module5_menu.php` | Seed | Inserts 6 operations menu items |
+| `scripts/smoke_module5.php` | Smoke test | 12-route HTTP smoke test |
+| `app/Services/Backoffice/DailyOperationsService.php` | Service | 794 lines, attendance/leaves/payslips/leads/operations/reports/dashboard |
+| `app/Http/Controllers/Admin/BackofficeController.php` | Controller | All route handler actions |
+| `app/views/admin/backoffice/dashboard.php` | View | KPI cards + pending leaves + today attendance + lead summary |
+| `app/views/admin/backoffice/attendance.php` | View | Daily attendance with employee list |
+| `app/views/admin/backoffice/attendance-monthly.php` | View | Monthly summary grid (per-employee, color-coded) |
+| `app/views/admin/backoffice/leaves.php` | View | Pending leave requests with approve/reject |
+| `app/views/admin/backoffice/leave-history.php` | View | Historical leaves with filters |
+| `app/views/admin/backoffice/payslips.php` | View | Generate monthly payslips with batch action |
+| `app/views/admin/backoffice/payslip-view.php` | View | Single payslip detail with deductions breakdown |
+| `app/views/admin/backoffice/leads.php` | View | Lead pipeline with stage badges + quick stage advance |
+| `app/views/admin/backoffice/lead-create.php` | View | Create new lead form |
+| `app/views/admin/backoffice/lead-detail.php` | View | Lead detail with activity timeline |
+| `app/views/admin/backoffice/lead-edit.php` | View | Edit lead form |
+| `app/views/admin/backoffice/lead-activity-form.php` | View | Add activity to lead (call/sms/email/visit/note) |
+| `app/views/admin/backoffice/operations.php` | View | Daily operations log with filters |
+| `app/views/admin/backoffice/operations-create.php` | View | New operations entry form |
+| `app/views/admin/backoffice/reports.php` | View | Report center with run/history buttons |
+| `app/views/admin/backoffice/report-run.php` | View | Run report with dynamic params + results table |
+| `app/views/admin/backoffice/report-history.php` | View | Report execution history |
+
+### Files Modified (2)
+- `routes/web.php` — Added 30 Module 5 routes under `/admin/backoffice/*` (after Module 4 MLM block, ~line 3543).
+- `admin_menu_items` table — 6 new menu items in section 'operations': Backoffice Dashboard (#5), Attendance (#10), Payslips (#15), Lead Pipeline (#20), Operations Log (#25), Reports (#30).
+
+### Database — 8 Tables Created
+| Table | Purpose |
+|---|---|
+| `employee_attendance` | Daily check-in/out, late flag, half_day/full_day, status |
+| `employee_leave_requests` | Leave applications with approval workflow |
+| `employee_payslips` | Monthly payslips with full deduction breakdown |
+| `lead_pipeline` | Lead tracking with stage progression |
+| `lead_pipeline_activities` | Activity log per lead (call/sms/email/visit/note) |
+| `daily_operations_log` | Field ops: site visits, collections, registry, construction |
+| `report_definitions` | 8 seeded report definitions (attendance, leave, payslip, lead, operations, monthly summary, collection, TDS) |
+| `report_executions` | Execution history with status, row_count, error_message |
+
+### Service Methods (DailyOperationsService)
+| Category | Methods |
+|---|---|
+| **Attendance** | `recordAttendance($data)`, `getDailyAttendance($date)` |
+| **Leaves** | `getPendingLeaves()`, `approveLeave($id, $approvedBy)`, `rejectLeave($id, $rejectedBy, $reason)` |
+| **Payslips** | `generatePayslip($employeeId, $month, $year)`, `getMonthlyPayslips($month, $year)` |
+| **Leads** | `listLeads($stage, $search)`, `createLead($data)`, `addActivity($leadId, $data)`, `advanceStage($leadId, $newStage)` |
+| **Operations** | `listOperations($date, $type, $status)` |
+| **Reports** | `getReportDefinitions()`, `runReport($id, $params)` |
+| **Dashboard** | `getDashboardSummary()` |
+
+### Design Decisions
+- **Payslip TDS (old regime)**: 0-3L=0%, 3-6L=5%, 6-9L=10%, 9-12L=15%, 12-15L=20%, >15L=30%.
+- **Employee lookup**: `employees` table may not exist; service gracefully falls back to 50000 CTC default.
+- **Lead stages**: new→contacted→qualified→viewing→negotiation→closed+won/lost+dead.
+- **All 17 views use `aps-cp-*` design system** for visual consistency.
+- **All POST forms have CSRF tokens**; all views use `BASE_URL` for links.
+- **Service constructor**: `__construct($pdo = null)` falling back to `$this->db`.
+
+### Verification
+| Check | Result |
+|---|---|
+| PHP syntax (4 PHP files: service, controller, migration, seed) | 4/4 PASS |
+| PHP syntax (17 views in `app/views/admin/backoffice/`) | 17/17 PASS |
+| HTTP smoke (12 routes, authenticated) | 12/12 — all 200 |
+| BOM removal (14 files with UTF-8 BOM) | 14/14 FIXED |
+| Menu items inserted (6) | 6/6 — section 'operations' |
+| DB tables created (8) | 8/8 with proper PKs/indexes |
+| Report definitions seeded (8) | 8/8 |
+
 
