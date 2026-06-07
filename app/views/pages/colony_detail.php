@@ -50,7 +50,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                 <div class="row g-3">
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['total_plots'] ?? 0; ?></div><div class="lbl">Total Plots</div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['available_plots'] ?? 0; ?></div><div class="lbl">Available</div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num">â‚¹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl">Starting Price</div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num">₹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl">Starting Price</div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo count($amenities); ?>+</div><div class="lbl">Amenities</div></div></div>
                 </div>
             </div>
@@ -128,7 +128,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                         <span class="badge bg-success">Available</span>
                     </div>
                     <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo $p['area_sqft'] ?? 0; ?> sqft</p>
-                    <div class="price">â‚¹<?php echo number_format($p['total_price'] ?? 0); ?></div>
+                    <div class="price">₹<?php echo number_format($p['total_price'] ?? 0); ?></div>
                 </div>
             </div>
             <?php endforeach; ?>

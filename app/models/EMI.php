@@ -103,7 +103,7 @@ class EMI extends Model
             }
 
             // Create notification for the customer
-            $notificationMessage = "Your EMI plan has been created with monthly installment of â‚¹" . number_format($emiAmount, 2);
+            $notificationMessage = "Your EMI plan has been created with monthly installment of ₹" . number_format($emiAmount, 2);
             $notificationLink = "emi/view.php?id=" . $emiPlanId;
 
             // Check if notifications table exists and has user_id
@@ -179,7 +179,7 @@ class EMI extends Model
 
         return [
             'active_count' => $activeCount,
-            'monthly_collection' => 'â‚¹' . number_format($monthlyCollection, 2),
+            'monthly_collection' => '₹' . number_format($monthlyCollection, 2),
             'pending_count' => $pendingCount,
             'overdue_count' => $overdueCount
         ];
@@ -260,7 +260,7 @@ class EMI extends Model
             $transactionId = 'EMI' . time() . rand(1000, 9999);
             $description = "EMI Payment - Installment #" . $installment['installment_number'];
             if ($lateFee > 0) {
-                $description .= " (Including Late Fee: â‚¹" . number_format($lateFee, 2) . ")";
+                $description .= " (Including Late Fee: ₹" . number_format($lateFee, 2) . ")";
             }
 
             // 1. Create payment record in main payments table

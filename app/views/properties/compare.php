@@ -116,7 +116,7 @@
 
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="h5 text-primary mb-0">
-                                                â‚¹<?= number_format($property['price']) ?>
+                                                ₹<?= number_format($property['price']) ?>
                                             </span>
                                             <span class="badge bg-<?= $property['status'] === 'available' ? 'success' : 'warning' ?>">
                                                 <?= ucfirst($property['status']) ?>

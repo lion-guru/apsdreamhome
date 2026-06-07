@@ -588,7 +588,7 @@ class AIPropertyChatbot {
     private function handleGeneralHelp() {
         return [
             'type' => 'help_response',
-            'message' => "I'm your AI property assistant! I can help you:\n\nâ€¢ Find properties based on your criteria\nâ€¢ Get personalized recommendations\nâ€¢ Check prices in different areas\nâ€¢ Learn about available locations\nâ€¢ Answer questions about properties\n\nTry asking me things like:\nâ€¢ 'Show me 3-bedroom houses under $300,000'\nâ€¢ 'What do you recommend for me?'\nâ€¢ 'Find properties in downtown'\nâ€¢ 'What's the average price in this area?'"
+            'message' => "I'm your AI property assistant! I can help you:\n\n• Find properties based on your criteria\n• Get personalized recommendations\n• Check prices in different areas\n• Learn about available locations\n• Answer questions about properties\n\nTry asking me things like:\n• 'Show me 3-bedroom houses under $300,000'\n• 'What do you recommend for me?'\n• 'Find properties in downtown'\n• 'What's the average price in this area?'"
         ];
     }
 

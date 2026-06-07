@@ -86,91 +86,136 @@ class AdminController extends BaseController
     }
 
     /**
-     * Admin Dashboard
+     * Admin Dashboard — redirects to Unified ERP Overview
      */
     public function dashboard()
     {
-        // Start session if not started
-        if (session_status() === PHP_SESSION_NONE) {
-            @session_start();
-        }
+        $this->redirect(BASE_URL . '/admin/erp');
+        return;
+    }
 
-        // Check if admin is logged in - use direct session check
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? '', ['admin', 'super_admin'])) {
-            $_SESSION['error'] = 'Admin access required';
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
+    /**
+     * Unified ERP Overview Dashboard
+     * Shows ALL 5 modules on one page: Land, Sales, Money, MLM, Backoffice
+     */
+    public function erpOverview()
+    {
+        $this->requireAdmin();
+
+        $stats = [];
+
+        // Module 1: Land Inventory
+        try {
+            $stats['land_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM land_leads WHERE status NOT IN ('acquired','rejected')")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['land_active_leads'] = 0; }
 
         try {
-            // ── Hot-path cache: admin dashboard KPIs (2 min TTL, per role+user) ──
-            $adminRole = (string) ($_SESSION['admin_role'] ?? 'admin');
-            $adminId   = (int) ($_SESSION['admin_id'] ?? 0);
-            $stats = \App\Services\Cache\HotPathCacheService::getAdminDashboardKpis(
-                $adminRole,
-                $adminId,
-                function () {
-                    return [
-                        'total_users' => $this->getTotalUsers(),
-                        'total_properties' => $this->getTotalProperties(),
-                        'total_inquiries' => $this->getTotalInquiries(),
-                        'total_revenue' => $this->getTotalRevenue(),
-                        'active_properties' => $this->getActiveProperties(),
-                        'new_users_today' => $this->getNewUsersToday(),
-                        'pending_approvals' => $this->getPendingApprovals(),
-                        'system_health' => $this->getSystemHealth()
-                    ];
-                }
-            );
+            $stats['land_acquisitions'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM land_acquisitions")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['land_acquisitions'] = 0; }
 
-            // Get Khatabook sales stats
-            try {
-                $khatabookStats = $this->db->fetch("SELECT COUNT(*) as total_sales, COALESCE(SUM(amount), 0) as total_amount FROM khatabook_sales");
-                $khatabookStats['recent_sales'] = $this->db->fetchAll("SELECT * FROM khatabook_sales ORDER BY transaction_date DESC LIMIT 5") ?? [];
-            } catch (\Exception $e) {
-                $khatabookStats = ['total_sales' => 0, 'total_amount' => 0, 'recent_sales' => []];
-            }
+        // Module 2: Sales + Allotment
+        try {
+            $stats['sales_active_bookings'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM plot_bookings WHERE status NOT IN ('cancelled','transferred')")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['sales_active_bookings'] = 0; }
 
-            // Get Ad slot stats
-            try {
-                $adStats = $this->db->fetch("SELECT COUNT(*) as total_slots, COALESCE(SUM(views), 0) as total_views, COALESCE(SUM(clicks), 0) as total_clicks FROM ad_slots WHERE status = 'active'");
-            } catch (\Exception $e) {
-                $adStats = ['total_slots' => 0, 'total_views' => 0, 'total_clicks' => 0];
-            }
+        try {
+            $stats['sales_booking_value'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(total_plot_value),0) AS total FROM plot_bookings WHERE status NOT IN ('cancelled','transferred')")['total'] ?? 0);
+        } catch (\Exception $e) { $stats['sales_booking_value'] = 0; }
 
-            $dashboard_stats = array_merge($stats, [
-                'khatabook_sales' => $khatabookStats['total_sales'] ?? 0,
-                'khatabook_amount' => $khatabookStats['total_amount'] ?? 0,
-                'ad_slots' => $adStats['total_slots'] ?? 0,
-                'ad_views' => $adStats['total_views'] ?? 0,
-                'ad_clicks' => $adStats['total_clicks'] ?? 0,
-            ]);
+        // Module 3: Money Workflow + Accounting
+        try {
+            $stats['money_today_collections'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(amount),0) AS total FROM daily_cash_book WHERE transaction_date = CURDATE() AND transaction_type='receipt'")['total'] ?? 0);
+        } catch (\Exception $e) { $stats['money_today_collections'] = 0; }
 
-            // Get recent activities
-            $recentActivities = $this->getRecentActivities();
+        try {
+            $stats['money_today_payments'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(amount),0) AS total FROM daily_cash_book WHERE transaction_date = CURDATE() AND transaction_type='payment'")['total'] ?? 0);
+        } catch (\Exception $e) { $stats['money_today_payments'] = 0; }
 
-            // Get charts data
-            $chartsData = $this->getChartsData();
+        try {
+            $stats['money_total_cash_flow'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(amount),0) AS total FROM daily_cash_book")['total'] ?? 0);
+        } catch (\Exception $e) { $stats['money_total_cash_flow'] = 0; }
 
-            $this->data = array_merge($this->data, [
-                'stats' => $stats,
-                'dashboard_stats' => $dashboard_stats,
-                'khatabookStats' => $khatabookStats,
-                'adStats' => $adStats,
-                'recent_activities' => $recentActivities,
-                'charts_data' => $chartsData,
-                'page_title' => 'Admin Dashboard - ' . $this->getConfig('app_name'),
-                'page_description' => 'Manage your real estate business'
-            ]);
+        try {
+            $stats['money_bounced_cheques'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM cheque_register WHERE status='bounced'")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['money_bounced_cheques'] = 0; }
 
-            return $this->render('admin/dashboard', $this->data);
-        } catch (Exception $e) {
-            $this->setFlash('error', 'Error loading dashboard: ' . $e->getMessage());
-            return $this->render('admin/dashboard', [
-                'page_title' => 'Admin Dashboard - ' . $this->getConfig('app_name'),
-                'error' => true
-            ]);
-        }
+        try {
+            $stats['money_pending_tds'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM tds_register WHERE status='pending'")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['money_pending_tds'] = 0; }
+
+        // Module 4: MLM Network
+        try {
+            $stats['mlm_commissions_paid'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM mlm_commission_ledger WHERE status='paid' AND MONTH(created_at)=MONTH(CURDATE())")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['mlm_commissions_paid'] = 0; }
+
+        try {
+            $stats['mlm_pending_payouts'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM mlm_payouts WHERE status='pending'")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['mlm_pending_payouts'] = 0; }
+
+        // Module 5: Backoffice + Daily Operations
+        try {
+            $stats['backoffice_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE status NOT IN ('closed_won','closed_lost')")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['backoffice_active_leads'] = 0; }
+
+        try {
+            $stats['backoffice_present_today'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM employee_attendance WHERE attendance_date=CURDATE() AND status='present'")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['backoffice_present_today'] = 0; }
+
+        try {
+            $stats['backoffice_pending_leaves'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM employee_leave_requests WHERE status='pending'")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['backoffice_pending_leaves'] = 0; }
+
+        try {
+            $stats['backoffice_today_operations'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM daily_operations_log WHERE log_date=CURDATE()")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['backoffice_today_operations'] = 0; }
+
+        // Recent activity feed (last 10 from daily_operations_log + daily_cash_book combined)
+        $recentActivity = [];
+        try {
+            $recentActivity = $this->db->fetchAll("
+                SELECT 'operation' AS source, id, log_date AS activity_date, operation_type AS type, description, status
+                FROM daily_operations_log
+                UNION ALL
+                SELECT 'finance' AS source, id, transaction_date AS activity_date, transaction_type AS type, description, transaction_mode AS status
+                FROM daily_cash_book
+                ORDER BY activity_date DESC
+                LIMIT 10
+            ") ?? [];
+        } catch (\Exception $e) { $recentActivity = []; }
+
+        // Cash flow chart data (last 7 days)
+        $cashFlowChart = [];
+        try {
+            $cashFlowChart = $this->db->fetchAll("
+                SELECT transaction_date,
+                       COALESCE(SUM(CASE WHEN transaction_type='receipt' THEN amount ELSE 0 END), 0) AS receipts,
+                       COALESCE(SUM(CASE WHEN transaction_type='payment' THEN amount ELSE 0 END), 0) AS payments
+                FROM daily_cash_book
+                WHERE transaction_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+                GROUP BY transaction_date
+                ORDER BY transaction_date ASC
+            ") ?? [];
+        } catch (\Exception $e) { $cashFlowChart = []; }
+
+        // Lead pipeline chart data
+        $leadPipelineChart = [];
+        try {
+            $leadPipelineChart = $this->db->fetchAll("
+                SELECT status, COUNT(*) AS cnt
+                FROM lead_pipeline
+                GROUP BY status
+                ORDER BY cnt DESC
+            ") ?? [];
+        } catch (\Exception $e) { $leadPipelineChart = []; }
+
+        return $this->render('admin/erp/overview', [
+            'page_title' => 'ERP Overview — APS Dream Home',
+            'stats' => $stats,
+            'recent_activity' => $recentActivity,
+            'cash_flow_chart' => $cashFlowChart,
+            'lead_pipeline_chart' => $leadPipelineChart,
+            'updated_at' => date('d M Y, h:i A'),
+        ]);
     }
 
     /**

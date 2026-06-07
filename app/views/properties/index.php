@@ -46,7 +46,7 @@ include __DIR__ . '/../layouts/base.php';
                         </span>
                     </div>
                     <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark">
-                        <h4 class="text-white h5 mb-0">â‚¹<?php echo number_format($property['price']); ?></h4>
+                        <h4 class="text-white h5 mb-0">₹<?php echo number_format($property['price']); ?></h4>
                     </div>
                 </div>
                 

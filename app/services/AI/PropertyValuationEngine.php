@@ -13,10 +13,14 @@ class PropertyValuationEngine
 {
     private $database;
     private $marketData;
+    private $propertyTypeMultipliers;
     
     public function __construct()
     {
         $this->database = \App\Core\Database\Database::getInstance();
+        $this->propertyTypeMultipliers = [
+            'plot' => 1.0, 'house' => 1.25, 'flat' => 1.15, 'shop' => 1.45, 'farmhouse' => 1.35, 'commercial' => 1.5, 'residential' => 1.1
+        ];
         $this->initializeMarketData();
     }
     
@@ -101,24 +105,13 @@ class PropertyValuationEngine
     private function getBasePrice($location, $type)
     {
         $basePrices = [
-            'mumbai' => [
-                'apartment' => 15000000,
-                'house' => 25000000,
-                'villa' => 50000000
-            ],
-            'delhi' => [
-                'apartment' => 8000000,
-                'house' => 15000000,
-                'villa' => 30000000
-            ],
-            'bangalore' => [
-                'apartment' => 6000000,
-                'house' => 12000000,
-                'villa' => 25000000
-            ]
+            'gorakhpur' => ['apartment' => 3000000, 'house' => 5500000, 'villa' => 9000000],
+            'lucknow' => ['apartment' => 4500000, 'house' => 7500000, 'villa' => 12000000],
+            'kushinagar' => ['apartment' => 1800000, 'house' => 3200000, 'villa' => 5000000],
+            'varanasi' => ['apartment' => 4000000, 'house' => 7000000, 'villa' => 11000000]
         ];
-        
-        return $basePrices[$location][$type] ?? 5000000;
+        $loc = strtolower(trim(explode(',', $location)[0]));
+        return $basePrices[$loc][$type] ?? 2500000;
     }
     
     /**
@@ -127,14 +120,13 @@ class PropertyValuationEngine
     private function getLocationMultiplier($location)
     {
         $locationScores = [
-            'mumbai' => 1.8,
-            'delhi' => 1.4,
-            'bangalore' => 1.3,
-            'pune' => 1.1,
-            'hyderabad' => 1.2
+            'lucknow' => 1.35,
+            'varanasi' => 1.25,
+            'gorakhpur' => 1.15,
+            'kushinagar' => 0.95
         ];
-        
-        return $locationScores[$location] ?? 1.0;
+        $loc = strtolower(trim(explode(',', $location)[0]));
+        return $locationScores[$loc] ?? 1.0;
     }
     
     /**
@@ -142,16 +134,14 @@ class PropertyValuationEngine
      */
     private function getMarketTrendAdjustment($location)
     {
-        // Simulated market trend data
         $marketTrends = [
-            'mumbai' => 1.05,  // 5% growth
-            'delhi' => 1.03,   // 3% growth
-            'bangalore' => 1.07, // 7% growth
-            'pune' => 1.04,    // 4% growth
-            'hyderabad' => 1.06  // 6% growth
+            'lucknow' => 1.07,
+            'varanasi' => 1.05,
+            'gorakhpur' => 1.06,
+            'kushinagar' => 1.02
         ];
-        
-        return $marketTrends[$location] ?? 1.0;
+        $loc = strtolower(trim(explode(',', $location)[0]));
+        return $marketTrends[$loc] ?? 1.0;
     }
     
     /**
@@ -176,12 +166,13 @@ class PropertyValuationEngine
     private function getDemandIndex($type, $location)
     {
         $demandMatrix = [
-            'mumbai' => ['apartment' => 1.2, 'house' => 1.1, 'villa' => 1.05],
-            'delhi' => ['apartment' => 1.15, 'house' => 1.08, 'villa' => 1.03],
-            'bangalore' => ['apartment' => 1.25, 'house' => 1.12, 'villa' => 1.08]
+            'lucknow' => ['apartment' => 1.15, 'house' => 1.20, 'villa' => 1.10],
+            'varanasi' => ['apartment' => 1.10, 'house' => 1.15, 'villa' => 1.08],
+            'gorakhpur' => ['apartment' => 1.18, 'house' => 1.25, 'villa' => 1.12],
+            'kushinagar' => ['apartment' => 0.95, 'house' => 1.05, 'villa' => 0.98]
         ];
-        
-        return $demandMatrix[$location][$type] ?? 1.0;
+        $loc = strtolower(trim(explode(',', $location)[0]));
+        return $demandMatrix[$loc][$type] ?? 1.0;
     }
     
     /**
@@ -378,14 +369,13 @@ class PropertyValuationEngine
     private function getPricePerSqft($location)
     {
         $pricesPerSqft = [
-            'mumbai' => 15000,
-            'delhi' => 8000,
-            'bangalore' => 6000,
-            'pune' => 5500,
-            'hyderabad' => 5000
+            'lucknow' => 3500,
+            'varanasi' => 3000,
+            'gorakhpur' => 2800,
+            'kushinagar' => 1800
         ];
-        
-        return $pricesPerSqft[$location] ?? 4000;
+        $loc = strtolower(trim(explode(',', $location)[0]));
+        return $pricesPerSqft[$loc] ?? 2200;
     }
     
     /**

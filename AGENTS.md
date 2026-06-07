@@ -2,6 +2,60 @@
 
 ---
 
+## Session 2026-06-07: Unified ERP Dashboard
+
+### What Was Done
+Created a **Unified ERP Overview Dashboard** showing all 5 modules (Land, Sales, Money, MLM, Backoffice) on a single page at `/admin/erp`. The legacy `/admin/dashboard` now redirects to `/admin/erp`.
+
+### Files Modified (3)
+| File | Change |
+|---|---|
+| `app/Http/Controllers/Admin/AdminController.php` | Added `erpOverview()` method (60+ queries with try/catch), changed `dashboard()` to redirect to `/admin/erp` |
+| `routes/web.php` | Added route `GET /admin/erp` → `AdminController@erpOverview`, updated `/admin` and `/admin/` redirects to `/admin/erp` |
+| `AGENTS.md` | Updated |
+
+### Files Created (1)
+| File | Purpose |
+|---|---|
+| `app/views/admin/erp/overview.php` | Unified ERP dashboard view — 5 KPI cards, Quick Actions, Recent Activity feed, Cash Flow bar chart, Lead Pipeline donut, Alert banners |
+
+### Route Added
+```
+GET /admin/erp → AdminController@erpOverview
+```
+
+### Menu Item Added
+- `admin_menu_items`: name="ERP Overview", url="/admin/erp", icon="fa-th-large", section="dashboards", order_index=0
+
+### Controller Method: `erpOverview()`
+Queries 15 stats across 5 modules (all wrapped in individual try/catch returning 0 on failure):
+- **Module 1 (Land):** active leads, acquisitions
+- **Module 2 (Sales):** active bookings, total booking value
+- **Module 3 (Money):** today's collections, today's payments, total cash flow, bounced cheques, pending TDS
+- **Module 4 (MLM):** commissions paid this month, pending payouts
+- **Module 5 (Backoffice):** active pipeline leads, present today, pending leaves, today's operations
+
+Plus: recent activity feed (UNION of `daily_operations_log` + `daily_cash_book`), cash flow chart (7-day receipt/payment), lead pipeline donut (grouped by status).
+
+### View Layout
+- **ROW 1:** 5 KPI cards (one per module) with colored left borders
+- **ROW 2:** Quick Actions (5 module cards with links + descriptions) | Recent Activity Feed
+- **ROW 3:** Cash Flow bar chart (Chart.js) | Lead Pipeline donut (Chart.js)
+- **ROW 4:** Conditional alerts for bounced cheques, pending TDS, pending payouts, pending leaves
+
+### Verification
+| Check | Result |
+|---|---|
+| PHP syntax (AdminController) | PASS |
+| PHP syntax (overview.php view) | PASS |
+| PHP syntax (web.php routes) | PASS |
+| HTTP GET `/admin/erp` (unauthenticated) | 302 (auth gate) ✅ |
+| HTTP GET `/admin/erp` (authenticated) | 200 ✅ |
+| Menu item inserted | 1 row ✅ |
+| `/admin` redirect → `/admin/erp` | Updated ✅ |
+
+---
+
 ## Session 2026-06-07: MODULE 3 — Money Workflow + Accounting
 
 ### What Was Done

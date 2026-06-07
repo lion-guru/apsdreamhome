@@ -109,7 +109,7 @@ ob_start();
                 <div class="icon-box bg-warning-soft rounded-circle mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-receipt text-warning fs-4"></i>
                 </div>
-                <h3 class="fw-bold mb-1">â‚¹<?= number_format($stats['total_paid']) ?></h3>
+                <h3 class="fw-bold mb-1">₹<?= number_format($stats['total_paid']) ?></h3>
                 <p class="text-muted mb-0">Total Paid</p>
             </div>
         </div>

@@ -67,7 +67,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <h5 class="card-title"><?php echo htmlspecialchars($property['title'] ?? 'Property'); ?></h5>
                                 <p class="text-muted mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['location'] ?? 'Location N/A'); ?></p>
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-primary fw-bold">â‚¹<?php echo number_format($property['price'] ?? 0); ?></span>
+                                    <span class="text-primary fw-bold">₹<?php echo number_format($property['price'] ?? 0); ?></span>
                                     <span class="badge bg-secondary"><?php echo htmlspecialchars($property['type'] ?? 'N/A'); ?></span>
                                 </div>
                                 <div class="mb-3">

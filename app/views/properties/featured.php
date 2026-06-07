@@ -133,7 +133,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                             <!-- Property Price -->
                             <div class="property-price mb-3">
                                 <span class="h5 text-success font-weight-bold">
-                                    â‚¹<?= number_format($property['price']) ?>
+                                    ₹<?= number_format($property['price']) ?>
                                 </span>
                                 <?php if ($property['type']): ?>
                                     <span class="badge badge-info ml-2">

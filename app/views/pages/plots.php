@@ -1,43 +1,84 @@
-<div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="h3 mb-4"><?= __('plots_title') ?></h1>
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <div class="table-responsive"><table class="table table-striped table-responsive">
-                                <thead>
-                                    <tr>
-                                        <th>Plot Number</th>
-                                        <th>Colony</th>
-                                        <th>Area (sqft)</th>
-                                        <th>Price</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>A-101</td>
-                                        <td>Suryoday Colony</td>
-                                        <td>1000</td>
-                                        <td>₹25,00,000</td>
-                                        <td><span class="badge bg-success">Available</span></td>
-                                        <td><button class="btn btn-sm btn-primary">View Details</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>A-102</td>
-                                        <td>Suryoday Colony</td>
-                                        <td>1200</td>
-                                        <td>₹30,00,000</td>
-                                        <td><span class="badge bg-warning">Booked</span></td>
-                                        <td><button class="btn btn-sm btn-primary">View Details</button></td>
-                                    </tr>
-                                </tbody>
-                            </table></div>
-                        </div>
-                    </div>
-                </div>
+<?php
+// Available Colonies / Plots Page
+?>
+<div class="container py-5">
+    <div class="row mb-5 text-center">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-4 fw-bold text-dark mb-3"><?= __('plots_title') ?? 'Explore Our Premium Colonies' ?></h1>
+            <p class="lead text-muted">Discover fully developed, verified residential and commercial plots across Uttar Pradesh's prime hubs.</p>
+            <div class="d-flex justify-content-center gap-2 mt-4">
+                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Lucknow</span>
+                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Gorakhpur</span>
+                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Varanasi</span>
+                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Kushinagar</span>
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <?php if (!empty($colonies)): ?>
+            <?php foreach ($colonies as $colony): ?>
+                <?php
+                $img = !empty($colony['image_path']) ? BASE_URL . '/' . ltrim($colony['image_path'], '/') : BASE_URL . '/assets/images/placeholder/property.svg';
+                $startingPrice = !empty($colony['starting_price']) ? '₹' . number_format($colony['starting_price']) : '₹5.5 Lakh';
+                ?>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative aps-colony-card" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                        <?php if (!empty($colony['is_featured'])): ?>
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-warning text-dark fw-bold px-3 py-2 shadow-sm" style="z-index: 10;">
+                                <i class="fas fa-star me-1"></i> FEATURED
+                            </span>
+                        <?php endif; ?>
+                        
+                        <div class="position-relative overflow-hidden" style="height: 220px;">
+                            <img src="<?= htmlspecialchars($img) ?>" class="w-100 h-100 object-fit-cover" alt="<?= htmlspecialchars($colony['name']) ?>" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+                            <div class="position-absolute bottom-0 start-0 w-100 p-3 text-white d-flex align-items-end" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 100%); height: 100px;">
+                                <span class="badge bg-primary px-2 py-1"><i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($colony['district_name'] . ', ' . $colony['state_name']) ?></span>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h4 class="card-title fw-bold text-dark mb-2"><?= htmlspecialchars($colony['name']) ?></h4>
+                            <p class="card-text text-muted small flex-grow-1"><?= htmlspecialchars(substr(strip_tags($colony['description'] ?? ''), 0, 120)) ?>...</p>
+                            
+                            <hr class="text-muted opacity-25 my-3">
+                            
+                            <div class="row g-0 align-items-center mb-3">
+                                <div class="col-6">
+                                    <span class="text-muted d-block small">Starting From</span>
+                                    <span class="fs-5 fw-bold text-primary"><?= $startingPrice ?></span>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <span class="text-muted d-block small">Available Plots</span>
+                                    <span class="fs-5 fw-bold text-success"><?= (int)($colony['available_plots'] ?? 0) ?></span>
+                                </div>
+                            </div>
+                            
+                            <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($colony['slug']) ?>/plots" class="btn btn-primary w-100 rounded-3 py-2 fw-semibold">
+                                View Layout & Plots <i class="fas fa-arrow-right ms-1 small"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="col-12 text-center py-5">
+                <div class="empty-state p-5 bg-white rounded-4 shadow-sm border">
+                    <i class="fas fa-map-marked-alt text-muted fa-4x mb-3 opacity-25"></i>
+                    <h3 class="fw-bold">No Colonies Available</h3>
+                    <p class="text-muted">Aapki locations ke liye abhi koi colony available nahi hai. Kripya baad mein check karein.</p>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<style>
+.aps-colony-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1) !important;
+}
+.object-fit-cover {
+    object-fit: cover;
+}
+</style>

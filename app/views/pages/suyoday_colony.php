@@ -100,7 +100,7 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
                         <i class="fas fa-rupee-sign fa-3x text-danger"></i>
                     </div>
                     <h5>Starting Price</h5>
-                    <p class="text-muted">â‚¹7.5 Lakhs</p>
+                    <p class="text-muted">₹7.5 Lakhs</p>
                 </div>
             </div>
             

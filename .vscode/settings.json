@@ -70,16 +70,16 @@
   "mcp.enabled": true,
   "mcp.servers": {
     "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "c:\\xampp\\htdocs\\apsdreamhome"]
+      "command": "${workspaceFolder}\\node_modules\\.bin\\mcp-server-filesystem.cmd",
+      "args": ["c:\\xampp\\htdocs\\apsdreamhome"]
     },
     "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "command": "${workspaceFolder}\\node_modules\\.bin\\mcp-server-memory.cmd",
+      "args": []
     },
     "mysql": {
-      "command": "npx",
-      "args": ["-y", "@f4ww4z/mcp-mysql-server"],
+      "command": "${workspaceFolder}\\node_modules\\.bin\\mcp-mysql.cmd",
+      "args": [],
       "env": {
         "MYSQL_HOST": "127.0.0.1",
         "MYSQL_PORT": "3307",
@@ -89,8 +89,8 @@
       }
     },
     "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "command": "${workspaceFolder}\\node_modules\\.bin\\mcp-server-sequential-thinking.cmd",
+      "args": []
     }
   },
   "security.workspace.trust.untrustedFiles": "open",

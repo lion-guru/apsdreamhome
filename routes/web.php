@@ -745,15 +745,16 @@ $router->get('/admin/logout', 'App\\Http\\Controllers\\Auth\\AdminAuthController
 
 // Admin Dashboard (single route - uses RoleBasedDashboardController)
 $router->get('/admin', function() {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
+    header('Location: ' . BASE_URL . '/admin/erp');
     exit;
 });
 $router->get('/admin/dashboard', 'App\\Http\\Controllers\\RoleBasedDashboardController@index');
+$router->get('/admin/erp', 'App\\Http\\Controllers\\Admin\\AdminController@erpOverview');
 $router->get('/admin/enterprise_dashboard', 'App\\Http\\Controllers\\RoleBasedDashboardController@enterpriseDashboard');
 
 // Admin root route fix
 $router->get('/admin/', function() {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
+    header('Location: ' . BASE_URL . '/admin/erp');
     exit;
 });
 

@@ -20,8 +20,10 @@
 
     <!-- Admin CSS -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend-enhancements.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/customer-pages.css" rel="stylesheet">
+    <!-- Consolidated APS CSS Bundles -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
     <style>
         /* RBAC Sidebar section toggle styles */
         .sidebar-sec {
@@ -62,7 +64,7 @@
     ?>
 
     <!-- Sidebar (DB-driven via rbac_sidebar.php) -->
-    <?php include_once __DIR . '/../admin/layouts/rbac_sidebar.php'; ?>
+    <?php include_once __DIR__ . '/../admin/layouts/rbac_sidebar.php'; ?>
 
     <?php
     // Live notification/message counts from DB

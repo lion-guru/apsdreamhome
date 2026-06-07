@@ -114,7 +114,7 @@ include __DIR__ . '/../layouts/base.php';
                 <!-- Pricing Card -->
                 <div class="glass-card p-4 mb-4">
                     <h5 class="text-white-50 small text-uppercase mb-1">Investment Amount</h5>
-                    <h2 class="text-white fw-bold mb-4">â‚¹<?php echo number_format($property['price']); ?></h2>
+                    <h2 class="text-white fw-bold mb-4">₹<?php echo number_format($property['price']); ?></h2>
 
                     <div class="d-grid gap-3">
                         <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#inquiryModal">

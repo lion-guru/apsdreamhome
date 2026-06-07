@@ -66,7 +66,7 @@ class PageController extends BaseController
                     'title' => $siteName,
                     'location' => ($project->district ?? '') . ', ' . ($project->state ?? ''),
                     'city' => $project->district ?? '',
-                    'price' => 'Starting from â‚¹5.5 Lakhs',
+                    'price' => 'Starting from ₹5.5 Lakhs',
                     'slug' => $slug,
                     'type' => ucfirst($project->site_type ?? 'Residential'),
                     'status' => ($project->status === 'active') ? 'Available' : 'Completed',
@@ -520,7 +520,7 @@ class PageController extends BaseController
                 'address' => 'Gorakhpur, Uttar Pradesh',
                 'location' => 'Gorakhpur',
                 'price' => 750000,
-                'price_display' => 'â‚¹7.5 Lakhs',
+                'price_display' => '₹7.5 Lakhs',
                 'price_num' => 750000,
                 'image' => 'suyoday.jpg',
                 'property_type' => 'plot',
@@ -538,7 +538,7 @@ class PageController extends BaseController
                 'address' => 'Gorakhpur, Uttar Pradesh',
                 'location' => 'Gorakhpur',
                 'price' => 850000,
-                'price_display' => 'â‚¹8.5 Lakhs',
+                'price_display' => '₹8.5 Lakhs',
                 'price_num' => 850000,
                 'image' => 'raghunat.jpg',
                 'property_type' => 'plot',
@@ -556,7 +556,7 @@ class PageController extends BaseController
                 'address' => 'Gorakhpur, Uttar Pradesh',
                 'location' => 'Gorakhpur',
                 'price' => 650000,
-                'price_display' => 'â‚¹6.5 Lakhs',
+                'price_display' => '₹6.5 Lakhs',
                 'price_num' => 650000,
                 'image' => 'brajradha.jpg',
                 'property_type' => 'plot',
@@ -574,7 +574,7 @@ class PageController extends BaseController
                 'address' => 'Kushinagar, Uttar Pradesh',
                 'location' => 'Kushinagar',
                 'price' => 550000,
-                'price_display' => 'â‚¹5.5 Lakhs',
+                'price_display' => '₹5.5 Lakhs',
                 'price_num' => 550000,
                 'image' => 'budhbihar.jpg',
                 'property_type' => 'plot',
@@ -592,7 +592,7 @@ class PageController extends BaseController
                 'address' => 'Lucknow, Uttar Pradesh',
                 'location' => 'Lucknow',
                 'price' => 1200000,
-                'price_display' => 'â‚¹12 Lakhs',
+                'price_display' => '₹12 Lakhs',
                 'price_num' => 1200000,
                 'image' => 'awadhpuri.jpg',
                 'property_type' => 'plot',
@@ -610,7 +610,7 @@ class PageController extends BaseController
                 'address' => 'Gorakhpur, Uttar Pradesh',
                 'location' => 'Gorakhpur',
                 'price' => 2500000,
-                'price_display' => 'â‚¹25 Lakhs',
+                'price_display' => '₹25 Lakhs',
                 'price_num' => 2500000,
                 'image' => 'commercial.jpg',
                 'property_type' => 'shop',
@@ -1149,12 +1149,12 @@ class PageController extends BaseController
 
         try {
             $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'project', 'pending', 'medium', NOW())");
-            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: â‚¹{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
+            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ₹{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
 
             // Also save to service_interests if table exists
             try {
                 $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
-                $sStmt->execute([$this->db->lastInsertId(), "Budget: â‚¹{$budget}, Location: {$location}, Type: {$project_type}"]);
+                $sStmt->execute([$this->db->lastInsertId(), "Budget: ₹{$budget}, Location: {$location}, Type: {$project_type}"]);
             } catch (\Exception $e) {
                 error_log('PageController constructionInquiry service interests: ' . $e->getMessage());
             }
