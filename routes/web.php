@@ -3807,6 +3807,27 @@ $router->post('/admin/cash-collections/reconciliations/create',            'Admi
 $router->post('/admin/cash-collections/reconciliations/close',             'Admin\\CashCollectionController@reconciliationClose');
 
 // ============================================================
+// NOC & REGISTRY PIPE
+// URL prefix: /admin/noc-registry/*
+// ============================================================
+$router->get('/admin/noc-registry',                                       'Admin\\NocRegistryController@dashboard');
+$router->get('/admin/noc-registry/eligibility',                           'Admin\\NocRegistryController@eligibilityCheck');
+// NOC
+$router->get('/admin/noc-registry/nocs',                                  'Admin\\NocRegistryController@nocList');
+$router->get('/admin/noc-registry/nocs/create',                           'Admin\\NocRegistryController@nocCreate');
+$router->post('/admin/noc-registry/nocs/store',                           'Admin\\NocRegistryController@nocStore');
+$router->get('/admin/noc-registry/nocs/{id}',                             'Admin\\NocRegistryController@nocDetail');
+$router->post('/admin/noc-registry/nocs/approve',                         'Admin\\NocRegistryController@nocApprove');
+$router->post('/admin/noc-registry/nocs/reject',                          'Admin\\NocRegistryController@nocReject');
+$router->post('/admin/noc-registry/nocs/reprocess',                       'Admin\\NocRegistryController@nocReprocess');
+// Registry
+$router->get('/admin/noc-registry/registries',                            'Admin\\NocRegistryController@registryList');
+$router->get('/admin/noc-registry/registries/create',                     'Admin\\NocRegistryController@registryCreate');
+$router->post('/admin/noc-registry/registries/store',                     'Admin\\NocRegistryController@registryStore');
+$router->get('/admin/noc-registry/registries/{id}',                       'Admin\\NocRegistryController@registryDetail');
+$router->post('/admin/noc-registry/registries/update-status',             'Admin\\NocRegistryController@registryUpdateStatus');
+
+// ============================================================
 // BANK STATEMENT IMPORT & AUTO-RECONCILIATION
 // URL prefix: /admin/bank-import/*
 // ============================================================
