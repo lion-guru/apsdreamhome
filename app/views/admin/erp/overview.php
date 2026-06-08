@@ -130,6 +130,29 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     </div>
 </div>
 
+<!-- EMI Dunning Alert Banner (Phase 30) -->
+<?php if (($s['emi_overdue_count'] ?? 0) > 0): ?>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;">
+    <div style="background:#fef2f2;border:2px solid #fecaca;border-radius:12px;padding:16px 20px;text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:#dc2626;"><?= (int)($s['emi_overdue_count'] ?? 0) ?></div>
+        <div style="font-size:0.75rem;color:#991b1b;font-weight:600;">OVERDUE INSTALLMENTS</div>
+        <a href="<?= BASE_URL ?>/admin/finance/penalties" style="font-size:0.7rem;color:#dc2626;text-decoration:underline;">View & Apply Penalties &rarr;</a>
+    </div>
+    <div style="background:#fef2f2;border:2px solid #fecaca;border-radius:12px;padding:16px 20px;text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:#dc2626;"><?= $fmt($s['emi_overdue_amount'] ?? 0) ?></div>
+        <div style="font-size:0.75rem;color:#991b1b;font-weight:600;">OVERDUE AMOUNT</div>
+    </div>
+    <div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:16px 20px;text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:#ea580c;"><?= $fmt($s['emi_total_penalties'] ?? 0) ?></div>
+        <div style="font-size:0.75rem;color:#9a3412;font-weight:600;">PENALTIES ACCRUED</div>
+    </div>
+    <div style="background:#faf5ff;border:2px solid #c4b5fd;border-radius:12px;padding:16px 20px;text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:#7c3aed;"><?= (int)($s['emi_defaulted_count'] ?? 0) ?></div>
+        <div style="font-size:0.75rem;color:#5b21b6;font-weight:600;">DEFAULTED BOOKINGS</div>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- ROW 2 — Quick Actions + Recent Activity -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;">
 
@@ -151,6 +174,14 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
                     <div>
                         <div style="font-weight:600;">Sales Bookings</div>
                         <div style="font-size:0.75rem;opacity:0.8;">View bookings, EMI schedule & commissions</div>
+                    </div>
+                    <span style="margin-left:auto;font-size:0.8rem;opacity:0.6;">&rarr;</span>
+                </a>
+                <a href="<?= BASE_URL ?>/admin/finance/penalties" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:#fef2f2;color:#991b1b;text-decoration:none;transition:transform 0.15s;<?php if (($s['emi_overdue_count'] ?? 0) > 0) echo 'border:2px solid #fecaca;'; ?>">
+                    <span style="font-size:1.3rem;">&#9888;</span>
+                    <div>
+                        <div style="font-weight:600;">EMI Dunning & Penalties</div>
+                        <div style="font-size:0.75rem;opacity:0.8;"><?= ($s['emi_overdue_count'] ?? 0) ?> overdue installments</div>
                     </div>
                     <span style="margin-left:auto;font-size:0.8rem;opacity:0.6;">&rarr;</span>
                 </a>
