@@ -2,11 +2,15 @@
 /**
  * Site Visit Calendar View
  */
-
-$page_title = 'Visit Calendar - APS Dream Home';
+$page_title = $page_title ?? 'Visit Calendar';
+$page_heading = $page_heading ?? 'Visit Calendar';
+$month = $month ?? (int)date('m');
+$year = $year ?? (int)date('Y');
+$visits = $visits ?? [];
 $monthName = date('F Y', strtotime($year . '-' . $month . '-01'));
 $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 $firstDay = date('N', strtotime($year . '-' . $month . '-01'));
+ob_start();
 ?>
 
 <div class="container-fluid py-4">
@@ -16,10 +20,10 @@ $firstDay = date('N', strtotime($year . '-' . $month . '-01'));
             <p class="text-muted">Schedule and manage property site visits</p>
         </div>
         <div class="btn-group">
-            <a href="/admin/visits/create" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/admin/visits/create" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Schedule Visit
             </a>
-            <a href="/admin/visits" class="btn btn-outline-secondary">
+            <a href="<?= BASE_URL ?>/admin/visits" class="btn btn-outline-secondary">
                 <i class="fas fa-list me-2"></i>List View
             </a>
         </div>
@@ -88,7 +92,7 @@ $firstDay = date('N', strtotime($year . '-' . $month . '-01'));
                                         ][$visit['status']] ?? 'secondary';
                                         
                                         echo '<div class="mt-1 p-1 bg-' . $statusColor . ' bg-opacity-10 rounded small">';
-                                        echo '<div class="text-truncate fw-bold">' . htmlspecialchars(visit['lead_name'] ?? '') . '</div>';
+                                        echo '<div class="text-truncate fw-bold">' . htmlspecialchars($visit['lead_name'] ?? $visit['customer_name'] ?? '') . '</div>';
                                         echo '<div class="text-truncate text-muted">' . date('h:i A', strtotime($visit['visit_time'])) . '</div>';
                                         echo '<div class="text-truncate text-muted">' . htmlspecialchars(visit['property_title'] ?? '') . '</div>';
                                         echo '</div>';
@@ -119,5 +123,7 @@ $firstDay = date('N', strtotime($year . '-' . $month . '-01'));
         </div>
     </div>
 </div>
-
+<?php
+$content = ob_get_clean();
+include APP_PATH . '/views/admin/layouts/unified.php';
 
