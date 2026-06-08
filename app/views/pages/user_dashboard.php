@@ -494,6 +494,36 @@ $dashBookingCount = count($dashBookings);
             </div>
         </div>
 
+        <?php
+        $dashOpenTickets = (int)($stats['open_tickets'] ?? 0);
+        $dashTotalTickets = (int)($stats['total_tickets'] ?? 0);
+        ?>
+        <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #ecfdf5 100%);">
+            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(16, 185, 129, 0.15);">
+                <h5><i class="fas fa-headset" style="color:#10b981;"></i> Need Help?</h5>
+            </div>
+            <div class="aps-cp-card-body text-center">
+                <div class="d-flex justify-content-center gap-4 mb-3">
+                    <div>
+                        <div class="fw-bold fs-4" style="color: <?= $dashOpenTickets > 0 ? '#ef4444' : '#10b981' ?>;" data-aps-count="<?= $dashOpenTickets ?>">0</div>
+                        <small class="text-muted">Open Tickets</small>
+                    </div>
+                    <div>
+                        <div class="fw-bold fs-4 text-primary" data-aps-count="<?= $dashTotalTickets ?>">0</div>
+                        <small class="text-muted">Total Tickets</small>
+                    </div>
+                </div>
+                <a href="<?= BASE_URL ?>/user/support/create" class="btn btn-success btn-sm w-100">
+                    <i class="fas fa-plus me-1"></i>Create Support Ticket
+                </a>
+                <?php if ($dashTotalTickets > 0): ?>
+                <a href="<?= BASE_URL ?>/user/support" class="btn btn-outline-success btn-sm w-100 mt-2">
+                    <i class="fas fa-list me-1"></i>View All Tickets
+                </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
                 <h5><i class="fas fa-concierge-bell text-info"></i> <?= __('dash_section_our_services', null, 'Our Services') ?></h5>
@@ -557,6 +587,18 @@ $dashBookingCount = count($dashBookings);
                 <a href="<?= BASE_URL ?>/user/profile" class="btn btn-outline-primary btn-sm w-100 mt-3">
                     <i class="fas fa-edit me-1"></i><?= __('dash_btn_edit_profile', null, 'Edit Profile') ?>
                 </a>
+            </div>
+        </div>
+
+        <div class="aps-cp-card" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
+            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <h5><i class="fas fa-bell text-primary"></i> <?= __('dash_section_notifications', null, 'Notifications') ?></h5>
+            </div>
+            <div class="aps-cp-card-body">
+                <p class="text-muted small mb-3"><?= __('dash_push_desc', null, 'Get notified about booking updates, payment reminders, and offers.') ?></p>
+                <button id="push-toggle" class="btn btn-sm btn-primary w-100" onclick="PushNotifications.subscribe()">
+                    <i class="fas fa-bell me-1"></i> <?= __('dash_btn_enable_push', null, 'Enable Notifications') ?>
+                </button>
             </div>
         </div>
 

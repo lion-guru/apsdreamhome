@@ -218,42 +218,24 @@ class SupportTicketController extends AdminController
                 return $this->redirect('admin/support_tickets');
             }
 
-            // Get ticket details
-            $sql = "SELECT st.*, 
-                           u.name as customer_name,
-                           u.email as customer_email,
-                           u.phone as customer_phone,
-                           a.name as assigned_agent_name,
-                           a.email as assigned_agent_email
-                    FROM support_tickets st
-                    LEFT JOIN users u ON st.customer_id = u.id
-                    LEFT JOIN users a ON st.assigned_agent_id = a.id
-                    WHERE st.id = ?";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$ticketId]);
-            $ticket = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $service = new \App\Services\SupportTicketService();
+            $ticket = $service->getTicket($ticketId);
 
             if (!$ticket) {
                 $this->setFlash('error', 'Ticket not found');
                 return $this->redirect('admin/support_tickets');
             }
 
-            try {
-                // Get ticket responses
-                $sql = "SELECT * FROM support_ticket_responses 
-                        WHERE ticket_id = ? ORDER BY created_at ASC";
-            } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
-            }
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$ticketId]);
-            $responses = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            // Get staff members for assignment dropdown
+            $staffStmt = $this->db->query("SELECT id, name, email FROM users WHERE role IN ('admin','employee') ORDER BY name");
+            $staffMembers = $staffStmt->fetchAll(\PDO::FETCH_ASSOC);
 
             $data = [
-                'page_title' => 'Ticket Details - APS Dream Home',
+                'page_title' => 'Ticket ' . ($ticket['ticket_number'] ?? '#' . $ticketId) . ' - APS Dream Home',
                 'active_page' => 'support_tickets',
                 'ticket' => $ticket,
-                'responses' => $responses
+                'replies' => $ticket['replies'] ?? [],
+                'staffMembers' => $staffMembers,
             ];
 
             return $this->render('admin/support_tickets/show', $data);
@@ -509,6 +491,130 @@ class SupportTicketController extends AdminController
                 'success' => false,
                 'message' => 'Failed to fetch stats'
             ], 500);
+        }
+    }
+
+    /**
+     * Staff reply to a ticket
+     */
+    public function reply($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $ticketId = intval($id);
+            $message = trim($_POST['message'] ?? '');
+
+            if ($ticketId <= 0) {
+                return $this->jsonError('Invalid ticket ID', 400);
+            }
+            if (empty($message)) {
+                return $this->jsonError('Reply message is required', 400);
+            }
+
+            $sql = "SELECT id FROM support_tickets WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$ticketId]);
+            if (!$stmt->fetch()) {
+                return $this->jsonError('Ticket not found', 404);
+            }
+
+            $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $service = new \App\Services\SupportTicketService();
+            $service->addReply($ticketId, $userId, $message, true);
+
+            $this->loggingService->logUserActivity($userId, 'support_ticket_reply', [
+                'ticket_id' => $ticketId,
+            ]);
+
+            $_SESSION['flash_success'] = 'Reply sent successfully!';
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $ticketId);
+            exit;
+        } catch (Exception $e) {
+            $this->loggingService->error("Support Ticket Reply error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to send reply.';
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $id);
+            exit;
+        }
+    }
+
+    /**
+     * Assign ticket to staff member
+     */
+    public function assign($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $ticketId = intval($id);
+            $staffId = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
+
+            if ($ticketId <= 0) {
+                return $this->jsonError('Invalid ticket ID', 400);
+            }
+
+            $service = new \App\Services\SupportTicketService();
+            $service->assignTicket($ticketId, $staffId);
+
+            $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'support_ticket_assigned', [
+                'ticket_id' => $ticketId,
+                'assigned_to' => $staffId,
+            ]);
+
+            $_SESSION['flash_success'] = 'Ticket assigned successfully!';
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $ticketId);
+            exit;
+        } catch (Exception $e) {
+            $this->loggingService->error("Support Ticket Assign error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to assign ticket.';
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $id);
+            exit;
+        }
+    }
+
+    /**
+     * Update ticket status
+     */
+    public function updateStatus($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $ticketId = intval($id);
+            $status = trim($_POST['status'] ?? '');
+
+            if ($ticketId <= 0) {
+                return $this->jsonError('Invalid ticket ID', 400);
+            }
+
+            $validStatuses = ['open', 'in_progress', 'waiting_customer', 'resolved', 'closed'];
+            if (!in_array($status, $validStatuses)) {
+                return $this->jsonError('Invalid status', 400);
+            }
+
+            $service = new \App\Services\SupportTicketService();
+            $service->updateStatus($ticketId, $status);
+
+            $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'support_ticket_status_changed', [
+                'ticket_id' => $ticketId,
+                'new_status' => $status,
+            ]);
+
+            $_SESSION['flash_success'] = 'Ticket status updated to ' . str_replace('_', ' ', $status) . '!';
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $ticketId);
+            exit;
+        } catch (Exception $e) {
+            $this->loggingService->error("Support Ticket UpdateStatus error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to update status.';
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $id);
+            exit;
         }
     }
 

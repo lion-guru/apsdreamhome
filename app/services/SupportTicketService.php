@@ -1,155 +1,239 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 namespace App\Services;
 
-use App\Models\SupportTicket;
-use App\Models\TicketReply;
-use App\Core\Auth;
-use Exception;
+use PDO;
 
 class SupportTicketService
 {
-    protected $ticketModel;
-    protected $replyModel;
-    protected $auth;
+    private $db;
 
     public function __construct()
     {
-        $this->ticketModel = new SupportTicket();
-        $this->replyModel = new TicketReply();
-        $this->auth = new Auth();
+        $config = require dirname(__DIR__, 2) . '/config/database.php';
+        $this->db = new PDO(
+            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
+            $config['username'],
+            $config['password'],
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
+        );
     }
 
-    public function getAllTickets()
+    public function createTicket(int $userId, string $subject, string $message, string $category = 'general', string $priority = 'medium', ?int $bookingId = null): array
     {
-        // RBAC: Only admin can see all tickets
-        if (!$this->auth->isAdmin()) {
-            return []; // Or throw exception
+        $ticketNumber = 'APS-TKT-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+        $stmt = $this->db->prepare("
+            INSERT INTO support_tickets (ticket_number, user_id, subject, message, category, priority, booking_id, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'open', NOW())
+        ");
+        $stmt->execute([$ticketNumber, $userId, $subject, $message, $category, $priority, $bookingId]);
+        $ticketId = (int) $this->db->lastInsertId();
+
+        $stmt2 = $this->db->prepare("
+            INSERT INTO support_ticket_replies (ticket_id, user_id, message, is_admin, created_at)
+            VALUES (?, ?, ?, 0, NOW())
+        ");
+        $stmt2->execute([$ticketId, $userId, $message]);
+
+        $this->db->prepare("UPDATE support_tickets SET reply_count = 1, last_reply_by = ?, last_reply_at = NOW() WHERE id = ?")
+            ->execute([$userId, $ticketId]);
+
+        return $this->getTicket($ticketId);
+    }
+
+    public function getTickets(?int $userId = null, ?string $status = null, ?string $category = null, ?string $priority = null, ?string $search = null, int $page = 1, int $perPage = 20): array
+    {
+        $where = ['1=1'];
+        $params = [];
+
+        if ($userId !== null) {
+            $where[] = 't.user_id = ?';
+            $params[] = $userId;
         }
-        return $this->ticketModel->getAllTicketsWithUser();
-    }
-
-    public function getTicketsByUser($userId)
-    {
-        // RBAC: User can only see their own tickets unless admin
-        if (!$this->auth->isAdmin() && $this->auth->id() != $userId) {
-            return []; // Unauthorized
+        if ($status !== null && $status !== '') {
+            $where[] = 't.status = ?';
+            $params[] = $status;
         }
-        return $this->ticketModel->getTicketsByUser($userId);
+        if ($category !== null && $category !== '') {
+            $where[] = 't.category = ?';
+            $params[] = $category;
+        }
+        if ($priority !== null && $priority !== '') {
+            $where[] = 't.priority = ?';
+            $params[] = $priority;
+        }
+        if ($search !== null && $search !== '') {
+            $where[] = '(t.subject LIKE ? OR t.ticket_number LIKE ?)';
+            $params[] = '%' . $search . '%';
+            $params[] = '%' . $search . '%';
+        }
+
+        $whereSql = implode(' AND ', $where);
+
+        $countStmt = $this->db->prepare("SELECT COUNT(*) FROM support_tickets t WHERE $whereSql");
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
+
+        $offset = ($page - 1) * $perPage;
+        $sql = "SELECT t.*, u.name as customer_name, u.email as customer_email,
+                       a.name as assigned_name
+                FROM support_tickets t
+                LEFT JOIN users u ON t.user_id = u.id
+                LEFT JOIN users a ON t.assigned_to = a.id
+                WHERE $whereSql
+                ORDER BY t.created_at DESC
+                LIMIT $perPage OFFSET $offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $tickets = $stmt->fetchAll();
+
+        return [
+            'tickets' => $tickets,
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'total_pages' => (int) ceil($total / $perPage),
+        ];
     }
 
-    public function getTicketById($id)
+    public function getTicket(int $ticketId): ?array
     {
-        $ticket = $this->ticketModel->find($id);
-        
+        $stmt = $this->db->prepare("
+            SELECT t.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
+                   a.name as assigned_name, a.email as assigned_email
+            FROM support_tickets t
+            LEFT JOIN users u ON t.user_id = u.id
+            LEFT JOIN users a ON t.assigned_to = a.id
+            WHERE t.id = ?
+        ");
+        $stmt->execute([$ticketId]);
+        $ticket = $stmt->fetch();
         if (!$ticket) {
             return null;
         }
 
-        // RBAC Check
-        // Assuming $ticket is an object or array. Model returns object usually, but find() in basic model might return object.
-        // Let's check App\Core\Model implementation. 
-        // App\Core\Model::find returns object if using fetchObject or array if using fetchAll?
-        // App\Core\Model uses PDO::FETCH_OBJ by default in constructor options.
-        // But `SupportTicket::getTicketByNumber` uses `fetch(PDO::FETCH_ASSOC)`.
-        // `Model::find` is not shown in my read, but usually it returns an object.
-        // Let's assume object access first, or check if it's array.
-        // Wait, `SupportTicketService` line 33 used `$ticket['replies']`, implying array access.
-        // But `App\Core\Model` sets default fetch mode to OBJ.
-        // This suggests `SupportTicket` model might override it or `find` returns array.
-        // Let's use array access as per previous code usage.
-        
-        // However, if `find` returns an object (standard in Laravel-like models), array access might fail unless it implements ArrayAccess.
-        // In `SupportTicketService.php` before edit:
-        // $ticket = $this->ticketModel->find($id);
-        // $ticket['replies'] = ...
-        // This strongly suggests it returns an array or ArrayAccess object.
-        // I'll stick to array access but add a check.
+        $replyStmt = $this->db->prepare("
+            SELECT r.*, u.name as user_name, u.role as user_role
+            FROM support_ticket_replies r
+            LEFT JOIN users u ON r.user_id = u.id
+            WHERE r.ticket_id = ?
+            ORDER BY r.created_at ASC
+        ");
+        $replyStmt->execute([$ticketId]);
+        $ticket['replies'] = $replyStmt->fetchAll();
 
-        $ticketUserId = is_array($ticket) ? $ticket['user_id'] : $ticket->user_id;
-
-        if (!$this->auth->isAdmin() && $this->auth->id() != $ticketUserId) {
-            return null; // Unauthorized
-        }
-
-        if ($ticket) {
-            $replies = $this->replyModel->getRepliesByTicketId($id);
-            if (is_array($ticket)) {
-                $ticket['replies'] = $replies;
-            } else {
-                $ticket->replies = $replies;
-            }
-        }
         return $ticket;
     }
 
-    public function createTicket($data, $userId)
+    public function addReply(int $ticketId, int $userId, string $message, bool $isStaff = false): array
     {
-        // RBAC: Ensure creating for self unless admin
-        if (!$this->auth->isAdmin() && $this->auth->id() != $userId) {
-            return false;
-        }
+        $isStaffFlag = $isStaff ? 1 : 0;
 
-        $ticketData = [
-            'ticket_number' => 'TKT-' . time() . '-' . rand(1000, 9999),
-            'user_id' => $userId,
-            'subject' => $data['subject'],
-            'message' => $data['message'],
-            'priority' => $data['priority'] ?? 'medium',
-            'status' => 'open',
-            'attachment' => $data['attachment'] ?? null
-        ];
+        $stmt = $this->db->prepare("
+            INSERT INTO support_ticket_replies (ticket_id, user_id, message, is_admin, created_at)
+            VALUES (?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([$ticketId, $userId, $message, $isStaffFlag]);
+        $replyId = (int) $this->db->lastInsertId();
 
-        return $this->ticketModel->create($ticketData);
+        $newStatus = $isStaff ? 'waiting_customer' : 'in_progress';
+        $this->db->prepare("
+            UPDATE support_tickets
+            SET reply_count = reply_count + 1, last_reply_by = ?, last_reply_at = NOW(),
+                status = IF(status IN ('resolved','closed'), status, ?)
+            WHERE id = ?
+        ")->execute([$userId, $newStatus, $ticketId]);
+
+        $stmt2 = $this->db->prepare("SELECT * FROM support_ticket_replies WHERE id = ?");
+        $stmt2->execute([$replyId]);
+        return $stmt2->fetch();
     }
 
-    public function updateTicketStatus($id, $status)
+    public function updateStatus(int $ticketId, string $status): bool
     {
-        // RBAC: Only admin can update status (usually)
-        // Or user can close their own ticket?
-        if (!$this->auth->isAdmin()) {
-            // Check if user is closing their own ticket
-            $ticket = $this->getTicketById($id);
-            if (!$ticket) return false;
-            
-            // Allow user to close/resolve, but maybe not other statuses?
-            // For simplicity, let's restrict status updates to Admin only for now, 
-            // except maybe 'closed' by user.
-            if ($status !== 'closed' && $status !== 'resolved') {
-                 return false;
-            }
+        $extra = '';
+        if ($status === 'resolved') {
+            $extra = ', resolved_at = NOW()';
         }
-
-        return $this->ticketModel->update($id, ['status' => $status]);
+        $stmt = $this->db->prepare("UPDATE support_tickets SET status = ?$extra WHERE id = ?");
+        return $stmt->execute([$status, $ticketId]);
     }
 
-    public function addReply($ticketId, $userId, $message, $attachment = null)
+    public function assignTicket(int $ticketId, int $staffId): bool
     {
-        // RBAC check
-        $ticket = $this->getTicketById($ticketId); // This already checks read permission
-        if (!$ticket) {
-            return false;
+        $stmt = $this->db->prepare("UPDATE support_tickets SET assigned_to = ? WHERE id = ?");
+        return $stmt->execute([$staffId, $ticketId]);
+    }
+
+    public function updatePriority(int $ticketId, string $priority): bool
+    {
+        $stmt = $this->db->prepare("UPDATE support_tickets SET priority = ? WHERE id = ?");
+        return $stmt->execute([$priority, $ticketId]);
+    }
+
+    public function getStats(): array
+    {
+        $stats = [];
+
+        $row = $this->db->query("SELECT COUNT(*) as total, SUM(status='open') as open_count, SUM(status='in_progress') as in_progress, SUM(status='waiting_customer') as waiting, SUM(status='resolved') as resolved, SUM(status='closed') as closed FROM support_tickets")->fetch();
+        $stats['total'] = (int)($row['total'] ?? 0);
+        $stats['open'] = (int)($row['open_count'] ?? 0);
+        $stats['in_progress'] = (int)($row['in_progress'] ?? 0);
+        $stats['waiting_customer'] = (int)($row['waiting'] ?? 0);
+        $stats['resolved'] = (int)($row['resolved'] ?? 0);
+        $stats['closed'] = (int)($row['closed'] ?? 0);
+
+        $catRows = $this->db->query("SELECT category, COUNT(*) as cnt FROM support_tickets GROUP BY category")->fetchAll();
+        $stats['by_category'] = [];
+        foreach ($catRows as $r) {
+            $stats['by_category'][$r['category']] = (int) $r['cnt'];
         }
 
-        // Ensure replier is authorized
-        if (!$this->auth->isAdmin() && $this->auth->id() != $userId) {
-            return false;
+        $priRows = $this->db->query("SELECT priority, COUNT(*) as cnt FROM support_tickets GROUP BY priority")->fetchAll();
+        $stats['by_priority'] = [];
+        foreach ($priRows as $r) {
+            $stats['by_priority'][$r['priority']] = (int) $r['cnt'];
         }
 
-        $replyData = [
-            'ticket_id' => $ticketId,
-            'user_id' => $userId,
-            'message' => $message,
-            'attachment' => $attachment
+        $avgRow = $this->db->query("
+            SELECT AVG(TIMESTAMPDIFF(HOUR, t.created_at, t.last_reply_at)) as avg_hours
+            FROM support_tickets t
+            WHERE t.last_reply_at IS NOT NULL AND t.reply_count > 1
+        ")->fetch();
+        $stats['avg_response_hours'] = round((float)($avgRow['avg_hours'] ?? 0), 1);
+
+        $stats['resolution_rate'] = $stats['total'] > 0
+            ? round((($stats['resolved'] + $stats['closed']) / $stats['total']) * 100, 1)
+            : 0;
+
+        return $stats;
+    }
+
+    public function getTicketCount(int $userId): int
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM support_tickets WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getUserTicketStats(int $userId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT
+                COUNT(*) as total,
+                SUM(status='open') as open_count,
+                SUM(status='in_progress') as in_progress,
+                SUM(status IN ('resolved','closed')) as resolved
+            FROM support_tickets WHERE user_id = ?
+        ");
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch();
+        return [
+            'total' => (int)($row['total'] ?? 0),
+            'open' => (int)($row['open_count'] ?? 0),
+            'in_progress' => (int)($row['in_progress'] ?? 0),
+            'resolved' => (int)($row['resolved'] ?? 0),
         ];
-
-        $replyId = $this->replyModel->create($replyData);
-        
-        // Update ticket updated_at timestamp
-        $this->ticketModel->update($ticketId, []); 
-
-        return $replyId;
     }
 }

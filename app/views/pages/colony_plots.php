@@ -227,8 +227,11 @@
                             <div class="d-flex gap-1">
                                 <?php if (($plot['status'] ?? '') === 'available'): ?>
                                     <a href="<?= BASE_URL ?>/plot/<?= $plot['id'] ?>" class="btn btn-sm btn-outline-primary flex-grow-1">
-                                        <i class="fas fa-info-circle"></i> View Details
+                                        <i class="fas fa-info-circle"></i> View
                                     </a>
+                                    <button class="btn btn-sm btn-compare" data-id="<?= $plot['id'] ?>" onclick="addToCompare(<?= $plot['id'] ?>)" title="Compare">
+                                        <i class="fas fa-balance-scale"></i>
+                                    </button>
                                     <button class="btn btn-sm btn-outline-danger" data-id="<?= $plot['id'] ?>" title="Favourite" onclick="togglePlotFav(this)">
                                         <i class="far fa-heart"></i>
                                     </button>
@@ -246,6 +249,38 @@
     <?php endif; ?>
 </div>
 
+<!-- Floating Compare Bar -->
+<div id="compare-bar" class="compare-bar" style="display:none;">
+    <div class="compare-bar-inner">
+        <span class="compare-bar-count"><i class="fas fa-balance-scale me-1"></i> <span id="compare-count">0</span> plots selected</span>
+        <div class="compare-bar-actions">
+            <a href="<?= BASE_URL ?>/compare" class="btn btn-sm btn-primary rounded-3 px-3 fw-semibold">Compare Now</a>
+            <button onclick="clearCompare()" class="btn btn-sm btn-outline-light rounded-3 px-3">Clear</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.compare-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+    background: linear-gradient(135deg, #1e3a5f, #2563eb);
+    color: #fff; padding: 12px 20px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    animation: slideUp 0.3s ease;
+}
+.compare-bar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.compare-bar-count { font-weight: 600; font-size: 0.95rem; }
+.compare-bar-actions { display: flex; gap: 8px; }
+.btn-compare {
+    background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;
+    border-radius: 8px; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
+}
+.btn-compare:hover, .btn-compare.active {
+    background: #2563eb; color: #fff; border-color: #2563eb;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+</style>
+
 <script>
 function setFilter(name, value) {
     const form = document.getElementById('filterForm');
@@ -256,23 +291,77 @@ function setFilter(name, value) {
     form.appendChild(input);
     form.submit();
 }
+
 function togglePlotFav(btn) {
     const id = btn.dataset.id;
     if (!id) return;
     const icon = btn.querySelector('i');
     const isFav = icon.classList.contains('fas');
-    fetch(<?= json_encode(BASE_URL . '/dashboard/favorites/' . (isset($_SESSION['user_id']) ? 'add' : 'add')) ?>, {
+    fetch('<?= BASE_URL ?>/dashboard/favorites/add', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'property_id=' + id
     }).then(r => r.json()).then(d => {
         if (d.success) {
             icon.className = isFav ? 'far fa-heart' : 'fas fa-heart';
-        } else if (d.message.includes('login')) {
-            window.location.href = <?= json_encode(BASE_URL . '/login') ?>;
+        } else if (d.message && d.message.includes('login')) {
+            window.location.href = '<?= BASE_URL ?>/login';
         } else {
             icon.className = 'far fa-heart';
         }
     }).catch(() => {});
 }
+
+/* --- Compare Feature --- */
+function addToCompare(plotId) {
+    fetch('<?= BASE_URL ?>/compare/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-Token': '<?= $csrf_token ?? '' ?>'
+        },
+        body: 'plot_id=' + plotId
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            refreshCompareBar();
+            /* highlight the button */
+            document.querySelectorAll('.btn-compare[data-id="' + plotId + '"]').forEach(b => b.classList.add('active'));
+        } else {
+            alert(d.message);
+        }
+    });
+}
+
+function clearCompare() {
+    fetch('<?= BASE_URL ?>/compare/clear', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-Token': '<?= $csrf_token ?? '' ?>'
+        }
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            document.getElementById('compare-bar').style.display = 'none';
+            document.querySelectorAll('.btn-compare').forEach(b => b.classList.remove('active'));
+        }
+    });
+}
+
+function refreshCompareBar() {
+    fetch('<?= BASE_URL ?>/compare/count')
+    .then(r => r.json())
+    .then(d => {
+        var bar = document.getElementById('compare-bar');
+        var count = d.count || 0;
+        document.getElementById('compare-count').textContent = count;
+        bar.style.display = count > 0 ? 'block' : 'none';
+    });
+}
+
+/* Load compare bar state on page load */
+document.addEventListener('DOMContentLoaded', function() { refreshCompareBar(); });
 </script>
