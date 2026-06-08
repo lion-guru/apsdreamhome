@@ -99,7 +99,7 @@ assertTrue(strpos($properties, 'data-caption=') !== false, 'properties.php has d
 echo "\n[9] Layout includes\n";
 $baseLayout = file_get_contents(BASE_PATH . '/app/views/layouts/base.php');
 assertTrue(strpos($baseLayout, 'image-gallery.js') !== false, 'base.php includes image-gallery.js');
-assertTrue(strpos($baseLayout, 'image-gallery.css') !== false, 'base.php includes image-gallery.css');
+assertTrue(strpos($baseLayout, 'image-gallery.css') !== false || strpos($baseLayout, 'aps-components.css') !== false, 'base.php includes image-gallery.css or consolidated aps-components.css');
 
 // Group 10: URL pattern
 echo "\n[10] URL pattern\n";

@@ -186,6 +186,102 @@ $router->get('/rental-yield-calculator', 'Front\\PageController@rentalYieldCalcu
 $router->get('/property-tax-calculator', 'Front\\PageController@propertyTaxCalculator');
 $router->get('/rera-lookup', 'Front\\PageController@reraLookup');
 
+// Free Tools (new)
+$router->get('/tools/plot-converter', 'Front\\PageController@plotConverter');
+$router->get('/tools/valuation-calculator', 'Front\\PageController@valuationCalculator');
+
+// Free Tools API
+$router->get('/api/tools/convert-area', function () {
+    $value = floatval($_GET['value'] ?? 0);
+    $from  = $_GET['from'] ?? 'sqft';
+    $to    = $_GET['to'] ?? 'sqm';
+    $rates = [
+        'sqft' => 1, 'sqm' => 0.092903, 'acre' => 43560, 'hectare' => 107639,
+        'bigha' => 27000, 'bigha_bi' => 27220, 'gaj' => 9, 'katha' => 1361,
+        'marla' => 272.25, 'guntha' => 1089, 'ground' => 2400,
+    ];
+    $labels = [
+        'sqft' => 'Square Feet', 'sqm' => 'Square Meter', 'acre' => 'Acre',
+        'hectare' => 'Hectare', 'bigha' => 'Bigha (UP)', 'bigha_bi' => 'Bigha (Bihar)',
+        'gaj' => 'Gaj', 'katha' => 'Katha', 'marla' => 'Marla',
+        'guntha' => 'Guntha', 'ground' => 'Ground',
+    ];
+    if (!isset($rates[$from]) || !isset($rates[$to])) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Invalid unit']);
+        exit;
+    }
+    $sqftValue = $value * $rates[$from];
+    $result    = $sqftValue / $rates[$to];
+    $formula   = "$value {$labels[$from]} × (" . round(1 / $rates[$from], 6) . " sqft/{$labels[$from]}) ÷ (" . round(1 / $rates[$to], 6) . " sqft/{$labels[$to]})";
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => true,
+        'value'   => $value,
+        'from'    => $from,
+        'from_label' => $labels[$from],
+        'to'      => $to,
+        'to_label' => $labels[$to],
+        'result'  => round($result, 4),
+        'formula' => $formula,
+    ]);
+    exit;
+});
+
+$router->post('/api/tools/estimate-value', function () {
+    $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+    $location   = intval($input['location'] ?? 0);
+    $type       = $input['type'] ?? 'plot';
+    $area       = floatval($input['area'] ?? 0);
+    $bedrooms   = intval($input['bedrooms'] ?? 0);
+    $age        = intval($input['age'] ?? 0);
+    $condition  = $input['condition'] ?? 'new';
+    if ($area <= 0) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Area must be greater than 0']);
+        exit;
+    }
+    $baseRates = [
+        3000 => 2800, 5 => 3200, 2 => 4500, 7 => 3800, 10 => 3500,
+        4 => 4200, 14 => 4000, 12 => 3600, 91 => 5500, 90 => 6000,
+    ];
+    $rate = $baseRates[$location] ?? 2500;
+    $typeMultipliers = [
+        'plot' => 1.0, 'house' => 1.25, 'flat' => 1.15,
+        'shop' => 1.5, 'farmhouse' => 1.3,
+    ];
+    $typeMul = $typeMultipliers[$type] ?? 1.0;
+    if ($bedrooms > 0) {
+        $typeMul += ($bedrooms - 2) * 0.03;
+    }
+    $ageFactor = 1.0;
+    if ($age <= 5) $ageFactor = 1.0;
+    elseif ($age <= 10) $ageFactor = 0.95;
+    elseif ($age <= 20) $ageFactor = 0.85;
+    else $ageFactor = 0.75;
+    $condFactors = ['new' => 1.0, 'old' => 0.85, 'renovated' => 0.95];
+    $condFactor = $condFactors[$condition] ?? 1.0;
+    $pricePerSqft = $rate * $typeMul * $ageFactor * $condFactor;
+    $estimated    = $pricePerSqft * $area;
+    $minPrice     = $estimated * 0.85;
+    $maxPrice     = $estimated * 1.15;
+    $confidence   = 60;
+    if ($location > 0) $confidence += 10;
+    if ($type !== 'plot') $confidence += 5;
+    if ($age < 5) $confidence += 5;
+    $confidence = min($confidence, 95);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success'        => true,
+        'min_price'      => round($minPrice),
+        'max_price'      => round($maxPrice),
+        'price_per_sqft' => round($pricePerSqft),
+        'estimated'      => round($estimated),
+        'confidence'     => $confidence,
+    ]);
+    exit;
+});
+
 // MLM & AI Dashboard Routes
 $router->get('/mlm-dashboard', 'MLM\MLMDashboardController@dashboard');
 $router->get('/ai-dashboard', 'App\\Http\\Controllers\\AIDashboardController@index');
@@ -1092,6 +1188,9 @@ $router->post('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMCon
 $router->get('/admin/mlm/commission', 'App\Http\Controllers\Admin\MLMController@commission');
 $router->get('/admin/mlm/network', 'App\Http\Controllers\Admin\MLMController@network');
 $router->get('/admin/mlm/payouts', 'App\Http\Controllers\Admin\MLMController@payouts');
+$router->get('/admin/mlm/tree', 'App\Http\Controllers\Admin\MLMController@tree');
+$router->get('/admin/mlm/genealogy', 'App\Http\Controllers\Admin\MLMController@genealogy');
+$router->get('/admin/mlm/ranks', 'App\Http\Controllers\Admin\MLMController@ranks');
 
 // MLM Settings & Rank Evaluation
 $router->get('/admin/mlm-settings/levels', 'App\Http\Controllers\Admin\MLMSettingsController@levels');
@@ -1719,6 +1818,9 @@ $router->get('/admin/sales/refunds',                              'App\\Http\\Co
 $router->get('/admin/sales/rera',                                 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@reraCompliance');
 $router->post('/admin/sales/rera/store',                          'App\\Http\\Controllers\\Admin\\BookingLifecycleController@reraComplianceStore');
 
+$router->get('/admin/sales/bookings/{id}/registry-check',       'App\\Http\\Controllers\\Admin\\BookingLifecycleController@registryCheck');
+$router->post('/admin/sales/bookings/{id}/generate-noc',        'App\\Http\\Controllers\\Admin\\BookingLifecycleController@generateNoc');
+
 // ============================================================
 // MODULE 3: MONEY WORKFLOW + ACCOUNTING
 // URL prefix: /admin/finance/*
@@ -1795,6 +1897,20 @@ $router->post('/admin/finance/template-delete',                                 
 
 // Voucher audit log
 $router->get('/admin/finance/voucher-log',                                        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@voucherLog');
+
+// EMI Penalty Engine
+$router->get('/admin/finance/penalties',                                          'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@penaltySummary');
+$router->post('/admin/finance/penalties/apply',                                   'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@applyPenalties');
+
+// On-Field Cash Collection & Reconciliation
+$router->get('/admin/finance/collections',                                        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@collections');
+$router->get('/admin/finance/collection-form',                                    'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@collectionForm');
+$router->post('/admin/finance/collections/store',                                 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@collectionStore');
+$router->post('/admin/finance/collections/verify',                                'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@collectionVerify');
+$router->post('/admin/finance/collections/reject',                                'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@collectionReject');
+$router->get('/admin/finance/reconciliation-collections',                         'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationCollections');
+$router->post('/admin/finance/reconciliation-collections/start',                  'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationCollectionsStart');
+$router->post('/admin/finance/reconciliation-collections/close',                  'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationCollectionsClose');
 
 // ============================================================
 // ADMIN LAND MANAGEMENT
@@ -2223,6 +2339,10 @@ $router->post('/admin/mlm-realestate/bookings/store', 'Admin\MLMRealEstateContro
 $router->get('/admin/mlm-realestate/salary', 'Admin\MLMRealEstateController@salaryTracker');
 $router->get('/admin/mlm-realestate/salary/evaluate', 'Admin\MLMRealEstateController@evaluateSalary');
 $router->get('/admin/mlm-realestate/cron', 'Admin\MLMRealEstateController@runCron');
+$router->post('/admin/mlm-realestate/salary/process', 'Admin\MLMRealEstateController@processMonthlyPayouts');
+$router->get('/admin/mlm-realestate/salary/diagnostics', 'Admin\MLMRealEstateController@salaryDiagnostics');
+$router->get('/admin/mlm-realestate/rera/status', 'Admin\MLMRealEstateController@reraStatus');
+$router->get('/admin/mlm-realestate/rera/diagnostics', 'Admin\MLMRealEstateController@reraDiagnostics');
 
 // Language switcher
 $router->get('/language/set/{lang}', 'Front\\PageController@setLanguage');
@@ -3182,10 +3302,10 @@ $router->post('/admin/whatsapp/templates/sync', 'App\\Http\\Controllers\\Admin\\
 // ============================================================
 
 // --- Analytics\ReportController ---
-$router->get('/admin/analytics/reports', 'Analytics\\ReportController@index');
-$router->get('/admin/analytics/reports/sales', 'Analytics\\ReportController@sales');
-$router->get('/admin/analytics/reports/properties', 'Analytics\\ReportController@properties');
-$router->get('/admin/analytics/reports/user-activity', 'Analytics\\ReportController@userActivity');
+$router->get('/admin/analytics/reports', 'App\\Http\\Controllers\\Reports\\ReportController@dashboard');
+$router->get('/admin/analytics/reports/sales', 'App\\Http\\Controllers\\Reports\\ReportController@sales');
+$router->get('/admin/analytics/reports/properties', 'App\\Http\\Controllers\\Reports\\ReportController@property');
+$router->get('/admin/analytics/reports/user-activity', 'App\\Http\\Controllers\\Reports\\ReportController@userActivity');
 
 // --- Associate\AssociateController ---
 $router->get('/admin/associate/manage', 'Associate\\AssociateController@dashboard');

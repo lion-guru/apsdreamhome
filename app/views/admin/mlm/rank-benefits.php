@@ -13,7 +13,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <?php foreach ($rankBenefits as $rb):
                 $color = (string)($rb['color_code'] ?? '#94a3b8');
                 $icon  = (string)($rb['badge_icon'] ?? 'fa-user');
-                $benefits = json_decode($rb['benefits'] ?? '{}', true) ?: [];
+                $benefits = json_decode($rb['perks'] ?? '{}', true) ?: [];
             ?>
                 <div class="col-md-6 col-lg-4">
                     <div class="aps-cp-rank-card">
@@ -22,37 +22,33 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="aps-cp-rank-body">
                             <h4 class="m-0 mb-1"><?= htmlspecialchars(ucfirst((string)$rb['rank_name'])) ?></h4>
-                            <small class="text-muted">Tier <?= (int)$rb['tier_order'] ?></small>
+                            <small class="text-muted">Tier <?= (int)$rb['rank_order'] ?></small>
                             <hr class="my-2">
                             <table class="table table-sm m-0">
                                 <tbody>
                                     <tr>
                                         <th>Direct %</th>
-                                        <td class="text-end"><?= number_format((float)$rb['direct_commission_pct'], 2) ?>%</td>
+                                        <td class="text-end"><?= number_format((float)$rb['direct_sale_pct'], 2) ?>%</td>
                                     </tr>
                                     <tr>
                                         <th>L1 %</th>
-                                        <td class="text-end"><?= number_format((float)$rb['level1_pct'], 2) ?>%</td>
+                                        <td class="text-end"><?= number_format((float)$rb['l1_pct'], 2) ?>%</td>
                                     </tr>
                                     <tr>
                                         <th>L2 %</th>
-                                        <td class="text-end"><?= number_format((float)$rb['level2_pct'], 2) ?>%</td>
+                                        <td class="text-end"><?= number_format((float)$rb['l2_pct'], 2) ?>%</td>
                                     </tr>
                                     <tr>
                                         <th>L3 %</th>
-                                        <td class="text-end"><?= number_format((float)$rb['level3_pct'], 2) ?>%</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Bonus</th>
-                                        <td class="text-end">&#8377;<?= number_format((float)$rb['rank_bonus_amount']) ?></td>
+                                        <td class="text-end"><?= number_format((float)$rb['l3_pct'], 2) ?>%</td>
                                     </tr>
                                     <tr>
                                         <th>Qualifying Volume</th>
-                                        <td class="text-end">&#8377;<?= number_format((float)$rb['qualifying_volume']) ?></td>
+                                        <td class="text-end">&#8377;<?= number_format((float)($rb['min_qualifying_volume'] ?? 0)) ?></td>
                                     </tr>
                                     <tr>
                                         <th>Legs Required</th>
-                                        <td class="text-end"><?= (int)$rb['legs_required'] ?></td>
+                                        <td class="text-end"><?= (int)($rb['min_leg_count'] ?? 0) ?></td>
                                     </tr>
                                 </tbody>
                             </table>

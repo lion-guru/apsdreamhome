@@ -464,6 +464,87 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
         exit;
     }
 
+    public function processMonthlyPayouts()
+    {
+        $this->requireAdmin();
+        try {
+            $salaryService = new LeadershipSalaryService();
+            $result = $salaryService->processMonthlyPayouts();
+            $_SESSION['flash_message'] = 'Monthly payouts processed: ' . ($result['processed'] ?? 0) . ' entries.';
+            $_SESSION['flash_type'] = 'success';
+        } catch (\Exception $e) {
+            error_log('[MLMRealEstateController::processMonthlyPayouts] ' . $e->getMessage());
+            $_SESSION['flash_message'] = 'Error processing payouts: ' . $e->getMessage();
+            $_SESSION['flash_type'] = 'danger';
+        }
+        header('Location: ' . BASE_URL . '/admin/mlm-realestate/salary');
+        exit;
+    }
+
+    public function salaryDiagnostics()
+    {
+        $this->requireAdmin();
+        try {
+            $salaryService = new LeadershipSalaryService();
+            $db = Database::getInstance()->getConnection();
+            $activeTrackers = $db->query("SELECT COUNT(*) as c FROM salary_tracker WHERE status = 'active'")->fetch()['c'] ?? 0;
+            $totalPaid = $db->query("SELECT COALESCE(SUM(amount_paid),0) as c FROM salary_tracker WHERE status = 'paid'")->fetch()['c'] ?? 0;
+            $result = [
+                'active_trackers' => $activeTrackers,
+                'total_paid' => $totalPaid,
+                'service_status' => 'ok',
+            ];
+            header('Content-Type: application/json');
+            echo json_encode($result);
+        } catch (\Exception $e) {
+            error_log('[MLMRealEstateController::salaryDiagnostics] ' . $e->getMessage());
+            header('Content-Type: application/json');
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function reraStatus()
+    {
+        $this->requireAdmin();
+        try {
+            $db = Database::getInstance()->getConnection();
+            $pending = $db->query("SELECT COUNT(*) as c FROM rera_requests WHERE status = 'pending'")->fetch()['c'] ?? 0;
+            $approved = $db->query("SELECT COUNT(*) as c FROM rera_requests WHERE status = 'approved'")->fetch()['c'] ?? 0;
+            $rejected = $db->query("SELECT COUNT(*) as c FROM rera_requests WHERE status = 'rejected'")->fetch()['c'] ?? 0;
+            header('Content-Type: application/json');
+            echo json_encode([
+                'pending' => $pending,
+                'approved' => $approved,
+                'rejected' => $rejected,
+                'total' => $pending + $approved + $rejected,
+            ]);
+        } catch (\Exception $e) {
+            error_log('[MLMRealEstateController::reraStatus] ' . $e->getMessage());
+            header('Content-Type: application/json');
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function reraDiagnostics()
+    {
+        $this->requireAdmin();
+        try {
+            $reraService = new RERAComplianceService();
+            $db = Database::getInstance()->getConnection();
+            $recentRequests = $db->query("SELECT id, status, rera_number, application_date FROM rera_requests ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
+            header('Content-Type: application/json');
+            echo json_encode([
+                'service' => 'RERAComplianceService',
+                'status' => 'ok',
+                'recent_requests' => $recentRequests,
+            ]);
+        } catch (\Exception $e) {
+            error_log('[MLMRealEstateController::reraDiagnostics] ' . $e->getMessage());
+            header('Content-Type: application/json');
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+    }
+
     public function rejectBooking(int $id)
     {
         $this->requireAdmin();

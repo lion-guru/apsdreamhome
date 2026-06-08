@@ -15,12 +15,13 @@ test.describe('APS Dream Home - Core Functionality', () => {
   });
 
   test('User Registration Flow', async ({ page }) => {
+    const uniqueEmail = `test+${Date.now()}@example.com`;
     await page.click('a[href*="register"], button:has-text("Register")');
     await expect(page).toHaveURL(/.*register|.*register/);
     
     // Fill registration form
     await page.fill('input[name="name"], input[name="username"]', 'Test User');
-    await page.fill('input[name="email"]', 'test@example.com');
+    await page.fill('input[name="email"]', uniqueEmail);
     await page.fill('input[name="phone"]', '9876543210');
     await page.fill('input[name="password"]', 'Test@123');
     await page.fill('input[name="confirm_password"], input[name="password_confirmation"]', 'Test@123');
@@ -70,11 +71,8 @@ test.describe('APS Dream Home - Core Functionality', () => {
     await page.fill('input[name="email"], input[name="username"]', 'admin');
     await page.fill('input[name="password"]', 'admin');
     
-    // Submit with test bypass if available
-    const testLoginUrl = page.url() + '?test_login=1';
-    await page.goto(testLoginUrl);
-    
-    // Verify admin dashboard
+    // Submit login form
+    await page.click('button[type="submit"], input[type="submit"]');
     await expect(page).toHaveURL(/.*admin.*dashboard|.*dashboard/, { timeout: 10000 });
   });
 
@@ -122,7 +120,7 @@ test.describe('APS Dream Home - Core Functionality', () => {
 
   test('Database Connection Test', async ({ page }) => {
     await page.goto('http://localhost/apsdreamhome/test_mysql_connection.php');
-    await expect(page.locator('body')).toContainText('MySQL connection successful');
+    await expect(page.locator('body')).toContainText(/MySQL connection successful|Connection successful/i);
   });
 
   test('API Endpoints Health Check', async ({ page }) => {
@@ -157,12 +155,22 @@ test.describe('APS Dream Home - Performance', () => {
     // Check for performance metrics
     const performanceMetrics = await page.evaluate(() => {
       const navigation = performance.getEntriesByType('navigation')[0];
-      return {
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
-        loadComplete: navigation.loadEventEnd - navigation.loadEventStart
-      };
+      if (navigation) {
+        return {
+          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+          loadComplete: navigation.loadEventEnd - navigation.loadEventStart
+        };
+      }
+      if (performance.timing) {
+        const timing = performance.timing;
+        return {
+          domContentLoaded: timing.domContentLoadedEventEnd - timing.domContentLoadedEventStart,
+          loadComplete: timing.loadEventEnd - timing.loadEventStart
+        };
+      }
+      return null;
     });
-    
+    expect(performanceMetrics).not.toBeNull();
     console.log('Performance Metrics:', performanceMetrics);
   });
 

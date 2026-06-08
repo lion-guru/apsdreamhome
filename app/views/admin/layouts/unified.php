@@ -168,6 +168,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
 <body>
     <!-- Sidebar -->
     <?php include __DIR__ . '/rbac_sidebar.php'; ?>
+    <div class="sidebar-overlay" onclick="document.getElementById('sidebarMenu').classList.remove('show')"></div>
 
     <!-- Main Content -->
     <main class="main-content">
