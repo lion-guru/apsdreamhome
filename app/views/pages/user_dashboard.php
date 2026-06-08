@@ -11,6 +11,7 @@ $userDocuments = $userDocuments ?? [];
 $recentPayments = $recentPayments ?? [];
 $savedCount = $savedCount ?? 0;
 $twoFactorEnabled = $twoFactorEnabled ?? false;
+$kycStatus = $kycStatus ?? 'not_started';
 ?>
 
 <div class="aps-cp-hero">
@@ -572,6 +573,59 @@ $dashBookingCount = count($dashBookings);
                     <a href="<?= BASE_URL ?>/user/two-factor" class="btn btn-sm btn-primary w-100">
                         <i class="fas fa-shield-alt me-1"></i> <?= __('dash_btn_enable_2fa', null, 'Enable 2FA') ?>
                     </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php
+        $kycBg = match($kycStatus) {
+            'approved' => 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)',
+            'pending' => 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+            'rejected' => 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+            default => 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)'
+        };
+        $kycIcon = match($kycStatus) {
+            'approved' => 'fas fa-check-circle',
+            'pending' => 'fas fa-clock',
+            'rejected' => 'fas fa-times-circle',
+            default => 'fas fa-id-card'
+        };
+        $kycColor = match($kycStatus) {
+            'approved' => 'success',
+            'pending' => 'warning',
+            'rejected' => 'danger',
+            default => 'primary'
+        };
+        $kycLabel = match($kycStatus) {
+            'approved' => 'KYC Verified',
+            'pending' => 'KYC Under Review',
+            'rejected' => 'KYC Rejected',
+            default => 'KYC Not Completed'
+        };
+        $kycDesc = match($kycStatus) {
+            'approved' => 'Your identity is verified. All features are unlocked.',
+            'pending' => 'Your documents are being reviewed. This usually takes 1-2 business days.',
+            'rejected' => 'Your KYC was rejected. Please re-submit with correct documents.',
+            default => 'Complete your KYC to unlock property bookings, loans, and payouts.'
+        };
+        ?>
+        <div class="aps-cp-card mt-4" style="background: <?= $kycBg ?>;">
+            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <h5><i class="fas fa-id-card text-<?= $kycColor ?>"></i> <?= $kycLabel ?></h5>
+            </div>
+            <div class="aps-cp-card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="aps-cp-stat-icon" style="background: var(--aps-cp-<?= $kycColor ?>-light, #f0f4ff); color: var(--aps-cp-<?= $kycColor ?>, #4f46e5);"><i class="<?= $kycIcon ?>"></i></div>
+                    <div class="ms-3">
+                        <p class="mb-0 fw-bold text-<?= $kycColor ?>"><?= $kycLabel ?></p>
+                        <small class="text-muted"><?= $kycDesc ?></small>
+                    </div>
+                </div>
+                <?php if ($kycStatus !== 'approved'): ?>
+                <a href="<?= BASE_URL ?>/user/kyc" class="btn btn-sm btn-<?= $kycStatus === 'rejected' ? 'warning' : 'primary' ?> w-100">
+                    <i class="fas fa-<?= $kycStatus === 'rejected' ? 'redo' : 'upload' ?> me-1"></i>
+                    <?= $kycStatus === 'rejected' ? 'Re-submit KYC' : 'Complete KYC' ?>
+                </a>
                 <?php endif; ?>
             </div>
         </div>

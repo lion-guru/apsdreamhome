@@ -38,7 +38,7 @@
                                     <td><?= htmlspecialchars($r['legal_name'] ?? '—') ?></td>
                                     <td><?= date('M j, Y', strtotime($r['created_at'] ?? 'now')) ?></td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/kyc/show/<?= $r['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-check"></i> Verify</a>
+                                        <a href="<?= BASE_URL ?>/admin/kyc/<?= (int)($r['id'] ?? 0) ?>" class="btn btn-sm btn-primary"><i class="fas fa-check"></i> Review</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
