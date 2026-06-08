@@ -85,6 +85,19 @@ class KycController extends AdminController
             $stmt->execute([$adminId, (int)$id]);
             if ($stmt->rowCount() > 0) {
                 $this->setFlash('success', 'KYC approved successfully');
+                // Send approval email
+                try {
+                    $row = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
+                    if (!empty($row['user_id'])) {
+                        $emailSvc = new \App\Services\EmailTemplateService();
+                        $pan = $this->db->fetchOne("SELECT pan_number FROM kyc_requests WHERE id = ?", [(int)$id]);
+                        $emailSvc->sendKycApproved((int)$row['user_id'], [
+                            'pan_number' => $pan['pan_number'] ?? 'XXXXX1234X',
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    error_log("[KycController] approve email failed: " . $e->getMessage());
+                }
             } else {
                 $this->setFlash('warning', 'KYC request was already processed');
             }
@@ -113,6 +126,18 @@ class KycController extends AdminController
             $stmt->execute([$adminId, $reason, (int)$id]);
             if ($stmt->rowCount() > 0) {
                 $this->setFlash('success', 'KYC rejected');
+                // Send rejection email
+                try {
+                    $row = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
+                    if (!empty($row['user_id'])) {
+                        $emailSvc = new \App\Services\EmailTemplateService();
+                        $emailSvc->sendKycRejected((int)$row['user_id'], [
+                            'rejection_reason' => $reason,
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    error_log("[KycController] reject email failed: " . $e->getMessage());
+                }
             } else {
                 $this->setFlash('warning', 'KYC request was already processed');
             }

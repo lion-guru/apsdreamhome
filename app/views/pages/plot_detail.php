@@ -133,6 +133,9 @@
                         <a href="<?= BASE_URL ?>/schedule-visit?plot=<?= $plot['id'] ?>" class="btn btn-outline-primary">
                             <i class="fas fa-calendar-check"></i> Schedule Site Visit
                         </a>
+                        <button type="button" class="btn btn-outline-info" id="addCompareBtn" onclick="addToCompare(<?= $plot['id'] ?? 0 ?>)">
+                            <i class="fas fa-balance-scale"></i> Add to Compare
+                        </button>
                     <?php else: ?>
                         <button class="btn btn-secondary btn-lg" disabled>
                             <i class="fas fa-lock"></i> Not Available
@@ -141,6 +144,9 @@
                             <i class="fas fa-search"></i> Find Similar Plots
                         </a>
                     <?php endif; ?>
+                </div>
+                <div class="text-center mt-2" id="compareMsg" style="display:none;">
+                    <small class="text-success"><i class="fas fa-check-circle"></i> Added to comparison! <a href="<?= BASE_URL ?>/compare">View Compare</a></small>
                 </div>
             </div>
 
@@ -226,3 +232,27 @@
     </div>
     <?php endif; ?>
 </div>
+
+<script>
+function addToCompare(plotId) {
+    fetch('<?= BASE_URL ?>/compare/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-Token': '<?= $csrf_token ?? '' ?>'
+        },
+        body: 'plot_id=' + plotId
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            document.getElementById('compareMsg').style.display = 'block';
+            document.getElementById('addCompareBtn').classList.add('active');
+            document.getElementById('addCompareBtn').innerHTML = '<i class="fas fa-check"></i> Added to Compare';
+        } else {
+            alert(d.message);
+        }
+    })
+    .catch(() => alert('Could not add to compare. Please try again.'));
+}
+</script>

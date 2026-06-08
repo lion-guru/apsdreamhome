@@ -476,6 +476,26 @@ class BookingLifecycleService
             $this->maybeAdvanceBookingStatus((int)$inst['booking_id']);
             $this->db->commit();
 
+            // Send payment receipt email
+            try {
+                $booking = $this->getBookingById((int)$inst['booking_id']);
+                if (!empty($booking['customer_id'])) {
+                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $emailSvc->sendPaymentReceipt((int)$booking['customer_id'], [
+                        'booking_number' => $booking['booking_number'] ?? '',
+                        'receipt_number' => $receiptNumber,
+                        'receipt_date' => $paidDate,
+                        'amount' => number_format($amount, 2),
+                        'payment_mode' => strtoupper($mode),
+                        'plot_number' => $booking['plot_number'] ?? '',
+                        'colony_name' => $booking['colony_name'] ?? '',
+                        'installment_number' => $inst['installment_number'] ?? '',
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                error_log("[BookingLifecycleService::recordPayment] email failed: " . $e->getMessage());
+            }
+
             return [
                 'success'        => true,
                 'receipt_id'     => $receiptId,
@@ -612,6 +632,21 @@ class BookingLifecycleService
             $ins->execute([$bookingId, $refundAmt, $cancellationCharge, $reason]);
             $refundId = (int)$this->db->lastInsertId();
             $this->db->commit();
+
+            // Send cancellation email
+            try {
+                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc->sendBookingCancellation((int)$booking['customer_id'], [
+                    'booking_number' => $booking['booking_number'] ?? '',
+                    'plot_number' => $booking['plot_number'] ?? '',
+                    'colony_name' => $booking['colony_name'] ?? '',
+                    'cancellation_reason' => $reason,
+                    'cancellation_charge' => number_format($cancellationCharge, 2),
+                    'refund_amount' => number_format($refundAmt, 2),
+                ]);
+            } catch (\Throwable $e) {
+                error_log("[BookingLifecycleService] cancelBooking email failed: " . $e->getMessage());
+            }
 
             return [
                 'success'    => true,

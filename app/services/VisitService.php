@@ -107,6 +107,31 @@ class VisitService
             $visitId = (int)$this->pdo->lastInsertId();
             $this->pdo->prepare("UPDATE visit_time_slots SET current_bookings = current_bookings + 1 WHERE id = ?")->execute([$slot['id']]);
             $this->pdo->commit();
+
+            // Send site visit confirmation email
+            try {
+                $customerId = $data['customer_id'] ?? 0;
+                if ($customerId > 0) {
+                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $propertyTitle = '';
+                    try {
+                        $pstmt = $this->pdo->prepare("SELECT title FROM user_properties WHERE id = ?");
+                        $pstmt->execute([$data['property_id']]);
+                        $prow = $pstmt->fetch();
+                        $propertyTitle = $prow['title'] ?? '';
+                    } catch (\Throwable $e) {}
+                    $emailSvc->sendSiteVisitConfirmed($customerId, [
+                        'property_name' => $propertyTitle,
+                        'visit_date' => date('d M Y', strtotime($data['visit_date'])),
+                        'visit_time' => date('h:i A', strtotime($data['visit_time'])),
+                        'address' => '',
+                        'what_to_bring' => 'Valid photo ID (Aadhaar/PAN), Property documents if available',
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                error_log("[VisitService::bookVisit] email failed: " . $e->getMessage());
+            }
+
             return ['success' => true, 'visit_id' => $visitId, 'visit_date' => $data['visit_date'], 'visit_time' => $data['visit_time']];
         } catch (\Throwable $e) {
             if ($this->pdo->inTransaction()) $this->pdo->rollBack();
