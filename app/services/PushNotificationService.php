@@ -155,12 +155,23 @@ class PushNotificationService
 
     private function sendWebPush(string $endpoint, string $p256dh, string $auth, string $payload): array
     {
-        $privateKey = $_ENV['VAPID_PRIVATE_KEY'] ?? '';
+        $privateKeyRaw = $_ENV['VAPID_PRIVATE_KEY'] ?? '';
         $publicKey = $_ENV['VAPID_PUBLIC_KEY'] ?? '';
         $subject = $_ENV['VAPID_SUBJECT'] ?? 'mailto:admin@apsdreamhome.com';
 
-        if (!$privateKey || !$publicKey) {
+        if (!$privateKeyRaw || !$publicKey) {
             return ['success' => false, 'status' => 'config_error', 'error' => 'VAPID keys not configured'];
+        }
+
+        // Handle PEM:file reference or raw base64url key
+        if (strpos($privateKeyRaw, 'PEM:') === 0) {
+            $pemFile = dirname(__DIR__, 2) . '/' . substr($privateKeyRaw, 4);
+            $privateKey = file_get_contents($pemFile);
+            if (!$privateKey) {
+                return ['success' => false, 'status' => 'config_error', 'error' => 'VAPID private key file not found: ' . $pemFile];
+            }
+        } else {
+            $privateKey = $privateKeyRaw;
         }
 
         $authKey = base64_decode(strtr($auth, '-_', '+/'));

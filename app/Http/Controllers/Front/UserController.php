@@ -550,6 +550,19 @@ class UserController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO support_ticket_replies (ticket_id, user_id, message, is_admin) VALUES (?, ?, ?, 0)");
             $stmt->execute([$ticketId, $user['id'], $message]);
 
+            // Send confirmation email
+            try {
+                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc->sendSupportTicketCreated((int)$user['id'], [
+                    'ticket_number' => 'TKT-' . str_pad($ticketId, 6, '0', STR_PAD_LEFT),
+                    'subject' => $subject,
+                    'description' => $message,
+                    'priority' => $priority,
+                ]);
+            } catch (\Throwable $e) {
+                error_log("[UserController::createTicket] email failed: " . $e->getMessage());
+            }
+
             $_SESSION['flash_success'] = 'Support ticket created successfully!';
         } catch (\Exception $e) {
             $_SESSION['flash_error'] = 'Failed to create ticket. Please try again.';
@@ -629,6 +642,20 @@ class UserController extends BaseController
         try {
             $service = new \App\Services\SupportTicketService();
             $ticket = $service->createTicket((int)$user['id'], $subject, $message, $category, $priority, $bookingId);
+
+            // Send confirmation email
+            try {
+                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc->sendSupportTicketCreated((int)$user['id'], [
+                    'ticket_number' => $ticket['ticket_number'],
+                    'subject' => $subject,
+                    'description' => $message,
+                    'priority' => $priority,
+                ]);
+            } catch (\Throwable $e) {
+                error_log("[UserController::storeSupportTicket] email failed: " . $e->getMessage());
+            }
+
             $_SESSION['flash_success'] = 'Ticket ' . $ticket['ticket_number'] . ' created successfully!';
             header('Location: ' . BASE_URL . '/user/support/' . $ticket['id']);
             exit;

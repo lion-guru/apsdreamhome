@@ -281,6 +281,28 @@ class AgreementController extends AdminController
             $stmt = $this->db->prepare("UPDATE agreements SET $setClause WHERE id = ?");
             $stmt->execute($params);
 
+            // Send status-based email notifications
+            try {
+                $agRow = $this->db->fetchOne("SELECT ag.*, pb.customer_id, pb.booking_number, p.plot_number, c.name as colony_name FROM agreements ag LEFT JOIN plot_bookings pb ON ag.booking_id = pb.id LEFT JOIN plots p ON ag.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id WHERE ag.id = ?", [(int)$id]);
+                if (!empty($agRow['customer_id'])) {
+                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $bookingData = [
+                        'booking_number' => $agRow['booking_number'] ?? '',
+                        'plot_number' => $agRow['plot_number'] ?? '',
+                        'colony_name' => $agRow['colony_name'] ?? '',
+                        'agreement_number' => $agRow['agreement_number'] ?? '',
+                        'total_value' => $agRow['total_value'] ?? 0,
+                    ];
+                    if ($newStatus === 'pending_signature') {
+                        $emailSvc->sendAgreementPending((int)$agRow['customer_id'], $bookingData);
+                    } elseif ($newStatus === 'signed') {
+                        $emailSvc->sendAgreementSigned((int)$agRow['customer_id'], $bookingData);
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log("[AgreementController] update email failed: " . $e->getMessage());
+            }
+
             $this->json(['success' => true, 'message' => 'Agreement updated to ' . ucfirst(str_replace('_', ' ', $newStatus))]);
         } catch (Exception $e) {
             $this->json(['success' => false, 'error' => 'Failed to update: ' . $e->getMessage()], 500);
@@ -406,19 +428,32 @@ class AgreementController extends AdminController
             $customerPhone = $bookingData['customer_phone'] ?? '';
 
             if (!empty($customerEmail)) {
-                $subject = 'Your Agreement - ' . ($doc['title'] ?? 'APS Dream Home');
-                $message = "Dear " . ($bookingData['customer_name'] ?? 'Customer') . ",\n\n";
-                $message .= "Please find your agreement document attached.\n\n";
-                $message .= "Document: " . $doc['title'] . "\n";
-                $message .= "Document No: " . $doc['document_code'] . "\n\n";
-                $message .= "You can download it from: " . (defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome') . "/admin/agreements/download/" . $id . "\n\n";
-                $message .= "Thank you,\n" . ($this->company['company_name'] ?? 'APS Dream Home');
-
+                // Send via EmailTemplateService (branded HTML email)
                 try {
-                    $stmt = $this->db->prepare("INSERT INTO email_queue (recipient_email, subject, body, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
-                    $stmt->execute([$customerEmail, $subject, $message]);
-                } catch (\Exception $e) {
-                    error_log("AgreementController.php: " . $e->getMessage());
+                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $emailSvc->sendAgreementPending(intval($bookingData['customer_id'] ?? 0), [
+                        'booking_number' => $doc['entity_id'] ?? '',
+                        'plot_number' => $bookingData['plot_number'] ?? '',
+                        'colony_name' => $bookingData['colony_name'] ?? '',
+                        'agreement_number' => $doc['document_code'] ?? '',
+                        'total_value' => $bookingData['total_value'] ?? 0,
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log("[AgreementController] sendToCustomer email fallback: " . $e->getMessage());
+                    // Fallback: queue plain email
+                    $subject = 'Your Agreement - ' . ($doc['title'] ?? 'APS Dream Home');
+                    $message = "Dear " . ($bookingData['customer_name'] ?? 'Customer') . ",\n\n";
+                    $message .= "Please find your agreement document attached.\n\n";
+                    $message .= "Document: " . $doc['title'] . "\n";
+                    $message .= "Document No: " . $doc['document_code'] . "\n\n";
+                    $message .= "You can download it from: " . (defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome') . "/admin/agreements/download/" . $id . "\n\n";
+                    $message .= "Thank you,\n" . ($this->company['company_name'] ?? 'APS Dream Home');
+                    try {
+                        $stmt2 = $this->db->prepare("INSERT INTO email_queue (recipient_email, subject, body, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
+                        $stmt2->execute([$customerEmail, $subject, $message]);
+                    } catch (\Exception $e2) {
+                        error_log("AgreementController: email_queue fallback failed: " . $e2->getMessage());
+                    }
                 }
             }
 

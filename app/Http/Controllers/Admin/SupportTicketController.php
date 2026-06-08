@@ -191,6 +191,19 @@ class SupportTicketController extends AdminController
                     'customer_id' => $data['customer_id']
                 ]);
 
+                // Send creation email to customer
+                try {
+                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $emailSvc->sendSupportTicketCreated((int)$data['customer_id'], [
+                        'ticket_number' => $ticketNumber,
+                        'subject' => $data['subject'],
+                        'description' => $data['description'],
+                        'priority' => $data['priority'],
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log("[SupportTicketController] store email failed: " . $e->getMessage());
+                }
+
                 return $this->jsonResponse([
                     'success' => true,
                     'message' => 'Support ticket created successfully',
@@ -529,6 +542,22 @@ class SupportTicketController extends AdminController
             $this->loggingService->logUserActivity($userId, 'support_ticket_reply', [
                 'ticket_id' => $ticketId,
             ]);
+
+            // Send reply email to customer
+            try {
+                $ticket = $this->db->fetchOne("SELECT st.user_id, st.ticket_number, st.subject FROM support_tickets st WHERE st.id = ?", [$ticketId]);
+                if (!empty($ticket['user_id'])) {
+                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $emailSvc->sendSupportTicketReply($ticket['user_id'], [
+                        'ticket_number' => $ticket['ticket_number'],
+                        'subject' => $ticket['subject'],
+                        'reply_message' => $message,
+                        'replied_by' => 'Support Team',
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                error_log("[SupportTicketController] reply email failed: " . $e->getMessage());
+            }
 
             $_SESSION['flash_success'] = 'Reply sent successfully!';
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $ticketId);

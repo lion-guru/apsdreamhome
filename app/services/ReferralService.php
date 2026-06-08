@@ -595,6 +595,19 @@ class ReferralService
                 "Referral commission for booking {$bookingNumber}"
             ]);
 
+            // Send referral commission email to referrer
+            try {
+                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc->sendReferralCommission($referrerId, [
+                    'referrer_name' => $referrer['name'] ?? 'User',
+                    'commission_amount' => number_format($commissionAmount, 2),
+                    'booking_number' => $bookingNumber,
+                    'booking_amount' => number_format($bookingAmount, 2),
+                ]);
+            } catch (\Throwable $e) {
+                error_log("[ReferralService] commission email failed: " . $e->getMessage());
+            }
+
             return [
                 'success' => true,
                 'referrer_name' => $referrer['name'] ?? 'User',

@@ -32,9 +32,18 @@ class PushSender
     {
         $this->db = Database::getInstance();
 
+        $privRaw = $_ENV['VAPID_PRIVATE_KEY'] ?? getenv('VAPID_PRIVATE_KEY') ?: '';
         $this->vapidPublicKey  = $this->decodeVapidKey($_ENV['VAPID_PUBLIC_KEY']  ?? getenv('VAPID_PUBLIC_KEY')  ?: '');
-        $this->vapidPrivateKey = $this->decodeVapidKey($_ENV['VAPID_PRIVATE_KEY'] ?? getenv('VAPID_PRIVATE_KEY') ?: '');
         $subject = $_ENV['VAPID_SUBJECT'] ?? getenv('VAPID_SUBJECT') ?: 'mailto:admin@apsdreamhome.com';
+
+        // Handle PEM:file reference
+        if (strpos($privRaw, 'PEM:') === 0) {
+            $pemFile = dirname(__DIR__, 2) . '/' . substr($privRaw, 4);
+            $pemContent = @file_get_contents($pemFile);
+            $this->vapidPrivateKey = $pemContent ? $this->decodeVapidKey($pemContent) : '';
+        } else {
+            $this->vapidPrivateKey = $this->decodeVapidKey($privRaw);
+        }
         $this->vapidSubject = $subject;
     }
 
