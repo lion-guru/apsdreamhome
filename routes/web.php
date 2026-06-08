@@ -3722,6 +3722,7 @@ $router->post('/admin/mlm/payouts/batches/{id}/approve',          'App\\Http\\Co
 $router->get('/admin/mlm/payouts/{id}/mark-paid',                 'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutPaidForm');
 $router->post('/admin/mlm/payouts/{id}/mark-paid',                'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutMarkPaid');
 $router->get('/admin/mlm/associate-ranks',                        'App\\Http\\Controllers\\Admin\\MLMCommissionController@associateRanks');
+$router->post('/admin/mlm/associate-ranks/promote-all',          'App\\Http\\Controllers\\Admin\\MLMCommissionController@promoteAll');
 $router->get('/admin/mlm/associate-ranks/{id}',                   'App\\Http\\Controllers\\Admin\\MLMCommissionController@associateRankView');
 $router->post('/admin/mlm/associate-ranks/{id}/promote',          'App\\Http\\Controllers\\Admin\\MLMCommissionController@manualPromote');
 $router->get('/admin/mlm/rank-benefits',                          'App\\Http\\Controllers\\Admin\\MLMCommissionController@rankBenefits');
