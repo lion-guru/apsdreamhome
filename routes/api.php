@@ -75,9 +75,6 @@ $router->get('/api/gemini/status', 'Api\GeminiApiController@getStatus');
 // Dependency Injection Container Routes
 require_once __DIR__ . '/container.php';
 
-// Core Functions Routes
-require_once __DIR__ . '/core-functions.php';
-
 // Request Middleware Routes
 require_once __DIR__ . '/request-middleware.php';
 
