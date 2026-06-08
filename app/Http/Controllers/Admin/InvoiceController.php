@@ -2,388 +2,345 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Core\Database\Database;
+use App\Services\Accounting\InvoiceService;
+use Exception;
 
-/**
- * Invoice Controller - Plot Booking Invoice Management
- * Generates and manages invoices for plot bookings, installments, and payments
- */
 class InvoiceController extends AdminController
 {
     protected $db;
+    protected $service;
 
     public function __construct()
     {
-        $this->db = Database::getInstance();
         parent::__construct();
+        try {
+            $this->db = \App\Core\Database\Database::getInstance();
+            if (method_exists($this->db, 'getPdo')) {
+                $this->db = $this->db->getPdo();
+            }
+        } catch (Exception $e) {
+            $this->db = null;
+        }
+        try {
+            $this->service = new InvoiceService($this->db instanceof \PDO ? $this->db : null);
+        } catch (Exception $e) {
+            $this->service = new InvoiceService();
+        }
     }
 
-    /**
-     * Display all invoices
-     * Route: /admin/invoices
-     */
+    private function safe(callable $fn, $fallback = null)
+    {
+        try {
+            return $fn();
+        } catch (Exception $e) {
+            return $fallback;
+        }
+    }
+
     public function index()
     {
         $this->requireAdmin();
-        try {
-            $conn = $this->db->getConnection();
-            
-            // Get all invoices with customer and property details
-            $sql = "SELECT i.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
-                    p.title as property_title, p.location as property_location,
-                    CASE i.status
-                        WHEN 'draft' THEN 'Draft'
-                        WHEN 'sent' THEN 'Sent'
-                        WHEN 'partial' THEN 'Partial Payment'
-                        WHEN 'paid' THEN 'Paid'
-                        WHEN 'overdue' THEN 'Overdue'
-                        WHEN 'cancelled' THEN 'Cancelled'
-                        ELSE i.status
-                    END as status_label
-                    FROM invoices i
-                    LEFT JOIN users c ON i.customer_id = c.id
-                    LEFT JOIN properties p ON i.property_id = p.id
-                    ORDER BY i.created_at DESC";
-            
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $invoices = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            
-            // Get invoice statistics
-            $stats = $this->getInvoiceStatistics();
-            
-            $data = [
-                'page_title' => 'Invoice Management',
-                'invoices' => $invoices,
-                'stats' => $stats
-            ];
-            
-            return $this->render('admin.invoices.index', $data);
-            
-        } catch (\Exception $e) {
-            return $this->render('admin.invoices.index', [
-                'page_title' => 'Invoice Management',
-                'invoices' => [],
-                'stats' => [],
-                'error' => $e->getMessage()
-            ]);
-        }
+        $stats = $this->safe(fn() => $this->service->getStats(), []);
+        $filters = [
+            'status' => $_GET['status'] ?? '',
+            'search' => $_GET['search'] ?? '',
+            'date_from' => $_GET['date_from'] ?? '',
+            'date_to' => $_GET['date_to'] ?? '',
+            'page' => $_GET['page'] ?? 1,
+            'per_page' => 20,
+        ];
+        $result = $this->safe(fn() => $this->service->listInvoices($filters), ['invoices' => [], 'total' => 0, 'page' => 1, 'total_pages' => 1]);
+
+        return $this->render('admin/invoices/index', [
+            'page_title' => 'Invoice Management',
+            'page_heading' => 'Invoice Management',
+            'stats' => $stats,
+            'invoices' => $result['invoices'],
+            'total' => $result['total'],
+            'page' => $result['page'],
+            'total_pages' => $result['total_pages'],
+            'filters' => $filters,
+        ]);
     }
 
-    /**
-     * Display create invoice form
-     * Route: /admin/invoices/create
-     */
     public function create()
     {
         $this->requireAdmin();
-        try {
-            $conn = $this->db->getConnection();
-            
-            // Get users for dropdown
-            $users = $conn->query("SELECT id, name, email, phone FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
-            
-            // Get properties for dropdown
-            $properties = $conn->query("SELECT id, title, location, price FROM properties WHERE status = 'available' ORDER BY title ASC")->fetchAll(\PDO::FETCH_ASSOC);
-            
-            // Generate invoice number
-            $invoiceNumber = 'INV-' . date('Ymd-His');
-            
-            $data = [
-                'page_title' => 'Create Invoice',
-                'users' => $users,
-                'properties' => $properties,
-                'invoice_number' => $invoiceNumber
-            ];
-            
-            return $this->render('admin.invoices.create', $data);
-            
-        } catch (\Exception $e) {
-            return $this->render('admin.invoices.create', [
-                'page_title' => 'Create Invoice',
-                'error' => $e->getMessage()
-            ]);
-        }
+        $users = $this->safe(fn() => $this->service->getUsers(), []);
+        $bookings = $this->safe(fn() => $this->service->getBookings(), []);
+        $invoiceNumber = $this->safe(fn() => $this->service->generateInvoiceNumber(), 'APS-INV-' . date('Ymd') . '-0001');
+
+        return $this->render('admin/invoices/create', [
+            'page_title' => 'Create Invoice',
+            'page_heading' => 'Create Invoice',
+            'users' => $users,
+            'bookings' => $bookings,
+            'invoice_number' => $invoiceNumber,
+            'company' => $this->service->getCompanyDetails(),
+        ]);
     }
 
-    /**
-     * Store new invoice
-     * Route: /admin/invoices/store
-     */
     public function store()
     {
         $this->requireAdmin();
+        $data = [
+            'client_id' => $_POST['client_id'] ?? null,
+            'client_type' => $_POST['client_type'] ?? 'customer',
+            'client_name' => $_POST['client_name'] ?? '',
+            'client_email' => $_POST['client_email'] ?? '',
+            'client_phone' => $_POST['client_phone'] ?? '',
+            'client_address' => $_POST['client_address'] ?? '',
+            'billing_address' => $_POST['billing_address'] ?? '',
+            'shipping_address' => $_POST['shipping_address'] ?? '',
+            'place_of_supply' => $_POST['place_of_supply'] ?? 'Uttar Pradesh',
+            'gstin' => $_POST['gstin'] ?? '',
+            'hsn_code' => $_POST['hsn_code'] ?? '',
+            'due_date' => $_POST['due_date'] ?? date('Y-m-d', strtotime('+30 days')),
+            'discount_amount' => $_POST['discount_amount'] ?? 0,
+            'status' => $_POST['status'] ?? 'draft',
+            'payment_terms' => $_POST['payment_terms'] ?? '',
+            'notes' => $_POST['notes'] ?? '',
+            'booking_id' => !empty($_POST['booking_id']) ? (int)$_POST['booking_id'] : null,
+            'items' => [],
+        ];
+
+        if (!empty($_POST['item_name']) && is_array($_POST['item_name'])) {
+            $count = count($_POST['item_name']);
+            for ($i = 0; $i < $count; $i++) {
+                if (empty($_POST['item_name'][$i])) continue;
+                $data['items'][] = [
+                    'item_type' => $_POST['item_type'][$i] ?? 'service',
+                    'item_name' => $_POST['item_name'][$i] ?? '',
+                    'item_description' => $_POST['item_description'][$i] ?? '',
+                    'quantity' => $_POST['item_quantity'][$i] ?? 1,
+                    'unit_price' => $_POST['item_unit_price'][$i] ?? 0,
+                    'discount_percent' => $_POST['item_discount'][$i] ?? 0,
+                    'tax_percent' => $_POST['item_tax'][$i] ?? 18,
+                    'sort_order' => $i + 1,
+                ];
+            }
+        }
+
+        if (empty($data['items'])) {
+            $subtotal = (float)($_POST['subtotal'] ?? 0);
+            if ($subtotal > 0) {
+                $data['subtotal'] = $subtotal;
+                $data['items'][] = [
+                    'item_type' => 'service',
+                    'item_name' => $_POST['item_name_text'] ?? 'Invoice Item',
+                    'item_description' => $_POST['item_description_text'] ?? '',
+                    'quantity' => 1,
+                    'unit_price' => $subtotal,
+                    'discount_percent' => 0,
+                    'tax_percent' => 18,
+                ];
+            }
+        }
+
         try {
-            $conn = $this->db->getConnection();
-            
-            $invoiceNumber = $_POST['invoice_number'] ?? 'INV-' . date('Ymd-His');
-            $customerId = $_POST['customer_id'] ?? 0;
-            $propertyId = $_POST['property_id'] ?? 0;
-            $amount = $_POST['amount'] ?? 0;
-            $dueDate = $_POST['due_date'] ?? date('Y-m-d', strtotime('+30 days'));
-            $description = $_POST['description'] ?? '';
-            $installmentNumber = $_POST['installment_number'] ?? 1;
-            $totalInstallments = $_POST['total_installments'] ?? 1;
-            
-            $sql = "INSERT INTO invoices 
-                    (invoice_number, customer_id, property_id, amount, due_date, description, 
-                     installment_number, total_installments, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', NOW())";
-            
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([
-                $invoiceNumber, $customerId, $propertyId, $amount, $dueDate, $description,
-                $installmentNumber, $totalInstallments
-            ]);
-            
-            redirect('/admin/invoices?success=Invoice created successfully');
+            $invoiceId = $this->service->createInvoice($data);
+            redirect(BASE_URL . '/admin/invoices/manage/' . $invoiceId . '?success=Invoice created successfully');
             exit;
-            
-        } catch (\Exception $e) {
-            redirect('/admin/invoices/create?error=' . urlencode($e->getMessage()));
+        } catch (Exception $e) {
+            redirect(BASE_URL . '/admin/invoices/manage/create?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
 
-    /**
-     * Display single invoice details
-     * Route: /admin/invoices/{id}
-     */
     public function show($id)
     {
         $this->requireAdmin();
-        try {
-            $conn = $this->db->getConnection();
-            
-            $sql = "SELECT i.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
-                    c.address as customer_address,
-                    p.title as property_title, p.location as property_location, p.price as property_price,
-                    CASE i.status
-                        WHEN 'draft' THEN 'Draft'
-                        WHEN 'sent' THEN 'Sent'
-                        WHEN 'partial' THEN 'Partial Payment'
-                        WHEN 'paid' THEN 'Paid'
-                        WHEN 'overdue' THEN 'Overdue'
-                        WHEN 'cancelled' THEN 'Cancelled'
-                        ELSE i.status
-                    END as status_label
-                    FROM invoices i
-                    LEFT JOIN users c ON i.customer_id = c.id
-                    LEFT JOIN properties p ON i.property_id = p.id
-                    WHERE i.id = ?";
-            
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([$id]);
-            $invoice = $stmt->fetch(\PDO::FETCH_ASSOC);
-            
-            if (!$invoice) {
-                redirect('/admin/invoices?error=Invoice not found');
-                exit;
-            }
-            
-            // Get payment history for this invoice
-            $payments = $conn->prepare("SELECT * FROM payments WHERE invoice_id = ? ORDER BY payment_date DESC");
-            $payments->execute([$id]);
-            $paymentHistory = $payments->fetchAll(\PDO::FETCH_ASSOC);
-            
-            $data = [
-                'page_title' => 'Invoice Details - ' . $invoice['invoice_number'],
-                'invoice' => $invoice,
-                'payment_history' => $paymentHistory
-            ];
-            
-            return $this->render('admin.invoices.show', $data);
-            
-        } catch (\Exception $e) {
-            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
+        $invoice = $this->service->getInvoice((int)$id);
+        if (!$invoice) {
+            redirect(BASE_URL . '/admin/invoices/manage?error=Invoice not found');
             exit;
         }
+
+        return $this->render('admin/invoices/show', [
+            'page_title' => 'Invoice ' . ($invoice['invoice_number'] ?? ''),
+            'page_heading' => 'Invoice Details',
+            'invoice' => $invoice,
+            'company' => $this->service->getCompanyDetails(),
+        ]);
     }
 
-    /**
-     * Display edit invoice form
-     * Route: /admin/invoices/{id}/edit
-     */
     public function edit($id)
     {
         $this->requireAdmin();
-        try {
-            $conn = $this->db->getConnection();
-            
-            // Get invoice details
-            $sql = "SELECT i.*, c.name as customer_name, p.title as property_title
-                    FROM invoices i
-                    LEFT JOIN users c ON i.customer_id = c.id
-                    LEFT JOIN properties p ON i.property_id = p.id
-                    WHERE i.id = ?";
-            
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([$id]);
-            $invoice = $stmt->fetch(\PDO::FETCH_ASSOC);
-            
-            if (!$invoice) {
-                redirect('/admin/invoices?error=Invoice not found');
-                exit;
-            }
-            
-            // Get users and properties for dropdown
-            $users = $conn->query("SELECT id, name, email, phone FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
-            $properties = $conn->query("SELECT id, title, location, price FROM properties ORDER BY title ASC")->fetchAll(\PDO::FETCH_ASSOC);
-            
-            $data = [
-                'page_title' => 'Edit Invoice',
-                'invoice' => $invoice,
-                'users' => $users,
-                'properties' => $properties
-            ];
-            
-            return $this->render('admin.invoices.edit', $data);
-            
-        } catch (\Exception $e) {
-            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
+        $invoice = $this->service->getInvoice((int)$id);
+        if (!$invoice) {
+            redirect(BASE_URL . '/admin/invoices/manage?error=Invoice not found');
             exit;
         }
+        $users = $this->safe(fn() => $this->service->getUsers(), []);
+        $bookings = $this->safe(fn() => $this->service->getBookings(), []);
+
+        return $this->render('admin/invoices/edit', [
+            'page_title' => 'Edit Invoice ' . ($invoice['invoice_number'] ?? ''),
+            'page_heading' => 'Edit Invoice',
+            'invoice' => $invoice,
+            'users' => $users,
+            'bookings' => $bookings,
+            'company' => $this->service->getCompanyDetails(),
+        ]);
     }
 
-    /**
-     * Update invoice
-     * Route: /admin/invoices/{id}/update
-     */
     public function update($id)
     {
         $this->requireAdmin();
+        $pdo = $this->db instanceof \PDO ? $this->db : (\App\Core\Database\Database::getInstance())->getConnection();
+
+        $data = [
+            'client_id' => $_POST['client_id'] ?? null,
+            'client_type' => $_POST['client_type'] ?? 'customer',
+            'client_name' => $_POST['client_name'] ?? '',
+            'client_email' => $_POST['client_email'] ?? '',
+            'client_phone' => $_POST['client_phone'] ?? '',
+            'client_address' => $_POST['client_address'] ?? '',
+            'billing_address' => $_POST['billing_address'] ?? '',
+            'shipping_address' => $_POST['shipping_address'] ?? '',
+            'place_of_supply' => $_POST['place_of_supply'] ?? 'Uttar Pradesh',
+            'gstin' => $_POST['gstin'] ?? '',
+            'hsn_code' => $_POST['hsn_code'] ?? '',
+            'due_date' => $_POST['due_date'] ?? '',
+            'discount_amount' => (float)($_POST['discount_amount'] ?? 0),
+            'status' => $_POST['status'] ?? 'draft',
+            'payment_terms' => $_POST['payment_terms'] ?? '',
+            'notes' => $_POST['notes'] ?? '',
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+
         try {
-            $conn = $this->db->getConnection();
-            
-            $invoiceNumber = $_POST['invoice_number'] ?? '';
-            $customerId = $_POST['customer_id'] ?? 0;
-            $propertyId = $_POST['property_id'] ?? 0;
-            $amount = $_POST['amount'] ?? 0;
-            $dueDate = $_POST['due_date'] ?? '';
-            $description = $_POST['description'] ?? '';
-            $status = $_POST['status'] ?? 'sent';
-            
-            $sql = "UPDATE invoices 
-                    SET invoice_number = ?, customer_id = ?, property_id = ?, amount = ?, 
-                        due_date = ?, description = ?, status = ?, updated_at = NOW()
-                    WHERE id = ?";
-            
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([$invoiceNumber, $customerId, $propertyId, $amount, $dueDate, $description, $status, $id]);
-            
-            redirect('/admin/invoices?success=Invoice updated successfully');
+            $invoice = $this->service->getInvoice((int)$id);
+            if (!$invoice) {
+                redirect(BASE_URL . '/admin/invoices/manage?error=Invoice not found');
+                exit;
+            }
+
+            $placeOfSupply = $data['place_of_supply'];
+            $subtotal = (float)($invoice['subtotal'] ?? 0);
+            $discountAmount = $data['discount_amount'];
+            $taxableAmount = $subtotal - $discountAmount;
+            if ($taxableAmount < 0) $taxableAmount = 0;
+            $gst = $this->service->calculateGst($taxableAmount, $placeOfSupply);
+
+            $data['subtotal'] = $subtotal;
+            $data['tax_amount'] = $gst['tax_amount'];
+            $data['gst_type'] = $gst['gst_type'];
+            $data['gst_rate'] = $gst['gst_rate'];
+            $data['cgst_amount'] = $gst['cgst_amount'];
+            $data['sgst_amount'] = $gst['sgst_amount'];
+            $data['igst_amount'] = $gst['igst_amount'];
+            $data['total_amount'] = $taxableAmount + $gst['tax_amount'];
+
+            $set = implode(', ', array_map(fn($k) => "{$k} = ?", array_keys($data)));
+            $vals = array_values($data);
+            $vals[] = (int)$id;
+            $pdo->prepare("UPDATE invoices SET {$set} WHERE id = ?")->execute($vals);
+
+            if (!empty($_POST['item_name']) && is_array($_POST['item_name'])) {
+                $pdo->prepare("DELETE FROM invoice_items WHERE invoice_id = ?")->execute([(int)$id]);
+                $count = count($_POST['item_name']);
+                for ($i = 0; $i < $count; $i++) {
+                    if (empty($_POST['item_name'][$i])) continue;
+                    $this->service->addLineItem((int)$id, [
+                        'item_type' => $_POST['item_type'][$i] ?? 'service',
+                        'item_name' => $_POST['item_name'][$i] ?? '',
+                        'item_description' => $_POST['item_description'][$i] ?? '',
+                        'quantity' => $_POST['item_quantity'][$i] ?? 1,
+                        'unit_price' => $_POST['item_unit_price'][$i] ?? 0,
+                        'discount_percent' => $_POST['item_discount'][$i] ?? 0,
+                        'tax_percent' => $_POST['item_tax'][$i] ?? 18,
+                        'sort_order' => $i + 1,
+                    ]);
+                }
+            }
+
+            redirect(BASE_URL . '/admin/invoices/manage/' . $id . '?success=Invoice updated');
             exit;
-            
-        } catch (\Exception $e) {
-            redirect('/admin/invoices/' . $id . '/edit?error=' . urlencode($e->getMessage()));
+        } catch (Exception $e) {
+            redirect(BASE_URL . '/admin/invoices/manage/' . $id . '/edit?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
 
-    /**
-     * Delete invoice
-     * Route: /admin/invoices/{id}/delete
-     */
     public function delete($id)
     {
         $this->requireAdmin();
         try {
-            $conn = $this->db->getConnection();
-            
-            // Delete associated payments first
-            $conn->prepare("DELETE FROM payments WHERE invoice_id = ?")->execute([$id]);
-            
-            // Delete invoice
-            $conn->prepare("DELETE FROM invoices WHERE id = ?")->execute([$id]);
-            
-            redirect('/admin/invoices?success=Invoice deleted successfully');
+            $this->service->deleteInvoice((int)$id);
+            redirect(BASE_URL . '/admin/invoices/manage?success=Invoice deleted');
             exit;
-            
-        } catch (\Exception $e) {
-            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
+        } catch (Exception $e) {
+            redirect(BASE_URL . '/admin/invoices/manage?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
 
-    /**
-     * Mark invoice as paid
-     * Route: /admin/invoices/{id}/mark-paid
-     */
     public function markAsPaid($id)
     {
         $this->requireAdmin();
         try {
-            $conn = $this->db->getConnection();
-            
-            // Update invoice status
-            $conn->prepare("UPDATE invoices SET status = 'paid', updated_at = NOW() WHERE id = ?")->execute([$id]);
-            
-            // Record payment
-            $invoice = $conn->prepare("SELECT amount, customer_id FROM invoices WHERE id = ?");
-            $invoice->execute([$id]);
-            $invoiceData = $invoice->fetch(\PDO::FETCH_ASSOC);
-            
-            $paymentSql = "INSERT INTO payments (invoice_id, customer_id, amount, payment_date, payment_method, status, created_at)
-                          VALUES (?, ?, ?, NOW(), 'cash', 'completed', NOW())";
-            $conn->prepare($paymentSql)->execute([$id, $invoiceData['customer_id'], $invoiceData['amount']]);
-            
-            redirect('/admin/invoices?success=Invoice marked as paid');
+            $this->service->markAsPaid((int)$id);
+            $success = isset($_GET['redirect']) ? '' : '?success=Invoice marked as paid';
+            redirect(BASE_URL . '/admin/invoices/manage/' . $id . $success);
             exit;
-            
-        } catch (\Exception $e) {
-            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
+        } catch (Exception $e) {
+            redirect(BASE_URL . '/admin/invoices/manage?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
 
-    /**
-     * Send invoice to customer
-     * Route: /admin/invoices/{id}/send
-     */
     public function sendInvoice($id)
     {
         $this->requireAdmin();
         try {
-            $conn = $this->db->getConnection();
-            
-            // Update invoice status to sent
-            $conn->prepare("UPDATE invoices SET status = 'sent', updated_at = NOW() WHERE id = ?")->execute([$id]);
-            
-            // Here you would integrate with email service to send invoice
-            // For now, we'll just update the status
-            
-            redirect('/admin/invoices?success=Invoice sent successfully');
+            $this->service->markAsSent((int)$id);
+            redirect(BASE_URL . '/admin/invoices/manage/' . $id . '?success=Invoice marked as sent');
             exit;
-            
-        } catch (\Exception $e) {
-            redirect('/admin/invoices?error=' . urlencode($e->getMessage()));
+        } catch (Exception $e) {
+            redirect(BASE_URL . '/admin/invoices/manage?error=' . urlencode($e->getMessage()));
             exit;
         }
     }
 
-    /**
-     * Get invoice statistics
-     */
-    private function getInvoiceStatistics()
+    public function downloadPdf($id)
     {
+        $this->requireAdmin();
+        $invoice = $this->service->getInvoice((int)$id);
+        if (!$invoice) {
+            redirect(BASE_URL . '/admin/invoices/manage?error=Invoice not found');
+            exit;
+        }
+
+        $company = $this->service->getCompanyDetails();
+        $statusLabels = [
+            'draft' => 'Draft', 'sent' => 'Sent', 'viewed' => 'Viewed',
+            'paid' => 'Paid', 'overdue' => 'Overdue', 'cancelled' => 'Cancelled',
+        ];
+        $invoice['status_label'] = $statusLabels[$invoice['status'] ?? ''] ?? ucfirst($invoice['status']);
+
+        ob_start();
+        extract(['invoice' => $invoice, 'company' => $company]);
+        require __DIR__ . '/../../../views/admin/invoices/pdf.php';
+        $html = ob_get_clean();
+
+        header('Content-Type: text/html; charset=UTF-8');
+        header('Content-Disposition: inline; filename="' . ($invoice['invoice_number'] ?? 'invoice') . '.html"');
+        echo $html;
+        exit;
+    }
+
+    public function createFromBooking($bookingId)
+    {
+        $this->requireAdmin();
         try {
-            $conn = $this->db->getConnection();
-            
-            $stats = [
-                'total_invoices' => $conn->query("SELECT COUNT(*) FROM invoices")->fetchColumn(),
-                'total_amount' => $conn->query("SELECT COALESCE(SUM(amount), 0) FROM invoices")->fetchColumn(),
-                'paid_invoices' => $conn->query("SELECT COUNT(*) FROM invoices WHERE status = 'paid'")->fetchColumn(),
-                'paid_amount' => $conn->query("SELECT COALESCE(SUM(amount), 0) FROM invoices WHERE status = 'paid'")->fetchColumn(),
-                'pending_invoices' => $conn->query("SELECT COUNT(*) FROM invoices WHERE status IN ('sent', 'partial')")->fetchColumn(),
-                'pending_amount' => $conn->query("SELECT COALESCE(SUM(amount), 0) FROM invoices WHERE status IN ('sent', 'partial')")->fetchColumn(),
-                'overdue_invoices' => $conn->query("SELECT COUNT(*) FROM invoices WHERE status = 'overdue'")->fetchColumn(),
-                'overdue_amount' => $conn->query("SELECT COALESCE(SUM(amount), 0) FROM invoices WHERE status = 'overdue'")->fetchColumn()
-            ];
-            
-            return $stats;
-            
-        } catch (\Exception $e) {
-            return [];
+            $invoiceId = $this->service->createFromBooking((int)$bookingId);
+            redirect(BASE_URL . '/admin/invoices/manage/' . $invoiceId . '?success=Invoice generated from booking');
+            exit;
+        } catch (Exception $e) {
+            redirect(BASE_URL . '/admin/invoices/manage?error=' . urlencode($e->getMessage()));
+            exit;
         }
     }
 }

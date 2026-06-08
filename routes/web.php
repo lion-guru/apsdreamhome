@@ -3244,6 +3244,8 @@ $router->post('/admin/invoices/manage/{id}/update', 'App\\Http\\Controllers\\Adm
 $router->post('/admin/invoices/manage/{id}/delete', 'App\\Http\\Controllers\\Admin\\InvoiceController@delete');
 $router->post('/admin/invoices/manage/{id}/mark-paid', 'App\\Http\\Controllers\\Admin\\InvoiceController@markAsPaid');
 $router->post('/admin/invoices/manage/{id}/send', 'App\\Http\\Controllers\\Admin\\InvoiceController@sendInvoice');
+$router->get('/admin/invoices/manage/{id}/pdf', 'App\\Http\\Controllers\\Admin\\InvoiceController@downloadPdf');
+$router->get('/admin/invoices/booking/{bookingId}', 'App\\Http\\Controllers\\Admin\\InvoiceController@createFromBooking');
 
 // ============================================================
 // API LEADS (Api\ApiLeadController)
