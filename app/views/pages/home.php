@@ -441,6 +441,118 @@ calcEMI();
 </div>
 
 <script>
+window.HOME_T = {
+    service_home_loan: <?= json_encode(__('svc_home_loan')) ?>,
+    service_home_loan_sub: <?= json_encode(__('svc_home_loan_sub')) ?>,
+    service_legal: <?= json_encode(__('svc_legal')) ?>,
+    service_legal_sub: <?= json_encode(__('svc_legal_sub')) ?>,
+    service_interior: <?= json_encode(__('svc_interior')) ?>,
+    service_interior_sub: <?= json_encode(__('svc_interior_sub')) ?>,
+    service_registry: <?= json_encode(__('svc_registry')) ?>,
+    service_registry_sub: <?= json_encode(__('svc_registry_sub')) ?>,
+    service_rental: <?= json_encode(__('svc_rental')) ?>,
+    service_rental_sub: <?= json_encode(__('svc_rental_sub')) ?>,
+    service_tax: <?= json_encode(__('svc_tax')) ?>,
+    service_tax_sub: <?= json_encode(__('svc_tax_sub')) ?>,
+    tool_emi: <?= json_encode(__('tool_emi')) ?>,
+    tool_emi_sub: <?= json_encode(__('tool_emi_sub')) ?>,
+    tool_investment: <?= json_encode(__('tool_investment')) ?>,
+    tool_investment_sub: <?= json_encode(__('tool_investment_sub')) ?>,
+    tool_stamp: <?= json_encode(__('tool_stamp')) ?>,
+    tool_stamp_sub: <?= json_encode(__('tool_stamp_sub')) ?>,
+    tool_converter: <?= json_encode(__('tool_converter')) ?>,
+    tool_converter_sub: <?= json_encode(__('tool_converter_sub')) ?>,
+    tool_eligibility: <?= json_encode(__('tool_eligibility')) ?>,
+    tool_eligibility_sub: <?= json_encode(__('tool_eligibility_sub')) ?>,
+    tool_valuation: <?= json_encode(__('tool_valuation')) ?>,
+    tool_valuation_sub: <?= json_encode(__('tool_valuation_sub')) ?>,
+    why_choose_us: <?= json_encode(__('home_js_why_choose')) ?>,
+    free_consultation: <?= json_encode(__('home_js_free_consultation')) ?>,
+    compare_rates: <?= json_encode(__('home_js_compare_rates')) ?>,
+    documentation_support: <?= json_encode(__('home_js_doc_support')) ?>,
+    doorstep_service: <?= json_encode(__('home_js_doorstep')) ?>,
+    loan_preapproval: <?= json_encode(__('home_js_preapproval')) ?>,
+    current_rates: <?= json_encode(__('home_js_current_rates')) ?>,
+    calculate_emi: <?= json_encode(__('home_js_calculate_emi')) ?>,
+    emi_calc_desc: <?= json_encode(__('home_js_emi_desc')) ?>,
+    calculate_now: <?= json_encode(__('home_js_calc_now')) ?>,
+    what_we_offer: <?= json_encode(__('home_js_what_we_offer')) ?>,
+    sale_deed_drafting: <?= json_encode(__('home_js_sale_deed')) ?>,
+    title_verification: <?= json_encode(__('home_js_title_verify')) ?>,
+    mutation_records: <?= json_encode(__('home_js_mutation')) ?>,
+    legal_notice: <?= json_encode(__('home_js_legal_notice')) ?>,
+    legal_protection: <?= json_encode(__('home_js_legal_protection')) ?>,
+    verified_advocates: <?= json_encode(__('home_js_verified_advocates')) ?>,
+    services_include: <?= json_encode(__('home_js_services_include')) ?>,
+    modular_kitchen: <?= json_encode(__('home_js_modular_kitchen')) ?>,
+    wardrobe_storage: <?= json_encode(__('home_js_wardrobe')) ?>,
+    false_ceiling: <?= json_encode(__('home_js_false_ceiling')) ?>,
+    wall_painting: <?= json_encode(__('home_js_wall_painting')) ?>,
+    home_furnishing: <?= json_encode(__('home_js_home_furnishing')) ?>,
+    starting_prices: <?= json_encode(__('home_js_starting_prices')) ?>,
+    free_estimate: <?= json_encode(__('home_js_free_estimate')) ?>,
+    free_estimate_desc: <?= json_encode(__('home_js_free_estimate_desc')) ?>,
+    we_handle: <?= json_encode(__('home_js_we_handle')) ?>,
+    sale_deed_reg: <?= json_encode(__('home_js_sale_deed_reg')) ?>,
+    mutation_land: <?= json_encode(__('home_js_mutation_land')) ?>,
+    certified_copies: <?= json_encode(__('home_js_certified_copies')) ?>,
+    property_tax_receipt: <?= json_encode(__('home_js_tax_receipt')) ?>,
+    transfer_title: <?= json_encode(__('home_js_transfer_title')) ?>,
+    fast_track: <?= json_encode(__('home_js_fast_track')) ?>,
+    fast_track_desc: <?= json_encode(__('home_js_fast_track_desc')) ?>,
+    rental_services: <?= json_encode(__('home_js_rental_services')) ?>,
+    rental_drafting: <?= json_encode(__('home_js_rental_drafting')) ?>,
+    estamping: <?= json_encode(__('home_js_estamping')) ?>,
+    landlord_tenant: <?= json_encode(__('home_js_landlord_tenant')) ?>,
+    agreement_renewal: <?= json_encode(__('home_js_agreement_renewal')) ?>,
+    online_offline: <?= json_encode(__('home_js_online_offline')) ?>,
+    estamped: <?= json_encode(__('home_js_estamped')) ?>,
+    legally_valid: <?= json_encode(__('home_js_legally_valid')) ?>,
+    tax_services: <?= json_encode(__('home_js_tax_services')) ?>,
+    tax_calc: <?= json_encode(__('home_js_tax_calc')) ?>,
+    tax_payment: <?= json_encode(__('home_js_tax_payment')) ?>,
+    tax_exemption: <?= json_encode(__('home_js_tax_exemption')) ?>,
+    municipal_coord: <?= json_encode(__('home_js_municipal')) ?>,
+    tax_clearance: <?= json_encode(__('home_js_tax_clearance')) ?>,
+    online_pay: <?= json_encode(__('home_js_online_pay')) ?>,
+    pay_online: <?= json_encode(__('home_js_pay_online')) ?>,
+    emi_label: <?= json_encode(__('tool_js_emi_label')) ?>,
+    emi_amount_label: <?= json_encode(__('tool_js_emi_amount')) ?>,
+    emi_rate_label: <?= json_encode(__('tool_js_emi_rate')) ?>,
+    emi_tenure_label: <?= json_encode(__('tool_js_emi_tenure')) ?>,
+    monthly_emi: <?= json_encode(__('tool_js_monthly_emi')) ?>,
+    total_interest: <?= json_encode(__('tool_js_total_interest')) ?>,
+    total_payment: <?= json_encode(__('tool_js_total_payment')) ?>,
+    investment_amount: <?= json_encode(__('tool_js_investment_amount')) ?>,
+    time_period: <?= json_encode(__('tool_js_time_period')) ?>,
+    real_estate: <?= json_encode(__('tool_js_real_estate')) ?>,
+    re_wins: <?= json_encode(__('tool_js_re_wins')) ?>,
+    highest_returns: <?= json_encode(__('tool_js_highest_returns')) ?>,
+    tangible_asset: <?= json_encode(__('tool_js_tangible_asset')) ?>,
+    property_price: <?= json_encode(__('tool_js_property_price')) ?>,
+    stamp_duty: <?= json_encode(__('tool_js_stamp_duty')) ?>,
+    registration: <?= json_encode(__('tool_js_registration')) ?>,
+    total_cost: <?= json_encode(__('tool_js_total_cost')) ?>,
+    loan_amount: <?= json_encode(__('tool_js_loan_amount')) ?>,
+    interest_rate: <?= json_encode(__('tool_js_interest_rate')) ?>,
+    tenure: <?= json_encode(__('tool_js_tenure')) ?>,
+    monthly_income: <?= json_encode(__('tool_js_monthly_income')) ?>,
+    existing_emi: <?= json_encode(__('tool_js_existing_emi')) ?>,
+    eligible_for: <?= json_encode(__('tool_js_eligible_for')) ?>,
+    max_emi: <?= json_encode(__('tool_js_max_emi')) ?>,
+    foir_ratio: <?= json_encode(__('tool_js_foir_ratio')) ?>,
+    ai_estimate: <?= json_encode(__('tool_js_ai_estimate')) ?>,
+    bedrooms: <?= json_encode(__('tool_js_bedrooms')) ?>,
+    furnishing: <?= json_encode(__('tool_js_furnishing')) ?>,
+    unfurnished: <?= json_encode(__('tool_js_unfurnished')) ?>,
+    semi_furnished: <?= json_encode(__('tool_js_semi_furnished')) ?>,
+    fully_furnished: <?= json_encode(__('tool_js_fully_furnished')) ?>,
+    estimated_value: <?= json_encode(__('tool_js_estimated_value')) ?>,
+    per_sqft: <?= json_encode(__('tool_js_per_sqft')) ?>,
+    confidence: <?= json_encode(__('tool_js_confidence')) ?>,
+    quick_ref: <?= json_encode(__('tool_js_quick_ref')) ?>,
+    result_label: <?= json_encode(__('tool_js_result')) ?>
+};
 function openServiceModal(service) {
     var header = document.getElementById('serviceModalHeader');
     var icon = document.getElementById('serviceModalIcon');
@@ -1345,11 +1457,11 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_fixed_salary') ?></h5>
                         <p class="text-muted small"><?= __('home_fixed_salary_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3">
-                            <div class="d-flex justify-content-between mb-1"><span class="small">Starter: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹15L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small">Basic: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹30L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small">Professional: <strong>₹8,000/mo</strong></span><span class="small text-muted">₹50L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small">Executive: <strong>₹12,000/mo</strong></span><span class="small text-muted">₹75L target</span></div>
-                            <div class="d-flex justify-content-between"><span class="small">Elite: <strong>₹20,000/mo</strong></span><span class="small text-muted">₹1Cr target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_starter') ?>: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹15L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_basic') ?>: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹30L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_professional') ?>: <strong>₹8,000/mo</strong></span><span class="small text-muted">₹50L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_executive') ?>: <strong>₹12,000/mo</strong></span><span class="small text-muted">₹75L target</span></div>
+                            <div class="d-flex justify-content-between"><span class="small"><?= __('rank_elite') ?>: <strong>₹20,000/mo</strong></span><span class="small text-muted">₹1Cr target</span></div>
                         </div>
                     </div>
                 </div>
@@ -1363,9 +1475,9 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_free_insurance') ?></h5>
                         <p class="text-muted small"><?= __('home_free_insurance_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Health Insurance: <strong>₹5 Lakh</strong></span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Life Cover: <strong>₹10 Lakh</strong></span>
-                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i>Accidental Cover: <strong>₹5 Lakh</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_health') ?>: <strong>₹5 Lakh</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_life') ?>: <strong>₹10 Lakh</strong></span>
+                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_accidental') ?>: <strong>₹5 Lakh</strong></span>
                         </div>
                     </div>
                 </div>
@@ -1379,11 +1491,11 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_commission_plans') ?></h5>
                         <p class="text-muted small"><?= __('home_commission_plans_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Direct Business: <strong>10%</strong></span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Junior Business: <strong>5%</strong></span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Team Override: <strong>3%</strong></span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Leadership Bonus: <strong>2%</strong></span>
-                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i>Director Override: <strong>1%</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('commission_direct') ?>: <strong>10%</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('commission_junior') ?>: <strong>5%</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('commission_team') ?>: <strong>3%</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('commission_leadership') ?>: <strong>2%</strong></span>
+                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i><?= __('commission_director') ?>: <strong>1%</strong></span>
                         </div>
                     </div>
                 </div>
@@ -1397,9 +1509,9 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_free_training') ?></h5>
                         <p class="text-muted small"><?= __('home_free_training_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>7-Day Induction Program</span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Monthly Skill Workshops</span>
-                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i>Certified Real Estate Professional</span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('training_induction') ?></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('training_workshops') ?></span>
+                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i><?= __('training_certified') ?></span>
                         </div>
                     </div>
                 </div>
@@ -1413,16 +1525,16 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_mlm_benefits') ?></h5>
                         <p class="text-muted small"><?= __('home_mlm_benefits_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3" style="max-height:160px;overflow-y:auto;">
-                            <div class="small mb-1"><span class="text-warning me-1">ðŸ‘‘</span>Associate: <strong>5%</strong></div>
-                            <div class="small mb-1"><span class="text-secondary me-1">ðŸ‘‘</span>Bronze: <strong>7%</strong></div>
-                            <div class="small mb-1"><span class="text-secondary me-1">ðŸ‘‘</span>Silver: <strong>10%</strong></div>
-                            <div class="small mb-1"><span class="text-warning me-1">ðŸ‘‘</span>Gold: <strong>12.5%</strong></div>
-                            <div class="small mb-1"><span class="text-info me-1">ðŸ‘‘</span>Platinum: <strong>15%</strong></div>
-                            <div class="small mb-1"><span class="text-primary me-1">ðŸ‘‘</span>Diamond: <strong>18%</strong></div>
-                            <div class="small mb-1"><span class="text-success me-1">ðŸ‘‘</span>Executive: <strong>20%</strong></div>
-                            <div class="small mb-1"><span class="text-success me-1">ðŸ‘‘</span>Sr. Executive: <strong>22%</strong></div>
-                            <div class="small mb-1"><span class="text-danger me-1">ðŸ‘‘</span>Director: <strong>25%</strong></div>
-                            <div class="small"><span class="text-danger me-1">ðŸ‘‘</span>Global Director: <strong>30%</strong></div>
+                            <div class="small mb-1"><span class="text-warning me-1">ðŸ‘‘</span><?= __("rank_associate") ?>: <strong>5%</strong></div>
+                            <div class="small mb-1"><span class="text-secondary me-1">ðŸ‘‘</span><?= __("rank_bronze") ?>: <strong>7%</strong></div>
+                            <div class="small mb-1"><span class="text-secondary me-1">ðŸ‘‘</span><?= __("rank_silver") ?>: <strong>10%</strong></div>
+                            <div class="small mb-1"><span class="text-warning me-1">ðŸ‘‘</span><?= __("rank_gold") ?>: <strong>12.5%</strong></div>
+                            <div class="small mb-1"><span class="text-info me-1">ðŸ‘‘</span><?= __("rank_platinum") ?>: <strong>15%</strong></div>
+                            <div class="small mb-1"><span class="text-primary me-1">ðŸ‘‘</span><?= __("rank_diamond") ?>: <strong>18%</strong></div>
+                            <div class="small mb-1"><span class="text-success me-1">ðŸ‘‘</span><?= __("rank_executive") ?>: <strong>20%</strong></div>
+                            <div class="small mb-1"><span class="text-success me-1">ðŸ‘‘</span><?= __("rank_sr_executive") ?>: <strong>22%</strong></div>
+                            <div class="small mb-1"><span class="text-danger me-1">ðŸ‘‘</span><?= __("rank_director") ?>: <strong>25%</strong></div>
+                            <div class="small"><span class="text-danger me-1">ðŸ‘‘</span><?= __("rank_global_director") ?>: <strong>30%</strong></div>
                         </div>
                     </div>
                 </div>
@@ -1436,12 +1548,12 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_more_reasons') ?></h5>
                         <p class="text-muted small"><?= __('home_more_reasons_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Flexible working hours</span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>15+ years of market trust</span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Free marketing materials</span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Office space & support team</span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>AI-powered lead generation</span>
-                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i>Career growth to Branch Manager</span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('reason_flexible_hours') ?></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('reason_market_trust') ?></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('reason_free_materials') ?></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('reason_office_support') ?></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('reason_ai_lead_gen') ?></span>
+                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i><?= __('reason_career_growth') ?></span>
                         </div>
                     </div>
                 </div>
