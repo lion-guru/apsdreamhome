@@ -3652,6 +3652,13 @@ $router->post('/push/unsubscribe', 'App\\Http\\Controllers\\Front\\PushNotificat
 $router->post('/push/test',        'App\\Http\\Controllers\\Front\\PushNotificationController@test');
 $router->get('/push/vapid-key',    'App\\Http\\Controllers\\Front\\PushNotificationController@vapidPublicKey');
 
+// ADMIN PUSH NOTIFICATION MANAGEMENT
+$router->get('/admin/push-notifications',          'App\\Http\\Controllers\\Admin\\PushNotificationAdminController@index');
+$router->get('/admin/push-notifications/send',     'App\\Http\\Controllers\\Admin\\PushNotificationAdminController@sendForm');
+$router->post('/admin/push-notifications/send',    'App\\Http\\Controllers\\Admin\\PushNotificationAdminController@send');
+$router->get('/admin/push-notifications/log',      'App\\Http\\Controllers\\Admin\\PushNotificationAdminController@log');
+$router->get('/admin/push-notifications/stats',    'App\\Http\\Controllers\\Admin\\PushNotificationAdminController@stats');
+
 // ============================================================
 // CHECKOUT + RAZORPAY FLOW
 // GET  /checkout/{bookingId}           — payment page
