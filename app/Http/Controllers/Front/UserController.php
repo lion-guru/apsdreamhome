@@ -978,6 +978,202 @@ class UserController extends BaseController
         $controller->destroy($id);
     }
 
+    public function newBooking()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $colonies = [];
+        try {
+            $colonies = $this->db->fetchAll("
+                SELECT c.id, c.name, c.slug, c.description, c.image_path,
+                       c.total_plots, c.available_plots, c.starting_price, c.is_active,
+                       d.name as district_name
+                FROM colonies c
+                LEFT JOIN districts d ON c.district_id = d.id
+                WHERE c.is_active = 1 AND c.available_plots > 0
+                ORDER BY c.name
+            ");
+        } catch (\Throwable $e) {
+            error_log("UserController::newBooking colonies - " . $e->getMessage());
+        }
+
+        $selectedColony = (int)($_GET['colony_id'] ?? 0);
+        $plots = [];
+        if ($selectedColony > 0) {
+            try {
+                $plots = $this->db->fetchAll("
+                    SELECT p.id, p.plot_number, p.block, p.area_sqft, p.total_price,
+                           p.width_ft, p.length_ft, p.dimension_label, p.facing,
+                           p.corner_plot, p.road_width_ft, c.name as colony_name
+                    FROM plots p
+                    JOIN colonies c ON p.colony_id = c.id
+                    WHERE p.colony_id = ? AND p.status = 'available'
+                    ORDER BY p.block, p.plot_number
+                ", [$selectedColony]);
+            } catch (\Throwable $e) {
+                error_log("UserController::newBooking plots - " . $e->getMessage());
+            }
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/new_booking', [
+            'page_title' => 'Book a Plot - APS Dream Home',
+            'user' => $user,
+            'colonies' => $colonies,
+            'plots' => $plots,
+            'selected_colony' => $selectedColony,
+        ]);
+    }
+
+    public function createBooking()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            $this->json(['success' => false, 'error' => 'Please login to continue'], 401);
+            return;
+        }
+
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+            return;
+        }
+
+        $userId = (int)$_SESSION['user_id'];
+        $plotId = (int)($_POST['plot_id'] ?? 0);
+
+        if ($plotId <= 0) {
+            $this->json(['success' => false, 'error' => 'Invalid plot selection'], 400);
+            return;
+        }
+
+        try {
+            $plot = $this->db->fetch(
+                "SELECT p.*, c.name as colony_name FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.id = ? AND p.status = 'available'",
+                [$plotId]
+            );
+        } catch (\Throwable $e) {
+            error_log("UserController::createBooking plot fetch - " . $e->getMessage());
+            $this->json(['success' => false, 'error' => 'Unable to verify plot availability'], 500);
+            return;
+        }
+
+        if (!$plot) {
+            $this->json(['success' => false, 'error' => 'This plot is no longer available. Please select another.'], 400);
+            return;
+        }
+
+        try {
+            $existing = $this->db->fetch(
+                "SELECT id FROM plot_bookings WHERE plot_id = ? AND status NOT IN ('cancelled')",
+                [$plotId]
+            );
+        } catch (\Throwable $e) {
+            error_log("UserController::createBooking existing check - " . $e->getMessage());
+            $existing = null;
+        }
+
+        if ($existing) {
+            $this->json(['success' => false, 'error' => 'This plot already has an active booking.'], 400);
+            return;
+        }
+
+        $bookingNumber = 'APS-BK-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        $totalAmount = (float)$plot['total_price'];
+        $tokenAmount = 25000.00;
+
+        try {
+            $this->db->beginTransaction();
+
+            $this->db->prepare("
+                INSERT INTO plot_bookings
+                    (plot_id, customer_id, booking_number, booking_date, total_plot_value,
+                     booking_amount, agreement_value, status, channel, notes, created_at, updated_at)
+                VALUES (?, ?, ?, CURDATE(), ?, ?, ?, 'token_paid', 'direct', ?, NOW(), NOW())
+            ")->execute([
+                $plotId,
+                $userId,
+                $bookingNumber,
+                $totalAmount,
+                $tokenAmount,
+                $totalAmount,
+                trim($_POST['notes'] ?? ''),
+            ]);
+
+            $bookingId = (int)$this->db->lastInsertId();
+
+            $this->db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = CURDATE(), updated_at = NOW() WHERE id = ?")
+                ->execute([$userId, $plotId]);
+
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                try { $this->db->rollBack(); } catch (\Throwable $e2) {}
+            }
+            error_log("UserController::createBooking insert - " . $e->getMessage());
+            $this->json(['success' => false, 'error' => 'Booking failed. Please try again.'], 500);
+            return;
+        }
+
+        $this->json([
+            'success' => true,
+            'booking_id' => $bookingId,
+            'booking_number' => $bookingNumber,
+            'plot' => $plot['plot_number'],
+            'colony' => $plot['colony_name'],
+            'total_amount' => $totalAmount,
+            'token_amount' => $tokenAmount,
+        ]);
+    }
+
+    public function bookingConfirmation($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int)$user['id'];
+        $bookingId = (int)$id;
+
+        if ($bookingId <= 0) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        $booking = null;
+        try {
+            $booking = $this->db->fetch("
+                SELECT pb.*,
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       p.width_ft, p.length_ft, p.dimension_label, p.facing,
+                       p.corner_plot, p.road_width_ft,
+                       c.name as colony_name, d.name as district_name
+                FROM plot_bookings pb
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON c.district_id = d.id
+                WHERE pb.id = ? AND pb.customer_id = ?
+            ", [$bookingId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::bookingConfirmation fetch - " . $e->getMessage());
+        }
+
+        if (!$booking) {
+            $this->layout = 'layouts/customer';
+            $this->render('pages/user/booking_confirmation', [
+                'page_title' => 'Booking Not Found - APS Dream Home',
+                'user' => $user,
+                'booking' => null,
+            ]);
+            return;
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/booking_confirmation', [
+            'page_title' => 'Booking Confirmed - APS Dream Home',
+            'user' => $user,
+            'booking' => $booking,
+        ]);
+    }
+
     private function safeInvestorStats(int $userId): array
     {
         try {

@@ -32,8 +32,8 @@ $statusLabels = [
             <p>Track your plot bookings, payment schedules, and download demand letters.</p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0 text-md-end">
-            <a href="<?= BASE_URL ?>/properties" class="btn btn-light">
-                <i class="fas fa-plus me-2"></i>New Booking
+            <a href="<?= BASE_URL ?>/user/bookings/new" class="btn btn-light">
+                <i class="fas fa-plus me-2"></i>Book a Plot
             </a>
         </div>
     </div>
