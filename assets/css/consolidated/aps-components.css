@@ -2532,3 +2532,170 @@ body.lightbox-open { overflow: hidden; }
         .sidebar-overlay.show {
             display: block;
         }
+
+/* ========================================================================
+ * Customer Portal — Mobile Responsiveness Fixes (Phase 13)
+ * ======================================================================== */
+
+/* Content wrapper: reduce padding on mobile */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 15px 12px;
+    }
+
+    .top-header {
+        padding: 12px 15px;
+        padding-left: 65px; /* space for sidebar toggle */
+    }
+
+    .top-header .page-title {
+        font-size: 1.1rem;
+    }
+
+    .top-header .breadcrumb {
+        font-size: 0.75rem;
+    }
+
+    /* Hero sections: compact on mobile */
+    .aps-cp-hero, .aps-cp-page-header {
+        padding: 1rem;
+    }
+
+    .aps-cp-hero h2, .aps-cp-page-header h2 {
+        font-size: 1.15rem;
+    }
+
+    /* Cards: reduce padding */
+    .aps-cp-card-body {
+        padding: 14px;
+    }
+
+    .aps-cp-card-header {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+    }
+
+    /* Tables: card view on small screens */
+    .aps-cp-table {
+        font-size: 0.82rem;
+    }
+
+    .aps-cp-table thead th,
+    .aps-cp-table tbody td {
+        padding: 0.5rem 0.4rem;
+    }
+
+    /* Payment schedule: hide less important columns */
+    .aps-cp-table th:nth-child(4),
+    .aps-cp-table td:nth-child(4),
+    .aps-cp-table th:nth-child(5),
+    .aps-cp-table td:nth-child(5) {
+        display: none;
+    }
+
+    /* Forms: full width inputs */
+    .aps-cp-form-section {
+        margin-bottom: 14px;
+    }
+
+    .aps-cp-input, .aps-cp-select, .form-control, .form-select {
+        font-size: 16px; /* prevents iOS zoom on focus */
+        min-height: 44px; /* touch target */
+    }
+
+    /* File upload: bigger touch target */
+    input[type="file"] {
+        min-height: 48px;
+        padding: 8px;
+    }
+
+    /* Buttons: ensure 44px touch targets */
+    .btn-sm {
+        min-height: 36px;
+        padding: 6px 12px;
+    }
+
+    .btn {
+        min-height: 44px;
+    }
+
+    /* Badge: prevent wrapping */
+    .badge {
+        white-space: nowrap;
+    }
+
+    /* Comparison page: tighter grid */
+    .compare-label {
+        padding: 10px 12px;
+        font-size: 0.82rem;
+    }
+
+    .compare-cell {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Stats grid: 2 columns on mobile */
+    .aps-cp-stats-grid,
+    .aps-cp-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    /* KYC form sections */
+    .aps-cp-form-section label {
+        font-size: 0.88rem;
+    }
+
+    /* Sidebar badge position fix on mobile */
+    .sidebar-badge {
+        right: 12px;
+    }
+}
+
+/* Very small screens (360px and below) */
+@media (max-width: 360px) {
+    .content-wrapper {
+        padding: 10px 8px;
+    }
+
+    .aps-cp-hero h2 {
+        font-size: 1rem;
+    }
+
+    .aps-cp-stat-value {
+        font-size: 1.2rem;
+    }
+
+    /* Hide less critical columns on very small screens */
+    .aps-cp-table th:nth-child(3),
+    .aps-cp-table td:nth-child(3),
+    .aps-cp-table th:nth-child(7),
+    .aps-cp-table td:nth-child(7) {
+        display: none;
+    }
+
+    .compare-header h1 {
+        font-size: 1.2rem;
+    }
+
+    .aps-cp-stats-grid,
+    .aps-cp-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Print styles for receipts/demand letters */
+@media print {
+    .sidebar, .sidebar-toggle, .sidebar-overlay, .top-header {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .content-wrapper {
+        padding: 0 !important;
+    }
+}

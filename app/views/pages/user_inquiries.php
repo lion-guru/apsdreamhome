@@ -22,7 +22,7 @@ $extraHead = '<style>
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
+                    <table class="table table-hover mb-0">
                         <thead>
                             <tr>
                                 <th><?= __('user_inquiries_col_type') ?></th>
@@ -41,7 +41,7 @@ $extraHead = '<style>
                                         </span>
                                     </td>
                                     <td>
-                                        <p class="mb-0" style="max-width: 300px;">
+                                        <p class="mb-0" style="max-width: min(300px, 60vw);">
                                             <?php echo htmlspecialchars(substr($inq['message'] ?? '', 0, 100)); ?>
                                             <?php if (strlen($inq['message'] ?? '') > 100): ?>...<?php endif; ?>
                                         </p>
