@@ -1,4 +1,8 @@
-<?php $r = $request ?? []; ?>
+<?php
+$r = $request ?? [];
+$verifyResults = $_SESSION['kyc_verify_results'] ?? null;
+unset($_SESSION['kyc_verify_results']);
+?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0"><i class="fas fa-id-card me-2"></i>KYC Request #<?= $r['id'] ?? '' ?></h1>
@@ -98,6 +102,52 @@
             </div>
 
             <?php if (($r['status'] ?? '') !== 'approved'): ?>
+            <!-- Verify via API Button -->
+            <div class="card shadow-sm mb-4 border-primary">
+                <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="fas fa-robot me-2"></i>API Verification</h5></div>
+                <div class="card-body">
+                    <form method="post" action="<?= BASE_URL ?>/admin/kyc/<?= (int)($r['id'] ?? 0) ?>/verify" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-shield-alt me-1"></i>Verify PAN + Aadhaar via NSDL/UIDAI</button>
+                    </form>
+                    <?php if ($verifyResults): ?>
+                    <div class="mt-3">
+                        <h6 class="fw-bold">Verification Results:</h6>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="card <?= ($verifyResults['pan']['success'] ?? false) ? 'border-success' : 'border-danger' ?>">
+                                    <div class="card-body text-center p-2">
+                                        <small class="fw-bold">PAN (NSDL)</small><br>
+                                        <?php if ($verifyResults['pan']['success'] ?? false): ?>
+                                            <span class="badge bg-success">Verified</span>
+                                            <br><small class="text-muted"><?= htmlspecialchars($verifyResults['pan']['data']['name_on_card'] ?? '') ?></small>
+                                        <?php else: ?>
+                                            <span class="badge bg-danger">Failed</span>
+                                            <br><small class="text-danger"><?= htmlspecialchars($verifyResults['pan']['message'] ?? '') ?></small>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card <?= ($verifyResults['aadhaar']['success'] ?? false) ? 'border-success' : 'border-danger' ?>">
+                                    <div class="card-body text-center p-2">
+                                        <small class="fw-bold">Aadhaar (UIDAI)</small><br>
+                                        <?php if ($verifyResults['aadhaar']['success'] ?? false): ?>
+                                            <span class="badge bg-success">Verified</span>
+                                            <br><small class="text-muted">Checksum OK</small>
+                                        <?php else: ?>
+                                            <span class="badge bg-danger">Failed</span>
+                                            <br><small class="text-danger"><?= htmlspecialchars($verifyResults['aadhaar']['message'] ?? '') ?></small>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-warning text-dark"><h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Take Action</h5></div>
                 <div class="card-body">

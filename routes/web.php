@@ -2597,6 +2597,7 @@ $router->get('/admin/gst/{id}', 'App\\Http\\Controllers\\Admin\\GstController@sh
 // ═══════════════════════════════════════════════════
 $router->get('/admin/kyc', 'App\\Http\\Controllers\\Admin\\KycController@index');
 $router->get('/admin/kyc/pending', 'App\\Http\\Controllers\\Admin\\KycController@pending');
+$router->get('/admin/kyc/logs', 'App\\Http\\Controllers\\Admin\\KycController@logs');
 $router->get('/admin/kyc/{id}', 'App\\Http\\Controllers\\Admin\\KycController@show');
 $router->post('/admin/kyc/{id}/approve', 'App\\Http\\Controllers\\Admin\\KycController@approve');
 $router->post('/admin/kyc/{id}/reject', 'App\\Http\\Controllers\\Admin\\KycController@reject');
