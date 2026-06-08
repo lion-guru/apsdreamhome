@@ -483,6 +483,25 @@ class MLMCommissionController extends AdminController
         return $this->redirect('/admin/mlm/clawbacks/' . (int)$id);
     }
 
+    public function processClawbacksNow()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        try {
+            $result = $this->engine->processClawbacks(30);
+            $count = $result['processed'] ?? 0;
+            $amount = $result['amount'] ?? 0.0;
+            if ($count > 0) {
+                $this->setFlash('success', "Processed {$count} clawbacks totaling ₹" . number_format($amount, 2));
+            } else {
+                $this->setFlash('info', 'No new clawbacks to process (no installments overdue 30+ days with paid commissions).');
+            }
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Clawback processing failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/mlm/clawbacks');
+    }
+
     /* =============================================================
      *  CRON LOG
      * ============================================================= */

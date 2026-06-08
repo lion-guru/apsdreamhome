@@ -3727,6 +3727,8 @@ $router->post('/admin/mlm/associate-ranks/{id}/promote',          'App\\Http\\Co
 $router->get('/admin/mlm/rank-benefits',                          'App\\Http\\Controllers\\Admin\\MLMCommissionController@rankBenefits');
 $router->get('/admin/mlm/clawbacks',                              'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbacks');
 $router->get('/admin/mlm/clawbacks/{id}',                         'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbackView');
+$router->post('/admin/mlm/clawbacks/{id}/recover',                'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbackRecover');
+$router->post('/admin/mlm/clawbacks/process',                     'App\\Http\\Controllers\\Admin\\MLMCommissionController@processClawbacksNow');
 $router->get('/admin/mlm/cron-log',                               'App\\Http\\Controllers\\Admin\\MLMCommissionController@cronLog');
 $router->get('/admin/mlm/api/rank-distribution',                  'App\\Http\\Controllers\\Admin\\MLMCommissionController@apiRankDistribution');
 
