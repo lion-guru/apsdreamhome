@@ -366,6 +366,39 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
 <?php endif; ?>
 
 <div class="row g-3 mb-4">
+    <?php if ($bStatus === 'token_paid'): ?>
+    <div class="col-md-4">
+        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>/pay-token" class="btn btn-success w-100 py-3" style="font-size:1.05rem;">
+            <i class="fas fa-credit-card me-2"></i>Pay Token Amount
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100">
+            <i class="fas fa-arrow-left me-2"></i>Back to My Bookings
+        </a>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-outline-danger w-100" onclick="if(confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) { /* Cancel logic */ }">
+            <i class="fas fa-times-circle me-2"></i>Cancel Booking
+        </button>
+    </div>
+    <?php elseif ($bStatus === 'agreement_signed'): ?>
+    <div class="col-md-4">
+        <span class="btn btn-success w-100 py-3 disabled" style="font-size:1.05rem; opacity:0.85;">
+            <i class="fas fa-check-circle me-2"></i>Payment Complete
+        </span>
+    </div>
+    <div class="col-md-4">
+        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100">
+            <i class="fas fa-arrow-left me-2"></i>Back to My Bookings
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>" class="btn btn-outline-info w-100">
+            <i class="fas fa-eye me-2"></i>View Details
+        </a>
+    </div>
+    <?php else: ?>
     <div class="col-md-6">
         <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100">
             <i class="fas fa-arrow-left me-2"></i>Back to My Bookings
@@ -378,6 +411,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
         </button>
         <?php endif; ?>
     </div>
+    <?php endif; ?>
 </div>
 
 <?php endif; ?>

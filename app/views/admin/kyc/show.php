@@ -10,30 +10,44 @@
                 <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>KYC Details</h5></div>
                 <div class="card-body">
                     <table class="table table-sm">
-                        <tr><th>ID</th><td>#<?= $r['id'] ?? '' ?></td></tr>
+                        <tr><th style="width:140px">ID</th><td>#<?= $r['id'] ?? '' ?></td></tr>
                         <tr><th>Legal Name</th><td><strong><?= htmlspecialchars($r['legal_name'] ?? '—') ?></strong></td></tr>
                         <tr><th>PAN</th><td><code><?= htmlspecialchars($r['pan_number'] ?? '—') ?></code></td></tr>
                         <tr><th>Aadhaar</th><td><code><?= htmlspecialchars($r['aadhaar_number'] ?? '—') ?></code></td></tr>
                         <tr><th>Date of Birth</th><td><?= htmlspecialchars($r['dob'] ?? '—') ?></td></tr>
-                        <tr><th>Status</th><td><span class="badge bg-<?= match($r['status'] ?? 'pending') { 'approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning', default => 'secondary' } ?> fs-6"><?= ucfirst($r['status'] ?? 'Pending') ?></span></td></tr>
+                        <tr><th>Status</th>
+                            <td>
+                                <span class="badge bg-<?= match($r['status'] ?? 'pending') { 'approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning', default => 'secondary' } ?> fs-6">
+                                    <?= ucfirst($r['status'] ?? 'Pending') ?>
+                                </span>
+                            </td>
+                        </tr>
                         <tr><th>Submitted</th><td><?= date('M j, Y H:i', strtotime($r['created_at'] ?? 'now')) ?></td></tr>
-                        <tr><th>Reason</th><td><?= htmlspecialchars($r['reason'] ?? '—') ?></td></tr>
+                        <?php if (!empty($r['rejection_reason'])): ?>
+                        <tr><th>Rejection Reason</th><td class="text-danger"><?= htmlspecialchars($r['rejection_reason']) ?></td></tr>
+                        <?php endif; ?>
+                        <?php if (!empty($r['verified_at'])): ?>
+                        <tr><th>Verified At</th><td><?= date('M j, Y H:i', strtotime($r['verified_at'])) ?></td></tr>
+                        <?php endif; ?>
                     </table>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
+
             <div class="card shadow-sm mb-4">
                 <div class="card-header"><h5 class="mb-0"><i class="fas fa-user me-2"></i>User Info</h5></div>
                 <div class="card-body">
                     <table class="table table-sm">
-                        <tr><th>Name</th><td><?= htmlspecialchars($r['user_name'] ?? '') ?></td></tr>
+                        <tr><th style="width:140px">Name</th><td><?= htmlspecialchars($r['user_name'] ?? '') ?></td></tr>
                         <tr><th>Email</th><td><?= htmlspecialchars($r['user_email'] ?? '') ?></td></tr>
                         <tr><th>Phone</th><td><?= htmlspecialchars($r['user_phone'] ?? '') ?></td></tr>
+                        <tr><th>User ID</th><td><?= (int)($r['user_id'] ?? 0) ?></td></tr>
                     </table>
                 </div>
             </div>
-            <div class="card shadow-sm">
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
                 <div class="card-header"><h5 class="mb-0"><i class="fas fa-file-image me-2"></i>Documents</h5></div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -45,7 +59,7 @@
                                         <img src="<?= BASE_URL . '/' . $r['pan_document'] ?>" class="card-img-top" style="max-height:150px; object-fit:cover;" alt="PAN">
                                     </a>
                                     <div class="card-body text-center p-2">
-                                        <a href="<?= BASE_URL . '/' . $r['pan_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="<?= BASE_URL . '/' . $r['pan_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Full</a>
                                     </div>
                                 </div>
                             </div>
@@ -58,7 +72,7 @@
                                         <img src="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" class="card-img-top" style="max-height:150px; object-fit:cover;" alt="Aadhaar Front">
                                     </a>
                                     <div class="card-body text-center p-2">
-                                        <a href="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Full</a>
                                     </div>
                                 </div>
                             </div>
@@ -71,96 +85,54 @@
                                         <img src="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" class="card-img-top" style="max-height:150px; object-fit:cover;" alt="Aadhaar Back">
                                     </a>
                                     <div class="card-body text-center p-2">
-                                        <a href="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Full</a>
                                     </div>
                                 </div>
                             </div>
                         <?php endif; ?>
                         <?php if (empty($r['pan_document']) && empty($r['aadhaar_front_document']) && empty($r['aadhaar_back_document'])): ?>
-                            <div class="col-12 text-muted text-center">No documents uploaded</div>
+                            <div class="col-12 text-muted text-center py-3">No documents uploaded</div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
-            <div class="card shadow-sm">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Verification</h5></div>
-                <div class="card-body">
-                    <table class="table table-sm">
-                        <tr><th>Status</th><td><span class="badge bg-<?= match($r['status'] ?? 'pending') { 'approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning', default => 'secondary' } ?> fs-6"><?= ucfirst($r['status'] ?? 'Pending') ?></span></td></tr>
-                        <tr><th>Verified By</th><td><?= htmlspecialchars($r['verified_by'] ?? '—') ?></td></tr>
-                        <tr><th>Verified At</th><td><?= htmlspecialchars($r['verified_at'] ?? '—') ?></td></tr>
-                        <tr><th>Rejection Reason</th><td><?= htmlspecialchars($r['rejection_reason'] ?? '—') ?></td></tr>
-                    </table>
-                    <form method="post" action="<?= BASE_URL ?>/admin/kyc/verify/<?= $r['id'] ?? 0 ?>">
-                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="mb-3">
-                            <label class="form-label">Action</label>
-                            <select name="status" class="form-select">
-                                <option value="approved">Approve</option>
-                                <option value="rejected">Reject</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Rejection Reason (if rejecting)</label>
-                            <textarea name="reason" class="form-control" rows="2" placeholder="Enter reason for rejection..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check me-1"></i>Submit Verification</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-    <div class="row">
-        <div class="col-md-6">
+
+            <?php if (($r['status'] ?? '') !== 'approved'): ?>
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Document Details</h5></div>
+                <div class="card-header bg-warning text-dark"><h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Take Action</h5></div>
                 <div class="card-body">
-                    <table class="table table-sm">
-                        <tr><th>ID</th><td>#<?= $d['id'] ?? '' ?></td></tr>
-                        <tr><th>Document Type</th><td><span class="badge bg-info fs-6"><?= strtoupper(htmlspecialchars($d['document_type'] ?? '')) ?></span></td></tr>
-                        <tr><th>Document Number</th><td><strong><?= htmlspecialchars($d['document_number'] ?? '—') ?></strong></td></tr>
-                        <tr><th>Issued By</th><td><?= htmlspecialchars($d['issued_by'] ?? '—') ?></td></tr>
-                        <tr><th>Issue Date</th><td><?= htmlspecialchars($d['issue_date'] ?? '—') ?></td></tr>
-                        <tr><th>Expiry Date</th><td><?= htmlspecialchars($d['expiry_date'] ?? '—') ?></td></tr>
-                        <tr><th>Signature Hash</th><td><code><?= htmlspecialchars(substr($d['signature_hash'] ?? '', 0, 20) ?: '—') ?></code></td></tr>
-                        <tr><th>Signed At</th><td><?= htmlspecialchars($d['signed_at'] ?? '—') ?></td></tr>
-                    </table>
+                    <div class="d-flex gap-2">
+                        <form method="post" action="<?= BASE_URL ?>/admin/kyc/<?= (int)($r['id'] ?? 0) ?>/approve" class="flex-grow-1" onsubmit="return confirm('Approve this KYC request?');">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                            <button type="submit" class="btn btn-success w-100"><i class="fas fa-check me-1"></i>Approve</button>
+                        </form>
+                        <button type="button" class="btn btn-danger flex-grow-1" data-bs-toggle="collapse" data-bs-target="#rejectForm">
+                            <i class="fas fa-times me-1"></i>Reject
+                        </button>
+                    </div>
+                    <div class="collapse mt-3" id="rejectForm">
+                        <form method="post" action="<?= BASE_URL ?>/admin/kyc/<?= (int)($r['id'] ?? 0) ?>/reject">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Rejection Reason <span class="text-danger">*</span></label>
+                                <textarea name="rejection_reason" class="form-control" rows="3" placeholder="Enter reason for rejection..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Reject this KYC request?');">
+                                <i class="fas fa-times me-1"></i>Confirm Rejection
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-user me-2"></i>User Info</h5></div>
-                <div class="card-body">
-                    <table class="table table-sm">
-                        <tr><th>Name</th><td><?= htmlspecialchars($d['user_name'] ?? '') ?></td></tr>
-                        <tr><th>Email</th><td><?= htmlspecialchars($d['user_email'] ?? '') ?></td></tr>
-                        <tr><th>Phone</th><td><?= htmlspecialchars($d['user_phone'] ?? '') ?></td></tr>
-                    </table>
+            <?php else: ?>
+            <div class="card shadow-sm mb-4 border-success">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                    <h5 class="text-success">KYC Approved</h5>
+                    <p class="text-muted mb-0">This request was verified and approved.</p>
                 </div>
             </div>
-            <div class="card shadow-sm">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Verification</h5></div>
-                <div class="card-body">
-                    <table class="table table-sm">
-                        <tr><th>Status</th><td><span class="badge bg-<?= match($d['verification_status'] ?? 'pending') { 'verified' => 'success', 'rejected' => 'danger', default => 'warning' } ?> fs-6"><?= ucfirst($d['verification_status'] ?? 'Pending') ?></span></td></tr>
-                        <tr><th>Verified By</th><td><?= htmlspecialchars($d['verified_by'] ?? '—') ?></td></tr>
-                        <tr><th>Verified At</th><td><?= htmlspecialchars($d['verified_at'] ?? '—') ?></td></tr>
-                    </table>
-                    <form method="post" action="<?= BASE_URL ?>/admin/kyc/verify/<?= $d['id'] ?? 0 ?>">
-                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="mb-3">
-                            <label class="form-label">Action</label>
-                            <select name="status" class="form-select">
-                                <option value="verified">Verify</option>
-                                <option value="rejected">Reject</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check me-1"></i>Submit Verification</button>
-                    </form>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

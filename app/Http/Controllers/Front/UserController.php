@@ -135,6 +135,7 @@ class UserController extends BaseController
         $referralLink = $referralCode ? (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . $referralCode : '';
         $twoFactorEnabled = false;
         $savedCount = 0;
+        $kycStatus = 'not_started';
 
         try {
             $stmt = $this->db->prepare("SELECT direct_referrals FROM mlm_profiles WHERE user_id = ?");
@@ -161,6 +162,15 @@ class UserController extends BaseController
             $stmt->execute([$user['id']]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             $savedCount = (int)($row['cnt'] ?? 0);
+            // KYC status
+            try {
+                $stmt = $this->db->prepare("SELECT status FROM kyc_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1");
+                $stmt->execute([$user['id']]);
+                $kycRow = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $kycStatus = $kycRow['status'] ?? 'not_started';
+            } catch (\Exception $e) {
+                $kycStatus = 'not_started';
+            }
         } catch (\Exception $e) {
             error_log("UserController.php: " . $e->getMessage());
         }
@@ -192,6 +202,7 @@ class UserController extends BaseController
             'investor_stats' => $this->safeInvestorStats((int)$user['id']),
             'twoFactorEnabled' => $twoFactorEnabled,
             'savedCount' => $savedCount,
+            'kycStatus' => $kycStatus ?? 'not_started',
         ];
 
         $this->layout = 'layouts/customer';
@@ -1115,6 +1126,23 @@ class UserController extends BaseController
             return;
         }
 
+        // Send booking confirmation notifications (best-effort)
+        try {
+            $user = $this->getUser();
+            $notifier = new \App\Services\BookingNotificationService();
+            $colony = $this->db->fetch("SELECT * FROM colonies WHERE id = ?", [$plot['colony_id'] ?? 0]);
+            $bookingData = [
+                'booking_number' => $bookingNumber,
+                'total_plot_value' => $totalAmount,
+                'booking_amount' => $tokenAmount,
+                'plot_number' => $plot['plot_number'],
+                'colony_name' => $plot['colony_name'],
+            ];
+            $notifier->sendBookingConfirmation($bookingData, $user, $plot, $colony ?: ['name' => $plot['colony_name']]);
+        } catch (\Throwable $e) {
+            error_log("[UserController] Booking notification failed: " . $e->getMessage());
+        }
+
         $this->json([
             'success' => true,
             'booking_id' => $bookingId,
@@ -1172,6 +1200,252 @@ class UserController extends BaseController
             'user' => $user,
             'booking' => $booking,
         ]);
+    }
+
+    /* ------------------------------------------------------------------ *
+     *  TOKEN PAYMENT FLOW (Razorpay)
+     * ------------------------------------------------------------------ */
+
+    public function payToken($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int)$user['id'];
+        $bookingId = (int)$id;
+
+        if ($bookingId <= 0) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        $booking = $this->fetchBookingWithPlot($bookingId, $userId);
+        if (!$booking) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        // Already paid token — redirect to detail
+        if (($booking['status'] ?? '') !== 'token_paid') {
+            header('Location: ' . BASE_URL . '/user/bookings/' . $bookingId);
+            exit;
+        }
+
+        // Create Razorpay order for the token amount
+        $tokenAmount = (float)($booking['booking_amount'] ?? 25000);
+        $razorpaySvc = new \App\Services\Gateway\RazorpayService();
+        $orderResp = $razorpaySvc->createOrder(
+            $tokenAmount,
+            'INR',
+            'TOKEN_' . $booking['booking_number'],
+            [
+                'booking_id'    => $bookingId,
+                'user_id'       => $userId,
+                'customer_name' => $user['name'] ?? '',
+                'customer_email'=> $user['email'] ?? '',
+                'customer_phone'=> $user['phone'] ?? '',
+                'description'   => 'Token payment for Plot ' . ($booking['plot_number'] ?? '') . ' — ' . ($booking['colony_name'] ?? ''),
+            ]
+        );
+
+        $orderId = null;
+        if ($orderResp['success'] && isset($orderResp['data']['id'])) {
+            $orderId = $orderResp['data']['id'];
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/pay_token', [
+            'page_title'   => 'Pay Token Amount — APS Dream Home',
+            'user'         => $user,
+            'booking'      => $booking,
+            'token_amount' => $tokenAmount,
+            'order_id'     => $orderId,
+            'razorpay'     => [
+                'key_id'  => $razorpaySvc->getKeyId(),
+                'test'    => $razorpaySvc->isTestMode() || !$razorpaySvc->isConfigured(),
+            ],
+        ]);
+    }
+
+    public function processTokenPayment($id = null)
+    {
+        @session_start();
+
+        if (!isset($_SESSION['user_id'])) {
+            $this->json(['success' => false, 'error' => 'Please log in.'], 401);
+            return;
+        }
+
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->json(['success' => false, 'error' => 'Invalid CSRF token.'], 403);
+            return;
+        }
+
+        $userId = (int)$_SESSION['user_id'];
+        $bookingId = (int)$id;
+
+        if ($bookingId <= 0) {
+            $this->json(['success' => false, 'error' => 'Invalid booking.'], 400);
+            return;
+        }
+
+        $razorpay_order_id   = $_POST['razorpay_order_id']   ?? '';
+        $razorpay_payment_id  = $_POST['razorpay_payment_id']  ?? '';
+        $razorpay_signature   = $_POST['razorpay_signature']   ?? '';
+
+        if (!$razorpay_order_id || !$razorpay_payment_id || !$razorpay_signature) {
+            $this->json(['success' => false, 'error' => 'Missing payment response data.'], 400);
+            return;
+        }
+
+        $booking = $this->fetchBookingWithPlot($bookingId, $userId);
+        if (!$booking) {
+            $this->json(['success' => false, 'error' => 'Booking not found.'], 404);
+            return;
+        }
+
+        if (($booking['status'] ?? '') !== 'token_paid') {
+            $this->json(['success' => false, 'error' => 'Token already paid or booking in unexpected state.'], 400);
+            return;
+        }
+
+        // Verify HMAC-SHA256 signature
+        $razorpaySvc = new \App\Services\Gateway\RazorpayService();
+        if (!$razorpaySvc->verifyPaymentSignature($razorpay_order_id, $razorpay_payment_id, $razorpay_signature)) {
+            error_log("UserController::processTokenPayment signature mismatch booking #{$bookingId}");
+            $this->json(['success' => false, 'error' => 'Payment signature verification failed.'], 400);
+            return;
+        }
+
+        $tokenAmount = (float)($booking['booking_amount'] ?? 25000);
+
+        try {
+            $this->db->beginTransaction();
+
+            // Advance booking status
+            $this->db->prepare("
+                UPDATE plot_bookings
+                SET status = 'agreement_signed', updated_at = NOW()
+                WHERE id = ? AND customer_id = ? AND status = 'token_paid'
+            ")->execute([$bookingId, $userId]);
+
+            // Log payment transaction
+            $this->db->prepare("
+                INSERT INTO payment_transactions
+                    (transaction_id, user_id, booking_id, amount, currency, payment_method,
+                     payment_status, gateway_transaction_id, gateway_response, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 'INR', 'razorpay', 'completed', ?, ?, NOW(), NOW())
+            ")->execute([
+                'APS-RCP-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)), 0, 6),
+                $userId,
+                $bookingId,
+                $tokenAmount,
+                $razorpay_payment_id,
+                json_encode([
+                    'order_id'   => $razorpay_order_id,
+                    'payment_id' => $razorpay_payment_id,
+                    'signature'  => $razorpay_signature,
+                ]),
+            ]);
+
+            // Update payment_orders record (set paid status)
+            try {
+                $this->db->prepare("
+                    UPDATE payment_orders
+                    SET status = 'paid', payment_id = ?, signature = ?, paid_at = NOW()
+                    WHERE order_id = ?
+                ")->execute([$razorpay_payment_id, $razorpay_signature, $razorpay_order_id]);
+            } catch (\Throwable $e) {
+                error_log("UserController::processTokenPayment order update: " . $e->getMessage());
+            }
+
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                try { $this->db->rollBack(); } catch (\Throwable $e2) {}
+            }
+            error_log("UserController::processTokenPayment db error booking #{$bookingId}: " . $e->getMessage());
+            $this->json(['success' => false, 'error' => 'Payment processing failed. Please contact support.'], 500);
+            return;
+        }
+
+        // Send payment receipt notification (best-effort)
+        try {
+            $user = $this->getUser();
+            $notifier = new \App\Services\BookingNotificationService();
+            $notifier->sendPaymentReceipt($booking, $user, $tokenAmount, $razorpay_payment_id);
+        } catch (\Throwable $e) {
+            error_log("[UserController] Payment notification failed: " . $e->getMessage());
+        }
+
+        $this->json([
+            'success'  => true,
+            'redirect' => BASE_URL . '/user/bookings/' . $bookingId . '/payment-success',
+        ]);
+    }
+
+    public function paymentSuccess($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int)$user['id'];
+        $bookingId = (int)$id;
+
+        if ($bookingId <= 0) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        $booking = $this->fetchBookingWithPlot($bookingId, $userId);
+        if (!$booking) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        // Fetch the latest payment transaction for this booking
+        $payment = null;
+        try {
+            $payment = $this->db->fetch("
+                SELECT * FROM payment_transactions
+                WHERE booking_id = ? AND user_id = ? AND payment_status = 'completed'
+                ORDER BY created_at DESC LIMIT 1
+            ", [$bookingId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::paymentSuccess fetch payment: " . $e->getMessage());
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/payment_success', [
+            'page_title' => 'Payment Successful — APS Dream Home',
+            'user'       => $user,
+            'booking'    => $booking,
+            'payment'    => $payment,
+            'token_amount' => (float)($booking['booking_amount'] ?? 25000),
+        ]);
+    }
+
+    /**
+     * Shared helper: fetch booking + plot + colony with ownership check.
+     */
+    private function fetchBookingWithPlot(int $bookingId, int $userId): ?array
+    {
+        try {
+            return $this->db->fetch("
+                SELECT pb.*,
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       p.width_ft, p.length_ft, p.dimension_label, p.facing,
+                       p.corner_plot, p.road_width_ft,
+                       c.name as colony_name, d.name as district_name
+                FROM plot_bookings pb
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON c.district_id = d.id
+                WHERE pb.id = ? AND pb.customer_id = ?
+            ", [$bookingId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::fetchBookingWithPlot - " . $e->getMessage());
+            return null;
+        }
     }
 
     private function safeInvestorStats(int $userId): array

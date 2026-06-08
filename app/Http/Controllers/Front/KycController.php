@@ -41,7 +41,7 @@ class KycController extends BaseController
             $this->json(['success' => false, 'error' => 'Not authenticated'], 401);
             return;
         }
-        $this->verifyCsrf();
+        // CSRF handled by BaseController constructor
 
         $pan = strtoupper(trim($_POST['pan_number'] ?? ''));
         $aadhaar = preg_replace('/\D/', '', $_POST['aadhaar_number'] ?? '');
@@ -80,11 +80,6 @@ class KycController extends BaseController
             }
             $documents[$field] = 'assets/uploads/kyc/' . $filename;
         }
-
-        $pan = strtoupper(trim($_POST['pan_number'] ?? ''));
-        $aadhaar = preg_replace('/\D/', '', $_POST['aadhaar_number'] ?? '');
-        $name = trim($_POST['legal_name'] ?? '');
-        $dob = $_POST['dob'] ?? null;
 
         $service = new KYCService();
         $panResult = $service->verifyPAN($pan, $name);
@@ -126,6 +121,25 @@ class KycController extends BaseController
             $stmt->execute([$userId]);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (\Throwable $e) { return null; }
+    }
+
+    public function status()
+    {
+        $this->requireLogin();
+        $userId = (int)($_SESSION['user_id'] ?? 0);
+        $kyc = $this->fetchKycRequest($userId);
+        $this->json([
+            'success' => true,
+            'status' => $kyc['status'] ?? 'not_started',
+            'kyc' => $kyc ? [
+                'id' => $kyc['id'],
+                'status' => $kyc['status'],
+                'legal_name' => $kyc['legal_name'] ?? '',
+                'submitted_at' => $kyc['created_at'] ?? null,
+                'verified_at' => $kyc['verified_at'] ?? null,
+                'rejection_reason' => $kyc['rejection_reason'] ?? null,
+            ] : null
+        ]);
     }
 
     private function fetchKycRequest(int $userId): ?array

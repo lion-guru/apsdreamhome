@@ -427,6 +427,9 @@ $router->get('/user/bookings/new', 'Front\\UserController@newBooking');
 $router->post('/user/bookings/create', 'Front\\UserController@createBooking');
 $router->get('/user/bookings/{id}', 'Front\\UserController@bookingDetail');
 $router->get('/user/bookings/{id}/confirmation', 'Front\\UserController@bookingConfirmation');
+$router->get('/user/bookings/{id}/pay-token', 'Front\\UserController@payToken');
+$router->post('/user/bookings/{id}/pay-token', 'Front\\UserController@processTokenPayment');
+$router->get('/user/bookings/{id}/payment-success', 'Front\\UserController@paymentSuccess');
 $router->get('/user/installments/{id}/demand-letter', 'Front\\UserController@demandLetter');
 $router->get('/user/inquiries', 'Front\\UserController@myInquiries');
 $router->get('/user/tickets', 'Front\\UserController@myTickets');
@@ -442,6 +445,7 @@ $router->get('/user/insurance', 'Front\\UserController@insurance');
 $router->get('/user/investment-plans', 'Front\\UserController@investmentPlans');
 $router->get('/user/kyc', 'Front\\KycController@index');
 $router->post('/user/kyc/submit', 'Front\\KycController@submit');
+$router->get('/user/kyc/status', 'Front\\KycController@status');
 
 // Portal: Insurance / Investment / Address (Phase 8 do-next-all)
 $router->post('/user/insurance/enrol', 'Front\\PortalController@insuranceEnrol');
@@ -2554,6 +2558,8 @@ $router->get('/admin/gst/{id}', 'App\\Http\\Controllers\\Admin\\GstController@sh
 $router->get('/admin/kyc', 'App\\Http\\Controllers\\Admin\\KycController@index');
 $router->get('/admin/kyc/pending', 'App\\Http\\Controllers\\Admin\\KycController@pending');
 $router->get('/admin/kyc/{id}', 'App\\Http\\Controllers\\Admin\\KycController@show');
+$router->post('/admin/kyc/{id}/approve', 'App\\Http\\Controllers\\Admin\\KycController@approve');
+$router->post('/admin/kyc/{id}/reject', 'App\\Http\\Controllers\\Admin\\KycController@reject');
 $router->post('/admin/kyc/{id}/verify', 'App\\Http\\Controllers\\Admin\\KycController@verify');
 
 // ═══════════════════════════════════════════════════
@@ -2781,6 +2787,7 @@ $router->get('/admin/notifications', 'App\\Http\\Controllers\\Admin\\AdminNotifi
 $router->get('/admin/notifications/panel', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@panel');
 $router->post('/admin/notifications/mark-read/{id}', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@markRead');
 $router->post('/admin/notifications/mark-all-read', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@markAllRead');
+$router->get('/admin/notifications/booking-log', 'App\\Http\\Controllers\\Admin\\AdminNotificationController@bookingLog');
 
 // ============================================================
 // TECH: BLOCKCHAIN PROPERTY VERIFICATION
