@@ -1,32 +1,69 @@
-<?php $pageTitle = 'Edit Visit'; ?>
-<div class="container-fluid">
-    <div class="page-header mb-4">
-        <div class="row align-items-center">
-            <div class="col">
-                <h3 class="page-title"><i class="fas fa-edit me-2"></i>Edit Visit</h3>
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/visits">Visits</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/visits/show/<?= $visit['id'] ?? 0 ?>">#<?= $visit['id'] ?? 0 ?></a></li>
-                    <li class="breadcrumb-item active">Edit</li>
-                </ul>
-            </div>
+<?php
+$page_title = $page_title ?? 'Edit Visit';
+$page_heading = $page_heading ?? 'Edit Visit';
+$visit = $visit ?? [];
+$users = $users ?? [];
+ob_start();
+?>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="fas fa-edit me-2"></i>Edit Visit</h2>
+            <p class="text-muted mb-0">Visit #<?= $visit['id'] ?? 0 ?></p>
         </div>
+        <a href="<?= BASE_URL ?>/admin/visits" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Back to Visits
+        </a>
     </div>
-    <div class="card shadow-sm border-0">
+
+    <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
-            <form method="POST" action="/admin/visits/update/<?= $visit['id'] ?? 0 ?>">
+            <form method="POST" action="<?= BASE_URL ?>/admin/visits/update">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
+                <input type="hidden" name="visit_id" value="<?= $visit['id'] ?? 0 ?>">
                 <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Customer</label><select name="customer_id" class="form-select"><option value="">Select</option><?php foreach ($users as $c): ?><option value="<?= $c['id'] ?>" <?= ($visit['customer_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= $c['name'] ?></option><?php endforeach; ?></select></div>
-                    <div class="col-md-6"><label class="form-label">Assigned To</label><select name="assigned_to" class="form-select"><option value="">Unassigned</option><?php foreach ($users as $u): ?><option value="<?= $u['id'] ?>" <?= ($visit['assigned_to'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= $u['name'] ?? $u['username'] ?></option><?php endforeach; ?></select></div>
-                    <div class="col-md-6"><label class="form-label">Scheduled Date & Time</label><input type="datetime-local" name="scheduled_at" class="form-control" value="<?= isset($visit['scheduled_at']) ? date('Y-m-d\TH:i', strtotime($visit['scheduled_at'])) : '' ?>"></div>
-                    <div class="col-md-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="scheduled" <?= ($visit['status'] ?? '') === 'scheduled' ? 'selected' : '' ?>>Scheduled</option><option value="completed" <?= ($visit['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option><option value="cancelled" <?= ($visit['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelled</option></select></div>
-                    <div class="col-md-3"><label class="form-label">Purpose</label><select name="purpose" class="form-select"><option value="site_visit" <?= ($visit['purpose'] ?? '') === 'site_visit' ? 'selected' : '' ?>>Site Visit</option><option value="meeting" <?= ($visit['purpose'] ?? '') === 'meeting' ? 'selected' : '' ?>>Meeting</option><option value="paperwork" <?= ($visit['purpose'] ?? '') === 'paperwork' ? 'selected' : '' ?>>Paperwork</option></select></div>
-                    <div class="col-12"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="3"><?= $visit['notes'] ?? '' ?></textarea></div>
-                    <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Visit</button> <a href="/admin/visits" class="btn btn-secondary">Cancel</a></div>
+                    <div class="col-md-6">
+                        <label class="form-label">Customer Name</label>
+                        <input type="text" name="customer_name" class="form-control" value="<?= htmlspecialchars($visit['customer_name'] ?? '') ?>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Assigned To</label>
+                        <select name="assigned_to" class="form-select">
+                            <option value="">Unassigned</option>
+                            <?php foreach ($users as $u): ?>
+                                <option value="<?= $u['id'] ?>" <?= ($visit['assigned_to'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= htmlspecialchars($u['name'] ?? '') ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Visit Date</label>
+                        <input type="date" name="visit_date" class="form-control" value="<?= isset($visit['visit_date']) ? date('Y-m-d', strtotime($visit['visit_date'])) : '' ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Visit Time</label>
+                        <input type="time" name="visit_time" class="form-control" value="<?= $visit['visit_time'] ?? '' ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            <?php foreach (['scheduled' => 'Scheduled', 'confirmed' => 'Confirmed', 'completed' => 'Completed', 'cancelled' => 'Cancelled', 'rescheduled' => 'Rescheduled', 'no_show' => 'No Show'] as $val => $lbl): ?>
+                                <option value="<?= $val ?>" <?= ($visit['status'] ?? '') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Notes</label>
+                        <textarea name="notes" class="form-control" rows="3"><?= htmlspecialchars($visit['notes'] ?? '') ?></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Visit</button>
+                        <a href="<?= BASE_URL ?>/admin/visits" class="btn btn-secondary">Cancel</a>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<?php
+$content = ob_get_clean();
+include APP_PATH . '/views/admin/layouts/unified.php';

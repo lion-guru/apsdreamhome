@@ -1,19 +1,18 @@
-<?php $pageTitle = 'Visit Details'; ?>
-<div class="container-fluid">
-    <div class="page-header mb-4">
-        <div class="row align-items-center">
-            <div class="col">
-                <h3 class="page-title"><i class="fas fa-calendar-check me-2"></i>Visit Details</h3>
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/visits">Visits</a></li>
-                    <li class="breadcrumb-item active">#<?= $visit['id'] ?? 0 ?></li>
-                </ul>
-            </div>
-            <div class="col-auto">
-                <a href="/admin/visits/edit/<?= $visit['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
-                <a href="/admin/visits" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
-            </div>
+<?php
+$page_title = $page_title ?? 'Visit Details';
+$page_heading = $page_heading ?? 'Visit Details';
+$visit = $visit ?? [];
+ob_start();
+?>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="fas fa-calendar-check me-2"></i>Visit Details</h2>
+            <p class="text-muted mb-0">Visit #<?= $visit['id'] ?? 0 ?></p>
+        </div>
+        <div class="btn-group">
+            <a href="<?= BASE_URL ?>/admin/visits/edit/<?= $visit['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+            <a href="<?= BASE_URL ?>/admin/visits" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
         </div>
     </div>
     <?php if (empty($visit)): ?>
@@ -48,3 +47,7 @@
     </div>
     <?php endif; ?>
 </div>
+<?php
+$content = ob_get_clean();
+include APP_PATH . '/views/admin/layouts/unified.php';
+
