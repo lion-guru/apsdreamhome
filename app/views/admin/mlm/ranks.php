@@ -1,9 +1,8 @@
 <?php
 $page_title = $page_title ?? "Ranks & Tiers";
-$ranksData = $ranksData ?? ['benefits' => [], 'rates' => [], 'rankCounts' => [], 'recentPromotions' => [], 'stats' => []];
+$ranksData = $ranksData ?? ['benefits' => [], 'rankCounts' => [], 'recentPromotions' => [], 'stats' => []];
 $base = defined('BASE_URL') ? BASE_URL : '';
 $benefits = $ranksData['benefits'] ?? [];
-$rates = $ranksData['rates'] ?? [];
 $rankCounts = $ranksData['rankCounts'] ?? [];
 $recentPromotions = $ranksData['recentPromotions'] ?? [];
 $stats = $ranksData['stats'] ?? [];
@@ -78,13 +77,11 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                                     <th class="text-center">L3 %</th>
                                     <th class="text-end">Min Volume</th>
                                     <th class="text-end">Min Legs</th>
-                                    <th class="text-end">Multiplier</th>
-                                    <th class="text-end">Bonus</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($benefits)): ?>
-                                    <tr><td colspan="10" class="text-center text-muted py-4">No rank data found.</td></tr>
+                                    <tr><td colspan="8" class="text-center text-muted py-4">No rank data found.</td></tr>
                                 <?php else: ?>
                                     <?php foreach ($benefits as $b):
                                         $name = strtolower($b['rank_name'] ?? '');
@@ -129,14 +126,6 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                                         </td>
                                         <td class="text-end">&#8377;<?= number_format((float)($b['min_qualifying_volume'] ?? 0)) ?></td>
                                         <td class="text-end"><?= (int)($b['min_leg_count'] ?? 0) ?></td>
-                                        <td class="text-end">
-                                            <?php $mult = 1.0; foreach ($rates as $rr) { if (strtolower($rr['rank_name']) === $name) { $mult = (float)$rr['commission_multiplier']; break; } } ?>
-                                            <?= number_format($mult, 1) ?>x
-                                        </td>
-                                        <td class="text-end">
-                                            <?php $bonus = 0; foreach ($rates as $rr) { if (strtolower($rr['rank_name']) === $name) { $bonus = (float)$rr['bonus_amount']; break; } } ?>
-                                            &#8377;<?= number_format($bonus) ?>
-                                        </td>
                                     </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -145,31 +134,6 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                     </div>
                 </div>
             </div>
-
-            <?php if (!empty($rates)): ?>
-            <div class="aps-cp-card mt-4">
-                <div class="aps-cp-card-header">
-                    <h5 class="m-0"><i class="fas fa-chart-bar me-2"></i>Rate Comparison</h5>
-                </div>
-                <div class="aps-cp-card-body">
-                    <div class="row g-3">
-                        <?php foreach ($rates as $rr):
-                            $color = $rankColors[strtolower($rr['rank_name'])] ?? '#94a3b8';
-                        ?>
-                        <div class="col-md-4 col-6">
-                            <div class="border rounded p-3 text-center" style="border-left:4px solid <?= htmlspecialchars($color) ?> !important;">
-                                <div class="fw-bold"><?= htmlspecialchars($rr['rank_name']) ?></div>
-                                <div class="text-muted small mb-2">Level <?= (int)$rr['rank_level'] ?></div>
-                                <div style="font-size:1.3rem;font-weight:700;color:<?= htmlspecialchars($color) ?>;"><?= number_format((float)$rr['commission_multiplier'], 1) ?>x</div>
-                                <div class="text-muted small">Multiplier</div>
-                                <div class="mt-1 small">&#8377;<?= number_format((float)$rr['bonus_amount']) ?> bonus</div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
-            <?php endif; ?>
         </div>
 
         <div class="col-lg-4">

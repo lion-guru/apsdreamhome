@@ -423,6 +423,8 @@ $router->get('/user/logout', 'Auth\\CustomerAuthController@logout');
 $router->get('/user/dashboard', 'Front\\UserController@dashboard');
 $router->get('/user/properties', 'Front\\UserController@myProperties');
 $router->get('/user/bookings', 'Front\\UserController@userBookings');
+$router->get('/user/bookings/{id}', 'Front\\UserController@bookingDetail');
+$router->get('/user/installments/{id}/demand-letter', 'Front\\UserController@demandLetter');
 $router->get('/user/inquiries', 'Front\\UserController@myInquiries');
 $router->get('/user/tickets', 'Front\\UserController@myTickets');
 $router->post('/user/tickets/create', 'Front\\UserController@createTicket');
@@ -939,6 +941,10 @@ $router->post('/admin/bookings/{id}/payment', 'App\\Http\\Controllers\\Admin\\Bo
 
 // Admin Agreements
 $router->get('/admin/agreements', 'App\\Http\\Controllers\\Admin\\AgreementController@index');
+$router->get('/admin/agreements/create', 'App\\Http\\Controllers\\Admin\\AgreementController@create');
+$router->post('/admin/agreements/store', 'App\\Http\\Controllers\\Admin\\AgreementController@store');
+$router->get('/admin/agreements/{id}', 'App\\Http\\Controllers\\Admin\\AgreementController@show');
+$router->post('/admin/agreements/update/{id}', 'App\\Http\\Controllers\\Admin\\AgreementController@update');
 $router->get('/admin/agreements/generate/{id}/{type}', 'App\\Http\\Controllers\\Admin\\AgreementController@generate');
 $router->get('/admin/agreements/download/{id}', 'App\\Http\\Controllers\\Admin\\AgreementController@download');
 $router->get('/admin/agreements/preview/{id}/{type}', 'App\\Http\\Controllers\\Admin\\AgreementController@preview');

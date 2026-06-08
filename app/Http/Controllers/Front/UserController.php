@@ -220,31 +220,223 @@ class UserController extends BaseController
 
     public function userBookings()
     {
+        $this->myBookings();
+    }
+
+    public function myBookings()
+    {
         $this->requireCustomerLogin();
         $user = $this->getUser();
+        $userId = (int)$user['id'];
 
-        $bookings = $this->db->fetchAll("
-            SELECT b.*, 
-                   COALESCE(p.plot_number, p2.plot_number) as plot_number,
-                   COALESCE(p.block, p2.block) as block,
-                   COALESCE(p.area_sqft, p2.area_sqft) as area_sqft,
-                   COALESCE(p.total_price, p2.total_price) as plot_price,
-                   COALESCE(c.name, c2.name) as colony_name
-            FROM bookings b
-            LEFT JOIN plots p ON b.property_id = p.id
-            LEFT JOIN colonies c ON p.colony_id = c.id
-            LEFT JOIN plots p2 ON b.plot_id = p2.id
-            LEFT JOIN colonies c2 ON p2.colony_id = c2.id
-            WHERE b.customer_id = ?
-            ORDER BY b.created_at DESC
-        ", [$user['id']]);
+        $bookings = [];
+        try {
+            $bookings = $this->db->fetchAll("
+                SELECT pb.*,
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       p.width_ft, p.length_ft, p.dimension_label, p.facing,
+                       c.name as colony_name,
+                       (SELECT COALESCE(SUM(bps.paid_amount), 0) FROM booking_payment_schedules bps WHERE bps.booking_id = pb.id) as total_paid,
+                       (SELECT COUNT(*) FROM booking_payment_schedules bps WHERE bps.booking_id = pb.id AND bps.status = 'overdue') as overdue_count,
+                       (SELECT COUNT(*) FROM booking_payment_schedules bps WHERE bps.booking_id = pb.id AND bps.status = 'pending') as pending_count,
+                       (SELECT COUNT(*) FROM booking_payment_schedules bps WHERE bps.booking_id = pb.id) as total_installments
+                FROM plot_bookings pb
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE pb.customer_id = ?
+                ORDER BY pb.created_at DESC
+            ", [$userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::myBookings - " . $e->getMessage());
+        }
 
         $this->layout = 'layouts/customer';
-        $this->render('pages/user_bookings', [
+        $this->render('pages/user/bookings', [
             'page_title' => 'My Bookings - APS Dream Home',
             'user' => $user,
             'bookings' => $bookings,
         ]);
+    }
+
+    public function bookingDetail($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int)$user['id'];
+        $bookingId = (int)$id;
+
+        if ($bookingId <= 0) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        $booking = null;
+        try {
+            $booking = $this->db->fetch("
+                SELECT pb.*,
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       p.width_ft, p.length_ft, p.dimension_label, p.facing,
+                       p.corner_plot, p.road_width_ft,
+                       c.name as colony_name, c.contact_phone as colony_phone,
+                       c.contact_email as colony_email,
+                       d.name as district_name, s.name as state_name,
+                       u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                FROM plot_bookings pb
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN states s ON d.state_id = s.id
+                LEFT JOIN users u ON pb.customer_id = u.id
+                WHERE pb.id = ? AND pb.customer_id = ?
+            ", [$bookingId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::bookingDetail - " . $e->getMessage());
+        }
+
+        if (!$booking) {
+            $this->layout = 'layouts/customer';
+            $this->render('pages/user/booking_detail', [
+                'page_title' => 'Booking Not Found - APS Dream Home',
+                'user' => $user,
+                'booking' => null,
+                'payments' => [],
+                'receipts' => [],
+                'documents' => [],
+                'history' => [],
+            ]);
+            return;
+        }
+
+        $payments = [];
+        try {
+            $payments = $this->db->fetchAll("
+                SELECT * FROM booking_payment_schedules
+                WHERE booking_id = ?
+                ORDER BY installment_no ASC
+            ", [$bookingId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::bookingDetail payments - " . $e->getMessage());
+        }
+
+        $receipts = [];
+        try {
+            $receipts = $this->db->fetchAll("
+                SELECT * FROM booking_payment_receipts
+                WHERE booking_id = ?
+                ORDER BY receipt_date DESC
+            ", [$bookingId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::bookingDetail receipts - " . $e->getMessage());
+        }
+
+        $documents = [];
+        try {
+            $documents = $this->db->fetchAll("
+                SELECT * FROM booking_documents
+                WHERE booking_id = ?
+                ORDER BY created_at DESC
+            ", [$bookingId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::bookingDetail documents - " . $e->getMessage());
+        }
+
+        $history = [];
+        try {
+            $history = $this->db->fetchAll("
+                SELECT bsh.*, u.name as changed_by_name
+                FROM booking_status_history bsh
+                LEFT JOIN users u ON bsh.changed_by = u.id
+                WHERE bsh.booking_id = ?
+                ORDER BY bsh.created_at ASC
+            ", [$bookingId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::bookingDetail history - " . $e->getMessage());
+        }
+
+        $totalPaid = 0;
+        foreach ($payments as $p) {
+            $totalPaid += (float)($p['paid_amount'] ?? 0);
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/booking_detail', [
+            'page_title' => 'Booking ' . htmlspecialchars($booking['booking_number'] ?? '') . ' - APS Dream Home',
+            'user' => $user,
+            'booking' => $booking,
+            'payments' => $payments,
+            'receipts' => $receipts,
+            'documents' => $documents,
+            'history' => $history,
+            'total_paid' => $totalPaid,
+        ]);
+    }
+
+    public function demandLetter($installmentId = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int)$user['id'];
+        $instId = (int)$installmentId;
+
+        if ($instId <= 0) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        $installment = null;
+        $booking = null;
+        $colony = null;
+        $plot = null;
+
+        try {
+            $installment = $this->db->fetch("
+                SELECT bps.*, pb.customer_id, pb.booking_number, pb.total_plot_value
+                FROM booking_payment_schedules bps
+                JOIN plot_bookings pb ON bps.booking_id = pb.id
+                WHERE bps.id = ? AND pb.customer_id = ?
+            ", [$instId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::demandLetter installment - " . $e->getMessage());
+        }
+
+        if (!$installment) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        try {
+            $booking = $this->db->fetch("
+                SELECT pb.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                FROM plot_bookings pb
+                LEFT JOIN users u ON pb.customer_id = u.id
+                WHERE pb.id = ?
+            ", [$installment['booking_id']]);
+        } catch (\Throwable $e) {
+            error_log("UserController::demandLetter booking - " . $e->getMessage());
+        }
+
+        try {
+            $plot = $this->db->fetch("SELECT * FROM plots WHERE id = ?", [$booking['plot_id'] ?? 0]);
+        } catch (\Throwable $e) {
+            error_log("UserController::demandLetter plot - " . $e->getMessage());
+        }
+
+        try {
+            $colony = $this->db->fetch("SELECT c.*, d.name as district_name FROM colonies c LEFT JOIN districts d ON c.district_id = d.id WHERE c.id = ?", [$plot['colony_id'] ?? 0]);
+        } catch (\Throwable $e) {
+            error_log("UserController::demandLetter colony - " . $e->getMessage());
+        }
+
+        if (!$booking || !$colony || !$plot) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        $html = \App\Services\PDFService::generateDemandLetter($booking, $installment, $colony, $plot);
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo $html;
+        exit;
     }
 
     public function myInquiries()

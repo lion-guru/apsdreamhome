@@ -915,6 +915,8 @@ class PageController extends BaseController
                 "SELECT * FROM news WHERE status = 'published' ORDER BY created_at DESC"
             );
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $news_items = [];
         }
 
@@ -1047,6 +1049,8 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM interior_services WHERE status = 'active' ORDER BY sort_order ASC LIMIT 6");
             $services = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $services = [
                 ['id' => 1, 'title' => 'Residential Design', 'description' => 'Complete home interior design from concept to completion, including furniture, lighting, and decor selection.', 'icon' => 'fas fa-home', 'features' => json_encode(['Space Planning', 'Furniture Selection', 'Lighting Design', 'Color Consultation'])],
                 ['id' => 2, 'title' => 'Commercial Design', 'description' => 'Professional office and commercial space design that enhances productivity and brand identity.', 'icon' => 'fas fa-building', 'features' => json_encode(['Office Layout', 'Brand Integration', 'Ergonomic Design', 'Reception Design'])],
@@ -1061,6 +1065,8 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM interior_portfolio WHERE status = 'active' ORDER BY sort_order ASC LIMIT 6");
             $portfolio = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $portfolio = [];
         }
 
@@ -1068,6 +1074,8 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM interior_team WHERE status = 'active' ORDER BY sort_order ASC LIMIT 4");
             $team_members = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $team_members = [];
         }
 
@@ -1075,6 +1083,8 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM testimonials WHERE type = 'interior' AND status = 'active' ORDER BY sort_order ASC LIMIT 3");
             $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $testimonials = [];
         }
 
@@ -1107,6 +1117,8 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM construction_projects WHERE status IN ('completed', 'in_progress') ORDER BY created_at DESC LIMIT 6");
             $projects = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $projects = [];
         }
 
@@ -1114,6 +1126,8 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM testimonials WHERE type = 'construction' AND status = 'active' LIMIT 3");
             $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $testimonials = [];
         }
 
@@ -1161,6 +1175,8 @@ class PageController extends BaseController
 
             $_SESSION['flash_success'] = 'Thank you! We will contact you shortly regarding your construction project.';
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $_SESSION['flash_error'] = 'Something went wrong. Please try again.';
         }
 
@@ -1446,6 +1462,8 @@ class PageController extends BaseController
                         $plotStmt->execute([$project->id]);
                         $plots = $plotStmt->fetchAll(\PDO::FETCH_OBJ);
                     } catch (\Exception $e) {
+                        error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
                         $plots = [];
                     }
 
@@ -1455,6 +1473,8 @@ class PageController extends BaseController
                         $relatedStmt->execute([$project->district, $project->id]);
                         $related_projects = $relatedStmt->fetchAll(\PDO::FETCH_OBJ);
                     } catch (\Exception $e) {
+                        error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
                         $related_projects = [];
                     }
                 }
@@ -1557,6 +1577,8 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $project = null;
         }
 
@@ -1576,6 +1598,8 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $project = null;
         }
 
@@ -1595,6 +1619,8 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $project = null;
         }
 
@@ -1614,6 +1640,8 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $project = null;
         }
 
@@ -1633,6 +1661,8 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $project = null;
         }
 
@@ -2280,6 +2310,8 @@ class PageController extends BaseController
             $stmt->execute();
             $legal_docs = $stmt->fetchAll(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $legal_docs = [];
         }
 
@@ -2563,6 +2595,8 @@ class PageController extends BaseController
                     $data['result'] = ['found' => false, 'message' => 'No record found for RERA number: ' . htmlspecialchars($reraNumber)];
                 }
             } catch (\Exception $e) {
+                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
                 $data['result'] = ['found' => false, 'message' => 'Lookup failed. Please try again.'];
             }
         }
@@ -2581,6 +2615,8 @@ class PageController extends BaseController
             $stmt->execute([$id]);
             $property = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $property = null;
         }
 
@@ -2699,6 +2735,8 @@ class PageController extends BaseController
                 'cities_covered' => count(array_unique(array_column($colonies, 'district_name')))
             ];
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $colonies = [];
             $colonyStats = ['total_colonies' => 0, 'total_area' => '0', 'total_plots' => 0, 'cities_covered' => 0];
         }

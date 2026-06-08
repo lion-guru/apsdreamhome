@@ -104,6 +104,69 @@ $twoFactorEnabled = $twoFactorEnabled ?? false;
     </div>
 </div>
 
+<?php
+$dashBookings = $bookings ?? [];
+$dashActiveEmis = 0;
+$dashTotalPending = 0;
+$dashTotalPaid = 0;
+foreach ($dashBookings as $db) {
+    $dbStatus = $db['status'] ?? '';
+    if ($dbStatus === 'emi_active' || $dbStatus === 'partially_paid') {
+        $dashActiveEmis++;
+    }
+    $dbTotal = (float)($db['total_plot_value'] ?? $db['total_amount'] ?? 0);
+    $dbPaid = (float)($db['amount'] ?? $db['token_paid'] ?? 0);
+    $dashTotalPaid += $dbPaid;
+    $dashTotalPending += max(0, $dbTotal - $dbPaid);
+}
+$dashBookingCount = count($dashBookings);
+?>
+<?php if ($dashBookingCount > 0): ?>
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="aps-cp-card" style="background: linear-gradient(135deg, #fff 0%, #ede9fe 100%);">
+            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(79, 70, 229, 0.15);">
+                <h5><i class="fas fa-file-invoice-dollar" style="color:#4f46e5;"></i> My Bookings</h5>
+                <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="aps-cp-card-body">
+                <div class="row g-3 text-center">
+                    <div class="col-md-3 col-6">
+                        <div class="bg-white rounded-3 p-3 border">
+                            <div class="fw-bold fs-4 text-primary" data-aps-count="<?= $dashBookingCount ?>">0</div>
+                            <small class="text-muted">Total Bookings</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="bg-white rounded-3 p-3 border">
+                            <div class="fw-bold fs-4 text-amber" style="color:#f59e0b;" data-aps-count="<?= $dashActiveEmis ?>">0</div>
+                            <small class="text-muted">Active EMIs</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="bg-white rounded-3 p-3 border">
+                            <div class="fw-bold fs-4 text-success">₹<?= number_format($dashTotalPaid) ?></div>
+                            <small class="text-muted">Total Paid</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="bg-white rounded-3 p-3 border">
+                            <div class="fw-bold fs-4 text-danger">₹<?= number_format($dashTotalPending > 0 ? $dashTotalPending : 0) ?></div>
+                            <small class="text-muted">Pending Amount</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-primary btn-sm">
+                        <i class="fas fa-arrow-right me-1"></i>View All Bookings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="row g-4">
     <div class="col-lg-8">
 

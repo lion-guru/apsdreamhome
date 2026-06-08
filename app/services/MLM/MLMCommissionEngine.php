@@ -52,6 +52,7 @@ class MLMCommissionEngine
                     $pdo = $pdo->getPdo();
                 }
             } catch (Exception $e) {
+                error_log('[MLMCommissionEngine] Database init failed: ' . $e->getMessage());
                 $pdo = null;
             }
         }
@@ -120,6 +121,8 @@ class MLMCommissionEngine
                 return $r;
             }, $rows);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $this->defaultRankBenefits();
         }
     }
@@ -192,6 +195,8 @@ class MLMCommissionEngine
                 $lStmt->execute([$userId, $userId]);
                 $legs = (int)$lStmt->fetchColumn();
             } catch (Exception $e) {
+                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
                 $legs = 0;
             }
             if ($legs === 0 && $userId > 0) {
@@ -201,6 +206,8 @@ class MLMCommissionEngine
                     $rStmt->execute([$userId]);
                     $legs = (int)$rStmt->fetchColumn();
                 } catch (Exception $e) {
+                    error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
                     $legs = 0;
                 }
             }
@@ -221,6 +228,8 @@ class MLMCommissionEngine
                 'status'         => $a['status'] ?? 'active',
             ];
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $empty;
         }
     }
@@ -341,7 +350,9 @@ class MLMCommissionEngine
             $this->db->commit();
             return true;
         } catch (Exception $e) {
-            try { $this->db->rollBack(); } catch (Exception $e2) {}
+            try { $this->db->rollBack(); } catch (Exception $e2) {
+                error_log("[{$className}] {$methodName}() exception: " . $e2->getMessage());
+}
             return false;
         }
     }
@@ -366,10 +377,14 @@ class MLMCommissionEngine
                         $unchanged++;
                     }
                 } catch (Exception $e) {
+                    error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
                     $errors[] = "Assoc {$aid}: " . $e->getMessage();
                 }
             }
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $errors[] = $e->getMessage();
         }
         return ['promoted' => $promoted, 'unchanged' => $unchanged, 'errors' => $errors];
@@ -385,8 +400,96 @@ class MLMCommissionEngine
             $stmt->execute([$associateId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return [];
         }
+    }
+
+    /* =============================================================
+     *  CANONICAL RATE HELPER
+     * ============================================================= */
+
+    /**
+     * Returns the canonical commission rates for a given rank.
+     * Uses mlm_rank_benefits DB table first, falls back to hardcoded defaults.
+     *
+     * @return array{direct: float, l1: float, l2: float, l3: float}
+     */
+    public static function getCanonicalRates(string $rank): array
+    {
+        $defaults = [
+            'associate' => ['direct' => 1.0, 'l1' => 2.0, 'l2' => 1.0, 'l3' => 0.5],
+            'bronze'    => ['direct' => 2.0, 'l1' => 3.0, 'l2' => 1.5, 'l3' => 0.5],
+            'silver'    => ['direct' => 2.5, 'l1' => 3.0, 'l2' => 1.5, 'l3' => 1.0],
+            'gold'      => ['direct' => 3.0, 'l1' => 3.5, 'l2' => 2.0, 'l3' => 1.0],
+            'platinum'  => ['direct' => 3.5, 'l1' => 4.0, 'l2' => 2.5, 'l3' => 1.5],
+            'diamond'   => ['direct' => 4.0, 'l1' => 5.0, 'l2' => 3.0, 'l3' => 2.0],
+        ];
+
+        $fallback = $defaults[$rank] ?? $defaults['associate'];
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance();
+            if (method_exists($pdo, 'getPdo')) {
+                $pdo = $pdo->getPdo();
+            }
+            if (!$pdo instanceof PDO) {
+                return $fallback;
+            }
+            $stmt = $pdo->prepare(
+                "SELECT direct_sale_pct, l1_pct, l2_pct, l3_pct
+                 FROM mlm_rank_benefits
+                 WHERE rank_name = ? AND is_active = 1
+                 LIMIT 1"
+            );
+            $stmt->execute([$rank]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                return [
+                    'direct' => (float)$row['direct_sale_pct'],
+                    'l1'     => (float)$row['l1_pct'],
+                    'l2'     => (float)$row['l2_pct'],
+                    'l3'     => (float)$row['l3_pct'],
+                ];
+            }
+        } catch (\Throwable $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
+            // fall through to defaults
+        }
+
+        return $fallback;
+    }
+
+    /**
+     * Resolve canonical rates for a given user_id (looks up their associate rank).
+     * Falls back to 'associate' rank if user is not found or has no rank.
+     */
+    public static function getRatesForUser(int $userId): array
+    {
+        $rank = 'associate';
+        try {
+            $pdo = \App\Core\Database\Database::getInstance();
+            if (method_exists($pdo, 'getPdo')) {
+                $pdo = $pdo->getPdo();
+            }
+            if ($pdo instanceof PDO) {
+                $stmt = $pdo->prepare(
+                    "SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1"
+                );
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($row && !empty($row['level'])) {
+                    $rank = $row['level'];
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
+            // fall through
+        }
+        return self::getCanonicalRates($rank);
     }
 
     /* =============================================================
@@ -513,6 +616,8 @@ class MLMCommissionEngine
                     $result['created_ids'][] = $e['id'];
                     $result['total'] += $e['amount'];
                 } catch (Exception $ee) {
+                    error_log("[{$className}] {$methodName}() exception: " . $ee->getMessage());
+
                     // continue to next entry
                 }
             }
@@ -520,6 +625,8 @@ class MLMCommissionEngine
             $result['entries'] = $entries;
             return $result;
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $result;
         }
     }
@@ -545,6 +652,8 @@ class MLMCommissionEngine
                 }
             }
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             // fall through
         }
         return $this->getRankBenefitByName('associate') ?? $this->defaultRankBenefits()[0];
@@ -582,6 +691,8 @@ class MLMCommissionEngine
             $stmt->execute([$minDaysOverdue]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return [];
         }
     }
@@ -658,17 +769,23 @@ class MLMCommissionEngine
                                 ")->execute([$cbAmt, $cbAmt, $w['id']]);
                             }
                         } catch (Exception $we) {
+                            error_log("[{$className}] {$methodName}() exception: " . $we->getMessage());
+
                             // wallet may not exist
                         }
 
                         $result['processed']++;
                         $result['amount'] += $cbAmt;
                     } catch (Exception $ie) {
+                        error_log("[{$className}] {$methodName}() exception: " . $ie->getMessage());
+
                         $result['errors'][] = "Ledger {$pr['id']}: " . $ie->getMessage();
                     }
                 }
             }
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $result['errors'][] = $e->getMessage();
         }
         return $result;
@@ -699,6 +816,8 @@ class MLMCommissionEngine
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return [];
         }
     }
@@ -800,7 +919,9 @@ class MLMCommissionEngine
             $this->db->commit();
             return $batchId;
         } catch (Exception $e) {
-            try { $this->db->rollBack(); } catch (Exception $e2) {}
+            try { $this->db->rollBack(); } catch (Exception $e2) {
+                error_log("[{$className}] {$methodName}() exception: " . $e2->getMessage());
+}
             error_log('[MLMCommissionEngine] createPayoutBatch error: ' . $e->getMessage());
             return 0;
         }
@@ -820,6 +941,8 @@ class MLMCommissionEngine
             $stmt->execute([$approverId, $batchId]);
             return $stmt->rowCount() > 0;
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return false;
         }
     }
@@ -861,6 +984,8 @@ class MLMCommissionEngine
             $this->refreshBatchTotals((int)$this->db->query("SELECT batch_id FROM mlm_payouts WHERE id = {$payoutId}")->fetchColumn());
             return true;
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return false;
         }
     }
@@ -895,6 +1020,8 @@ class MLMCommissionEngine
                 ]);
             }
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             // non-fatal
         }
     }
@@ -923,6 +1050,8 @@ class MLMCommissionEngine
             $payouts = $p->fetchAll(PDO::FETCH_ASSOC) ?: [];
             return ['batch' => $batch, 'payouts' => $payouts];
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return ['batch' => null, 'payouts' => []];
         }
     }
@@ -946,6 +1075,8 @@ class MLMCommissionEngine
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return [];
         }
     }
@@ -992,6 +1123,8 @@ class MLMCommissionEngine
 
             return $stats;
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $empty;
         }
     }
@@ -1012,6 +1145,8 @@ class MLMCommissionEngine
                 $buckets[$lvl] = (int)$r['c'];
             }
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             // return default buckets
         }
         return $buckets;
@@ -1033,6 +1168,8 @@ class MLMCommissionEngine
             ")->execute([$cronName]);
             return (int)$this->db->lastInsertId();
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return 0;
         }
     }
@@ -1050,6 +1187,8 @@ class MLMCommissionEngine
             ")->execute([$status, $itemsProcessed, $errorsCount, $errorLog, $logId]);
             return true;
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return false;
         }
     }
@@ -1065,6 +1204,8 @@ class MLMCommissionEngine
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return [];
         }
     }

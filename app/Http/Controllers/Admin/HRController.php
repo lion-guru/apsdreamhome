@@ -26,6 +26,8 @@ class HRController extends AdminController
             $attendanceRate = $totalEmployees > 0 ? round(($presentToday / $totalEmployees) * 100, 1) : 0;
             $activeEmployees = $this->db->fetchAll("SELECT e.id, e.name, e.department, e.designation, e.status, u.email, u.phone FROM users e JOIN users u ON e.id = u.id WHERE e.status='active' ORDER BY e.name LIMIT 5");
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $totalEmployees = 0; $totalUsers = 0; $presentToday = 0; $onLeave = 0; $pendingLeaves = 0; $attendanceRate = 0; $activeEmployees = [];
         }
         return $this->render('admin/hr/index', [
@@ -63,6 +65,8 @@ class HRController extends AdminController
             $users = $this->db->fetchAll("SELECT e.*, u.email, u.phone FROM users e JOIN users u ON e.id=u.id $where ORDER BY e.id DESC LIMIT $perPage OFFSET $offset", $params);
             $departments = $this->db->fetchAll("SELECT DISTINCT department FROM users WHERE department IS NOT NULL AND department!='' ORDER BY department");
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $total = 0; $users = []; $departments = [];
         }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
@@ -110,6 +114,8 @@ class HRController extends AdminController
             $this->db->execute("INSERT INTO users (name, email, phone, role, status, password, employee_data, created_at) VALUES (?,?,?,'employee','active',?,?,NOW())", [$name, $email, $phone, $hashed, $employeeData]);
             $this->setFlash('success', 'Employee created successfully');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/users');
@@ -122,7 +128,9 @@ class HRController extends AdminController
         try {
             $employee = $this->db->fetch("SELECT e.*, u.email, u.phone FROM users e JOIN users u ON e.id=u.id WHERE e.id=?", [$id]);
             if (!$employee) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
-        } catch (\Exception $e) { $employee = null; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $employee = null; }
         return $this->render('admin/hr/employee_edit', ['page_title' => 'Edit Employee', 'employee' => $employee]);
     }
 
@@ -149,6 +157,8 @@ class HRController extends AdminController
             $this->db->execute("UPDATE users SET name=?, email=?, phone=?, employee_data=?, status=? WHERE id=?", [$name, $email, $phone, json_encode($empData), $status, $id]);
             $this->setFlash('success', 'Employee updated successfully');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/users');
@@ -162,6 +172,8 @@ class HRController extends AdminController
             $this->db->execute("UPDATE users SET status='deleted' WHERE id=?", [$id]);
             $this->setFlash('success', 'Employee deleted');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/users');
@@ -176,7 +188,9 @@ class HRController extends AdminController
             if (!$employee) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
             $attendance = $this->db->fetchAll("SELECT * FROM employee_attendance WHERE employee_id=? ORDER BY attendance_date DESC LIMIT 10", [$employee['id']]);
             $leaves = $this->db->fetchAll("SELECT el.*, lt.name as leave_type_name FROM employee_leaves el LEFT JOIN leave_types lt ON el.leave_type_id=lt.id WHERE el.employee_id=? ORDER BY el.created_at DESC LIMIT 5", [$id]);
-        } catch (\Exception $e) { $employee = null; $attendance = []; $leaves = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $employee = null; $attendance = []; $leaves = []; }
         return $this->render('admin/hr/employee_view', [
             'page_title' => 'Employee: ' . ($employee['name'] ?? ''),
             'employee' => $employee,
@@ -204,7 +218,9 @@ class HRController extends AdminController
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_attendance a $where", $params)['c'] ?? 0;
             $records = $this->db->fetchAll("SELECT a.*, u.name as employee_name, u.email, u.phone FROM employee_attendance a JOIN users u ON a.employee_id=u.id $where ORDER BY u.name LIMIT $perPage OFFSET $offset", $params);
             $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN users e ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
-        } catch (\Exception $e) { $total = 0; $records = []; $users = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $total = 0; $records = []; $users = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/attendance', [
             'page_title' => 'Attendance - ' . $date,
@@ -236,6 +252,8 @@ class HRController extends AdminController
             }
             $this->setFlash('success', 'Attendance marked');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/attendance?date=' . $date);
@@ -260,7 +278,9 @@ class HRController extends AdminController
                 FROM employee_attendance a JOIN users u ON a.employee_id=u.id
                 WHERE a.attendance_date BETWEEN ? AND ?
                 GROUP BY u.id, u.name ORDER BY u.name", [$firstDay, $lastDay]);
-        } catch (\Exception $e) { $report = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $report = []; }
         return $this->render('admin/hr/attendance_report', [
             'page_title' => "Attendance Report - $month/$year",
             'report' => $report,
@@ -291,7 +311,9 @@ class HRController extends AdminController
                 JOIN users e ON el.employee_id=e.id
                 JOIN users u ON e.id=u.id
                 $where ORDER BY el.created_at DESC LIMIT $perPage OFFSET $offset", $params);
-        } catch (\Exception $e) { $total = 0; $leaves = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $total = 0; $leaves = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/leaves', [
             'page_title' => 'Leave Applications',
@@ -310,6 +332,8 @@ class HRController extends AdminController
             $this->db->execute("UPDATE employee_leaves SET status='approved', approved_by=?, approved_at=NOW() WHERE id=?", [(int)($_SESSION['admin_id'] ?? 0), $id]);
             $this->setFlash('success', 'Leave approved');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/leaves');
@@ -324,6 +348,8 @@ class HRController extends AdminController
             $this->db->execute("UPDATE employee_leaves SET status='rejected', rejection_reason=?, approved_by=?, approved_at=NOW() WHERE id=?", [$reason, (int)($_SESSION['admin_id'] ?? 0), $id]);
             $this->setFlash('success', 'Leave rejected');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/leaves');
@@ -344,6 +370,8 @@ class HRController extends AdminController
             $this->db->execute("INSERT INTO employee_leaves (employee_id, leave_type_id, leave_type, start_date, end_date, total_days, reason, status, created_at) VALUES (?,?,?,?,?,?,?,'pending',NOW())", [$employeeId, $leaveTypeId, '', $startDate, $endDate, $days, $reason]);
             $this->setFlash('success', 'Leave application submitted');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/leaves');
@@ -355,7 +383,9 @@ class HRController extends AdminController
         $this->requireAdmin();
         try {
             $types = $this->db->fetchAll("SELECT * FROM leave_types ORDER BY name");
-        } catch (\Exception $e) { $types = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $types = []; }
         return $this->render('admin/hr/leave_types', ['page_title' => 'Leave Types', 'types' => $types]);
     }
 
@@ -372,6 +402,8 @@ class HRController extends AdminController
             $this->db->execute("INSERT INTO leave_types (name, code, days_per_year, description, color, status, created_at) VALUES (?,?,?,?,?,'active',NOW())", [$name, $code, $days, $desc, $color]);
             $this->setFlash('success', 'Leave type created');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/leave-types');
@@ -389,7 +421,9 @@ class HRController extends AdminController
                 JOIN users e ON lb.employee_id=e.id
                 JOIN users u ON e.id=u.id
                 WHERE lb.year=? ORDER BY u.name, lt.name", [$year]);
-        } catch (\Exception $e) { $balances = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $balances = []; }
         return $this->render('admin/hr/leave_balances', [
             'page_title' => 'Leave Balances',
             'balances' => $balances,
@@ -406,7 +440,9 @@ class HRController extends AdminController
         $this->requireAdmin();
         try {
             $shifts = $this->db->fetchAll("SELECT * FROM shift_types ORDER BY name");
-        } catch (\Exception $e) { $shifts = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $shifts = []; }
         return $this->render('admin/hr/shifts', ['page_title' => 'Shift Types', 'shifts' => $shifts]);
     }
 
@@ -425,6 +461,8 @@ class HRController extends AdminController
             $this->db->execute("INSERT INTO shift_types (name, code, description, start_time, end_time, duration_hours, color, is_active, created_at) VALUES (?,?,?,?,?,?,?,1,NOW())", [$name, $code, $desc, $startTime, $endTime, $duration < 0 ? $duration + 24 : $duration, $color]);
             $this->setFlash('success', 'Shift created');
         } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/admin/hr/shifts');
@@ -446,14 +484,18 @@ class HRController extends AdminController
                 if ($startTime && $endTime) { $duration = round((strtotime($endTime) - strtotime($startTime)) / 3600, 2); if ($duration < 0) $duration += 24; }
                 $this->db->execute("INSERT INTO employee_shifts (employee_id, shift_type_id, shift_date, start_time, end_time, duration_hours, status, created_at) VALUES (?,?,?,?,?,?,'scheduled',NOW())", [$employeeId, $shiftTypeId, $shiftDate, $startTime, $endTime, $duration]);
                 $this->setFlash('success', 'Shift assigned');
-            } catch (\Exception $e) { $this->setFlash('error', 'Error: ' . $e->getMessage()); }
+            } catch (\Exception $e) {
+                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $this->setFlash('error', 'Error: ' . $e->getMessage()); }
             header('Location: ' . BASE_URL . '/admin/hr/shifts/schedule');
             exit;
         }
         try {
             $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
             $shiftTypes = $this->db->fetchAll("SELECT * FROM shift_types WHERE is_active=1 ORDER BY name");
-        } catch (\Exception $e) { $users = []; $shiftTypes = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $users = []; $shiftTypes = []; }
         return $this->render('admin/hr/shift_schedule', ['page_title' => 'Assign Shift', 'users' => $users, 'shift_types' => $shiftTypes, 'mode' => 'assign']);
     }
 
@@ -468,7 +510,9 @@ class HRController extends AdminController
                 JOIN users e ON es.employee_id=e.id
                 JOIN users u ON e.id=u.id
                 WHERE es.shift_date=? ORDER BY u.name", [$date]);
-        } catch (\Exception $e) { $schedule = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $schedule = []; }
         return $this->render('admin/hr/shift_schedule', [
             'page_title' => 'Shift Schedule',
             'schedule' => $schedule,
@@ -486,7 +530,9 @@ class HRController extends AdminController
         $this->requireAdmin();
         try {
             $kpis = $this->db->fetchAll("SELECT * FROM kpis ORDER BY name");
-        } catch (\Exception $e) { $kpis = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $kpis = []; }
         return $this->render('admin/hr/kpis', ['page_title' => 'KPI Definitions', 'kpis' => $kpis]);
     }
 
@@ -503,7 +549,9 @@ class HRController extends AdminController
         try {
             $this->db->execute("INSERT INTO kpis (name, description, category, unit, default_target, weightage, is_active, created_at) VALUES (?,?,?,?,?,?,1,NOW())", [$name, $desc, $category, $unit, $target, $weight]);
             $this->setFlash('success', 'KPI created');
-        } catch (\Exception $e) { $this->setFlash('error', 'Error: ' . $e->getMessage()); }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $this->setFlash('error', 'Error: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/hr/kpis');
         exit;
     }
@@ -526,12 +574,16 @@ class HRController extends AdminController
                 JOIN users e ON ek.employee_id=e.id
                 JOIN users u ON e.id=u.id
                 ORDER BY ek.created_at DESC LIMIT $perPage OFFSET $offset", []);
-        } catch (\Exception $e) { $total = 0; $reviews = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $total = 0; $reviews = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         try {
             $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
             $kpis_list = $this->db->fetchAll("SELECT id, name FROM kpis WHERE is_active=1 ORDER BY name");
-        } catch (\Exception $e) { $users = []; $kpis_list = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $users = []; $kpis_list = []; }
         return $this->render('admin/hr/performance', [
             'page_title' => 'Performance Reviews',
             'reviews' => $reviews,
@@ -558,7 +610,9 @@ class HRController extends AdminController
             $score = round($achievement / 100, 2);
             $this->db->execute("INSERT INTO employee_kpis (employee_id, kpi_id, period_start, period_end, target_value, actual_value, achievement_percentage, score, status, created_at) VALUES (?,?,?,?,?,?,?,?,'completed',NOW())", [$employeeId, $kpiId, $periodStart, $periodEnd, $targetValue, $actualValue, $achievement, $score]);
             $this->setFlash('success', 'Review created');
-        } catch (\Exception $e) { $this->setFlash('error', 'Error: ' . $e->getMessage()); }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $this->setFlash('error', 'Error: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/hr/performance');
         exit;
     }
@@ -579,11 +633,15 @@ class HRController extends AdminController
                 FROM employee_bonuses b
                 JOIN users u ON b.employee_id=u.id
                 ORDER BY b.created_at DESC LIMIT $perPage OFFSET $offset", []);
-        } catch (\Exception $e) { $total = 0; $bonuses = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $total = 0; $bonuses = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         try {
             $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN users e ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
-        } catch (\Exception $e) { $users = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $users = []; }
         return $this->render('admin/hr/bonuses', [
             'page_title' => 'Employee Bonuses',
             'bonuses' => $bonuses,
@@ -608,7 +666,9 @@ class HRController extends AdminController
             $bn = 'BNS-' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $employeeId . '-' . time();
             $this->db->execute("INSERT INTO employee_bonuses (employee_id, bonus_number, bonus_type, bonus_amount, bonus_month, bonus_year, reason, payment_status, created_by, created_at) VALUES (?,?,?,?,?,?,?,'pending',?,NOW())", [$employeeId, $bn, $bonusType, $amount, $month, $year, $reason, (int)($_SESSION['admin_id'] ?? 0)]);
             $this->setFlash('success', 'Bonus recorded');
-        } catch (\Exception $e) { $this->setFlash('error', 'Error: ' . $e->getMessage()); }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $this->setFlash('error', 'Error: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/hr/bonuses');
         exit;
     }
@@ -629,11 +689,15 @@ class HRController extends AdminController
                 FROM employee_salary_structure s
                 JOIN users u ON s.employee_id=u.id
                 ORDER BY s.created_at DESC LIMIT $perPage OFFSET $offset", []);
-        } catch (\Exception $e) { $total = 0; $structures = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $total = 0; $structures = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         try {
             $users = $this->db->fetchAll("SELECT u.id, u.name FROM users u JOIN users e ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
-        } catch (\Exception $e) { $users = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $users = []; }
         return $this->render('admin/hr/salary_structure', [
             'page_title' => 'Salary Structures',
             'structures' => $structures,
@@ -666,7 +730,9 @@ class HRController extends AdminController
             $net = $gross - $pf - $tds;
             $this->db->execute("INSERT INTO employee_salary_structure (employee_id, basic_salary, hra, da, ta, medical_allowance, special_allowance, pf_deduction, tds_deduction, gross_salary, net_salary, effective_from, is_active, created_by, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,NOW())", [$employeeId, $basic, $hra, $da, $ta, $medical, $special, $pf, $tds, $gross, $net, $effFrom, (int)($_SESSION['admin_id'] ?? 0)]);
             $this->setFlash('success', 'Salary structure created');
-        } catch (\Exception $e) { $this->setFlash('error', 'Error: ' . $e->getMessage()); }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $this->setFlash('error', 'Error: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/hr/salary-structure');
         exit;
     }
@@ -677,7 +743,9 @@ class HRController extends AdminController
         try {
             $structure = $this->db->fetch("SELECT s.*, u.name as employee_name FROM employee_salary_structure s JOIN users u ON s.employee_id=u.id WHERE s.id=?", [$id]);
             if (!$structure) { $this->setFlash('error', 'Not found'); header('Location: ' . BASE_URL . '/admin/hr/salary-structure'); exit; }
-        } catch (\Exception $e) { $structure = null; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $structure = null; }
         return $this->render('admin/hr/salary_structure', ['page_title' => 'Edit Salary Structure', 'edit_structure' => $structure, 'mode' => 'edit']);
     }
 
@@ -699,7 +767,9 @@ class HRController extends AdminController
             $net = $gross - $pf - $tds;
             $this->db->execute("UPDATE employee_salary_structure SET basic_salary=?, hra=?, ta=?, medical_allowance=?, special_allowance=?, pf_deduction=?, tds_deduction=?, gross_salary=?, net_salary=?, effective_from=? WHERE id=?", [$basic, $hra, $ta, $medical, $special, $pf, $tds, $gross, $net, $effFrom, $id]);
             $this->setFlash('success', 'Salary structure updated');
-        } catch (\Exception $e) { $this->setFlash('error', 'Error: ' . $e->getMessage()); }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $this->setFlash('error', 'Error: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/hr/salary-structure');
         exit;
     }
@@ -722,7 +792,9 @@ class HRController extends AdminController
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM documents d $where", $params)['c'] ?? 0;
             $documents = $this->db->fetchAll("SELECT d.*, u.name as employee_name FROM documents d JOIN users u ON d.entity_id=u.id $where ORDER BY d.uploaded_on DESC LIMIT $perPage OFFSET $offset", $params);
             $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.id=u.id WHERE e.status='active' ORDER BY u.name");
-        } catch (\Exception $e) { $total = 0; $documents = []; $users = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $total = 0; $documents = []; $users = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/employee_documents', [
             'page_title' => 'Employee Documents',
@@ -754,7 +826,9 @@ class HRController extends AdminController
         try {
             $this->db->execute("INSERT INTO documents (entity_type, entity_id, document_type, url, uploaded_on) VALUES ('employee',?,?,?,?,NOW())", [$employeeId, $docType, $filePath]);
             $this->setFlash('success', 'Document uploaded');
-        } catch (\Exception $e) { $this->setFlash('error', 'Error: ' . $e->getMessage()); }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $this->setFlash('error', 'Error: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/hr/documents');
         exit;
     }
@@ -772,7 +846,9 @@ class HRController extends AdminController
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM employee_activities")['c'] ?? 0;
             $activities = $this->db->fetchAll("SELECT a.*, u.name as employee_name FROM employee_activities a JOIN users e ON a.employee_id=e.id JOIN users u ON e.id=u.id ORDER BY a.created_at DESC LIMIT $perPage OFFSET $offset", []);
-        } catch (\Exception $e) { $total = 0; $activities = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $total = 0; $activities = []; }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/activities', [
             'page_title' => 'Employee Activities',
@@ -803,7 +879,9 @@ class HRController extends AdminController
                     $bonuses = $this->db->fetchAll("SELECT * FROM employee_bonuses WHERE employee_id=? ORDER BY created_at DESC LIMIT 10", [$report['id']]);
                 }
             }
-        } catch (\Exception $e) { $users = []; $report = null; $attendances = []; $leaves = []; $bonuses = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $users = []; $report = null; $attendances = []; $leaves = []; $bonuses = []; }
         return $this->render('admin/hr/employee_report', [
             'page_title' => $report ? 'Report: ' . $report['name'] : 'Employee Report',
             'users' => $users,
@@ -826,7 +904,9 @@ class HRController extends AdminController
         try {
             $leaveTypes = $this->db->fetchAll("SELECT * FROM leave_types WHERE status='active' ORDER BY name");
             $shiftTypes = $this->db->fetchAll("SELECT * FROM shift_types WHERE is_active=1 ORDER BY name");
-        } catch (\Exception $e) { $leaveTypes = []; $shiftTypes = []; }
+        } catch (\Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ $leaveTypes = []; $shiftTypes = []; }
         return $this->render('admin/hr/settings', [
             'page_title' => 'HR Settings',
             'leave_types' => $leaveTypes,
