@@ -1,0 +1,144 @@
+<?php
+$page_title = $page_title ?? 'Payment Successful';
+$current_page = 'bookings';
+$user = $user ?? [];
+$installment = $installment ?? null;
+$booking = $booking ?? null;
+$receipt = $receipt ?? null;
+$all_installments = $all_installments ?? [];
+
+$instStatusColors = [
+    'pending' => 'warning',
+    'paid'    => 'success',
+    'overdue' => 'danger',
+    'partial' => 'info',
+];
+?>
+
+<div class="aps-cp-hero">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h2><i class="fas fa-check-circle me-2"></i>Payment Successful</h2>
+            <p>Your installment payment has been processed successfully.</p>
+        </div>
+        <div class="col-md-4 mt-3 mt-md-0 text-md-end">
+            <a href="<?= BASE_URL ?>/user/bookings/<?= (int)($installment['booking_id'] ?? 0) ?>" class="btn btn-outline-light">
+                <i class="fas fa-arrow-left me-2"></i>Back to Booking
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        <div class="text-center mb-4">
+            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 8px 24px rgba(16,185,129,0.3);">
+                <i class="fas fa-check" style="font-size:36px;color:#fff;"></i>
+            </div>
+            <h3 class="mt-2">Thank You, <?= htmlspecialchars($user['name'] ?? '') ?>!</h3>
+            <p class="text-muted">
+                Your installment #<?= (int)($installment['installment_number'] ?? 0) ?> payment of
+                <strong class="text-success">₹<?= number_format((float)($receipt['amount'] ?? 0)) ?></strong>
+                has been received.
+            </p>
+        </div>
+
+        <?php if ($receipt): ?>
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-receipt text-success"></i> Payment Receipt</h5>
+            </div>
+            <div class="aps-cp-card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Receipt Number</small>
+                        <strong><?= htmlspecialchars($receipt['receipt_number'] ?? 'N/A') ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Payment Date</small>
+                        <strong><?= date('d M Y, h:i A', strtotime($receipt['created_at'] ?? 'now')) ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Amount Paid</small>
+                        <strong class="text-success fs-5">₹<?= number_format((float)($receipt['amount'] ?? 0)) ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Payment Method</small>
+                        <strong><i class="fas fa-credit-card me-1"></i> Razorpay (Online)</strong>
+                    </div>
+                    <?php if (!empty($receipt['transaction_ref'])): ?>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Transaction ID</small>
+                        <strong class="text-break"><?= htmlspecialchars($receipt['transaction_ref']) ?></strong>
+                    </div>
+                    <?php endif; ?>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Status</small>
+                        <span class="badge bg-success fs-6"><i class="fas fa-check-circle me-1"></i> Completed</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Installment</small>
+                        <strong>#<?= (int)($installment['installment_number'] ?? 0) ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Plot</small>
+                        <strong><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></strong> at <?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($all_installments)): ?>
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-list-check text-primary"></i> Updated Payment Schedule</h5>
+            </div>
+            <div class="aps-cp-card-body p-0">
+                <div class="table-responsive">
+                    <table class="aps-cp-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Due Date</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-end">Paid</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($all_installments as $ai):
+                                $aiStatus = $ai['status'] ?? 'pending';
+                                $aiColor = $instStatusColors[$aiStatus] ?? 'secondary';
+                            ?>
+                            <tr class="<?= $aiStatus === 'overdue' ? 'table-danger' : '' ?>">
+                                <td><strong><?= (int)($ai['installment_number'] ?? 0) ?></strong></td>
+                                <td><?= date('d M Y', strtotime($ai['due_date'] ?? 'now')) ?></td>
+                                <td class="text-end">₹<?= number_format((float)($ai['emi_amount'] ?? 0)) ?></td>
+                                <td class="text-end">₹<?= number_format((float)($ai['paid_amount'] ?? 0)) ?></td>
+                                <td><span class="badge bg-<?= $aiColor ?>"><?= ucfirst($aiStatus) ?></span></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <a href="<?= BASE_URL ?>/user/bookings/<?= (int)($installment['booking_id'] ?? 0) ?>" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-eye me-2"></i>Back to Booking
+                </a>
+            </div>
+            <div class="col-sm-6">
+                <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-primary w-100">
+                    <i class="fas fa-list me-2"></i>All My Bookings
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

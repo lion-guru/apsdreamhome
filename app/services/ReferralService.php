@@ -438,6 +438,208 @@ class ReferralService
         ];
     }
 
+    // ── Customer Referral Program Methods ──────────────────────────
+
+    /**
+     * Get or create referral code for a user (format: APS-{FIRST3NAME}{LAST4PHONE})
+     */
+    public function getReferralCode(int $userId): string
+    {
+        $stmt = $this->conn->prepare("SELECT referral_code, name, phone FROM users WHERE id = ? LIMIT 1");
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return '';
+        }
+
+        if (!empty($row['referral_code'])) {
+            return $row['referral_code'];
+        }
+
+        $prefix = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $row['name'] ?? 'USR'), 0, 3));
+        if (empty($prefix)) $prefix = 'USR';
+        $last4 = substr(preg_replace('/[^0-9]/', '', $row['phone'] ?? ''), -4);
+        if (strlen($last4) < 4) $last4 = str_pad($last4, 4, '0', STR_PAD_LEFT);
+        $code = 'APS-' . $prefix . $last4;
+
+        // Ensure uniqueness
+        $check = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referral_code = ? AND id != ?");
+        $check->execute([$code, $userId]);
+        if ((int)$check->fetchColumn() > 0) {
+            $code = $code . strtoupper(substr(uniqid(), -3));
+        }
+
+        $stmt = $this->conn->prepare("UPDATE users SET referral_code = ? WHERE id = ? AND (referral_code IS NULL OR referral_code = '')");
+        $stmt->execute([$code, $userId]);
+
+        return $code;
+    }
+
+    /**
+     * Get referral stats for a user
+     */
+    public function getReferralStats(int $userId): array
+    {
+        $stats = [
+            'total_referrals' => 0,
+            'successful_referrals' => 0,
+            'total_earned' => 0.0,
+            'pending_earned' => 0.0,
+        ];
+
+        try {
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
+            $stmt->execute([$userId]);
+            $stats['total_referrals'] = (int)$stmt->fetchColumn();
+        } catch (\Throwable $e) {}
+
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT COUNT(DISTINCT u.id) 
+                FROM users u 
+                INNER JOIN plot_bookings pb ON pb.customer_id = u.id 
+                WHERE u.referred_by = ? AND pb.status NOT IN ('cancelled')
+            ");
+            $stmt->execute([$userId]);
+            $stats['successful_referrals'] = (int)$stmt->fetchColumn();
+        } catch (\Throwable $e) {}
+
+        try {
+            $stmt = $this->conn->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'referral' AND status = 'paid'");
+            $stmt->execute([$userId]);
+            $stats['total_earned'] = (float)$stmt->fetchColumn();
+        } catch (\Throwable $e) {}
+
+        try {
+            $stmt = $this->conn->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'referral' AND status = 'pending'");
+            $stmt->execute([$userId]);
+            $stats['pending_earned'] = (float)$stmt->fetchColumn();
+        } catch (\Throwable $e) {}
+
+        return $stats;
+    }
+
+    /**
+     * Get list of referred users
+     */
+    public function getReferredUsers(int $userId): array
+    {
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT u.id, u.name, u.email, u.phone, u.created_at,
+                       CASE WHEN pb.id IS NOT NULL THEN 1 ELSE 0 END AS has_booking,
+                       COALESCE(ml.amount, 0) AS commission_earned
+                FROM users u
+                LEFT JOIN plot_bookings pb ON pb.customer_id = u.id AND pb.status NOT IN ('cancelled')
+                LEFT JOIN mlm_commission_ledger ml ON ml.source_user_id = u.id AND ml.beneficiary_user_id = ? AND ml.commission_type = 'referral'
+                WHERE u.referred_by = ?
+                ORDER BY u.created_at DESC
+            ");
+            $stmt->execute([$userId, $userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Process referral commission on booking
+     */
+    public function processReferralCommission(int $referredUserId, int $bookingId, float $bookingAmount): array
+    {
+        try {
+            $stmt = $this->conn->prepare("SELECT referred_by FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$referredUserId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row || empty($row['referred_by'])) {
+                return ['success' => false, 'message' => 'No referrer found'];
+            }
+
+            $referrerId = (int)$row['referred_by'];
+            if ($referrerId === $referredUserId) {
+                return ['success' => false, 'message' => 'Cannot refer yourself'];
+            }
+
+            // Check if commission already processed for this booking
+            $stmt = $this->conn->prepare("SELECT id FROM mlm_commission_ledger WHERE source_user_id = ? AND booking_id = ? AND commission_type = 'referral' LIMIT 1");
+            $stmt->execute([$referredUserId, $bookingId]);
+            if ($stmt->fetch()) {
+                return ['success' => false, 'message' => 'Commission already processed'];
+            }
+
+            // 1% flat referral commission
+            $commissionAmount = round($bookingAmount * 0.01, 2);
+
+            // Get booking number for notes
+            $stmt = $this->conn->prepare("SELECT booking_number FROM plot_bookings WHERE id = ? LIMIT 1");
+            $stmt->execute([$bookingId]);
+            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+            $bookingNumber = $booking['booking_number'] ?? "#{$bookingId}";
+
+            // Get referrer name
+            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$referrerId]);
+            $referrer = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->conn->prepare("
+                INSERT INTO mlm_commission_ledger 
+                    (beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, created_at)
+                VALUES (?, ?, 'referral', ?, 'pending', ?, ?, NOW())
+            ")->execute([
+                $referrerId,
+                $referredUserId,
+                $commissionAmount,
+                $bookingId,
+                "Referral commission for booking {$bookingNumber}"
+            ]);
+
+            return [
+                'success' => true,
+                'referrer_name' => $referrer['name'] ?? 'User',
+                'commission_amount' => $commissionAmount,
+            ];
+        } catch (\Throwable $e) {
+            error_log("[ReferralService] processReferralCommission failed: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Commission processing failed'];
+        }
+    }
+
+    /**
+     * Generate referral share URL
+     */
+    public function getShareUrl(string $code): string
+    {
+        return (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . urlencode($code);
+    }
+
+    /**
+     * Validate referral code (queries users table)
+     */
+    public function validateUserReferralCode(string $code): ?array
+    {
+        $stmt = $this->conn->prepare("SELECT id, name FROM users WHERE referral_code = ? LIMIT 1");
+        $stmt->execute([$code]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    /**
+     * Apply referral on registration
+     */
+    public function applyReferral(int $newUserId, string $code): bool
+    {
+        $referrer = $this->validateUserReferralCode($code);
+        if (!$referrer || (int)$referrer['id'] === $newUserId) {
+            return false;
+        }
+
+        $stmt = $this->conn->prepare("UPDATE users SET referred_by = ? WHERE id = ? AND (referred_by IS NULL OR referred_by = 0)");
+        $stmt->execute([(int)$referrer['id'], $newUserId]);
+        return $stmt->rowCount() > 0;
+    }
+
     private function userExists(int $userId): bool
     {
         $stmt = $this->conn->prepare('SELECT 1 FROM users WHERE id = ? LIMIT 1');
