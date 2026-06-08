@@ -168,4 +168,75 @@ class KycController extends AdminController
             'requests' => $requests
         ]);
     }
+
+    /**
+     * Verify KYC via API (NSDL PAN + UIDAI Aadhaar)
+     * POST /admin/kyc/{id}/verify
+     */
+    public function verify($id)
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM kyc_requests WHERE id = ?");
+            $stmt->execute([(int)$id]);
+            $request = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$request) {
+                $this->setFlash('error', 'KYC request not found');
+                $this->redirect('/admin/kyc');
+                return;
+            }
+
+            $kycService = new \App\Services\KYCService();
+            $results = [];
+
+            // Verify PAN
+            $panResult = $kycService->verifyPAN($request['pan_number'], $request['legal_name']);
+            $results['pan'] = $panResult;
+
+            // Verify Aadhaar (Verhoeff checksum)
+            $aadhaarResult = $kycService->verifyAadhaar($request['aadhaar_number'], $request['legal_name'], $request['dob'] ?? null);
+            $results['aadhaar'] = $aadhaarResult;
+
+            // Determine overall status
+            $panOk = $panResult['success'] ?? false;
+            $aadhaarOk = $aadhaarResult['success'] ?? false;
+
+            if ($panOk && $aadhaarOk) {
+                $this->setFlash('success', 'PAN and Aadhaar both verified successfully');
+            } else {
+                $failed = [];
+                if (!$panOk) $failed[] = 'PAN: ' . ($panResult['message'] ?? 'failed');
+                if (!$aadhaarOk) $failed[] = 'Aadhaar: ' . ($aadhaarResult['message'] ?? 'failed');
+                $this->setFlash('warning', 'Verification issues: ' . implode('; ', $failed));
+            }
+
+            // Store results in session for the show page to display
+            $_SESSION['kyc_verify_results'] = $results;
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Verification error: ' . $e->getMessage());
+        }
+        $this->redirect('/admin/kyc/' . (int)$id);
+    }
+
+    /**
+     * View KYC verification logs
+     * GET /admin/kyc/logs
+     */
+    public function logs()
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->query("
+                SELECT * FROM kyc_verification_logs ORDER BY created_at DESC LIMIT 100
+            ");
+            $logs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $logs = [];
+        }
+        return $this->render('admin/kyc/logs', [
+            'page_title' => 'KYC Verification Logs',
+            'logs' => $logs
+        ]);
+    }
 }
