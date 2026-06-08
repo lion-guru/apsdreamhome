@@ -386,6 +386,24 @@ class MLMCommissionController extends AdminController
         return $this->redirect('/admin/mlm/associate-ranks/' . (int)$associateId);
     }
 
+    public function promoteAll()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        try {
+            $result = $this->engine->runRankPromotions();
+            $promoted = is_array($result) ? count($result) : (int)$result;
+            if ($promoted > 0) {
+                $this->setFlash('success', "{$promoted} associate(s) promoted to higher ranks.");
+            } else {
+                $this->setFlash('info', 'No associates currently qualify for rank promotion.');
+            }
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Rank promotion failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/mlm/associate-ranks');
+    }
+
     /* =============================================================
      *  RANK BENEFITS (READ-ONLY)
      * ============================================================= */
