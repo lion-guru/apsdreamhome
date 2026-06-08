@@ -161,9 +161,12 @@ class CustomerAuthController extends BaseController
         $old = $_SESSION['old_input'] ?? [];
         unset($_SESSION['errors'], $_SESSION['old_input']);
 
+        // Preserve referral code from URL query string
+        $ref = trim($_GET['ref'] ?? $old['referral_code'] ?? '');
+
         $this->layout = false;
         ob_start();
-        extract(compact('csrf_token', 'errors', 'old'));
+        extract(compact('csrf_token', 'errors', 'old', 'ref'));
         $viewPath = __DIR__ . '/../../../views/auth/customer_register.php';
         if (file_exists($viewPath)) include $viewPath;
         echo ob_get_clean();
@@ -178,7 +181,7 @@ class CustomerAuthController extends BaseController
         $phone = trim($_POST['phone'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
-        $referral = trim($_POST['referral_code'] ?? '');
+        $referral = trim($_POST['referral_code'] ?? $_GET['ref'] ?? '');
 
         $errors = [];
         if (empty($name)) $errors[] = "Name is required";

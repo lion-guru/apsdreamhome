@@ -373,10 +373,13 @@ $dashBookingCount = count($dashBookings);
         <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);">
             <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(245, 158, 11, 0.2);">
                 <h5><i class="fas fa-gift text-warning"></i> <?= __('dash_refer_earn_title', null, 'Refer & Earn') ?></h5>
+                <a href="<?= BASE_URL ?>/user/referral" class="btn btn-sm btn-outline-warning">View All</a>
             </div>
             <div class="aps-cp-card-body">
                 <div class="text-center mb-3">
-                    <div class="display-6 fw-bold text-warning mb-1" style="letter-spacing: 0.1em;"><?= htmlspecialchars($referral_code) ?></div>
+                    <div class="display-6 fw-bold text-warning mb-1" style="letter-spacing: 0.15em; font-family: 'Courier New', monospace;" id="dashRefCode">
+                        <?= htmlspecialchars($referral_code) ?>
+                    </div>
                     <small class="text-muted"><?= __('dash_your_referral_code', null, 'Your Referral Code') ?></small>
                 </div>
                 <div class="row text-center g-2 mb-3">
@@ -396,18 +399,29 @@ $dashBookingCount = count($dashBookings);
                 <?php if (!empty($referral_link)): ?>
                 <div class="input-group input-group-sm mb-2">
                     <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link) ?>" readonly>
-                    <button class="btn btn-outline-warning" type="button" data-aps-copy="#refLink" aria-label="Copy referral link">
+                    <button class="btn btn-outline-warning" type="button" onclick="dashCopyRef()" aria-label="Copy referral link">
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-3">
-                    <a href="https://wa.me/?text=<?= urlencode('Join APS Dream Home using my referral code: ' . $referral_code . ' - ' . $referral_link) ?>" target="_blank" class="aps-cp-icon-btn" style="background: #25d366; color: #fff; border-color: #25d366;" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($referral_link) ?>" target="_blank" class="aps-cp-icon-btn" style="background: #1877f2; color: #fff; border-color: #1877f2;" title="Share on Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://wa.me/?text=<?= urlencode('Join APS Dream Home! Use my referral code: ' . $referral_code . ' Register here: ' . $referral_link) ?>" target="_blank" class="aps-cp-icon-btn" style="background: #25d366; color: #fff; border-color: #25d366;" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="sms:?body=<?= urlencode('Use my referral code ' . $referral_code . ' to register at APS Dream Home: ' . $referral_link) ?>" class="aps-cp-icon-btn" style="background: #6c757d; color: #fff; border-color: #6c757d;" title="Share via SMS"><i class="fas fa-sms"></i></a>
                     <a href="mailto:?subject=<?= urlencode('Join APS Dream Home') ?>&body=<?= urlencode('Use my referral code ' . $referral_code . ' to register: ' . $referral_link) ?>" class="aps-cp-icon-btn" title="Share via Email"><i class="fas fa-envelope"></i></a>
                 </div>
                 <?php endif; ?>
             </div>
         </div>
+        <script>
+        function dashCopyRef() {
+            var el = document.getElementById('refLink');
+            if (el) {
+                navigator.clipboard.writeText(el.value).then(function() {
+                    var btn = el.nextElementSibling;
+                    if (btn) { btn.innerHTML = '<i class="fas fa-check"></i>'; setTimeout(function(){ btn.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000); }
+                });
+            }
+        }
+        </script>
         <?php endif; ?>
 
         <div class="aps-cp-card mb-4">

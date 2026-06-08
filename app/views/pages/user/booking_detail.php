@@ -274,7 +274,10 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                             <?php endif; ?>
                         </td>
                         <td class="text-end">
-                            <?php if ($isOverdue || $pStatus === 'pending'): ?>
+                            <?php if (in_array($pStatus, ['pending', 'overdue', 'partial'], true)): ?>
+                                <a href="<?= BASE_URL ?>/user/installments/<?= (int)$p['id'] ?>/pay" class="btn btn-sm btn-success me-1" title="Pay Now">
+                                    <i class="fas fa-credit-card me-1"></i>Pay
+                                </a>
                                 <a href="<?= BASE_URL ?>/user/installments/<?= (int)$p['id'] ?>/demand-letter" class="aps-cp-icon-btn" title="View Demand Letter" target="_blank">
                                     <i class="fas fa-file-pdf text-danger"></i>
                                 </a>

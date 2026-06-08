@@ -1126,6 +1126,22 @@ class UserController extends BaseController
             return;
         }
 
+        // Auto-create agreement for this booking
+        try {
+            $this->db->prepare("
+                INSERT INTO agreements (booking_id, plot_id, agreement_type, status, party_a_name, party_b_id, total_value, notes, created_by, created_at, updated_at)
+                VALUES (?, ?, 'allotment', 'pending_signature', 'APS Dream Home Pvt. Ltd.', ?, ?, 'Auto-generated on booking', ?, NOW(), NOW())
+            ")->execute([
+                $bookingId,
+                $plotId,
+                $userId,
+                $totalAmount,
+                $userId,
+            ]);
+        } catch (\Throwable $e) {
+            error_log("[UserController] Auto-create agreement failed: " . $e->getMessage());
+        }
+
         // Send booking confirmation notifications (best-effort)
         try {
             $user = $this->getUser();
@@ -1141,6 +1157,14 @@ class UserController extends BaseController
             $notifier->sendBookingConfirmation($bookingData, $user, $plot, $colony ?: ['name' => $plot['colony_name']]);
         } catch (\Throwable $e) {
             error_log("[UserController] Booking notification failed: " . $e->getMessage());
+        }
+
+        // Process referral commission if user was referred
+        try {
+            $referralService = new \App\Services\ReferralService();
+            $referralService->processReferralCommission($userId, $bookingId, $totalAmount);
+        } catch (\Throwable $e) {
+            error_log("[UserController] Referral commission failed: " . $e->getMessage());
         }
 
         $this->json([
@@ -1446,6 +1470,805 @@ class UserController extends BaseController
             error_log("UserController::fetchBookingWithPlot - " . $e->getMessage());
             return null;
         }
+    }
+
+    /* ================================================================
+     *  INSTALLMENT ONLINE PAYMENT
+     * ================================================================ */
+
+    public function payInstallment($installmentId = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int) $user['id'];
+        $instId = (int) $installmentId;
+
+        if ($instId <= 0) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        try {
+            $installment = $this->db->fetch("
+                SELECT ips.*,
+                       pb.booking_number, pb.customer_id, pb.total_plot_value, pb.status as booking_status,
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       c.name as colony_name
+                FROM booking_payment_schedules ips
+                JOIN plot_bookings pb ON ips.booking_id = pb.id
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE ips.id = ?
+            ", [$instId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::payInstallment fetch: " . $e->getMessage());
+            $installment = null;
+        }
+
+        if (!$installment) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        if ((int) $installment['customer_id'] !== $userId) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        $status = $installment['status'] ?? 'pending';
+        if (!in_array($status, ['pending', 'overdue', 'partial'], true)) {
+            header('Location: ' . BASE_URL . '/user/bookings/' . (int) $installment['booking_id']);
+            exit;
+        }
+
+        $emiAmount = (float) ($installment['emi_amount'] ?? 0);
+        $paidAmount = (float) ($installment['paid_amount'] ?? 0);
+        $lateFee = (float) ($installment['late_fee'] ?? 0);
+        $accruedPenalty = (float) ($installment['accrued_penalty'] ?? 0);
+        $amountDue = max(0, ($emiAmount - $paidAmount) + $lateFee + $accruedPenalty);
+
+        $razorpaySvc = new \App\Services\Gateway\RazorpayService();
+        $orderResp = $razorpaySvc->createOrder(
+            $amountDue,
+            'INR',
+            'EMI_' . ($installment['booking_number'] ?? 'BK') . '_INST' . ($installment['installment_number'] ?? $installment['id']),
+            [
+                'booking_id'     => (int) $installment['booking_id'],
+                'installment_id' => $instId,
+                'user_id'        => $userId,
+                'customer_name'  => $user['name'] ?? '',
+                'customer_email' => $user['email'] ?? '',
+                'customer_phone' => $user['phone'] ?? '',
+                'description'    => 'EMI Installment #' . ($installment['installment_number'] ?? $instId) . ' — Plot ' . ($installment['plot_number'] ?? ''),
+            ]
+        );
+
+        $orderId = null;
+        if ($orderResp['success'] && isset($orderResp['data']['id'])) {
+            $orderId = $orderResp['data']['id'];
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/pay_installment', [
+            'page_title'   => 'Pay Installment — APS Dream Home',
+            'user'         => $user,
+            'installment'  => $installment,
+            'booking'      => $installment,
+            'amount_due'   => $amountDue,
+            'emi_amount'   => $emiAmount,
+            'paid_amount'  => $paidAmount,
+            'late_fee'     => $lateFee,
+            'penalty'      => $accruedPenalty,
+            'order_id'     => $orderId,
+            'razorpay'     => [
+                'key_id' => $razorpaySvc->getKeyId(),
+                'test'   => $razorpaySvc->isTestMode() || !$razorpaySvc->isConfigured(),
+            ],
+        ]);
+    }
+
+    public function processInstallmentPayment($installmentId = null)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['success' => false, 'error' => 'POST required.'], 405);
+            return;
+        }
+
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->json(['success' => false, 'error' => 'Invalid CSRF token.'], 403);
+            return;
+        }
+
+        $userId = (int) ($_SESSION['user_id'] ?? 0);
+        $instId = (int) $installmentId;
+
+        if ($instId <= 0 || $userId <= 0) {
+            $this->json(['success' => false, 'error' => 'Invalid request.'], 400);
+            return;
+        }
+
+        $razorpay_order_id  = $_POST['razorpay_order_id']  ?? '';
+        $razorpay_payment_id = $_POST['razorpay_payment_id'] ?? '';
+        $razorpay_signature  = $_POST['razorpay_signature']  ?? '';
+
+        if (!$razorpay_order_id || !$razorpay_payment_id || !$razorpay_signature) {
+            $this->json(['success' => false, 'error' => 'Missing payment response data.'], 400);
+            return;
+        }
+
+        try {
+            $installment = $this->db->fetch("
+                SELECT ips.*, pb.customer_id, pb.booking_number, pb.id as bid
+                FROM booking_payment_schedules ips
+                JOIN plot_bookings pb ON ips.booking_id = pb.id
+                WHERE ips.id = ?
+            ", [$instId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::processInstallmentPayment fetch: " . $e->getMessage());
+            $installment = null;
+        }
+
+        if (!$installment || (int) $installment['customer_id'] !== $userId) {
+            $this->json(['success' => false, 'error' => 'Installment not found.'], 404);
+            return;
+        }
+
+        $status = $installment['status'] ?? 'pending';
+        if (!in_array($status, ['pending', 'overdue', 'partial'], true)) {
+            $this->json(['success' => false, 'error' => 'Installment is not payable.'], 400);
+            return;
+        }
+
+        $razorpaySvc = new \App\Services\Gateway\RazorpayService();
+        if (!$razorpaySvc->verifyPaymentSignature($razorpay_order_id, $razorpay_payment_id, $razorpay_signature)) {
+            error_log("UserController::processInstallmentPayment signature mismatch inst #{$instId}");
+            $this->json(['success' => false, 'error' => 'Payment signature verification failed.'], 400);
+            return;
+        }
+
+        $emiAmount = (float) ($installment['emi_amount'] ?? 0);
+        $oldPaid = (float) ($installment['paid_amount'] ?? 0);
+        $lateFee = (float) ($installment['late_fee'] ?? 0);
+        $accruedPenalty = (float) ($installment['accrued_penalty'] ?? 0);
+        $amountDue = max(0, ($emiAmount - $oldPaid) + $lateFee + $accruedPenalty);
+        $newPaid = $oldPaid + $amountDue;
+
+        $bookingId = (int) $installment['booking_id'];
+
+        try {
+            $this->db->beginTransaction();
+
+            $newStatus = ($newPaid >= $emiAmount) ? 'paid' : 'partial';
+            $paidDate = ($newStatus === 'paid') ? date('Y-m-d H:i:s') : null;
+
+            $this->db->prepare("
+                UPDATE booking_payment_schedules
+                SET paid_amount = ?, status = ?, paid_date = COALESCE(?, paid_date),
+                    payment_mode = 'razorpay', updated_at = NOW()
+                WHERE id = ?
+            ")->execute([$newPaid, $newStatus, $paidDate, $instId]);
+
+            $receiptNumber = 'APS-RCP-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+            $this->db->prepare("
+                INSERT INTO booking_payment_receipts
+                    (booking_id, installment_id, receipt_number, amount, payment_mode,
+                     transaction_ref, status, receipt_date, created_at)
+                VALUES (?, ?, ?, ?, 'razorpay', ?, 'completed', NOW(), NOW())
+            ")->execute([$bookingId, $instId, $receiptNumber, $amountDue, $razorpay_payment_id]);
+
+            $this->db->prepare("
+                INSERT INTO payment_transactions
+                    (transaction_id, user_id, booking_id, amount, currency, payment_method,
+                     payment_status, gateway_transaction_id, gateway_response, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 'INR', 'razorpay', 'completed', ?, ?, NOW(), NOW())
+            ")->execute([
+                $receiptNumber, $userId, $bookingId, $amountDue,
+                $razorpay_payment_id,
+                json_encode([
+                    'order_id'        => $razorpay_order_id,
+                    'payment_id'      => $razorpay_payment_id,
+                    'signature'       => $razorpay_signature,
+                    'installment_id'  => $instId,
+                ]),
+            ]);
+
+            try {
+                $this->db->prepare("
+                    UPDATE payment_orders
+                    SET status = 'paid', payment_id = ?, signature = ?, paid_at = NOW()
+                    WHERE order_id = ?
+                ")->execute([$razorpay_payment_id, $razorpay_signature, $razorpay_order_id]);
+            } catch (\Throwable $e) {
+                error_log("UserController::processInstallmentPayment order update: " . $e->getMessage());
+            }
+
+            $allPaid = false;
+            try {
+                $stmtCheck = $this->db->prepare("
+                    SELECT COUNT(*) as unpaid
+                    FROM booking_payment_schedules
+                    WHERE booking_id = ? AND status NOT IN ('paid')
+                ");
+                $stmtCheck->execute([$bookingId]);
+                $unpaidRow = $stmtCheck->fetch(\PDO::FETCH_ASSOC);
+                $allPaid = ((int) ($unpaidRow['unpaid'] ?? 1)) === 0;
+            } catch (\Throwable $e) {
+                error_log("UserController::processInstallmentPayment check-all-paid: " . $e->getMessage());
+            }
+
+            if ($allPaid) {
+                $this->db->prepare("
+                    UPDATE plot_bookings
+                    SET status = 'fully_paid', updated_at = NOW()
+                    WHERE id = ? AND status NOT IN ('cancelled', 'transferred')
+                ")->execute([$bookingId]);
+            }
+
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                try { $this->db->rollBack(); } catch (\Throwable $e2) {}
+            }
+            error_log("UserController::processInstallmentPayment db error inst #{$instId}: " . $e->getMessage());
+            $this->json(['success' => false, 'error' => 'Payment processing failed. Please contact support.'], 500);
+            return;
+        }
+
+        try {
+            $notifier = new \App\Services\BookingNotificationService();
+            $notifier->sendPaymentReceipt(
+                ['booking_number' => $installment['booking_number'], 'id' => $bookingId],
+                $user,
+                $amountDue,
+                $razorpay_payment_id
+            );
+        } catch (\Throwable $e) {
+            error_log("[UserController] Installment payment notification failed: " . $e->getMessage());
+        }
+
+        $this->json([
+            'success'  => true,
+            'redirect' => BASE_URL . '/user/installments/' . $instId . '/success',
+        ]);
+    }
+
+    public function installmentSuccess($installmentId = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int) $user['id'];
+        $instId = (int) $installmentId;
+
+        if ($instId <= 0) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        try {
+            $installment = $this->db->fetch("
+                SELECT ips.*,
+                       pb.booking_number, pb.customer_id, pb.total_plot_value, pb.status as booking_status,
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       c.name as colony_name
+                FROM booking_payment_schedules ips
+                JOIN plot_bookings pb ON ips.booking_id = pb.id
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE ips.id = ?
+            ", [$instId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::installmentSuccess fetch: " . $e->getMessage());
+            $installment = null;
+        }
+
+        if (!$installment || (int) $installment['customer_id'] !== $userId) {
+            header('Location: ' . BASE_URL . '/user/bookings');
+            exit;
+        }
+
+        $receipt = null;
+        try {
+            $receipt = $this->db->fetch("
+                SELECT * FROM booking_payment_receipts
+                WHERE installment_id = ? AND booking_id = ?
+                ORDER BY created_at DESC LIMIT 1
+            ", [$instId, (int) $installment['booking_id']]);
+        } catch (\Throwable $e) {
+            error_log("UserController::installmentSuccess fetch receipt: " . $e->getMessage());
+        }
+
+        $allInstallments = [];
+        try {
+            $allInstallments = $this->db->fetchAll("
+                SELECT * FROM booking_payment_schedules
+                WHERE booking_id = ?
+                ORDER BY installment_number ASC
+            ", [(int) $installment['booking_id']]);
+        } catch (\Throwable $e) {
+            error_log("UserController::installmentSuccess fetch schedule: " . $e->getMessage());
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/installment_success', [
+            'page_title'     => 'Payment Successful — APS Dream Home',
+            'user'           => $user,
+            'installment'    => $installment,
+            'booking'        => $installment,
+            'receipt'        => $receipt,
+            'all_installments' => $allInstallments,
+        ]);
+    }
+
+    /* ------------------------------------------------------------------ *
+     *  AGREEMENT SIGNING FLOW
+     * ------------------------------------------------------------------ */
+
+    public function agreements()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int)$user['id'];
+
+        $agreements = [];
+        try {
+            $agreements = $this->db->fetchAll("
+                SELECT ag.*,
+                       pb.booking_number, pb.total_plot_value,
+                       p.plot_number, p.block, p.area_sqft,
+                       c.name as colony_name
+                FROM agreements ag
+                LEFT JOIN plot_bookings pb ON ag.booking_id = pb.id
+                LEFT JOIN plots p ON ag.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE pb.customer_id = ? OR ag.party_b_id = ?
+                ORDER BY ag.created_at DESC
+            ", [$userId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::agreements - " . $e->getMessage());
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/agreements', [
+            'page_title' => 'My Agreements - APS Dream Home',
+            'user' => $user,
+            'agreements' => $agreements,
+        ]);
+    }
+
+    public function agreementDetail($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int)$user['id'];
+        $agreementId = (int)$id;
+
+        if ($agreementId <= 0) {
+            header('Location: ' . BASE_URL . '/user/agreements');
+            exit;
+        }
+
+        $agreement = null;
+        try {
+            $agreement = $this->db->fetch("
+                SELECT ag.*,
+                       pb.booking_number, pb.total_plot_value, pb.booking_amount,
+                       pb.status as booking_status, pb.booking_date,
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       p.width_ft, p.length_ft, p.dimension_label, p.facing,
+                       c.name as colony_name,
+                       d.name as district_name,
+                       u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                FROM agreements ag
+                LEFT JOIN plot_bookings pb ON ag.booking_id = pb.id
+                LEFT JOIN plots p ON ag.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN users u ON pb.customer_id = u.id
+                WHERE ag.id = ? AND (pb.customer_id = ? OR ag.party_b_id = ?)
+            ", [$agreementId, $userId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::agreementDetail - " . $e->getMessage());
+        }
+
+        if (!$agreement) {
+            header('Location: ' . BASE_URL . '/user/agreements');
+            exit;
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/agreement_detail', [
+            'page_title' => 'Agreement Details - APS Dream Home',
+            'user' => $user,
+            'agreement' => $agreement,
+        ]);
+    }
+
+    public function signAgreement($id = null)
+    {
+        if (!isset($_SESSION['user_id'])) {
+            $this->json(['success' => false, 'error' => 'Please login to continue'], 401);
+            return;
+        }
+
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+            return;
+        }
+
+        $userId = (int)$_SESSION['user_id'];
+        $agreementId = (int)$id;
+
+        if ($agreementId <= 0) {
+            $this->json(['success' => false, 'error' => 'Invalid agreement'], 400);
+            return;
+        }
+
+        // Verify ownership
+        $agreement = null;
+        try {
+            $agreement = $this->db->fetch("
+                SELECT ag.*, pb.customer_id, pb.status as booking_status, pb.plot_id
+                FROM agreements ag
+                LEFT JOIN plot_bookings pb ON ag.booking_id = pb.id
+                WHERE ag.id = ? AND (pb.customer_id = ? OR ag.party_b_id = ?)
+            ", [$agreementId, $userId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::signAgreement fetch - " . $e->getMessage());
+            $this->json(['success' => false, 'error' => 'Unable to verify agreement'], 500);
+            return;
+        }
+
+        if (!$agreement) {
+            $this->json(['success' => false, 'error' => 'Agreement not found'], 404);
+            return;
+        }
+
+        $currentStatus = $agreement['status'] ?? '';
+        if ($currentStatus === 'signed' || $currentStatus === 'registered') {
+            $this->json(['success' => false, 'error' => 'Agreement is already signed'], 400);
+            return;
+        }
+        if ($currentStatus === 'cancelled' || $currentStatus === 'expired') {
+            $this->json(['success' => false, 'error' => 'This agreement can no longer be signed'], 400);
+            return;
+        }
+
+        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'unknown';
+
+        try {
+            $this->db->beginTransaction();
+
+            // 1. Update agreement status
+            $this->db->prepare("
+                UPDATE agreements
+                SET status = 'signed', signed_at = NOW(), signed_ip = ?, updated_at = NOW()
+                WHERE id = ?
+            ")->execute([$ipAddress, $agreementId]);
+
+            // 2. Update agreement_number if not set
+            if (empty($agreement['agreement_number'])) {
+                $agreementNumber = 'APS-AGR-' . date('Ymd') . '-' . str_pad($agreementId, 4, '0', STR_PAD_LEFT);
+                $this->db->prepare("UPDATE agreements SET agreement_number = ? WHERE id = ?")
+                    ->execute([$agreementNumber, $agreementId]);
+            }
+
+            // 3. Auto-advance plot_bookings status if needed
+            $bookingStatus = $agreement['booking_status'] ?? '';
+            if ($bookingStatus === 'token_paid') {
+                $this->db->prepare("
+                    UPDATE plot_bookings SET status = 'agreement_signed', updated_at = NOW()
+                    WHERE id = ? AND status = 'token_paid'
+                ")->execute([$agreement['booking_id']]);
+            }
+
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                try { $this->db->rollBack(); } catch (\Throwable $e2) {}
+            }
+            error_log("UserController::signAgreement db error #{$agreementId}: " . $e->getMessage());
+            $this->json(['success' => false, 'error' => 'Signing failed. Please try again.'], 500);
+            return;
+        }
+
+        // 4. Send notification (best-effort)
+        try {
+            $notifier = new \App\Services\BookingNotificationService();
+            $user = $this->getUser();
+            $booking = $this->fetchBookingWithPlot($agreement['booking_id'], $userId);
+            if ($booking && method_exists($notifier, 'sendAgreementSigned')) {
+                $notifier->sendAgreementSigned($agreement, $user, $booking);
+            }
+        } catch (\Throwable $e) {
+            error_log("[UserController] Agreement sign notification failed: " . $e->getMessage());
+        }
+
+        $this->json([
+            'success' => true,
+            'redirect' => BASE_URL . '/user/agreements/' . $agreementId,
+        ]);
+    }
+
+    public function agreementPreview($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $userId = (int)$user['id'];
+        $agreementId = (int)$id;
+
+        if ($agreementId <= 0) {
+            header('Location: ' . BASE_URL . '/user/agreements');
+            exit;
+        }
+
+        $agreement = null;
+        try {
+            $agreement = $this->db->fetch("
+                SELECT ag.*,
+                       pb.booking_number, pb.total_plot_value, pb.booking_amount,
+                       pb.status as booking_status, pb.booking_date,
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       p.width_ft, p.length_ft, p.dimension_label, p.facing,
+                       c.name as colony_name,
+                       d.name as district_name,
+                       u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                FROM agreements ag
+                LEFT JOIN plot_bookings pb ON ag.booking_id = pb.id
+                LEFT JOIN plots p ON ag.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN districts d ON c.district_id = d.id
+                LEFT JOIN users u ON pb.customer_id = u.id
+                WHERE ag.id = ? AND (pb.customer_id = ? OR ag.party_b_id = ?)
+            ", [$agreementId, $userId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("UserController::agreementPreview - " . $e->getMessage());
+        }
+
+        if (!$agreement) {
+            header('Location: ' . BASE_URL . '/user/agreements');
+            exit;
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo $this->renderAgreementHtml($agreement);
+        exit;
+    }
+
+    private function renderAgreementHtml(array $agreement): string
+    {
+        $customerName = htmlspecialchars($agreement['customer_name'] ?? 'Customer');
+        $plotNo = htmlspecialchars($agreement['plot_number'] ?? 'N/A');
+        $block = htmlspecialchars($agreement['block'] ?? '');
+        $colonyName = htmlspecialchars($agreement['colony_name'] ?? 'N/A');
+        $district = htmlspecialchars($agreement['district_name'] ?? 'Gorakhpur');
+        $area = number_format((float)($agreement['area_sqft'] ?? 0));
+        $dimLabel = htmlspecialchars($agreement['dimension_label'] ?? (($agreement['width_ft'] ?? 0) . ' x ' . ($agreement['length_ft'] ?? 0) . ' ft'));
+        $facing = htmlspecialchars($agreement['facing'] ?? 'N/A');
+        $totalValue = number_format((float)($agreement['total_value'] ?? $agreement['plot_price'] ?? $agreement['total_plot_value'] ?? 0), 2);
+        $bookingNo = htmlspecialchars($agreement['booking_number'] ?? 'N/A');
+        $agrNumber = htmlspecialchars($agreement['agreement_number'] ?? 'APS-AGR-' . str_pad($agreement['id'], 4, '0', STR_PAD_LEFT));
+        $agrDate = date('d M Y', strtotime($agreement['agreement_date'] ?? $agreement['created_at'] ?? 'now'));
+        $signedAt = !empty($agreement['signed_at']) ? date('d M Y, h:i A', strtotime($agreement['signed_at'])) : '';
+        $agreementType = ucwords(str_replace('_', ' ', $agreement['agreement_type'] ?? 'allotment'));
+        $stampDuty = number_format((float)($agreement['stamp_duty_amount'] ?? 0), 2);
+        $registrationFee = number_format((float)($agreement['registration_fee'] ?? 0), 2);
+        $today = date('d M Y');
+        $isSigned = ($agreement['status'] ?? '') === 'signed';
+
+        return '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agreement Preview - ' . $agrNumber . '</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; color: #1e293b; line-height: 1.7; background: #fff; }
+        .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-35deg); font-size: 72px; font-weight: 900; color: rgba(0,0,0,0.03); letter-spacing: 12px; text-transform: uppercase; pointer-events: none; z-index: 0; white-space: nowrap; }
+        .page { max-width: 800px; margin: 0 auto; padding: 40px 50px; position: relative; z-index: 1; }
+        .header { text-align: center; border-bottom: 3px solid #4f46e5; padding-bottom: 20px; margin-bottom: 30px; }
+        .header h1 { color: #4f46e5; font-size: 26px; margin-bottom: 4px; }
+        .header .tagline { color: #6b7280; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
+        .header .contact { font-size: 12px; color: #6b7280; margin-top: 8px; }
+        .header .contact span { margin: 0 8px; }
+        .agr-title { text-align: center; font-size: 20px; font-weight: 700; color: #1e293b; margin: 20px 0; text-transform: uppercase; letter-spacing: 1px; }
+        .agr-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin-bottom: 24px; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .agr-meta .row { display: flex; }
+        .agr-meta .label { font-weight: 600; color: #6b7280; min-width: 160px; }
+        .agr-meta .value { color: #1e293b; font-weight: 500; }
+        .section-title { font-size: 16px; font-weight: 700; color: #4f46e5; margin: 24px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+        .body-text { margin: 12px 0; line-height: 1.8; }
+        .body-text p { margin-bottom: 10px; text-align: justify; }
+        .clause { margin-bottom: 14px; }
+        .clause-num { font-weight: 700; color: #4f46e5; }
+        .parties-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+        .party-card { padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; }
+        .party-card h4 { color: #4f46e5; margin-bottom: 8px; font-size: 14px; }
+        .party-card p { font-size: 13px; line-height: 1.6; }
+        .plot-box { padding: 16px; border: 2px solid #4f46e5; border-radius: 8px; margin: 16px 0; background: #f5f3ff; }
+        .plot-box h4 { color: #4f46e5; margin-bottom: 8px; }
+        .plot-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
+        .plot-detail .label { font-weight: 600; color: #6b7280; }
+        .payment-box { padding: 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin: 16px 0; }
+        .payment-box h4 { color: #166534; margin-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+        table th { background: #4f46e5; color: #fff; padding: 10px 12px; text-align: left; font-size: 13px; }
+        table td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; font-size: 13px; }
+        .signature-section { margin-top: 50px; display: flex; justify-content: space-between; }
+        .sig-block { text-align: center; width: 220px; }
+        .sig-block .line { border-top: 1px solid #1e293b; margin-top: 70px; padding-top: 8px; font-weight: 600; font-size: 13px; }
+        .sig-block .sub { font-size: 11px; color: #6b7280; }
+        .signed-badge { text-align: center; padding: 12px; background: #dcfce7; border: 1px solid #86efac; border-radius: 8px; margin: 20px 0; }
+        .signed-badge i { color: #16a34a; margin-right: 8px; }
+        .footer { margin-top: 30px; border-top: 2px solid #4f46e5; padding-top: 16px; font-size: 12px; color: #6b7280; text-align: center; }
+        .no-print { text-align: center; margin-top: 24px; }
+        .no-print button { background: #4f46e5; color: #fff; border: none; padding: 10px 28px; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; margin: 0 6px; }
+        .no-print a { display: inline-block; padding: 10px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid #4f46e5; color: #4f46e5; margin: 0 6px; }
+        @media print {
+            body { background: #fff; margin: 0; }
+            .page { padding: 20px 30px; max-width: 100%; }
+            .no-print { display: none !important; }
+            .watermark { color: rgba(0,0,0,0.02); }
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">AGREEMENT</div>
+    <div class="page">
+        <div class="header">
+            <h1>APS Dream Home</h1>
+            <div class="tagline">Building Dreams, Delivering Trust</div>
+            <div class="contact">
+                <span><i class="fas fa-map-marker-alt"></i> Head Office: Gorakhpur, Uttar Pradesh</span>
+                <span><i class="fas fa-phone"></i> +91 92771 21112</span>
+                <span><i class="fas fa-envelope"></i> info@apsdreamhome.com</span>
+            </div>
+        </div>
+
+        <div class="agr-title">' . $agreementType . '</div>
+
+        <div class="agr-meta">
+            <div class="row"><span class="label">Agreement No:</span> <span class="value">' . $agrNumber . '</span></div>
+            <div class="row"><span class="label">Date:</span> <span class="value">' . $agrDate . '</span></div>
+            <div class="row"><span class="label">Booking Ref:</span> <span class="value">' . $bookingNo . '</span></div>
+            <div class="row"><span class="label">Total Value:</span> <span class="value">₹' . $totalValue . '</span></div>
+        </div>
+
+        ' . ($isSigned ? '<div class="signed-badge"><i class="fas fa-check-circle"></i> <strong>This agreement has been digitally signed</strong> on ' . $signedAt . '</div>' : '') . '
+
+        <div class="section-title">1. Parties to the Agreement</div>
+        <div class="parties-grid">
+            <div class="party-card">
+                <h4><i class="fas fa-building"></i> Party A (Seller)</h4>
+                <p><strong>APS Dream Home Pvt. Ltd.</strong><br>
+                Registered Office: Gorakhpur, Uttar Pradesh, India<br>
+                CIN: U70102UP2020PTC123456<br>
+                GSTIN: 09AAACS1234F1Z5<br>
+                Represented by: Authorized Signatory</p>
+            </div>
+            <div class="party-card">
+                <h4><i class="fas fa-user"></i> Party B (Buyer)</h4>
+                <p><strong>' . $customerName . '</strong><br>
+                Email: ' . htmlspecialchars($agreement['customer_email'] ?? '') . '<br>
+                Phone: ' . htmlspecialchars($agreement['customer_phone'] ?? '') . '<br>
+                (Hereinafter referred to as the "Purchaser/Buyer")</p>
+            </div>
+        </div>
+
+        <div class="section-title">2. Property Description</div>
+        <div class="plot-box">
+            <h4><i class="fas fa-map-marked-alt"></i> immovable Property Details</h4>
+            <div class="plot-detail">
+                <div><span class="label">Colony/Project:</span> ' . $colonyName . '</div>
+                <div><span class="label">District:</span> ' . $district . ', Uttar Pradesh</div>
+                <div><span class="label">Plot Number:</span> ' . $plotNo . ($block ? ' (Block ' . $block . ')' : '') . '</div>
+                <div><span class="label">Area:</span> ' . $area . ' sq ft</div>
+                <div><span class="label">Dimensions:</span> ' . $dimLabel . '</div>
+                <div><span class="label">Facing:</span> ' . $facing . '</div>
+            </div>
+        </div>
+
+        <div class="section-title">3. Terms and Conditions</div>
+        <div class="body-text">
+            <div class="clause">
+                <span class="clause-num">3.1 Agreement Value:</span> The total agreement value for the said property is <strong>₹' . $totalValue . '</strong> (Rupees ' . $this->numberToWords((float)($agreement['total_value'] ?? $agreement['plot_price'] ?? 0)) . ' Only).
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.2 Token Amount:</span> The Purchaser has paid a token amount of <strong>₹' . number_format((float)($agreement['booking_amount'] ?? 25000), 2) . '</strong> at the time of booking, which is adjustable against the total consideration.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.3 Payment Schedule:</span> The balance amount shall be paid as per the Payment Schedule mutually agreed upon between the parties. The Purchaser shall pay all installments by the due dates. In case of delayed payment, interest at the rate of 18% per annum shall be charged on the overdue amount from the due date until the date of actual payment.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.4 Possession:</span> The Seller shall endeavor to deliver possession of the property within 24 months from the date of this Agreement, subject to force majeure conditions. Delay in possession beyond 24 months shall entitle the Purchaser to compensation at the rate of ₹5 per sq ft per month for the delayed period.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.5 Title and Transfer:</span> The Seller warrants that the property is free from all encumbrances, liens, charges, and litigation. Upon receipt of full payment, the Seller shall execute all necessary documents to transfer clear and marketable title to the Purchaser.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.6 Stamp Duty and Registration:</span> The stamp duty and registration charges for this Agreement and the subsequent sale deed shall be borne by the Purchaser as per the Indian Stamp Act, 1899 and the Indian Registration Act, 1908. Current estimated stamp duty: <strong>₹' . $stampDuty . '</strong> and registration fee: <strong>₹' . $registrationFee . '</strong>.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.7 Maintenance and Utilities:</span> The Purchaser shall be responsible for all maintenance charges, property taxes, and utility charges from the date of possession. The Seller shall hand over the property with active water, electricity, and sewage connections.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.8 Cancellation:</span> In case the Purchaser wishes to cancel this Agreement, the token amount shall be forfeited. If 25% or more of the agreement value has been paid, a refund of 75% of the amount paid (excluding the token amount) shall be processed within 90 days of cancellation request.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.9 Default by Purchaser:</span> If the Purchaser fails to make payments for more than 90 days beyond the due date, the Seller reserves the right to terminate this Agreement after issuing a 30-day written notice. Upon termination, the Seller shall refund 50% of the amount paid (excluding the token amount) within 60 days.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.10 Dispute Resolution:</span> Any dispute arising out of or in connection with this Agreement shall first be resolved through mutual negotiation within 30 days. Failing which, the dispute shall be referred to arbitration in accordance with the Arbitration and Conciliation Act, 1996. The seat of arbitration shall be <strong>Gorakhpur, Uttar Pradesh</strong> and the language of proceedings shall be English/Hindi.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.11 Jurisdiction:</span> The courts of <strong>Gorakhpur, Uttar Pradesh</strong> shall have exclusive jurisdiction over any matter arising from this Agreement.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.12 Force Majeure:</span> Neither party shall be liable for delays or failures in performance resulting from acts beyond reasonable control, including but not limited to natural disasters, government actions, pandemics, strikes, or war.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.13 RERA Compliance:</span> This project is registered under the Real Estate (Regulation and Development) Act, 2016 (RERA) with the Uttar Pradesh Real Estate Regulatory Authority. The Purchaser may verify the registration details at the official RERA website.
+            </div>
+            <div class="clause">
+                <span class="clause-num">3.14 Entire Agreement:</span> This Agreement constitutes the entire understanding between the parties and supersedes all prior negotiations, representations, or agreements. Any modification must be in writing and signed by both parties.
+            </div>
+        </div>
+
+        <div class="section-title">4. Signature</div>
+        <div class="body-text">
+            <p>IN WITNESS WHEREOF, the parties hereto have executed this Agreement on the date first above written.</p>
+        </div>
+
+        <div class="signature-section">
+            <div class="sig-block">
+                <div class="line">For APS Dream Home Pvt. Ltd.</div>
+                <div class="sub">Authorized Signatory</div>
+                <div class="sub">Date: ' . $agrDate . '</div>
+            </div>
+            <div class="sig-block">
+                <div class="line">' . $customerName . '</div>
+                <div class="sub">Purchaser/Buyer</div>
+                <div class="sub">Date: ' . ($signedAt ?: $today) . '</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>APS Dream Home Pvt. Ltd. | Head Office: Gorakhpur, Uttar Pradesh, India</p>
+            <p>This is a digitally generated agreement. For queries, contact <strong>+91 92771 21112</strong> or <strong>info@apsdreamhome.com</strong></p>
+        </div>
+
+        <div class="no-print">
+            <button onclick="window.print()"><i class="fas fa-print"></i> Print / Save as PDF</button>
+            <a href="' . BASE_URL . '/user/agreements/' . $agreement['id'] . '"><i class="fas fa-arrow-left"></i> Back to Agreement</a>
+        </div>
+    </div>
+</body>
+</html>';
+    }
+
+    private function numberToWords(float $num): string
+    {
+        if ($num <= 0) return 'Zero';
+        $ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+                  'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen',
+                  'Seventeen', 'Eighteen', 'Nineteen'];
+        $tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+        $intPart = (int)$num;
+        $words = '';
+
+        if ($intPart >= 10000000) { $words .= $ones[(int)($intPart / 10000000)] . ' Crore '; $intPart %= 10000000; }
+        if ($intPart >= 100000) { $words .= $ones[(int)($intPart / 100000)] . ' Lakh '; $intPart %= 100000; }
+        if ($intPart >= 1000) { $words .= $ones[(int)($intPart / 1000)] . ' Thousand '; $intPart %= 1000; }
+        if ($intPart >= 100) { $words .= $ones[(int)($intPart / 100)] . ' Hundred '; $intPart %= 100; }
+        if ($intPart >= 20) { $words .= $tens[(int)($intPart / 10)] . ' '; $intPart %= 10; }
+        if ($intPart > 0) { $words .= $ones[$intPart] . ' '; }
+
+        return trim($words) . ' Rupees';
     }
 
     private function safeInvestorStats(int $userId): array

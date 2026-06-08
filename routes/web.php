@@ -430,7 +430,14 @@ $router->get('/user/bookings/{id}/confirmation', 'Front\\UserController@bookingC
 $router->get('/user/bookings/{id}/pay-token', 'Front\\UserController@payToken');
 $router->post('/user/bookings/{id}/pay-token', 'Front\\UserController@processTokenPayment');
 $router->get('/user/bookings/{id}/payment-success', 'Front\\UserController@paymentSuccess');
+$router->get('/user/agreements', 'Front\\UserController@agreements');
+$router->get('/user/agreements/{id}', 'Front\\UserController@agreementDetail');
+$router->post('/user/agreements/{id}/sign', 'Front\\UserController@signAgreement');
+$router->get('/user/agreements/{id}/preview', 'Front\\UserController@agreementPreview');
 $router->get('/user/installments/{id}/demand-letter', 'Front\\UserController@demandLetter');
+$router->get('/user/installments/{id}/pay', 'Front\\UserController@payInstallment');
+$router->post('/user/installments/{id}/pay', 'Front\\UserController@processInstallmentPayment');
+$router->get('/user/installments/{id}/success', 'Front\\UserController@installmentSuccess');
 $router->get('/user/inquiries', 'Front\\UserController@myInquiries');
 $router->get('/user/tickets', 'Front\\UserController@myTickets');
 $router->post('/user/tickets/create', 'Front\\UserController@createTicket');
@@ -605,6 +612,7 @@ $router->post('/property-comparison/clear', 'App\\Http\\Controllers\\Front\\Prop
 $router->get('/property-comparison/share', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@share');
 
 $router->get('/user/referral', 'App\\Http\\Controllers\\Front\\ReferralController@index');
+$router->get('/api/referral/share', 'App\\Http\\Controllers\\Front\\ReferralController@share');
 $router->post('/property/inquire', 'Front\\PageController@propertyInquiry');
 $router->get('/dashboard', 'App\\Http\\Controllers\\DashboardController@index');
 $router->get('/dashboard/profile', 'App\\Http\\Controllers\\DashboardController@profile');

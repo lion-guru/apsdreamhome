@@ -93,7 +93,7 @@ $base = BASE_URL;
                         </div>
                         <div class="mb-3">
                             <label class="form-label"><?= __('register_label_referral') ?></label>
-                            <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>" placeholder="<?= __('register_ph_referral') ?>">
+                            <input type="text" class="form-control" name="referral_code" value="<?php echo htmlspecialchars($old['referral_code'] ?? $ref ?? ''); ?>" placeholder="<?= __('register_ph_referral') ?>">
                             <small class="text-success">
                                 <i class="fas fa-gift me-1"></i>
                                 <?= __('register_referral_bonus', ['percent' => 5]) ?>
