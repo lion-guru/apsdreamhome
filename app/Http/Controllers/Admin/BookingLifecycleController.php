@@ -44,6 +44,8 @@ class BookingLifecycleController extends AdminController
                 $this->db = $this->db->getPdo();
             }
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->db = null;
         }
         try {
@@ -51,6 +53,8 @@ class BookingLifecycleController extends AdminController
                 $this->db instanceof \PDO ? $this->db : null
             );
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->service = new BookingLifecycleService();
         }
     }
@@ -241,6 +245,8 @@ class BookingLifecycleController extends AdminController
             ]);
             $this->setFlash('success', 'Booking updated');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->setFlash('error', 'Update failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/sales/bookings/' . $id);
@@ -353,7 +359,9 @@ class BookingLifecycleController extends AdminController
             );
             $row->execute([$installmentId]);
             $letter = $row->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+}
         $this->render('admin/sales/demand-letter', [
             'page_title'   => 'Demand Letter',
             'page_heading' => 'Demand Letter — Installment #' . $installmentId,
@@ -464,7 +472,9 @@ class BookingLifecycleController extends AdminController
                     $summary['pending'] += (float)$r['amount'];
                 }
             }
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+}
         $this->render('admin/sales/commissions', [
             'page_title'   => 'Commissions',
             'page_heading' => 'Sales Commissions',
@@ -499,7 +509,9 @@ class BookingLifecycleController extends AdminController
                     $summary['pending']++;
                 }
             }
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+}
         $this->render('admin/sales/refunds', [
             'page_title'   => 'Refunds',
             'page_heading' => 'Booking Refunds',
@@ -612,7 +624,9 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchDemandLetters(int $bookingId): array
@@ -624,7 +638,9 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchDocuments(int $bookingId): array
@@ -636,7 +652,9 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchStatusHistory(int $bookingId): array
@@ -651,7 +669,9 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchCommissions(int $bookingId): array
@@ -666,7 +686,9 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchInstallment(int $id): ?array
@@ -676,7 +698,9 @@ class BookingLifecycleController extends AdminController
             $s->execute([$id]);
             $row = $s->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) { return null; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return null; }
     }
 
     private function fetchAvailablePlots(bool $includeBooked = false): array
@@ -689,7 +713,9 @@ class BookingLifecycleController extends AdminController
                     ORDER BY c.name, p.plot_number
                     LIMIT 200";
             return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchCustomers(): array
@@ -702,7 +728,9 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute();
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchAssociates(): array
@@ -712,7 +740,9 @@ class BookingLifecycleController extends AdminController
                 "SELECT id, name, email, phone FROM associates
                  WHERE status = 'active' ORDER BY name LIMIT 200"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchSalesManagers(): array
@@ -725,7 +755,9 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute();
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) { return []; }
+        } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+ return []; }
     }
 
     private function fetchColonies(): array
@@ -738,7 +770,9 @@ class BookingLifecycleController extends AdminController
             try {
                 return $this->db->query("SELECT id, name FROM colonies ORDER BY name LIMIT 50")
                                 ->fetchAll(\PDO::FETCH_ASSOC);
-            } catch (Exception $e2) { return []; }
+            } catch (Exception $e2) {
+                error_log("[{$className}] {$methodName}() exception: " . $e2->getMessage());
+ return []; }
         }
     }
 

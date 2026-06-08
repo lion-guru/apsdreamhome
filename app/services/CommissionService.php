@@ -125,15 +125,24 @@ class CommissionService
         return ['ok' => true, 'amount' => $total, 'id' => (int)$this->db->lastInsertId()];
     }
 
+    /**
+     * Get MLM rank commission rates.
+     * Delegates to MLMCommissionEngine::getCanonicalRates() for the canonical source.
+     * If no rank is specified, returns all ranks from mlm_rank_benefits DB table.
+     */
     public function getMlmRankRates(string $rank = ''): array
     {
+        // Single-rank query: use the canonical helper
+        if ($rank) {
+            $rates = \App\Services\MLM\MLMCommissionEngine::getCanonicalRates($rank);
+            return [$rank => $rates];
+        }
+        // All ranks: query the DB table directly (canonical source)
         try {
-            $sql = "SELECT id, rank_name AS rank, rank_name, rank_level, min_qualification_volume, min_downline_count AS min_downline, commission_multiplier AS commission_pct, bonus_amount, '' AS perks FROM mlm_rank_rates WHERE 1=1";
-            $params = [];
-            if ($rank) { $sql .= " AND rank_name = :r"; $params[':r'] = $rank; }
-            $sql .= " ORDER BY rank_level DESC";
+            $sql = "SELECT id, rank_name, rank_order, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_pct, l2_pct, l3_pct, perks, color_code, badge_icon FROM mlm_rank_benefits WHERE is_active = 1";
+            $sql .= " ORDER BY rank_order ASC";
             $st = $this->pdo->prepare($sql);
-            $st->execute($params);
+            $st->execute();
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             return [];
@@ -143,8 +152,9 @@ class CommissionService
     public function setMlmRank(string $rank, int $minDownline, float $commissionPct, float $bonusAmount, array $perks = []): array
     {
         try {
-            $st = $this->pdo->prepare("INSERT INTO mlm_rank_rates (rank_name, rank_level, min_downline_count, commission_multiplier, bonus_amount) VALUES (:r, :l, :m, :c, :b)");
-            $st->execute([':r' => $rank, ':l' => $minDownline, ':m' => $minDownline, ':c' => $commissionPct / 10, ':b' => $bonusAmount]);
+            $st = $this->pdo->prepare("INSERT INTO mlm_rank_benefits (rank_name, rank_order, min_leg_count, min_qualifying_volume, is_active) VALUES (:r, :l, :m, :c, 1)
+                                      ON DUPLICATE KEY UPDATE min_leg_count = VALUES(min_leg_count), min_qualifying_volume = VALUES(min_qualifying_volume)");
+            $st->execute([':r' => $rank, ':l' => $minDownline, ':m' => $minDownline, ':c' => $bonusAmount]);
             return ['ok' => true];
         } catch (\Throwable $e) {
             return ['error' => $e->getMessage()];

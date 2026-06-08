@@ -104,15 +104,12 @@ class MLMController extends AdminController
 
     private function getRanksData()
     {
-        $data = ['benefits' => [], 'rates' => [], 'rankCounts' => [], 'recentPromotions' => [], 'stats' => ['total_ranks' => 0, 'total_members' => 0]];
+        $data = ['benefits' => [], 'rankCounts' => [], 'recentPromotions' => [], 'stats' => ['total_ranks' => 0, 'total_members' => 0]];
         try {
             $db = $this->db;
             try {
                 $data['benefits'] = $db->fetchAll("SELECT * FROM mlm_rank_benefits ORDER BY rank_order ASC") ?? [];
             } catch (\Exception $e) { $data['benefits'] = []; }
-            try {
-                $data['rates'] = $db->fetchAll("SELECT * FROM mlm_rank_rates ORDER BY rank_level ASC") ?? [];
-            } catch (\Exception $e) { $data['rates'] = []; }
             try {
                 $raw = $db->fetchAll("SELECT mp.current_level, COUNT(*) as cnt FROM mlm_profiles mp GROUP BY mp.current_level");
                 $data['rankCounts'] = [];

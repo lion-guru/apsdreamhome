@@ -867,6 +867,7 @@ class MobileApiController extends BaseController
                         $errors[] = "Unknown entity type: $entity_type";
                 }
             } catch (Exception $e) {
+                error_log("[MobileApiController] uploadSyncData() exception: " . $e->getMessage());
                 $errors[] = "Error processing {$change['entity_type']} {$change['entity_id']}: " . $e->getMessage();
             }
         }
@@ -1207,6 +1208,8 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($properties, 'Properties fetched for sync');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $this->errorResponse('Failed to fetch properties: ' . $e->getMessage());
         }
     }
@@ -1248,6 +1251,8 @@ class MobileApiController extends BaseController
             $this->db->commit();
             return $this->successResponse(['synced_count' => count($leads)], 'Leads batch synced successfully');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             $this->db->rollBack();
             return $this->errorResponse('Batch sync failed: ' . $e->getMessage());
         }
@@ -1280,6 +1285,8 @@ class MobileApiController extends BaseController
 
             return $this->successResponse(['id' => $this->db->lastInsertId()], 'Lead synced successfully');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $this->errorResponse('Lead sync failed: ' . $e->getMessage());
         }
     }
@@ -1302,6 +1309,8 @@ class MobileApiController extends BaseController
             
             return $this->successResponse($summary, 'MLM performance summary fetched');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $this->errorResponse('Failed to fetch MLM summary: ' . $e->getMessage());
         }
     }
@@ -1331,6 +1340,8 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($history, 'Payout history fetched');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $this->errorResponse('Failed to fetch payout history: ' . $e->getMessage());
         }
     }
@@ -1350,8 +1361,7 @@ class MobileApiController extends BaseController
         try {
             $stmt = $this->db->prepare("
                 SELECT u.id as user_id, u.name, u.email, u.phone, u.role, u.created_at, u.updated_at,
-                       mp.current_level as rank, mp.referral_code, mp.status as mlm_status,
-                       (SELECT target_amount FROM mlm_rank_rates WHERE rank = mp.current_level LIMIT 1) as target
+                       mp.current_level as rank, mp.referral_code, mp.status as mlm_status
                 FROM users u
                 LEFT JOIN mlm_profiles mp ON u.id = mp.user_id
                 WHERE u.id = ?
@@ -1363,12 +1373,12 @@ class MobileApiController extends BaseController
                 return $this->errorResponse('User not found', 404);
             }
 
-            // Ensure target is numeric
-            $user['target'] = (double)($user['target'] ?? 0);
             $user['avatar'] = null; // Placeholder for now
 
             return $this->successResponse($user, 'User profile fetched');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $this->errorResponse('Failed to fetch profile: ' . $e->getMessage());
         }
     }
@@ -1411,6 +1421,8 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($summary, 'Monthly incentives fetched');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $this->errorResponse('Failed to fetch incentives: ' . $e->getMessage());
         }
     }
@@ -1433,6 +1445,8 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($documents, 'Documents fetched from locker');
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             return $this->errorResponse('Failed to fetch documents: ' . $e->getMessage());
         }
     }
@@ -1518,6 +1532,8 @@ class MobileApiController extends BaseController
             $result = $visitService->startVisit($agentId, $leadId, $propertyId, $destLat, $destLng);
             echo json_encode($result);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to start site visit: ' . $e->getMessage()]);
         }
@@ -1544,6 +1560,8 @@ class MobileApiController extends BaseController
             $visitService->updateLocation($visitId, $lat, $lng);
             echo json_encode(['success' => true, 'message' => 'Location updated']);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Update failed: ' . $e->getMessage()]);
         }
@@ -1568,6 +1586,8 @@ class MobileApiController extends BaseController
             $status = $visitService->getVisitStatus($visitId);
             echo json_encode(['success' => true, 'data' => $status]);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Fetch failed: ' . $e->getMessage()]);
         }
@@ -1584,6 +1604,8 @@ class MobileApiController extends BaseController
             $pending = $payoutService->getPendingPayouts();
             echo json_encode(['success' => true, 'data' => $pending]);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1607,6 +1629,8 @@ class MobileApiController extends BaseController
             $result = $payoutService->processPayouts($adminId);
             echo json_encode($result);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1623,6 +1647,8 @@ class MobileApiController extends BaseController
             $history = $payoutService->getPayoutHistory();
             echo json_encode(['success' => true, 'data' => $history]);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1641,6 +1667,8 @@ class MobileApiController extends BaseController
             $tree = $mlmService->getDownline($userId);
             echo json_encode(['success' => true, 'data' => $tree]);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1665,6 +1693,8 @@ class MobileApiController extends BaseController
             $data = $mlmService->getBusinessBreakdown($userId);
             echo json_encode(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1703,6 +1733,8 @@ class MobileApiController extends BaseController
 
             echo json_encode(['success' => true, 'message' => 'Payout request submitted successfully']);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1727,6 +1759,8 @@ class MobileApiController extends BaseController
             $data = $customerService->getCustomerBookings($customerId);
             echo json_encode(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1751,6 +1785,8 @@ class MobileApiController extends BaseController
             $data = $customerService->getEmiSchedule($bookingId);
             echo json_encode(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1777,6 +1813,8 @@ class MobileApiController extends BaseController
             $result = $customerService->recordEmiPayment($emiId, $amount, $method);
             echo json_encode($result);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1820,6 +1858,8 @@ class MobileApiController extends BaseController
             $result = $submissionService->submitProperty($data);
             echo json_encode($result);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1838,6 +1878,8 @@ class MobileApiController extends BaseController
             $data = $submissionService->getUserSubmissions($userId);
             echo json_encode(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -2072,6 +2114,8 @@ class MobileApiController extends BaseController
                 'data' => $user,
             ]);
         } catch (\Throwable $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Profile fetch failed: ' . $e->getMessage(), 'code' => 500]);
         }
@@ -2121,6 +2165,8 @@ class MobileApiController extends BaseController
                 ],
             ]);
         } catch (\Throwable $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Properties fetch failed: ' . $e->getMessage(), 'code' => 500]);
         }
@@ -2151,19 +2197,25 @@ class MobileApiController extends BaseController
                 $stmt = $pdo->prepare('SELECT COUNT(*) FROM user_properties WHERE user_id = ?');
                 $stmt->execute([$userId]);
                 $stats['property_count'] = (int) $stmt->fetchColumn();
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+}
 
             try {
                 $stmt = $pdo->prepare('SELECT COUNT(*) FROM leads WHERE created_by = ? OR source_id = ?');
                 $stmt->execute([$userId, $userId]);
                 $stats['lead_count'] = (int) $stmt->fetchColumn();
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+}
 
             try {
                 $stmt = $pdo->prepare('SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0');
                 $stmt->execute([$userId]);
                 $stats['unread_notifications'] = (int) $stmt->fetchColumn();
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+}
 
             try {
                 $stmt = $pdo->prepare('SELECT wallet_balance, mlm_points FROM users WHERE id = ? LIMIT 1');
@@ -2173,13 +2225,17 @@ class MobileApiController extends BaseController
                     $stats['wallet_balance'] = (float) ($row['wallet_balance'] ?? 0);
                     $stats['mlm_points'] = (int) ($row['mlm_points'] ?? 0);
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+}
 
             echo json_encode([
                 'success' => true,
                 'data' => $stats,
             ]);
         } catch (\Throwable $e) {
+            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Dashboard fetch failed: ' . $e->getMessage(), 'code' => 500]);
         }

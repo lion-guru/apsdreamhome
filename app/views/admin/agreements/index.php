@@ -1,78 +1,78 @@
 <?php
 $page_title = $page_title ?? 'Agreements - APS Dream Home';
 $active_page = 'agreements';
+$agreements = $agreements ?? [];
+$stats = $stats ?? [];
+$filters = $filters ?? ['type' => '', 'status' => '', 'search' => '', 'date_from' => '', 'date_to' => ''];
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Agreement Generation</h1>
+    <h1 class="h2"><i class="fas fa-file-contract me-2"></i>Agreements</h1>
+    <a href="<?= BASE_URL ?>/admin/agreements/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>New Agreement</a>
 </div>
 
-<?php if (isset($error) && $error): ?>
+<?php if (isset($_SESSION['flash_success'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['flash_success']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php unset($_SESSION['flash_success']); ?>
+<?php endif; ?>
+<?php if (isset($_SESSION['flash_error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <?= htmlspecialchars(is_string($error) ? $error : ($error['message'] ?? 'Unknown error')) ?>
+        <?= htmlspecialchars($_SESSION['flash_error']) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
+    <?php unset($_SESSION['flash_error']); ?>
 <?php endif; ?>
 
-<?php if (isset($_SESSION['flash_message'])): ?>
-    <div class="alert alert-<?= $_SESSION['flash_type'] ?? 'info' ?> alert-dismissible fade show" role="alert">
-        <?= htmlspecialchars($_SESSION['flash_message']) ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
-<?php endif; ?>
-
-<!-- Stats -->
+<!-- Stats Cards -->
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="card bg-primary text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="mb-0"><?= $total ?></h4>
-                        <p class="mb-0">Plot Bookings</p>
-                    </div>
-                    <i class="fas fa-file-contract fa-2x opacity-50"></i>
-                </div>
+            <div class="card-body text-center">
+                <h4 class="mb-0"><?= $stats['total'] ?? 0 ?></h4>
+                <small>Total</small>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="mb-0"><?= count(array_filter($bookings, fn($b) => ($agreement_counts[$b['id']]['cnt'] ?? 0) > 0)) ?></h4>
-                        <p class="mb-0">With Agreements</p>
-                    </div>
-                    <i class="fas fa-check-circle fa-2x opacity-50"></i>
-                </div>
+    <div class="col-md-2">
+        <div class="card bg-secondary text-white">
+            <div class="card-body text-center">
+                <h4 class="mb-0"><?= $stats['draft'] ?? 0 ?></h4>
+                <small>Draft</small>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="mb-0"><?= count(array_filter($bookings, fn($b) => ($agreement_counts[$b['id']]['cnt'] ?? 0) == 0 && $b['status'] == 'confirmed')) ?></h4>
-                        <p class="mb-0">Pending</p>
-                    </div>
-                    <i class="fas fa-clock fa-2x opacity-50"></i>
-                </div>
+    <div class="col-md-2">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h4 class="mb-0"><?= $stats['pending_signature'] ?? 0 ?></h4>
+                <small>Pending Sig.</small>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="card bg-info text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="mb-0"><?= count(array_filter($bookings, fn($b) => $b['status'] == 'confirmed')) ?></h4>
-                        <p class="mb-0">Confirmed</p>
-                    </div>
-                    <i class="fas fa-thumbs-up fa-2x opacity-50"></i>
-                </div>
+            <div class="card-body text-center">
+                <h4 class="mb-0"><?= $stats['signed'] ?? 0 ?></h4>
+                <small>Signed</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h4 class="mb-0"><?= $stats['registered'] ?? 0 ?></h4>
+                <small>Registered</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h4 class="mb-0"><?= ($stats['cancelled'] ?? 0) + ($stats['expired'] ?? 0) ?></h4>
+                <small>Cancelled/Exp.</small>
             </div>
         </div>
     </div>
@@ -80,27 +80,38 @@ $active_page = 'agreements';
 
 <!-- Filters -->
 <form method="GET" class="row g-3 mb-4">
-    <div class="col-md-4">
-        <input type="text" class="form-control" name="search" placeholder="Search by booking no, customer, plot..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
-    </div>
-    <div class="col-md-3">
-        <select class="form-select" name="status">
-            <option value="">All Status</option>
-            <option value="pending" <?= ($filters['status'] ?? '') == 'pending' ? 'selected' : '' ?>>Pending</option>
-            <option value="confirmed" <?= ($filters['status'] ?? '') == 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
-            <option value="completed" <?= ($filters['status'] ?? '') == 'completed' ? 'selected' : '' ?>>Completed</option>
-            <option value="cancelled" <?= ($filters['status'] ?? '') == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+    <div class="col-md-2">
+        <select class="form-select" name="type">
+            <option value="">All Types</option>
+            <?php foreach (['sale_deed' => 'Sale Deed', 'allotment' => 'Allotment', 'mortgage' => 'Mortgage', 'lease' => 'Lease', 'nda' => 'NDA', 'joint_venture' => 'Joint Venture', 'other' => 'Other'] as $val => $label): ?>
+                <option value="<?= $val ?>" <?= ($filters['type'] ?? '') === $val ? 'selected' : '' ?>><?= $label ?></option>
+            <?php endforeach; ?>
         </select>
     </div>
     <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Filter</button>
+        <select class="form-select" name="status">
+            <option value="">All Status</option>
+            <?php foreach (['draft' => 'Draft', 'pending_signature' => 'Pending Signature', 'signed' => 'Signed', 'registered' => 'Registered', 'cancelled' => 'Cancelled', 'expired' => 'Expired'] as $val => $label): ?>
+                <option value="<?= $val ?>" <?= ($filters['status'] ?? '') === $val ? 'selected' : '' ?>><?= $label ?></option>
+            <?php endforeach; ?>
+        </select>
     </div>
-    <div class="col-md-3 text-end">
-        <a href="<?= BASE_URL ?>/admin/agreements" class="btn btn-secondary"><i class="fas fa-redo"></i> Reset</a>
+    <div class="col-md-2">
+        <input type="text" class="form-control" name="search" placeholder="Search agreements..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+    </div>
+    <div class="col-md-2">
+        <input type="date" class="form-control" name="date_from" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>" placeholder="From">
+    </div>
+    <div class="col-md-2">
+        <input type="date" class="form-control" name="date_to" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>" placeholder="To">
+    </div>
+    <div class="col-md-2 d-flex gap-1">
+        <button type="submit" class="btn btn-primary flex-fill"><i class="fas fa-search"></i> Filter</button>
+        <a href="<?= BASE_URL ?>/admin/agreements" class="btn btn-secondary"><i class="fas fa-redo"></i></a>
     </div>
 </form>
 
-<!-- Bookings Table -->
+<!-- Agreements Table -->
 <div class="card">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -108,74 +119,79 @@ $active_page = 'agreements';
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>
-                        <th>Customer</th>
-                        <th>Plot / Colony</th>
-                        <th>Amount</th>
+                        <th>Agreement No</th>
+                        <th>Type</th>
+                        <th>Plot</th>
+                        <th>Colony</th>
+                        <th>Party A</th>
+                        <th>Party B</th>
+                        <th>Value</th>
                         <th>Status</th>
-                        <th>Agreements</th>
+                        <th>Date</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (empty($bookings)): ?>
+                    <?php if (empty($agreements)): ?>
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">No plot bookings found. Bookings must have a plot assigned.</td>
+                            <td colspan="11" class="text-center py-4 text-muted">
+                                <i class="fas fa-file-contract fa-3x mb-3 d-block"></i>
+                                No agreements found. <a href="<?= BASE_URL ?>/admin/agreements/create">Create one</a>.
+                            </td>
                         </tr>
                     <?php else: ?>
                         <?php $i = ($current_page - 1) * 20 + 1; ?>
-                        <?php foreach ($bookings as $b): ?>
-                            <?php 
-                            $agCount = intval($agreement_counts[$b['id']]['cnt'] ?? 0);
-                            $agTypes = explode(',', $agreement_counts[$b['id']]['types'] ?? '');
-                            $hasAllotment = in_array('allotment', $agTypes);
-                            $hasSaleAgreement = in_array('sale_agreement', $agTypes);
-                            $hasPaymentPlan = in_array('payment_plan', $agTypes);
-                            ?>
+                        <?php foreach ($agreements as $a): ?>
                             <tr>
                                 <td><?= $i++ ?></td>
-                                <td>
-                                    <strong><?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?></strong>
-                                    <br><small class="text-muted"><?= htmlspecialchars($b['customer_email'] ?? '') ?></small>
-                                </td>
-                                <td>
-                                    <strong><?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?></strong>
-                                    <br><small class="text-muted"><?= htmlspecialchars($b['colony_name'] ?? '') ?></small>
-                                </td>
-                                <td>Rs. <?= number_format(floatval($b['total_amount'] ?? $b['total_price'] ?? 0), 2) ?></td>
+                                <td><code><?= htmlspecialchars($a['agreement_number'] ?? '') ?></code></td>
                                 <td>
                                     <?php
-                                    $badgeClass = match($b['status']) {
-                                        'confirmed' => 'success',
-                                        'completed' => 'info',
-                                        'cancelled' => 'danger',
-                                        default => 'warning'
+                                    $typeLabels = ['sale_deed' => 'Sale Deed', 'allotment' => 'Allotment', 'mortgage' => 'Mortgage', 'lease' => 'Lease', 'nda' => 'NDA', 'joint_venture' => 'Joint Venture', 'other' => 'Other'];
+                                    $typeBadge = match($a['agreement_type'] ?? '') {
+                                        'sale_deed' => 'primary',
+                                        'allotment' => 'success',
+                                        'mortgage' => 'warning',
+                                        'lease' => 'info',
+                                        'nda' => 'secondary',
+                                        'joint_venture' => 'dark',
+                                        default => 'secondary'
                                     };
                                     ?>
-                                    <span class="badge bg-<?= $badgeClass ?>"><?= ucfirst($b['status']) ?></span>
+                                    <span class="badge bg-<?= $typeBadge ?>"><?= $typeLabels[$a['agreement_type']] ?? $a['agreement_type'] ?></span>
                                 </td>
                                 <td>
-                                    <?php if ($agCount > 0): ?>
-                                        <span class="badge bg-success"><i class="fas fa-check"></i> <?= $agCount ?> generated</span>
-                                        <div class="mt-1 small">
-                                            <?php if ($hasAllotment): ?><span class="badge bg-secondary">Allotment</span> <?php endif; ?>
-                                            <?php if ($hasSaleAgreement): ?><span class="badge bg-secondary">Sale</span> <?php endif; ?>
-                                            <?php if ($hasPaymentPlan): ?><span class="badge bg-secondary">Payment</span> <?php endif; ?>
-                                        </div>
-                                    <?php else: ?>
-                                        <span class="badge bg-secondary">None</span>
+                                    <strong><?= htmlspecialchars($a['plot_number'] ?? '—') ?></strong>
+                                    <?php if (!empty($a['block'])): ?>
+                                        <br><small class="text-muted">Block: <?= htmlspecialchars($a['block']) ?></small>
                                     <?php endif; ?>
                                 </td>
+                                <td><small><?= htmlspecialchars($a['colony_name'] ?? '—') ?></small></td>
+                                <td><?= htmlspecialchars($a['party_a_name'] ?? '—') ?></td>
+                                <td><?= htmlspecialchars($a['party_b_name'] ?? '—') ?></td>
+                                <td>Rs. <?= number_format(floatval($a['total_value'] ?? 0), 0) ?></td>
+                                <td>
+                                    <?php
+                                    $statusBadge = match($a['status'] ?? 'draft') {
+                                        'draft' => 'secondary',
+                                        'pending_signature' => 'warning',
+                                        'signed' => 'info',
+                                        'registered' => 'success',
+                                        'cancelled' => 'danger',
+                                        'expired' => 'dark',
+                                        default => 'secondary'
+                                    };
+                                    $statusLabels = ['draft' => 'Draft', 'pending_signature' => 'Pending Sig.', 'signed' => 'Signed', 'registered' => 'Registered', 'cancelled' => 'Cancelled', 'expired' => 'Expired'];
+                                    ?>
+                                    <span class="badge bg-<?= $statusBadge ?>"><?= $statusLabels[$a['status']] ?? ucfirst($a['status']) ?></span>
+                                </td>
+                                <td><small><?= date('d M Y', strtotime($a['agreement_date'] ?? 'now')) ?></small></td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="<?= BASE_URL ?>/admin/agreements/preview/<?= $b['id'] ?>/allotment" class="btn btn-outline-primary" title="Generate Allotment Letter">
-                                            <i class="fas fa-file-alt"></i> Allot
-                                        </a>
-                                        <a href="<?= BASE_URL ?>/admin/agreements/preview/<?= $b['id'] ?>/sale_agreement" class="btn btn-outline-success" title="Generate Sale Agreement">
-                                            <i class="fas fa-file-signature"></i> Sale
-                                        </a>
-                                        <a href="<?= BASE_URL ?>/admin/agreements/preview/<?= $b['id'] ?>/payment_plan" class="btn btn-outline-info" title="Generate Payment Plan">
-                                            <i class="fas fa-credit-card"></i> Pay
-                                        </a>
+                                        <a href="<?= BASE_URL ?>/admin/agreements/<?= $a['id'] ?>" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
+                                        <?php if ($a['booking_id']): ?>
+                                            <a href="<?= BASE_URL ?>/admin/agreements/preview/<?= $a['booking_id'] ?>/allotment" class="btn btn-outline-success" title="Generate PDF" target="_blank"><i class="fas fa-file-pdf"></i></a>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -192,15 +208,15 @@ $active_page = 'agreements';
 <nav class="mt-3">
     <ul class="pagination justify-content-center">
         <li class="page-item <?= $current_page <= 1 ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=<?= $current_page - 1 ?>&status=<?= urlencode($filters['status'] ?? '') ?>&search=<?= urlencode($filters['search'] ?? '') ?>">Previous</a>
+            <a class="page-link" href="?page=<?= $current_page - 1 ?>&type=<?= urlencode($filters['type'] ?? '') ?>&status=<?= urlencode($filters['status'] ?? '') ?>&search=<?= urlencode($filters['search'] ?? '') ?>&date_from=<?= urlencode($filters['date_from'] ?? '') ?>&date_to=<?= urlencode($filters['date_to'] ?? '') ?>">Previous</a>
         </li>
-        <?php for ($p = 1; $p <= $total_pages; $p++): ?>
+        <?php for ($p = max(1, $current_page - 2); $p <= min($total_pages, $current_page + 2); $p++): ?>
             <li class="page-item <?= $p == $current_page ? 'active' : '' ?>">
-                <a class="page-link" href="?page=<?= $p ?>&status=<?= urlencode($filters['status'] ?? '') ?>&search=<?= urlencode($filters['search'] ?? '') ?>"><?= $p ?></a>
+                <a class="page-link" href="?page=<?= $p ?>&type=<?= urlencode($filters['type'] ?? '') ?>&status=<?= urlencode($filters['status'] ?? '') ?>&search=<?= urlencode($filters['search'] ?? '') ?>&date_from=<?= urlencode($filters['date_from'] ?? '') ?>&date_to=<?= urlencode($filters['date_to'] ?? '') ?>"><?= $p ?></a>
             </li>
         <?php endfor; ?>
         <li class="page-item <?= $current_page >= $total_pages ? 'disabled' : '' ?>">
-            <a class="page-link" href="?page=<?= $current_page + 1 ?>&status=<?= urlencode($filters['status'] ?? '') ?>&search=<?= urlencode($filters['search'] ?? '') ?>">Next</a>
+            <a class="page-link" href="?page=<?= $current_page + 1 ?>&type=<?= urlencode($filters['type'] ?? '') ?>&status=<?= urlencode($filters['status'] ?? '') ?>&search=<?= urlencode($filters['search'] ?? '') ?>&date_from=<?= urlencode($filters['date_from'] ?? '') ?>&date_to=<?= urlencode($filters['date_to'] ?? '') ?>">Next</a>
         </li>
     </ul>
 </nav>

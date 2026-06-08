@@ -44,10 +44,18 @@ class BookingLifecycleService
         'fully_paid','cancelled','transferred','registration_done',
     ];
 
-    /** Default MLM commission percentages for the 3 sponsor levels. */
+    /**
+     * Commission rates are now sourced from MLMCommissionEngine::getCanonicalRates()
+     * which reads from mlm_rank_benefits DB table. These constants are retained
+     * only as documentation of the old hardcoded values. DO NOT use directly.
+     *
+     * @deprecated Use \App\Services\MLM\MLMCommissionEngine::getCanonicalRates($rank)
+     */
     public const MLM_LEVEL_PCT = [1 => 3.0, 2 => 1.5, 3 => 1.0];
 
-    /** Default sales-manager commission on direct bookings. */
+    /**
+     * @deprecated Use \App\Services\MLM\MLMCommissionEngine::getCanonicalRates($rank)['direct']
+     */
     public const DEFAULT_DIRECT_SALE_PCT = 2.0;
 
     public function __construct(?PDO $pdo = null)
@@ -672,9 +680,14 @@ class BookingLifecycleService
 
     /**
      * Compute and create commission rows for a booking.
-     * - Direct sale: based on plot_bookings.commission_pct
-     * - Associate referral: based on linked associate
-     * - MLM levels 1-3: walk the sponsor chain via users.referred_by / mlm_profiles
+     *
+     * DELEGATES to MLMCommissionEngine::calculateBookingCommission() which:
+     *   - Reads rates from mlm_rank_benefits DB table via getCanonicalRates()
+     *   - Walks the upline via users.referred_by
+     *   - Writes to mlm_commission_ledger (canonical table)
+     *
+     * This method also writes a backward-compat row to booking_commissions
+     * for any legacy code that reads from that table.
      *
      * @return array ['success'=>true, 'created'=>N, 'total_amount'=>X, 'rows'=>[...]]
      */
@@ -686,64 +699,40 @@ class BookingLifecycleService
             if (!$booking) {
                 return ['success' => false, 'error' => 'Booking not found'];
             }
-            $bookingValue = (float)$booking['total_plot_value'];
-            $rows = [];
 
-            // 1. Direct sale: sales_manager_id or default percentage
-            $managerId = !empty($booking['sales_manager_id']) ? (int)$booking['sales_manager_id'] : null;
-            $pct = (float)$booking['commission_pct'] ?: self::DEFAULT_DIRECT_SALE_PCT;
-            if ($managerId && $pct > 0) {
-                $amt = round($bookingValue * $pct / 100, 2);
-                $rows[] = [
-                    'beneficiary_user_id' => $managerId,
-                    'source_user_id'      => (int)$booking['customer_id'],
-                    'commission_type'     => 'direct_sale',
-                    'amount'              => $amt,
-                    'percent'             => $pct,
-                    'level'               => 1,
-                ];
-            }
+            // Delegate to the canonical engine
+            $engine = new \App\Services\MLM\MLMCommissionEngine($this->db);
+            $engineResult = $engine->calculateBookingCommission($bookingId);
 
-            // 2. Associate referral
-            $associateId = (int)($booking['associate_id'] ?? 0);
-            if ($associateId > 0) {
-                $assocRow = $this->db->prepare("SELECT user_id FROM associates WHERE id = ?");
-                $assocRow->execute([$associateId]);
-                $assocUserId = (int)$assocRow->fetchColumn();
-                if ($assocUserId > 0) {
-                    $rows[] = [
-                        'beneficiary_user_id' => $assocUserId,
-                        'source_user_id'      => (int)$booking['customer_id'],
-                        'commission_type'     => 'associate_referral',
-                        'amount'              => round($bookingValue * 2.0 / 100, 2),
-                        'percent'             => 2.0,
-                        'level'               => 1,
-                    ];
-                    // 3. Walk up 3 levels of MLM upline starting from the associate
-                    $this->appendMlmUpline($assocUserId, (int)$booking['customer_id'], $bookingValue, $rows);
-                }
-            }
+            $rows = $engineResult['entries'] ?? [];
+            $totalAmt = (float)($engineResult['total'] ?? 0.0);
 
-            // Persist
-            $created = 0; $totalAmt = 0.0;
+            // Backward-compat: write summary rows to booking_commissions
+            // so legacy dashboard queries still work.
+            $created = 0;
             $ins = $this->db->prepare(
                 "INSERT INTO booking_commissions
                  (booking_id, beneficiary_user_id, source_user_id, commission_type, amount, percent, level, status)
                  VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')"
             );
             foreach ($rows as $r) {
-                $ins->execute([
-                    $bookingId,
-                    $r['beneficiary_user_id'],
-                    $r['source_user_id'],
-                    $r['commission_type'],
-                    $r['amount'],
-                    $r['percent'],
-                    $r['level'],
-                ]);
-                $created++;
-                $totalAmt += $r['amount'];
+                try {
+                    $ins->execute([
+                        $bookingId,
+                        $r['beneficiary_user_id'],
+                        $r['source_user_id'],
+                        $r['commission_type'],
+                        $r['amount'],
+                        $r['pct'],
+                        $r['level'],
+                    ]);
+                    $created++;
+                } catch (Exception $e) {
+                    // non-fatal: booking_commissions is legacy compat
+                    error_log('[BookingLifecycleService::calculateCommission] booking_commissions insert skip: ' . $e->getMessage());
+                }
             }
+
             $out = [
                 'success'       => true,
                 'created'       => $created,
@@ -755,7 +744,7 @@ class BookingLifecycleService
             try {
                 $capService = new \App\Services\MLM\DailyCappingService();
                 foreach ($rows as $r) {
-                    if (strpos($r['commission_type'], 'mlm_level_') === 0) {
+                    if (strpos($r['commission_type'], 'mlm_level_') === 0 || $r['commission_type'] === 'level_bonus') {
                         $capStatus = $capService->getCapStatus((int)$r['beneficiary_user_id']);
                         $dailyCap = (float)($capStatus['daily_cap'] ?? 0);
                         if ($dailyCap > 0) {

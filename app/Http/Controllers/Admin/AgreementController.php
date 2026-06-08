@@ -25,59 +25,70 @@ class AgreementController extends AdminController
             $page = max(1, intval($_GET['page'] ?? 1));
             $perPage = 20;
             $offset = ($page - 1) * $perPage;
+            $type = $_GET['type'] ?? '';
             $status = $_GET['status'] ?? '';
             $search = $_GET['search'] ?? '';
+            $dateFrom = $_GET['date_from'] ?? '';
+            $dateTo = $_GET['date_to'] ?? '';
 
-            $where = ["b.plot_id IS NOT NULL"];
+            $where = [];
             $params = [];
 
+            if (!empty($type)) {
+                $where[] = "a.agreement_type = ?";
+                $params[] = $type;
+            }
             if (!empty($status)) {
-                $where[] = "b.status = ?";
+                $where[] = "a.status = ?";
                 $params[] = $status;
             }
             if (!empty($search)) {
-                $where[] = "(b.booking_number LIKE ? OR u.name LIKE ? OR p.plot_number LIKE ?)";
+                $where[] = "(a.agreement_number LIKE ? OR a.party_a_name LIKE ? OR a.party_b_name LIKE ? OR p.plot_number LIKE ?)";
                 $s = '%' . $search . '%';
-                $params[] = $s; $params[] = $s; $params[] = $s;
+                $params[] = $s;
+                $params[] = $s;
+                $params[] = $s;
+                $params[] = $s;
             }
-            $whereClause = 'WHERE ' . implode(' AND ', $where);
+            if (!empty($dateFrom)) {
+                $where[] = "a.agreement_date >= ?";
+                $params[] = $dateFrom;
+            }
+            if (!empty($dateTo)) {
+                $where[] = "a.agreement_date <= ?";
+                $params[] = $dateTo;
+            }
 
-            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM bookings b LEFT JOIN users u ON b.customer_id = u.id LEFT JOIN plots p ON b.plot_id = p.id $whereClause");
+            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+
+            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM agreements a LEFT JOIN plots p ON a.plot_id = p.id $whereClause");
             $countStmt->execute($params);
             $total = intval($countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
             $totalPages = max(1, ceil($total / $perPage));
 
             $stmt = $this->db->prepare("
-                SELECT b.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
-                       p.plot_number, p.block, p.total_price, p.area_sqft,
-                       c.name as colony_name
-                FROM bookings b
-                LEFT JOIN users u ON b.customer_id = u.id
-                LEFT JOIN plots p ON b.plot_id = p.id
-                LEFT JOIN colonies c ON b.colony_id = c.id
+                SELECT a.*, 
+                       p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       c.name as colony_name,
+                       b.booking_number
+                FROM agreements a
+                LEFT JOIN plots p ON a.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN plot_bookings b ON a.booking_id = b.id
                 $whereClause
-                ORDER BY b.created_at DESC
+                ORDER BY a.created_at DESC
                 LIMIT $perPage OFFSET $offset
             ");
             $stmt->execute($params);
-            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $agreements = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            $bookingIds = array_column($bookings, 'id');
-            $agreementCounts = [];
-            if (!empty($bookingIds)) {
-                $placeholders = implode(',', array_fill(0, count($bookingIds), '?'));
-                $agStmt = $this->db->prepare("SELECT entity_id, COUNT(*) as cnt, GROUP_CONCAT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(variables_data, '$.agreement_type')) SEPARATOR ',') as types FROM generated_documents WHERE entity_type = 'booking' AND entity_id IN ($placeholders) GROUP BY entity_id");
-                $agStmt->execute($bookingIds);
-                foreach ($agStmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
-                    $agreementCounts[$row['entity_id']] = $row;
-                }
-            }
+            $stats = $this->getAgreementStats();
 
             return $this->render('admin/agreements/index', [
-                'bookings' => $bookings,
-                'agreement_counts' => $agreementCounts,
+                'agreements' => $agreements,
                 'total' => $total,
-                'filters' => ['status' => $status, 'search' => $search],
+                'stats' => $stats,
+                'filters' => ['type' => $type, 'status' => $status, 'search' => $search, 'date_from' => $dateFrom, 'date_to' => $dateTo],
                 'total_pages' => $totalPages,
                 'current_page' => $page,
                 'page_title' => 'Agreements - APS Dream Home',
@@ -85,8 +96,8 @@ class AgreementController extends AdminController
             ]);
         } catch (Exception $e) {
             return $this->render('admin/agreements/index', [
-                'bookings' => [], 'agreement_counts' => [], 'total' => 0,
-                'filters' => ['status' => '', 'search' => ''],
+                'agreements' => [], 'total' => 0, 'stats' => [],
+                'filters' => ['type' => '', 'status' => '', 'search' => '', 'date_from' => '', 'date_to' => ''],
                 'total_pages' => 1, 'current_page' => 1,
                 'error' => $e->getMessage(),
                 'page_title' => 'Agreements - APS Dream Home',
@@ -94,13 +105,201 @@ class AgreementController extends AdminController
         }
     }
 
-    public function generate($bookingId, $type)
+    public function create()
+    {
+        $bookings = [];
+        try {
+            $stmt = $this->db->prepare("
+                SELECT b.id, b.booking_number, b.total_amount, b.status,
+                       u.name as customer_name, u.phone as customer_phone,
+                       p.plot_number, c.name as colony_name
+                FROM plot_bookings b
+                LEFT JOIN users u ON b.customer_id = u.id
+                LEFT JOIN plots p ON b.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE b.status IN ('token_paid','agreement_signed','emi_active','partially_paid')
+                ORDER BY b.created_at DESC
+            ");
+            $stmt->execute();
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("AgreementController::create - bookings query error: " . $e->getMessage());
+        }
+
+        return $this->render('admin/agreements/create', [
+            'bookings' => $bookings,
+            'page_title' => 'Create Agreement - APS Dream Home',
+            'active_page' => 'agreements',
+        ]);
+    }
+
+    public function store()
+    {
+        $this->requireAdmin();
+        $this->verifyCsrf();
+
+        try {
+            $agreementType = $_POST['agreement_type'] ?? '';
+            $bookingId = intval($_POST['booking_id'] ?? 0);
+            $plotId = intval($_POST['plot_id'] ?? 0);
+            $partyAName = trim($_POST['party_a_name'] ?? '');
+            $partyAId = intval($_POST['party_a_id'] ?? 0) ?: null;
+            $partyBName = trim($_POST['party_b_name'] ?? '');
+            $partyBId = intval($_POST['party_b_id'] ?? 0) ?: null;
+            $agreementDate = $_POST['agreement_date'] ?? date('Y-m-d');
+            $registrationDate = !empty($_POST['registration_date']) ? $_POST['registration_date'] : null;
+            $stampDuty = floatval($_POST['stamp_duty_amount'] ?? 0);
+            $registrationFee = floatval($_POST['registration_fee'] ?? 0);
+            $totalValue = floatval($_POST['total_value'] ?? 0);
+            $validityDate = !empty($_POST['validity_date']) ? $_POST['validity_date'] : null;
+            $notes = trim($_POST['notes'] ?? '');
+
+            $validTypes = ['sale_deed', 'allotment', 'mortgage', 'lease', 'nda', 'joint_venture', 'other'];
+            if (!in_array($agreementType, $validTypes)) {
+                $this->json(['success' => false, 'error' => 'Invalid agreement type'], 400);
+                return;
+            }
+            if (empty($partyAName) || empty($partyBName)) {
+                $this->json(['success' => false, 'error' => 'Both party names are required'], 400);
+                return;
+            }
+
+            if ($bookingId > 0 && $plotId === 0) {
+                try {
+                    $bst = $this->db->prepare("SELECT plot_id FROM plot_bookings WHERE id = ?");
+                    $bst->execute([$bookingId]);
+                    $brow = $bst->fetch(\PDO::FETCH_ASSOC);
+                    if ($brow) $plotId = intval($brow['plot_id']);
+                } catch (\Throwable $e) {}
+            }
+
+            $agreementNumber = $this->generateAgreementNumber($agreementType);
+
+            $stmt = $this->db->prepare("
+                INSERT INTO agreements 
+                (agreement_number, agreement_type, booking_id, plot_id, party_a_name, party_a_id, party_b_name, party_b_id,
+                 agreement_date, registration_date, stamp_duty_amount, registration_fee, total_value, 
+                 validity_date, notes, status, created_by, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, NOW(), NOW())
+            ");
+            $stmt->execute([
+                $agreementNumber, $agreementType, $bookingId ?: null, $plotId ?: null,
+                $partyAName, $partyAId, $partyBName, $partyBId,
+                $agreementDate, $registrationDate, $stampDuty, $registrationFee, $totalValue,
+                $validityDate, $notes, $_SESSION['admin_id'] ?? null
+            ]);
+
+            $agreementId = $this->db->lastInsertId();
+
+            $this->json(['success' => true, 'id' => $agreementId, 'agreement_number' => $agreementNumber, 'redirect' => BASE_URL . '/admin/agreements/' . $agreementId]);
+        } catch (Exception $e) {
+            $this->json(['success' => false, 'error' => 'Failed to create agreement: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function show($id)
     {
         try {
+            $stmt = $this->db->prepare("
+                SELECT a.*, 
+                       p.plot_number, p.block, p.sector, p.area_sqft, p.total_price as plot_price,
+                       p.width_ft, p.length_ft, p.dimension_label, p.facing,
+                       c.name as colony_name, c.description as colony_description,
+                       b.booking_number, b.total_amount as booking_amount, b.status as booking_status,
+                       u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                FROM agreements a
+                LEFT JOIN plots p ON a.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN plot_bookings b ON a.booking_id = b.id
+                LEFT JOIN users u ON b.customer_id = u.id
+                WHERE a.id = ?
+            ");
+            $stmt->execute([$id]);
+            $agreement = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$agreement) {
+                $this->setFlash('error', 'Agreement not found');
+                $this->redirect('/admin/agreements');
+                return;
+            }
+
+            $relatedDocs = [];
+            if ($agreement['booking_id']) {
+                try {
+                    $dstmt = $this->db->prepare("SELECT * FROM generated_documents WHERE entity_type = 'booking' AND entity_id = ? ORDER BY generated_at DESC");
+                    $dstmt->execute([$agreement['booking_id']]);
+                    $relatedDocs = $dstmt->fetchAll(\PDO::FETCH_ASSOC);
+                } catch (\Throwable $e) {}
+            }
+
+            return $this->render('admin/agreements/show', [
+                'agreement' => $agreement,
+                'related_docs' => $relatedDocs,
+                'page_title' => 'Agreement #' . htmlspecialchars($agreement['agreement_number']),
+                'active_page' => 'agreements',
+            ]);
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Error loading agreement: ' . $e->getMessage());
+            $this->redirect('/admin/agreements');
+        }
+    }
+
+    public function update($id)
+    {
+        $this->requireAdmin();
+        $this->verifyCsrf();
+
+        try {
+            $newStatus = $_POST['status'] ?? '';
+            $validStatuses = ['draft', 'pending_signature', 'signed', 'registered', 'cancelled', 'expired'];
+            if (!in_array($newStatus, $validStatuses)) {
+                $this->json(['success' => false, 'error' => 'Invalid status'], 400);
+                return;
+            }
+
+            $updates = ['status = ?', 'updated_at = NOW()'];
+            $params = [$newStatus];
+
+            if ($newStatus === 'signed') {
+                $updates[] = 'registration_date = COALESCE(registration_date, CURDATE())';
+            }
+            if (!empty($_POST['stamp_duty_amount'])) {
+                $updates[] = 'stamp_duty_amount = ?';
+                $params[] = floatval($_POST['stamp_duty_amount']);
+            }
+            if (!empty($_POST['registration_fee'])) {
+                $updates[] = 'registration_fee = ?';
+                $params[] = floatval($_POST['registration_fee']);
+            }
+            if (!empty($_POST['notes'])) {
+                $updates[] = 'notes = ?';
+                $params[] = trim($_POST['notes']);
+            }
+
+            $params[] = $id;
+            $setClause = implode(', ', $updates);
+            $stmt = $this->db->prepare("UPDATE agreements SET $setClause WHERE id = ?");
+            $stmt->execute($params);
+
+            $this->json(['success' => true, 'message' => 'Agreement updated to ' . ucfirst(str_replace('_', ' ', $newStatus))]);
+        } catch (Exception $e) {
+            $this->json(['success' => false, 'error' => 'Failed to update: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function generate($id, $type = null)
+    {
+        if ($type === null && is_numeric($id)) {
+            $type = $_GET['type'] ?? 'allotment';
+        }
+
+        try {
+            $bookingId = $id;
             $validTypes = ['allotment', 'sale_agreement', 'payment_plan'];
             if (!in_array($type, $validTypes)) {
                 $this->setFlash('error', 'Invalid agreement type');
                 $this->redirect('/admin/agreements');
+                return;
             }
 
             $docId = null;
@@ -141,6 +340,7 @@ class AgreementController extends AdminController
             if (!$doc || empty($doc['file_path'])) {
                 $this->setFlash('error', 'Document not found');
                 $this->redirect('/admin/agreements');
+                return;
             }
 
             $fullPath = defined('APS_ROOT') ? APS_ROOT . $doc['file_path'] : (defined('APP_ROOT') ? APP_ROOT . $doc['file_path'] : __DIR__ . '/../../..' . $doc['file_path']);
@@ -148,6 +348,7 @@ class AgreementController extends AdminController
             if (!file_exists($fullPath)) {
                 $this->setFlash('error', 'File not found on server');
                 $this->redirect('/admin/agreements');
+                return;
             }
 
             $stmt = $this->db->prepare("UPDATE generated_documents SET download_count = download_count + 1 WHERE id = ?");
@@ -172,6 +373,7 @@ class AgreementController extends AdminController
             if (!in_array($type, $validTypes)) {
                 $this->setFlash('error', 'Invalid agreement type');
                 $this->redirect('/admin/agreements');
+                return;
             }
 
             $html = $this->agreementService->getHtmlPreview($bookingId, $type);
@@ -196,6 +398,7 @@ class AgreementController extends AdminController
             if (!$doc) {
                 $this->setFlash('error', 'Document not found');
                 $this->redirect('/admin/agreements');
+                return;
             }
 
             $bookingData = $this->agreementService->getBookingData($doc['entity_id']);
@@ -215,7 +418,7 @@ class AgreementController extends AdminController
                     $stmt = $this->db->prepare("INSERT INTO email_queue (recipient_email, subject, body, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
                     $stmt->execute([$customerEmail, $subject, $message]);
                 } catch (\Exception $e) {
-                            error_log("AgreementController.php: " . $e->getMessage());
+                    error_log("AgreementController.php: " . $e->getMessage());
                 }
             }
 
@@ -225,7 +428,7 @@ class AgreementController extends AdminController
                     $stmt = $this->db->prepare("INSERT INTO sms_queue (recipient_phone, message, status, created_at) VALUES (?, ?, 'pending', NOW())");
                     $stmt->execute([$customerPhone, $smsText]);
                 } catch (\Exception $e) {
-                            error_log("AgreementController.php: " . $e->getMessage());
+                    error_log("AgreementController.php: " . $e->getMessage());
                 }
             }
 
@@ -242,5 +445,39 @@ class AgreementController extends AdminController
             $this->setFlash('error', 'Error sending agreement: ' . $e->getMessage());
         }
         $this->redirect('/admin/agreements');
+    }
+
+    private function generateAgreementNumber(string $type): string
+    {
+        $typeMap = [
+            'sale_deed' => 'SD',
+            'allotment' => 'AL',
+            'mortgage' => 'MG',
+            'lease' => 'LS',
+            'nda' => 'ND',
+            'joint_venture' => 'JV',
+            'other' => 'OT',
+        ];
+        $prefix = $typeMap[$type] ?? 'AG';
+        $year = date('Y');
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM agreements WHERE YEAR(created_at) = ?");
+        $stmt->execute([$year]);
+        $count = intval($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0) + 1;
+
+        return "APS/$prefix/$year/" . str_pad($count, 4, '0', STR_PAD_LEFT);
+    }
+
+    private function getAgreementStats(): array
+    {
+        $stats = ['total' => 0, 'draft' => 0, 'pending_signature' => 0, 'signed' => 0, 'registered' => 0, 'cancelled' => 0, 'expired' => 0];
+        try {
+            $stmt = $this->db->query("SELECT status, COUNT(*) as cnt FROM agreements GROUP BY status");
+            foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+                $stats[$row['status']] = intval($row['cnt']);
+                $stats['total'] += intval($row['cnt']);
+            }
+        } catch (\Throwable $e) {}
+        return $stats;
     }
 }
