@@ -423,7 +423,10 @@ $router->get('/user/logout', 'Auth\\CustomerAuthController@logout');
 $router->get('/user/dashboard', 'Front\\UserController@dashboard');
 $router->get('/user/properties', 'Front\\UserController@myProperties');
 $router->get('/user/bookings', 'Front\\UserController@userBookings');
+$router->get('/user/bookings/new', 'Front\\UserController@newBooking');
+$router->post('/user/bookings/create', 'Front\\UserController@createBooking');
 $router->get('/user/bookings/{id}', 'Front\\UserController@bookingDetail');
+$router->get('/user/bookings/{id}/confirmation', 'Front\\UserController@bookingConfirmation');
 $router->get('/user/installments/{id}/demand-letter', 'Front\\UserController@demandLetter');
 $router->get('/user/inquiries', 'Front\\UserController@myInquiries');
 $router->get('/user/tickets', 'Front\\UserController@myTickets');
@@ -3718,3 +3721,30 @@ $router->get('/admin/backoffice/reports/{id}/history',               'App\\Http\
 
 // API
 $router->get('/admin/backoffice/api/lead-summary',                   'App\\Http\\Controllers\\Admin\\BackofficeController@apiLeadSummary');
+
+// ============================================================
+// COMPANY CREDENTIALS
+// ============================================================
+$router->get('/admin/company-credentials',                           'Admin\\CompanyCredentialsController@index');
+$router->get('/admin/company-credentials/create',                    'Admin\\CompanyCredentialsController@create');
+$router->post('/admin/company-credentials/store',                    'Admin\\CompanyCredentialsController@store');
+$router->get('/admin/company-credentials/expiring',                  'Admin\\CompanyCredentialsController@expiring');
+$router->get('/admin/company-credentials/{id}',                      'Admin\\CompanyCredentialsController@show');
+$router->get('/admin/company-credentials/{id}/edit',                 'Admin\\CompanyCredentialsController@edit');
+$router->post('/admin/company-credentials/{id}/update',              'Admin\\CompanyCredentialsController@update');
+$router->post('/admin/company-credentials/{id}/delete',              'Admin\\CompanyCredentialsController@delete');
+
+// ============================================================
+// BANK STATEMENT IMPORT & AUTO-RECONCILIATION
+// URL prefix: /admin/bank-import/*
+// ============================================================
+$router->get('/admin/bank-import',                                    'Admin\\BankImportController@index');
+$router->get('/admin/bank-import/upload',                             'Admin\\BankImportController@upload');
+$router->post('/admin/bank-import/process',                           'Admin\\BankImportController@process');
+$router->get('/admin/bank-import/{id}',                               'Admin\\BankImportController@show');
+$router->post('/admin/bank-import/{id}/match',                        'Admin\\BankImportController@match');
+$router->post('/admin/bank-import/manual-match',                      'Admin\\BankImportController@manualMatch');
+$router->post('/admin/bank-import/unmatch/{txnId}',                   'Admin\\BankImportController@unmatch');
+$router->post('/admin/bank-import/{id}/delete',                       'Admin\\BankImportController@delete');
+$router->get('/admin/bank-import/{id}/export',                        'Admin\\BankImportController@export');
+$router->get('/admin/bank-import/search-internal',                    'Admin\\BankImportController@searchInternal');

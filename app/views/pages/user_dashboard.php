@@ -156,8 +156,11 @@ $dashBookingCount = count($dashBookings);
                         </div>
                     </div>
                 </div>
-                <div class="text-center mt-3">
-                    <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-primary btn-sm">
+                <div class="d-flex gap-2 justify-content-center mt-3">
+                    <a href="<?= BASE_URL ?>/user/bookings/new" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Book a Plot
+                    </a>
+                    <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary btn-sm">
                         <i class="fas fa-arrow-right me-1"></i>View All Bookings
                     </a>
                 </div>
@@ -249,8 +252,8 @@ $dashBookingCount = count($dashBookings);
                     <div class="aps-cp-empty-icon"><i class="fas fa-file-invoice-dollar"></i></div>
                     <h5><?= __('dash_no_bookings_title', null, 'No purchases yet') ?></h5>
                     <p><?= __('dash_no_bookings_yet', null, 'Start browsing properties to make your first booking.') ?></p>
-                    <a href="<?= BASE_URL ?>/properties" class="btn btn-primary">
-                        <i class="fas fa-search me-2"></i><?= __('dash_browse_properties', null, 'Browse Properties') ?>
+                    <a href="<?= BASE_URL ?>/user/bookings/new" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i><?= __('dash_btn_book_plot', null, 'Book a Plot') ?>
                     </a>
                 </div>
             </div>
