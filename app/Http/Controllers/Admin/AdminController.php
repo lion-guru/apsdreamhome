@@ -143,6 +143,23 @@ class AdminController extends BaseController
             $stats['money_pending_tds'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM tds_register WHERE status='pending'")['cnt'] ?? 0);
         } catch (\Exception $e) { $stats['money_pending_tds'] = 0; }
 
+        // EMI Dunning (Phase 30)
+        try {
+            $stats['emi_overdue_count'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM booking_payment_schedules WHERE status IN ('overdue','pending') AND due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['emi_overdue_count'] = 0; }
+
+        try {
+            $stats['emi_overdue_amount'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(amount),0) AS total FROM booking_payment_schedules WHERE status IN ('overdue','pending') AND due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)")['total'] ?? 0);
+        } catch (\Exception $e) { $stats['emi_overdue_amount'] = 0; }
+
+        try {
+            $stats['emi_total_penalties'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(accrued_penalty),0) AS total FROM booking_payment_schedules WHERE accrued_penalty > 0")['total'] ?? 0);
+        } catch (\Exception $e) { $stats['emi_total_penalties'] = 0; }
+
+        try {
+            $stats['emi_defaulted_count'] = (int) ($this->db->fetch("SELECT COUNT(DISTINCT booking_id) AS cnt FROM booking_payment_schedules WHERE status IN ('overdue','pending') AND due_date < DATE_SUB(CURDATE(), INTERVAL 90 DAY)")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['emi_defaulted_count'] = 0; }
+
         // Module 4: MLM Network
         try {
             $stats['mlm_commissions_paid'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM mlm_commission_ledger WHERE status='paid' AND MONTH(created_at)=MONTH(CURDATE())")['cnt'] ?? 0);

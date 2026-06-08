@@ -5,44 +5,45 @@ namespace App\Services;
 use App\Core\Database;
 use App\Services\NotificationService;
 use Exception;
-use TCPDF;
 
+/**
+ * Phase 30: EMI Automation Service — rewritten to use correct Module 2 tables.
+ * Tables: booking_payment_schedules, plot_bookings, plots, users, dunning_log
+ */
 class EMIAutomationService
 {
     protected $db;
     protected $notificationService;
     protected $rootPath;
 
-    public function __construct()
+    public function __construct($db = null)
     {
-        $this->db = Database::getInstance()->getConnection();
-        $this->notificationService = new NotificationService();
+        $this->db = $db ?? Database::getInstance()->getConnection();
+        $this->notificationService = new NotificationService($this->db);
         $this->rootPath = dirname(__DIR__, 2);
     }
 
     /**
-     * Run all automation tasks
+     * Run all EMI automation tasks (cron entry point).
      */
-    public function runAll()
+    public function runAll(): array
     {
         $results = [
-            'status_update' => false,
-            'reminders' => false,
-            'defaults' => false,
-            'report' => false
+            'status_update'   => false,
+            'penalties'       => false,
+            'reminders'       => false,
+            'dunning'         => false,
+            'defaults_check'  => false,
         ];
 
         try {
             $this->db->beginTransaction();
 
-            $results['status_update'] = $this->updateInstallmentStatus();
-            $results['reminders'] = $this->sendUpcomingPaymentReminders();
-            $results['defaults'] = $this->checkDefaultedPlans();
-
-            // Generate monthly report on first day of month
-            if (date('j') === '1') {
-                $results['report'] = $this->generateMonthlyReport();
-            }
+            $results['status_update']  = $this->updateInstallmentStatus();
+            $results['penalties']      = $this->applyDailyPenalties();
+            $results['reminders']      = $this->sendUpcomingPaymentReminders();
+            $results['dunning']        = $this->sendDunningEmails();
+            $results['defaults_check'] = $this->checkDefaultedBookings();
 
             $this->db->commit();
             return $results;
@@ -51,372 +52,307 @@ class EMIAutomationService
                 $this->db->rollBack();
             }
             error_log("EMI Automation Error: " . $e->getMessage());
-            throw $e;
+            return $results;
         }
     }
 
     /**
-     * Update status of overdue installments
+     * Mark overdue installments: pending → overdue when past due_date.
      */
-    public function updateInstallmentStatus()
+    public function updateInstallmentStatus(): bool
     {
-        // Get all pending installments that are overdue
-        $query = "UPDATE emi_installments
-                  SET payment_status = 'overdue',
-                      updated_at = NOW()
-                  WHERE payment_status = 'pending'
-                  AND due_date < CURDATE()";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-
-        // Get overdue installments for notification
-        $query = "SELECT ei.*, ep.customer_id, u.name as customer_name, u.email as customer_email, p.title as property_title
-                  FROM emi_installments ei
-                  JOIN emi_plans ep ON ei.emi_plan_id = ep.id
-                  JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = ep.customer_id)
-                  JOIN properties p ON ep.property_id = p.id
-                  WHERE ei.payment_status = 'overdue'
-                  AND (ei.last_reminder_date IS NULL 
-                  OR ei.last_reminder_date < DATE_SUB(NOW(), INTERVAL 3 DAY))";
-
-        $stmt = $this->db->query($query);
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        foreach ($results as $row) {
-            $subject = "Overdue EMI Payment Alert - " . $row['property_title'];
-            $body = $this->renderTemplate('EMI_OVERDUE', [
-                'customer_name' => $row['customer_name'],
-                'amount' => number_format($row['amount'], 2),
-                'property_title' => $row['property_title'],
-                'due_date' => date('d M Y', strtotime($row['due_date']))
-            ]);
-
-            // Send email
-            if (!empty($row['customer_email'])) {
-                $this->notificationService->sendEmail(
-                    $row['customer_email'],
-                    $subject,
-                    $body,
-                    'emi_overdue',
-                    $row['customer_id'],
-                    ['emi_plan_id' => $row['emi_plan_id']]
-                );
-            }
-
-            // Update last reminder date
-            // Note: Ensure last_reminder_date column exists in emi_installments
-            try {
-                $updateQuery = "UPDATE emi_installments 
-                               SET last_reminder_date = NOW()
-                               WHERE id = ?";
-                $this->db->prepare($updateQuery)->execute([$row['id']]);
-            } catch (\Exception $e) {
-                // Column might not exist, ignore
-                        error_log("EMIAutomationService.php: " . $e->getMessage());
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Send reminders for upcoming payments
-     */
-    public function sendUpcomingPaymentReminders()
-    {
-        // Get installments due in next 3 days
-        $query = "SELECT ei.*, ep.customer_id, u.name as customer_name, 
-                         u.email as customer_email, p.title as property_title
-                  FROM emi_installments ei
-                  JOIN emi_plans ep ON ei.emi_plan_id = ep.id
-                  JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = ep.customer_id)
-                  JOIN properties p ON ep.property_id = p.id
-                  WHERE ei.payment_status = 'pending'
-                  AND ei.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
-                  AND (ei.reminder_sent IS NULL OR ei.reminder_sent = 0)";
-
-        $stmt = $this->db->query($query);
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        foreach ($results as $row) {
-            $subject = "Upcoming EMI Payment Reminder - " . $row['property_title'];
-            $body = $this->renderTemplate('EMI_REMINDER', [
-                'customer_name' => $row['customer_name'],
-                'amount' => number_format($row['amount'], 2),
-                'property_title' => $row['property_title'],
-                'due_date' => date('d M Y', strtotime($row['due_date']))
-            ]);
-
-            // Send email
-            if (!empty($row['customer_email'])) {
-                $this->notificationService->sendEmail(
-                    $row['customer_email'],
-                    $subject,
-                    $body,
-                    'emi_reminder',
-                    $row['customer_id'],
-                    ['emi_plan_id' => $row['emi_plan_id']]
-                );
-            }
-
-            // Mark reminder as sent
-            // Note: Ensure reminder_sent column exists
-            try {
-                $updateQuery = "UPDATE emi_installments 
-                               SET reminder_sent = 1
-                               WHERE id = ?";
-                $this->db->prepare($updateQuery)->execute([$row['id']]);
-            } catch (\Exception $e) {
-                // Column might not exist
-                        error_log("EMIAutomationService.php: " . $e->getMessage());
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Check for defaulted plans (3+ consecutive overdue)
-     */
-    public function checkDefaultedPlans()
-    {
-        // Get plans with 3 or more consecutive overdue installments
-        $query = "SELECT ep.*, 
-                         COUNT(ei.id) as overdue_count,
-                         u.name as customer_name,
-                         u.email as customer_email,
-                         p.title as property_title
-                  FROM emi_plans ep
-                  JOIN emi_installments ei ON ep.id = ei.emi_plan_id
-                  JOIN users u ON u.id = (SELECT c.user_id FROM users c WHERE c.id = ep.customer_id)
-                  JOIN properties p ON ep.property_id = p.id
-                  WHERE ep.status = 'active'
-                  AND ei.payment_status = 'overdue'
-                  GROUP BY ep.id
-                  HAVING overdue_count >= 3";
-
-        $stmt = $this->db->query($query);
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        foreach ($results as $row) {
-            // Update plan status to defaulted
-            $updateQuery = "UPDATE emi_plans 
-                           SET status = 'defaulted',
-                               updated_at = NOW()
-                           WHERE id = ?";
-            $this->db->prepare($updateQuery)->execute([$row['id']]);
-
-            // Notify Admins
-            $adminQuery = "SELECT id, email, name FROM admin WHERE role = 'admin'";
-            $admins = $this->db->query($adminQuery)->fetchAll(\PDO::FETCH_ASSOC);
-
-            foreach ($admins as $admin) {
-                if (!empty($admin['email'])) {
-                    $subject = "EMI Default Alert: " . $row['customer_name'];
-                    $body = $this->renderTemplate('EMI_DEFAULT_ADMIN', [
-                        'admin_name' => $admin['name'],
-                        'customer_name' => $row['customer_name'],
-                        'property_title' => $row['property_title'],
-                        'overdue_count' => $row['overdue_count']
-                    ]);
-
-                    $this->notificationService->sendEmail(
-                        $admin['email'],
-                        $subject,
-                        $body,
-                        'emi_default_admin',
-                        $admin['id'],
-                        ['plan_id' => $row['id']]
-                    );
-                }
-            }
-
-            // Notify Customer
-            if (!empty($row['customer_email'])) {
-                $subject = "Important: EMI Plan Defaulted - " . $row['property_title'];
-                $body = $this->renderTemplate('EMI_DEFAULT_CUSTOMER', [
-                    'customer_name' => $row['customer_name'],
-                    'property_title' => $row['property_title'],
-                    'overdue_count' => $row['overdue_count']
-                ]);
-
-                $this->notificationService->sendEmail(
-                    $row['customer_email'],
-                    $subject,
-                    $body,
-                    'emi_default',
-                    $row['customer_id'],
-                    ['plan_id' => $row['id']]
-                );
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Generate monthly collection report
-     */
-    public function generateMonthlyReport()
-    {
-        $month = date('m');
-        $year = date('Y');
-
-        // Get monthly collection stats
-        $query = "SELECT 
-                    COUNT(DISTINCT ep.id) as total_active_plans,
-                    COUNT(DISTINCT CASE WHEN ei.status = 'paid' THEN ei.id END) as paid_installments,
-                    COUNT(DISTINCT CASE WHEN ei.status = 'overdue' THEN ei.id END) as overdue_installments,
-                    SUM(CASE WHEN ei.status = 'paid' THEN ei.amount ELSE 0 END) as total_collected,
-                    SUM(CASE WHEN ei.status = 'overdue' THEN ei.amount ELSE 0 END) as total_overdue
-                  FROM emi_plans ep
-                  LEFT JOIN emi_installments ei ON ep.id = ei.emi_plan_id
-                  WHERE MONTH(ei.due_date) = ? AND YEAR(ei.due_date) = ?";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->execute([$month, $year]);
-        $stats = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        // Generate PDF
-        $pdfPath = $this->generateReportPDF($stats, $month, $year);
-
-        if (!$pdfPath) {
+        try {
+            $this->db->exec(
+                "UPDATE booking_payment_schedules
+                 SET status = 'overdue', updated_at = NOW()
+                 WHERE status = 'pending'
+                   AND due_date < CURDATE()"
+            );
+            return true;
+        } catch (\Exception $e) {
+            error_log("updateInstallmentStatus: " . $e->getMessage());
             return false;
         }
+    }
 
+    /**
+     * Apply daily penalty (18% p.a.) after 5-day grace period.
+     * Same logic as MoneyWorkflowService::applyDailyPenalties but called from cron.
+     */
+    public function applyDailyPenalties(): bool
+    {
         try {
-            // Save report reference in database
-            $query = "INSERT INTO reports (
-                        title,
-                        type,
-                        content,
-                        file_path,
-                        generated_for_month,
-                        generated_for_year,
-                        created_at
-                      ) VALUES (?, 'emi', ?, ?, ?, ?, NOW())";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            $sql = "SELECT id, booking_id, amount, due_date,
+                           DATEDIFF(CURDATE(), due_date) AS days_overdue
+                    FROM booking_payment_schedules
+                    WHERE status IN ('overdue','pending')
+                      AND due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
+                      AND due_date >= DATE_SUB(CURDATE(), INTERVAL 365 DAY)";
+            $rows = $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            foreach ($rows as $row) {
+                $days = (int)$row['days_overdue'];
+                $penalty = round((float)$row['amount'] * 0.18 * $days / 365, 2);
+                $this->db->prepare(
+                    "UPDATE booking_payment_schedules
+                     SET accrued_penalty = ?, updated_at = NOW()
+                     WHERE id = ? AND accrued_penalty < ?"
+                )->execute([$penalty, $row['id'], $penalty]);
+            }
+            return true;
+        } catch (\Exception $e) {
+            error_log("applyDailyPenalties: " . $e->getMessage());
+            return false;
         }
+    }
 
-        $reportTitle = "EMI Collection Report - " . date('F Y');
-        $reportContent = json_encode($stats);
+    /**
+     * Send upcoming payment reminders (due within 3 days).
+     */
+    public function sendUpcomingPaymentReminders(): bool
+    {
+        try {
+            $rows = $this->db->query(
+                "SELECT bps.id, bps.booking_id, bps.installment_no, bps.amount, bps.due_date,
+                        pb.booking_number, pb.customer_id,
+                        p.plot_number,
+                        c.name AS colony_name,
+                        u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone
+                 FROM booking_payment_schedules bps
+                 JOIN plot_bookings pb ON pb.id = bps.booking_id
+                 JOIN plots p ON p.id = pb.plot_id
+                 JOIN colonies c ON c.id = p.colony_id
+                 JOIN users u ON u.id = pb.customer_id
+                 WHERE bps.status = 'pending'
+                   AND bps.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+                   AND bps.reminder_count = 0"
+            )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-        $this->db->prepare($query)->execute([$reportTitle, $reportContent, $pdfPath, $month, $year]);
-        $reportId = $this->db->lastInsertId();
-
-        // Send report to admins
-        $adminQuery = "SELECT id, email, name FROM admin WHERE role = 'admin'";
-        $admins = $this->db->query($adminQuery)->fetchAll(\PDO::FETCH_ASSOC);
-
-        foreach ($admins as $admin) {
-            if (!empty($admin['email'])) {
-                $subject = "Monthly EMI Collection Report - " . date('F Y');
-                $body = $this->renderTemplate('EMI_MONTHLY_REPORT', [
-                    'admin_name' => $admin['name'],
-                    'report_month' => date('F Y')
-                ]);
-
-                // Note: NotificationService might not support attachments yet, 
-                // but we pass the path in payload for logging/future use
-                $this->notificationService->sendEmail(
-                    $admin['email'],
-                    $subject,
-                    $body . "\n\nReport available at: " . $pdfPath, // Fallback if no attachment support
-                    'emi_report',
-                    $admin['id'],
-                    ['report_id' => $reportId, 'file_path' => $pdfPath]
+            foreach ($rows as $row) {
+                $sent = $this->sendEmail(
+                    $row['customer_email'],
+                    "Upcoming EMI Reminder - {$row['booking_number']}",
+                    $this->renderEmail('dunning_reminder', $row)
                 );
+                if ($sent) {
+                    $this->db->prepare(
+                        "UPDATE booking_payment_schedules
+                         SET reminder_count = reminder_count + 1, last_reminder_at = NOW()
+                         WHERE id = ?"
+                    )->execute([$row['id']]);
+                    $this->logDunning($row, 'reminder', 'email');
+                }
             }
+            return true;
+        } catch (\Exception $e) {
+            error_log("sendUpcomingPaymentReminders: " . $e->getMessage());
+            return false;
         }
-
-        return true;
     }
 
-    private function generateReportPDF($stats, $month, $year)
+    /**
+     * Send graduated dunning emails based on days overdue.
+     * Tiers: 7 days → overdue_7, 14 → overdue_14, 30 → overdue_30, 60 → overdue_60, 90 → final_demand
+     */
+    public function sendDunningEmails(): bool
     {
-        // Try to load TCPDF
-        if (!class_exists('TCPDF')) {
-            $tcpdfPath = $this->rootPath . '/vendor/tecnickcom/tcpdf/tcpdf.php';
-            if (!file_exists($tcpdfPath)) {
-                // Fallback to library folder
-                $tcpdfPath = $this->rootPath . '/app/Core/TCPDF/tcpdf.php';
-            }
-
-            if (file_exists($tcpdfPath)) {
-                require_once $tcpdfPath;
-            } else {
-                error_log("TCPDF not found. Cannot generate PDF report.");
-                return false;
-            }
-        }
-
-        // Define PDF constants if not already defined
-        if (!defined('PDF_PAGE_ORIENTATION')) define('PDF_PAGE_ORIENTATION', 'P');
-        if (!defined('PDF_UNIT')) define('PDF_UNIT', 'mm');
-        if (!defined('PDF_PAGE_FORMAT')) define('PDF_PAGE_FORMAT', 'A4');
-
-        $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-        $pdf->SetCreator('APS Dream Home');
-        $pdf->SetAuthor('APS Dream Home');
-        $pdf->SetTitle('EMI Collection Report - ' . date('F Y'));
-
-        $pdf->AddPage();
-
-        // Add company logo if exists
-        $logoPath = $this->rootPath . '/assets/img/logo.png';
-        if (file_exists($logoPath)) {
-            $pdf->Image($logoPath, 15, 15, 50);
-        }
-
-        $pdf->SetFont('helvetica', 'B', 16);
-        $pdf->Cell(0, 20, 'EMI Collection Report - ' . date('F Y'), 0, 1, 'C');
-
-        $pdf->SetFont('helvetica', '', 12);
-
-        // Add statistics
-        $pdf->Ln(10);
-        $pdf->Cell(0, 10, 'Collection Statistics:', 0, 1);
-        $pdf->Cell(100, 8, 'Active EMI Plans:', 0);
-        $pdf->Cell(0, 8, $stats['total_active_plans'], 0, 1);
-        $pdf->Cell(100, 8, 'Paid Installments:', 0);
-        $pdf->Cell(0, 8, $stats['paid_installments'], 0, 1);
-        $pdf->Cell(100, 8, 'Overdue Installments:', 0);
-        $pdf->Cell(0, 8, $stats['overdue_installments'], 0, 1);
-        $pdf->Cell(100, 8, 'Total Amount Collected:', 0);
-        $pdf->Cell(0, 8, 'INR ' . number_format($stats['total_collected'] ?? 0, 2), 0, 1);
-        $pdf->Cell(100, 8, 'Total Amount Overdue:', 0);
-        $pdf->Cell(0, 8, 'INR ' . number_format($stats['total_overdue'] ?? 0, 2), 0, 1);
-
-        // Save PDF
-        $reportsDir = $this->rootPath . '/reports';
-        if (!is_dir($reportsDir)) {
-            mkdir($reportsDir, 0755, true);
-        }
-
-        $fileName = 'emi_report_' . date('Y_m') . '.pdf';
-        $pdfPath = $reportsDir . '/' . $fileName;
-        $pdf->Output($pdfPath, 'F');
-
-        return 'reports/' . $fileName; // Return relative path
-    }
-
-    private function renderTemplate($key, $data)
-    {
-        $templates = [
-            'EMI_OVERDUE' => "Dear {customer_name},\n\nYour EMI of INR {amount} for {property_title} was due on {due_date}. Please pay immediately to avoid penalties.\n\nRegards,\nAPS Dream Home",
-            'EMI_REMINDER' => "Dear {customer_name},\n\nThis is a reminder that your EMI of INR {amount} for {property_title} is due on {due_date}.\n\nRegards,\nAPS Dream Home",
-            'EMI_DEFAULT_ADMIN' => "Admin {admin_name},\n\nCustomer {customer_name} has defaulted on their EMI plan for {property_title}. Overdue installments: {overdue_count}.\n\nPlease review the account.",
-            'EMI_DEFAULT_CUSTOMER' => "Dear {customer_name},\n\nYour EMI plan for {property_title} has been marked as defaulted due to {overdue_count} missed payments.\n\nPlease contact support immediately.",
-            'EMI_MONTHLY_REPORT' => "Hello {admin_name},\n\nThe EMI Collection Report for {report_month} has been generated.\n\nRegards,\nAPS Dream Home"
+        $tierConfig = [
+            7  => ['tier' => 'overdue_7',   'template' => 'dunning_overdue',     'subject_prefix' => 'Payment Overdue — 7 Days'],
+            14 => ['tier' => 'overdue_14',  'template' => 'dunning_overdue',     'subject_prefix' => 'Payment Overdue — 14 Days'],
+            30 => ['tier' => 'overdue_30',  'template' => 'dunning_overdue',     'subject_prefix' => 'Payment Overdue — 30 Days'],
+            60 => ['tier' => 'overdue_60',  'template' => 'dunning_final_demand','subject_prefix' => 'FINAL DEMAND — 60 Days'],
+            90 => ['tier' => 'overdue_90',  'template' => 'dunning_defaulted',   'subject_prefix' => 'BOOKING DEFAULTED — 90+ Days'],
         ];
 
-        $template = $templates[$key] ?? '';
+        try {
+            $rows = $this->db->query(
+                "SELECT bps.*, pb.booking_number, pb.customer_id,
+                        p.plot_number,
+                        c.name AS colony_name,
+                        u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone,
+                        DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
+                 FROM booking_payment_schedules bps
+                 JOIN plot_bookings pb ON pb.id = bps.booking_id
+                 JOIN plots p ON p.id = pb.plot_id
+                 JOIN colonies c ON c.id = p.colony_id
+                 JOIN users u ON u.id = pb.customer_id
+                 WHERE bps.status IN ('overdue','pending')
+                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
+                 ORDER BY bps.due_date ASC"
+            )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-        foreach ($data as $k => $v) {
-            $template = str_replace('{' . $k . '}', $v, $template);
+            foreach ($rows as $row) {
+                $days = (int)$row['days_overdue'];
+                $tier = $this->getDunningTier($days, $tierConfig);
+                if (!$tier) continue;
+
+                // Check if we already sent this tier
+                $already = $this->db->prepare(
+                    "SELECT COUNT(*) FROM dunning_log
+                     WHERE installment_id = ? AND dunning_tier = ? AND status = 'sent'"
+                );
+                $already->execute([$row['id'], $tier['tier']]);
+                if ((int)$already->fetchColumn() > 0) continue;
+
+                // For defaulted tier, check at least 90 days
+                if ($tier['tier'] === 'overdue_90' && $days < 90) continue;
+
+                $totalDue = (float)$row['amount'] + (float)($row['accrued_penalty'] ?? 0);
+
+                $emailData = array_merge($row, [
+                    'total_due'    => number_format($totalDue),
+                    'total_overdue'=> number_format($totalDue),
+                    'total_penalty'=> number_format((float)($row['accrued_penalty'] ?? 0)),
+                    'penalty'      => number_format((float)($row['accrued_penalty'] ?? 0)),
+                    'payment_url'  => BASE_URL . '/user/bookings/' . $row['booking_id'],
+                ]);
+
+                $sent = $this->sendEmail(
+                    $row['customer_email'],
+                    "{$tier['subject_prefix']} — {$row['booking_number']}",
+                    $this->renderEmail($tier['template'], $emailData)
+                );
+
+                $this->db->prepare(
+                    "UPDATE booking_payment_schedules
+                     SET escalation_level = ?, reminder_count = reminder_count + 1, last_reminder_at = NOW()
+                     WHERE id = ?"
+                )->execute([$this->tierLevel($tier['tier']), $row['id']]);
+
+                $this->logDunning($row, $tier['tier'], 'email', $sent ? 'sent' : 'failed');
+
+                // At 90+ days, mark as defaulted in the booking
+                if ($tier['tier'] === 'overdue_90') {
+                    $this->db->prepare(
+                        "UPDATE plot_bookings SET status = 'cancelled', updated_at = NOW()
+                         WHERE id = ? AND status = 'emi_active'"
+                    )->execute([$row['booking_id']]);
+                }
+            }
+            return true;
+        } catch (\Exception $e) {
+            error_log("sendDunningEmails: " . $e->getMessage());
+            return false;
         }
+    }
 
-        return $template;
+    /**
+     * Check for defaulted bookings (90+ days overdue, 3+ consecutive missed payments).
+     * Notify admins.
+     */
+    public function checkDefaultedBookings(): bool
+    {
+        try {
+            $rows = $this->db->query(
+                "SELECT pb.id AS booking_id, pb.booking_number, pb.customer_id,
+                        COUNT(bps.id) AS overdue_count,
+                        MAX(DATEDIFF(CURDATE(), bps.due_date)) AS worst_days,
+                        SUM(bps.amount) AS total_overdue,
+                        SUM(bps.accrued_penalty) AS total_penalty,
+                        u.name AS customer_name, u.email AS customer_email,
+                        p.plot_number, col.name AS colony_name
+                 FROM plot_bookings pb
+                 JOIN booking_payment_schedules bps ON bps.booking_id = pb.id
+                 JOIN plots p ON p.id = pb.plot_id
+                 JOIN colonies col ON col.id = p.colony_id
+                 JOIN users u ON u.id = pb.customer_id
+                 WHERE bps.status IN ('overdue','pending')
+                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 90 DAY)
+                 GROUP BY pb.id
+                 HAVING overdue_count >= 2"
+            )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            foreach ($rows as $row) {
+                // Notify admin
+                $adminEmail = $_ENV['ADMIN_EMAIL'] ?? 'admin@apsdreamhome.com';
+                $this->sendEmail(
+                    $adminEmail,
+                    "EMI Default Alert: {$row['customer_name']} ({$row['booking_number']})",
+                    $this->renderEmail('dunning_defaulted', array_merge($row, [
+                        'total_overdue' => number_format((float)$row['total_overdue']),
+                        'total_penalty' => number_format((float)$row['total_penalty']),
+                        'days_overdue'  => $row['worst_days'],
+                        'payment_url'   => BASE_URL . '/admin/bookings/' . $row['booking_id'],
+                    ]))
+                );
+            }
+            return true;
+        } catch (\Exception $e) {
+            error_log("checkDefaultedBookings: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // ---- Helpers ----
+
+    private function getDunningTier(int $days, array $config): ?array
+    {
+        $selected = null;
+        foreach ($config as $threshold => $tier) {
+            if ($days >= $threshold) {
+                $selected = $tier;
+            }
+        }
+        return $selected;
+    }
+
+    private function tierLevel(string $tier): int
+    {
+        $map = [
+            'reminder' => 0, 'overdue_7' => 1, 'overdue_14' => 2,
+            'overdue_30' => 3, 'overdue_60' => 4, 'overdue_90' => 5,
+            'defaulted' => 6,
+        ];
+        return $map[$tier] ?? 0;
+    }
+
+    private function renderEmail(string $template, array $data): string
+    {
+        $path = $this->rootPath . "/app/views/emails/{$template}.php";
+        if (!file_exists($path)) {
+            return "<p>Email template {$template} not found.</p>";
+        }
+        ob_start();
+        extract($data, EXTR_SKIP);
+        include $path;
+        return ob_get_clean();
+    }
+
+    private function sendEmail(string $to, string $subject, string $html): bool
+    {
+        if (empty($to)) return false;
+        try {
+            $from = $_ENV['SMTP_FROM_EMAIL'] ?? 'notifications@apsdreamhome.com';
+            $headers = "From: APS Dream Home <{$from}>\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+            return @mail($to, $subject, $html, $headers);
+        } catch (\Exception $e) {
+            error_log("sendEmail error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function logDunning(array $row, string $tier, string $channel, string $status = 'sent'): void
+    {
+        try {
+            $this->db->prepare(
+                "INSERT INTO dunning_log
+                 (booking_id, installment_id, customer_id, dunning_tier, channel, subject, status, days_overdue, penalty_amount, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
+            )->execute([
+                $row['booking_id'],
+                $row['id'],
+                $row['customer_id'] ?? null,
+                $tier,
+                $channel,
+                "Dunning: {$tier}",
+                $status,
+                $row['days_overdue'] ?? 0,
+                $row['accrued_penalty'] ?? 0,
+            ]);
+        } catch (\Exception $e) {
+            error_log("logDunning: " . $e->getMessage());
+        }
     }
 }
