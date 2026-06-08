@@ -3791,6 +3791,22 @@ $router->post('/admin/company-credentials/{id}/update',              'Admin\\Com
 $router->post('/admin/company-credentials/{id}/delete',              'Admin\\CompanyCredentialsController@delete');
 
 // ============================================================
+// ON-FIELD CASH COLLECTION & RECONCILIATION
+// URL prefix: /admin/cash-collections/*
+// ============================================================
+$router->get('/admin/cash-collections',                                    'Admin\\CashCollectionController@index');
+$router->get('/admin/cash-collections/create',                             'Admin\\CashCollectionController@create');
+$router->post('/admin/cash-collections/store',                             'Admin\\CashCollectionController@store');
+$router->get('/admin/cash-collections/{id}',                               'Admin\\CashCollectionController@show');
+$router->post('/admin/cash-collections/verify',                            'Admin\\CashCollectionController@verify');
+$router->post('/admin/cash-collections/reject',                            'Admin\\CashCollectionController@reject');
+$router->post('/admin/cash-collections/bulk-verify',                       'Admin\\CashCollectionController@bulkVerify');
+$router->get('/admin/cash-collections/reconciliations',                    'Admin\\CashCollectionController@reconciliations');
+$router->get('/admin/cash-collections/reconciliations/create',             'Admin\\CashCollectionController@reconciliationForm');
+$router->post('/admin/cash-collections/reconciliations/create',            'Admin\\CashCollectionController@reconciliationCreate');
+$router->post('/admin/cash-collections/reconciliations/close',             'Admin\\CashCollectionController@reconciliationClose');
+
+// ============================================================
 // BANK STATEMENT IMPORT & AUTO-RECONCILIATION
 // URL prefix: /admin/bank-import/*
 // ============================================================
