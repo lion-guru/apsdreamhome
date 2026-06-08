@@ -1942,6 +1942,26 @@ $router->post('/admin/finance/reconciliation-collections/start',                
 $router->post('/admin/finance/reconciliation-collections/close',                  'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationCollectionsClose');
 
 // ============================================================
+// ADMIN E-FILING (TDS/GST)
+// ============================================================
+
+$router->get('/admin/efiling',                                                        'App\\Http\\Controllers\\Admin\\EFilingController@index');
+$router->get('/admin/efiling/tds',                                                    'App\\Http\\Controllers\\Admin\\EFilingController@tdsRegister');
+$router->post('/admin/efiling/tds/generate',                                          'App\\Http\\Controllers\\Admin\\EFilingController@generateTdsReturn');
+$router->get('/admin/efiling/tds/challans',                                           'App\\Http\\Controllers\\Admin\\EFilingController@tdsChallans');
+$router->get('/admin/efiling/tds/challans/create',                                    'App\\Http\\Controllers\\Admin\\EFilingController@createChallan');
+$router->post('/admin/efiling/tds/challans/create',                                   'App\\Http\\Controllers\\Admin\\EFilingController@storeChallan');
+$router->get('/admin/efiling/tds/challans/{id}',                                      'App\\Http\\Controllers\\Admin\\EFilingController@challanDetail');
+$router->get('/admin/efiling/tds/certificates',                                       'App\\Http\\Controllers\\Admin\\EFilingController@tdsCertificates');
+$router->get('/admin/efiling/gst',                                                    'App\\Http\\Controllers\\Admin\\EFilingController@gstFiling');
+$router->post('/admin/efiling/gst/gstr1',                                             'App\\Http\\Controllers\\Admin\\EFilingController@generateGstr1');
+$router->post('/admin/efiling/gst/gstr3b',                                            'App\\Http\\Controllers\\Admin\\EFilingController@generateGstr3b');
+$router->get('/admin/efiling/calendar',                                               'App\\Http\\Controllers\\Admin\\EFilingController@calendar');
+$router->get('/admin/efiling/submissions',                                            'App\\Http\\Controllers\\Admin\\EFilingController@submissions');
+$router->get('/admin/efiling/submissions/{id}',                                       'App\\Http\\Controllers\\Admin\\EFilingController@showSubmission');
+$router->post('/admin/efiling/submissions/{id}/update-status',                        'App\\Http\\Controllers\\Admin\\EFilingController@updateSubmissionStatus');
+
+// ============================================================
 // ADMIN LAND MANAGEMENT
 // ============================================================
 
