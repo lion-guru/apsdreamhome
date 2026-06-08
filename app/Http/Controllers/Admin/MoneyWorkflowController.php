@@ -710,6 +710,212 @@ class MoneyWorkflowController extends AdminController
     }
 
     /* =========================================================
+     *  EMI PENALTY ENGINE
+     * ========================================================= */
+    public function penaltySummary()
+    {
+        $this->requireAdmin();
+        $summary = [];
+        if ($this->service) {
+            $summary = $this->safe(fn() => $this->service->getOverduePenaltySummary(), []);
+        }
+        return $this->render('admin/finance/penalty-summary', [
+            'page_title'   => 'EMI Penalties',
+            'page_heading' => 'EMI Penalty Engine',
+            'summary'      => $summary,
+        ]);
+    }
+
+    public function applyPenalties()
+    {
+        $this->requireAdmin();
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+            return;
+        }
+        $result = [];
+        if ($this->service) {
+            $result = $this->safe(fn() => $this->service->applyDailyPenalties(), ['success' => false, 'error' => 'Service unavailable']);
+        }
+        $this->json($result);
+    }
+
+    /* =========================================================
+     *  ON-FIELD CASH COLLECTIONS
+     * ========================================================= */
+    public function collections()
+    {
+        $this->requireAdmin();
+        $filters = [];
+        if (!empty($_GET['status'])) $filters['status'] = $_GET['status'];
+        if (!empty($_GET['collector_id'])) $filters['collector_id'] = (int)$_GET['collector_id'];
+        if (!empty($_GET['from_date'])) $filters['from_date'] = $_GET['from_date'];
+        if (!empty($_GET['to_date'])) $filters['to_date'] = $_GET['to_date'];
+
+        $collections = $this->safe(fn() => $this->service->getCollections($filters), []);
+        $stats = $this->safe(fn() => $this->service->getCollectionStats(), []);
+        $collectors = $this->safe(fn() => $this->service->listCollectors(), []);
+
+        return $this->render('admin/finance/collections', [
+            'page_title'   => 'Cash Collections',
+            'page_heading' => 'On-Field Cash Collections',
+            'collections'  => $collections,
+            'stats'        => $stats,
+            'collectors'   => $collectors,
+            'filters'      => $filters,
+        ]);
+    }
+
+    public function collectionForm()
+    {
+        $this->requireAdmin();
+        $collectors = $this->safe(fn() => $this->service->listCollectors(), []);
+        $bookings = $this->safe(function() {
+            $stmt = $this->db->prepare("SELECT id, booking_number FROM plot_bookings ORDER BY id DESC LIMIT 100");
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        }, []);
+
+        return $this->render('admin/finance/collection-form', [
+            'page_title'   => 'Record Collection',
+            'page_heading' => 'Record Cash Collection',
+            'collectors'   => $collectors,
+            'bookings'     => $bookings,
+        ]);
+    }
+
+    public function collectionStore()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $receiptPath = null;
+            if (!empty($_FILES['receipt_photo']['tmp_name'])) {
+                $uploadDir = $this->getReceiptUploadDir();
+                $ext = strtolower(pathinfo($_FILES['receipt_photo']['name'], PATHINFO_EXTENSION));
+                if (in_array($ext, ['jpg','jpeg','png','webp'])) {
+                    $filename = 'receipt_' . time() . '_' . mt_rand(1000, 9999) . '.' . $ext;
+                    $target = $uploadDir . '/' . $filename;
+                    if (move_uploaded_file($_FILES['receipt_photo']['tmp_name'], $target)) {
+                        $receiptPath = 'storage/uploads/receipts/' . $filename;
+                    }
+                }
+            }
+
+            $data = $_POST;
+            $data['receipt_photo'] = $receiptPath;
+            $data['collector_id'] = (int)($_POST['collector_id'] ?? ($_SESSION['admin_id'] ?? 0));
+
+            $result = $this->service->recordCollection($data);
+            if ($result['success']) {
+                $this->setFlash('success', 'Collection recorded: ' . ($result['collection_number'] ?? ''));
+            } else {
+                $this->setFlash('error', $result['error'] ?? 'Failed to record collection');
+            }
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/finance/collections');
+    }
+
+    public function collectionVerify()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $id = (int)($_POST['id'] ?? 0);
+            $adminId = (int)($_SESSION['admin_id'] ?? 0);
+            $this->service->verifyCollection($id, $adminId);
+            $this->setFlash('success', 'Collection #' . $id . ' verified');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/finance/collections');
+    }
+
+    public function collectionReject()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $id = (int)($_POST['id'] ?? 0);
+            $adminId = (int)($_SESSION['admin_id'] ?? 0);
+            $reason = trim($_POST['reason'] ?? '');
+            if ($reason === '') {
+                $this->setFlash('error', 'Rejection reason is required');
+                return $this->redirect('/admin/finance/collections');
+            }
+            $this->service->rejectCollection($id, $adminId, $reason);
+            $this->setFlash('success', 'Collection #' . $id . ' rejected');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/finance/collections');
+    }
+
+    /* =========================================================
+     *  COLLECTION RECONCILIATION
+     * ========================================================= */
+    public function reconciliationCollections()
+    {
+        $this->requireAdmin();
+        $filters = [];
+        if (!empty($_GET['status'])) $filters['status'] = $_GET['status'];
+        if (!empty($_GET['collector_id'])) $filters['collector_id'] = (int)$_GET['collector_id'];
+
+        $sessions = $this->safe(fn() => $this->service->getReconciliationSessions($filters), []);
+        $collectors = $this->safe(fn() => $this->service->listCollectors(), []);
+
+        return $this->render('admin/finance/reconciliation-collections', [
+            'page_title'   => 'Collection Reconciliation',
+            'page_heading' => 'Cash Collection Reconciliation',
+            'sessions'     => $sessions,
+            'collectors'   => $collectors,
+            'filters'      => $filters,
+        ]);
+    }
+
+    public function reconciliationCollectionsStart()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $collectorId = (int)($_POST['collector_id'] ?? 0);
+            $date = $_POST['session_date'] ?? date('Y-m-d');
+            $result = $this->service->startReconciliation($collectorId, $date);
+            if ($result['success']) {
+                $this->setFlash('success', 'Reconciliation session started');
+            } else {
+                $this->setFlash('error', $result['error'] ?? 'Failed to start reconciliation');
+            }
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/finance/reconciliation-collections');
+    }
+
+    public function reconciliationCollectionsClose()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $sessionId = (int)($_POST['session_id'] ?? 0);
+            $adminId = (int)($_SESSION['admin_id'] ?? 0);
+            $this->service->closeReconciliation($sessionId, $adminId);
+            $this->setFlash('success', 'Reconciliation session closed');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/finance/reconciliation-collections');
+    }
+
+    /* =========================================================
      *  HELPERS
      * ========================================================= */
     private function currentFy(): string
@@ -734,5 +940,14 @@ class MoneyWorkflowController extends AdminController
             $this->setFlash('error', 'Invalid CSRF token. Please retry.');
             $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
         }
+    }
+
+    private function getReceiptUploadDir(): string
+    {
+        $dir = __DIR__ . '/../../../../storage/uploads/receipts';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        return $dir;
     }
 }

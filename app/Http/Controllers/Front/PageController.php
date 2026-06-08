@@ -1741,7 +1741,7 @@ class PageController extends BaseController
             'page_title' => 'Stamp Duty & Registration Calculator - APS Dream Home',
             'page_description' => 'Calculate stamp duty, registration fees and total cost for property purchase'
         ];
-        $this->render('pages/tools/stamp_duty', $data);
+        $this->render('pages/tools/stamp_duty_calculator', $data);
     }
 
     // Plot Size Converter
@@ -1752,6 +1752,34 @@ class PageController extends BaseController
             'page_description' => 'Convert between square feet, square meters, acres, bigha, gaj and more'
         ];
         $this->render('pages/tools/plot_converter', $data);
+    }
+
+    // Plot Converter (new alias)
+    public function plotConverter()
+    {
+        $data = [
+            'page_title' => 'Plot Area Converter - APS Dream Home',
+            'page_description' => 'Convert between sqft, sqm, acre, bigha, gaj, katha, marla and more'
+        ];
+        $this->render('pages/tools/plot_converter', $data);
+    }
+
+    // Valuation Calculator (new)
+    public function valuationCalculator()
+    {
+        $districts = [];
+        try {
+            $stmt = $this->db->query("SELECT id, name FROM districts ORDER BY name");
+            $districts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log('valuationCalculator districts error: ' . $e->getMessage());
+        }
+        $data = [
+            'page_title' => 'Property Valuation Calculator - APS Dream Home',
+            'page_description' => 'Estimate your property value based on location, type and area',
+            'districts' => $districts,
+        ];
+        $this->render('pages/tools/valuation_calculator', $data);
     }
 
     // Home Loan Eligibility
@@ -1767,9 +1795,17 @@ class PageController extends BaseController
     // Property Valuation
     public function propertyValuation()
     {
+        $districts = [];
+        try {
+            $stmt = $this->db->query("SELECT id, name FROM districts ORDER BY name");
+            $districts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log('propertyValuation districts error: ' . $e->getMessage());
+        }
         $data = [
             'page_title' => 'Property Valuation - APS Dream Home',
-            'page_description' => 'Get approximate market value of your property'
+            'page_description' => 'Get approximate market value of your property',
+            'districts' => $districts,
         ];
         $this->render('pages/tools/property_valuation', $data);
     }

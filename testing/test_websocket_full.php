@@ -325,8 +325,15 @@ try {
 
 // ─── 14. WebSocketBroadcaster graceful failure (no server) ──────────────────
 WebSocketServer::setInstance(null);
+$oldPort = getenv('WS_HTTP_PORT');
+putenv('WS_HTTP_PORT=9999');
 $ok = WebSocketBroadcaster::broadcast('test', ['x' => 1]);
 t('WebSocketBroadcaster returns false when no server + no HTTP', $ok === false);
+if ($oldPort !== false) {
+    putenv("WS_HTTP_PORT=$oldPort");
+} else {
+    putenv('WS_HTTP_PORT');
+}
 
 // ─── 15. End-to-end subscribe/unsubscribe via onMessage ─────────────────────
 // (manually drive the onMessage path)

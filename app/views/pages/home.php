@@ -4,7 +4,7 @@
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-7 text-white">
-                <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);"><?= __('trusted_by') ?> 500+ Families</span>
+                <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);"><?= __('trusted_by') ?> <?= __('home_families_count') ?></span>
                 <h1 id="hero-title" class="fw-bold"><?= __('hero_title') ?></h1>
                 <p class="lead mb-4"><?= __('hero_subtitle') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
@@ -43,40 +43,40 @@
                         <form action="<?php echo BASE_URL; ?>/properties" method="GET">
                             <div class="mb-3">
                                 <select name="listing" class="form-select">
-                                    <option value="">Buy / Rent</option>
-                                    <option value="sell">Buy</option>
-                                    <option value="rent">Rent</option>
+                                    <option value=""><?= __('home_buy_rent') ?></option>
+                                    <option value="sell"><?= __('home_buy') ?></option>
+                                    <option value="rent"><?= __('home_rent') ?></option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <select name="type" class="form-select">
-                                    <option value="">Property Type</option>
-                                    <option value="residential">Residential</option>
-                                    <option value="commercial">Commercial</option>
-                                    <option value="plot">Plot/Land</option>
-                                    <option value="house">House/Villa</option>
-                                    <option value="flat">Flat/Apartment</option>
+                                    <option value=""><?= __('home_property_type') ?></option>
+                                    <option value="residential"><?= __('home_residential') ?></option>
+                                    <option value="commercial"><?= __('home_commercial') ?></option>
+                                    <option value="plot"><?= __('home_plot_land') ?></option>
+                                    <option value="house"><?= __('home_house_villa') ?></option>
+                                    <option value="flat"><?= __('home_flat_apartment') ?></option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <select name="location" class="form-select">
-                                    <option value="">Select Location</option>
+                                    <option value=""><?= __('home_select_location') ?></option>
                                     <option value="Gorakhpur">Gorakhpur</option>
                                     <option value="Lucknow">Lucknow</option>
                                     <option value="Kushinagar">Kushinagar</option>
                                     <option value="Varanasi">Varanasi</option>
                                     <option value="Ayodhya">Ayodhya</option>
-                                    <option value="Other">Other</option>
+                                    <option value="Other"><?= __('home_other') ?></option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <select name="budget" class="form-select">
-                                    <option value="">Budget</option>
-                                    <option value="under_5l">Under ₹5 Lakh</option>
-                                    <option value="5_10l">₹5-10 Lakh</option>
-                                    <option value="10_20l">₹10-20 Lakh</option>
-                                    <option value="20_50l">₹20-50 Lakh</option>
-                                    <option value="above_50l">Above ₹50 Lakh</option>
+                                    <option value=""><?= __('home_budget') ?></option>
+                                    <option value="under_5l"><?= __('home_budget_under_5l') ?></option>
+                                    <option value="5_10l"><?= __('home_budget_5_10l') ?></option>
+                                    <option value="10_20l"><?= __('home_budget_10_20l') ?></option>
+                                    <option value="20_50l"><?= __('home_budget_20_50l') ?></option>
+                                    <option value="above_50l"><?= __('home_budget_above_50l') ?></option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-gradient w-100 btn-lg">
@@ -174,7 +174,7 @@
 <section class="py-5 emi-section" aria-labelledby="emi-title">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.08);">Free Tool</span>
+            <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.08);"><?= __('home_free_tool') ?></span>
             <h2 id="emi-title" class="fw-bold text-white"><?= __('emi_calculator') ?></h2>
             <p class="text-white-50" style="font-size:1.05rem;"><?= __('emi_subtitle') ?></p>
         </div>
@@ -185,7 +185,7 @@
                         <div class="row g-4">
                             <div class="col-md-7">
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold">Loan Amount: <span id="loanAmtDisplay" class="text-primary">₹50,00,000</span></label>
+                                    <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span id="loanAmtDisplay" class="text-primary">₹50,00,000</span></label>
                                     <input type="range" class="form-range" id="loanAmount" min="100000" max="50000000" step="100000" value="5000000" oninput="calcEMI()">
                                     <div class="d-flex justify-content-between small text-muted">
                                         <span>₹1 Lakh</span>
@@ -193,7 +193,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold">Interest Rate: <span id="rateDisplay" class="text-primary">8.5%</span></label>
+                                    <label class="form-label fw-bold"><?= __('home_interest_rate') ?> <span id="rateDisplay" class="text-primary">8.5%</span></label>
                                     <input type="range" class="form-range" id="interestRate" min="5" max="20" step="0.1" value="8.5" oninput="calcEMI()">
                                     <div class="d-flex justify-content-between small text-muted">
                                         <span>5%</span>
@@ -201,7 +201,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold">Loan Tenure: <span id="tenureDisplay" class="text-primary">20 Years</span></label>
+                                    <label class="form-label fw-bold"><?= __('home_loan_tenure') ?> <span id="tenureDisplay" class="text-primary">20 <?= __('home_years') ?></span></label>
                                     <input type="range" class="form-range" id="loanTenure" min="1" max="30" step="1" value="20" oninput="calcEMI()">
                                     <div class="d-flex justify-content-between small text-muted">
                                         <span>1 Year</span>
@@ -211,15 +211,15 @@
                             </div>
                             <div class="col-md-5">
                                 <div class="result-card bg-dark text-white">
-                                    <p class="text-white-50 mb-1 small text-uppercase" style="letter-spacing:0.08em;">Your Monthly EMI</p>
+                                    <p class="text-white-50 mb-1 small text-uppercase" style="letter-spacing:0.08em;"><?= __('home_your_monthly_emi') ?></p>
                                     <p class="display-4 fw-bold mb-0" id="emiResult" style="color:#818cf8;">₹42,426</p>
                                     <hr class="border-secondary my-3">
                                     <div class="d-flex justify-content-between">
-                                        <span class="text-white-50">Total Interest</span>
+                                        <span class="text-white-50"><?= __('home_total_interest') ?></span>
                                         <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
                                     </div>
                                     <div class="d-flex justify-content-between mt-2">
-                                        <span class="text-white-50">Total Payment</span>
+                                        <span class="text-white-50"><?= __('home_total_payment') ?></span>
                                         <span class="fw-bold text-white" id="totalPayment">₹1,01,82,240</span>
                                     </div>
                                 </div>
@@ -227,7 +227,7 @@
                         </div>
                     </div>
                 </div>
-                <p class="text-center text-white-50 mt-3 small"><i class="fas fa-info-circle me-1"></i>EMI calculated on monthly reducing balance. Actual rates may vary by lender.</p>
+                <p class="text-center text-white-50 mt-3 small"><i class="fas fa-info-circle me-1"></i><?= __('home_emi_disclaimer') ?></p>
             </div>
         </div>
     </div>
@@ -261,7 +261,7 @@ calcEMI();
 <section class="py-5 bg-light" aria-labelledby="projects-title">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-label">Our Portfolio</span>
+            <span class="section-label"><?= __('home_our_portfolio') ?></span>
             <h2 id="projects-title" class="fw-bold"><?= __('section_our_projects') ?></h2>
             <p class="section-subtitle"><?= __('projects_subtitle') ?></p>
         </div>
@@ -337,7 +337,7 @@ calcEMI();
 <section class="py-5" style="background:#f8fafc;" aria-labelledby="services-title">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-label">Our Expertise</span>
+            <span class="section-label"><?= __('home_our_expertise') ?></span>
             <h2 id="services-title" class="fw-bold"><?= __('our_services') ?></h2>
             <p class="section-subtitle"><?= __('services_tagline') ?></p>
         </div>
@@ -348,9 +348,9 @@ calcEMI();
                         <div class="icon-wrapper mx-auto" style="background: rgba(16,185,129,0.1);">
                             <i class="fas fa-hand-holding-usd fa-2x" style="color:#10b981;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Home Loan</h5>
-                        <p class="text-muted small">SBI, HDFC, ICICI, PNB, Axis — best rates, easy processing, doorstep service.</p>
-                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Starting 8.5% p.a.</span>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_home_loan') ?></h5>
+                        <p class="text-muted small"><?= __('home_service_home_loan_desc') ?></p>
+                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill"><?= __('home_service_home_loan_badge') ?></span>
                     </div>
                 </div>
             </div>
@@ -360,9 +360,9 @@ calcEMI();
                         <div class="icon-wrapper mx-auto" style="background: rgba(99,102,241,0.1);">
                             <i class="fas fa-gavel fa-2x" style="color:#6366f1;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Legal Services</h5>
-                        <p class="text-muted small">Registry, Mutation, Sale Deed, Agreement — complete property documentation legally verified.</p>
-                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">100% Legal</span>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_legal') ?></h5>
+                        <p class="text-muted small"><?= __('home_service_legal_desc') ?></p>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"><?= __('home_service_legal_badge') ?></span>
                     </div>
                 </div>
             </div>
@@ -372,8 +372,8 @@ calcEMI();
                         <div class="icon-wrapper mx-auto" style="background: rgba(245,158,11,0.1);">
                             <i class="fas fa-couch fa-2x" style="color:#f59e0b;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Interior Design</h5>
-                        <p class="text-muted small">Modular kitchen, wardrobe, false ceiling, flooring — complete home interiors.</p>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_interior') ?></h5>
+                        <p class="text-muted small"><?= __('home_service_interior_desc') ?></p>
                         <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">₹249/sqft</span>
                     </div>
                 </div>
@@ -384,9 +384,9 @@ calcEMI();
                         <div class="icon-wrapper mx-auto" style="background: rgba(239,68,68,0.1);">
                             <i class="fas fa-file-signature fa-2x" style="color:#ef4444;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Property Registry</h5>
-                        <p class="text-muted small">Complete property registration with sub-registrar. Mutation, certified copies, transfer.</p>
-                        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">Fast Track</span>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_registry') ?></h5>
+                        <p class="text-muted small"><?= __('home_service_registry_desc') ?></p>
+                        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill"><?= __('home_service_registry_badge') ?></span>
                     </div>
                 </div>
             </div>
@@ -396,9 +396,9 @@ calcEMI();
                         <div class="icon-wrapper mx-auto" style="background: rgba(139,92,246,0.1);">
                             <i class="fas fa-file-contract fa-2x" style="color:#8b5cf6;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Rental Agreement</h5>
-                        <p class="text-muted small">11-month rental agreement, e-stamping, notarization. Landlord aur tenant dono ke liye.</p>
-                        <span class="badge bg-purple bg-opacity-10 text-purple px-3 py-2 rounded-pill">e-Stamped</span>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_rental') ?></h5>
+                        <p class="text-muted small"><?= __('home_service_rental_desc') ?></p>
+                        <span class="badge bg-purple bg-opacity-10 text-purple px-3 py-2 rounded-pill"><?= __('home_service_rental_badge') ?></span>
                     </div>
                 </div>
             </div>
@@ -408,9 +408,9 @@ calcEMI();
                         <div class="icon-wrapper mx-auto" style="background: rgba(6,182,212,0.1);">
                             <i class="fas fa-file-invoice-dollar fa-2x" style="color:#06b6d4;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Property Tax</h5>
-                        <p class="text-muted small">Property tax calculation, payment, exemption. Municipal corporation ke saath complete support.</p>
-                        <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill">Online Pay</span>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_tax') ?></h5>
+                        <p class="text-muted small"><?= __('home_service_tax_desc') ?></p>
+                        <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill"><?= __('home_service_tax_badge') ?></span>
                     </div>
                 </div>
             </div>
@@ -576,7 +576,7 @@ function openServiceModal(service) {
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <span class="section-label">Why Us</span>
+                <span class="section-label"><?= __('home_why_us') ?></span>
                 <h2 id="why-choose-title" class="fw-bold mb-4"><?= __('section_why_choose_us') ?></h2>
                 <div class="checklist-item">
                     <div class="check-icon"><i class="fas fa-check"></i></div>
@@ -620,7 +620,7 @@ function openServiceModal(service) {
                                 <i class="fas fa-phone me-2"></i><?= __('call_now') ?>
                             </a>
                             <a href="https://wa.me/919277121112" target="_blank" class="btn btn-outline-dark btn-lg">
-                                <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                                <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
                             </a>
                         </div>
                     </div>
@@ -634,9 +634,9 @@ function openServiceModal(service) {
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-label" style="background:rgba(245,158,11,0.1);color:#d97706;">Why Real Estate?</span>
-            <h2 class="fw-bold">Land, Plot ya Property Mein Paisa Kyo Lagayein?</h2>
-            <p class="section-subtitle">Compare real estate with other investment options — results speak louder than words!</p>
+            <span class="section-label" style="background:rgba(245,158,11,0.1);color:#d97706;"><?= __('home_why_real_estate') ?></span>
+            <h2 class="fw-bold"><?= __('home_why_real_estate_title') ?></h2>
+            <p class="section-subtitle"><?= __('home_why_real_estate_subtitle') ?></p>
         </div>
 
         <!-- Investment Comparison Chart -->
@@ -646,13 +646,13 @@ function openServiceModal(service) {
                     <div class="icon-circle" style="background:rgba(16,185,129,0.08);">
                         <i class="fas fa-vector-square fa-2x" style="color:#10b981;"></i>
                     </div>
-                    <h5 class="fw-bold" style="color:#10b981;">Real Estate</h5>
+                    <h5 class="fw-bold" style="color:#10b981;"><?= __('home_invest_real_estate') ?></h5>
                     <div class="return-pct" style="color:#10b981;">15-25%</div>
-                    <p class="text-muted small">Average Annual Returns</p>
+                    <p class="text-muted small"><?= __('home_avg_annual_returns') ?></p>
                     <div class="progress mb-2" style="height:6px;">
                         <div class="progress-bar" style="width:85%;background:#10b981;"></div>
                     </div>
-                    <span class="badge" style="background:#10b981;color:#fff;">â­ Best Investment</span>
+                    <span class="badge" style="background:#10b981;color:#fff;">â­ <?= __('home_best_investment') ?></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
@@ -660,13 +660,13 @@ function openServiceModal(service) {
                     <div class="icon-circle" style="background:rgba(245,158,11,0.08);">
                         <i class="fas fa-coins fa-2x" style="color:#f59e0b;"></i>
                     </div>
-                    <h5 class="fw-bold" style="color:#f59e0b;">Fixed Deposit</h5>
+                    <h5 class="fw-bold" style="color:#f59e0b;"><?= __('home_invest_fd') ?></h5>
                     <div class="return-pct" style="color:#1e293b;">5-7%</div>
-                    <p class="text-muted small">Average Annual Returns</p>
+                    <p class="text-muted small"><?= __('home_avg_annual_returns') ?></p>
                     <div class="progress mb-2" style="height:6px;">
                         <div class="progress-bar" style="width:25%;background:#f59e0b;"></div>
                     </div>
-                    <span class="badge bg-secondary">Low Returns</span>
+                    <span class="badge bg-secondary"><?= __('home_low_returns') ?></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
@@ -674,13 +674,13 @@ function openServiceModal(service) {
                     <div class="icon-circle" style="background:rgba(239,68,68,0.08);">
                         <i class="fas fa-chart-line fa-2x" style="color:#ef4444;"></i>
                     </div>
-                    <h5 class="fw-bold" style="color:#ef4444;">Stock Market</h5>
+                    <h5 class="fw-bold" style="color:#ef4444;"><?= __('home_invest_stock') ?></h5>
                     <div class="return-pct">10-14%</div>
-                    <p class="text-muted small">High Risk / Volatile</p>
+                    <p class="text-muted small"><?= __('home_high_risk') ?></p>
                     <div class="progress mb-2" style="height:6px;">
                         <div class="progress-bar" style="width:50%;background:#ef4444;"></div>
                     </div>
-                    <span class="badge bg-warning text-dark">Moderate</span>
+                    <span class="badge bg-warning text-dark"><?= __('home_moderate') ?></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
@@ -688,13 +688,13 @@ function openServiceModal(service) {
                     <div class="icon-circle" style="background:rgba(79,70,229,0.08);">
                         <i class="fas fa-ring fa-2x" style="color:#4f46e5;"></i>
                     </div>
-                    <h5 class="fw-bold" style="color:#4f46e5;">Gold</h5>
+                    <h5 class="fw-bold" style="color:#4f46e5;"><?= __('home_invest_gold') ?></h5>
                     <div class="return-pct" style="color:#4f46e5;">8-10%</div>
-                    <p class="text-muted small">Safe but No Passive Income</p>
+                    <p class="text-muted small"><?= __('home_gold_desc') ?></p>
                     <div class="progress mb-2" style="height:6px;">
                         <div class="progress-bar" style="width:35%;background:#4f46e5;"></div>
                     </div>
-                    <span class="badge" style="background:rgba(6,182,212,0.15);color:#0891b2;">Safe Haven</span>
+                    <span class="badge" style="background:rgba(6,182,212,0.15);color:#0891b2;"><?= __('home_safe_haven') ?></span>
                 </div>
             </div>
         </div>
@@ -719,8 +719,8 @@ function openServiceModal(service) {
                                 <i class="fas fa-shield-halved"></i>
                             </div>
                             <div>
-                                <h6>Capital Appreciation</h6>
-                                <p>Land prices double every 5-7 years in developing areas. Plot value grows faster than any FD or gold.</p>
+                                <h6><?= __('home_capital_appreciation') ?></h6>
+                                <p><?= __('home_capital_appreciation_desc') ?></p>
                             </div>
                         </div>
                     </div>
@@ -730,8 +730,8 @@ function openServiceModal(service) {
                                 <i class="fas fa-hand-holding-dollar"></i>
                             </div>
                             <div>
-                                <h6>Passive Income</h6>
-                                <p>Rent out property for monthly income. Unlike gold or FD, real estate gives dual benefits — growth + income.</p>
+                                <h6><?= __('home_passive_income') ?></h6>
+                                <p><?= __('home_passive_income_desc') ?></p>
                             </div>
                         </div>
                     </div>
@@ -741,8 +741,8 @@ function openServiceModal(service) {
                                 <i class="fas fa-building-columns"></i>
                             </div>
                             <div>
-                                <h6>Loan Against Property</h6>
-                                <p>Use your plot as collateral for business or personal loans at lower interest rates.</p>
+                                <h6><?= __('home_loan_against_property') ?></h6>
+                                <p><?= __('home_loan_against_property_desc') ?></p>
                             </div>
                         </div>
                     </div>
@@ -752,8 +752,8 @@ function openServiceModal(service) {
                                 <i class="fas fa-flag-checkered"></i>
                             </div>
                             <div>
-                                <h6>Inflation Hedge</h6>
-                                <p>Real estate beats inflation by 5-8% annually. Your money in land grows while its value in bank shrinks.</p>
+                                <h6><?= __('home_inflation_hedge') ?></h6>
+                                <p><?= __('home_inflation_hedge_desc') ?></p>
                             </div>
                         </div>
                     </div>
@@ -766,11 +766,11 @@ function openServiceModal(service) {
             <div class="card-body p-5">
                 <div class="row align-items-center">
                     <div class="col-lg-7">
-                        <h4 class="fw-bold mb-3"><i class="fas fa-calculator me-2 text-warning"></i>Investment Growth Calculator</h4>
-                        <p class="text-white-50 mb-4">See how your investment grows in real estate vs FD vs Gold:</p>
+                        <h4 class="fw-bold mb-3"><i class="fas fa-calculator me-2 text-warning"></i><?= __('home_growth_calculator_title') ?></h4>
+                        <p class="text-white-50 mb-4"><?= __('home_growth_calculator_subtitle') ?></p>
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label text-white-50 small">Investment Amount</label>
+                                <label class="form-label text-white-50 small"><?= __('home_investment_amount') ?></label>
                                 <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()">
                                     <option value="500000">₹5 Lakh</option>
                                     <option value="1000000" selected>₹10 Lakh</option>
@@ -780,7 +780,7 @@ function openServiceModal(service) {
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label text-white-50 small">Time Period</label>
+                                <label class="form-label text-white-50 small"><?= __('home_time_period') ?></label>
                                 <select class="form-select form-select-sm" id="invYears" onchange="calcGrowth()">
                                     <option value="5">5 Years</option>
                                     <option value="10" selected>10 Years</option>
@@ -795,21 +795,21 @@ function openServiceModal(service) {
                         </div>
                         <div class="mt-3">
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="small text-white-50">Real Estate (18% CAGR)</span>
+                                <span class="small text-white-50"><?= __('home_re_cagr') ?></span>
                                 <span class="small fw-bold text-success" id="reValue">₹52,33,855</span>
                             </div>
                             <div class="progress mb-2" style="height: 6px;">
                                 <div class="progress-bar bg-success" id="reBar" style="width: 100%"></div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="small text-white-50">FD (6% CAGR)</span>
+                                <span class="small text-white-50"><?= __('home_fd_cagr') ?></span>
                                 <span class="small fw-bold text-warning" id="fdValue">₹17,90,848</span>
                             </div>
                             <div class="progress mb-2" style="height: 6px;">
                                 <div class="progress-bar bg-warning" id="fdBar" style="width: 34%"></div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="small text-white-50">Gold (9% CAGR)</span>
+                                <span class="small text-white-50"><?= __('home_gold_cagr') ?></span>
                                 <span class="small fw-bold text-primary" id="goldValue">₹23,67,364</span>
                             </div>
                             <div class="progress mb-0" style="height: 6px;">
@@ -822,10 +822,10 @@ function openServiceModal(service) {
                             <i class="fas fa-chart-simple"></i>
                         </div>
                         <div style="position: relative; margin-top: -90px;">
-                            <h3 class="fw-bold text-warning mb-2">Real Estate Wins!</h3>
-                            <p class="text-white-50 small mb-0"><i class="fas fa-check-circle text-success me-1"></i>Highest returns among all asset classes</p>
-                            <p class="text-white-50 small mb-0"><i class="fas fa-check-circle text-success me-1"></i>Lowest risk with tangible asset</p>
-                            <p class="text-white-50 small mb-0"><i class="fas fa-check-circle text-success me-1"></i>Dual benefit: Growth + Rental Income</p>
+                            <h3 class="fw-bold text-warning mb-2"><?= __('home_real_estate_wins') ?></h3>
+                            <p class="text-white-50 small mb-0"><i class="fas fa-check-circle text-success me-1"></i><?= __('home_highest_returns') ?></p>
+                            <p class="text-white-50 small mb-0"><i class="fas fa-check-circle text-success me-1"></i><?= __('home_lowest_risk') ?></p>
+                            <p class="text-white-50 small mb-0"><i class="fas fa-check-circle text-success me-1"></i><?= __('home_dual_benefit') ?></p>
                         </div>
                     </div>
                 </div>
@@ -868,9 +868,9 @@ calcGrowth();
 <section class="py-5 bg-white">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-label">Free Tools</span>
-            <h2 class="fw-bold">Real Estate Tools — Bilkul Free!</h2>
-            <p class="section-subtitle">Apna property calculate karein, compare karein aur smart decision lein</p>
+            <span class="section-label"><?= __('home_free_tools') ?></span>
+            <h2 class="fw-bold"><?= __('home_free_tools_title') ?></h2>
+            <p class="section-subtitle"><?= __('home_free_tools_subtitle') ?></p>
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
@@ -879,8 +879,8 @@ calcGrowth();
                         <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
                             <i class="fas fa-calculator fa-2x text-primary"></i>
                         </div>
-                        <h5 class="fw-bold">EMI Calculator</h5>
-                        <p class="text-muted small mb-0">Home loan, car loan — kisi bhi loan ka monthly EMI nikaalein. Principal, interest aur total payment dekhein.</p>
+                        <h5 class="fw-bold"><?= __('home_tool_emi') ?></h5>
+                        <p class="text-muted small mb-0"><?= __('home_tool_emi_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -890,8 +890,8 @@ calcGrowth();
                         <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
                             <i class="fas fa-arrow-trend-up fa-2x text-success"></i>
                         </div>
-                        <h5 class="fw-bold">Investment Calculator</h5>
-                        <p class="text-muted small mb-0">Real Estate vs FD vs Gold — kaunsa investment better hai? 5, 10, 15 saal ka growth compare karein.</p>
+                        <h5 class="fw-bold"><?= __('home_tool_investment') ?></h5>
+                        <p class="text-muted small mb-0"><?= __('home_tool_investment_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -901,8 +901,8 @@ calcGrowth();
                         <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
                             <i class="fas fa-file-contract fa-2x text-warning"></i>
                         </div>
-                        <h5 class="fw-bold">Stamp Duty Calculator</h5>
-                        <p class="text-muted small mb-0">Property price ke hisaab se stamp duty, registration fee aur total cost nikaalein. State-wise rates ke saath.</p>
+                        <h5 class="fw-bold"><?= __('home_tool_stamp') ?></h5>
+                        <p class="text-muted small mb-0"><?= __('home_tool_stamp_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -912,8 +912,8 @@ calcGrowth();
                         <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
                             <i class="fas fa-vector-square fa-2x text-info"></i>
                         </div>
-                        <h5 class="fw-bold">Plot Size Converter</h5>
-                        <p class="text-muted small mb-0">Square feet, square meter, acre, hectare, bigha, gaj — sabhi units mein plot size convert karein.</p>
+                        <h5 class="fw-bold"><?= __('home_tool_converter') ?></h5>
+                        <p class="text-muted small mb-0"><?= __('home_tool_converter_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -923,8 +923,8 @@ calcGrowth();
                         <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
                             <i class="fas fa-hand-holding-dollar fa-2x text-danger"></i>
                         </div>
-                        <h5 class="fw-bold">Loan Eligibility Check</h5>
-                        <p class="text-muted small mb-0">Aapki salary ke hisaab se kitna loan milega? SBI, HDFC, ICICI sabhi banks ke eligibility criteria ke saath.</p>
+                        <h5 class="fw-bold"><?= __('home_tool_eligibility') ?></h5>
+                        <p class="text-muted small mb-0"><?= __('home_tool_eligibility_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -934,8 +934,8 @@ calcGrowth();
                         <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
                             <i class="fas fa-house-chimney fa-2x text-secondary"></i>
                         </div>
-                        <h5 class="fw-bold">Property Valuation</h5>
-                        <p class="text-muted small mb-0">AI-powered property valuation. Apni property ki current market price turant jaanein. Free report!</p>
+                        <h5 class="fw-bold"><?= __('home_tool_valuation') ?></h5>
+                        <p class="text-muted small mb-0"><?= __('home_tool_valuation_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -1255,7 +1255,7 @@ function mCalcVal() {
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-label">Testimonials</span>
+            <span class="section-label"><?= __('home_testimonials') ?></span>
             <h2 class="fw-bold"><?= __('testimonials_title') ?></h2>
         </div>
         <div class="row">
@@ -1268,7 +1268,7 @@ function mCalcVal() {
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="card-text">"Bought a plot in Suryoday Colony. Best decision! Process was smooth and team was very helpful."</p>
+                    <p class="card-text"><?= __('home_testimonial_1') ?></p>
                     <div class="d-flex align-items-center">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
                             <i class="fas fa-user"></i>
@@ -1289,7 +1289,7 @@ function mCalcVal() {
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="card-text">"Excellent service! Got home loan easily through their assistance. Highly recommended."</p>
+                    <p class="card-text"><?= __('home_testimonial_2') ?></p>
                     <div class="d-flex align-items-center">
                         <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
                             <i class="fas fa-user"></i>
@@ -1310,7 +1310,7 @@ function mCalcVal() {
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star-half-alt"></i>
                     </div>
-                    <p class="card-text">"Great investment opportunity! The team guided me at every step. Thank you APS Dream Home!"</p>
+                    <p class="card-text"><?= __('home_testimonial_3') ?></p>
                     <div class="d-flex align-items-center">
                         <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
                             <i class="fas fa-user"></i>
@@ -1330,9 +1330,9 @@ function mCalcVal() {
 <section class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-label" style="background:rgba(239,68,68,0.08);color:#dc2626;">Career Opportunity</span>
-            <h2 class="fw-bold">APS Dream Home Ke Saath Kyo Judein?</h2>
-            <p class="section-subtitle">Real Estate mein ek nayi shuruaat — Salary + Commission + Insurance ke saath!</p>
+            <span class="section-label" style="background:rgba(239,68,68,0.08);color:#dc2626;"><?= __('home_career_opportunity') ?></span>
+            <h2 class="fw-bold"><?= __('home_why_join_title') ?></h2>
+            <p class="section-subtitle"><?= __('home_why_join_subtitle') ?></p>
         </div>
 
         <div class="row g-4 mb-5">
@@ -1342,8 +1342,8 @@ function mCalcVal() {
                         <div class="icon-circle" style="background:rgba(239,68,68,0.08);">
                             <i class="fas fa-sack-dollar fa-2x" style="color:#ef4444;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Fixed Monthly Salary</h5>
-                        <p class="text-muted small">Real estate mein aam taur par sirf commission milta hai. Lekin APS Dream Home users ko <strong style="color:#ef4444;">fixed monthly salary</strong> bhi di jaati hai!</p>
+                        <h5 class="fw-bold mb-2"><?= __('home_fixed_salary') ?></h5>
+                        <p class="text-muted small"><?= __('home_fixed_salary_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3">
                             <div class="d-flex justify-content-between mb-1"><span class="small">Starter: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹15L target</span></div>
                             <div class="d-flex justify-content-between mb-1"><span class="small">Basic: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹30L target</span></div>
@@ -1360,8 +1360,8 @@ function mCalcVal() {
                         <div class="icon-circle" style="background:rgba(16,185,129,0.08);">
                             <i class="fas fa-shield-heart fa-2x" style="color:#10b981;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Free Insurance Cover</h5>
-                        <p class="text-muted small">Company aapke parivar ki suraksha ka khayal rakhti hai. Sabhi users ko <strong style="color:#10b981;">free health aur life insurance</strong> cover diya jaata hai.</p>
+                        <h5 class="fw-bold mb-2"><?= __('home_free_insurance') ?></h5>
+                        <p class="text-muted small"><?= __('home_free_insurance_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Health Insurance: <strong>₹5 Lakh</strong></span>
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Life Cover: <strong>₹10 Lakh</strong></span>
@@ -1376,8 +1376,8 @@ function mCalcVal() {
                         <div class="icon-circle" style="background:rgba(245,158,11,0.08);">
                             <i class="fas fa-percentage fa-2x" style="color:#f59e0b;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Commission Plans</h5>
-                        <p class="text-muted small">Salary ke alawa har sale par <strong style="color:#f59e0b;">multiple commission plans</strong>. Jaise team badhegi, waise commission rate bhi badhega!</p>
+                        <h5 class="fw-bold mb-2"><?= __('home_commission_plans') ?></h5>
+                        <p class="text-muted small"><?= __('home_commission_plans_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Direct Business: <strong>10%</strong></span>
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Junior Business: <strong>5%</strong></span>
@@ -1394,8 +1394,8 @@ function mCalcVal() {
                         <div class="icon-circle" style="background:rgba(6,182,212,0.08);">
                             <i class="fas fa-graduation-cap fa-2x" style="color:#06b6d4;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">Free Training & Certification</h5>
-                        <p class="text-muted small">Real estate experience nahi hai? Koi baat nahi! Company aapko <strong style="color:#06b6d4;">free training</strong> degi — property knowledge, negotiation skills, aur sales techniques.</p>
+                        <h5 class="fw-bold mb-2"><?= __('home_free_training') ?></h5>
+                        <p class="text-muted small"><?= __('home_free_training_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>7-Day Induction Program</span>
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Monthly Skill Workshops</span>
@@ -1410,8 +1410,8 @@ function mCalcVal() {
                         <div class="icon-circle" style="background:rgba(79,70,229,0.08);">
                             <i class="fas fa-users-between-lines fa-2x" style="color:#4f46e5;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">MLM Network Benefits</h5>
-                        <p class="text-muted small">Naye users join karwaiye aur unki sales par <strong style="color:#4f46e5;">residual commission</strong> paayein. 10 rank structure — har rank ke saath badti hai earning!</p>
+                        <h5 class="fw-bold mb-2"><?= __('home_mlm_benefits') ?></h5>
+                        <p class="text-muted small"><?= __('home_mlm_benefits_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3" style="max-height:160px;overflow-y:auto;">
                             <div class="small mb-1"><span class="text-warning me-1">ðŸ‘‘</span>Associate: <strong>5%</strong></div>
                             <div class="small mb-1"><span class="text-secondary me-1">ðŸ‘‘</span>Bronze: <strong>7%</strong></div>
@@ -1433,8 +1433,8 @@ function mCalcVal() {
                         <div class="icon-circle" style="background:rgba(100,116,139,0.08);">
                             <i class="fas fa-handshake fa-2x" style="color:#64748b;"></i>
                         </div>
-                        <h5 class="fw-bold mb-2">More Reasons to Join</h5>
-                        <p class="text-muted small">Aur bhi kai saare reasons jo APS Dream Home ko best banate hain:</p>
+                        <h5 class="fw-bold mb-2"><?= __('home_more_reasons') ?></h5>
+                        <p class="text-muted small"><?= __('home_more_reasons_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>Flexible working hours</span>
                             <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i>15+ years of market trust</span>
@@ -1449,12 +1449,12 @@ function mCalcVal() {
         </div>
 
         <div class="text-center">
-            <p class="mb-3 fw-bold">Ready to start your real estate career with a fixed salary?</p>
+            <p class="mb-3 fw-bold"><?= __('home_ready_to_start') ?></p>
             <a href="<?php echo BASE_URL; ?>/associate/register" class="btn btn-danger btn-lg px-5">
-                <i class="fas fa-user-plus me-2"></i>Register as Associate
+                <i class="fas fa-user-plus me-2"></i><?= __('home_register_associate') ?>
             </a>
             <a href="tel:+919277121112" class="btn btn-outline-dark btn-lg px-4 ms-2">
-                <i class="fas fa-phone me-2"></i>Call Now
+                <i class="fas fa-phone me-2"></i><?= __('home_call_now') ?>
             </a>
         </div>
     </div>
@@ -1463,15 +1463,15 @@ function mCalcVal() {
 <!-- CTA -->
 <section class="py-5 text-white text-center cta-gradient">
     <div class="container">
-        <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);">Get In Touch</span>
+        <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);"><?= __('home_get_in_touch') ?></span>
         <h2 class="fw-bold mb-3"><?= __('cta_title') ?></h2>
         <p class="mb-4" style="font-size:1.1rem;opacity:0.9;"><?= __('cta_subtitle') ?></p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="tel:+919277121112" class="btn btn-warning btn-lg px-4">
-                <i class="fas fa-phone me-2"></i>Call Now
+                <i class="fas fa-phone me-2"></i><?= __('home_call_now') ?>
             </a>
             <a href="https://wa.me/919277121112" target="_blank" class="btn btn-success btn-lg px-4">
-                <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
             </a>
         </div>
     </div>

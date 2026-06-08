@@ -750,6 +750,23 @@ class BookingLifecycleService
                 'total_amount'  => round($totalAmt, 2),
                 'rows'          => $rows,
             ];
+
+            // Apply daily capping for each beneficiary on level-type commissions
+            try {
+                $capService = new \App\Services\MLM\DailyCappingService();
+                foreach ($rows as $r) {
+                    if (strpos($r['commission_type'], 'mlm_level_') === 0) {
+                        $capStatus = $capService->getCapStatus((int)$r['beneficiary_user_id']);
+                        $dailyCap = (float)($capStatus['daily_cap'] ?? 0);
+                        if ($dailyCap > 0) {
+                            $capService->applyDailyCap((int)$r['beneficiary_user_id'], $r['amount'], $dailyCap);
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                error_log('[BookingLifecycleService::calculateCommission] DailyCappingService error: ' . $e->getMessage());
+            }
+
             return $out;
         } catch (Exception $e) {
             error_log('[BookingLifecycleService::calculateCommission] ' . $e->getMessage());

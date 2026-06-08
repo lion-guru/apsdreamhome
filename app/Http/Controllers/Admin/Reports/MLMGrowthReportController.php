@@ -96,23 +96,23 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
                     a.id,
                     a.name,
                     a.email,
-                    a.referral_code,
-                    COUNT(DISTINCT r.id) as direct_referrals,
-                    SUM(c.amount) as total_commissions,
+                    ml.sponsor_user_id as referral_code,
+                    COUNT(DISTINCT cl.id) as direct_referrals,
+                    COALESCE(SUM(cl.amount), 0) as total_commissions,
                     a.created_at
                 FROM users a
-                LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id
-                LEFT JOIN mlm_commissions c ON a.id = c.associate_id AND c.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                GROUP BY a.id
+                LEFT JOIN mlm_profiles ml ON ml.user_id = a.id
+                LEFT JOIN mlm_commission_ledger cl ON a.id = cl.beneficiary_user_id AND cl.commission_type = 'referral' AND cl.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY a.id, ml.sponsor_user_id
                 ORDER BY total_commissions DESC
                 LIMIT 20
             ";
+            $stmt = $db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            error_log('[MLMGrowthReportController::getTopPerformers] ' . $e->getMessage());
+            return [];
         }
-        
-        $stmt = $db->query($sql);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     /**
@@ -120,18 +120,23 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
      */
     private function getLevelDistribution($db): array
     {
-        $sql = "
-            SELECT 
-                mlm_level as level,
-                COUNT(*) as associate_count,
-                ROUND(AVG(total_earnings), 2) as avg_earnings
-            FROM users
-            GROUP BY mlm_level
-            ORDER BY mlm_level ASC
-        ";
-        
-        $stmt = $db->query($sql);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $sql = "
+                SELECT 
+                    COALESCE(ml.current_level, 'Bronze') as level,
+                    COUNT(*) as associate_count,
+                    ROUND(AVG(ml.total_commission), 2) as avg_earnings
+                FROM users a
+                LEFT JOIN mlm_profiles ml ON ml.user_id = a.id
+                GROUP BY ml.current_level
+                ORDER BY ml.current_level ASC
+            ";
+            $stmt = $db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('[MLMGrowthReportController::getLevelDistribution] ' . $e->getMessage());
+            return [];
+        }
     }
     
     /**
@@ -139,20 +144,24 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
      */
     private function getCommissionTrends($db): array
     {
-        $sql = "
-            SELECT 
-                DATE_FORMAT(created_at, '%Y-%m') as month,
-                SUM(amount) as total_commissions,
-                COUNT(DISTINCT associate_id) as active_earners,
-                AVG(amount) as avg_commission
-            FROM mlm_commissions
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-            GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-            ORDER BY month ASC
-        ";
-        
-        $stmt = $db->query($sql);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $sql = "
+                SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    SUM(amount) as total_commissions,
+                    COUNT(DISTINCT beneficiary_user_id) as active_earners,
+                    AVG(amount) as avg_commission
+                FROM mlm_commission_ledger
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                ORDER BY month ASC
+            ";
+            $stmt = $db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('[MLMGrowthReportController::getCommissionTrends] ' . $e->getMessage());
+            return [];
+        }
     }
     
     /**
@@ -161,17 +170,16 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
     private function getMonthlyComparison($db): array
     {
         try {
-            // Current month vs previous month
             $sql = "
                 SELECT 
                     'Current Month' as period,
                     COUNT(DISTINCT a.id) as new_associates,
-                    COUNT(DISTINCT r.id) as new_referrals,
-                    COALESCE(SUM(c.amount), 0) as total_commissions
+                    COUNT(DISTINCT cl.id) as new_referrals,
+                    COALESCE(SUM(cl.amount), 0) as total_commissions
                 FROM users a
-                LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id 
-                    AND r.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
-                LEFT JOIN mlm_commissions c ON c.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+                LEFT JOIN mlm_commission_ledger cl ON cl.beneficiary_user_id = a.id 
+                    AND cl.commission_type = 'referral'
+                    AND cl.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
                 WHERE a.created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
                 
                 UNION ALL
@@ -179,23 +187,22 @@ class MLMGrowthReportController extends \App\Http\Controllers\Admin\AdminControl
                 SELECT 
                     'Previous Month' as period,
                     COUNT(DISTINCT a.id) as new_associates,
-                    COUNT(DISTINCT r.id) as new_referrals,
-                    COALESCE(SUM(c.amount), 0) as total_commissions
+                    COUNT(DISTINCT cl.id) as new_referrals,
+                    COALESCE(SUM(cl.amount), 0) as total_commissions
                 FROM users a
-                LEFT JOIN mlm_referrals r ON a.id = r.sponsor_id 
-                    AND r.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
-                    AND r.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
-                LEFT JOIN mlm_commissions c ON c.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
-                    AND c.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
+                LEFT JOIN mlm_commission_ledger cl ON cl.beneficiary_user_id = a.id 
+                    AND cl.commission_type = 'referral'
+                    AND cl.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+                    AND cl.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
                 WHERE a.created_at >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
                     AND a.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
             ";
+            $stmt = $db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            error_log('[MLMGrowthReportController::getMonthlyComparison] ' . $e->getMessage());
+            return [];
         }
-        
-        $stmt = $db->query($sql);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     /**

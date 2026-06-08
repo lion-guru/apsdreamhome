@@ -548,6 +548,58 @@ class BookingLifecycleController extends AdminController
     }
 
     /* =========================================================
+     *  Registry / NOC check
+     * ========================================================= */
+
+    public function registryCheck($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+
+        $mwSvc = new \App\Services\Accounting\MoneyWorkflowService();
+        $eligibility = $mwSvc->checkRegistryEligibility($id);
+        $booking = $eligibility['booking'] ?? null;
+
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found');
+            return $this->redirect('/admin/sales/bookings');
+        }
+
+        $this->render('admin/sales/registry_check', [
+            'page_title'   => 'Registry / NOC Check',
+            'page_heading' => 'Registry / NOC — ' . htmlspecialchars((string)($booking['booking_number'] ?? '')),
+            'booking'      => $booking,
+            'eligibility'  => $eligibility,
+        ]);
+    }
+
+    public function generateNoc($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+
+        $mwSvc = new \App\Services\Accounting\MoneyWorkflowService();
+        $generatedBy = (int)($_SESSION['admin_id'] ?? 1);
+        $result = $mwSvc->generateNoc($id, $generatedBy);
+
+        if (!empty($result['success'])) {
+            $this->json([
+                'success'    => true,
+                'noc_id'     => $result['noc_id'],
+                'noc_number' => $result['noc_number'],
+                'generated_at' => $result['generated_at'],
+            ]);
+        } else {
+            $this->json([
+                'success' => false,
+                'error'   => $result['error'] ?? 'Failed to generate NOC',
+                'reasons' => $result['reasons'] ?? [],
+            ], 422);
+        }
+    }
+
+    /* =========================================================
      *  Helper data fetchers (private)
      * ========================================================= */
 

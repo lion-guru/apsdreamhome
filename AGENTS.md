@@ -1,4 +1,100 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-07)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-08)
+
+---
+
+## Session 2026-06-08: P0 Gap Fixes — Registries, Land Parcels, Property Images
+
+### What Was Done
+Fixed 3 critical gaps identified in the project intelligence report:
+1. Created `registries` table for Indian real estate regulatory compliance (sub-registrar tracking)
+2. Created `land_parcels` table for geographic land records (Khasra/Khata/Khatauni)
+3. Fixed ExportController bug (referenced non-existent `registries` table)
+4. Updated 34 property_images from picsum.photos placeholders to real local colony photos
+5. Set primary images on all 4 colonies
+
+### Files Created (2)
+| File | Type | Purpose |
+|---|---|---|
+| `scripts/migrate_registries_table.php` | Migration | Creates `registries` table with FK to plot_bookings, plots, users |
+| `scripts/migrate_land_parcels_table.php` | Migration | Creates `land_parcels` table with FK to colonies |
+
+### Files Modified (0 code changes)
+- ExportController bug fixed implicitly (registries table now exists)
+- 34 `property_images` rows updated from picsum.photos to real local files
+- 4 `colonies` rows updated with primary image_path
+
+### Database Changes
+- `registries` table: id, booking_id (FK), plot_id (FK), user_id (FK), associate_id, registration_no, sub_registrar_office, registration_date, stamp_duty_amount, registration_fee, other_charges, total_registry_cost, document_url, status (7 ENUM values), rejection_reason, notes, timestamps
+- `land_parcels` table: id, colony_id (FK), khasra_no, khata_no, khatauni_no, survey_number, village, tehsil, district, state, pincode, area_acres, area_sqft, area_bigha, owner_name, owner_phone, owner_aadhaar, mutation_status, mutation_date, land_use, gps_lat, gps_lng, notes, timestamps
+- FK constraints: registries→plot_bookings, registries→plots, registries→users, land_parcels→colonies
+
+### Property Images Updated
+- 34 rows: picsum.photos → real local files (suryoday g1-g6.jpg, colony maps, city photos)
+- 4 colonies: Suryoday, Braj Radha, Raghunath, Budh Bihar now have primary images
+
+### Verification
+| Check | Result |
+|---|---|
+| PHP syntax (2 migration scripts) | 2/2 PASS |
+| registries table exists | YES (0 rows, 3 FKs) |
+| land_parcels table exists | YES (0 rows, 1 FK) |
+| ExportController references registries | NOW WORKS (table exists) |
+| property_images updated to real files | 34/34 rows |
+| Colony images set | 4/4 colonies |
+| E2E master test | **164/165 PASS** (1 expected GodMode 403) |
+
+---
+
+## Session 2026-06-08: EMI Penalty Engine
+
+### What Was Done
+Built an **EMI Penalty Engine** for overdue installment tracking — daily penalty accrual, admin UI, audit trail. 18% flat per annum (0.0493%/day) after 5-day grace period.
+
+### Files Created (2)
+| File | Type | Purpose |
+|---|---|---|
+| `scripts/penalty_engine_setup.php` | Migration + Seed | Adds `accrued_penalty` column, creates `penalty_audit` table, seeds 2 test bookings with overdue installments |
+| `scripts/seed_penalty_menu.php` | Seed | Inserts "EMI Penalties" menu item in finance section |
+
+### Files Modified (3)
+| File | Change |
+|---|---|
+| `app/Services/Accounting/MoneyWorkflowService.php` | Added `applyDailyPenalties()` (30+ lines) + `getOverduePenaltySummary()` (50+ lines) |
+| `app/Http/Controllers/Admin/MoneyWorkflowController.php` | Added `penaltySummary()` + `applyPenalties()` (CSRF-protected, JSON response) |
+| `app/views/admin/finance/penalty-summary.php` | NEW — 4 stat cards, "Apply Penalties Now" AJAX button, overdue installments table |
+| `routes/web.php` | Added GET `/admin/finance/penalties` + POST `/admin/finance/penalties/apply` |
+| `admin_menu_items` table | EMI Penalties (order 45, finance section) |
+
+### DB Schema Changes
+- `booking_payment_schedules`: added `accrued_penalty DECIMAL(10,2) NOT NULL DEFAULT 0` (after `late_fee`)
+- `penalty_audit` (NEW): id, installment_id BIGINT, booking_id BIGINT, days_overdue INT, penalty_amount DECIMAL(10,2), total_accrued DECIMAL(10,2), applied_at TIMESTAMP, indexes on booking_id + applied_at
+
+### Service Methods
+| Method | Purpose |
+|---|---|
+| `applyDailyPenalties()` | Finds all overdue installments past 5-day grace, calculates 18% p.a. penalty, updates `accrued_penalty`, logs to `penalty_audit`. Returns `{success, penalties_applied, total_penalty, installments[]}` |
+| `getOverduePenaltySummary()` | Returns `{total_overdue_count, total_overdue_amount, total_accrued_penalties, worst_overdue_days, overdue_installments[]}` with JOINed booking/plot/customer data |
+
+### Controller Actions
+| Route | Method | Purpose |
+|---|---|---|
+| `GET /admin/finance/penalties` | `penaltySummary()` | Renders summary page with overdue stats + installments table |
+| `POST /admin/finance/penalties/apply` | `applyPenalties()` | CSRF-protected, returns JSON `{success, penalties_applied, total_penalty}` |
+
+### Seed Data
+- Booking 9001: Plot A-001 (colony 2), Customer One (id=3), ₹25L total, 3 installments (#1 paid, #2 overdue 41 days, #3 pending future)
+- Booking 9002: Plot A-002 (colony 2), Customer One (id=3), ₹37.5L total, 3 installments (#1 paid, #2 overdue 16 days, #3 pending future)
+
+### Verification
+| Check | Result |
+|---|---|
+| PHP syntax (5 files) | 5/5 PASS |
+| GET `/admin/finance/penalties` | 200 — shows 2 overdue installments, ₹625K total, ₹0 penalties |
+| POST `/admin/finance/penalties/apply` | 200 — `{"success":true,"penalties_applied":2,"total_penalty":8013.69}` |
+| Re-check stats after apply | 2 overdue, ₹625K, ₹8,013.69 accrued penalties |
+| `penalty_audit` table | 2 rows with correct days (41, 16), amounts (₹5,054.79, ₹2,958.90) |
+| `booking_payment_schedules.accrued_penalty` | Updated to ₹5,054.79 and ₹2,958.90 |
+| Menu item | EMI Penalties in finance section, order 45 |
 
 ---
 

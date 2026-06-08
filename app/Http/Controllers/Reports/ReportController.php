@@ -27,24 +27,39 @@ class ReportController extends BaseController
     public function dashboard()
     {
         $this->requireAdmin();
+        $scheduledReports = [];
+        $availableReports = [];
+        $availableFormats = [];
+        $errorMsg = null;
+
         try {
             $scheduledReports = $this->reportService->getScheduledReports();
-            $availableReports = $this->reportService->getAvailableReports();
-            $availableFormats = $this->reportService->getAvailableFormats();
-
-            $data = [
-                'page_title' => 'Report Dashboard - APS Dream Home',
-                'scheduled_reports' => $scheduledReports,
-                'available_reports' => $availableReports,
-                'available_formats' => $availableFormats,
-                'total_scheduled' => count($scheduledReports)
-            ];
-
-            $this->render('reports/dashboard', $data);
         } catch (Exception $e) {
-            $this->setFlash('error', 'Error loading report dashboard: ' . $e->getMessage());
-            $this->redirect(BASE_URL . 'reports/dashboard');
+            $errorMsg = 'Could not load scheduled reports: ' . $e->getMessage();
         }
+
+        try {
+            $availableReports = $this->reportService->getAvailableReports();
+        } catch (Exception $e) {
+            $availableReports = [];
+        }
+
+        try {
+            $availableFormats = $this->reportService->getAvailableFormats();
+        } catch (Exception $e) {
+            $availableFormats = ['array' => 'Array Format'];
+        }
+
+        $data = [
+            'page_title' => 'Report Dashboard - APS Dream Home',
+            'scheduled_reports' => $scheduledReports,
+            'available_reports' => $availableReports,
+            'available_formats' => $availableFormats,
+            'total_scheduled' => count($scheduledReports),
+            'error_message' => $errorMsg
+        ];
+
+        $this->render('reports/dashboard', $data);
     }
 
     /**
@@ -370,6 +385,49 @@ class ReportController extends BaseController
             }
         } catch (Exception $e) {
             $this->setFlash('error', 'Error generating customer report: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Display user activity report
+     */
+    public function userActivity()
+    {
+        $this->requireAdmin();
+        try {
+            $startDate = $_GET['start_date'] ?? date('Y-m-01');
+            $endDate = $_GET['end_date'] ?? date('Y-m-t');
+
+            $users = [];
+            try {
+                $stmt = $this->db->query(
+                    "SELECT u.id, u.name, u.email, u.role, u.created_at,
+                            (SELECT COUNT(*) FROM leads WHERE user_id = u.id) as lead_count,
+                            (SELECT COUNT(*) FROM user_properties WHERE user_id = u.id) as property_count,
+                            (SELECT COUNT(*) FROM inquiries WHERE email = u.email) as inquiry_count
+                     FROM users u
+                     WHERE u.created_at BETWEEN ? AND ?
+                     ORDER BY u.created_at DESC"
+                );
+                $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            } catch (\Exception $e) {
+                $users = [];
+            }
+
+            $data = [
+                'page_title' => 'User Activity Report - APS Dream Home',
+                'users' => $users,
+                'parameters' => [
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
+                ],
+                'total_users' => count($users)
+            ];
+
+            $this->render('reports/user_activity', $data);
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Error generating user activity report: ' . $e->getMessage());
         }
     }
 

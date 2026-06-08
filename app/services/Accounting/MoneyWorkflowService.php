@@ -1087,6 +1087,521 @@ class MoneyWorkflowService
     }
 
     // ============================================================
+    //  EMI PENALTY ENGINE
+    //  18% flat per annum = 0.0493% per day
+    //  5-day grace period after due_date
+    // ============================================================
+
+    public function applyDailyPenalties(): array
+    {
+        $result = [
+            'success'       => true,
+            'penalties_applied' => 0,
+            'total_penalty'     => 0.0,
+            'installments'      => [],
+        ];
+
+        try {
+            $rows = $this->db->fetchAll(
+                "SELECT bps.*, pb.plot_id, pb.booking_number,
+                        DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
+                 FROM booking_payment_schedules bps
+                 LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id
+                 WHERE bps.status IN ('pending','overdue')
+                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)"
+            ) ?: [];
+
+            foreach ($rows as $row) {
+                $daysOverdue  = (int)$row['days_overdue'];
+                $installmentAmt = (float)$row['amount'];
+                $penaltyRate  = 0.18;
+                $dailyRate    = $penaltyRate / 365;
+                $newPenalty   = round($installmentAmt * $dailyRate * $daysOverdue, 2);
+                $prevAccrued  = (float)($row['accrued_penalty'] ?? 0);
+                $totalAccrued = $prevAccrued + $newPenalty;
+
+                // Update accrued_penalty on the installment
+                $this->db->execute(
+                    "UPDATE booking_payment_schedules SET accrued_penalty = ?, status = 'overdue' WHERE id = ?",
+                    [$totalAccrued, $row['id']]
+                );
+
+                // Log to penalty_audit
+                $this->db->insert('penalty_audit', [
+                    'installment_id' => $row['id'],
+                    'booking_id'     => $row['booking_id'],
+                    'days_overdue'   => $daysOverdue,
+                    'penalty_amount' => $newPenalty,
+                    'total_accrued'  => $totalAccrued,
+                ]);
+
+                $result['penalties_applied']++;
+                $result['total_penalty'] += $newPenalty;
+                $result['installments'][] = [
+                    'id'             => $row['id'],
+                    'booking_id'     => $row['booking_id'],
+                    'booking_number' => $row['booking_number'] ?? '',
+                    'installment_no' => $row['installment_no'],
+                    'due_date'       => $row['due_date'],
+                    'days_overdue'   => $daysOverdue,
+                    'amount'         => $installmentAmt,
+                    'new_penalty'    => $newPenalty,
+                    'total_accrued'  => $totalAccrued,
+                ];
+            }
+        } catch (\Throwable $e) {
+            error_log('applyDailyPenalties error: ' . $e->getMessage());
+            $result['success'] = false;
+            $result['error']   = $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    public function getOverduePenaltySummary(): array
+    {
+        $summary = [
+            'total_overdue_count'    => 0,
+            'total_overdue_amount'   => 0.0,
+            'total_accrued_penalties'=> 0.0,
+            'worst_overdue_days'     => 0,
+            'overdue_installments'   => [],
+        ];
+
+        try {
+            $rows = $this->db->fetchAll(
+                "SELECT bps.*, pb.plot_id, pb.booking_number,
+                        p.plot_number,
+                        u.name AS customer_name,
+                        DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
+                 FROM booking_payment_schedules bps
+                 LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id
+                 LEFT JOIN plots p ON p.id = pb.plot_id
+                 LEFT JOIN users u ON u.id = pb.customer_id
+                 WHERE bps.status IN ('pending','overdue')
+                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
+                 ORDER BY bps.due_date ASC"
+            ) ?: [];
+
+            foreach ($rows as $row) {
+                $days = (int)$row['days_overdue'];
+                $summary['total_overdue_count']++;
+                $summary['total_overdue_amount']   += (float)$row['amount'];
+                $summary['total_accrued_penalties'] += (float)($row['accrued_penalty'] ?? 0);
+                if ($days > $summary['worst_overdue_days']) {
+                    $summary['worst_overdue_days'] = $days;
+                }
+                $summary['overdue_installments'][] = [
+                    'id'             => $row['id'],
+                    'booking_id'     => $row['booking_id'],
+                    'booking_number' => $row['booking_number'] ?? '',
+                    'installment_no' => $row['installment_no'],
+                    'due_date'       => $row['due_date'],
+                    'days_overdue'   => $days,
+                    'amount'         => (float)$row['amount'],
+                    'accrued_penalty'=> (float)($row['accrued_penalty'] ?? 0),
+                    'plot_number'    => $row['plot_number'] ?? '',
+                    'customer_name'  => $row['customer_name'] ?? '',
+                ];
+            }
+        } catch (\Throwable $e) {
+            error_log('getOverduePenaltySummary error: ' . $e->getMessage());
+        }
+
+        return $summary;
+    }
+
+    // ============================================================
+    //  ON-FIELD CASH COLLECTION & RECONCILIATION
+    // ============================================================
+
+    public function recordCollection(array $data): array
+    {
+        $amount = (float)($data['amount'] ?? 0);
+        if ($amount <= 0) {
+            return ['success' => false, 'error' => 'Amount must be greater than 0'];
+        }
+
+        $collectorId = (int)($data['collector_id'] ?? 0);
+        if ($collectorId <= 0) {
+            return ['success' => false, 'error' => 'Collector is required'];
+        }
+
+        $customerName = trim($data['customer_name'] ?? '');
+        if ($customerName === '') {
+            return ['success' => false, 'error' => 'Customer name is required'];
+        }
+
+        $collectionDate = $data['collection_date'] ?? date('Y-m-d');
+
+        // Generate collection number: APS-CC-YYYYMMDD-NNNN
+        $today = date('Ymd');
+        $count = (int)$this->db->fetchColumn(
+            "SELECT COUNT(*) FROM cash_collections WHERE DATE(created_at) = CURDATE()"
+        );
+        $collectionNumber = sprintf('APS-CC-%s-%04d', $today, $count + 1);
+
+        $id = (int)$this->db->insert('cash_collections', [
+            'booking_id'      => !empty($data['booking_id']) ? (int)$data['booking_id'] : null,
+            'installment_id'  => !empty($data['installment_id']) ? (int)$data['installment_id'] : null,
+            'collector_id'    => $collectorId,
+            'customer_name'   => $customerName,
+            'amount'          => $amount,
+            'collection_date' => $collectionDate,
+            'payment_method'  => $data['payment_method'] ?? 'cash',
+            'reference_number'=> trim($data['reference_number'] ?? ''),
+            'receipt_photo'   => $data['receipt_photo'] ?? null,
+            'notes'           => $data['notes'] ?? null,
+            'status'          => 'submitted',
+        ]);
+
+        return ['success' => true, 'id' => $id, 'collection_number' => $collectionNumber];
+    }
+
+    public function getCollections(array $filters = []): array
+    {
+        $sql = "SELECT cc.*, u.name AS collector_name
+                FROM cash_collections cc
+                LEFT JOIN users u ON u.id = cc.collector_id
+                WHERE 1=1";
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $sql .= " AND cc.status = ?";
+            $params[] = $filters['status'];
+        }
+        if (!empty($filters['collector_id'])) {
+            $sql .= " AND cc.collector_id = ?";
+            $params[] = (int)$filters['collector_id'];
+        }
+        if (!empty($filters['from_date'])) {
+            $sql .= " AND cc.collection_date >= ?";
+            $params[] = $filters['from_date'];
+        }
+        if (!empty($filters['to_date'])) {
+            $sql .= " AND cc.collection_date <= ?";
+            $params[] = $filters['to_date'];
+        }
+
+        $sql .= " ORDER BY cc.collection_date DESC, cc.id DESC";
+
+        if (!empty($filters['limit'])) {
+            $sql .= " LIMIT " . (int)$filters['limit'];
+        } elseif (!isset($filters['limit'])) {
+            $sql .= " LIMIT 200";
+        }
+
+        return $this->db->fetchAll($sql, $params) ?: [];
+    }
+
+    public function getCollection(int $id): ?array
+    {
+        $row = $this->db->fetchOne(
+            "SELECT cc.*, u.name AS collector_name
+             FROM cash_collections cc
+             LEFT JOIN users u ON u.id = cc.collector_id
+             WHERE cc.id = ?",
+            [$id]
+        );
+        return $row ?: null;
+    }
+
+    public function verifyCollection(int $id, int $verifiedBy): bool
+    {
+        $this->db->execute(
+            "UPDATE cash_collections SET status = 'verified', verified_by = ?, verified_at = NOW() WHERE id = ? AND status = 'submitted'",
+            [$verifiedBy, $id]
+        );
+        return true;
+    }
+
+    public function rejectCollection(int $id, int $rejectedBy, string $reason): bool
+    {
+        $this->db->execute(
+            "UPDATE cash_collections SET status = 'rejected', verified_by = ?, verified_at = NOW(), rejection_reason = ? WHERE id = ? AND status = 'submitted'",
+            [$rejectedBy, $reason, $id]
+        );
+        return true;
+    }
+
+    public function startReconciliation(int $collectorId, string $date): array
+    {
+        // Check for existing open session for this collector+date
+        $existing = $this->db->fetchOne(
+            "SELECT id FROM reconciliation_collections WHERE collector_id = ? AND session_date = ? AND status = 'open'",
+            [$collectorId, $date]
+        );
+        if ($existing) {
+            return ['success' => false, 'error' => 'Open reconciliation session already exists for this collector on this date'];
+        }
+
+        // Calculate totals from verified collections for this collector+date
+        $totals = $this->db->fetchOne(
+            "SELECT
+                COALESCE(SUM(CASE WHEN status = 'submitted' THEN amount ELSE 0 END), 0) AS submitted,
+                COALESCE(SUM(CASE WHEN status = 'verified' THEN amount ELSE 0 END), 0) AS verified,
+                COALESCE(SUM(CASE WHEN status = 'rejected' THEN amount ELSE 0 END), 0) AS rejected
+             FROM cash_collections
+             WHERE collector_id = ? AND collection_date = ?",
+            [$collectorId, $date]
+        );
+
+        $submitted = (float)($totals['submitted'] ?? 0);
+        $verified  = (float)($totals['verified'] ?? 0);
+        $rejected  = (float)($totals['rejected'] ?? 0);
+        $discrepancy = $submitted - $verified - $rejected;
+
+        $id = (int)$this->db->insert('reconciliation_collections', [
+            'session_date'      => $date,
+            'collector_id'      => $collectorId,
+            'total_submitted'   => $submitted,
+            'total_verified'    => $verified,
+            'total_rejected'    => $rejected,
+            'discrepancy_amount'=> abs($discrepancy),
+            'status'            => $discrepancy > 0.01 ? 'discrepancy' : 'open',
+        ]);
+
+        return ['success' => true, 'id' => $id, 'discrepancy' => $discrepancy];
+    }
+
+    public function closeReconciliation(int $sessionId, int $closedBy): bool
+    {
+        $this->db->execute(
+            "UPDATE reconciliation_collections SET status = 'closed', closed_by = ?, closed_at = NOW() WHERE id = ?",
+            [$closedBy, $sessionId]
+        );
+        return true;
+    }
+
+    public function getReconciliationSessions(array $filters = []): array
+    {
+        $sql = "SELECT rc.*, u.name AS collector_name
+                FROM reconciliation_collections rc
+                LEFT JOIN users u ON u.id = rc.collector_id
+                WHERE 1=1";
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $sql .= " AND rc.status = ?";
+            $params[] = $filters['status'];
+        }
+        if (!empty($filters['collector_id'])) {
+            $sql .= " AND rc.collector_id = ?";
+            $params[] = (int)$filters['collector_id'];
+        }
+
+        $sql .= " ORDER BY rc.session_date DESC, rc.id DESC";
+        if (!empty($filters['limit'])) {
+            $sql .= " LIMIT " . (int)$filters['limit'];
+        }
+
+        return $this->db->fetchAll($sql, $params) ?: [];
+    }
+
+    public function getCollectionStats(): array
+    {
+        $stats = [
+            'today_total'         => 0.0,
+            'today_count'         => 0,
+            'pending_verification'=> 0,
+            'pending_amount'      => 0.0,
+            'month_total'         => 0.0,
+            'month_count'         => 0,
+            'verified_total'      => 0.0,
+            'rejected_total'      => 0.0,
+        ];
+
+        try {
+            $row = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(amount), 0) AS total, COUNT(*) AS cnt
+                 FROM cash_collections WHERE collection_date = CURDATE()"
+            );
+            $stats['today_total'] = (float)($row['total'] ?? 0);
+            $stats['today_count'] = (int)($row['cnt'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        try {
+            $row = $this->db->fetchOne(
+                "SELECT COUNT(*) AS cnt, COALESCE(SUM(amount), 0) AS total
+                 FROM cash_collections WHERE status = 'submitted'"
+            );
+            $stats['pending_verification'] = (int)($row['cnt'] ?? 0);
+            $stats['pending_amount'] = (float)($row['total'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        try {
+            $monthFrom = date('Y-m-01');
+            $monthTo = date('Y-m-t');
+            $row = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(amount), 0) AS total, COUNT(*) AS cnt
+                 FROM cash_collections WHERE collection_date BETWEEN ? AND ?",
+                [$monthFrom, $monthTo]
+            );
+            $stats['month_total'] = (float)($row['total'] ?? 0);
+            $stats['month_count'] = (int)($row['cnt'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        try {
+            $row = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(amount), 0) AS total FROM cash_collections WHERE status = 'verified'"
+            );
+            $stats['verified_total'] = (float)($row['total'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        try {
+            $row = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(amount), 0) AS total FROM cash_collections WHERE status = 'rejected'"
+            );
+            $stats['rejected_total'] = (float)($row['total'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        return $stats;
+    }
+
+    public function listCollectors(): array
+    {
+        return $this->db->fetchAll(
+            "SELECT u.id, u.name FROM users u
+             WHERE u.role IN ('associate','agent','employee','admin')
+             ORDER BY u.name"
+        ) ?: [];
+    }
+
+    // ============================================================
+    //  LEGAL / REGISTRY NOC PIPE
+    // ============================================================
+
+    public function checkRegistryEligibility(int $bookingId): array
+    {
+        $result = [
+            'eligible'        => false,
+            'reasons'         => [],
+            'overdue_count'   => 0,
+            'pending_amount'  => 0.0,
+            'penalty_amount'  => 0.0,
+            'booking'         => null,
+        ];
+
+        try {
+            $booking = $this->db->fetchOne(
+                "SELECT pb.*, u.name AS customer_name, p.plot_number, c.name AS colony_name
+                 FROM plot_bookings pb
+                 LEFT JOIN users u ON u.id = pb.customer_id
+                 LEFT JOIN plots p ON p.id = pb.plot_id
+                 LEFT JOIN colonies c ON c.id = pb.colony_id
+                 WHERE pb.id = ?",
+                [$bookingId]
+            );
+            $result['booking'] = $booking;
+
+            if (!$booking) {
+                $result['reasons'][] = 'Booking not found.';
+                return $result;
+            }
+
+            // 1. Overdue installments: status IN (pending, overdue) AND due_date < CURDATE()
+            $overdue = $this->db->fetchOne(
+                "SELECT COUNT(*) AS cnt, COALESCE(SUM(amount - paid_amount), 0) AS pending
+                 FROM booking_payment_schedules
+                 WHERE booking_id = ?
+                   AND status IN ('pending', 'overdue')
+                   AND due_date < CURDATE()",
+                [$bookingId]
+            );
+            $overdueCount = (int)($overdue['cnt'] ?? 0);
+            $pendingAmt   = (float)($overdue['pending'] ?? 0);
+            $result['overdue_count']  = $overdueCount;
+            $result['pending_amount'] = $pendingAmt;
+
+            if ($overdueCount > 0) {
+                $result['reasons'][] = $overdueCount . ' overdue installment(s) totaling ₹' . number_format($pendingAmt, 2) . '.';
+            }
+
+            // 2. Accrued penalties > 0
+            $penalty = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(accrued_penalty), 0) AS total
+                 FROM booking_payment_schedules
+                 WHERE booking_id = ? AND accrued_penalty > 0",
+                [$bookingId]
+            );
+            $penaltyAmt = (float)($penalty['total'] ?? 0);
+            $result['penalty_amount'] = $penaltyAmt;
+
+            if ($penaltyAmt > 0) {
+                $result['reasons'][] = 'Accrued penalties of ₹' . number_format($penaltyAmt, 2) . ' must be cleared.';
+            }
+
+            $result['eligible'] = empty($result['reasons']);
+        } catch (\Throwable $e) {
+            error_log('checkRegistryEligibility error: ' . $e->getMessage());
+            $result['reasons'][] = 'System error: ' . $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    public function generateNoc(int $bookingId, int $generatedBy): array
+    {
+        try {
+            $booking = $this->db->fetchOne(
+                "SELECT pb.*, u.name AS customer_name, p.plot_number, c.name AS colony_name
+                 FROM plot_bookings pb
+                 LEFT JOIN users u ON u.id = pb.customer_id
+                 LEFT JOIN plots p ON p.id = pb.plot_id
+                 LEFT JOIN colonies c ON c.id = pb.colony_id
+                 WHERE pb.id = ?",
+                [$bookingId]
+            );
+            if (!$booking) {
+                return ['success' => false, 'error' => 'Booking not found'];
+            }
+
+            $eligibility = $this->checkRegistryEligibility($bookingId);
+            if (!$eligibility['eligible']) {
+                return [
+                    'success' => false,
+                    'error'   => 'Booking is not eligible for NOC generation.',
+                    'reasons' => $eligibility['reasons'],
+                ];
+            }
+
+            // NOC number: APS-NOC-YYYYMMDD-NNNN
+            $today   = date('Ymd');
+            $count   = (int)$this->db->fetchColumn(
+                "SELECT COUNT(*) FROM daily_operations_log
+                 WHERE operation_type = 'noc_generation'
+                   AND DATE(operation_date) = CURDATE()"
+            );
+            $nocNumber = sprintf('APS-NOC-%s-%04d', $today, $count + 1);
+
+            $nocId = (int)$this->db->insert('daily_operations_log', [
+                'operation_date' => date('Y-m-d H:i:s'),
+                'operation_type' => 'noc_generation',
+                'colony_id'      => $booking['colony_id'] ?? null,
+                'plot_id'        => $booking['plot_id'] ?? null,
+                'booking_id'     => $bookingId,
+                'description'    => 'NOC generated for ' . ($booking['customer_name'] ?? 'Customer') .
+                                    ' — Plot ' . ($booking['plot_number'] ?? '') .
+                                    ' (' . ($booking['colony_name'] ?? '') . ')',
+                'reference_number' => $nocNumber,
+                'status'         => 'completed',
+                'created_by'     => $generatedBy,
+            ]);
+
+            return [
+                'success'    => true,
+                'noc_id'     => $nocId,
+                'noc_number' => $nocNumber,
+                'booking'    => $booking,
+                'generated_at' => date('Y-m-d H:i:s'),
+            ];
+        } catch (\Throwable $e) {
+            error_log('generateNoc error: ' . $e->getMessage());
+            return ['success' => false, 'error' => 'System error: ' . $e->getMessage()];
+        }
+    }
+
+    // ============================================================
     //  Helpers
     // ============================================================
 
