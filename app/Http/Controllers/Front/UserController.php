@@ -559,6 +559,158 @@ class UserController extends BaseController
         exit;
     }
 
+    public function supportTickets()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+        $service = new \App\Services\SupportTicketService();
+
+        $status = $_GET['status'] ?? null;
+        $category = $_GET['category'] ?? null;
+        $page = max(1, (int)($_GET['page'] ?? 1));
+
+        $result = $service->getTickets((int)$user['id'], $status, $category, null, null, $page);
+        $userStats = $service->getUserTicketStats((int)$user['id']);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/support_tickets', [
+            'page_title' => 'My Support Tickets - APS Dream Home',
+            'user' => $user,
+            'tickets' => $result['tickets'],
+            'total' => $result['total'],
+            'page' => $result['page'],
+            'total_pages' => $result['total_pages'],
+            'status' => $status,
+            'category' => $category,
+            'userStats' => $userStats,
+        ]);
+    }
+
+    public function createSupportTicket()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/create_ticket', [
+            'page_title' => 'Create Support Ticket - APS Dream Home',
+            'user' => $user,
+        ]);
+    }
+
+    public function storeSupportTicket()
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        $subject = trim($_POST['subject'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+        $category = trim($_POST['category'] ?? 'general');
+        $priority = trim($_POST['priority'] ?? 'medium');
+        $bookingId = !empty($_POST['booking_id']) ? (int)$_POST['booking_id'] : null;
+
+        if (strlen($subject) < 5) {
+            $_SESSION['flash_error'] = 'Subject must be at least 5 characters.';
+            header('Location: ' . BASE_URL . '/user/support/create');
+            exit;
+        }
+        if (strlen($message) < 10) {
+            $_SESSION['flash_error'] = 'Message must be at least 10 characters.';
+            header('Location: ' . BASE_URL . '/user/support/create');
+            exit;
+        }
+        if (!in_array($category, ['general', 'payment', 'booking', 'legal', 'technical', 'complaint', 'other'])) {
+            $category = 'general';
+        }
+        if (!in_array($priority, ['low', 'medium', 'high', 'urgent'])) {
+            $priority = 'medium';
+        }
+
+        try {
+            $service = new \App\Services\SupportTicketService();
+            $ticket = $service->createTicket((int)$user['id'], $subject, $message, $category, $priority, $bookingId);
+            $_SESSION['flash_success'] = 'Ticket ' . $ticket['ticket_number'] . ' created successfully!';
+            header('Location: ' . BASE_URL . '/user/support/' . $ticket['id']);
+            exit;
+        } catch (\Exception $e) {
+            error_log("storeSupportTicket: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to create ticket. Please try again.';
+            header('Location: ' . BASE_URL . '/user/support/create');
+            exit;
+        }
+    }
+
+    public function ticketDetail($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        if (!$id) {
+            header('Location: ' . BASE_URL . '/user/support');
+            exit;
+        }
+
+        $service = new \App\Services\SupportTicketService();
+        $ticket = $service->getTicket((int)$id);
+
+        if (!$ticket || (int)$ticket['user_id'] !== (int)$user['id']) {
+            $_SESSION['flash_error'] = 'Ticket not found.';
+            header('Location: ' . BASE_URL . '/user/support');
+            exit;
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/user/ticket_detail', [
+            'page_title' => $ticket['ticket_number'] . ' - APS Dream Home',
+            'user' => $user,
+            'ticket' => $ticket,
+        ]);
+    }
+
+    public function ticketReply($id = null)
+    {
+        $this->requireCustomerLogin();
+        $user = $this->getUser();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !$id) {
+            header('Location: ' . BASE_URL . '/user/support');
+            exit;
+        }
+
+        $message = trim($_POST['message'] ?? '');
+        if (strlen($message) < 2) {
+            $_SESSION['flash_error'] = 'Reply message is required.';
+            header('Location: ' . BASE_URL . '/user/support/' . $id);
+            exit;
+        }
+
+        $service = new \App\Services\SupportTicketService();
+        $ticket = $service->getTicket((int)$id);
+
+        if (!$ticket || (int)$ticket['user_id'] !== (int)$user['id']) {
+            $_SESSION['flash_error'] = 'Ticket not found.';
+            header('Location: ' . BASE_URL . '/user/support');
+            exit;
+        }
+
+        if (in_array($ticket['status'], ['resolved', 'closed'])) {
+            $_SESSION['flash_error'] = 'This ticket is ' . $ticket['status'] . ' and cannot accept new replies.';
+            header('Location: ' . BASE_URL . '/user/support/' . $id);
+            exit;
+        }
+
+        try {
+            $service->addReply((int)$id, (int)$user['id'], $message, false);
+            $_SESSION['flash_success'] = 'Reply sent successfully!';
+        } catch (\Exception $e) {
+            error_log("ticketReply: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to send reply.';
+        }
+
+        header('Location: ' . BASE_URL . '/user/support/' . $id);
+        exit;
+    }
+
     public function profile()
     {
         $this->requireCustomerLogin();

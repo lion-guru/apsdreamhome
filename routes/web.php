@@ -300,12 +300,12 @@ $router->get('/properties', 'Front\\PageController@properties');
 $router->get('/featured-properties', 'Front\PageController@featuredProperties');
 $router->get('/properties/{id}', 'Front\\PageController@propertyDetails');
 
-// Property Comparison Routes
-$router->get('/compare', 'Property\CompareController@index');
-$router->get('/compare/results', 'Property\CompareController@compare');
-$router->post('/compare/save', 'Property\CompareController@save');
-$router->get('/compare/load/{id}', 'Property\CompareController@load');
-$router->post('/compare/delete/{id}', 'Property\CompareController@delete');
+// Plot Comparison Routes
+$router->get('/compare', 'Front\CompareController@index');
+$router->post('/compare/add', 'Front\CompareController@add');
+$router->post('/compare/remove', 'Front\CompareController@remove');
+$router->post('/compare/clear', 'Front\CompareController@clear');
+$router->get('/compare/count', 'Front\CompareController@count');
 
 // Project Pages
 $router->get('/projects', 'Front\\PageController@projects');
@@ -441,6 +441,14 @@ $router->get('/user/installments/{id}/success', 'Front\\UserController@installme
 $router->get('/user/inquiries', 'Front\\UserController@myInquiries');
 $router->get('/user/tickets', 'Front\\UserController@myTickets');
 $router->post('/user/tickets/create', 'Front\\UserController@createTicket');
+
+// Customer Support Tickets (v2)
+$router->get('/user/support', 'Front\\UserController@supportTickets');
+$router->get('/user/support/create', 'Front\\UserController@createSupportTicket');
+$router->post('/user/support/store', 'Front\\UserController@storeSupportTicket');
+$router->get('/user/support/{id}', 'Front\\UserController@ticketDetail');
+$router->post('/user/support/{id}/reply', 'Front\\UserController@ticketReply');
+
 $router->get('/user/profile', 'Front\\UserController@profile');
 $router->post('/user/profile', 'Front\\UserController@updateProfile');
 $router->get('/user/bank-details', 'Front\\UserController@bankDetails');
@@ -2180,6 +2188,10 @@ $router->get('/admin/news/categories', 'App\\Http\\Controllers\\Admin\\NewsContr
 
 // Operations
 $router->get('/admin/support-tickets', 'App\\Http\\Controllers\\Admin\\SupportTicketController@index');
+$router->get('/admin/support-tickets/{id}', 'App\\Http\\Controllers\\Admin\\SupportTicketController@show');
+$router->post('/admin/support-tickets/{id}/reply', 'App\\Http\\Controllers\\Admin\\SupportTicketController@reply');
+$router->post('/admin/support-tickets/{id}/assign', 'App\\Http\\Controllers\\Admin\\SupportTicketController@assign');
+$router->post('/admin/support-tickets/{id}/status', 'App\\Http\\Controllers\\Admin\\SupportTicketController@updateStatus');
 $router->get('/admin/meetings', 'App\\Http\\Controllers\\Admin\\MeetingController@index');
 $router->get('/admin/documents', 'App\\Http\\Controllers\\Admin\\DocumentController@index');
 $router->get('/admin/documents/upload', 'App\\Http\\Controllers\\Admin\\DocumentController@upload');
@@ -3763,3 +3775,10 @@ $router->post('/admin/bank-import/unmatch/{txnId}',                   'Admin\\Ba
 $router->post('/admin/bank-import/{id}/delete',                       'Admin\\BankImportController@delete');
 $router->get('/admin/bank-import/{id}/export',                        'Admin\\BankImportController@export');
 $router->get('/admin/bank-import/search-internal',                    'Admin\\BankImportController@searchInternal');
+
+// ============================================================
+// PUSH NOTIFICATIONS (API)
+// ============================================================
+$router->post('/api/push/subscribe',    'Api\\PushNotificationController@subscribe');
+$router->post('/api/push/unsubscribe',  'Api\\PushNotificationController@unsubscribe');
+$router->get('/api/push/vapid-key',     'Api\\PushNotificationController@vapidPublicKey');

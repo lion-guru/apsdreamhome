@@ -165,5 +165,6 @@ setInterval(checkNotifications, 30000);
             }
         });
     </script>
+<script src="<?= BASE_URL ?>/assets/js/push-notifications.js"></script>
 </body>
 </html>
