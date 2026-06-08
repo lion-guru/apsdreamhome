@@ -782,6 +782,65 @@ class MLMCommissionEngine
                         $result['errors'][] = "Ledger {$pr['id']}: " . $ie->getMessage();
                     }
                 }
+                // Also check booking_commissions (Module 2 table)
+                try {
+                    $bcStmt = $this->db->prepare("
+                        SELECT id, beneficiary_user_id, source_user_id, amount
+                        FROM booking_commissions
+                        WHERE status = 'paid'
+                          AND booking_id = ?
+                    ");
+                    $bcStmt->execute([$bookingId]);
+                    $bcRows = $bcStmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($bcRows as $bc) {
+                        try {
+                            $existingBc = $this->db->prepare("
+                                SELECT id FROM mlm_clawback_log
+                                WHERE original_ledger_id = ? AND status IN ('pending','debited')
+                                LIMIT 1
+                            ");
+                            $existingBc->execute([(int)$bc['id']]);
+                            if ($existingBc->fetchColumn()) {
+                                continue;
+                            }
+                            $cbAmt = (float)$bc['amount'];
+                            if ($cbAmt <= 0) {
+                                continue;
+                            }
+                            $this->db->prepare("
+                                INSERT INTO mlm_clawback_log
+                                    (original_ledger_id, beneficiary_user_id, source_user_id,
+                                     emi_installment_id, default_date, original_amount, clawback_amount,
+                                     reason, status, created_at)
+                                VALUES
+                                    (?, ?, ?, ?, ?, ?, ?, ?, 'debited', NOW())
+                            ")->execute([
+                                (int)$bc['id'],
+                                $bc['beneficiary_user_id'],
+                                $bc['source_user_id'],
+                                $installmentId,
+                                $defaultDate,
+                                $cbAmt,
+                                $cbAmt,
+                                "EMI default {$daysOverdue}d on booking #{$bookingId} (booking_commissions)",
+                            ]);
+                            try {
+                                $wStmt2 = $this->db->prepare("SELECT id, balance FROM user_wallets WHERE user_id = ? LIMIT 1");
+                                $wStmt2->execute([$bc['beneficiary_user_id']]);
+                                $w2 = $wStmt2->fetch(PDO::FETCH_ASSOC);
+                                if ($w2) {
+                                    $this->db->prepare("
+                                        UPDATE user_wallets SET balance = balance - ?, total_debited = total_debited + ?, updated_at = NOW() WHERE id = ?
+                                    ")->execute([$cbAmt, $cbAmt, $w2['id']]);
+                                }
+                            } catch (Exception $we2) {}
+                            $result['processed']++;
+                            $result['amount'] += $cbAmt;
+                        } catch (Exception $ie2) {
+                            $result['errors'][] = "BookingCommission {$bc['id']}: " . $ie2->getMessage();
+                        }
+                    }
+                } catch (Exception $bce) {}
             }
         } catch (Exception $e) {
             error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
