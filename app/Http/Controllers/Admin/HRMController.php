@@ -6,99 +6,27 @@ use App\Http\Controllers\Admin\AdminController;
 
 class HRMController extends AdminController
 {
-    public function index()
+    private function hr($path)
     {
         $this->requireAdmin();
-        return $this->render('admin/hrm/index', []);
+        $this->redirect('/admin/hr' . $path);
+        exit;
     }
 
-    public function users()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/users/index', []);
-    }
-    
-    public function createEmployee()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/users/create', []);
-    }
-    
-    public function attendance()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/attendance', []);
-    }
-    
-    public function leave()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/leave', []);
-    }
-    
-    public function payroll()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/payroll', []);
-    }
-    
-    public function salarySlips()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/salary-slips', []);
-    }
-    
-    public function performance()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/performance', []);
-    }
-    
-    public function recruitment()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/recruitment', []);
-    }
-    
-    public function jobs()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/jobs', []);
-    }
-    
-    public function departments()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/departments', []);
-    }
-    
-    public function designations()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/designations', []);
-    }
-    
-    public function settings()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/settings', []);
-    }
-
-    public function applicants()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/applicants', []);
-    }
-
-    public function documents()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/hrm/documents', []);
-    }
-
-    public function employeeList()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/users/index', ['page_title' => 'users']);
-    }
+    public function index()            { $this->hr('/users'); }
+    public function users()            { $this->hr('/users'); }
+    public function createEmployee()   { $this->hr('/users/create'); }
+    public function attendance()       { $this->hr('/attendance'); }
+    public function leave()            { $this->hr('/leave'); }
+    public function payroll()          { $this->hr('/salary-structure'); }
+    public function salarySlips()      { $this->hr('/salary-structure'); }
+    public function performance()      { $this->hr('/performance'); }
+    public function recruitment()      { $this->hr('/users/create'); }
+    public function jobs()             { $this->hr('/settings'); }
+    public function departments()      { $this->hr('/settings'); }
+    public function designations()     { $this->hr('/settings'); }
+    public function settings()         { $this->hr('/settings'); }
+    public function applicants()       { $this->hr('/users'); }
+    public function documents()        { $this->hr('/documents'); }
+    public function employeeList()     { $this->hr('/users'); }
 }
