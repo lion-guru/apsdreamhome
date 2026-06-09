@@ -1,8 +1,8 @@
 <?php $leads = $leads ?? []; $summary = $summary ?? []; $filters = $filters ?? []; $total = $total ?? 0; ?>
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Lead Pipeline</h1>
-    <a href="<?= BASE_URL ?>/admin/backoffice/leads/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>New Lead</a>
+    <h1 class="h3"><?= __('admin_lead_pipeline') ?></h1>
+    <a href="<?= BASE_URL ?>/admin/backoffice/leads/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?= __('admin_new_lead') ?></a>
   </div>
   <?php if (!empty($summary['stages'])): ?>
   <div class="row g-2 mb-4">
@@ -15,31 +15,31 @@
       </div>
     <?php endforeach; ?>
   </div>
-  <div class="mb-3">Total: <strong><?= $total ?></strong> | Conversion: <strong><?= $summary['conversion_rate'] ?? 0 ?>%</strong> | Won: <strong><?= $summary['won'] ?? 0 ?></strong></div>
+  <div class="mb-3"><?= __('admin_total_colon') ?> <strong><?= $total ?></strong> | <?= __('admin_conversion_label') ?> <strong><?= $summary['conversion_rate'] ?? 0 ?>%</strong> | <?= __('admin_won_label') ?> <strong><?= $summary['won'] ?? 0 ?></strong></div>
   <?php endif; ?>
 
   <form class="row g-2 mb-3" method="get">
-    <div class="col-auto"><select name="status" class="form-select form-select-sm"><option value="">All Status</option>
+    <div class="col-auto"><select name="status" class="form-select form-select-sm"><option value=""><?= __('admin_all_status') ?></option>
       <?php foreach(['new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold'] as $s): ?>
         <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
       <?php endforeach; ?>
     </select></div>
-    <div class="col-auto"><select name="priority" class="form-select form-select-sm"><option value="">All Priority</option>
+    <div class="col-auto"><select name="priority" class="form-select form-select-sm"><option value=""><?= __('admin_all_priority') ?></option>
       <?php foreach(['hot','warm','cold','dead'] as $p): ?>
         <option value="<?= $p ?>" <?= ($filters['priority'] ?? '') === $p ? 'selected' : '' ?>><?= ucfirst($p) ?></option>
       <?php endforeach; ?>
     </select></div>
-    <div class="col-auto"><input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>"></div>
-    <div class="col-auto"><button class="btn btn-primary btn-sm">Filter</button></div>
+    <div class="col-auto"><input type="text" name="search" class="form-control form-control-sm" placeholder="<?= __('admin_search_placeholder') ?>" value="<?= htmlspecialchars($filters['search'] ?? '') ?>"></div>
+    <div class="col-auto"><button class="btn btn-primary btn-sm"><?= __('admin_filter_btn') ?></button></div>
   </form>
 
   <div class="card border-0 shadow-sm">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th>#</th><th>Lead</th><th>Contact</th><th>Source</th><th>Type</th><th>Priority</th><th>Score</th><th>Status</th><th>Follow Up</th><th></th></tr></thead>
+        <thead><tr><th><?= __('admin_hash_label') ?></th><th><?= __('admin_lead_label') ?></th><th><?= __('admin_contact_label') ?></th><th><?= __('admin_source_label') ?></th><th><?= __('admin_type_label') ?></th><th><?= __('admin_priority_label') ?></th><th><?= __('admin_score_label') ?></th><th><?= __('admin_status_label') ?></th><th><?= __('admin_follow_up') ?></th><th></th></tr></thead>
         <tbody>
           <?php if (empty($leads)): ?>
-            <tr><td colspan="10" class="text-center text-muted py-4">No leads</td></tr>
+            <tr><td colspan="10" class="text-center text-muted py-4"><?= __('admin_no_leads') ?></td></tr>
           <?php else: ?>
             <?php foreach ($leads as $l): ?>
               <tr>

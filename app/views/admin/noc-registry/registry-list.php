@@ -8,9 +8,9 @@ $status_filter = $status_filter ?? null;
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-1"><i class="fas fa-landmark me-2"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">Sub-registrar tracking and property registration</span>
+        <span class="text-muted"><?= __('admin_registry_subtitle') ?></span>
     </div>
-    <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Registry</a>
+    <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_registry') ?></a>
 </div>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
@@ -33,8 +33,8 @@ $status_filter = $status_filter ?? null;
         <?php if (empty($registries)): ?>
             <div class="p-5 text-center text-muted">
                 <i class="fas fa-landmark fa-3x mb-3 opacity-25"></i>
-                <p>No registries found<?= $status_filter ? " with status: $status_filter" : '' ?></p>
-                <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-primary btn-sm">Create Registry</a>
+                <p><?= __('admin_no_registries_found') ?><?= $status_filter ? " with status: $status_filter" : '' ?></p>
+                <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-primary btn-sm"><?= __('admin_create_registry') ?></a>
             </div>
         <?php else: ?>
             <div class="table-responsive">
@@ -42,14 +42,14 @@ $status_filter = $status_filter ?? null;
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
-                            <th>Booking</th>
-                            <th>Customer</th>
-                            <th>Plot</th>
-                            <th>Stamp Duty</th>
-                            <th>Reg. Fee</th>
-                            <th>Total Cost</th>
-                            <th>Status</th>
-                            <th>Reg. No.</th>
+                            <th><?= __('admin_booking_label') ?></th>
+                            <th><?= __('admin_customer_label') ?></th>
+                            <th><?= __('admin_plot_label') ?></th>
+                            <th><?= __('admin_stamp_duty') ?></th>
+                            <th><?= __('admin_reg_fee') ?></th>
+                            <th><?= __('admin_total_cost') ?></th>
+                            <th><?= __('admin_status_label') ?></th>
+                            <th><?= __('admin_reg_no') ?></th>
                             <th></th>
                         </tr>
                     </thead>

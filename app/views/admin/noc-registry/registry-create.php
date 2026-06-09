@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'New Registry';
+$page_title = $page_title ?? __('admin_new_registry');
 ob_start();
 $eligible_bookings = $eligible_bookings ?? [];
 $stamp_duty = $stamp_duty ?? [];
@@ -8,9 +8,9 @@ $stamp_duty = $stamp_duty ?? [];
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-1"><i class="fas fa-landmark me-2"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">Schedule property registration at sub-registrar office</span>
+        <span class="text-muted"><?= __('admin_registry_create_subtitle') ?></span>
     </div>
-    <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Registries</a>
+    <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('admin_back_to_registries') ?></a>
 </div>
 
 <?php if (!empty($_SESSION['flash_error'])): ?>
@@ -21,13 +21,13 @@ $stamp_duty = $stamp_duty ?? [];
     <div class="col-md-8">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-bottom">
-                <h6 class="mb-0">Registry Details</h6>
+                <h6 class="mb-0"><?= __('admin_registry_details') ?></h6>
             </div>
             <div class="card-body">
                 <?php if (empty($eligible_bookings)): ?>
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>No eligible bookings found.</strong> NOC must be approved before creating a registry.
+                        <strong><?= __('admin_no_eligible_bookings') ?></strong> <?= __('admin_noc_required_for_registry') ?>
                     </div>
                 <?php else: ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/noc-registry/registries/store">
@@ -35,7 +35,7 @@ $stamp_duty = $stamp_duty ?? [];
 
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <label class="form-label fw-semibold">Booking <span class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold"><?= __('admin_booking_label') ?> <span class="text-danger">*</span></label>
                                 <select name="booking_id" class="form-select" required id="bookingSelect">
                                     <option value="">— Select Booking —</option>
                                     <?php foreach ($eligible_bookings as $b): ?>
@@ -49,7 +49,7 @@ $stamp_duty = $stamp_duty ?? [];
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Sub-Registrar Office <span class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold"><?= __('admin_sub_registrar_office') ?> <span class="text-danger">*</span></label>
                                 <select name="sub_registrar_office" class="form-select" required>
                                     <option value="SRO Gorakhpur">SRO Gorakhpur</option>
                                     <option value="SRO Lucknow">SRO Lucknow</option>
@@ -60,18 +60,18 @@ $stamp_duty = $stamp_duty ?? [];
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Appointment Date</label>
+                                <label class="form-label fw-semibold"><?= __('admin_appointment_date') ?></label>
                                 <input type="date" name="appointment_date" class="form-control" min="<?= date('Y-m-d') ?>">
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Notes</label>
-                                <textarea name="notes" class="form-control" rows="2" placeholder="Additional instructions..."></textarea>
+                                <label class="form-label fw-semibold"><?= __('admin_notes_label') ?></label>
+                                <textarea name="notes" class="form-control" rows="2" placeholder="<?= __('admin_additional_instructions_placeholder') ?>"></textarea>
                             </div>
                         </div>
 
                         <div class="mt-4 d-flex gap-2">
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create Registry</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i><?= __('admin_create_registry') ?></button>
                             <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-outline-secondary">Cancel</a>
                         </div>
                     </form>
@@ -84,15 +84,15 @@ $stamp_duty = $stamp_duty ?? [];
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-bottom">
-                <h6 class="mb-0"><i class="fas fa-calculator me-2"></i>Stamp Duty Calculator</h6>
+                <h6 class="mb-0"><i class="fas fa-calculator me-2"></i><?= __('admin_stamp_duty_calculator') ?></h6>
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold">Property Value (₹)</label>
+                    <label class="form-label small fw-semibold"><?= __('admin_property_value') ?> (₹)</label>
                     <input type="number" class="form-control" id="calcValue" placeholder="e.g. 2500000" value="2500000">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold">State</label>
+                    <label class="form-label small fw-semibold"><?= __('admin_state_label') ?></label>
                     <select class="form-select" id="calcState">
                         <option value="Uttar Pradesh" selected>Uttar Pradesh (4%)</option>
                         <option value="Bihar">Bihar (6%)</option>
@@ -102,11 +102,11 @@ $stamp_duty = $stamp_duty ?? [];
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between mb-2">
-                    <span class="small">Stamp Duty:</span>
+                    <span class="small"><?= __('admin_stamp_duty_colon') ?></span>
                     <span class="fw-bold" id="calcStamp">₹<?= number_format($stamp_duty['stamp_duty'] ?? 0, 0) ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
-                    <span class="small">Registration Fee:</span>
+                    <span class="small"><?= __('admin_registration_fee_colon') ?></span>
                     <span class="fw-bold" id="calcReg">₹<?= number_format($stamp_duty['registration_fee'] ?? 0, 0) ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
@@ -115,7 +115,7 @@ $stamp_duty = $stamp_duty ?? [];
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between">
-                    <span class="fw-bold">Total Cost:</span>
+                    <span class="fw-bold"><?= __('admin_total_cost_colon') ?></span>
                     <span class="fw-bold text-primary fs-5" id="calcTotal">₹<?= number_format($stamp_duty['total'] ?? 0, 0) ?></span>
                 </div>
             </div>

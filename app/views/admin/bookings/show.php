@@ -1,5 +1,5 @@
 <?php
-$page_title = 'Booking Details';
+$page_title = __('admin_booking_details');
 $active_page = 'bookings';
 $extraHead = '<style>
     .status-badge {
@@ -15,16 +15,16 @@ $extraHead = '<style>
 </style>';
 ?>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Booking Details</h1>
+    <h1 class="h2"><?= __('admin_booking_details') ?></h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <a href="<?= BASE_URL ?>admin/bookings" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Bookings
+            <i class="fas fa-arrow-left"></i> <?= __('admin_back_to_bookings') ?>
         </a>
         <a href="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/edit" class="btn btn-primary ms-2">
-            <i class="fas fa-edit"></i> Edit Booking
+            <i class="fas fa-edit"></i> <?= __('admin_edit_booking') ?>
         </a>
         <button type="button" class="btn btn-danger ms-2" onclick="confirmDelete()">
-            <i class="fas fa-trash"></i> Delete
+            <i class="fas fa-trash"></i> <?= __('admin_delete') ?>
         </button>
     </div>
 </div>
@@ -44,32 +44,32 @@ $extraHead = '<style>
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-info-circle"></i> Booking Information
+                    <i class="fas fa-info-circle"></i> <?= __('admin_booking_information') ?>
                 </h5>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <p><strong>Booking Number:</strong><br>
+                        <p><strong><?= __('admin_booking_number') ?>:</strong><br>
                             <span class="badge bg-primary"><?= htmlspecialchars($booking['booking_number'] ?? '') ?></span>
                         </p>
 
-                        <p><strong>Property:</strong><br>
+                        <p><strong><?= __('admin_property') ?>:</strong><br>
                             <?= htmlspecialchars($booking['property_title'] ?? '') ?><br>
                             <small class="text-muted">
                                 <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($booking['property_location'] ?? '') ?>
                             </small>
                         </p>
 
-                        <p><strong>Total Amount:</strong><br>
+                        <p><strong><?= __('admin_total') ?>:</strong><br>
                             <span class="text-success fw-bold">₹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></span>
                         </p>
 
-                        <p><strong>Booking Date:</strong><br>
+                        <p><strong><?= __('admin_booking_date') ?>:</strong><br>
                             <?= date('d F Y', strtotime($booking['booking_date'])) ?></p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Status:</strong><br>
+                        <p><strong><?= __('admin_status_label') ?>:</strong><br>
                             <?php
                             $statusColors = [
                                 'pending' => 'warning',
@@ -84,14 +84,14 @@ $extraHead = '<style>
                             </span>
                         </p>
 
-                        <p><strong>Created:</strong><br>
+                        <p><strong><?= __('admin_created_label') ?>:</strong><br>
                             <?= date('d F Y h:i A', strtotime($booking['created_at'])) ?></p>
 
-                        <p><strong>Last Updated:</strong><br>
+                        <p><strong><?= __('admin_last_updated') ?>:</strong><br>
                             <?= $booking['updated_at'] ? date('d F Y h:i A', strtotime($booking['updated_at'])) : 'N/A' ?></p>
 
                         <?php if (!empty($booking['notes'])): ?>
-                            <p><strong>Notes:</strong><br>
+                            <p><strong><?= __('admin_notes_label') ?>:</strong><br>
                                 <?= nl2br(htmlspecialchars($booking['notes'] ?? '')) ?></p>
                         <?php endif; ?>
                     </div>
@@ -103,27 +103,27 @@ $extraHead = '<style>
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-pie"></i> Financial Summary
+                    <i class="fas fa-chart-pie"></i> <?= __('admin_financial_summary') ?>
                 </h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Total Amount</label>
+                    <label class="form-label fw-bold"><?= __('admin_total') ?></label>
                     <h4 class="text-primary">₹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></h4>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Total Paid</label>
+                    <label class="form-label fw-bold"><?= __('admin_total_paid') ?></label>
                     <h4 class="text-success">₹<?= number_format($total_paid, 2) ?></h4>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Balance Due</label>
+                    <label class="form-label fw-bold"><?= __('admin_balance_due') ?></label>
                     <h4 class="text-danger">₹<?= number_format(floatval($booking['total_amount'] ?? 0) - $total_paid, 2) ?></h4>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Total Commission</label>
+                    <label class="form-label fw-bold"><?= __('admin_total_commission') ?></label>
                     <h4 class="text-info">₹<?= number_format($total_commission, 2) ?></h4>
                 </div>
 
@@ -147,23 +147,23 @@ $extraHead = '<style>
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-user"></i> Customer Information
+                    <i class="fas fa-user"></i> <?= __('admin_customer_information') ?>
                 </h5>
             </div>
             <div class="card-body">
-                <p><strong>Name:</strong><br><?= htmlspecialchars($booking['customer_name'] ?? '') ?></p>
-                <p><strong>Email:</strong><br>
+                <p><strong><?= __('admin_name_label') ?>:</strong><br><?= htmlspecialchars($booking['customer_name'] ?? '') ?></p>
+                <p><strong><?= __('admin_email_label') ?>:</strong><br>
                     <a href="mailto:<?= htmlspecialchars($booking['customer_email'] ?? '') ?>">
                         <?= htmlspecialchars($booking['customer_email'] ?? '') ?>
                     </a>
                 </p>
-                <p><strong>Phone:</strong><br>
+                <p><strong><?= __('admin_phone_label') ?>:</strong><br>
                     <a href="tel:<?= htmlspecialchars($booking['customer_phone'] ?? '') ?>">
                         <?= htmlspecialchars($booking['customer_phone'] ?? '') ?>
                     </a>
                 </p>
                 <?php if (!empty($booking['customer_address'])): ?>
-                    <p><strong>Address:</strong><br>
+                    <p><strong><?= __('admin_address_label') ?>:</strong><br>
                         <?= nl2br(htmlspecialchars($booking['customer_address'] ?? '')) ?></p>
                 <?php endif; ?>
             </div>
@@ -173,26 +173,26 @@ $extraHead = '<style>
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-user-tie"></i> Associate Information
+                    <i class="fas fa-user-tie"></i> <?= __('admin_associate_information') ?>
                 </h5>
             </div>
             <div class="card-body">
                 <?php if ($booking['associate_name']): ?>
-                    <p><strong>Name:</strong><br><?= htmlspecialchars($booking['associate_name'] ?? '') ?></p>
-                    <p><strong>Email:</strong><br>
+                    <p><strong><?= __('admin_name_label') ?>:</strong><br><?= htmlspecialchars($booking['associate_name'] ?? '') ?></p>
+                    <p><strong><?= __('admin_email_label') ?>:</strong><br>
                         <a href="mailto:<?= htmlspecialchars($booking['associate_email'] ?? '') ?>">
                             <?= htmlspecialchars($booking['associate_email'] ?? '') ?>
                         </a>
                     </p>
                     <?php if (!empty($booking['associate_phone'])): ?>
-                        <p><strong>Phone:</strong><br>
+                        <p><strong><?= __('admin_phone_label') ?>:</strong><br>
                             <a href="tel:<?= htmlspecialchars($booking['associate_phone'] ?? '') ?>">
                                 <?= htmlspecialchars($booking['associate_phone'] ?? '') ?>
                             </a>
                         </p>
                     <?php endif; ?>
                 <?php else: ?>
-                    <p class="text-muted">No associate assigned (Direct Booking)</p>
+                    <p class="text-muted"><?= __('admin_no_associate_assigned') ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -203,23 +203,23 @@ $extraHead = '<style>
 <div class="card mb-4">
     <div class="card-header">
         <h5 class="card-title mb-0">
-            <i class="fas fa-money-bill-wave"></i> Payment History
+            <i class="fas fa-money-bill-wave"></i> <?= __('admin_payment_history') ?>
         </h5>
     </div>
     <div class="card-body">
         <?php if (empty($payments)): ?>
-            <p class="text-muted">No payments recorded yet.</p>
+            <p class="text-muted"><?= __('admin_no_payments_recorded') ?></p>
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Method</th>
-                            <th>Transaction ID</th>
-                            <th>Status</th>
-                            <th>Receipt</th>
+                            <th><?= __('admin_date_label') ?></th>
+                            <th><?= __('admin_amount_label') ?></th>
+                            <th><?= __('admin_method_label') ?></th>
+                            <th><?= __('admin_transaction_id') ?></th>
+                            <th><?= __('admin_status_label') ?></th>
+                            <th><?= __('admin_receipt_label') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -237,7 +237,7 @@ $extraHead = '<style>
                                 <td>
                                     <?php if (!empty($payment['receipt_number'])): ?>
                                         <button class="btn btn-sm btn-outline-primary" onclick="viewReceipt('<?= $payment['receipt_number'] ?>')">
-                                            <i class="fas fa-receipt"></i> View
+                                            <i class="fas fa-receipt"></i> <?= __('admin_view_button') ?>
                                         </button>
                                     <?php else: ?>
                                         <span class="text-muted">N/A</span>
@@ -252,7 +252,7 @@ $extraHead = '<style>
 
         <div class="mt-3">
             <button class="btn btn-primary" onclick="addPayment()">
-                <i class="fas fa-plus"></i> Add Payment
+                <i class="fas fa-plus"></i> <?= __('admin_add_payment') ?>
             </button>
         </div>
     </div>
@@ -262,23 +262,23 @@ $extraHead = '<style>
 <div class="card">
     <div class="card-header">
         <h5 class="card-title mb-0">
-            <i class="fas fa-percentage"></i> Commission History
+            <i class="fas fa-percentage"></i> <?= __('admin_commission_history') ?>
         </h5>
     </div>
     <div class="card-body">
         <?php if (empty($commissions)): ?>
-            <p class="text-muted">No commissions recorded yet.</p>
+            <p class="text-muted"><?= __('admin_no_commissions_recorded') ?></p>
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Associate</th>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Description</th>
+                            <th><?= __('admin_date_label') ?></th>
+                            <th><?= __('admin_associate') ?></th>
+                            <th><?= __('admin_type_label') ?></th>
+                            <th><?= __('admin_amount_label') ?></th>
+                            <th><?= __('admin_status_label') ?></th>
+                            <th><?= __('admin_description_label') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -308,18 +308,18 @@ $extraHead = '<style>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <h5 class="modal-title" id="deleteModalLabel"><?= __('admin_confirm_delete') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete booking <strong><?= htmlspecialchars($booking['booking_number'] ?? '') ?></strong>?<br>
-                This action cannot be undone and will also delete all related payments and commissions.
+                <?= __('admin_confirm_delete_booking') ?> <strong><?= htmlspecialchars($booking['booking_number'] ?? '') ?></strong>?<br>
+                <?= __('admin_delete_warning') ?>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
                 <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/destroy" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger"><?= __('admin_delete') ?></button>
                 </form>
             </div>
         </div>
@@ -331,7 +331,7 @@ $extraHead = '<style>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="paymentModalLabel">Add Payment</h5>
+                <h5 class="modal-title" id="paymentModalLabel"><?= __('admin_add_payment') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/payment">
@@ -339,7 +339,7 @@ $extraHead = '<style>
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
                     <div class="mb-3">
-                        <label for="amount" class="form-label">Amount (₹)</label>
+                        <label for="amount" class="form-label"><?= __('admin_amount_label') ?> (₹)</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
                             <input type="number" class="form-control" id="amount" name="amount"
@@ -348,26 +348,26 @@ $extraHead = '<style>
                     </div>
 
                     <div class="mb-3">
-                        <label for="payment_method" class="form-label">Payment Method</label>
+                        <label for="payment_method" class="form-label"><?= __('admin_payment_method') ?></label>
                         <select class="form-select" id="payment_method" name="payment_method" required>
-                            <option value="">Select Method</option>
-                            <option value="cash">Cash</option>
-                            <option value="bank_transfer">Bank Transfer</option>
-                            <option value="cheque">Cheque</option>
-                            <option value="online">Online Payment</option>
-                            <option value="upi">UPI</option>
+                            <option value=""><?= __('admin_select_method') ?></option>
+                            <option value="cash"><?= __('admin_cash') ?></option>
+                            <option value="bank_transfer"><?= __('admin_bank_transfer') ?></option>
+                            <option value="cheque"><?= __('admin_cheque') ?></option>
+                            <option value="online"><?= __('admin_online_payment') ?></option>
+                            <option value="upi"><?= __('admin_upi') ?></option>
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label for="transaction_id" class="form-label">Transaction ID</label>
+                        <label for="transaction_id" class="form-label"><?= __('admin_transaction_id') ?></label>
                         <input type="text" class="form-control" id="transaction_id" name="transaction_id"
-                            placeholder="Enter transaction ID">
+                            placeholder="<?= __('admin_enter_transaction_id') ?>">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Payment</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
+                    <button type="submit" class="btn btn-primary"><?= __('admin_add_payment') ?></button>
                 </div>
             </form>
         </div>
