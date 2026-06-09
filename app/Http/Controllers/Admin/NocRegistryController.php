@@ -1,261 +1,297 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Services\NocRegistryService;
-use App\Services\AuditService;
 
+/**
+ * NocRegistryController — NOC & Registry admin management
+ * Routes: /admin/noc-registry/*
+ */
 class NocRegistryController extends AdminController
 {
-    protected $service;
-    protected $audit;
+    private $service;
 
-    public function __construct($db = null, $auth = null, array $config = [])
+    public function __construct()
     {
-        parent::__construct($db, $auth, $config);
-        try { $this->service = new NocRegistryService($this->db); } catch (\Throwable $e) { $this->service = null; }
-        try { $this->audit = new AuditService($this->db); } catch (\Throwable $e) { $this->audit = null; }
+        parent::__construct();
+        $this->service = new NocRegistryService(
+            $this->db instanceof \PDO ? $this->db : null
+        );
     }
 
-    // ==================== NOC ====================
+    // ========== Dashboard ==========
 
     public function dashboard()
     {
-        $stats = $this->service ? $this->service->getDashboardSummary() : [];
-        $pendingNocs = $this->service ? $this->service->listNocs('pending', 10) : [];
-        $pendingRegistries = $this->service ? $this->service->listRegistries('pending', 10) : [];
-        return $this->render('admin/noc-registry/dashboard', [
-            'page_title' => 'NOC & Registry Dashboard',
+        $this->requireAdmin();
+        $stats = $this->service->getDashboardStats();
+        $recentNocs = $this->service->listNocs();
+        $recentRegistries = $this->service->listRegistries();
+
+        $this->render('admin/noc-registry/dashboard', [
+            'page_title' => 'NOC & Registry Pipeline',
             'stats' => $stats,
-            'pendingNocs' => $pendingNocs,
-            'pendingRegistries' => $pendingRegistries
+            'recent_nocs' => array_slice($recentNocs, 0, 10),
+            'recent_registries' => array_slice($recentRegistries, 0, 10),
         ]);
     }
+
+    // ========== Eligibility ==========
+
+    public function eligibilityCheck()
+    {
+        $this->requireAdmin();
+        $bookingId = (int)($_GET['booking_id'] ?? 0);
+        $result = null;
+        $eligibleBookings = $this->service->listEligibleBookings();
+
+        if ($bookingId > 0) {
+            $nocResult = $this->service->checkNocEligibility($bookingId);
+            $regResult = $this->service->checkRegistryEligibility($bookingId);
+            $result = [
+                'booking' => $nocResult['booking'],
+                'noc' => $nocResult,
+                'registry' => $regResult,
+            ];
+        }
+
+        $this->render('admin/noc-registry/eligibility', [
+            'page_title' => 'Eligibility Check',
+            'result' => $result,
+            'eligible_bookings' => $eligibleBookings,
+            'booking_id' => $bookingId,
+        ]);
+    }
+
+    // ========== NOC CRUD ==========
 
     public function nocList()
     {
-        $status = $_GET['status'] ?? '';
-        $nocs = $this->service ? $this->service->listNocs($status, 100) : [];
-        return $this->render('admin/noc-registry/noc-list', [
+        $this->requireAdmin();
+        $status = $_GET['status'] ?? null;
+        $nocs = $this->service->listNocs(['status' => $status]);
+
+        $this->render('admin/noc-registry/noc-list', [
             'page_title' => 'NOC Requests',
             'nocs' => $nocs,
-            'filters' => ['status' => $status]
-        ]);
-    }
-
-    public function nocDetail()
-    {
-        $id = (int)($_GET['id'] ?? 0);
-        $noc = $this->service ? $this->service->getNocById($id) : null;
-        if (!$noc) {
-            $this->setFlash('error', 'NOC request not found');
-            return $this->redirect(BASE_URL . '/admin/noc-registry/nocs');
-        }
-        $eligibility = $this->service ? $this->service->checkEligibility((int)$noc['booking_id']) : null;
-        return $this->render('admin/noc-registry/noc-detail', [
-            'page_title' => 'NOC Details',
-            'noc' => $noc,
-            'eligibility' => $eligibility
+            'status_filter' => $status,
         ]);
     }
 
     public function nocCreate()
     {
-        $bookings = $this->getBookings();
-        $users = $this->getUsers();
-        return $this->render('admin/noc-registry/noc-create', [
+        $this->requireAdmin();
+        $eligibleBookings = $this->service->listEligibleBookings();
+
+        $this->render('admin/noc-registry/noc-create', [
             'page_title' => 'Request NOC',
-            'bookings' => $bookings,
-            'users' => $users
+            'eligible_bookings' => $eligibleBookings,
         ]);
     }
 
     public function nocStore()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
         if (!$this->validateCsrfToken($token)) {
-            $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+            $_SESSION['flash_error'] = 'Invalid CSRF token';
+            redirect('/admin/noc-registry/nocs/create');
             return;
         }
-        $data = [
+
+        $result = $this->service->createNocRequest([
             'booking_id' => (int)($_POST['booking_id'] ?? 0),
-            'plot_id' => (int)($_POST['plot_id'] ?? 0),
-            'user_id' => (int)($_POST['user_id'] ?? 0),
-            'requested_by' => $this->getUserId(),
-            'purpose' => trim($_POST['purpose'] ?? ''),
-            'notes' => trim($_POST['notes'] ?? '')
-        ];
-        $result = $this->service ? $this->service->requestNoc($data) : ['success' => false, 'error' => 'Service unavailable'];
+            'requested_by' => (int)($_SESSION['admin_id'] ?? 0),
+            'purpose' => $_POST['purpose'] ?? 'Property transfer / Registry',
+            'notes' => $_POST['notes'] ?? null,
+        ]);
+
         if ($result['success']) {
-            // Auto-process eligibility
-            $this->service->processNoc($result['noc_id']);
-            if ($this->audit) $this->audit->log('noc.request', $this->getUserId(), $this->getUserRole(), 'noc_requests', $result['noc_id'], "NOC requested for booking #{$data['booking_id']}");
-            $this->setFlash('success', 'NOC request created and eligibility checked');
+            $_SESSION['flash_success'] = $result['message'];
+            redirect('/admin/noc-registry/nocs/' . $result['noc_id']);
         } else {
-            $this->setFlash('error', $result['error'] ?? 'Failed');
+            $_SESSION['flash_error'] = $result['error'];
+            redirect('/admin/noc-registry/nocs/create');
         }
-        return $this->redirect(BASE_URL . '/admin/noc-registry/nocs');
+    }
+
+    public function nocDetail($id = null)
+    {
+        $this->requireAdmin();
+        $id = (int)($id ?? $_GET['id'] ?? 0);
+        if ($id <= 0) { redirect('/admin/noc-registry/nocs'); return; }
+
+        $noc = $this->service->getNoc($id);
+        if (!$noc) {
+            $_SESSION['flash_error'] = 'NOC not found';
+            redirect('/admin/noc-registry/nocs');
+            return;
+        }
+
+        $eligibility = $this->service->checkNocEligibility($noc['booking_id']);
+
+        $this->render('admin/noc-registry/noc-detail', [
+            'page_title' => 'NOC #' . $id,
+            'noc' => $noc,
+            'eligibility' => $eligibility,
+        ]);
     }
 
     public function nocApprove()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
-        if (!$this->validateCsrfToken($token)) { $this->json(['success' => false, 'error' => 'CSRF'], 403); return; }
-        $id = (int)($_POST['id'] ?? 0);
-        if ($this->service && $this->service->approveNoc($id, $this->getUserId())) {
-            if ($this->audit) $this->audit->log('noc.approve', $this->getUserId(), $this->getUserRole(), 'noc_requests', $id, "NOC #$id approved");
-            $this->setFlash('success', 'NOC approved');
-        } else {
-            $this->setFlash('error', 'Failed to approve');
+        if (!$this->validateCsrfToken($token)) {
+            $_SESSION['flash_error'] = 'Invalid CSRF token';
+            return;
         }
-        return $this->redirect(BASE_URL . '/admin/noc-registry/nocs/' . $id);
+
+        $nocId = (int)($_POST['noc_id'] ?? 0);
+        $result = $this->service->approveNoc($nocId, (int)($_SESSION['admin_id'] ?? 0));
+
+        $_SESSION[$result['success'] ? 'flash_success' : 'flash_error'] = $result['success'] ? $result['message'] : $result['error'];
+        redirect('/admin/noc-registry/nocs/' . $nocId);
     }
 
     public function nocReject()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
-        if (!$this->validateCsrfToken($token)) { $this->json(['success' => false, 'error' => 'CSRF'], 403); return; }
-        $id = (int)($_POST['id'] ?? 0);
-        $reason = trim($_POST['reason'] ?? '');
-        if (!$reason) { $this->setFlash('error', 'Reason required'); return $this->redirect(BASE_URL . '/admin/noc-registry/nocs/' . $id); }
-        if ($this->service && $this->service->rejectNoc($id, $this->getUserId(), $reason)) {
-            if ($this->audit) $this->audit->log('noc.reject', $this->getUserId(), $this->getUserRole(), 'noc_requests', $id, "NOC #$id rejected: $reason");
-            $this->setFlash('warning', 'NOC rejected');
-        } else {
-            $this->setFlash('error', 'Failed');
+        if (!$this->validateCsrfToken($token)) {
+            $_SESSION['flash_error'] = 'Invalid CSRF token';
+            return;
         }
-        return $this->redirect(BASE_URL . '/admin/noc-registry/nocs/' . $id);
+
+        $nocId = (int)($_POST['noc_id'] ?? 0);
+        $reason = $_POST['reason'] ?? 'Rejected by admin';
+        $result = $this->service->rejectNoc($nocId, (int)($_SESSION['admin_id'] ?? 0), $reason);
+
+        $_SESSION[$result['success'] ? 'flash_success' : 'flash_error'] = $result['success'] ? $result['message'] : $result['error'];
+        redirect('/admin/noc-registry/nocs/' . $nocId);
     }
 
     public function nocReprocess()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
-        if (!$this->validateCsrfToken($token)) { $this->json(['success' => false, 'error' => 'CSRF'], 403); return; }
-        $id = (int)($_POST['id'] ?? 0);
-        $result = $this->service ? $this->service->processNoc($id) : ['success' => false];
-        if ($result['success']) {
-            $status = $result['status'] ?? 'unknown';
-            $this->setFlash($status === 'approved' ? 'success' : 'warning', "NOC re-processed: $status");
-        } else {
-            $this->setFlash('error', $result['error'] ?? 'Failed');
+        if (!$this->validateCsrfToken($token)) {
+            $_SESSION['flash_error'] = 'Invalid CSRF token';
+            return;
         }
-        return $this->redirect(BASE_URL . '/admin/noc-registry/nocs/' . $id);
+
+        $nocId = (int)($_POST['noc_id'] ?? 0);
+        $pdo = $this->getPdoLocal();
+        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'processing', rejection_reason = NULL WHERE id = ?");
+        $stmt->execute([$nocId]);
+
+        $_SESSION['flash_success'] = "NOC #{$nocId} set to processing";
+        redirect('/admin/noc-registry/nocs/' . $nocId);
     }
 
-    public function eligibilityCheck()
-    {
-        $bookingId = (int)($_GET['booking_id'] ?? 0);
-        if (!$bookingId) { $this->json(['error' => 'booking_id required'], 400); return; }
-        $result = $this->service ? $this->service->checkEligibility($bookingId) : ['eligible' => false, 'checks' => [], 'blockers' => ['Service unavailable']];
-        $this->json($result);
-    }
-
-    // ==================== REGISTRY ====================
+    // ========== Registry CRUD ==========
 
     public function registryList()
     {
-        $status = $_GET['status'] ?? '';
-        $registries = $this->service ? $this->service->listRegistries($status, 100) : [];
-        return $this->render('admin/noc-registry/registry-list', [
-            'page_title' => 'Registry Requests',
-            'registries' => $registries,
-            'filters' => ['status' => $status]
-        ]);
-    }
+        $this->requireAdmin();
+        $status = $_GET['status'] ?? null;
+        $registries = $this->service->listRegistries(['status' => $status]);
 
-    public function registryDetail()
-    {
-        $id = (int)($_GET['id'] ?? 0);
-        try {
-            $stmt = $this->db->prepare("SELECT r.*, pb.booking_number, pb.total_plot_value, p.plot_number, p.block, u.name as customer_name FROM registries r LEFT JOIN plot_bookings pb ON r.booking_id = pb.id LEFT JOIN plots p ON r.plot_id = p.id LEFT JOIN users u ON r.user_id = u.id WHERE r.id = ?");
-            $stmt->execute([$id]);
-            $registry = $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { $registry = null; }
-        if (!$registry) { $this->setFlash('error', 'Registry not found'); return $this->redirect(BASE_URL . '/admin/noc-registry/registries'); }
-        return $this->render('admin/noc-registry/registry-detail', [
-            'page_title' => 'Registry Details',
-            'registry' => $registry
+        $this->render('admin/noc-registry/registry-list', [
+            'page_title' => 'Registries',
+            'registries' => $registries,
+            'status_filter' => $status,
         ]);
     }
 
     public function registryCreate()
     {
-        $bookings = $this->getApprovedNocBookings();
-        $users = $this->getUsers();
-        return $this->render('admin/noc-registry/registry-create', [
-            'page_title' => 'Request Registry',
-            'bookings' => $bookings,
-            'users' => $users
+        $this->requireAdmin();
+        $eligibleBookings = $this->service->listEligibleBookings();
+        $stampDuty = $this->service->calculateStampDuty(0);
+
+        $this->render('admin/noc-registry/registry-create', [
+            'page_title' => 'New Registry',
+            'eligible_bookings' => $eligibleBookings,
+            'stamp_duty' => $stampDuty,
         ]);
     }
 
     public function registryStore()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
-        if (!$this->validateCsrfToken($token)) { $this->json(['success' => false, 'error' => 'CSRF'], 403); return; }
-        $data = [
-            'booking_id' => (int)($_POST['booking_id'] ?? 0),
-            'plot_id' => (int)($_POST['plot_id'] ?? 0),
-            'user_id' => (int)($_POST['user_id'] ?? 0),
-            'associate_id' => !empty($_POST['associate_id']) ? (int)$_POST['associate_id'] : null,
-            'sub_registrar_office' => trim($_POST['sub_registrar_office'] ?? ''),
-            'stamp_duty_amount' => (float)($_POST['stamp_duty_amount'] ?? 0),
-            'registration_fee' => (float)($_POST['registration_fee'] ?? 0),
-            'other_charges' => (float)($_POST['other_charges'] ?? 0),
-            'total_registry_cost' => (float)($_POST['total_registry_cost'] ?? 0),
-            'notes' => trim($_POST['notes'] ?? '')
-        ];
-        $result = $this->service ? $this->service->requestRegistry($data) : ['success' => false, 'error' => 'Service unavailable'];
-        if ($result['success']) {
-            if ($this->audit) $this->audit->log('registry.request', $this->getUserId(), $this->getUserRole(), 'registries', $result['registry_id'], "Registry requested for booking #{$data['booking_id']}");
-            $this->setFlash('success', 'Registry request created');
-        } else {
-            $this->setFlash('error', $result['error'] ?? 'Failed');
+        if (!$this->validateCsrfToken($token)) {
+            $_SESSION['flash_error'] = 'Invalid CSRF token';
+            redirect('/admin/noc-registry/registries/create');
+            return;
         }
-        return $this->redirect(BASE_URL . '/admin/noc-registry/registries');
+
+        $result = $this->service->createRegistry([
+            'booking_id' => (int)($_POST['booking_id'] ?? 0),
+            'sub_registrar_office' => $_POST['sub_registrar_office'] ?? 'SRO Gorakhpur',
+            'notes' => $_POST['notes'] ?? null,
+        ]);
+
+        if ($result['success']) {
+            $_SESSION['flash_success'] = $result['message'];
+            redirect('/admin/noc-registry/registries/' . $result['registry_id']);
+        } else {
+            $_SESSION['flash_error'] = $result['error'];
+            redirect('/admin/noc-registry/registries/create');
+        }
+    }
+
+    public function registryDetail($id = null)
+    {
+        $this->requireAdmin();
+        $id = (int)($id ?? $_GET['id'] ?? 0);
+        if ($id <= 0) { redirect('/admin/noc-registry/registries'); return; }
+
+        $registry = $this->service->getRegistry($id);
+        if (!$registry) {
+            $_SESSION['flash_error'] = 'Registry not found';
+            redirect('/admin/noc-registry/registries');
+            return;
+        }
+
+        $stampDutyCalc = $this->service->calculateStampDuty((float)$registry['total_plot_value'] ?? 0);
+
+        $this->render('admin/noc-registry/registry-detail', [
+            'page_title' => 'Registry #' . $id,
+            'registry' => $registry,
+            'stamp_duty_calc' => $stampDutyCalc,
+        ]);
     }
 
     public function registryUpdateStatus()
     {
+        $this->requireAdmin();
         $token = $_POST['csrf_token'] ?? '';
-        if (!$this->validateCsrfToken($token)) { $this->json(['success' => false, 'error' => 'CSRF'], 403); return; }
-        $id = (int)($_POST['id'] ?? 0);
-        $status = $_POST['status'] ?? '';
-        $reason = trim($_POST['reason'] ?? '');
-        $valid = ['pending','appointment_scheduled','documents_submitted','in_progress','completed','rejected','cancelled'];
-        if (!in_array($status, $valid)) { $this->setFlash('error', 'Invalid status'); return $this->redirect(BASE_URL . '/admin/noc-registry/registries/' . $id); }
-        if ($this->service && $this->service->updateRegistryStatus($id, $status, $reason)) {
-            if ($this->audit) $this->audit->log('registry.update_status', $this->getUserId(), $this->getUserRole(), 'registries', $id, "Registry #$id → $status");
-            $this->setFlash('success', "Registry status updated to $status");
-        } else {
-            $this->setFlash('error', 'Failed');
+        if (!$this->validateCsrfToken($token)) {
+            $_SESSION['flash_error'] = 'Invalid CSRF token';
+            return;
         }
-        return $this->redirect(BASE_URL . '/admin/noc-registry/registries/' . $id);
+
+        $registryId = (int)($_POST['registry_id'] ?? 0);
+        $newStatus = $_POST['status'] ?? '';
+        $notes = $_POST['notes'] ?? null;
+        $regNo = $_POST['registration_no'] ?? null;
+
+        $result = $this->service->updateRegistryStatus($registryId, $newStatus, $notes, $regNo);
+
+        $_SESSION[$result['success'] ? 'flash_success' : 'flash_error'] = $result['success'] ? $result['message'] : $result['error'];
+        redirect('/admin/noc-registry/registries/' . $registryId);
     }
 
-    // ---- Helpers ----
+    // ========== Helpers ==========
 
-    private function getBookings(): array
+    private function getPdoLocal(): \PDO
     {
-        try {
-            $stmt = $this->db->query("SELECT pb.id, pb.booking_number, pb.customer_id, pb.total_plot_value, pb.status, u.name as customer_name, p.plot_number, p.block FROM plot_bookings pb LEFT JOIN users u ON pb.customer_id = u.id LEFT JOIN plots p ON pb.plot_id = p.id WHERE pb.status NOT IN ('cancelled','transferred') ORDER BY pb.created_at DESC LIMIT 100");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
-    }
-
-    private function getApprovedNocBookings(): array
-    {
-        try {
-            $stmt = $this->db->query("SELECT pb.id, pb.booking_number, pb.customer_id, pb.total_plot_value, pb.status, u.name as customer_name, p.plot_number, p.block FROM plot_bookings pb INNER JOIN noc_requests nr ON nr.booking_id = pb.id AND nr.status = 'approved' LEFT JOIN users u ON pb.customer_id = u.id LEFT JOIN plots p ON pb.plot_id = p.id ORDER BY pb.created_at DESC LIMIT 100");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
-    }
-
-    private function getUsers(): array
-    {
-        try {
-            $stmt = $this->db->query("SELECT id, name FROM users WHERE role IN ('admin','agent','associate','employee') ORDER BY name");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) { return []; }
+        $config = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
+        return new \PDO(
+            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
+            $config['username'], $config['password'],
+            [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
+        );
     }
 }
