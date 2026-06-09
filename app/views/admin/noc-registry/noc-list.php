@@ -8,9 +8,9 @@ $status_filter = $status_filter ?? null;
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-1"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">No Objection Certificate requests and approvals</span>
+        <span class="text-muted"><?= __('admin_noc_subtitle') ?></span>
     </div>
-    <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New NOC Request</a>
+    <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_noc_request') ?></a>
 </div>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
@@ -33,8 +33,8 @@ $status_filter = $status_filter ?? null;
         <?php if (empty($nocs)): ?>
             <div class="p-5 text-center text-muted">
                 <i class="fas fa-file-alt fa-3x mb-3 opacity-25"></i>
-                <p>No NOC requests found<?= $status_filter ? " with status: $status_filter" : '' ?></p>
-                <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-primary btn-sm">Request NOC</a>
+                <p><?= __('admin_no_noc_requests_found') ?><?= $status_filter ? " with status: $status_filter" : '' ?></p>
+                <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-primary btn-sm"><?= __('admin_request_noc') ?></a>
             </div>
         <?php else: ?>
             <div class="table-responsive">
@@ -42,12 +42,12 @@ $status_filter = $status_filter ?? null;
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
-                            <th>Booking</th>
-                            <th>Customer</th>
-                            <th>Plot</th>
-                            <th>Purpose</th>
-                            <th>Status</th>
-                            <th>Created</th>
+                            <th><?= __('admin_booking_label') ?></th>
+                            <th><?= __('admin_customer_label') ?></th>
+                            <th><?= __('admin_plot_label') ?></th>
+                            <th><?= __('admin_purpose_label') ?></th>
+                            <th><?= __('admin_status_label') ?></th>
+                            <th><?= __('admin_created_at') ?></th>
                             <th></th>
                         </tr>
                     </thead>

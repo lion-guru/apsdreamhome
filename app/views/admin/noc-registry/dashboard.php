@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'NOC & Registry Pipeline';
+$page_title = $page_title ?? __('admin_noc_registry_pipeline');
 ob_start();
 $st = $stats ?? [];
 ?>
@@ -7,12 +7,12 @@ $st = $stats ?? [];
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-1"><i class="fas fa-file-contract me-2"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">Property registration pipeline — NOC → Registry</span>
+        <span class="text-muted"><?= __('admin_pipeline_subtitle') ?></span>
     </div>
     <div class="d-flex gap-2">
-        <a href="<?= BASE_URL ?>/admin/noc-registry/eligibility" class="btn btn-outline-warning btn-sm"><i class="fas fa-check-double me-1"></i>Eligibility Check</a>
-        <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-outline-danger btn-sm"><i class="fas fa-plus me-1"></i>New NOC</a>
-        <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-outline-primary btn-sm"><i class="fas fa-plus me-1"></i>New Registry</a>
+        <a href="<?= BASE_URL ?>/admin/noc-registry/eligibility" class="btn btn-outline-warning btn-sm"><i class="fas fa-check-double me-1"></i><?= __('admin_eligibility_check') ?></a>
+        <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-outline-danger btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_noc') ?></a>
+        <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-outline-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_registry') ?></a>
     </div>
 </div>
 
@@ -31,7 +31,7 @@ $st = $stats ?? [];
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-warning bg-opacity-10 p-3"><i class="fas fa-clock text-warning"></i></div></div>
                     <div>
-                        <div class="text-muted small">NOC Pending</div>
+                        <div class="text-muted small"><?= __('admin_noc_pending') ?></div>
                         <div class="fw-bold fs-5"><?= $st['nocPending'] ?? 0 ?></div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@ $st = $stats ?? [];
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-success bg-opacity-10 p-3"><i class="fas fa-check text-success"></i></div></div>
                     <div>
-                        <div class="text-muted small">NOC Approved</div>
+                        <div class="text-muted small"><?= __('admin_noc_approved') ?></div>
                         <div class="fw-bold fs-5"><?= $st['nocApproved'] ?? 0 ?></div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@ $st = $stats ?? [];
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-primary bg-opacity-10 p-3"><i class="fas fa-landmark text-primary"></i></div></div>
                     <div>
-                        <div class="text-muted small">Registry In Progress</div>
+                        <div class="text-muted small"><?= __('admin_registry_in_progress') ?></div>
                         <div class="fw-bold fs-5"><?= $st['regPending'] ?? 0 ?></div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ $st = $stats ?? [];
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-info bg-opacity-10 p-3"><i class="fas fa-check-double text-info"></i></div></div>
                     <div>
-                        <div class="text-muted small">Registry Completed</div>
+                        <div class="text-muted small"><?= __('admin_registry_completed') ?></div>
                         <div class="fw-bold fs-5"><?= $st['regCompleted'] ?? 0 ?></div>
                         <small class="text-muted">₹<?= number_format($st['regTotalCost'] ?? 0, 0) ?></small>
                     </div>
@@ -83,38 +83,38 @@ $st = $stats ?? [];
 <!-- Pipeline Flow -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom">
-        <h6 class="mb-0"><i class="fas fa-project-diagram me-2"></i>Registration Pipeline Flow</h6>
+        <h6 class="mb-0"><i class="fas fa-project-diagram me-2"></i><?= __('admin_registration_pipeline_flow') ?></h6>
     </div>
     <div class="card-body">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="text-center">
                 <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.2rem;">1</div>
-                <div class="small fw-bold mt-2">Booking Fully Paid</div>
+                <div class="small fw-bold mt-2"><?= __('admin_booking_fully_paid') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
                 <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.2rem;">2</div>
-                <div class="small fw-bold mt-2">NOC Requested</div>
+                <div class="small fw-bold mt-2"><?= __('admin_noc_requested') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
                 <div class="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.2rem;">3</div>
-                <div class="small fw-bold mt-2">NOC Approved</div>
+                <div class="small fw-bold mt-2"><?= __('admin_noc_approved') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
                 <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.2rem;">4</div>
-                <div class="small fw-bold mt-2">Registry Created</div>
+                <div class="small fw-bold mt-2"><?= __('admin_registry_created') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
                 <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.2rem;">5</div>
-                <div class="small fw-bold mt-2">SRO Appointment</div>
+                <div class="small fw-bold mt-2"><?= __('admin_sro_appointment') ?></div>
             </div>
             <i class="fas fa-arrow-right text-muted"></i>
             <div class="text-center">
                 <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.2rem;">6</div>
-                <div class="small fw-bold mt-2">Registration Done</div>
+                <div class="small fw-bold mt-2"><?= __('admin_registration_done') ?></div>
             </div>
         </div>
     </div>
@@ -125,16 +125,16 @@ $st = $stats ?? [];
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-bottom d-flex justify-content-between">
-                <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Recent NOC Requests</h6>
-                <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-sm btn-outline-primary">View All</a>
+                <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i><?= __('admin_recent_noc_requests') ?></h6>
+                <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-sm btn-outline-primary"><?= __('admin_view_all') ?></a>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($recent_nocs)): ?>
-                    <div class="p-4 text-center text-muted">No NOC requests yet</div>
+                    <div class="p-4 text-center text-muted"><?= __('admin_no_noc_requests_yet') ?></div>
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
-                            <thead class="table-light"><tr><th>Booking</th><th>Customer</th><th>Purpose</th><th>Status</th><th></th></tr></thead>
+                            <thead class="table-light"><tr><th><?= __('admin_booking_label') ?></th><th><?= __('admin_customer_label') ?></th><th><?= __('admin_purpose_label') ?></th><th><?= __('admin_status_label') ?></th><th></th></tr></thead>
                             <tbody>
                             <?php foreach ($recent_nocs as $n): ?>
                                 <tr>
@@ -157,16 +157,16 @@ $st = $stats ?? [];
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-bottom d-flex justify-content-between">
-                <h6 class="mb-0"><i class="fas fa-landmark me-2"></i>Recent Registries</h6>
-                <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-sm btn-outline-primary">View All</a>
+                <h6 class="mb-0"><i class="fas fa-landmark me-2"></i><?= __('admin_recent_registries') ?></h6>
+                <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-sm btn-outline-primary"><?= __('admin_view_all') ?></a>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($recent_registries)): ?>
-                    <div class="p-4 text-center text-muted">No registries yet</div>
+                    <div class="p-4 text-center text-muted"><?= __('admin_no_registries_yet') ?></div>
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
-                            <thead class="table-light"><tr><th>Booking</th><th>Customer</th><th>Plot</th><th>Cost</th><th>Status</th><th></th></tr></thead>
+                            <thead class="table-light"><tr><th><?= __('admin_booking_label') ?></th><th><?= __('admin_customer_label') ?></th><th><?= __('admin_plot_label') ?></th><th><?= __('admin_cost_label') ?></th><th><?= __('admin_status_label') ?></th><th></th></tr></thead>
                             <tbody>
                             <?php foreach ($recent_registries as $r): ?>
                                 <tr>

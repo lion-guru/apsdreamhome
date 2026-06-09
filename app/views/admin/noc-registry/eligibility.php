@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Eligibility Check';
+$page_title = $page_title ?? __('admin_eligibility_check');
 ob_start();
 $eligible_bookings = $eligible_bookings ?? [];
 $result = $result ?? null;
@@ -9,9 +9,9 @@ $booking_id = $booking_id ?? 0;
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-1"><i class="fas fa-check-double me-2"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">Check NOC and Registry eligibility for a booking</span>
+        <span class="text-muted"><?= __('admin_eligibility_subtitle') ?></span>
     </div>
-    <a href="<?= BASE_URL ?>/admin/noc-registry/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Dashboard</a>
+    <a href="<?= BASE_URL ?>/admin/noc-registry/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('admin_back_to_dashboard') ?></a>
 </div>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
@@ -21,7 +21,7 @@ $booking_id = $booking_id ?? 0;
 <!-- Booking Selector -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom">
-        <h6 class="mb-0"><i class="fas fa-search me-2"></i>Select Booking to Check</h6>
+        <h6 class="mb-0"><i class="fas fa-search me-2"></i><?= __('admin_select_booking_to_check') ?></h6>
     </div>
     <div class="card-body">
         <form method="GET" action="<?= BASE_URL ?>/admin/noc-registry/eligibility" class="row g-3">
@@ -39,7 +39,7 @@ $booking_id = $booking_id ?? 0;
                 </select>
             </div>
             <div class="col-md-4">
-                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check-double me-1"></i>Check Eligibility</button>
+                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check-double me-1"></i><?= __('admin_check_eligibility') ?></button>
             </div>
         </form>
     </div>
@@ -47,7 +47,7 @@ $booking_id = $booking_id ?? 0;
 
 <?php if ($result): ?>
     <?php if (!$result['booking']): ?>
-        <div class="alert alert-danger">Booking not found.</div>
+        <div class="alert alert-danger"><?= __('admin_booking_not_found') ?></div>
     <?php else: ?>
         <div class="row g-4">
             <!-- NOC Eligibility -->
@@ -55,11 +55,11 @@ $booking_id = $booking_id ?? 0;
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>NOC Eligibility</h6>
+                            <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i><?= __('admin_noc_eligibility') ?></h6>
                             <?php if ($result['noc']['eligible']): ?>
-                                <span class="badge bg-success fs-6"><i class="fas fa-check me-1"></i>Eligible</span>
+                                <span class="badge bg-success fs-6"><i class="fas fa-check me-1"></i><?= __('admin_eligible') ?></span>
                             <?php else: ?>
-                                <span class="badge bg-danger fs-6"><i class="fas fa-times me-1"></i>Not Eligible</span>
+                                <span class="badge bg-danger fs-6"><i class="fas fa-times me-1"></i><?= __('admin_not_eligible') ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -67,19 +67,19 @@ $booking_id = $booking_id ?? 0;
                         <!-- Booking Info -->
                         <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <div class="text-muted small">Booking</div>
+                                <div class="text-muted small"><?= __('admin_booking_label') ?></div>
                                 <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['booking_number']) ?></div>
                             </div>
                             <div class="col-6">
-                                <div class="text-muted small">Customer</div>
+                                <div class="text-muted small"><?= __('admin_customer_label') ?></div>
                                 <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['customer_name']) ?></div>
                             </div>
                             <div class="col-6">
-                                <div class="text-muted small">Plot</div>
+                                <div class="text-muted small"><?= __('admin_plot_label') ?></div>
                                 <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['plot_no']) ?></div>
                             </div>
                             <div class="col-6">
-                                <div class="text-muted small">Status</div>
+                                <div class="text-muted small"><?= __('admin_status_label') ?></div>
                                 <span class="badge bg-<?= $result['booking']['status'] === 'fully_paid' || $result['booking']['status'] === 'registration_done' ? 'success' : 'warning' ?>">
                                     <?= ucfirst(str_replace('_', ' ', $result['booking']['status'])) ?>
                                 </span>
@@ -106,9 +106,9 @@ $booking_id = $booking_id ?? 0;
                         <hr>
                         <div class="text-center">
                             <?php if ($result['noc']['eligible']): ?>
-                                <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create?booking_id=<?= $result['booking']['id'] ?>" class="btn btn-success"><i class="fas fa-plus me-1"></i>Request NOC</a>
+                                <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create?booking_id=<?= $result['booking']['id'] ?>" class="btn btn-success"><i class="fas fa-plus me-1"></i><?= __('admin_request_noc') ?></a>
                             <?php else: ?>
-                                <div class="text-danger small fw-bold"><i class="fas fa-ban me-1"></i><?= $result['noc']['fail_count'] ?> check(s) failed — resolve before requesting NOC</div>
+                                <div class="text-danger small fw-bold"><i class="fas fa-ban me-1"></i><?= $result['noc']['fail_count'] ?> <?= __('admin_checks_failed_resolve') ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -120,16 +120,16 @@ $booking_id = $booking_id ?? 0;
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0"><i class="fas fa-landmark me-2"></i>Registry Eligibility</h6>
+                            <h6 class="mb-0"><i class="fas fa-landmark me-2"></i><?= __('admin_registry_eligibility') ?></h6>
                             <?php if ($result['registry']['eligible']): ?>
-                                <span class="badge bg-success fs-6"><i class="fas fa-check me-1"></i>Eligible</span>
+                                <span class="badge bg-success fs-6"><i class="fas fa-check me-1"></i><?= __('admin_eligible') ?></span>
                             <?php else: ?>
-                                <span class="badge bg-danger fs-6"><i class="fas fa-times me-1"></i>Not Eligible</span>
+                                <span class="badge bg-danger fs-6"><i class="fas fa-times me-1"></i><?= __('admin_not_eligible') ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="text-muted small mb-3">Registry requires NOC approval + all NOC checks passed.</div>
+                        <div class="text-muted small mb-3"><?= __('admin_registry_requires_noc') ?></div>
 
                         <!-- Checks -->
                         <?php if (!empty($result['registry']['checks'])): ?>
@@ -149,9 +149,9 @@ $booking_id = $booking_id ?? 0;
                         <hr>
                         <div class="text-center">
                             <?php if ($result['registry']['eligible']): ?>
-                                <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create?booking_id=<?= $result['booking']['id'] ?>" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Create Registry</a>
+                                <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create?booking_id=<?= $result['booking']['id'] ?>" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?= __('admin_create_registry') ?></a>
                             <?php else: ?>
-                                <div class="text-danger small fw-bold"><i class="fas fa-ban me-1"></i><?= $result['registry']['fail_count'] ?> check(s) failed</div>
+                                <div class="text-danger small fw-bold"><i class="fas fa-ban me-1"></i><?= $result['registry']['fail_count'] ?> <?= __('admin_checks_failed') ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
