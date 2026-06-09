@@ -116,64 +116,101 @@ class LeadController extends AdminController
         ]);
     }
     
-    /**
-     * Lead status management
-     */
     public function status()
     {
         $this->requireAdmin();
-        return $this->render('admin/leads/status', []);
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $statuses = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL")->fetchColumn();
+            $by_source = $db->query("SELECT source, status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY source, status ORDER BY source, cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            $statuses = []; $total = 0; $by_source = [];
+        }
+        return $this->render('admin/leads/status', ['statuses' => $statuses, 'total' => $total, 'by_source' => $by_source]);
     }
-    
-    /**
-     * Follow-ups
-     */
+
     public function followups()
     {
         $this->requireAdmin();
-        return $this->render('admin/leads/followups', []);
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $pending = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL ORDER BY l.next_activity_date ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $recent = $db->query("SELECT la.*, l.name as lead_name FROM lead_activities la LEFT JOIN leads l ON la.lead_id=l.id ORDER BY la.activity_date DESC LIMIT 30")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            $pending = []; $recent = [];
+        }
+        return $this->render('admin/leads/followups', ['pending' => $pending, 'recent' => $recent]);
     }
-    
-    /**
-     * Lead scoring/prioritization
-     */
+
     public function scoring()
     {
         $this->requireAdmin();
-        return $this->render('admin/leads/scoring', []);
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $scored = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL ORDER BY l.lead_score DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            $scored = [];
+        }
+        return $this->render('admin/leads/scoring', ['scored' => $scored]);
     }
-    
-    /**
-     * Bulk actions
-     */
+
     public function bulk()
     {
         $this->requireAdmin();
-        return $this->render('admin/leads/bulk', []);
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $leads = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL ORDER BY l.created_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            $leads = [];
+        }
+        return $this->render('admin/leads/bulk', ['leads' => $leads]);
     }
-    
-    /**
-     * Import leads
-     */
+
     public function import()
     {
         $this->requireAdmin();
         return $this->render('admin/leads/import', []);
     }
-    
-    /**
-     * Lead analysis/reports
-     */
+
     public function analysis()
     {
         $this->requireAdmin();
-        return $this->render('admin/leads/analysis', []);
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL")->fetchColumn();
+            $converted = (int)$db->query("SELECT COUNT(*) FROM leads WHERE status='converted' AND deleted_at IS NULL")->fetchColumn();
+            $conv_rate = $total > 0 ? round(($converted / $total) * 100, 1) : 0;
+            $by_source = $db->query("SELECT source, COUNT(*) as total, SUM(CASE WHEN status='converted' THEN 1 ELSE 0 END) as converted FROM leads WHERE deleted_at IS NULL GROUP BY source ORDER BY total DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $monthly = $db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as total, SUM(CASE WHEN status='converted' THEN 1 ELSE 0 END) as converted FROM leads WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) AND deleted_at IS NULL GROUP BY month ORDER BY month ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $by_city = $db->query("SELECT city, COUNT(*) as cnt FROM leads WHERE city IS NOT NULL AND city != '' AND deleted_at IS NULL GROUP BY city ORDER BY cnt DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            $total = 0; $converted = 0; $conv_rate = 0; $by_source = []; $monthly = []; $by_city = [];
+        }
+        return $this->render('admin/leads/analysis', [
+            'total' => $total, 'converted' => $converted, 'conv_rate' => $conv_rate,
+            'by_source' => $by_source, 'monthly' => $monthly, 'by_city' => $by_city,
+        ]);
     }
 
     public function getDocuments($id)
     {
         $this->requireAdmin();
-        return $this->render('admin/leads/documents', ['lead_id' => $id]);
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $lead = $db->prepare("SELECT * FROM leads WHERE id = ?");
+            $lead->execute([$id]);
+            $lead = $lead->fetch(\PDO::FETCH_ASSOC);
+            $notes = $db->prepare("SELECT ln.*, u.name as author FROM lead_notes ln LEFT JOIN users u ON ln.created_by=u.id WHERE ln.lead_id=? ORDER BY ln.created_at DESC");
+            $notes->execute([$id]);
+            $notes = $notes->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $activities = $db->prepare("SELECT * FROM lead_activities WHERE lead_id=? ORDER BY activity_date DESC LIMIT 20");
+            $activities->execute([$id]);
+            $activities = $activities->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            $lead = null; $notes = []; $activities = [];
+        }
+        return $this->render('admin/leads/documents', ['lead_id' => $id, 'lead' => $lead, 'notes' => $notes, 'activities' => $activities]);
     }
 
     public function edit($id)
