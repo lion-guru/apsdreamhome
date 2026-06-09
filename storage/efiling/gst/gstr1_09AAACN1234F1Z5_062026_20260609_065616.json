@@ -1,0 +1,47 @@
+{
+    "gstin": "09AAACN1234F1Z5",
+    "fp": "062026",
+    "gt": 20000,
+    "ctin": "",
+    "b2b": [],
+    "b2c": {
+        "details": [
+            {
+                "place_of_supply": "09-Uttar Pradesh",
+                "rate": 18,
+                "taxable_value": 20000,
+                "cgst": 1800,
+                "sgst": 1800,
+                "igst": 0,
+                "count": 2
+            }
+        ]
+    },
+    "hsn": {
+        "data": [
+            {
+                "hsn_sac_code": null,
+                "gst_rate": "18.00",
+                "total_taxable": "20000.00",
+                "total_cgst": "1800.00",
+                "total_sgst": "1800.00",
+                "total_igst": "0.00",
+                "qty": 2
+            }
+        ]
+    },
+    "docdata": {
+        "inv": {
+            "total": 2,
+            "issued": 2
+        }
+    },
+    "summary": {
+        "total_taxable": 20000,
+        "total_cgst": 1800,
+        "total_sgst": 1800,
+        "total_igst": 0,
+        "total_cess": 0,
+        "total_tax": 3600
+    }
+}

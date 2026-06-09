@@ -30,100 +30,69 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
-        }
-
-        body {
-            font-family: var(--font);
-            background: var(--body-bg);
-            overflow-x: hidden
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: var(--sidebar-bg);
-            z-index: 1050;
-            overflow-y: auto;
-            transition: transform .3s ease
-        }
-
-        .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            transition: margin-left .3s ease
-        }
-
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            height: 60px;
-            background: var(--topnav-bg);
-            border-bottom: 1px solid var(--topnav-border);
-            position: sticky;
-            top: 0;
-            z-index: 1020
-        }
-
-        @media(max-width:992px) {
-            .sidebar {
-                transform: translateX(-100%)
-            }
-
-            .sidebar.show {
-                transform: translateX(0)
-            }
-
-            .main-content {
-                margin-left: 0
-            }
-
-            .toggle-btn {
-                display: block
-            }
-        }
+        /* Only overrides that admin.css doesn't cover — NO duplication */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font); background: var(--body-bg); overflow-x: hidden; }
     </style>
 
     <!-- CRITICAL: Sidebar Toggle Functions in HEAD - Load first before anything -->
     <script>
-        // Define sidebar toggle functions immediately in HEAD
-        window.toggleSidebarSection = function(id) {
-            console.log('toggleSidebarSection called:', id);
-            var ul = document.getElementById(id);
-            if (!ul) {
-                console.error('Element not found:', id);
-                return;
+        // APS Sidebar — single namespace for all sidebar ops
+        var APS = APS || {};
+        APS._sidebar = null;
+        APS._overlay = null;
+        APS._touchStartX = 0;
+
+        APS._init = function() {
+            APS._sidebar = document.getElementById('sidebarMenu');
+            APS._overlay = document.getElementById('sidebarOverlay');
+            APS._restoreSections();
+            APS._bindSwipe();
+            // Auto-close sidebar on mobile when a link is clicked
+            if (APS._sidebar) {
+                APS._sidebar.querySelectorAll('a[href]').forEach(function(a) {
+                    a.addEventListener('click', function() {
+                        if (window.innerWidth <= 992) APS.closeSidebar();
+                    });
+                });
             }
+        };
+
+        APS.toggleSidebar = function() {
+            if (!APS._sidebar) return;
+            APS._sidebar.classList.toggle('show');
+            if (APS._overlay) APS._overlay.classList.toggle('active', APS._sidebar.classList.contains('show'));
+            document.body.style.overflow = APS._sidebar.classList.contains('show') ? 'hidden' : '';
+        };
+
+        APS.closeSidebar = function() {
+            if (!APS._sidebar) return;
+            APS._sidebar.classList.remove('show');
+            if (APS._overlay) APS._overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        APS.toggleSection = function(id) {
+            var ul = document.getElementById(id);
+            if (!ul) return;
             var hidden = ul.style.display === 'none';
             ul.style.display = hidden ? '' : 'none';
             var arrow = document.getElementById('arrow-' + id);
-            if (arrow) {
-                arrow.classList.toggle('collapsed', !hidden);
-            }
-            var savedState = localStorage.getItem('adminSidebarSections');
-            var state = savedState ? JSON.parse(savedState) : {};
+            if (arrow) arrow.classList.toggle('collapsed', !hidden);
+            // persist to localStorage
+            var saved = localStorage.getItem('adminSidebarSections');
+            var state = saved ? JSON.parse(saved) : {};
             state[id] = hidden;
             localStorage.setItem('adminSidebarSections', JSON.stringify(state));
         };
 
-        window.toggleAllSidebarSections = function() {
-            console.log('toggleAllSidebarSections called');
+        APS.toggleAllSections = function() {
             var menus = document.querySelectorAll('.sidebar-menu[id]');
-            var anyHidden = Array.from(menus).some(function(el) {
-                return el.style.display === 'none';
-            });
+            var anyHidden = Array.from(menus).some(function(el) { return el.style.display === 'none'; });
             menus.forEach(function(el) {
                 el.style.display = anyHidden ? '' : 'none';
-                var savedState = localStorage.getItem('adminSidebarSections');
-                var state = savedState ? JSON.parse(savedState) : {};
+                var saved = localStorage.getItem('adminSidebarSections');
+                var state = saved ? JSON.parse(saved) : {};
                 state[el.id] = anyHidden;
                 localStorage.setItem('adminSidebarSections', JSON.stringify(state));
             });
@@ -132,32 +101,37 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
             });
         };
 
-        // Load saved state
-        document.addEventListener('DOMContentLoaded', function() {
-            var savedState = localStorage.getItem('adminSidebarSections');
-            if (savedState) {
-                try {
-                    var state = JSON.parse(savedState);
-                    Object.keys(state).forEach(function(id) {
-                        var ul = document.getElementById(id);
-                        var arrow = document.getElementById('arrow-' + id);
-                        if (ul) {
-                            ul.style.display = state[id] ? '' : 'none';
-                        }
-                        if (arrow) {
-                            if (state[id]) {
-                                arrow.classList.remove('collapsed');
-                            } else {
-                                arrow.classList.add('collapsed');
-                            }
-                        }
-                    });
-                } catch (e) {
-                    console.log('Error loading sidebar state:', e);
-                }
-            }
-            console.log('Sidebar toggle functions DEFINED IN HEAD - GUARANTEED TO WORK');
-        });
+        APS._restoreSections = function() {
+            var saved = localStorage.getItem('adminSidebarSections');
+            if (!saved) return;
+            try {
+                var state = JSON.parse(saved);
+                Object.keys(state).forEach(function(id) {
+                    var ul = document.getElementById(id);
+                    var arrow = document.getElementById('arrow-' + id);
+                    if (ul) ul.style.display = state[id] ? '' : 'none';
+                    if (arrow) arrow.classList.toggle('collapsed', !state[id]);
+                });
+            } catch (e) { /* ignore */ }
+        };
+
+        // Swipe left to close sidebar on mobile
+        APS._bindSwipe = function() {
+            if (!APS._sidebar) return;
+            APS._sidebar.addEventListener('touchstart', function(e) {
+                APS._touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+            APS._sidebar.addEventListener('touchend', function(e) {
+                var dx = e.changedTouches[0].clientX - APS._touchStartX;
+                if (dx < -60) APS.closeSidebar(); // swipe left = close
+            }, { passive: true });
+        };
+
+        // Legacy globals for onclick handlers in rbac_sidebar.php
+        window.toggleSidebarSection = APS.toggleSection;
+        window.toggleAllSidebarSections = APS.toggleAllSections;
+
+        document.addEventListener('DOMContentLoaded', APS._init);
     </script>
 
     <?php if (!empty($extra_css)): ?>
@@ -168,14 +142,14 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
 <body>
     <!-- Sidebar -->
     <?php include __DIR__ . '/rbac_sidebar.php'; ?>
-    <div class="sidebar-overlay" onclick="document.getElementById('sidebarMenu').classList.remove('show')"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="APS.closeSidebar()"></div>
 
     <!-- Main Content -->
     <main class="main-content">
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="nav-left">
-                <button class="toggle-btn" onclick="document.getElementById('sidebarMenu').classList.toggle('show')">
+                <button class="toggle-btn" onclick="APS.toggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
                 <nav aria-label="breadcrumb">
