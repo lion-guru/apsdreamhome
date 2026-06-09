@@ -4,10 +4,10 @@ $active_page = 'bookings';
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Bookings Management</h1>
+    <h1 class="h2"><?= __('admin_bookings_management') ?></h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <a href="<?php echo BASE_URL; ?>/admin/bookings/create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> New Booking
+            <i class="fas fa-plus"></i> <?= __('admin_new_booking') ?>
         </a>
     </div>
 </div>
@@ -29,7 +29,7 @@ $active_page = 'bookings';
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4><?= $total ?></h4>
-                        <p class="mb-0">Total Bookings</p>
+                        <p class="mb-0"><?= __('admin_total_bookings') ?></p>
                     </div>
                     <div class="align-self-center">
                         <i class="fas fa-calendar fa-2x"></i>
@@ -44,7 +44,7 @@ $active_page = 'bookings';
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4><?= count(array_filter($bookings, fn($b) => $b['status'] == 'confirmed')) ?></h4>
-                        <p class="mb-0">Confirmed</p>
+                        <p class="mb-0"><?= __('admin_confirmed') ?></p>
                     </div>
                     <div class="align-self-center">
                         <i class="fas fa-check-circle fa-2x"></i>
@@ -59,7 +59,7 @@ $active_page = 'bookings';
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4><?= count(array_filter($bookings, fn($b) => $b['status'] == 'pending')) ?></h4>
-                        <p class="mb-0">Pending</p>
+                        <p class="mb-0"><?= __('admin_pending') ?></p>
                     </div>
                     <div class="align-self-center">
                         <i class="fas fa-clock fa-2x"></i>
@@ -74,7 +74,7 @@ $active_page = 'bookings';
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4><?= count(array_filter($bookings, fn($b) => $b['status'] == 'cancelled')) ?></h4>
-                        <p class="mb-0">Cancelled</p>
+                        <p class="mb-0"><?= __('admin_cancelled') ?></p>
                     </div>
                     <div class="align-self-center">
                         <i class="fas fa-times-circle fa-2x"></i>
@@ -89,32 +89,32 @@ $active_page = 'bookings';
 <div class="card mb-4">
     <div class="card-header">
         <h5 class="card-title mb-0">
-            <i class="fas fa-filter"></i> Filters
+            <i class="fas fa-filter"></i> <?= __('admin_filters') ?>
         </h5>
     </div>
     <div class="card-body">
         <form method="GET" action="<?php echo BASE_URL; ?>/admin/bookings">
             <div class="row">
                 <div class="col-md-3">
-                    <label for="search" class="form-label">Search</label>
+                    <label for="search" class="form-label"><?= __('admin_search') ?></label>
                     <input type="text" class="form-control" id="search" name="search"
                         value="<?= htmlspecialchars($filters['search'] ?? '') ?>"
                         placeholder="Booking #, Customer, Property">
                 </div>
                 <div class="col-md-2">
-                    <label for="status" class="form-label">Status</label>
+                    <label for="status" class="form-label"><?= __('admin_status') ?></label>
                     <select class="form-select" id="status" name="status">
-                        <option value="">All Status</option>
-                        <option value="pending" <?= $filters['status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
-                        <option value="confirmed" <?= $filters['status'] == 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
-                        <option value="completed" <?= $filters['status'] == 'completed' ? 'selected' : '' ?>>Completed</option>
-                        <option value="cancelled" <?= $filters['status'] == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                        <option value=""><?= __('admin_all_status') ?></option>
+                        <option value="pending" <?= $filters['status'] == 'pending' ? 'selected' : '' ?>><?= __('admin_pending') ?></option>
+                        <option value="confirmed" <?= $filters['status'] == 'confirmed' ? 'selected' : '' ?>><?= __('admin_confirmed') ?></option>
+                        <option value="completed" <?= $filters['status'] == 'completed' ? 'selected' : '' ?>><?= __('admin_completed') ?></option>
+                        <option value="cancelled" <?= $filters['status'] == 'cancelled' ? 'selected' : '' ?>><?= __('admin_cancelled') ?></option>
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label for="customer_id" class="form-label">Customer</label>
+                    <label for="customer_id" class="form-label"><?= __('admin_customer') ?></label>
                     <select class="form-select" id="customer_id" name="customer_id">
-                        <option value="">All users</option>
+                        <option value=""><?= __('admin_all_users') ?></option>
                         <?php foreach ($users as $customer): ?>
                             <option value="<?= $customer['id'] ?>" <?= $filters['customer_id'] == $customer['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($customer['name'] ?? '') ?>
@@ -123,9 +123,9 @@ $active_page = 'bookings';
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label for="associate_id" class="form-label">Associate</label>
+                    <label for="associate_id" class="form-label"><?= __('admin_associate') ?></label>
                     <select class="form-select" id="associate_id" name="associate_id">
-                        <option value="">All users</option>
+                        <option value=""><?= __('admin_all_users') ?></option>
                         <?php foreach ($users as $associate): ?>
                             <option value="<?= $associate['id'] ?>" <?= $filters['associate_id'] == $associate['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($associate['name'] ?? '') ?>
@@ -137,10 +137,10 @@ $active_page = 'bookings';
                     <label class="form-label">&nbsp;</label>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-search"></i> Filter
+                            <i class="fas fa-search"></i> <?= __('admin_filter_btn') ?>
                         </button>
                         <a href="<?php echo BASE_URL; ?>/admin/bookings" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Clear
+                            <i class="fas fa-times"></i> <?= __('admin_clear') ?>
                         </a>
                     </div>
                 </div>
@@ -153,7 +153,7 @@ $active_page = 'bookings';
 <div class="card">
     <div class="card-header">
         <h5 class="card-title mb-0">
-            <i class="fas fa-list"></i> Bookings List
+            <i class="fas fa-list"></i> <?= __('admin_bookings_list') ?>
         </h5>
     </div>
     <div class="card-body">
@@ -166,19 +166,19 @@ $active_page = 'bookings';
                                 Booking # <i class="fas fa-sort"></i>
                             </a>
                         </th>
-                        <th>Property</th>
-                        <th>Customer</th>
-                        <th>Associate</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th><?= __('admin_property') ?></th>
+                        <th><?= __('admin_customer') ?></th>
+                        <th><?= __('admin_associate') ?></th>
+                        <th><?= __('admin_amount') ?></th>
+                        <th><?= __('admin_status') ?></th>
+                        <th><?= __('admin_date') ?></th>
+                        <th><?= __('admin_actions') ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($bookings)): ?>
                         <tr>
-                            <td colspan="8" class="text-center">No bookings found</td>
+                            <td colspan="8" class="text-center"><?= __('admin_no_bookings') ?></td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($bookings as $booking): ?>
@@ -202,7 +202,7 @@ $active_page = 'bookings';
                                         <br>
                                         <small class="text-muted"><?= htmlspecialchars($booking['associate_email'] ?? '') ?></small>
                                     <?php else: ?>
-                                        <span class="text-muted">Direct Booking</span>
+                                        <span class="text-muted"><?= __('admin_direct_booking') ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -256,7 +256,7 @@ $active_page = 'bookings';
                     <?php if ($current_page > 1): ?>
                         <li class="page-item">
                             <a class="page-link" href="?page=<?= $current_page - 1 ?>&<?= http_build_query(array_diff_key($filters, ['page' => ''])) ?>">
-                                Previous
+                                <?= __('admin_previous') ?>
                             </a>
                         </li>
                     <?php endif; ?>
@@ -278,7 +278,7 @@ $active_page = 'bookings';
                     <?php if ($current_page < $total_pages): ?>
                         <li class="page-item">
                             <a class="page-link" href="?page=<?= $current_page + 1 ?>&<?= http_build_query(array_diff_key($filters, ['page' => ''])) ?>">
-                                Next
+                                <?= __('admin_next') ?>
                             </a>
                         </li>
                     <?php endif; ?>
@@ -293,18 +293,18 @@ $active_page = 'bookings';
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <h5 class="modal-title" id="deleteModalLabel"><?= __('admin_confirm_delete') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete booking <strong id="deleteBookingNumber"></strong>?<br>
-                This action cannot be undone and will also delete all related payments and commissions.
+                <?= __('admin_confirm_delete_booking') ?> <strong id="deleteBookingNumber"></strong>?<br>
+                <?= __('admin_delete_warning') ?>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
                 <form id="deleteForm" method="POST" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger"><?= __('admin_delete') ?></button>
                 </form>
             </div>
         </div>

@@ -1,26 +1,26 @@
 <?php $page_title = 'Referrals Management'; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-share-alt me-2"></i>Referrals Management</h2>
-        <a href="<?= BASE_URL ?>/admin/referrals/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>New Referral</a>
+        <h2 class="mb-0"><i class="fas fa-share-alt me-2"></i><?= __('admin_referrals_management') ?></h2>
+        <a href="<?= BASE_URL ?>/admin/referrals/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?= __('admin_new_referral') ?></a>
     </div>
     <div class="row mb-4">
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3><?= $stats['total'] ?></h3><small class="text-muted">Total</small></div></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-warning"><?= $stats['pending'] ?></h3><small class="text-muted">Pending</small></div></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-success"><?= $stats['converted'] ?></h3><small class="text-muted">Converted</small></div></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-danger"><?= $stats['rejected'] ?></h3><small class="text-muted">Rejected</small></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3><?= $stats['total'] ?></h3><small class="text-muted"><?= __('admin_total') ?></small></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-warning"><?= $stats['pending'] ?></h3><small class="text-muted"><?= __('admin_pending') ?></small></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-success"><?= $stats['converted'] ?></h3><small class="text-muted"><?= __('admin_converted') ?></small></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-danger"><?= $stats['rejected'] ?></h3><small class="text-muted"><?= __('admin_rejected') ?></small></div></div></div>
     </div>
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <?php if (empty($referrals)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-share-alt fa-4x text-muted mb-3"></i>
-                    <h5 class="text-muted">No referrals yet</h5>
+                    <h5 class="text-muted"><?= __('admin_no_referrals') ?></h5>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>#</th><th>Referrer</th><th>Referred Email</th><th>Code</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>#</th><th><?= __('admin_referrer') ?></th><th><?= __('admin_referred_email') ?></th><th><?= __('admin_code') ?></th><th><?= __('admin_status') ?></th><th><?= __('admin_date') ?></th><th><?= __('admin_actions') ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($referrals as $r): ?>
                             <tr>

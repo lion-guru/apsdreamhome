@@ -1,19 +1,19 @@
 <?php $page_title = 'Home Loan Services'; ?>
 <div class="container-fluid py-4">
-    <h2 class="mb-4"><i class="fas fa-home me-2"></i>Home Loan Services</h2>
+    <h2 class="mb-4"><i class="fas fa-home me-2"></i><?= __('admin_home_loan_services') ?></h2>
     <div class="row mb-4">
-        <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3><?= $count ?></h3><small class="text-muted">Total Inquiries</small></div></div></div>
-        <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-warning"><?= $pending ?></h3><small class="text-muted">Pending</small></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3><?= $count ?></h3><small class="text-muted"><?= __('admin_total_inquiries') ?></small></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-warning"><?= $pending ?></h3><small class="text-muted"><?= __('admin_pending') ?></small></div></div></div>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Home Loan Inquiries</h6></div>
+        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i><?= __('admin_home_loan_inquiries') ?></h6></div>
         <div class="card-body p-0">
             <?php if (empty($services)): ?>
-                <p class="text-muted text-center py-4">No home loan inquiries yet</p>
+                <p class="text-muted text-center py-4"><?= __('admin_no_home_loan') ?></p>
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>#</th><th>Customer</th><th>Phone</th><th>Email</th><th>Status</th><th>Notes</th><th>Date</th></tr></thead>
+                        <thead><tr><th>#</th><th><?= __('admin_customer') ?></th><th><?= __('admin_phone') ?></th><th><?= __('admin_email') ?></th><th><?= __('admin_status') ?></th><th><?= __('admin_notes') ?></th><th><?= __('admin_date') ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($services as $s): ?>
                             <tr>

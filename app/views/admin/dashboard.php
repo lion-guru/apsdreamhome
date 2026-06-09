@@ -153,7 +153,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
             <div class="aps-cp-stat aps-cp-stat--orange">
                 <div class="aps-cp-stat-icon"><i class="fas fa-file-contract"></i></div>
                 <div class="aps-cp-stat-body">
-                    <div class="aps-cp-stat-label">Pending Bookings</div>
+                    <div class="aps-cp-stat-label"><?= __('admin_pending_bookings', null, 'Pending Bookings') ?></div>
                     <div class="aps-cp-stat-value"><?php echo number_format($stats['pending_bookings']); ?></div>
                 </div>
             </div>
@@ -164,7 +164,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-check-circle"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_stat_system', null, 'System Status') ?></div>
-                    <div class="aps-cp-stat-value text-success">Online</div>
+                    <div class="aps-cp-stat-value text-success"><?= __('admin_online', null, 'Online') ?></div>
                 </div>
             </div>
         </div>
@@ -194,13 +194,13 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                         <div class="col-md-3">
                             <a href="<?php echo BASE_URL; ?>/admin/bookings?action=new" class="btn btn-outline-warning w-100 py-3">
                                 <i class="fas fa-file-contract mb-2" style="font-size: 1.5rem;"></i>
-                                <div>New Booking</div>
+                                <div><?= __('admin_new_booking', null, 'New Booking') ?></div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="<?php echo BASE_URL; ?>/admin/mlm/commissions?action=payout" class="btn btn-outline-info w-100 py-3">
                                 <i class="fas fa-wallet mb-2" style="font-size: 1.5rem;"></i>
-                                <div>Process Payout</div>
+                                <div><?= __('admin_process_payout', null, 'Process Payout') ?></div>
                             </a>
                         </div>
                     </div>
@@ -215,8 +215,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title"><i class="fas fa-user-clock me-2"></i>Recent Leads</h5>
-                    <a href="<?php echo BASE_URL; ?>/admin/leads" class="btn btn-sm btn-primary">View All</a>
+                    <h5 class="card-title"><i class="fas fa-user-clock me-2"></i><?= __('admin_recent_leads', null, 'Recent Leads') ?></h5>
+                    <a href="<?php echo BASE_URL; ?>/admin/leads" class="btn btn-sm btn-primary"><?= __('admin_view_all', null, 'View All') ?></a>
                 </div>
                 <div class="card-body p-0">
                     <?php
@@ -243,13 +243,13 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                         <?php else: ?>
                             <div class="aps-empty-state">
                                 <i class="fas fa-user-plus fa-3x" aria-hidden="true"></i>
-                                <p class="mb-0">No leads found</p>
+                                <p class="mb-0"><?= __('admin_no_leads_found', null, 'No leads found') ?></p>
                             </div>
                         <?php endif;
                     } catch (\Exception $e) { ?>
                         <div class="aps-empty-state">
                             <i class="fas fa-exclamation-triangle fa-3x text-warning" aria-hidden="true"></i>
-                            <p class="mb-0">Unable to load leads</p>
+                            <p class="mb-0"><?= __('admin_unable_to_load_leads', null, 'Unable to load leads') ?></p>
                         </div>
                     <?php } ?>
                 </div>
@@ -260,12 +260,12 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title"><i class="fas fa-server me-2"></i>System Overview</h5>
+                    <h5 class="card-title"><i class="fas fa-server me-2"></i><?= __('admin_system_overview', null, 'System Overview') ?></h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <span>Database Tables</span>
+                            <span><?= __('admin_database_tables', null, 'Database Tables') ?></span>
                             <span class="fw-semibold">633</span>
                         </div>
                         <div class="progress" style="height: 6px;">
@@ -275,7 +275,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
 
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <span>Active Users</span>
+                            <span><?= __('admin_active_users', null, 'Active Users') ?></span>
                             <span class="fw-semibold"><?php echo number_format($stats['total_users']); ?></span>
                         </div>
                         <div class="progress" style="height: 6px;">
@@ -285,7 +285,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
 
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <span>System Health</span>
+                            <span><?= __('admin_system_health', null, 'System Health') ?></span>
                             <span class="fw-semibold text-success">99.9%</span>
                         </div>
                         <div class="progress" style="height: 6px;">
@@ -298,15 +298,15 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <div class="row text-center">
                         <div class="col-4">
                             <div class="h4 mb-0 text-primary"><?php echo number_format($stats['total_properties']); ?></div>
-                            <small class="text-muted">Properties</small>
+                            <small class="text-muted"><?= __('admin_property', null, 'Properties') ?></small>
                         </div>
                         <div class="col-4">
                             <div class="h4 mb-0 text-success"><?php echo number_format($stats['total_leads']); ?></div>
-                            <small class="text-muted">Total Leads</small>
+                            <small class="text-muted"><?= __('admin_total_leads', null, 'Total Leads') ?></small>
                         </div>
                         <div class="col-4">
                             <div class="h4 mb-0 text-warning"><?php echo number_format($stats['pending_bookings']); ?></div>
-                            <small class="text-muted">Pending</small>
+                            <small class="text-muted"><?= __('admin_pending', null, 'Pending') ?></small>
                         </div>
                     </div>
                 </div>
