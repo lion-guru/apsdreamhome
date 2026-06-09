@@ -33,7 +33,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Sort Order</label>
-                                    <input type="number" name="display_order" class="form-control" value="<?php echo $faq['sort_order']; ?>">
+                                    <input type="number" name="display_order" class="form-control" value="<?php echo $faq['display_order']; ?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
