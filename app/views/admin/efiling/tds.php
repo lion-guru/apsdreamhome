@@ -53,7 +53,7 @@ ob_start();
                 <?php foreach ($summary['by_section'] as $s): ?>
                     <tr>
                         <td><strong><?= htmlspecialchars($s['tds_section']) ?></strong></td>
-                        <td class="small"><?= htmlspecialchars($this->tdsFiling->getSectionName($s['tds_section'])) ?></td>
+                        <td class="small"><?= htmlspecialchars(($rates[$s['tds_section']]['desc'] ?? $s['tds_section'])) ?></td>
                         <td class="text-end"><?= $s['count'] ?></td>
                         <td class="text-end">₹<?= number_format($s['total_gross'], 0) ?></td>
                         <td class="text-end fw-bold">₹<?= number_format($s['total_tds'], 0) ?></td>

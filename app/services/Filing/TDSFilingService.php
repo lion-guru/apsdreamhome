@@ -34,22 +34,22 @@ class TDSFilingService
     private function getCompanyTAN(): ?string
     {
         try {
-            $stmt = $this->getPdo()->prepare("SELECT setting_value FROM company_credentials
-                WHERE credential_type = 'tan' AND is_active = 1 LIMIT 1");
+            $stmt = $this->getPdo()->prepare("SELECT credential_value FROM company_credentials
+                WHERE credential_type = 'tan' AND status = 'active' AND is_primary = 1 LIMIT 1");
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row['setting_value'] ?? null;
+            return $row['credential_value'] ?? null;
         } catch (\Exception $e) { error_log("[TDSFilingService] getCompanyTAN: " . $e->getMessage()); return null; }
     }
 
     private function getCompanyPAN(): ?string
     {
         try {
-            $stmt = $this->getPdo()->prepare("SELECT setting_value FROM company_credentials
-                WHERE credential_type = 'pan' AND is_active = 1 LIMIT 1");
+            $stmt = $this->getPdo()->prepare("SELECT credential_value FROM company_credentials
+                WHERE credential_type = 'pan' AND status = 'active' AND is_primary = 1 LIMIT 1");
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row['setting_value'] ?? null;
+            return $row['credential_value'] ?? null;
         } catch (\Exception $e) { error_log("[TDSFilingService] getCompanyPAN: " . $e->getMessage()); return null; }
     }
 

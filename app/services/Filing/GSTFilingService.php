@@ -33,11 +33,11 @@ class GSTFilingService
     private function getCompanyGSTIN(): ?string
     {
         try {
-            $stmt = $this->getPdo()->prepare("SELECT setting_value FROM company_credentials
-                WHERE credential_type = 'gst' AND is_active = 1 LIMIT 1");
+            $stmt = $this->getPdo()->prepare("SELECT credential_value FROM company_credentials
+                WHERE credential_type = 'gst' AND status = 'active' AND is_primary = 1 LIMIT 1");
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row['setting_value'] ?? null;
+            return $row['credential_value'] ?? null;
         } catch (\Exception $e) { error_log("[GSTFilingService] getCompanyGSTIN: " . $e->getMessage()); return null; }
     }
 
@@ -396,13 +396,15 @@ class GSTFilingService
 
                 $output = $input = ['taxable' => 0, 'cgst' => 0, 'sgst' => 0, 'igst' => 0, 'tax' => 0, 'count' => 0];
                 foreach ($rows as $r) {
-                    $key = $r['transaction_type'];
-                    $$key['taxable'] = (float)$r['taxable'];
-                    $$key['cgst'] = (float)$r['cgst'];
-                    $$key['sgst'] = (float)$r['sgst'];
-                    $$key['igst'] = (float)$r['igst'];
-                    $$key['tax'] = (float)$r['tax'];
-                    $$key['count'] = (int)$r['count'];
+                    $type = $r['transaction_type'];
+                    $target = ($type === 'output') ? $output : $input;
+                    $target['taxable'] = (float)$r['taxable'];
+                    $target['cgst'] = (float)$r['cgst'];
+                    $target['sgst'] = (float)$r['sgst'];
+                    $target['igst'] = (float)$r['igst'];
+                    $target['tax'] = (float)$r['tax'];
+                    $target['count'] = (int)$r['count'];
+                    if ($type === 'output') $output = $target; else $input = $target;
                 }
 
                 $outTax = $output['cgst'] + $output['sgst'] + $output['igst'];
