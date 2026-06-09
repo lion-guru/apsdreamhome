@@ -1,33 +1,34 @@
 /**
  * APS Dream Home - Admin Dashboard JS
- * Simple version - No IIFE, No try-catch to ensure it loads
+ * Delegates sidebar logic to APS namespace (defined in unified.php head).
+ * Only runs fallback if APS is not available (non-unified layouts).
  */
 
-// Define sidebar toggle functions directly
+// Sidebar toggle — delegate to APS if available, otherwise standalone fallback
 window.toggleSidebarSection = function (id) {
+  if (window.APS && APS.toggleSection) return APS.toggleSection(id);
+  // Fallback
   var ul = document.getElementById(id);
   if (!ul) return;
   var hidden = ul.style.display === 'none';
   ul.style.display = hidden ? '' : 'none';
   var arrow = document.getElementById('arrow-' + id);
-  if (arrow) {
-    arrow.classList.toggle('collapsed', !hidden);
-  }
-  var savedState = localStorage.getItem('adminSidebarSections');
-  var state = savedState ? JSON.parse(savedState) : {};
+  if (arrow) arrow.classList.toggle('collapsed', !hidden);
+  var saved = localStorage.getItem('adminSidebarSections');
+  var state = saved ? JSON.parse(saved) : {};
   state[id] = hidden;
   localStorage.setItem('adminSidebarSections', JSON.stringify(state));
 };
 
 window.toggleAllSidebarSections = function () {
+  if (window.APS && APS.toggleAllSections) return APS.toggleAllSections();
+  // Fallback
   var menus = document.querySelectorAll('.sidebar-menu[id]');
-  var anyHidden = Array.from(menus).some(function (el) {
-    return el.style.display === 'none';
-  });
+  var anyHidden = Array.from(menus).some(function (el) { return el.style.display === 'none'; });
   menus.forEach(function (el) {
     el.style.display = anyHidden ? '' : 'none';
-    var savedState = localStorage.getItem('adminSidebarSections');
-    var state = savedState ? JSON.parse(savedState) : {};
+    var saved = localStorage.getItem('adminSidebarSections');
+    var state = saved ? JSON.parse(saved) : {};
     state[el.id] = anyHidden;
     localStorage.setItem('adminSidebarSections', JSON.stringify(state));
   });
@@ -36,26 +37,41 @@ window.toggleAllSidebarSections = function () {
   });
 };
 
-// Load saved state on DOM ready
+// Load saved state — only if APS didn't already handle it
 document.addEventListener('DOMContentLoaded', function () {
-  var savedState = localStorage.getItem('adminSidebarSections');
-  if (savedState) {
-    try {
-      var state = JSON.parse(savedState);
-      Object.keys(state).forEach(function (id) {
-        var ul = document.getElementById(id);
-        var arrow = document.getElementById('arrow-' + id);
-        if (ul) {
-          ul.style.display = state[id] ? '' : 'none';
-        }
-        if (arrow) {
-          if (state[id]) {
-            arrow.classList.remove('collapsed');
-          } else {
-            arrow.classList.add('collapsed');
-          }
-        }
-      });
-    } catch (e) {}
-  }
+  if (window.APS && APS._init) return; // APS handles its own restore
+  var saved = localStorage.getItem('adminSidebarSections');
+  if (!saved) return;
+  try {
+    var state = JSON.parse(saved);
+    Object.keys(state).forEach(function (id) {
+      var ul = document.getElementById(id);
+      var arrow = document.getElementById('arrow-' + id);
+      if (ul) ul.style.display = state[id] ? '' : 'none';
+      if (arrow) arrow.classList.toggle('collapsed', !state[id]);
+    });
+  } catch (e) {}
+});
+
+// Auto-dismiss alerts
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.alert-dismissible').forEach(function (alert) {
+    setTimeout(function () {
+      var close = alert.querySelector('.btn-close');
+      if (close) close.click();
+    }, 5000);
+  });
+});
+
+// Highlight active sidebar link
+document.addEventListener('DOMContentLoaded', function () {
+  var path = window.location.pathname;
+  document.querySelectorAll('.sidebar-link').forEach(function (link) {
+    if (link.getAttribute('href') === path) {
+      link.classList.add('active');
+      // Expand parent section
+      var parent = link.closest('.sidebar-menu');
+      if (parent) parent.style.display = '';
+    }
+  });
 });

@@ -25,30 +25,106 @@
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
     <style>
-        /* RBAC Sidebar section toggle styles */
-        .sidebar-sec {
-            padding: 15px 15px 5px;
-            font-size: .7rem;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, .4);
-            font-weight: 600;
-            letter-spacing: .05em;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-sec-arrow {
-            font-size: .6rem;
-            transition: transform .25s;
-            color: rgba(255, 255, 255, .3)
-        }
-
-        .sidebar-sec-arrow.collapsed {
-            transform: rotate(-90deg)
-        }
+        /* Only overrides that admin.css doesn't cover — NO duplication */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font); background: var(--body-bg); overflow-x: hidden; }
     </style>
+
+    <!-- CRITICAL: Sidebar functions in HEAD — load before body -->
+    <script>
+        var APS = APS || {};
+        APS._sidebar = null;
+        APS._overlay = null;
+        APS._touchStartX = 0;
+
+        APS._init = function() {
+            APS._sidebar = document.getElementById('sidebarMenu');
+            APS._overlay = document.getElementById('sidebarOverlay');
+            APS._restoreSections();
+            APS._bindSwipe();
+            // Auto-close sidebar on mobile when a link is clicked
+            if (APS._sidebar) {
+                APS._sidebar.querySelectorAll('a[href]').forEach(function(a) {
+                    a.addEventListener('click', function() {
+                        if (window.innerWidth <= 992) APS.closeSidebar();
+                    });
+                });
+            }
+        };
+
+        APS.toggleSidebar = function() {
+            if (!APS._sidebar) return;
+            APS._sidebar.classList.toggle('show');
+            if (APS._overlay) APS._overlay.classList.toggle('active', APS._sidebar.classList.contains('show'));
+            document.body.style.overflow = APS._sidebar.classList.contains('show') ? 'hidden' : '';
+        };
+
+        APS.closeSidebar = function() {
+            if (!APS._sidebar) return;
+            APS._sidebar.classList.remove('show');
+            if (APS._overlay) APS._overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        APS.toggleSection = function(id) {
+            var ul = document.getElementById(id);
+            if (!ul) return;
+            var hidden = ul.style.display === 'none';
+            ul.style.display = hidden ? '' : 'none';
+            var arrow = document.getElementById('arrow-' + id);
+            if (arrow) arrow.classList.toggle('collapsed', !hidden);
+            var saved = localStorage.getItem('adminSidebarSections');
+            var state = saved ? JSON.parse(saved) : {};
+            state[id] = hidden;
+            localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+        };
+
+        APS.toggleAllSections = function() {
+            var menus = document.querySelectorAll('.sidebar-menu[id]');
+            var anyHidden = Array.from(menus).some(function(el) { return el.style.display === 'none'; });
+            menus.forEach(function(el) {
+                el.style.display = anyHidden ? '' : 'none';
+                var saved = localStorage.getItem('adminSidebarSections');
+                var state = saved ? JSON.parse(saved) : {};
+                state[el.id] = anyHidden;
+                localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+            });
+            document.querySelectorAll('.sidebar-sec-arrow[id^="arrow-sec-"]').forEach(function(arr) {
+                arr.classList.toggle('collapsed', !anyHidden);
+            });
+        };
+
+        APS._restoreSections = function() {
+            var saved = localStorage.getItem('adminSidebarSections');
+            if (!saved) return;
+            try {
+                var state = JSON.parse(saved);
+                Object.keys(state).forEach(function(id) {
+                    var ul = document.getElementById(id);
+                    var arrow = document.getElementById('arrow-' + id);
+                    if (ul) ul.style.display = state[id] ? '' : 'none';
+                    if (arrow) arrow.classList.toggle('collapsed', !state[id]);
+                });
+            } catch (e) { /* ignore */ }
+        };
+
+        APS._bindSwipe = function() {
+            if (!APS._sidebar) return;
+            APS._sidebar.addEventListener('touchstart', function(e) {
+                APS._touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+            APS._sidebar.addEventListener('touchend', function(e) {
+                var dx = e.changedTouches[0].clientX - APS._touchStartX;
+                if (dx < -60) APS.closeSidebar();
+            }, { passive: true });
+        };
+
+        // Legacy globals for onclick handlers in rbac_sidebar.php
+        window.toggleSidebarSection = APS.toggleSection;
+        window.toggleAllSidebarSections = APS.toggleAllSections;
+
+        document.addEventListener('DOMContentLoaded', APS._init);
+    </script>
 </head>
 
 <body>
@@ -65,6 +141,7 @@
 
     <!-- Sidebar (DB-driven via rbac_sidebar.php) -->
     <?php include_once __DIR__ . '/../admin/layouts/rbac_sidebar.php'; ?>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="APS.closeSidebar()"></div>
 
     <?php
     // Live notification/message counts from DB
@@ -91,7 +168,7 @@
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="nav-left">
-                <button class="toggle-btn" onclick="document.getElementById('sidebarMenu').classList.toggle('show')">
+                <button class="toggle-btn" onclick="APS.toggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
                 <nav aria-label="breadcrumb">

@@ -1,0 +1,27 @@
+{
+    "gstin": "09AAACN1234F1Z5",
+    "fp": "062026",
+    "period": "062026",
+    "output": {
+        "taxable_value": 20000,
+        "cgst": 1800,
+        "sgst": 1800,
+        "igst": 0,
+        "cess": 0,
+        "total": 3600,
+        "count": 2
+    },
+    "input": {
+        "taxable_value": 0,
+        "cgst": 0,
+        "sgst": 0,
+        "igst": 0,
+        "cess": 0,
+        "total": 0,
+        "count": 0
+    },
+    "net_payable": 3600,
+    "interest": 0,
+    "late_fee": 0,
+    "total_payable": 3600
+}
