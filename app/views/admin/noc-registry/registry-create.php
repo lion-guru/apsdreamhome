@@ -1,98 +1,151 @@
 <?php
-$page_title = $page_title ?? 'Request Registry';
-$page_heading = $page_heading ?? 'Request Registry (Requires Approved NOC)';
-$bookings = $bookings ?? [];
-$users = $users ?? [];
+$page_title = $page_title ?? 'New Registry';
 ob_start();
+$eligible_bookings = $eligible_bookings ?? [];
+$stamp_duty = $stamp_duty ?? [];
 ?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-1"><i class="fas fa-landmark me-2"></i>Request Registry</h2>
-            <p class="text-muted mb-0">Register plot ownership at sub-registrar office</p>
-        </div>
-        <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
-    </div>
 
-    <div class="alert alert-warning mb-4">
-        <i class="fas fa-exclamation-triangle me-2"></i><strong>Prerequisite:</strong> The booking must have an <strong>approved NOC</strong> before you can request registry. If NOC is not yet approved, <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create">request one first</a>.
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1"><i class="fas fa-landmark me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <span class="text-muted">Schedule property registration at sub-registrar office</span>
     </div>
+    <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Registries</a>
+</div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <form method="POST" action="<?= BASE_URL ?>/admin/noc-registry/registries/store">
-                <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-link me-2"></i>Booking (with approved NOC)</h5></div>
-                    <div class="card-body">
+<?php if (!empty($_SESSION['flash_error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?></div>
+<?php endif; ?>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom">
+                <h6 class="mb-0">Registry Details</h6>
+            </div>
+            <div class="card-body">
+                <?php if (empty($eligible_bookings)): ?>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>No eligible bookings found.</strong> NOC must be approved before creating a registry.
+                    </div>
+                <?php else: ?>
+                    <form method="POST" action="<?= BASE_URL ?>/admin/noc-registry/registries/store">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Booking *</label>
-                                <select class="form-select" name="booking_id" id="bookingSelect" required>
-                                    <option value="">Select booking with approved NOC...</option>
-                                    <?php foreach ($bookings as $b): ?>
-                                        <option value="<?= $b['id'] ?>" data-plot="<?= $b['plot_id'] ?? 0 ?>" data-user="<?= $b['customer_id'] ?? 0 ?>"><?= htmlspecialchars($b['booking_number'] ?? '#'.$b['id']) ?> — <?= htmlspecialchars($b['customer_name'] ?? '') ?></option>
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">Booking <span class="text-danger">*</span></label>
+                                <select name="booking_id" class="form-select" required id="bookingSelect">
+                                    <option value="">— Select Booking —</option>
+                                    <?php foreach ($eligible_bookings as $b): ?>
+                                        <option value="<?= $b['id'] ?>" data-price="<?= $b['total_price'] ?? 0 ?>">
+                                            <?= htmlspecialchars($b['booking_number']) ?> — <?= htmlspecialchars($b['customer_name']) ?>
+                                            (<?= htmlspecialchars($b['plot_no']) ?>, <?= htmlspecialchars($b['colony_name']) ?>)
+                                            — ₹<?= number_format($b['total_price'] ?? 0, 0) ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Sub-Registrar Office *</label>
-                                <input type="text" class="form-control" name="sub_registrar_office" required placeholder="e.g., SRO Gorakhpur">
-                            </div>
-                            <input type="hidden" name="plot_id" id="plotId">
-                            <input type="hidden" name="user_id" id="userId">
-                        </div>
-                    </div>
-                </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Cost Breakdown</h5></div>
-                    <div class="card-body">
-                        <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Stamp Duty (₹) *</label>
-                                <input type="number" class="form-control" name="stamp_duty_amount" required min="0" step="0.01" placeholder="0.00">
+                                <label class="form-label fw-semibold">Sub-Registrar Office <span class="text-danger">*</span></label>
+                                <select name="sub_registrar_office" class="form-select" required>
+                                    <option value="SRO Gorakhpur">SRO Gorakhpur</option>
+                                    <option value="SRO Lucknow">SRO Lucknow</option>
+                                    <option value="SRO Varanasi">SRO Varanasi</option>
+                                    <option value="SRO Kushinagar">SRO Kushinagar</option>
+                                    <option value="SRO Deoria">SRO Deoria</option>
+                                </select>
                             </div>
+
                             <div class="col-md-6">
-                                <label class="form-label">Registration Fee (₹) *</label>
-                                <input type="number" class="form-control" name="registration_fee" required min="0" step="0.01" placeholder="0.00">
+                                <label class="form-label fw-semibold">Appointment Date</label>
+                                <input type="date" name="appointment_date" class="form-control" min="<?= date('Y-m-d') ?>">
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Other Charges (₹)</label>
-                                <input type="number" class="form-control" name="other_charges" min="0" step="0.01" placeholder="0.00">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Total Registry Cost (₹) *</label>
-                                <input type="number" class="form-control" name="total_registry_cost" required min="0" step="0.01" placeholder="Auto-calculate or enter">
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Notes</label>
+                                <textarea name="notes" class="form-control" rows="2" placeholder="Additional instructions..."></textarea>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h5></div>
-                    <div class="card-body">
-                        <textarea class="form-control" name="notes" rows="3" placeholder="Any additional notes..."></textarea>
-                    </div>
-                </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create Registry</button>
+                            <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-landmark me-2"></i>Submit Registry Request</button>
+    <!-- Stamp Duty Calculator -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom">
+                <h6 class="mb-0"><i class="fas fa-calculator me-2"></i>Stamp Duty Calculator</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Property Value (₹)</label>
+                    <input type="number" class="form-control" id="calcValue" placeholder="e.g. 2500000" value="2500000">
                 </div>
-            </form>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">State</label>
+                    <select class="form-select" id="calcState">
+                        <option value="Uttar Pradesh" selected>Uttar Pradesh (4%)</option>
+                        <option value="Bihar">Bihar (6%)</option>
+                        <option value="Rajasthan">Rajasthan (5%)</option>
+                        <option value="Maharashtra">Maharashtra (6%)</option>
+                    </select>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small">Stamp Duty:</span>
+                    <span class="fw-bold" id="calcStamp">₹<?= number_format($stamp_duty['stamp_duty'] ?? 0, 0) ?></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small">Registration Fee:</span>
+                    <span class="fw-bold" id="calcReg">₹<?= number_format($stamp_duty['registration_fee'] ?? 0, 0) ?></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small">Other Charges:</span>
+                    <span class="fw-bold" id="calcOther">₹1,000</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <span class="fw-bold">Total Cost:</span>
+                    <span class="fw-bold text-primary fs-5" id="calcTotal">₹<?= number_format($stamp_duty['total'] ?? 0, 0) ?></span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-document.getElementById('bookingSelect').addEventListener('change', function() {
-    var opt = this.options[this.selectedIndex];
-    if (opt.value) {
-        document.getElementById('plotId').value = opt.dataset.plot || '';
-        document.getElementById('userId').value = opt.dataset.user || '';
+document.addEventListener('DOMContentLoaded', function() {
+    var rates = { 'Uttar Pradesh': 0.04, 'Bihar': 0.06, 'Rajasthan': 0.05, 'Maharashtra': 0.06 };
+    var caps = { 'Uttar Pradesh': 30000, 'Bihar': 50000, 'Rajasthan': 50000, 'Maharashtra': 30000 };
+
+    function recalc() {
+        var val = parseFloat(document.getElementById('calcValue').value) || 0;
+        var state = document.getElementById('calcState').value;
+        var rate = rates[state] || 0.04;
+        var cap = caps[state] || 30000;
+        var stamp = Math.round(val * rate);
+        var regFee = Math.min(Math.round(val * 0.01), cap);
+        var total = stamp + regFee + 1000;
+        document.getElementById('calcStamp').textContent = '₹' + stamp.toLocaleString('en-IN');
+        document.getElementById('calcReg').textContent = '₹' + regFee.toLocaleString('en-IN');
+        document.getElementById('calcTotal').textContent = '₹' + total.toLocaleString('en-IN');
     }
+
+    document.getElementById('calcValue').addEventListener('input', recalc);
+    document.getElementById('calcState').addEventListener('change', recalc);
 });
 </script>
+
 <?php
 $content = ob_get_clean();
-include APP_PATH . '/views/admin/layouts/unified.php';
+require __DIR__ . '/../layouts/unified.php';

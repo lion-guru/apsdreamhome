@@ -1,91 +1,75 @@
 <?php
 $page_title = $page_title ?? 'Request NOC';
-$page_heading = $page_heading ?? 'Request NOC for Booking';
-$bookings = $bookings ?? [];
-$users = $users ?? [];
 ob_start();
+$eligible_bookings = $eligible_bookings ?? [];
 ?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-1"><i class="fas fa-file-contract me-2"></i>Request NOC</h2>
-            <p class="text-muted mb-0">Submit a new No Objection Certificate request</p>
-        </div>
-        <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back</a>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1"><i class="fas fa-file-signature me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <span class="text-muted">Submit a new No Objection Certificate request</span>
     </div>
+    <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to NOCs</a>
+</div>
 
-    <div class="row">
-        <div class="col-md-8">
+<?php if (!empty($_SESSION['flash_error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?></div>
+<?php endif; ?>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-bottom">
+        <h6 class="mb-0">NOC Request Details</h6>
+    </div>
+    <div class="card-body">
+        <?php if (empty($eligible_bookings)): ?>
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>No eligible bookings found.</strong> All bookings must be fully paid or registered before an NOC can be requested.
+            </div>
+        <?php else: ?>
             <form method="POST" action="<?= BASE_URL ?>/admin/noc-registry/nocs/store">
-                <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-link me-2"></i>Booking Details</h5></div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Booking *</label>
-                                <select class="form-select" name="booking_id" id="bookingSelect" required>
-                                    <option value="">Select booking...</option>
-                                    <?php foreach ($bookings as $b): ?>
-                                        <option value="<?= $b['id'] ?>" data-plot="<?= $b['plot_id'] ?? 0 ?>" data-user="<?= $b['customer_id'] ?? 0 ?>"><?= htmlspecialchars($b['booking_number'] ?? '#'.$b['id']) ?> — <?= htmlspecialchars($b['customer_name'] ?? '') ?> (₹<?= number_format($b['total_plot_value'] ?? 0) ?>)</option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Plot</label>
-                                <input type="text" class="form-control" id="plotInfo" readonly placeholder="Auto-filled from booking">
-                                <input type="hidden" name="plot_id" id="plotId">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Customer</label>
-                                <input type="text" class="form-control" id="customerInfo" readonly placeholder="Auto-filled from booking">
-                                <input type="hidden" name="user_id" id="userId">
-                            </div>
-                        </div>
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Booking <span class="text-danger">*</span></label>
+                        <select name="booking_id" class="form-select" required>
+                            <option value="">— Select Booking —</option>
+                            <?php foreach ($eligible_bookings as $b): ?>
+                                <option value="<?= $b['id'] ?>">
+                                    <?= htmlspecialchars($b['booking_number']) ?> — <?= htmlspecialchars($b['customer_name']) ?>
+                                    (<?= htmlspecialchars($b['plot_no']) ?>, <?= htmlspecialchars($b['colony_name']) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Purpose <span class="text-danger">*</span></label>
+                        <select name="purpose" class="form-select" required>
+                            <option value="Property transfer / Registry">Property Transfer / Registry</option>
+                            <option value="Bank loan processing">Bank Loan Processing</option>
+                            <option value="Court order compliance">Court Order Compliance</option>
+                            <option value="Mutation / Name transfer">Mutation / Name Transfer</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Notes / Remarks</label>
+                        <textarea name="notes" class="form-control" rows="3" placeholder="Any additional details or special instructions..."></textarea>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>NOC Details</h5></div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Purpose *</label>
-                            <input type="text" class="form-control" name="purpose" required placeholder="e.g., Registry, Bank Loan, Transfer">
-                        </div>
-                        <div class="mb-0">
-                            <label class="form-label">Notes</label>
-                            <textarea class="form-control" name="notes" rows="3" placeholder="Any additional notes..."></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-info-circle me-2"></i><strong>Auto-Eligibility Check:</strong> When submitted, the system will automatically check EMI status, penalties, RERA compliance, documents, and commissions. If any check fails, the NOC will be blocked with detailed reasons.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane me-2"></i>Submit NOC Request</button>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i>Submit Request</button>
+                    <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
-        </div>
+        <?php endif; ?>
     </div>
 </div>
 
-<script>
-document.getElementById('bookingSelect').addEventListener('change', function() {
-    var opt = this.options[this.selectedIndex];
-    if (opt.value) {
-        document.getElementById('plotId').value = opt.dataset.plot || '';
-        document.getElementById('userId').value = opt.dataset.user || '';
-        document.getElementById('plotInfo').value = opt.dataset.plot ? 'Plot #' + opt.dataset.plot : '';
-        document.getElementById('customerInfo').value = opt.text.split(' — ')[1] || '';
-    }
-});
-</script>
 <?php
 $content = ob_get_clean();
-include APP_PATH . '/views/admin/layouts/unified.php';
+require __DIR__ . '/../layouts/unified.php';

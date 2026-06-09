@@ -1,69 +1,90 @@
 <?php
 $page_title = $page_title ?? 'NOC Requests';
-$page_heading = $page_heading ?? 'NOC Requests';
-$nocs = $nocs ?? [];
-$filters = $filters ?? [];
 ob_start();
+$nocs = $nocs ?? [];
+$status_filter = $status_filter ?? null;
 ?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-1"><i class="fas fa-file-contract me-2"></i>NOC Requests</h2>
-            <p class="text-muted mb-0">No Objection Certificate requests for plot bookings</p>
-        </div>
-        <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Request NOC</a>
-    </div>
 
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <form method="GET" class="row g-3 align-items-end">
-                <div class="col-md-4">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
-                        <option value="">All Statuses</option>
-                        <?php foreach (['pending'=>'Pending','processing'=>'Processing','approved'=>'Approved','blocked'=>'Blocked','rejected'=>'Rejected','cancelled'=>'Cancelled'] as $v=>$l): ?>
-                            <option value="<?= $v ?>" <?= ($filters['status'] ?? '') === $v ? 'selected' : '' ?>><?= $l ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>Filter</button></div>
-            </form>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <span class="text-muted">No Objection Certificate requests and approvals</span>
     </div>
+    <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New NOC Request</a>
+</div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
+<?php if (!empty($_SESSION['flash_success'])): ?>
+    <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?></div>
+<?php endif; ?>
+<?php if (!empty($_SESSION['flash_error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?></div>
+<?php endif; ?>
+
+<!-- Filter Buttons -->
+<div class="mb-3">
+    <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-sm <?= !$status_filter ? 'btn-primary' : 'btn-outline-primary' ?>">All</a>
+    <?php foreach (['pending','processing','approved','rejected','blocked'] as $s): ?>
+        <a href="<?= BASE_URL ?>/admin/noc-registry/nocs?status=<?= $s ?>" class="btn btn-sm <?= $status_filter === $s ? 'btn-primary' : 'btn-outline-primary' ?>"><?= ucfirst($s) ?></a>
+    <?php endforeach; ?>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <?php if (empty($nocs)): ?>
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-file-alt fa-3x mb-3 opacity-25"></i>
+                <p>No NOC requests found<?= $status_filter ? " with status: $status_filter" : '' ?></p>
+                <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-primary btn-sm">Request NOC</a>
+            </div>
+        <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>#</th><th>Booking</th><th>Customer</th><th>Plot</th><th>Purpose</th><th>Status</th><th>Created</th><th>Actions</th></tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Booking</th>
+                            <th>Customer</th>
+                            <th>Plot</th>
+                            <th>Purpose</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <?php if (empty($nocs)): ?>
-                            <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2"></i>No NOC requests found</td></tr>
-                        <?php else: foreach ($nocs as $n): ?>
-                            <tr>
-                                <td>#<?= $n['id'] ?></td>
-                                <td><strong><?= htmlspecialchars($n['booking_number'] ?? '') ?></strong></td>
-                                <td><?= htmlspecialchars($n['customer_name'] ?? '') ?></td>
-                                <td><?= htmlspecialchars(($n['block'] ?? '') . '-' . ($n['plot_number'] ?? '')) ?></td>
-                                <td><?= htmlspecialchars($n['purpose'] ?? '') ?></td>
-                                <td>
-                                    <?php
-                                    $colors = ['pending'=>'warning','processing'=>'info','approved'=>'success','blocked'=>'danger','rejected'=>'dark','cancelled'=>'secondary'];
-                                    ?>
-                                    <span class="badge bg-<?= $colors[$n['status']] ?? 'secondary' ?> px-3 py-2"><?= ucfirst($n['status']) ?></span>
-                                </td>
-                                <td><?= date('d M Y', strtotime($n['created_at'])) ?></td>
-                                <td><a href="<?= BASE_URL ?>/admin/noc-registry/nocs/<?= $n['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
-                            </tr>
-                        <?php endforeach; endif; ?>
+                    <?php foreach ($nocs as $n): ?>
+                        <tr>
+                            <td><?= $n['id'] ?></td>
+                            <td>
+                                <div class="fw-semibold small"><?= htmlspecialchars($n['booking_number']) ?></div>
+                            </td>
+                            <td>
+                                <div class="small"><?= htmlspecialchars($n['customer_name'] ?? '—') ?></div>
+                                <div class="text-muted" style="font-size:.75rem;"><?= htmlspecialchars($n['customer_phone'] ?? '') ?></div>
+                            </td>
+                            <td class="small"><?= htmlspecialchars($n['plot_no']) ?>, <?= htmlspecialchars($n['colony_name']) ?></td>
+                            <td class="small text-truncate" style="max-width:180px;"><?= htmlspecialchars($n['purpose']) ?></td>
+                            <td>
+                                <?php
+                                $colors = ['pending'=>'warning','processing'=>'info','approved'=>'success','rejected'=>'danger','blocked'=>'dark'];
+                                $color = $colors[$n['status']] ?? 'secondary';
+                                ?>
+                                <span class="badge bg-<?= $color ?>"><?= ucfirst($n['status']) ?></span>
+                                <?php if ($n['noc_number']): ?>
+                                    <div class="text-muted" style="font-size:.7rem;"><?= htmlspecialchars($n['noc_number']) ?></div>
+                                <?php endif; ?>
+                            </td>
+                            <td class="small text-muted"><?= date('d M Y', strtotime($n['created_at'])) ?></td>
+                            <td><a href="<?= BASE_URL ?>/admin/noc-registry/nocs/<?= $n['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
-        </div>
+        <?php endif; ?>
     </div>
 </div>
+
 <?php
 $content = ob_get_clean();
-include APP_PATH . '/views/admin/layouts/unified.php';
+require __DIR__ . '/../layouts/unified.php';
