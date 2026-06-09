@@ -1,4 +1,39 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-08)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-09)
+
+---
+
+## Session 2026-06-09: E-Filing Fixes + Admin CSS Modernization
+
+### What Was Done
+1. **Phase 31: E-Filing Credential Column Fixes + GST Summary Bug**
+   - Fixed `GSTFilingService::getCompanyGSTIN()` — `setting_value` → `credential_value`, `is_active` → `status='active' AND is_primary=1`
+   - Fixed `TDSFilingService::getCompanyTAN()/getCompanyPAN()` — same column fixes
+   - Fixed critical `$$key` variable-variable bug in `GSTFilingService::getGSTSummary()` — output/input sub-arrays now correctly populated
+   - Removed `$this->tdsFiling->getSectionName()` from TDS view (views don't have `$this`)
+   - Verified: GSTR-1 JSON (GSTN format), GSTR-3B JSON, Form 26Q JSON, Form 16A all generate correctly
+   - **Commit:** `973c7dd06`
+
+2. **Phase 33: Admin CSS Modernization**
+   - Enhanced `.card` class: border-radius 14px, hover box-shadow transition, overflow:hidden
+   - `.card-header` now has flex layout with `justify-content: space-between`
+   - Preserved `aps-cp-card`/`aps-cp-card-header`/`aps-cp-card-body` as dual-selector aliases
+   - Mobile: touch targets ≥44px, card border-radius 12px, tighter padding
+   - Phase 34 verified: session_start cleanup already done (Phase 1.4b/1.5)
+   - **Commit:** `4cdbe7b09`
+
+3. **ngrok started** — tunnel: `https://unforced-willena-seclusively.ngrok-free.dev` → localhost:80
+
+### Verification
+| Check | Result |
+|---|---|
+| PHP syntax (3 service files + 1 view) | 4/4 PASS |
+| E2E master test | **164/165 PASS** (1 expected GodMode 403) |
+| E-filing routes (8 routes) | 8/8 HTTP 200 |
+| GSTR-1 JSON generation | ✅ 2 B2C invoices, GSTN format |
+| GSTR-3B JSON generation | ✅ ₹3,600 net payable |
+| Form 26Q JSON generation | ✅ 2 records, ₹10,000 TDS |
+| Form 16A certificate generation | ✅ |
+| GST summary (FY 2026-27) | ✅ ₹20,000 taxable, ₹3,600 net |
 
 ---
 
