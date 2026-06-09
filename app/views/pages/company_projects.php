@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <?php
 /**
  * Company Projects Page
@@ -112,7 +113,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                                                 <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-primary btn-sm flex-grow-1">
                                                     <i class="fas fa-eye me-1"></i>View Details
                                                 </a>
-                                                <a href="https://wa.me/919277121112?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">
+                                                <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">
                                                     <i class="fab fa-whatsapp"></i>
                                                 </a>
                                             </div>

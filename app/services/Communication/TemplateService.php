@@ -278,25 +278,37 @@ class TemplateService
     private function defaultsFor(string $code): array
     {
         $year = date('Y');
+        // Shared contact info from DB settings
+        $contact = [
+            'company_phone' => '+91 92771 21112',
+            'company_email' => 'info@apsdreamhome.com',
+            'company_name'  => 'APS Dream Home',
+        ];
+        try {
+            $settings = \App\Services\SiteContentService::getInstance()->getSection('settings');
+            $contact['company_phone'] = $settings['contact_phone'] ?? $contact['company_phone'];
+            $contact['company_email'] = $settings['contact_email'] ?? $contact['company_email'];
+            $contact['company_name']  = $settings['company_name'] ?? $contact['company_name'];
+        } catch (\Throwable $e) {}
         switch ($code) {
             case 'welcome':
-                return [
+                return array_merge($contact, [
                     'name'             => 'Customer',
                     'login_url'        => '/login',
                     'logo_url'         => '/assets/images/logo.png',
                     'unsubscribe_url'  => '/unsubscribe',
                     'preferences_url'  => '/email-preferences',
                     'year'             => $year,
-                ];
+                ]);
             case 'password_reset':
-                return [
+                return array_merge($contact, [
                     'user_name'  => 'Customer',
                     'reset_url'  => '/reset-password?token=abc',
                     'expires_in' => '1 hour',
                     'year'       => $year,
-                ];
+                ]);
             case 'booking_confirmation':
-                return [
+                return array_merge($contact, [
                     'customer_name'     => 'Customer',
                     'booking_id'        => 'BK-0000',
                     'property_name'     => 'Your Property',
@@ -306,9 +318,9 @@ class TemplateService
                     'booking_url'       => '/user/bookings',
                     'unsubscribe_url'   => '/unsubscribe',
                     'year'              => $year,
-                ];
+                ]);
             case 'property_approved':
-                return [
+                return array_merge($contact, [
                     'user_name'         => 'Customer',
                     'property_name'     => 'Your Property',
                     'property_location' => 'Gorakhpur, UP',
@@ -319,9 +331,9 @@ class TemplateService
                     'property_url'      => '/properties',
                     'unsubscribe_url'   => '/unsubscribe',
                     'year'              => $year,
-                ];
+                ]);
             default:
-                return ['year' => $year];
+                return array_merge($contact, ['year' => $year]);
         }
     }
 

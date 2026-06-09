@@ -1,4 +1,5 @@
-﻿<div class="container my-5">
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
+<div class="container my-5">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
@@ -136,9 +137,9 @@
                 <div class="card-body">
                     <h6 class="fw-bold mb-3"><i class="fas fa-tools me-2"></i>Quick Actions</h6>
                     <a href="tel:919277121112" class="btn btn-success w-100 mb-2">
-                        <i class="fas fa-phone me-2"></i>Call APS (+91 92771 21112)
+                        <i class="fas fa-phone me-2"></i>Call APS (<?= htmlspecialchars($phoneDisplay) ?>)
                     </a>
-                    <a href="https://wa.me/919277121112?text=Hi, I'm interested in <?php echo urlencode($property['name'] ?? 'this property'); ?>" target="_blank" class="btn btn-outline-success w-100 mb-2">
+                    <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($property['name'] ?? 'this property'); ?>" target="_blank" class="btn btn-outline-success w-100 mb-2">
                         <i class="fab fa-whatsapp me-2"></i>WhatsApp
                     </a>
                     <a href="<?php echo BASE_URL; ?>/tools/emi-calculator" class="btn btn-outline-primary w-100">

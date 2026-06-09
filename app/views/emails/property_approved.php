@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -80,7 +80,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
         <!-- Footer -->
         <tr>
           <td bgcolor="#f7fafc" style="padding:24px 30px;text-align:center;border-top:1px solid #e2e8f0;">
-            <p style="margin:0 0 6px;font-size:13px;color:#718096;">APS Dream Home &nbsp;|&nbsp; +91 92771 21112 &nbsp;|&nbsp; info@apsdreamhome.com</p>
+            <p style="margin:0 0 6px;font-size:13px;color:#718096;">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
             <p style="margin:6px 0 0;font-size:12px;color:#a0aec0;">
               <a href="{{unsubscribe_url}}" style="color:#718096;">Unsubscribe</a>
             </p>

@@ -2,6 +2,7 @@
 // Contact Page - APS Dream Home - Enhanced UI/UX
 $contactSuccess = $contact_success ?? false;
 $contactError = $contact_error ?? '';
+if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }
 ?>
 
 <?php if ($contactSuccess): ?>
@@ -30,10 +31,10 @@ $contactError = $contact_error ?? '';
                 <h1 class="display-4 fw-bold mb-4 animate-fade-in"><?php echo __('get_in_touch'); ?></h1>
                 <p class="lead mb-4 animate-fade-in-delay"><?php echo __('contact_subtitle'); ?></p>
                 <div class="d-flex flex-wrap gap-3 animate-fade-in-delay-2">
-                    <a href="tel:+919277121112" class="btn btn-light btn-lg">
+                    <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+919277121112')) ?>" class="btn btn-light btn-lg">
                         <i class="fas fa-phone-alt me-2"></i><?php echo __('call_now'); ?>
                     </a>
-                    <a href="https://wa.me/919277121112" class="btn btn-success btn-lg" target="_blank">
+                    <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')) ?>" class="btn btn-success btn-lg" target="_blank">
                         <i class="fab fa-whatsapp me-2"></i><?php echo __('whatsapp'); ?>
                     </a>
                 </div>
@@ -139,7 +140,7 @@ $contactError = $contact_error ?? '';
                         </h2>
                         <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                <?= __('contact_faq2_a', null, 'You can call us at +91 92771 21112 / +91 70074 44842 or fill out the contact form. Our team will get back to you to arrange a convenient time.') ?>
+                                You can call us at <?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?><?php if ($sc('contact_phone_2')): ?> / <?= htmlspecialchars($sc('contact_phone_2')) ?><?php endif; ?> or fill out the contact form. Our team will get back to you to arrange a convenient time.
                             </div>
                         </div>
                     </div>
@@ -178,8 +179,8 @@ $contactError = $contact_error ?? '';
                             <address>
                                 <?= __('contact_office_addr1', null, '1st floor, Singhariya Chauraha, Kunraghat, Deoria Road') ?><br>
                                 <?= __('contact_office_addr2', null, 'Gorakhpur, UP - 273008') ?><br>
-                                <?= __('phone_lbl') ?>: +91 92771 21112 / +91 70074 44842<br>
-                                <?= __('email_lbl') ?>: info@apsdreamhome.com
+                                <?= __('phone_lbl') ?>: <?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?><?php if ($sc('contact_phone_2')): ?> / <?= htmlspecialchars($sc('contact_phone_2')) ?><?php endif; ?><br>
+                                <?= __('email_lbl') ?>: <?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?>
                             </address>
                         </div>
                         <div class="map-container mt-3">

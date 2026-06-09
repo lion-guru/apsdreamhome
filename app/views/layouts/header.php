@@ -1,6 +1,17 @@
 <?php
 require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 
+// Load site settings from DB (cached in-process)
+if (!isset($GLOBALS['_site_settings_cache'])) {
+    $GLOBALS['_site_settings_cache'] = [];
+    try {
+        $scPdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3]);
+        $scRows = $scPdo->query("SELECT content_key, content_value FROM site_content WHERE section = 'settings' AND is_active = 1")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $GLOBALS['_site_settings_cache'] = $scRows;
+    } catch (\Exception $e) { /* graceful fallback */ }
+}
+$sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$key] ?? $default; };
+
 // Google Analytics 4 (gtag.js) — id pulled from GA4_MEASUREMENT_ID env var.
 // The placeholder 'G-PLACEHOLDER' is shown in the source for visibility so
 // the wiring is obviously present; replace it with a real ID (G-XXXXXXXXXX)
@@ -500,9 +511,9 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                     <?php endif; ?>
 
                     <li class="nav-item ms-2">
-                        <a href="tel:+919277121112" class="btn btn-call btn-sm">
+                        <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+91 92771 21112')) ?>" class="btn btn-call btn-sm">
                             <i class="fas fa-phone me-1"></i>
-                            <span class="d-none d-lg-inline">+91 92771 21112</span>
+                            <span class="d-none d-lg-inline"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></span>
                         </a>
                     </li>
                     <li class="nav-item ms-2 btn-compare">

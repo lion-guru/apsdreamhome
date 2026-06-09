@@ -263,6 +263,11 @@ class EmailTemplateService
             return '';
         }
 
+        // Inject site settings for dynamic content (phone, email, company name)
+        if (!isset($data['settings'])) {
+            $data['settings'] = \App\Services\SiteContentService::getInstance()->getSection('settings');
+        }
+
         extract($data, EXTR_SKIP);
         ob_start();
         include $file;

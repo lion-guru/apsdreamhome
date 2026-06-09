@@ -3,6 +3,9 @@
  * Admin Footer Layout
  * Dedicated footer for admin pages
  */
+if (!isset($sc)) {
+    $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; };
+}
 ?>
 
     <!-- Admin Footer -->
@@ -187,7 +190,7 @@
         }
 
         function showSupport() {
-            alert('Support Center: support@apsdreamhome.com\nPhone: +91 92771 21112');
+            alert('Support Center: <?= $sc('contact_email', 'support@apsdreamhome.com') ?>\nPhone: <?= $sc('contact_phone', '+91 92771 21112') ?>');
         }
 
         // Initialize

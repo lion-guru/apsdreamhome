@@ -1,4 +1,5 @@
-﻿<?php
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
+<?php
 /**
  * Projects by Location Page
  */
@@ -39,7 +40,7 @@ $locationName = ucfirst($location);
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 shadow-sm border-0 overflow-hidden">
                         <div class="position-relative" style="height: 200px;">
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project- />site_name); ?>" style="object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 start-0 m-2">
                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'primary'; ?>">
                                     <?php echo $project->status === 'active' ? 'Available' : 'Completed'; ?>
@@ -64,7 +65,7 @@ $locationName = ucfirst($location);
                                 <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-primary btn-sm flex-grow-1">
                                     <i class="fas fa-eye me-1"></i>View Details
                                 </a>
-                                <a href="https://wa.me/919277121112?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">
+                                <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">
                                     <i class="fab fa-whatsapp"></i>
                                 </a>
                             </div>
@@ -108,7 +109,7 @@ $locationName = ucfirst($location);
         <h3>Interested in <?php echo $locationName; ?> Properties?</h3>
         <p class="mb-4">Contact us for site visits and expert guidance</p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a href="tel:+919277121112" class="btn btn-warning btn-lg">
+            <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg">
                 <i class="fas fa-phone me-2"></i>Call Now
             </a>
             <a href="https://wa.me/919277121112" target="_blank" class="btn btn-success btn-lg">

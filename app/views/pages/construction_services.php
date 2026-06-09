@@ -1,4 +1,5 @@
-﻿<style>
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
+<style>
 :root { --primary: #1a237e; --secondary: #ff6f00; --accent: #00c853; }
 .construction-hero {
     background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
@@ -246,7 +247,7 @@
                     </div>
                 </div>
                 <div class="row mt-4 g-3 text-center">
-                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-phone-alt text-primary fa-2x mb-2"></i><h6>Call Us</h6><p class="mb-0 text-muted">+91 92771 21112</p></div></div>
+                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-phone-alt text-primary fa-2x mb-2"></i><h6>Call Us</h6><p class="mb-0 text-muted"><?= $phoneDisplay ?></p></div></div>
                     <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-envelope text-primary fa-2x mb-2"></i><h6>Email</h6><p class="mb-0 text-muted">info@apsdreamhome.com</p></div></div>
                     <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-map-marker-alt text-primary fa-2x mb-2"></i><h6>Office</h6><p class="mb-0 text-muted">Gorakhpur, UP</p></div></div>
                 </div>
@@ -263,7 +264,7 @@
                 <p class="mb-0 opacity-75">Get a free consultation and detailed estimate with no obligation</p>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <a href="tel:+919277121112" class="btn btn-warning btn-lg px-4"><i class="fas fa-phone me-2"></i>Call Now</a>
+                <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4"><i class="fas fa-phone me-2"></i>Call Now</a>
             </div>
         </div>
     </div>

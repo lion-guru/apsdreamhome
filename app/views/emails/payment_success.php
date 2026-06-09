@@ -1,4 +1,4 @@
-<?php $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome'; ?>
+﻿<?php $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,7 +54,7 @@
 
             <p>If you have any questions about your payment, please contact our support team:</p>
             <p>📧 Email: support@apsdreamhome.com<br>
-               📞 Phone: +91-9277121112</p>
+               📞 Phone: {{company_phone}}</p>
         </div>
 
         <div class="footer">

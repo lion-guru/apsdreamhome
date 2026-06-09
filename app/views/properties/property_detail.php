@@ -1,4 +1,5 @@
-﻿<?php
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
+<?php
 $page_title = $property['title'] . ' - APS Dream Home';
 include __DIR__ . '/../layouts/base.php';
 ?>
@@ -145,7 +146,7 @@ include __DIR__ . '/../layouts/base.php';
                                 <!-- Logged In View: Show Contact & Track Lead -->
                                 <div class="mt-2" id="revealed-contact" style="display:none;">
                                     <h5 class="text-success fw-bold mb-0" style="letter-spacing: 1px;">
-                                        <?php echo !empty($property['owner_contact']) ? htmlspecialchars($property['owner_contact']) : '+91 92771 21112'; ?>
+                                        <?php echo !empty($property['owner_contact']) ? htmlspecialchars($property['owner_contact']) : '<?= htmlspecialchars($phoneDisplay) ?>'; ?>
                                     </h5>
                                     <small class="text-white-50">Verified Number <i class="bi bi-check-circle-fill text-success ms-1"></i></small>
                                 </div>

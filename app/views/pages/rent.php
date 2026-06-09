@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <!-- Hero Section -->
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #17a2b8 0%, #6610f2 100%);">
     <div class="container text-center py-5">
@@ -20,7 +21,7 @@
                         <h4>Looking to Rent?</h4>
                         <p class="text-muted mb-4">Contact us and we'll help you find the perfect rental property.</p>
                         <div class="d-flex gap-2 justify-content-center">
-                            <a href="tel:+919277121112" class="btn btn-success">
+                            <a href="tel:<?= $phoneRaw ?>" class="btn btn-success">
                                 <i class="fas fa-phone me-2"></i>Call Us
                             </a>
                             <a href="https://wa.me/919277121112" target="_blank" class="btn btn-primary">

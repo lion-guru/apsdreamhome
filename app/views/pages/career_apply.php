@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
 <?php
 /**
  * APS Dream Home - Career Application Page
@@ -142,7 +143,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                                     <i class="fas fa-phone text-primary me-3"></i>
                                     <div>
                                         <strong><?= __('career_apply_phone_lbl') ?>:</strong><br>
-                                        <a href="tel:+919876543210">+91 92771 21112</a>
+                                        <a href="tel:+919876543210"><?= htmlspecialchars($phoneDisplay) ?></a>
                                     </div>
                                 </div>
                             </div>

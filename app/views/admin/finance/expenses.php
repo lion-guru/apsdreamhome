@@ -1,8 +1,8 @@
-<?php $page_title = $page_title ?? 'Expenses'; $page_heading = $page_heading ?? 'Expense Approvals'; $status = $status ?? ''; ?>
+<?php $page_title = $page_title ?? __('finance_expense_approvals'); $page_heading = $page_heading ?? __('finance_expense_approvals'); $status = $status ?? ''; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-receipt me-2 text-primary"></i>Expense Approvals</h2>
-        <a href="<?= BASE_URL ?>/admin/finance/expense-form" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Submit Expense</a>
+        <h2 class="mb-0"><i class="fas fa-receipt me-2 text-primary"></i><?php echo __('finance_expense_approvals'); ?></h2>
+        <a href="<?= BASE_URL ?>/admin/finance/expense-form" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?php echo __('finance_submit_expense'); ?></a>
     </div>
 
     <div class="aps-cp-card mb-4">
@@ -10,15 +10,15 @@
             <form method="get" class="row g-2 align-items-end">
                 <input type="hidden" name="url" value="/admin/finance/expenses">
                 <div class="col-md-3">
-                    <label class="form-label small">Status</label>
+                    <label class="form-label small"><?php echo __('finance_status'); ?></label>
                     <select name="status" class="form-select form-select-sm">
-                        <option value="">All</option>
+                        <option value=""><?php echo __('finance_all'); ?></option>
                         <?php foreach (['pending','approved','rejected'] as $s): ?>
                             <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-2"><button class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i>Filter</button></div>
+                <div class="col-md-2"><button class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i><?php echo __('finance_filter'); ?></button></div>
             </form>
         </div>
     </div>
@@ -27,11 +27,11 @@
         <div class="aps-cp-card-body p-0">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th>Date</th><th>Category</th><th>Description</th><th>Mode</th><th>Submitted By</th><th class="text-end">Amount</th><th>Status</th><th></th></tr>
+                    <tr><th><?php echo __('finance_date'); ?></th><th><?php echo __('finance_category'); ?></th><th><?php echo __('finance_description'); ?></th><th><?php echo __('finance_payment_mode'); ?></th><th><?php echo __('finance_submitted_by'); ?></th><th class="text-end"><?php echo __('finance_amount'); ?></th><th><?php echo __('finance_status'); ?></th><th></th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($entries)): ?>
-                    <tr><td colspan="8" class="text-center text-muted py-4">No expenses</td></tr>
+                    <tr><td colspan="8" class="text-center text-muted py-4"><?php echo __('finance_no_expenses'); ?></td></tr>
                 <?php else: foreach ($entries as $e): ?>
                     <tr>
                         <td><?= htmlspecialchars($e['expense_date'] ?? '-') ?></td>
