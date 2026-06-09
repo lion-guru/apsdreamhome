@@ -1,18 +1,18 @@
-<?php $page_title = $page_title ?? 'Vendor Payments'; $page_heading = $page_heading ?? 'Vendor Payments & Outstanding'; ?>
+<?php $page_title = $page_title ?? __('finance_vendor_payments'); $page_heading = $page_heading ?? __('finance_vendor_payments_outstanding'); ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-truck me-2 text-primary"></i>Vendor Payments</h2>
-        <a href="<?= BASE_URL ?>/admin/finance/vendor-payment" class="btn btn-primary"><i class="fas fa-plus me-1"></i>New Payment</a>
+        <h2 class="mb-0"><i class="fas fa-truck me-2 text-primary"></i><?php echo __('finance_vendor_payments'); ?></h2>
+        <a href="<?= BASE_URL ?>/admin/finance/vendor-payment" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?php echo __('finance_new_payment'); ?></a>
     </div>
 
     <div class="aps-cp-card mb-4">
-        <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-exclamation-circle me-2 text-warning"></i>Vendor Outstanding</h5></div>
+        <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-exclamation-circle me-2 text-warning"></i><?php echo __('finance_vendor_outstanding'); ?></h5></div>
         <div class="aps-cp-card-body p-0">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-light"><tr><th>Vendor</th><th>Type</th><th class="text-end">Payable</th><th class="text-end">TDS</th><th class="text-end">GST</th><th>Bills</th></tr></thead>
+                <thead class="table-light"><tr><th><?php echo __('finance_vendor'); ?></th><th><?php echo __('finance_type'); ?></th><th class="text-end"><?php echo __('finance_payable'); ?></th><th class="text-end"><?php echo __('finance_tds'); ?></th><th class="text-end"><?php echo __('finance_gst'); ?></th><th><?php echo __('finance_bills'); ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($outstanding)): ?>
-                    <tr><td colspan="6" class="text-center text-muted py-4">No outstanding vendor dues</td></tr>
+                    <tr><td colspan="6" class="text-center text-muted py-4"><?php echo __('finance_no_outstanding_vendor_dues'); ?></td></tr>
                 <?php else: foreach ($outstanding as $o): ?>
                     <tr>
                         <td class="fw-semibold"><?= htmlspecialchars($o['vendor_name'] ?? '-') ?></td>
@@ -29,15 +29,15 @@
     </div>
 
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-list me-2"></i>Recent Payments</h5></div>
+        <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-list me-2"></i><?php echo __('finance_recent_payments'); ?></h5></div>
         <div class="aps-cp-card-body p-0">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th>Date</th><th>Vendor</th><th>Type</th><th>Bill #</th><th class="text-end">Amount</th><th class="text-end">TDS</th><th class="text-end">GST</th><th>Status</th></tr>
+                    <tr><th><?php echo __('finance_date'); ?></th><th><?php echo __('finance_vendor'); ?></th><th><?php echo __('finance_type'); ?></th><th><?php echo __('finance_bill_hash'); ?></th><th class="text-end"><?php echo __('finance_amount'); ?></th><th class="text-end"><?php echo __('finance_tds'); ?></th><th class="text-end"><?php echo __('finance_gst'); ?></th><th><?php echo __('finance_status'); ?></th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($payments)): ?>
-                    <tr><td colspan="8" class="text-center text-muted py-4">No vendor payments recorded</td></tr>
+                    <tr><td colspan="8" class="text-center text-muted py-4"><?php echo __('finance_no_vendor_payments_recorded'); ?></td></tr>
                 <?php else: foreach ($payments as $p): ?>
                     <tr>
                         <td><?= htmlspecialchars($p['payment_date'] ?? '-') ?></td>

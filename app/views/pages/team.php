@@ -1,4 +1,5 @@
-﻿<style>
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
+<style>
 .team-hero {
     background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
     position: relative;
@@ -475,7 +476,7 @@
             <a href="<?php echo BASE_URL; ?>/contact" class="btn-cta me-2 mb-2">
                 <i class="fas fa-calendar-check me-2"></i>Get in Touch
             </a>
-            <a href="tel:+919277121112" class="btn-cta mb-2" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);">
+            <a href="tel:<?= $phoneRaw ?>" class="btn-cta mb-2" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);">
                 <i class="fas fa-phone-alt me-2"></i>Call Now
             </a>
         </div>

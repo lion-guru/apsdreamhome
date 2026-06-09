@@ -1,4 +1,5 @@
-﻿<?php
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
+<?php
 /**
  * Project Detail Page
  * Display individual project/site details
@@ -62,14 +63,14 @@ if ($project) {
         <div class="row align-items-center text-center">
             <div class="col-md-4 mb-2 mb-md-0">
                 <i class="fas fa-phone-alt me-2"></i>
-                <a href="tel:+919277121112" class="text-white text-decoration-none">+91 92771 21112</a>
+                <a href="tel:<?= $phoneRaw ?>" class="text-white text-decoration-none"><?= $phoneDisplay ?></a>
             </div>
             <div class="col-md-4 mb-2 mb-md-0">
                 <i class="fas fa-envelope me-2"></i>
                 <a href="mailto:info@apsdreamhome.com" class="text-white text-decoration-none">info@apsdreamhome.com</a>
             </div>
             <div class="col-md-4">
-                <a href="https://wa.me/919277121112?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success">
+                <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success">
                     <i class="fab fa-whatsapp me-2"></i>WhatsApp Now
                 </a>
             </div>
@@ -174,10 +175,10 @@ if ($project) {
                     <div class="card-body">
                         <h5 class="text-primary mb-3">Interested in this project?</h5>
                         <div class="d-grid gap-2">
-                            <a href="tel:+919277121112" class="btn btn-success btn-lg">
+                            <a href="tel:<?= $phoneRaw ?>" class="btn btn-success btn-lg">
                                 <i class="fas fa-phone me-2"></i>Call Now
                             </a>
-                            <a href="https://wa.me/919277121112?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-outline-success btn-lg">
+                            <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-outline-success btn-lg">
                                 <i class="fab fa-whatsapp me-2"></i>WhatsApp
                             </a>
                             <a href="<?php echo $baseUrl; ?>/contact" class="btn btn-primary btn-lg">
@@ -345,7 +346,7 @@ if ($project) {
                 ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related- />site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?php echo $baseUrl; ?>/assets/images/placeholder/property.svg'">
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?php echo $baseUrl; ?>/assets/images/placeholder/property.svg'">
                         <div class="card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>
@@ -401,10 +402,10 @@ if ($project) {
         <h2 class="mb-3">Interested in <?php echo htmlspecialchars($project->site_name); ?>?</h2>
         <p class="lead mb-4">Book your dream plot today and secure your future!</p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a href="tel:+919277121112" class="btn btn-warning btn-lg">
+            <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg">
                 <i class="fas fa-phone me-2"></i>Call Now
             </a>
-            <a href="https://wa.me/919277121112?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-lg">
+            <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-lg">
                 <i class="fab fa-whatsapp me-2"></i>WhatsApp
             </a>
             <a href="<?php echo $baseUrl; ?>/register" class="btn btn-light btn-lg">

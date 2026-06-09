@@ -1,3 +1,15 @@
+<?php
+// Load site settings from DB (same cache as header)
+if (!isset($GLOBALS['_site_settings_cache'])) {
+    $GLOBALS['_site_settings_cache'] = [];
+    try {
+        $scPdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3]);
+        $scRows = $scPdo->query("SELECT content_key, content_value FROM site_content WHERE section = 'settings' AND is_active = 1")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $GLOBALS['_site_settings_cache'] = $scRows;
+    } catch (\Exception $e) {}
+}
+$sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$key] ?? $default; };
+?>
 <!-- Footer Stats Banner -->
 <div class="footer-stats-banner bg-primary bg-gradient text-white py-3">
     <div class="container">
@@ -45,15 +57,27 @@
         <div class="row">
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <h5 class="mb-3 text-white">APS Dream Homes Pvt Ltd</h5>
-                <p class="text-light"><?= __('footer_company_desc') ?></p>
+                <h5 class="mb-3 text-white"><?= htmlspecialchars($sc('company_name', 'APS Dream Homes Pvt Ltd')) ?></h5>
+                <p class="text-light"><?= $sc('footer_about', __('footer_company_desc')) ?></p>
                 <div class="social-links mt-3">
-                    <a href="https://www.facebook.com/apsdreamhomes/" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/apsdreamhomes/" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/@apsdreamhomes" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-youtube"></i></a>
-                    <a href="https://www.linkedin.com/company/apsdreamhomes" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://wa.me/919277121112" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://www.justdial.com/Gorakhpur/Aps-Dream-Homes-Pvt-Ltd" target="_blank" class="text-white social-icon"><i class="fas fa-phone"></i></a>
+                    <?php if ($sc('social_facebook')): ?>
+                    <a href="<?= htmlspecialchars($sc('social_facebook')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <?php endif; ?>
+                    <?php if ($sc('social_instagram')): ?>
+                    <a href="<?= htmlspecialchars($sc('social_instagram')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-instagram"></i></a>
+                    <?php endif; ?>
+                    <?php if ($sc('social_youtube')): ?>
+                    <a href="<?= htmlspecialchars($sc('social_youtube')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-youtube"></i></a>
+                    <?php endif; ?>
+                    <?php if ($sc('social_linkedin')): ?>
+                    <a href="<?= htmlspecialchars($sc('social_linkedin')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <?php endif; ?>
+                    <?php if ($sc('social_telegram')): ?>
+                    <a href="<?= htmlspecialchars($sc('social_telegram')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-telegram"></i></a>
+                    <?php endif; ?>
+                    <?php if ($sc('contact_whatsapp')): ?>
+                    <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $sc('contact_whatsapp')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-whatsapp"></i></a>
+                    <?php endif; ?>
                 </div>
                 <style>
                     .social-icon {
@@ -104,23 +128,25 @@
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <i class="fas fa-map-marker-alt me-2 text-primary"></i>
-                        <span class="text-light"><?= __('footer_address') ?></span>
+                        <span class="text-light"><?= $sc('contact_address', __('footer_address')) ?></span>
                     </li>
                     <li class="mb-3">
                         <i class="fas fa-phone me-2 text-primary"></i>
-                        <a href="tel:+919277121112" class="text-light text-decoration-none">+91 92771 21112</a>
+                        <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+919277121112')) ?>" class="text-light text-decoration-none"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></a>
                     </li>
+                    <?php if ($sc('contact_phone_2')): ?>
                     <li class="mb-3">
                         <i class="fas fa-phone me-2 text-primary"></i>
-                        <a href="tel:+917007444842" class="text-light text-decoration-none">+91 70074 44842</a>
+                        <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone_2')) ?>" class="text-light text-decoration-none"><?= htmlspecialchars($sc('contact_phone_2')) ?></a>
                     </li>
+                    <?php endif; ?>
                     <li class="mb-3">
                         <i class="fas fa-envelope me-2 text-primary"></i>
-                        <a href="mailto:info@apsdreamhome.com" class="text-light text-decoration-none">info@apsdreamhome.com</a>
+                        <a href="mailto:<?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?>" class="text-light text-decoration-none"><?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?></a>
                     </li>
                     <li class="mb-3">
                         <i class="fas fa-clock me-2 text-primary"></i>
-                        <span class="text-light"><?= __('footer_business_hours') ?></span>
+                        <span class="text-light"><?= $sc('contact_working_hours', __('footer_business_hours')) ?></span>
                     </li>
                 </ul>
             </div>

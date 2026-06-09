@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <?php
 if (!function_exists('__')) {
     require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
@@ -295,7 +296,7 @@ if (!function_exists('__')) {
                     <a href="contact.php" class="btn btn-primary btn-lg">
                         <i class="fas fa-phone me-2"></i><?= __('contact_us') ?>
                     </a>
-                    <a href="tel:+917007444842" class="btn btn-outline-primary btn-lg">
+                    <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-primary btn-lg">
                         <i class="fas fa-phone-alt me-2"></i><?= __('faqs_cta_call') ?>
                     </a>
                     <a href="mailto:info@apsdreamhome.com" class="btn btn-outline-secondary btn-lg">

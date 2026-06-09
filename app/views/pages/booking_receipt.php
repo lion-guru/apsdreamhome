@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -109,7 +110,7 @@
                 <div class="col-6">
                     <strong>APS Dream Home</strong><br>
                     Gorakhpur, Uttar Pradesh<br>
-                    Phone: +91 92771 21112
+                    Phone: <?= htmlspecialchars($phoneDisplay) ?>
                 </div>
                 <div class="col-6 text-end">
                     <small>This is a computer-generated receipt.<br>

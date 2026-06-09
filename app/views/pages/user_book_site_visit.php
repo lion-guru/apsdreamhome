@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
 <div class="container py-4">
     <h3 class="mb-4"><i class="fas fa-calendar-check me-2"></i>Book a Site Visit</h3>
     <?php if (!empty($message)): ?>
@@ -59,7 +60,7 @@
                         <li class="mb-1">Project brochures & price list provided</li>
                     </ul>
                     <hr>
-                    <p class="small mb-0"><i class="fas fa-phone me-1"></i>Call: +91 92771 21112</p>
+                    <p class="small mb-0"><i class="fas fa-phone me-1"></i>Call: <?= htmlspecialchars($phoneDisplay) ?></p>
                 </div>
             </div>
         </div>

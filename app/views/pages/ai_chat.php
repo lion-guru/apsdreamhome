@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '+91 92771 21112'); ?>
 <?php
 /**
  * AI Chat Page
@@ -66,7 +67,7 @@ function sendMessage() {
     
     // Simulate AI response
     setTimeout(() => {
-        addMessage("Thank you for your inquiry! Our team will get back to you shortly. For immediate assistance, please call +91-7007444842.", 'ai');
+        addMessage("Thank you for your inquiry! Our team will get back to you shortly. For immediate assistance, please call <?= $phoneDisplay ?>.", 'ai');
     }, 1000);
 }
 

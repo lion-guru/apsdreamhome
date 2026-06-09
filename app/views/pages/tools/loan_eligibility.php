@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <?php if (!defined('BASE_URL')) exit('No direct access'); ?>
 <section class="py-4 py-md-5" style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);">
     <div class="container">
@@ -356,8 +357,8 @@
                 <h3 class="text-white fw-bold mb-2">Ready to Take the Next Step?</h3>
                 <p class="text-white-50 mb-4">Our home loan experts can help you find the best rates and guide you through the application process.</p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <a href="tel:+919277121112" class="btn btn-light btn-lg px-4 fw-bold rounded-pill">
-                        <i class="fas fa-phone-alt me-2"></i>Call +91 92771 21112
+                    <a href="tel:<?= $phoneRaw ?>" class="btn btn-light btn-lg px-4 fw-bold rounded-pill">
+                        <i class="fas fa-phone-alt me-2"></i>Call <?= $phoneDisplay ?>
                     </a>
                     <a href="<?= BASE_URL ?>/contact" class="btn btn-outline-light btn-lg px-4 fw-bold rounded-pill">
                         <i class="fas fa-envelope me-2"></i>Send Enquiry

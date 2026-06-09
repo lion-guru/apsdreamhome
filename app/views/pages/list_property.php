@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <?php
 /**
  * List Property Page - 3-Step Wizard with Modern UI
@@ -38,8 +39,8 @@ try {
         </div>
         <div class="col-md-4 mt-3 mt-md-0">
             <div class="aps-cp-hero-actions justify-content-md-end">
-                <a href="tel:+919277121112" class="btn btn-light">
-                    <i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?>: +91 92771 21112
+                <a href="tel:<?= $phoneRaw ?>" class="btn btn-light">
+                    <i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?>: <?= $phoneDisplay ?>
                 </a>
             </div>
         </div>
@@ -294,10 +295,10 @@ try {
                 <h5 class="mb-2"><?= __('list_property_help_title') ?></h5>
                 <p class="text-muted mb-3"><?= __('list_property_help_desc') ?></p>
                 <div class="d-grid gap-2">
-                    <a href="tel:+919277121112" class="btn btn-success">
-                        <i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?>: +91 92771 21112
+                    <a href="tel:<?= $phoneRaw ?>" class="btn btn-success">
+                        <i class="fas fa-phone me-2"></i><?= __('list_property_call_label') ?>: <?= $phoneDisplay ?>
                     </a>
-                    <a href="https://wa.me/919277121112?text=Hi, I want to list my property for sale" target="_blank" rel="noopener" class="btn btn-outline-success">
+                    <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I want to list my property for sale" target="_blank" rel="noopener" class="btn btn-outline-success">
                         <i class="fab fa-whatsapp me-2"></i><?= __('list_property_whatsapp_button') ?>
                     </a>
                 </div>

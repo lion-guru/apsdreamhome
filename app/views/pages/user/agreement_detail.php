@@ -3,6 +3,9 @@ $page_title = $page_title ?? 'Agreement Details';
 $current_page = 'agreements';
 $agreement = $agreement ?? [];
 $user = $user ?? [];
+if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }
+$phoneDisplay = $sc('contact_phone', '+91 92771 21112');
+$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112'));
 
 $statusColors = [
     'draft' => 'secondary',
@@ -255,8 +258,8 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
             </div>
             <div class="aps-cp-card-body">
                 <p class="small text-muted mb-3">Have questions about this agreement? Contact our legal team.</p>
-                <a href="tel:+919277121112" class="btn btn-outline-primary w-100 mb-2">
-                    <i class="fas fa-phone me-2"></i>+91 92771 21112
+                <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-primary w-100 mb-2">
+                    <i class="fas fa-phone me-2"></i><?= htmlspecialchars($phoneDisplay) ?>
                 </a>
                 <a href="mailto:legal@apsdreamhome.com" class="btn btn-outline-secondary w-100">
                     <i class="fas fa-envelope me-2"></i>legal@apsdreamhome.com

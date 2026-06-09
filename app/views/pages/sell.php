@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <?php
 /**
  * Sell Property Page - Redirect to List Property
@@ -101,10 +102,10 @@
         <h3>Need Help?</h3>
         <p class="mb-4">Contact us directly for assistance</p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a href="tel:+919277121112" class="btn btn-light btn-lg">
+            <a href="tel:<?= $phoneRaw ?>" class="btn btn-light btn-lg">
                 <i class="fas fa-phone me-2"></i>Call Now
             </a>
-            <a href="https://wa.me/919277121112?text=Hi, I want to sell my property" target="_blank" class="btn btn-outline-light btn-lg">
+            <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I want to sell my property" target="_blank" class="btn btn-outline-light btn-lg">
                 <i class="fab fa-whatsapp me-2"></i>WhatsApp
             </a>
         </div>

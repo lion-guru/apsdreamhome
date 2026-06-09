@@ -2,6 +2,16 @@
 if (class_exists('\App\Helpers\SecurityHelper')) {
     \App\Helpers\SecurityHelper::setSecurityHeaders();
 }
+// Load site settings from DB (same cache as header/footer)
+if (!isset($GLOBALS['_site_settings_cache'])) {
+    $GLOBALS['_site_settings_cache'] = [];
+    try {
+        $scPdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3]);
+        $scRows = $scPdo->query("SELECT content_key, content_value FROM site_content WHERE section = 'settings' AND is_active = 1")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $GLOBALS['_site_settings_cache'] = $scRows;
+    } catch (\Exception $e) {}
+}
+$sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$key] ?? $default; };
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,23 +19,33 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'APS Dream Home - Premium Real Estate in Uttar Pradesh'; ?></title>
+    <title><?php echo $page_title ?? $sc('seo_title', 'APS Dream Home - Premium Real Estate in Uttar Pradesh'); ?></title>
+
+    <!-- SEO Meta (from Site Settings) -->
+    <meta name="description" content="<?= htmlspecialchars($sc('seo_description', 'APS Dream Home offers premium residential plots, houses, and commercial properties in Gorakhpur, Lucknow, Kushinagar and across Uttar Pradesh.')) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($sc('seo_keywords', 'real estate, plots, houses, flats, Gorakhpur, Lucknow, UP, property, APS Dream Home')) ?>">
+    <?php if ($sc('seo_og_image')): ?>
+    <meta property="og:image" content="<?= htmlspecialchars($sc('seo_og_image')) ?>">
+    <?php endif; ?>
+    <meta property="og:title" content="<?= htmlspecialchars($page_title ?? $sc('seo_title', 'APS Dream Home')) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($sc('seo_description', 'Premium Real Estate in Uttar Pradesh')) ?>">
+    <meta property="og:type" content="website">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "RealEstateAgent",
-        "name": "APS Dream Home",
-        "image": "<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/logo/apslogonew.jpg",
-        "url": "<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>",
-        "telephone": "+91-9277121112",
+        "name": <?= json_encode($sc('company_name', 'APS Dream Home')) ?>,
+        "image": "<?= defined('BASE_URL') ? BASE_URL : '' ?>/<?= $sc('company_logo', 'assets/images/logo/apslogonew.jpg') ?>",
+        "url": "<?= defined('BASE_URL') ? BASE_URL : '' ?>",
+        "telephone": <?= json_encode(preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+91-9277121112'))) ?>,
         "address": {
             "@type": "PostalAddress",
-            "streetAddress": "1st floor, Singhariya Chauraha, Kunraghat",
-            "addressLocality": "Gorakhpur",
-            "addressRegion": "Uttar Pradesh",
-            "postalCode": "273008",
+            "streetAddress": <?= json_encode($sc('contact_address', '1st floor, Singhariya Chauraha, Kunraghat, Deoria Road')) ?>,
+            "addressLocality": <?= json_encode($sc('contact_city', 'Gorakhpur')) ?>,
+            "addressRegion": <?= json_encode($sc('contact_state', 'Uttar Pradesh')) ?>,
+            "postalCode": <?= json_encode($sc('contact_pincode', '273008')) ?>,
             "addressCountry": "IN"
         },
         "aggregateRating": {
@@ -37,10 +57,10 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
             {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "09:00", "closes": "19:00"}
         ],
         "sameAs": [
-            "https://www.facebook.com/apsdreamhomes/",
-            "https://www.instagram.com/apsdreamhomes/",
-            "https://www.youtube.com/@apsdreamhomes",
-            "https://www.linkedin.com/company/apsdreamhomes"
+            <?= $sc('social_facebook') ? json_encode($sc('social_facebook')) . ',' : '' ?>
+            <?= $sc('social_instagram') ? json_encode($sc('social_instagram')) . ',' : '' ?>
+            <?= $sc('social_youtube') ? json_encode($sc('social_youtube')) . ',' : '' ?>
+            <?= $sc('social_linkedin') ? json_encode($sc('social_linkedin')) : '' ?>
         ]
     }
     </script>
@@ -305,9 +325,11 @@ if (class_exists('\App\Helpers\SecurityHelper')) {
     </div>
 
     <!-- WhatsApp Button (Right Side - Manual Chat) -->
-    <a href="https://wa.me/919277121112?text=Hi, I'm interested in APS Dream Home properties" target="_blank" class="whatsapp-float-btn" title="Chat on WhatsApp">
+    <?php if ($sc('whatsapp_enabled', '1') === '1' && $sc('contact_whatsapp')): ?>
+    <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $sc('contact_whatsapp')) ?>?text=<?= urlencode($sc('whatsapp_message', 'Hi, I\'m interested in APS Dream Home properties')) ?>" target="_blank" class="whatsapp-float-btn" title="Chat on WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
+    <?php endif; ?>
 
     <!-- Chatbot JS -->
     <script>

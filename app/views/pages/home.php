@@ -1,4 +1,9 @@
-﻿<main id="main-content">
+﻿<?php
+if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }
+$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112'));
+$phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
+?>
+<main id="main-content">
 <!-- Hero Section -->
 <section class="hero" aria-labelledby="hero-title" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
     <div class="container">
@@ -582,7 +587,7 @@ function openServiceModal(service) {
                 '<i class="fas fa-calculator fa-3x text-success mb-3"></i><h5 class="fw-bold">Calculate EMI</h5>' +
                 '<p class="text-muted small">Use our free EMI calculator</p>' +
                 '<a href="#" class="btn btn-success" onclick="openToolModal(\'emi\');return false;"><i class="fas fa-calculator me-2"></i>Calculate Now</a>' +
-                '<hr class="my-3"><p class="small text-muted mb-1">ðŸ“ž Call: +91 92771 21112</p>' +
+                '<hr class="my-3"><p class="small text-muted mb-1">ðŸ“ž Call: <?= $phoneDisplay ?></p>' +
                 '<p class="small text-muted mb-0">ðŸ’¬ <a href="https://wa.me/919277121112" target="_blank">WhatsApp</a></p></div></div></div>'
         },
         legal: {
@@ -600,7 +605,7 @@ function openServiceModal(service) {
                 '<div class="col-md-5"><div class="bg-primary bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">' +
                 '<i class="fas fa-shield-halved fa-3x text-primary mb-3"></i><h5 class="fw-bold">100% Legal Protection</h5>' +
                 '<p class="text-muted small mb-1">Verified advocates & property experts</p>' +
-                '<hr><p class="small text-muted mb-0">ðŸ“ž Call: +91 92771 21112</p></div></div></div>'
+                '<hr><p class="small text-muted mb-0">ðŸ“ž Call: <?= $phoneDisplay ?></p></div></div></div>'
         },
         interior: {
             color: 'linear-gradient(135deg, #f59e0b, #d97706)',
@@ -728,7 +733,7 @@ function openServiceModal(service) {
                         <h4><?= __('need_help') ?></h4>
                         <p class="text-muted mb-4"><?= __('need_help_desc') ?></p>
                         <div class="d-grid gap-3">
-                            <a href="tel:+919277121112" class="btn btn-gradient btn-lg">
+                            <a href="tel:<?= $phoneRaw ?>" class="btn btn-gradient btn-lg">
                                 <i class="fas fa-phone me-2"></i><?= __('call_now') ?>
                             </a>
                             <a href="https://wa.me/919277121112" target="_blank" class="btn btn-outline-dark btn-lg">
@@ -1565,7 +1570,7 @@ function mCalcVal() {
             <a href="<?php echo BASE_URL; ?>/associate/register" class="btn btn-danger btn-lg px-5">
                 <i class="fas fa-user-plus me-2"></i><?= __('home_register_associate') ?>
             </a>
-            <a href="tel:+919277121112" class="btn btn-outline-dark btn-lg px-4 ms-2">
+            <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-dark btn-lg px-4 ms-2">
                 <i class="fas fa-phone me-2"></i><?= __('home_call_now') ?>
             </a>
         </div>
@@ -1579,7 +1584,7 @@ function mCalcVal() {
         <h2 class="fw-bold mb-3"><?= __('cta_title') ?></h2>
         <p class="mb-4" style="font-size:1.1rem;opacity:0.9;"><?= __('cta_subtitle') ?></p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a href="tel:+919277121112" class="btn btn-warning btn-lg px-4">
+            <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4">
                 <i class="fas fa-phone me-2"></i><?= __('home_call_now') ?>
             </a>
             <a href="https://wa.me/919277121112" target="_blank" class="btn btn-success btn-lg px-4">

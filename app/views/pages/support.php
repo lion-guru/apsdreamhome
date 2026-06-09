@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <?php
 $priority = $_POST['priority'] ?? 'medium';
 $subjectVal = $_POST['subject'] ?? '';
@@ -55,7 +56,7 @@ $messageVal = $_POST['message'] ?? '';
                 </div>
                 <div class="card-footer text-center py-3">
                     <div class="small">
-                        <?php echo __('need_immediate_assistance'); ?> <a href="tel:+919277121112">+91 92771 21112</a> <?php echo __('or_email_us'); ?>
+                        <?php echo __('need_immediate_assistance'); ?> <a href="tel:<?= $phoneRaw ?>"><?= $phoneDisplay ?></a> <?php echo __('or_email_us'); ?>
                         <a href="mailto:info@apsdreamhome.com"><?php echo __('email_us_link'); ?></a>.
                     </div>
                 </div>

@@ -1,3 +1,4 @@
+﻿<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
 <?php
 
 // TODO: Add proper error handling with try-catch blocks
@@ -162,11 +163,11 @@
             <h3>Need Assistance?</h3>
             <div class="contact-item">
                 <i class="fas fa-envelope"></i>
-                <span>info@apsdreamhome.com</span>
+                <span><?= htmlspecialchars($emailDisplay) ?></span>
             </div>
             <div class="contact-item">
                 <i class="fas fa-phone"></i>
-                <span>+91 92771 21112</span>
+                <span><?= htmlspecialchars($phoneDisplay) ?></span>
             </div>
             <div class="contact-item">
                 <i class="fas fa-map-marker-alt"></i>

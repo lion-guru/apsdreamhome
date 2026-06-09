@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f1f5f9;">
@@ -29,7 +29,7 @@
     </div>
 
     <p style="color: #475569; line-height: 1.6;">Please settle all dues immediately to avoid these consequences.</p>
-    <p style="color: #475569; line-height: 1.6;">Contact us: <strong style="color: #4f46e5;">+91 92771 21112</strong> | <strong style="color: #4f46e5;">finance@apsdreamhome.com</strong></p>
+    <p style="color: #475569; line-height: 1.6;">Contact us: <strong style="color: #4f46e5;">{{company_phone}}</strong> | <strong style="color: #4f46e5;">finance@apsdreamhome.com</strong></p>
 </div>
 <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
     <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>

@@ -1,3 +1,4 @@
+<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } ?>
 <!-- AI Chat Bot Widget -->
 <style>
     /* Chat Widget */
@@ -355,7 +356,7 @@
             })
             .catch(err => {
                 hideTyping();
-                addMessage('Connection error. Please try again or call us at +91 92771 21112', 'bot');
+                addMessage('Connection error. Please try again or call us at <?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?>', 'bot');
             });
     }
 

@@ -33,12 +33,13 @@ class PageController extends BaseController
     // Home Page
     public function home()
     {
-        // Get hero statistics
+        // Get hero statistics from DB settings with fallback
+        $scStats = \App\Services\SiteContentService::getInstance()->getSection('settings');
         $hero_stats = [
-            'years_experience' => 15,
-            'projects_completed' => 50,
-            'happy_customers' => 1000,
-            'awards_won' => 25,
+            'years_experience' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_experience_value'] ?? '15') ?: 15,
+            'projects_completed' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_projects_value'] ?? '50') ?: 50,
+            'happy_customers' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_families_value'] ?? '1000') ?: 1000,
+            'awards_won' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_properties_value'] ?? '25') ?: 25,
         ];
 
         // Get featured projects from database (hot-path cached, 15 min TTL)
@@ -246,10 +247,20 @@ class PageController extends BaseController
     public function about()
     {
         [$cmsTitle, $pageContent] = $this->loadPageContent('about');
+
+        // Load dynamic content from DB (fallback to empty)
+        $siteContent = [];
+        try {
+            $siteContent = \App\Services\SiteContentService::getInstance()->getSection('about');
+        } catch (\Exception $e) {
+            // fallback: empty, view will use __() lang keys
+        }
+
         $data = [
             'page_title' => ($cmsTitle ?: 'About Us') . ' - APS Dream Home',
             'page_description' => 'Learn more about APS Dream Home',
-            'pageContent' => $pageContent
+            'pageContent' => $pageContent,
+            'siteContent' => $siteContent,
         ];
         $this->render('pages/about', $data);
     }

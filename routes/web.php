@@ -3831,6 +3831,17 @@ $router->post('/admin/noc-registry/registries/store',                     'Admin
 $router->get('/admin/noc-registry/registries/{id}',                       'Admin\\NocRegistryController@registryDetail');
 $router->post('/admin/noc-registry/registries/update-status',             'Admin\\NocRegistryController@registryUpdateStatus');
 
+// ── Site Content Manager ──
+$router->get('/admin/site-content',                                       'Admin\\SiteContentController@index');
+$router->get('/admin/site-content/edit/{section}',                        'Admin\\SiteContentController@edit');
+$router->post('/admin/site-content/update/{section}',                     'Admin\\SiteContentController@update');
+$router->post('/admin/site-content/create',                               'Admin\\SiteContentController@create');
+$router->post('/admin/site-content/delete',                               'Admin\\SiteContentController@delete');
+
+// ── Site Settings (tabbed admin panel) ──
+$router->get('/admin/site-settings',                                       'Admin\\SiteSettingsController@index');
+$router->post('/admin/site-settings/update',                               'Admin\\SiteSettingsController@update');
+
 // ============================================================
 // BANK STATEMENT IMPORT & AUTO-RECONCILIATION
 // URL prefix: /admin/bank-import/*
