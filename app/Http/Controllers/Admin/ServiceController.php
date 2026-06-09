@@ -159,52 +159,56 @@ class ServiceController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $this->data['page_title'] = 'Home Loan Services - APS Dream Home';
-            $this->data['service_type'] = 'home_loan';
-            $this->render('admin/services/home-loan', $this->data);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $services = $db->query("SELECT si.*, l.name, l.phone, l.email FROM service_interests si LEFT JOIN leads l ON si.lead_id=l.id WHERE si.service_type='home_loan' ORDER BY si.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $count = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='home_loan'")->fetchColumn();
+            $pending = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='home_loan' AND status='pending'")->fetchColumn();
         } catch (\Exception $e) {
-            $this->setFlash('error', 'Failed to load home loan page');
-            $this->redirect('/admin/services');
+            $services = []; $count = 0; $pending = 0;
         }
+        return $this->render('admin/services/home-loan', ['services' => $services, 'count' => $count, 'pending' => $pending, 'service_type' => 'home_loan']);
     }
 
     public function legal()
     {
         $this->requireAdmin();
         try {
-            $this->data['page_title'] = 'Legal Services - APS Dream Home';
-            $this->data['service_type'] = 'legal';
-            $this->render('admin/services/legal', $this->data);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $services = $db->query("SELECT si.*, l.name, l.phone, l.email FROM service_interests si LEFT JOIN leads l ON si.lead_id=l.id WHERE si.service_type IN ('legal','registry','mutation') ORDER BY si.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $count = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type IN ('legal','registry','mutation')")->fetchColumn();
+            $pending = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type IN ('legal','registry','mutation') AND status='pending'")->fetchColumn();
         } catch (\Exception $e) {
-            $this->setFlash('error', 'Failed to load legal page');
-            $this->redirect('/admin/services');
+            $services = []; $count = 0; $pending = 0;
         }
+        return $this->render('admin/services/legal', ['services' => $services, 'count' => $count, 'pending' => $pending, 'service_type' => 'legal']);
     }
 
     public function interior()
     {
         $this->requireAdmin();
         try {
-            $this->data['page_title'] = 'Interior Design Services - APS Dream Home';
-            $this->data['service_type'] = 'interior';
-            $this->render('admin/services/interior', $this->data);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $services = $db->query("SELECT si.*, l.name, l.phone, l.email FROM service_interests si LEFT JOIN leads l ON si.lead_id=l.id WHERE si.service_type='interior' ORDER BY si.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $count = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='interior'")->fetchColumn();
+            $pending = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='interior' AND status='pending'")->fetchColumn();
         } catch (\Exception $e) {
-            $this->setFlash('error', 'Failed to load interior page');
-            $this->redirect('/admin/services');
+            $services = []; $count = 0; $pending = 0;
         }
+        return $this->render('admin/services/interior', ['services' => $services, 'count' => $count, 'pending' => $pending, 'service_type' => 'interior']);
     }
 
     public function propertyTax()
     {
         $this->requireAdmin();
         try {
-            $this->data['page_title'] = 'Property Tax Services - APS Dream Home';
-            $this->data['service_type'] = 'property_tax';
-            $this->render('admin/services/tax', $this->data);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $services = $db->query("SELECT si.*, l.name, l.phone, l.email FROM service_interests si LEFT JOIN leads l ON si.lead_id=l.id WHERE si.service_type='property_tax' ORDER BY si.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $count = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='property_tax'")->fetchColumn();
+            $pending = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='property_tax' AND status='pending'")->fetchColumn();
         } catch (\Exception $e) {
-            $this->setFlash('error', 'Failed to load property tax page');
-            $this->redirect('/admin/services');
+            $services = []; $count = 0; $pending = 0;
         }
+        return $this->render('admin/services/tax', ['services' => $services, 'count' => $count, 'pending' => $pending, 'service_type' => 'property_tax']);
     }
 
     public function updateStatus()
