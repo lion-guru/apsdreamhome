@@ -106,7 +106,7 @@ _backup_legacy_files/
 *.tar.gz
 storage/snapshots/
 storage/backups/
-storage/cache/*.cache
+storage/cache/
 storage/logs/*.log
 storage/sessions/*
 !storage/sessions/.gitkeep
