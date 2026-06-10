@@ -18,7 +18,7 @@
                         <i class="fas fa-info-circle"></i> Changing project status will be logged in the status history.
                     </div>
 
-                    <form method="POST" action="<?= BASE_URL ?>/admin/projects/status/<?php echo $_GET['id'] ?? ''; ?>">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/projects/status/<?php echo htmlspecialchars($_GET['id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label for="status" class="form-label">Project Status</label>

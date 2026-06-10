@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Associate;
 
 use App\Services\Associate\AssociateService;
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * Associate Controller - APS Dream Home
  * Associate management and relationship tracking
  * Custom MVC implementation without Laravel dependencies
  */
-class AssociateController extends BaseController
+class AssociateController extends AdminController
 {
     private $associateService;
 

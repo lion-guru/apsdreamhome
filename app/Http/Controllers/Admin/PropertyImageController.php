@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Admin;
 use App\Core\Database\Database;
 use App\Core\ImageOptimizer;
 use App\Services\Storage\StorageManager;
+use UploadValidator;
 
 class PropertyImageController extends AdminController
 {
@@ -99,14 +100,10 @@ class PropertyImageController extends AdminController
                 continue;
             }
             
-            // Validate file
-            if (!in_array($file['type'], $this->allowedTypes)) {
-                $errors[] = $file['name'] . ": Invalid file type. Only JPG, PNG, GIF, WEBP allowed.";
-                continue;
-            }
-            
-            if ($file['size'] > $this->maxFileSize) {
-                $errors[] = $file['name'] . ": File too large. Max 10MB.";
+            // Validate file using UploadValidator
+            $v = UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
+            if (!$v['valid']) {
+                $errors[] = $file['name'] . ": " . $v['error'];
                 continue;
             }
             
@@ -208,14 +205,10 @@ class PropertyImageController extends AdminController
         
         $file = $_FILES['file'];
         
-        // Validate
-        if (!in_array($file['type'], $this->allowedTypes)) {
-            echo json_encode(['success' => false, 'error' => 'Invalid file type']);
-            exit;
-        }
-        
-        if ($file['size'] > $this->maxFileSize) {
-            echo json_encode(['success' => false, 'error' => 'File too large']);
+        // Validate using UploadValidator
+        $v = UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
+        if (!$v['valid']) {
+            echo json_encode(['success' => false, 'error' => $v['error']]);
             exit;
         }
         

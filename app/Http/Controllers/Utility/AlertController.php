@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Utility;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * Alert Controller
  * Handles system alerts, escalations, and notifications.
  */
-class AlertController extends BaseController
+class AlertController extends AdminController
 {
     public function __construct()
     {

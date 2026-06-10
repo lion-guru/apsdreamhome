@@ -23,11 +23,11 @@ $page_title = 'Bank Reconciliation';
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/banking/reconciliation" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Date From</label>
-                    <input type="date" class="form-control" name="date_from" value="<?php echo $_GET['date_from'] ?? ''; ?>">
+                    <input type="date" class="form-control" name="date_from" value="<?php echo htmlspecialchars($_GET['date_from'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date To</label>
-                    <input type="date" class="form-control" name="date_to" value="<?php echo $_GET['date_to'] ?? ''; ?>">
+                    <input type="date" class="form-control" name="date_to" value="<?php echo htmlspecialchars($_GET['date_to'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Bank</label>

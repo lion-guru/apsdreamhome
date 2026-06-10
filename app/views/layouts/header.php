@@ -692,7 +692,7 @@ try {
         .premium-header .navbar-collapse.show { transform: translateX(0); }
         .premium-header .navbar-nav { margin-left: 0 !important; flex-direction: column; width: 100%; }
         .premium-header .navbar-nav .nav-item { width: 100%; }
-        .premium-header .navbar-nav .nav-link { padding: 12px 10px; border-radius: 8px; font-size: 14px; }
+        .premium-header .navbar-nav .nav-link { padding: 12px 10px !important; border-radius: 8px; font-size: 14px; }
         .premium-header .navbar-nav .nav-link::after { display: none; }
         .premium-header .navbar-nav .dropdown-menu {
             position: static !important; border: none; box-shadow: none;
@@ -702,7 +702,7 @@ try {
             animation: none;
         }
         .premium-header .navbar-nav .dropdown-menu.show-mobile { max-height: 2000px; padding-top: 8px; padding-bottom: 8px; }
-        .premium-header .navbar-nav .dropdown-menu .dropdown-item { padding: 10px 12px; border-radius: 6px; }
+        .premium-header .navbar-nav .dropdown-menu .dropdown-item { padding: 10px 12px; border-radius: 6px; font-size: 14px; }
         .premium-header .navbar-nav .dropdown-menu .dropdown-item:hover { background: #e2e8f0; transform: none; }
         .premium-header .ms-2 { margin-left: 0 !important; margin-top: 8px; }
         #compareBadge, .btn-compare, .btn-admin { display: none !important; }

@@ -816,12 +816,18 @@ class HRController extends AdminController
         if (!$employeeId || !$docType) { $this->setFlash('error', 'Employee and document type required'); header('Location: ' . BASE_URL . '/admin/hr/documents'); exit; }
         $filePath = '';
         if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = APP_PATH . '/assets/uploads/documents/';
-            if (!is_dir($uploadDir)) { mkdir($uploadDir, 0777, true); }
-            $ext = pathinfo($_FILES['document_file']['name'], PATHINFO_EXTENSION);
-            $fileName = 'emp_' . $employeeId . '_' . time() . '.' . $ext;
-            move_uploaded_file($_FILES['document_file']['tmp_name'], $uploadDir . $fileName);
-            $filePath = 'assets/uploads/documents/' . $fileName;
+            $validation = UploadValidator::validate($_FILES['document_file'], ['types' => 'documents', 'max_size' => 10]);
+            if ($validation['valid']) {
+                $uploadDir = APP_PATH . '/assets/uploads/documents/';
+                if (!is_dir($uploadDir)) { mkdir($uploadDir, 0755, true); }
+                $fileName = $validation['sanitized_name'];
+                move_uploaded_file($_FILES['document_file']['tmp_name'], $uploadDir . $fileName);
+                $filePath = 'assets/uploads/documents/' . $fileName;
+            } else {
+                $this->setFlash('error', 'Upload rejected: ' . $validation['error']);
+                header('Location: ' . BASE_URL . '/admin/hr/documents');
+                exit;
+            }
         }
         try {
             $this->db->execute("INSERT INTO documents (entity_type, entity_id, document_type, url, uploaded_on) VALUES ('employee',?,?,?,?,NOW())", [$employeeId, $docType, $filePath]);

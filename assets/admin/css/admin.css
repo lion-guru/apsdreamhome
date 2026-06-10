@@ -291,7 +291,7 @@ img { max-width: 100%; }
 .user-role { font-size: .7rem; color: var(--text-muted); line-height: 1.2; }
 
 /* ===== PAGE CONTENT ===== */
-.page-content { padding: 24px; flex: 1; }
+.page-content { padding: 24px; flex: 1; overflow-wrap: break-word; word-wrap: break-word; }
 
 /* ===== BREADCRUMB ===== */
 .breadcrumb { font-size: .85rem; margin: 0; }
@@ -534,6 +534,12 @@ img { max-width: 100%; }
     .top-nav { padding: 0 16px; height: 56px; }
     .user-name, .user-role { display: none; }
 
+    /* Sidebar: readable font sizes on mobile */
+    .sidebar-sub { font-size: .72rem; }
+    .sidebar-sec { font-size: .72rem; }
+    .sidebar-link { font-size: .875rem; }
+    .sidebar-link .badge { font-size: .75rem; }
+
     /* Stat cards: single column */
     .stats-grid { grid-template-columns: 1fr; gap: 12px; }
 
@@ -566,7 +572,7 @@ img { max-width: 100%; }
     .alert { padding: 12px 14px; font-size: .85rem; }
 
     /* Modal: full-screen on mobile */
-    .modal-dialog { margin: 8px; max-height: calc(100vh - 16px); }
+    .modal-dialog { margin: 8px; max-height: calc(100vh - 16px); max-width: calc(100vw - 16px); }
     .modal-body { padding: 16px; overflow-y: auto; }
 
     /* Badge text truncation */
@@ -598,6 +604,9 @@ img { max-width: 100%; }
 @media (max-width: 480px) {
     .page-content { padding: 12px; }
     .top-nav { padding: 0 12px; }
+
+    /* Touch targets: at least 44px */
+    .nav-icon { padding: 10px; }
 
     /* Everything tighter */
     .card-body { padding: 12px; }
@@ -636,7 +645,7 @@ img { max-width: 100%; }
 
 /* ===== TABLE OVERFLOW ===== */
 .table-responsive-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid var(--card-border); }
-.table-responsive-wrap .table { margin-bottom: 0; min-width: 600px; }
+.table-responsive-wrap .table { margin-bottom: 0; min-width: 480px; }
 
 /* ===== UTILITY CLASSES ===== */
 .d-none-mobile { display: block; }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Land;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\Land\PlottingService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
@@ -11,7 +11,7 @@ use App\Core\ViewRenderer;
  * Plotting Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class PlottingController extends BaseController
+class PlottingController extends AdminController
 {
     private $plottingService;
     private $authService;

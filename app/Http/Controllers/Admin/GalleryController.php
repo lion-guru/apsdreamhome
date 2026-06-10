@@ -56,17 +56,19 @@ class GalleryController extends AdminController
             // Handle file upload
             $imagePath = '';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = dirname(__DIR__, 3) . '/assets/images/gallery/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
+                $validation = UploadValidator::validate($_FILES['image'], ['types' => 'images', 'max_size' => 10]);
+                if ($validation['valid']) {
+                    $uploadDir = dirname(__DIR__, 3) . '/assets/images/gallery/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0755, true);
+                    }
 
-                $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $filename = 'gallery_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $extension;
-                $destination = $uploadDir . $filename;
+                    $filename = $validation['sanitized_name'];
+                    $destination = $uploadDir . $filename;
 
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-                    $imagePath = 'assets/images/gallery/' . $filename;
+                    if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                        $imagePath = 'assets/images/gallery/' . $filename;
+                    }
                 }
             }
 
@@ -129,17 +131,19 @@ class GalleryController extends AdminController
 
             // Handle file upload
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = dirname(__DIR__, 3) . '/assets/images/gallery/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
+                $validation = UploadValidator::validate($_FILES['image'], ['types' => 'images', 'max_size' => 10]);
+                if ($validation['valid']) {
+                    $uploadDir = dirname(__DIR__, 3) . '/assets/images/gallery/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0755, true);
+                    }
 
-                $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $filename = 'gallery_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $extension;
-                $destination = $uploadDir . $filename;
+                    $filename = $validation['sanitized_name'];
+                    $destination = $uploadDir . $filename;
 
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-                    $updateData['image_path'] = 'assets/images/gallery/' . $filename;
+                    if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                        $updateData['image_path'] = 'assets/images/gallery/' . $filename;
+                    }
                 }
             }
 

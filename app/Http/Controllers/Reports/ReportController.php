@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Services\Reports\ReportService;
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 
 /**
@@ -11,7 +11,7 @@ use Exception;
  * Report generation and management
  * Custom MVC implementation without Laravel dependencies
  */
-class ReportController extends BaseController
+class ReportController extends AdminController
 {
     private $reportService;
 

@@ -184,6 +184,15 @@ $autoloader->addClassMap('App\Http\Controllers\AIAssistantController', APP_ROOT 
 // Register misnamed-file controllers
 $autoloader->addClassMap('App\Http\Controllers\Api\MonitorController', APP_ROOT . '/app/Http/Controllers/Api/MonitorApiController.php');
 
+// Fix broken Api\* route references — routes/api.php references controllers
+// in the Api\ namespace that live at different file locations.
+$autoloader->addClassMap('App\Http\Controllers\Api\PropertyController', APP_ROOT . '/app/Http/Controllers/PropertyController.php');
+$autoloader->addClassMap('App\Http\Controllers\Api\NotificationController', APP_ROOT . '/app/Http/Controllers/NotificationController.php');
+$autoloader->addClassMap('App\Http\Controllers\Api\PaymentGatewayController', APP_ROOT . '/app/Http/Controllers/Payment/PaymentGatewayController.php');
+$autoloader->addClassMap('App\Http\Controllers\Api\AnalyticsController', APP_ROOT . '/app/Http/Controllers/Admin/AnalyticsController.php');
+$autoloader->addClassMap('App\Http\Controllers\Api\ReferralController', APP_ROOT . '/app/Http/Controllers/Admin/ReferralController.php');
+$autoloader->addClassMap('App\Http\Controllers\Api\AuthController', APP_ROOT . '/app/Http/Controllers/AuthController.php');
+
 // Register BaseAgent (class is in Agents/ directory but namespace says 'users')
 $autoloader->addClassMap('App\Services\AI\users\BaseAgent', APP_ROOT . '/app/Services/AI/Agents/BaseAgent.php');
 $autoloader->addClassMap('App\Services\AI\users\AgentInterface', APP_ROOT . '/app/Services/AI/Agents/AgentInterface.php');
@@ -194,6 +203,7 @@ $autoloader->addClassMap('RedisCache', APP_ROOT . '/app/Core/RedisCache.php');
 $autoloader->addClassMap('UserManager', APP_ROOT . '/includes/managers.php');
 $autoloader->addClassMap('PropertyManager', APP_ROOT . '/includes/managers.php');
 $autoloader->addClassMap('ContactManager', APP_ROOT . '/includes/managers.php');
+$autoloader->addClassMap('UploadValidator', APP_ROOT . '/app/helpers/UploadValidator.php');
 
 // Alias the namespaced CacheService to the legacy global name
 // so any pre-namespace references (e.g. `CacheService::getProjects()`)

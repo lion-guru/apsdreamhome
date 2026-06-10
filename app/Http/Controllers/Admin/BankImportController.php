@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Services\BankImportService;
 use Exception;
+use UploadValidator;
 
 class BankImportController extends AdminController
 {
@@ -93,13 +94,14 @@ class BankImportController extends AdminController
             return;
         }
 
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($ext, ['csv', 'txt'])) {
-            $this->json(['success' => false, 'error' => 'Only CSV files are allowed'], 400);
+        $v = UploadValidator::validate($file, ['types' => 'csv', 'max_size' => 10]);
+        if (!$v['valid']) {
+            $this->json(['success' => false, 'error' => $v['error']], 400);
             return;
         }
 
         // Move to temp location
+        $safeName = UploadValidator::safeFilename($file['name']);
         $uploadDir = sys_get_temp_dir();
         $destPath = $uploadDir . '/bank_import_' . time() . '_' . bin2hex(random_bytes(4)) . '.csv';
         if (!move_uploaded_file($file['tmp_name'], $destPath)) {

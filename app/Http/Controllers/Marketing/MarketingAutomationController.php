@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Marketing;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\Marketing\MarketingAutomationService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
@@ -11,7 +11,7 @@ use App\Core\ViewRenderer;
  * Marketing Automation Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class MarketingAutomationController extends BaseController
+class MarketingAutomationController extends AdminController
 {
     private $marketingService;
     private $authService;

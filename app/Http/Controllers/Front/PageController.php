@@ -2147,15 +2147,15 @@ class PageController extends BaseController
             try {
                 // Handle image upload
                 $imagePath = null;
-                if (!empty($_FILES['property_image']['name'])) {
+                if (!empty($_FILES['property_image']['name']) && $_FILES['property_image']['error'] === UPLOAD_ERR_OK) {
                     $uploadDir = __DIR__ . '/../../../../assets/images/properties/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
-                    $ext = strtolower(pathinfo($_FILES['property_image']['name'], PATHINFO_EXTENSION));
-                    $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-                    if (in_array($ext, $allowed) && $_FILES['property_image']['size'] <= 5 * 1024 * 1024) {
-                        $newName = 'prop_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                    $v = \UploadValidator::validate($_FILES['property_image'], ['types' => 'images', 'max_size' => 5]);
+                    if ($v['valid']) {
+                        $safeName = \UploadValidator::safeFilename($_FILES['property_image']['name']);
+                        $newName = 'prop_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . pathinfo($safeName, PATHINFO_EXTENSION);
                         $targetPath = $uploadDir . $newName;
                         if (move_uploaded_file($_FILES['property_image']['tmp_name'], $targetPath)) {
                             \App\Core\ImageOptimizer::optimizeStatic($targetPath);

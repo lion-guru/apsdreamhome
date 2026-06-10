@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\BulkOperationsService;
+use UploadValidator;
 
 class BulkOperationsController extends AdminController
 {
@@ -46,8 +47,13 @@ class BulkOperationsController extends AdminController
         $table = $_POST['table'] ?? '';
         $result = null;
         if (!empty($_FILES['csv']['tmp_name'])) {
-            $content = file_get_contents($_FILES['csv']['tmp_name']);
-            $result = $svc->importCSV($table, $content, (int)($_SESSION['user_id'] ?? 0));
+            $v = UploadValidator::validate($_FILES['csv'], 'csv');
+            if ($v !== true) {
+                $result = ['ok' => false, 'error' => $v];
+            } else {
+                $content = file_get_contents($_FILES['csv']['tmp_name']);
+                $result = $svc->importCSV($table, $content, (int)($_SESSION['user_id'] ?? 0));
+            }
         } else {
             $result = ['ok' => false, 'error' => 'No file uploaded'];
         }
@@ -100,12 +106,13 @@ class BulkOperationsController extends AdminController
             header('Location: ' . BASE_URL . '/admin/bulk/property-import');
             exit;
         }
-        $content = file_get_contents($_FILES['csv']['tmp_name']);
-        if (strlen($content) > 10 * 1024 * 1024) {
-            $_SESSION['flash_error'] = 'File too large (max 10MB)';
+        $v = UploadValidator::validate($_FILES['csv'], 'csv');
+        if ($v !== true) {
+            $_SESSION['flash_error'] = $v;
             header('Location: ' . BASE_URL . '/admin/bulk/property-import');
             exit;
         }
+        $content = file_get_contents($_FILES['csv']['tmp_name']);
         require_once __DIR__ . '/../../../Services/Bulk/PropertyImportService.php';
         $svc = new \App\Services\Bulk\PropertyImportService($this->db);
         $preview = $svc->previewImport($content);

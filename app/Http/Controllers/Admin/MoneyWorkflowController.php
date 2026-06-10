@@ -13,6 +13,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Services\Accounting\MoneyWorkflowService;
 use Exception;
+use UploadValidator;
 
 class MoneyWorkflowController extends AdminController
 {
@@ -792,10 +793,12 @@ class MoneyWorkflowController extends AdminController
 
         try {
             $receiptPath = null;
-            if (!empty($_FILES['receipt_photo']['tmp_name'])) {
-                $uploadDir = $this->getReceiptUploadDir();
-                $ext = strtolower(pathinfo($_FILES['receipt_photo']['name'], PATHINFO_EXTENSION));
-                if (in_array($ext, ['jpg','jpeg','png','webp'])) {
+            if (!empty($_FILES['receipt_photo']['tmp_name']) && $_FILES['receipt_photo']['error'] === UPLOAD_ERR_OK) {
+                $v = UploadValidator::validate($_FILES['receipt_photo'], ['types' => 'images', 'max_size' => 5]);
+                if ($v['valid']) {
+                    $uploadDir = $this->getReceiptUploadDir();
+                    $safeName = UploadValidator::safeFilename($_FILES['receipt_photo']['name']);
+                    $ext = strtolower(pathinfo($safeName, PATHINFO_EXTENSION));
                     $filename = 'receipt_' . time() . '_' . mt_rand(1000, 9999) . '.' . $ext;
                     $target = $uploadDir . '/' . $filename;
                     if (move_uploaded_file($_FILES['receipt_photo']['tmp_name'], $target)) {

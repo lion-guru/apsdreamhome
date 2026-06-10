@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * Automated Monitoring System Controller
  * Real-time system health monitoring and alerts
  */
-class MonitoringController extends BaseController
+class MonitoringController extends AdminController
 {
     private $logFile;
     private $alertThresholds;

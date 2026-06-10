@@ -26,8 +26,9 @@ class State extends Model
             $columnList = implode(', ', $columns);
             $sql = "SELECT {$columnList} FROM states WHERE is_active = 1 ORDER BY name ASC";
 
-            $db = \App\Core\Database::getInstance();
-            return $db->fetchAll($sql);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             error_log('Error in State::getActive: ' . $e->getMessage());
             return [];
@@ -48,8 +49,9 @@ class State extends Model
             $where = $activeOnly ? "WHERE is_active = 1" : '';
             $sql = "SELECT {$columnList} FROM states {$where} ORDER BY name ASC";
 
-            $db = \App\Core\Database::getInstance();
-            return $db->fetchAll($sql);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             error_log('Error in State::getForSelect: ' . $e->getMessage());
             return [];
@@ -69,8 +71,9 @@ class State extends Model
             $columnList = implode(', ', $columns);
             $sql = "SELECT {$columnList} FROM states ORDER BY name ASC";
 
-            $db = \App\Core\Database::getInstance();
-            return $db->fetchAll($sql);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             error_log('Error in State::getAll: ' . $e->getMessage());
             return [];

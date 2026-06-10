@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\SiteContentService;
+use UploadValidator;
 
 class SiteContentController extends AdminController
 {
@@ -72,16 +73,23 @@ class SiteContentController extends AdminController
         if (!empty($_FILES['content_image'])) {
             foreach ($_FILES['content_image']['name'] as $key => $name) {
                 if ($_FILES['content_image']['error'][$key] === UPLOAD_ERR_OK && !empty($name)) {
-                    $tmpPath = $_FILES['content_image']['tmp_name'][$key];
-                    $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-                    $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-                    if (in_array($ext, $allowed)) {
+                    $fileData = [
+                        'name'     => $name,
+                        'type'     => $_FILES['content_image']['type'][$key],
+                        'tmp_name' => $_FILES['content_image']['tmp_name'][$key],
+                        'size'     => $_FILES['content_image']['size'][$key],
+                        'error'    => $_FILES['content_image']['error'][$key],
+                    ];
+                    $v = UploadValidator::validate($fileData, ['types' => 'images', 'max_size' => 10]);
+                    if ($v['valid']) {
+                        $safeName = UploadValidator::safeFilename($name);
+                        $ext = strtolower(pathinfo($safeName, PATHINFO_EXTENSION));
                         $filename = 'content_' . $section . '_' . $key . '_' . time() . '.' . $ext;
                         $dest = ROOT_PATH . '/assets/images/content/' . $filename;
                         if (!is_dir(dirname($dest))) {
                             mkdir(dirname($dest), 0755, true);
                         }
-                        if (move_uploaded_file($tmpPath, $dest)) {
+                        if (move_uploaded_file($fileData['tmp_name'], $dest)) {
                             $data[$key] = 'assets/images/content/' . $filename;
                         }
                     }

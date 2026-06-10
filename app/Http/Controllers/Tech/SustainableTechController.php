@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Tech;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Security;
 use Exception;
 
@@ -11,7 +11,7 @@ use Exception;
  * Handles green technology, sustainability features, and environmental impact
  */
 
-class SustainableTechController extends BaseController
+class SustainableTechController extends AdminController
 {
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Async;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\Async\AsyncTaskService;
 use App\Services\Auth\AuthenticationService;
 
@@ -10,7 +10,7 @@ use App\Services\Auth\AuthenticationService;
  * Async Task Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class AsyncController extends BaseController
+class AsyncController extends AdminController
 {
     private $taskService;
     private $authService;
@@ -536,7 +536,7 @@ class AsyncController extends BaseController
     public function cleanupOldTasks($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->authService->isAuthenticated() || !$this->checkUserIsAdmin($this->authService->getCurrentUser())) {
             return [
                 'success' => false,
                 'message' => 'Access denied'
@@ -615,7 +615,7 @@ class AsyncController extends BaseController
     /**
      * Check if user is admin
      */
-    private function isAdmin($user)
+    protected function checkUserIsAdmin($user)
     {
         return $user && ($user['role'] === 'admin' || $user['role'] === 'super_admin');
     }

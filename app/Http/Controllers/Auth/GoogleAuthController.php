@@ -4,159 +4,83 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
 use App\Models\User;
+use App\Services\GoogleAuthService;
 
 class GoogleAuthController extends BaseController
 {
-    /**
-     * Redirect to Google OAuth
-     */
+    private GoogleAuthService $googleService;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->googleService = new GoogleAuthService();
+    }
+
     public function googleRedirect()
     {
-        // Ensure .env is loaded
-        \App\Core\ConfigService::getInstance();
-        $clientId = getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? '');
         $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         $redirectUri = $baseUrl . '/google_callback.php';
-
-        $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
-            'client_id' => $clientId,
-            'redirect_uri' => $redirectUri,
-            'response_type' => 'code',
-            'scope' => 'openid email profile',
-            'state' => bin2hex(random_bytes(16))
-        ]);
-
-        header('Location: ' . $authUrl);
+        header('Location: ' . $this->googleService->getAuthUrl($redirectUri));
         exit;
     }
 
-    /**
-     * Handle Google OAuth callback
-     */
     public function callback()
     {
         $code = $_GET['code'] ?? null;
+        $loginUrl = (defined('BASE_URL') ? BASE_URL : '') . '/login';
 
         if (!$code) {
             $_SESSION['error'] = 'Authorization failed';
-            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
+            header('Location: ' . $loginUrl);
             exit;
         }
 
-        // Ensure .env is loaded
-        \App\Core\ConfigService::getInstance();
-        $clientId = getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? '');
-        $clientSecret = getenv('GOOGLE_CLIENT_SECRET') ?: ($_ENV['GOOGLE_CLIENT_SECRET'] ?? '');
         $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
         $redirectUri = $baseUrl . '/google_callback.php';
 
-        // Exchange code for access token
-        $tokenUrl = 'https://oauth2.googleapis.com/token';
-        $data = [
-            'code' => $code,
-            'client_id' => $clientId,
-            'client_secret' => $clientSecret,
-            'redirect_uri' => $redirectUri,
-            'grant_type' => 'authorization_code'
-        ];
+        $result = $this->googleService->handleCallback($code, $redirectUri);
 
-        $response = $this->makeRequest($tokenUrl, $data);
-        $tokenData = json_decode($response, true);
-
-        if (!isset($tokenData['access_token'])) {
-            $_SESSION['error'] = 'Failed to get access token';
-            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
+        if ($result === false) {
+            $_SESSION['error'] = 'Google authentication failed. Please try again.';
+            header('Location: ' . $loginUrl);
             exit;
         }
 
-        // Get user info
-        $userInfoUrl = 'https://www.googleapis.com/oauth2/v2/userinfo';
-        $headers = [
-            'Authorization: Bearer ' . $tokenData['access_token']
-        ];
-
-        $userResponse = $this->makeRequest($userInfoUrl, [], $headers);
-        $userData = json_decode($userResponse, true);
-
-        if (!isset($userData['email'])) {
-            $_SESSION['error'] = 'Failed to get user information';
-            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
-            exit;
-        }
-
-        // Check if user exists
-        $userModel = new User();
-        $user = $userModel->findByEmail($userData['email']);
-
-        if ($user) {
-            // Login existing user
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_phone'] = $user['phone'];
-            $_SESSION['role'] = $user['role'] ?? 'customer';
-            $_SESSION['logged_in'] = true;
-            $_SESSION['success'] = 'Welcome back, ' . $user['name'] . '!';
-
-            // Redirect based on user type
-            $redirectUrl = $this->getRedirectUrl($user['role'] ?? 'customer');
-            header('Location: ' . $redirectUrl);
-            exit;
-        } else {
-            // Store Google user data in session for role selection
+        if (isset($result['is_new']) && $result['is_new']) {
             $_SESSION['google_user_data'] = [
-                'name' => $userData['name'] ?? 'User',
-                'email' => $userData['email'],
-                'picture' => $userData['picture'] ?? ''
+                'name' => $result['name'],
+                'email' => $result['email'],
+                'picture' => $result['picture'] ?? ''
             ];
-
-            // Redirect to role selection page
             header('Location: /auth/google/role-selection');
             exit;
         }
+
+        $_SESSION['user_id'] = $result['id'];
+        $_SESSION['user_name'] = $result['name'];
+        $_SESSION['user_email'] = $result['email'];
+        $_SESSION['user_phone'] = $result['phone'] ?? '';
+        $_SESSION['role'] = $result['role'] ?? 'customer';
+        $_SESSION['logged_in'] = true;
+        $_SESSION['success'] = 'Welcome back, ' . $result['name'] . '!';
+
+        header('Location: ' . $this->getRedirectUrl($result['role'] ?? 'customer'));
+        exit;
     }
 
-    /**
-     * Get redirect URL based on user type
-     */
-    private function getRedirectUrl($userType)
-    {
-        $redirects = [
-            'customer' => '/customer/dashboard',
-            'associate' => '/associate/dashboard',
-            'agent' => '/agent/dashboard',
-            'admin' => '/admin/dashboard',
-            'employee' => '/employee/dashboard'
-        ];
-
-        return $redirects[$userType] ?? '/user/dashboard';
-    }
-
-    /**
-     * Show role selection page
-     */
     public function roleSelection()
     {
         @session_start();
-
         if (!isset($_SESSION['google_user_data'])) {
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
             exit;
         }
-
-        $googleUserData = $_SESSION['google_user_data'];
-        $companyReferralCode = 'APS2025COMP'; // Company referral code for new users/users
-
         include __DIR__ . '/../../../views/auth/google_role_selection.php';
     }
 
-    /**
-     * Complete Google registration with role and referral code
-     */
     public function completeRegistration()
     {
         @session_start();
-
         if (!isset($_SESSION['google_user_data'])) {
             echo json_encode(['success' => false, 'message' => 'Session expired']);
             exit;
@@ -168,100 +92,53 @@ class GoogleAuthController extends BaseController
         $phone = $_POST['phone'] ?? '';
 
         try {
-            $db = \App\Core\Database::getInstance();
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
 
-            // Find referrer if referral code provided
             $referrerId = null;
             if (!empty($referralCode)) {
-                $ref = $db->fetchOne("SELECT id FROM users WHERE referral_code = ? LIMIT 1", [$referralCode]);
-                if ($ref) $referrerId = $ref['id'];
+                $ref = $db->prepare("SELECT id FROM users WHERE referral_code = ? LIMIT 1");
+                $ref->execute([$referralCode]);
+                $refRow = $ref->fetch(\PDO::FETCH_ASSOC);
+                if ($refRow) $referrerId = $refRow['id'];
             }
 
-            // Generate customer_id based on role
             $prefix = strtoupper(substr($role, 0, 3));
             $customerId = $prefix . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
             $newReferralCode = strtoupper(substr($googleUserData['name'], 0, 3)) . date('ymd') . rand(100, 999);
             $password = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
 
-            // Insert user
-            $db->insert('users', [
-                'customer_id' => $customerId,
-                'name' => $googleUserData['name'],
-                'email' => $googleUserData['email'],
-                'phone' => $phone,
-                'password' => $password,
-                'referral_code' => $newReferralCode,
-                'referred_by' => $referrerId,
-                'role' => $role,
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            $stmt = $db->prepare("INSERT INTO users (customer_id, name, email, phone, password, referral_code, referred_by, role, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW(), NOW())");
+            $stmt->execute([$customerId, $googleUserData['name'], $googleUserData['email'], $phone, $password, $newReferralCode, $referrerId, $role]);
 
-            $newUserId = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$googleUserData['email']])['id'];
+            $idStmt = $db->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+            $idStmt->execute([$googleUserData['email']]);
+            $newUserId = $idStmt->fetch(\PDO::FETCH_ASSOC)['id'];
 
-            // Create wallet entry
-            $db->insert('wallet_points', [
-                'user_id' => $newUserId,
-                'points_balance' => 0.00,
-                'total_earned' => 0.00,
-                'total_used' => 0.00,
-                'total_transferred_to_emi' => 0.00,
-                'referral_earnings' => 0.00,
-                'commission_earnings' => 0.00,
-                'bonus_earnings' => 0.00,
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            $walletStmt = $db->prepare("INSERT INTO wallet_points (user_id, points_balance, total_earned, total_used, total_transferred_to_emi, referral_earnings, commission_earnings, bonus_earnings, status, created_at, updated_at) VALUES (?, 0, 0, 0, 0, 0, 0, 0, 'active', NOW(), NOW())");
+            $walletStmt->execute([$newUserId]);
 
-            // Handle referral rewards if referral code was used
             if ($referrerId) {
-                $referrerWallet = $db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$referrerId]);
+                $rwStmt = $db->prepare("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1");
+                $rwStmt->execute([$referrerId]);
+                $referrerWallet = $rwStmt->fetch(\PDO::FETCH_ASSOC);
 
                 if ($referrerWallet) {
-                    // Calculate reward points based on role
                     $rewardPoints = $role === 'customer' ? 100 : ($role === 'associate' ? 200 : 250);
-
                     $newBalance = $referrerWallet['points_balance'] + $rewardPoints;
                     $newTotalEarned = $referrerWallet['total_earned'] + $rewardPoints;
                     $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
 
-                    $db->query(
-                        "UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?",
-                        [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrerId]
-                    );
+                    $updStmt = $db->prepare("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = NOW() WHERE user_id = ?");
+                    $updStmt->execute([$newBalance, $newTotalEarned, $newReferralEarnings, $referrerId]);
 
-                    $db->insert('wallet_transactions', [
-                        'user_id' => $referrerId,
-                        'transaction_type' => 'credit',
-                        'transaction_category' => 'referral',
-                        'amount' => $rewardPoints,
-                        'balance_before' => $referrerWallet['points_balance'],
-                        'balance_after' => $newBalance,
-                        'description' => "Google signup referral reward for " . ucfirst($role) . ": " . $googleUserData['name'],
-                        'reference_id' => $newUserId,
-                        'reference_type' => 'user',
-                        'related_user_id' => $newUserId,
-                        'status' => 'completed',
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
+                    $txnStmt = $db->prepare("INSERT INTO wallet_transactions (user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type, related_user_id, status, created_at) VALUES (?, 'credit', 'referral', ?, ?, ?, ?, ?, 'user', ?, 'completed', NOW())");
+                    $txnStmt->execute([$referrerId, $rewardPoints, $referrerWallet['points_balance'], $newBalance, "Google signup referral reward: " . $googleUserData['name'], $newUserId, $newUserId]);
 
-                    $db->insert('referral_rewards', [
-                        'referrer_id' => $referrerId,
-                        'referred_id' => $newUserId,
-                        'reward_amount' => $rewardPoints,
-                        'reward_type' => 'points',
-                        'reward_percentage' => 0.00,
-                        'referral_code' => $referralCode,
-                        'status' => 'credited',
-                        'credited_at' => date('Y-m-d H:i:s'),
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
+                    $refStmt = $db->prepare("INSERT INTO referral_rewards (referrer_id, referred_id, reward_amount, reward_type, reward_percentage, referral_code, status, credited_at, created_at) VALUES (?, ?, ?, 'points', 0, ?, 'credited', NOW(), NOW())");
+                    $refStmt->execute([$referrerId, $newUserId, $rewardPoints, $referralCode]);
                 }
             }
 
-            // Set session
             $_SESSION['user_id'] = $newUserId;
             $_SESSION['user_name'] = $googleUserData['name'];
             $_SESSION['user_email'] = $googleUserData['email'];
@@ -269,11 +146,8 @@ class GoogleAuthController extends BaseController
             $_SESSION['role'] = $role;
             $_SESSION['logged_in'] = true;
             $_SESSION['success'] = 'Account created successfully! Welcome to APS Dream Home.';
-
-            // Clear Google user data from session
             unset($_SESSION['google_user_data']);
 
-            // Mark visitor as converted
             try {
                 $visitorTracking = new \App\Services\VisitorTrackingService();
                 $visitorTracking->markAsConverted($newUserId);
@@ -289,28 +163,15 @@ class GoogleAuthController extends BaseController
         }
     }
 
-    /**
-     * Make HTTP request
-     */
-    private function makeRequest($url, $data = [], $headers = [])
+    private function getRedirectUrl($userType)
     {
-        $ch = curl_init($url);
-
-        if (!empty($data)) {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-        }
-
-        if (!empty($headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        }
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        return $response;
+        $redirects = [
+            'customer' => '/user/dashboard',
+            'associate' => '/associate/dashboard',
+            'agent' => '/agent/dashboard',
+            'admin' => '/admin/dashboard',
+            'employee' => '/employee/dashboard'
+        ];
+        return $redirects[$userType] ?? '/user/dashboard';
     }
 }

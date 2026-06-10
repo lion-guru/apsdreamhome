@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Communication;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * Communication Media Controller
  * Handles media uploads and management for communication channels.
  */
-class MediaController extends BaseController
+class MediaController extends AdminController
 {
     public function __construct()
     {

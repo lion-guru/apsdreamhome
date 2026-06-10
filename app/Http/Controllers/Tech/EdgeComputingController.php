@@ -7,14 +7,14 @@
 
 namespace App\Http\Controllers\Tech;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 
 /**
  * Edge Computing & 5G Integration Controller
  * Handles edge computing optimization and 5G network integration
  */
-class EdgeComputingController extends BaseController
+class EdgeComputingController extends AdminController
 {
     protected $data;
 

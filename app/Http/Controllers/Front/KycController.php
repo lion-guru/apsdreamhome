@@ -48,14 +48,12 @@ class KycController extends BaseController
         $name = trim($_POST['legal_name'] ?? '');
         $dob = $_POST['dob'] ?? null;
 
-        // Handle file uploads
+        // Handle file uploads with UploadValidator
         $uploadDir = __DIR__ . '/../../../assets/uploads/kyc/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
 
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-        $maxSize = 5 * 1024 * 1024; // 5MB
         $documents = [];
 
         foreach (['pan_document', 'aadhaar_front_document', 'aadhaar_back_document'] as $field) {
@@ -63,15 +61,13 @@ class KycController extends BaseController
                 $this->json(['success' => false, 'error' => ucfirst(str_replace('_', ' ', $field)) . ' is required'], 400);
                 return;
             }
-            if (!in_array($_FILES[$field]['type'], $allowedTypes)) {
-                $this->json(['success' => false, 'error' => ucfirst(str_replace('_', ' ', $field)) . ' must be JPG, PNG, or PDF'], 400);
+            $v = \UploadValidator::validate($_FILES[$field], ['types' => 'documents', 'max_size' => 5]);
+            if (!$v['valid']) {
+                $this->json(['success' => false, 'error' => ucfirst(str_replace('_', ' ', $field)) . ': ' . $v['error']], 400);
                 return;
             }
-            if ($_FILES[$field]['size'] > $maxSize) {
-                $this->json(['success' => false, 'error' => ucfirst(str_replace('_', ' ', $field)) . ' must be under 5MB'], 400);
-                return;
-            }
-            $ext = pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION);
+            $safeName = \UploadValidator::safeFilename($_FILES[$field]['name']);
+            $ext = pathinfo($safeName, PATHINFO_EXTENSION);
             $filename = $field . '_' . $userId . '_' . time() . '.' . $ext;
             $destPath = $uploadDir . $filename;
             if (!move_uploaded_file($_FILES[$field]['tmp_name'], $destPath)) {

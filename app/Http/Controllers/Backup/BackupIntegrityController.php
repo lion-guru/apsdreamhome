@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backup;
 
 use App\Services\Backup\BackupIntegrityService;
 use Psr\Log\LoggerInterface;
+use UploadValidator;
 
 class BackupIntegrityController
 {
@@ -239,15 +240,14 @@ class BackupIntegrityController
 
             $file = $_FILES['backup_file'];
             
-            // Validate file
-            if ($file['error'] !== UPLOAD_ERR_OK) {
+            $v = UploadValidator::validate($file, 'backups');
+            if ($v !== true) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'File upload error: ' . $file['error']
-                ], 400);
+                    'message' => $v
+                ], 422);
             }
 
-            // Check file size
             if ($file['size'] < 1024) {
                 return response()->json([
                     'success' => false,
@@ -255,13 +255,13 @@ class BackupIntegrityController
                 ], 400);
             }
 
-            // Move uploaded file to backup directory
             $backupPath = 'storage/backups/uploads/';
             if (!is_dir($backupPath)) {
                 mkdir($backupPath, 0755, true);
             }
 
-            $filename = 'backup_' . date('Y-m-d_H-i-s') . '_' . basename($file['name']);
+            $safeName = UploadValidator::safeFilename($file['name']);
+            $filename = 'backup_' . date('Y-m-d_H-i-s') . '_' . $safeName;
             $targetPath = $backupPath . $filename;
 
             if (!move_uploaded_file($file['tmp_name'], $targetPath)) {

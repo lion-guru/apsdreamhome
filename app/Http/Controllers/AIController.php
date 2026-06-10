@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * APS Dream Home - AI Controller
  * MVC Integration for AI Chat System
  */
 
-class AIController extends BaseController
+class AIController extends AdminController
 {
     private $config;
 

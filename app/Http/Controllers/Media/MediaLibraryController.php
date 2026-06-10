@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Media;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\Media\MediaLibraryService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
@@ -11,7 +11,7 @@ use App\Core\ViewRenderer;
  * Media Library Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class MediaLibraryController extends BaseController
+class MediaLibraryController extends AdminController
 {
     private $mediaService;
     private $authService;
@@ -322,7 +322,7 @@ class MediaLibraryController extends BaseController
     public function getMediaStats($request = [])
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->isAdmin($this->authService->getCurrentUser())) {
+        if (!$this->authService->isAuthenticated() || !$this->checkUserIsAdmin($this->authService->getCurrentUser())) {
             return [
                 'success' => false,
                 'message' => 'Access denied'
@@ -564,7 +564,7 @@ class MediaLibraryController extends BaseController
     /**
      * Check if user is admin
      */
-    private function isAdmin($user)
+    protected function checkUserIsAdmin($user)
     {
         return $user && ($user['role'] === 'admin' || $user['role'] === 'super_admin');
     }
