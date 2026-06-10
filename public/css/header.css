@@ -897,3 +897,59 @@
         padding-top: 60px;
     }
 }
+
+/* Fix navbar brand and menu alignment */
+.premium-header .navbar-brand {
+    align-self: center;
+    margin-bottom: 0;
+}
+
+.premium-header .navbar {
+    align-items: center !important;
+}
+
+.premium-header .container {
+    align-items: center !important;
+}
+
+/* Fix navbar collapse alignment */
+.premium-header .navbar-collapse {
+    align-self: center;
+}
+
+.premium-header .navbar-nav {
+    align-items: center !important;
+}
+
+/* Fix navbar alignment issues */
+.premium-header .navbar {
+    align-items: center !important;
+    display: flex !important;
+    flex-wrap: nowrap;
+}
+
+.premium-header .container {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap;
+}
+
+.premium-header .navbar-brand {
+    flex-shrink: 0;
+    margin-bottom: 0 !important;
+    margin-right: auto;
+}
+
+.premium-header .quick-search-form {
+    flex: 0 0 auto;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.premium-header .navbar-collapse {
+    flex: 1 0 auto;
+}
+
+.premium-header .navbar-toggler {
+    margin-left: 0.5rem;
+}
