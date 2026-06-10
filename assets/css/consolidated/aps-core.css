@@ -973,7 +973,7 @@ section { position: relative; }
    ============================================ */
 .hero {
     position: relative;
-    padding: 100px 0 80px !important;
+    padding: 56px 0 64px !important;
     overflow: hidden;
 }
 .hero::before {

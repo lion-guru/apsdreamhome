@@ -682,3 +682,40 @@ img { max-width: 100%; }
 }
 .list-group-item:first-child { border-radius: 10px 10px 0 0; }
 .list-group-item:last-child { border-radius: 0 0 10px 10px; }
+
+/* ====================================================================
+   ADMIN SHELL OVERRIDES (specificity-safe)
+   The global `.sidebar` / `.sidebar-overlay` rules in the consolidated
+   bundles (aps-core.css, aps-components.css) declare z-index:1000/999,
+   which clobber the admin shell and let the sticky top-nav (z:1020)
+   paint over the open drawer on mobile. The admin sidebar/overlay carry
+   ids, so id+class selectors win regardless of stylesheet load order.
+   ==================================================================== */
+#sidebarMenu.sidebar {
+    z-index: 1050;
+    background: var(--sidebar-bg);
+    width: var(--sidebar-width);
+}
+#sidebarOverlay.sidebar-overlay {
+    z-index: 1045;
+}
+
+@media (max-width: 992px) {
+    /* Off-canvas drawer must sit above the sticky top-nav */
+    #sidebarMenu.sidebar {
+        z-index: 1090;
+        transform: translateX(-100%);
+        margin-left: 0;
+    }
+    #sidebarMenu.sidebar.show {
+        transform: translateX(0);
+        margin-left: 0;
+    }
+    #sidebarOverlay.sidebar-overlay { z-index: 1080; }
+    .top-nav { z-index: 1030; }
+}
+
+@media (max-width: 480px) {
+    /* Full-width drawer on small phones */
+    #sidebarMenu.sidebar { width: min(86%, 320px); }
+}

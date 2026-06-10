@@ -1057,6 +1057,7 @@ return array (
   'nav_my_properties' => 'मेरी प्रॉपर्टी',
   'nav_our_team' => 'हमारी टीम',
   'nav_plot_land' => 'प्लॉट / ज़मीन',
+  'nav_plots' => 'प्लॉट',
   'nav_post_property' => 'प्रॉपर्टी पोस्ट करें',
   'nav_rent_properties' => 'प्रॉपर्टी किराए पर लें',
   'nav_resell_property' => 'रीसेल प्रॉपर्टी',
