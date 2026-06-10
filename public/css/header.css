@@ -953,3 +953,66 @@
 .premium-header .navbar-toggler {
     margin-left: 0.5rem;
 }
+
+/* Fix header navbar alignment - simplified approach */
+.premium-header .navbar {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap;
+    height: auto;
+}
+
+.premium-header .navbar .container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.premium-header .navbar-brand {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+}
+
+.premium-header .quick-search-form {
+    flex: 0 0 auto;
+    margin: 0 1rem;
+}
+
+.premium-header .navbar-collapse {
+    flex: 1 0 auto;
+}
+
+.premium-header .navbar-nav {
+    flex: 0 0 auto;
+}
+
+/* Remove conflicting styles */
+.premium-header .navbar-brand.me-auto {
+    margin-right: 0 !important;
+}
+
+/* Fix sections below header - adjust padding */
+#main-content {
+    padding-top: 80px !important;
+}
+
+@media (max-width: 768px) {
+    #main-content {
+        padding-top: 70px !important;
+    }
+}
+
+/* Ensure hero section displays properly */
+.hero {
+    margin-top: 0 !important;
+    padding-top: 60px;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding-top: 40px;
+    }
+}
