@@ -7,6 +7,7 @@ use App\Services\CoreFunctionsServiceCustom;
 use App\Services\LoggingService;
 use App\Core\Database;
 use Exception;
+use UploadValidator;
 
 /**
  * Project Controller - Custom MVC Implementation
@@ -582,7 +583,12 @@ class ProjectController extends AdminController
     private function uploadImage(array $file): ?string
     {
         try {
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $v = UploadValidator::validate($file, ['types' => 'images', 'max_size' => 10]);
+            if (!$v['valid']) {
+                return null;
+            }
+            $safeName = UploadValidator::safeFilename($file['name']);
+            $extension = pathinfo($safeName, PATHINFO_EXTENSION);
             $fileName = uniqid('project_') . '.' . $extension;
 
             // Create upload directory if it doesn't exist

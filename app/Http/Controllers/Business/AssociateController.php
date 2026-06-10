@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Business;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\Business\AssociateService;
 use App\Services\Auth\AuthenticationService;
 
@@ -10,7 +10,7 @@ use App\Services\Auth\AuthenticationService;
  * Associate Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  */
-class AssociateController extends BaseController
+class AssociateController extends AdminController
 {
     private $associateService;
     private $authService;

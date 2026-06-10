@@ -396,4 +396,68 @@ class PaymentGatewayController extends BaseController
             'page_title' => 'Payment History - Associate Dashboard'
         ]);
     }
+
+    // =====================================================================
+    // API stub methods — routes/api.php references these 8 methods
+    // TODO: Implement real PhonePe/GPay/UPI gateway integration
+    // =====================================================================
+
+    public function initiatePhonePe()
+    {
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $this->json(['success' => false, 'error' => 'PhonePe integration not yet implemented', 'received' => $data], 501);
+    }
+
+    public function verifyPhonePe($transactionId = null)
+    {
+        $this->json(['success' => false, 'error' => 'PhonePe verification not yet implemented', 'transaction_id' => $transactionId], 501);
+    }
+
+    public function phonePeWebhook()
+    {
+        $payload = json_decode(file_get_contents('php://input'), true);
+        error_log('PhonePe webhook received: ' . json_encode($payload));
+        http_response_code(200);
+        echo json_encode(['status' => 'received']);
+    }
+
+    public function initiateGPay()
+    {
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $this->json(['success' => false, 'error' => 'GPay integration not yet implemented', 'received' => $data], 501);
+    }
+
+    public function generateQRCode()
+    {
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $this->json(['success' => false, 'error' => 'UPI QR code generation not yet implemented', 'received' => $data], 501);
+    }
+
+    public function upiCallback()
+    {
+        $payload = json_decode(file_get_contents('php://input'), true);
+        error_log('UPI callback received: ' . json_encode($payload));
+        http_response_code(200);
+        echo json_encode(['status' => 'received']);
+    }
+
+    public function getStatus($orderId = null)
+    {
+        $this->json(['success' => false, 'error' => 'Payment status lookup not yet implemented', 'order_id' => $orderId], 501);
+    }
+
+    public function getPaymentMethods()
+    {
+        $this->json([
+            'success' => true,
+            'methods' => [
+                ['id' => 'razorpay', 'name' => 'Razorpay', 'enabled' => true],
+                ['id' => 'phonepe', 'name' => 'PhonePe', 'enabled' => false],
+                ['id' => 'gpay', 'name' => 'Google Pay', 'enabled' => false],
+                ['id' => 'upi', 'name' => 'UPI QR', 'enabled' => false],
+                ['id' => 'bank_transfer', 'name' => 'Bank Transfer', 'enabled' => true],
+                ['id' => 'cash', 'name' => 'Cash', 'enabled' => true],
+            ]
+        ]);
+    }
 }

@@ -7,12 +7,12 @@
 
 namespace App\Http\Controllers\Tech;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Security;
 use App\Core\Database;
 use Exception;
 
-class BlockchainController extends BaseController
+class BlockchainController extends AdminController
 {
     protected $data;
     protected $db;

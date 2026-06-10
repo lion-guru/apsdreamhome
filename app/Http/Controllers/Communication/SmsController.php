@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Communication;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * SMS Controller
  * Handles SMS sending, bulk messages, and scheduling.
  */
-class SmsController extends BaseController
+class SmsController extends AdminController
 {
     public function __construct()
     {

@@ -7,14 +7,14 @@
 
 namespace App\Http\Controllers\Payment;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Security;
 use App\Core\PaymentGateway;
 use App\Core\EmailNotification;
 use Exception;
 use PDO;
 
-class AdvancedPaymentController extends BaseController
+class AdvancedPaymentController extends AdminController
 {
 
     private $payment_gateways = [

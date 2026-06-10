@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Services\Performance\PerformanceService;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * Performance Controller
  * Handles performance and caching operations
  */
-class PerformanceController extends BaseController
+class PerformanceController extends AdminController
 {
     private ?PerformanceService $performanceService = null;
 

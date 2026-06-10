@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Employee;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Database\Database;
 use Exception;
 
@@ -10,7 +10,7 @@ use Exception;
  * Telecalling Controller
  * Handles lead management, calling system, and conversion tracking
  */
-class TelecallingController extends BaseController
+class TelecallingController extends AdminController
 {
     protected $db;
     protected $employeeId;

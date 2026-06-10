@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\EventService;
 use App\Services\SystemLogger as Logger;
 
@@ -10,7 +10,7 @@ use App\Services\SystemLogger as Logger;
  * Event Controller
  * Handles event management and event bus operations
  */
-class EventController extends BaseController
+class EventController extends AdminController
 {
     private ?EventService $eventService = null;
     private ?Logger $logger = null;

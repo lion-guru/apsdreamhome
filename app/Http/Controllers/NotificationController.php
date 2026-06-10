@@ -16,6 +16,11 @@ class NotificationController extends AdminController
         $this->render('notification/index', ['page_title' => 'Notification Management']);
     }
     
+    public function create()
+    {
+        return $this->createNotification();
+    }
+    
     public function templates() 
     {
         $this->render('notification/templates', ['page_title' => 'Notification Templates']);

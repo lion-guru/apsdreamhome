@@ -1216,7 +1216,6 @@ $router->get('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMCont
 $router->post('/admin/mlm/associates/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
 $router->get('/admin/mlm/commission', 'App\Http\Controllers\Admin\MLMController@commission');
 $router->get('/admin/mlm/network', 'App\Http\Controllers\Admin\MLMController@network');
-$router->get('/admin/mlm/payouts', 'App\Http\Controllers\Admin\MLMController@payouts');
 $router->get('/admin/mlm/tree', 'App\Http\Controllers\Admin\MLMController@tree');
 $router->get('/admin/mlm/genealogy', 'App\Http\Controllers\Admin\MLMController@genealogy');
 $router->get('/admin/mlm/ranks', 'App\Http\Controllers\Admin\MLMController@ranks');
@@ -1471,11 +1470,9 @@ $router->get('/admin/accounts', 'App\\Http\\Controllers\\Admin\\FinanceControlle
 // Developer Tools
 $router->get('/admin/dev-tools', 'App\\Http\\Controllers\\Admin\\AdminController@devTools');
 
-// Missing sidebar menu items - Route stubs for DB-driven menu
-$router->get('/admin/finance', 'App\\Http\\Controllers\\Admin\\FinanceController@index');
+// Legacy FinanceController stubs (unique routes only — /admin/finance and /admin/finance/expenses handled by MoneyWorkflowController)
 $router->get('/admin/finance/invoices', 'App\\Http\\Controllers\\Admin\\FinanceController@invoices');
 $router->get('/admin/finance/create-invoice', 'App\\Http\\Controllers\\Admin\\FinanceController@createInvoice');
-$router->get('/admin/finance/expenses', 'App\\Http\\Controllers\\Admin\\FinanceController@expenses');
 $router->get('/admin/finance/create-expense', 'App\\Http\\Controllers\\Admin\\FinanceController@createExpense');
 $router->get('/admin/finance/payments', 'App\\Http\\Controllers\\Admin\\FinanceController@payments');
 $router->get('/admin/finance/calculator', 'App\\Http\\Controllers\\Admin\\FinanceController@calculator');
@@ -1689,7 +1686,6 @@ $router->get('/admin/vendors/contracts/{id}', 'App\\Http\\Controllers\\Admin\\Ve
 // Admin Settings Sub-pages
 $router->get('/admin/settings/payment', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 $router->get('/admin/settings/email', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
-$router->get('/admin/settings/sms', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 
 // ============================================================
 // ADMIN COMMUNICATION (Email & SMS Queue)
@@ -2152,16 +2148,6 @@ $router->get('/admin/projects/manage/edit/{id}', 'App\Http\Controllers\Admin\Pro
 $router->post('/admin/projects/manage/update/{id}', 'App\Http\Controllers\Admin\ProjectController@update');
 $router->post('/admin/projects/manage/destroy/{id}', 'App\Http\Controllers\Admin\ProjectController@destroy');
 $router->get('/admin/projects/manage/analytics', 'App\Http\Controllers\Admin\ProjectController@analytics');
-
-// ====== Sales Management ======
-$router->get('/admin/sales', 'App\Http\Controllers\Admin\SalesController@index');
-$router->get('/admin/sales/create', 'App\Http\Controllers\Admin\SalesController@create');
-$router->post('/admin/sales/store', 'App\Http\Controllers\Admin\SalesController@store');
-$router->get('/admin/sales/show/{id}', 'App\Http\Controllers\Admin\SalesController@show');
-$router->get('/admin/sales/edit/{id}', 'App\Http\Controllers\Admin\SalesController@edit');
-$router->post('/admin/sales/update/{id}', 'App\Http\Controllers\Admin\SalesController@update');
-$router->post('/admin/sales/destroy/{id}', 'App\Http\Controllers\Admin\SalesController@destroy');
-$router->get('/admin/sales/analytics', 'App\Http\Controllers\Admin\SalesController@analytics');
 
 // ====== Payout Management ======
 $router->get('/admin/payouts/list', 'App\Http\Controllers\Admin\PayoutController@index');

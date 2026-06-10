@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use UploadValidator;
 
 class PropertyListingWizardController extends BaseController
 {
@@ -334,21 +335,19 @@ class PropertyListingWizardController extends BaseController
             return;
         }
         $file = $_FILES['image'];
-        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        $v = \UploadValidator::validate($file, ['types' => 'images', 'max_size' => 5]);
+        if (!$v['valid']) {
+            http_response_code(400);
+            echo json_encode(['ok' => false, 'error' => $v['error']]);
+            return;
+        }
+        $safeName = \UploadValidator::safeFilename($file['name']);
         $mime = mime_content_type($file['tmp_name']);
-        if (!isset($allowed[$mime])) {
-            http_response_code(400);
-            echo json_encode(['ok' => false, 'error' => 'Invalid type: ' . $mime]);
-            return;
-        }
-        if ($file['size'] > 5 * 1024 * 1024) {
-            http_response_code(400);
-            echo json_encode(['ok' => false, 'error' => 'Max 5MB']);
-            return;
-        }
+        $extMap = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        $ext = $extMap[$mime] ?? pathinfo($safeName, PATHINFO_EXTENSION);
         $dir = __DIR__ . '/../../../public/uploads/property-draft/';
         if (!is_dir($dir)) @mkdir($dir, 0775, true);
-        $filename = 'draft_' . session_id() . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $allowed[$mime];
+        $filename = 'draft_' . session_id() . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
         $target = $dir . $filename;
         if (!move_uploaded_file($file['tmp_name'], $target)) {
             http_response_code(500);

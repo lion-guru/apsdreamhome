@@ -218,4 +218,101 @@ class SecurityHelper
 
         return true;
     }
+
+    /**
+     * Detect potential SQL injection patterns in input
+     * Returns true if suspicious patterns found
+     */
+    public static function detectSqlInjection($input)
+    {
+        if (empty($input)) return false;
+        $input = strtolower(trim($input));
+
+        $patterns = [
+            '/\bunion\b.*\bselect\b/',
+            '/\bselect\b.*\bfrom\b/',
+            '/\binsert\b.*\binto\b/',
+            '/\bdelete\b.*\bfrom\b/',
+            '/\bdrop\b.*\btable\b/',
+            '/\bupdate\b.*\bset\b/',
+            '/\bor\b\s+\d+\s*=\s*\d+/',
+            '/\band\b\s+\d+\s*=\s*\d+/',
+            '/;\s*(drop|delete|update|insert|select)\b/',
+            "/'\s*or\s+'/",
+            '/--\s*$/',
+            '/\/\*.*\*\//',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $input)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Detect potential XSS patterns in input
+     * Returns true if suspicious patterns found
+     */
+    public static function detectXss($input)
+    {
+        if (empty($input)) return false;
+
+        $patterns = [
+            '/<script[\s>]/i',
+            '/javascript\s*:/i',
+            '/on(error|load|click|mouse)\s*=/i',
+            '/<iframe[\s>]/i',
+            '/<object[\s>]/i',
+            '/<embed[\s>]/i',
+            '/<form[\s>]/i',
+            '/expression\s*\(/i',
+            '/vbscript\s*:/i',
+            '/data\s*:\s*text\/html/i',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $input)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if IP is blocked in the database
+     */
+    public static function isIpBlocked($ip)
+    {
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT 1 FROM blocked_ips WHERE ip_address = ? AND (expires_at IS NULL OR expires_at > NOW())");
+            $stmt->execute([$ip]);
+            return $stmt->fetch() !== false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Block an IP address
+     */
+    public static function blockIp($ip, $reason = '', $duration = 3600)
+    {
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $expiresAt = date('Y-m-d H:i:s', time() + $duration);
+            $stmt = $db->prepare(
+                "INSERT INTO blocked_ips (ip_address, reason, expires_at, created_at)
+                 VALUES (?, ?, ?, NOW())
+                 ON DUPLICATE KEY UPDATE reason = ?, expires_at = ?"
+            );
+            $stmt->execute([$ip, $reason, $expiresAt, $reason, $expiresAt]);
+            return true;
+        } catch (\Exception $e) {
+            error_log('SecurityHelper::blockIp error: ' . $e->getMessage());
+            return false;
+        }
+    }
 }

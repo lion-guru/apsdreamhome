@@ -7,11 +7,11 @@
 
 namespace App\Http\Controllers\Tech;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Security;
 use Exception;
 
-class MetaverseController extends BaseController
+class MetaverseController extends AdminController
 {
 
     /**

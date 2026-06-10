@@ -19,6 +19,7 @@ class LeadNote extends Model
      */
     protected $fillable = [
         'lead_id',
+        'note',
         'content',
         'is_private',
         'created_by',

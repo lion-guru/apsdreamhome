@@ -5,9 +5,17 @@ class PropertyService
 {
     private $db;
     
-    public function __construct() {
-        $this->db = new PDO("mysql:host=localhost;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    public function __construct($pdo = null) {
+        if ($pdo) {
+            $this->db = $pdo;
+        } else {
+            $config = require APP_ROOT . '/config/database.php';
+            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['charset']}";
+            $this->db = new PDO($dsn, $config['username'], $config['password'], [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
+        }
     }
     
     public function getProperties($filters = [], $limit = 20, $offset = 0) {
@@ -117,12 +125,7 @@ class PropertyService
     }
     
     public function getResellProperties($filters = []) {
-        try {
-            $sql = "SELECT * FROM resell_properties WHERE listing_status = 'active'";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        
+        $sql = "SELECT * FROM resell_properties WHERE listing_status = 'active'";
         $params = [];
         
         if (!empty($filters['property_type'])) {
@@ -142,10 +145,13 @@ class PropertyService
         
         $sql .= " ORDER BY featured DESC, listing_date DESC";
         
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
     
     public function getStates() {

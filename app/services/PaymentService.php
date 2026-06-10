@@ -6,22 +6,30 @@ class PaymentService
     private $db;
     private $settings;
     
-    public function __construct() {
-        $this->db = new PDO("mysql:host=localhost;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    public function __construct($pdo = null) {
+        if ($pdo) {
+            $this->db = $pdo;
+        } else {
+            $config = require APP_ROOT . '/config/database.php';
+            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['charset']}";
+            $this->db = new PDO($dsn, $config['username'], $config['password'], [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
+        }
         $this->loadSettings();
     }
     
     private function loadSettings() {
         try {
             $stmt = $this->db->prepare("SELECT setting_key, setting_value FROM payment_settings");
+            $stmt->execute();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $this->settings[$row["setting_key"]] = $row["setting_value"];
+            }
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        $stmt->execute();
-        
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $this->settings[$row["setting_key"]] = $row["setting_value"];
+            // payment_settings table may not exist yet
+            $this->settings = [];
         }
     }
     
@@ -164,11 +172,11 @@ class PaymentService
     public function getPaymentPlans() {
         try {
             $stmt = $this->db->prepare("SELECT * FROM payment_plans WHERE is_active = 1 ORDER BY is_default DESC, plan_name ASC");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            return [];
         }
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function getPaymentHistory($customerId, $limit = 20, $offset = 0) {
@@ -222,10 +230,10 @@ class PaymentService
     public function updatePaymentSetting($key, $value) {
         try {
             $stmt = $this->db->prepare("INSERT INTO payment_settings (setting_key, setting_value, setting_type, setting_category) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()");
+            return $stmt->execute([$key, $value, "string", "general"]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            return false;
         }
-        return $stmt->execute([$key, $value, "string", "general"]);
     }
     
     private function createNotification($paymentId, $type, $title, $message, $customerId = null) {

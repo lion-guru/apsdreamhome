@@ -12,6 +12,7 @@ use App\Models\LeadStatus;
 use App\Models\LeadSource;
 use App\Models\User\User;
 use App\Core\Security;
+use UploadValidator;
 
 /**
  * API Lead Controller - Custom Framework Version
@@ -315,11 +316,17 @@ class ApiLeadController extends BaseController
             }
 
             $file = $_FILES['file'];
+
+            $v = UploadValidator::validate($file, 'documents');
+            if ($v !== true) {
+                $this->jsonError($v, 422);
+            }
+
             $currentUser = $this->getCurrentUser();
 
             // Generate unique filename
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = 'lead_' . $lead->id . '_' . time() . '_' . uniqid() . '.' . $extension;
+            $safeName = UploadValidator::safeFilename($file['name']);
+            $filename = 'lead_' . $lead->id . '_' . time() . '_' . $safeName;
 
             // Create upload directory if it doesn't exist
             $uploadDir = __DIR__ . '/../../uploads/leads/' . $lead->id;

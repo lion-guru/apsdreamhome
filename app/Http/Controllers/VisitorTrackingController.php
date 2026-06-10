@@ -6,12 +6,15 @@ namespace App\Http\Controllers;
  * Visitor Tracking Controller
  * Handles visitor tracking and lead capture
  */
-class VisitorTrackingController extends BaseController
+use App\Http\Controllers\Admin\AdminController;
+
+class VisitorTrackingController extends AdminController
 {
     private $trackingService;
 
     public function __construct()
     {
+        parent::__construct();
         // Lazy load service to avoid database connection issues
         $this->trackingService = null;
     }

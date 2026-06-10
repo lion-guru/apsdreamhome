@@ -7,11 +7,11 @@
 
 namespace App\Http\Controllers\Utility;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Core\Security;
 use Exception;
 
-class LanguageController extends BaseController
+class LanguageController extends AdminController
 {
     private $supported_languages = [
         'en' => [

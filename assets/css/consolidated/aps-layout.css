@@ -78,6 +78,15 @@ body {
 .col-11 { flex: 0 0 91.666667%; max-width: 91.666667%; padding: 0 15px; }
 .col-12 { flex: 0 0 100%; max-width: 100%; padding: 0 15px; }
 
+/* Mobile: stack all columns */
+@media (max-width: 768px) {
+    .col, .col-1, .col-2, .col-3, .col-4, .col-5, .col-6,
+    .col-7, .col-8, .col-9, .col-10, .col-11, .col-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
 /* ============================================
    3. RESPONSIVE IMAGES & MEDIA
    ============================================ */
@@ -1112,6 +1121,8 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .container { padding: 0 10px; }
+
     .chatbot-widget {
         width: 90%;
         right: 5%;

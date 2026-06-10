@@ -27,8 +27,8 @@ class LeadController extends AdminController
     {
         $this->requireAdmin();
         try {
+            $sources = \App\Models\LeadSource::active();
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $sources = $db->query("SELECT id, name FROM lead_sources ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $statuses = $db->query("SELECT status_name FROM lead_statuses ORDER BY id")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
@@ -43,7 +43,39 @@ class LeadController extends AdminController
     public function store()
     {
         $this->requireAdmin();
-        $this->redirect('/admin/leads');
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $name = trim($_POST['name'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $source = trim($_POST['source'] ?? 'manual');
+            $status = trim($_POST['status'] ?? 'new');
+            $notes = trim($_POST['notes'] ?? '');
+            $assigned_to = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
+            $budget = !empty($_POST['budget']) ? floatval($_POST['budget']) : null;
+            $location_pref = trim($_POST['location_preference'] ?? '');
+
+            if (empty($name)) {
+                $this->setFlashMessage('error', 'Lead name is required');
+                return $this->redirect('/admin/leads/create');
+            }
+
+            $stmt = $db->prepare("INSERT INTO leads (name, phone, email, source, status, assigned_to, budget, location_preference, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->execute([$name, $phone, $email, $source, $status, $assigned_to, $budget, $location_pref, $notes]);
+            $leadId = $db->lastInsertId();
+
+            try {
+                $automation = new \App\Services\AutomationTriggerService();
+                $automation->onLeadCreated($leadId);
+            } catch (\Exception $e) {
+                error_log('LeadController::store automation error: ' . $e->getMessage());
+            }
+
+            $this->setFlashMessage('success', 'Lead created successfully');
+        } catch (\Exception $e) {
+            $this->setFlashMessage('error', 'Failed to create lead: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/leads');
     }
     
     /**
@@ -201,9 +233,7 @@ class LeadController extends AdminController
             $lead = $db->prepare("SELECT * FROM leads WHERE id = ?");
             $lead->execute([$id]);
             $lead = $lead->fetch(\PDO::FETCH_ASSOC);
-            $notes = $db->prepare("SELECT ln.*, u.name as author FROM lead_notes ln LEFT JOIN users u ON ln.created_by=u.id WHERE ln.lead_id=? ORDER BY ln.created_at DESC");
-            $notes->execute([$id]);
-            $notes = $notes->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $notes = \App\Models\LeadNote::findMany(['lead_id' => $id], 'created_at DESC');
             $activities = $db->prepare("SELECT * FROM lead_activities WHERE lead_id=? ORDER BY activity_date DESC LIMIT 20");
             $activities->execute([$id]);
             $activities = $activities->fetchAll(\PDO::FETCH_ASSOC) ?: [];
@@ -225,13 +255,37 @@ class LeadController extends AdminController
 
     public function update($id) { return $this->render('admin/leads/edit', ['lead' => \App\Models\Lead::find($id)]); }
     public function destroy($id) { try { \App\Models\Lead::delete($id); $this->setFlashMessage('success', 'Lead deleted'); } catch (\Exception $e) { $this->setFlashMessage('error', $e->getMessage()); } return $this->redirect('/admin/leads'); }
-    public function addNote($id) { try { $this->db->query("INSERT INTO lead_notes (lead_id, note, created_by, created_at) VALUES (?, ?, ?, NOW())", [$id, $_POST['note'] ?? '', $_SESSION['admin_id'] ?? 0]); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }
+    public function addNote($id) {
+        try {
+            \App\Models\LeadNote::create([
+                'lead_id' => $id,
+                'note' => $_POST['note'] ?? '',
+                'created_by' => $_SESSION['admin_id'] ?? 0,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+        } catch (\Exception $e) {
+            error_log('LeadController::addNote error: ' . $e->getMessage());
+        }
+        return $this->redirect("/admin/leads/show/$id");
+    }
     public function updateStatus($id) {
         try {
-            $this->db->query("UPDATE leads SET status = ? WHERE id = ?", [$_POST['status'] ?? 'new', $id]);
-            // Hot-path: lead status changes affect admin dashboard KPI bundle.
+            $oldLead = \App\Models\Lead::find($id);
+            $oldStatus = $oldLead ? ($oldLead['status'] ?? 'new') : 'new';
+            $newStatus = $_POST['status'] ?? 'new';
+
+            $this->db->query("UPDATE leads SET status = ? WHERE id = ?", [$newStatus, $id]);
             \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
-        } catch (\Exception $e) {}
+
+            try {
+                $automation = new \App\Services\AutomationTriggerService();
+                $automation->onLeadStatusChange($id, $oldStatus, $newStatus);
+            } catch (\Exception $e) {
+                error_log('LeadController::updateStatus automation error: ' . $e->getMessage());
+            }
+        } catch (\Exception $e) {
+            error_log('LeadController::updateStatus error: ' . $e->getMessage());
+        }
         return $this->redirect("/admin/leads/show/$id");
     }
     public function uploadDocument($id) { try { $this->setFlashMessage('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }

@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Security;
+use UploadValidator;
 
 use EmailNotification;
 use Exception;
@@ -1474,14 +1475,22 @@ class MobileApiController extends BaseController
         }
 
         $file = $_FILES['document'];
+
+        $v = UploadValidator::validate($file, 'documents');
+        if ($v !== true) {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'message' => $v]);
+            return;
+        }
+
         $uploadDir = __DIR__ . '/../../../../public/uploads/documents/' . $userId . '/';
         
         if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
+            mkdir($uploadDir, 0755, true);
         }
 
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = $documentType . '_' . time() . '.' . $extension;
+        $safeName = UploadValidator::safeFilename($file['name']);
+        $filename = $documentType . '_' . time() . '_' . $safeName;
         $targetFile = $uploadDir . $filename;
 
         if (move_uploaded_file($file['tmp_name'], $targetFile)) {

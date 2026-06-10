@@ -266,18 +266,24 @@ class LandInventoryController extends AdminController
         $data = $_POST;
         $data['uploaded_by'] = $_SESSION['user_id'] ?? ($_SESSION['admin_id'] ?? null);
 
-        // Handle file upload
+        // Handle file upload with validation
         $filePath = null;
         if (!empty($_FILES['document_file']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
-            $leadDir = $this->uploadPath . DIRECTORY_SEPARATOR . $leadId;
-            if (!is_dir($leadDir)) {
-                @mkdir($leadDir, 0755, true);
-            }
-            $safeName = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['document_file']['name'] ?? 'file'));
-            $unique = date('Ymd_His') . '_' . substr(md5(uniqid('', true)), 0, 6) . '_' . $safeName;
-            $target  = $leadDir . DIRECTORY_SEPARATOR . $unique;
-            if (move_uploaded_file($_FILES['document_file']['tmp_name'], $target)) {
-                $filePath = 'assets/uploads/land-docs/' . $leadId . '/' . $unique;
+            $validation = UploadValidator::validate($_FILES['document_file'], ['types' => 'documents', 'max_size' => 25]);
+            if ($validation['valid']) {
+                $leadDir = $this->uploadPath . DIRECTORY_SEPARATOR . $leadId;
+                if (!is_dir($leadDir)) {
+                    @mkdir($leadDir, 0755, true);
+                }
+                $target = $leadDir . DIRECTORY_SEPARATOR . $validation['sanitized_name'];
+                if (move_uploaded_file($_FILES['document_file']['tmp_name'], $target)) {
+                    $filePath = 'assets/uploads/land-docs/' . $leadId . '/' . $validation['sanitized_name'];
+                }
+            } else {
+                $data['file_path'] = null;
+                $r = ['success' => false, 'error' => 'Upload rejected: ' . $validation['error']];
+                $this->setFlash('error', 'Upload rejected: ' . $validation['error']);
+                return $this->redirect('/admin/land-inventory/leads/' . $leadId . '/documents');
             }
         }
         $data['file_path'] = $filePath;

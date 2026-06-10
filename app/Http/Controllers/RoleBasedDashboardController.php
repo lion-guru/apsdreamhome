@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Middleware\RBACManager;
 use App\Core\Database\Database;
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 
 /**
  * Role-Based Dashboard Controller
  * Handles dashboard routing based on user roles
  */
-class RoleBasedDashboardController extends BaseController
+class RoleBasedDashboardController extends AdminController
 {
     protected $db;
 
@@ -640,7 +640,7 @@ class RoleBasedDashboardController extends BaseController
      * @param string $role User role
      * @return array Recent activities
      */
-    private function getRecentActivities($role)
+    public function getRecentActivitiesForRole($role)
     {
         try {
             $sql = "SELECT ual.*, u.name as user_name FROM user_activity_logs_unified ual LEFT JOIN users u ON ual.user_id = u.id ORDER BY ual.created_at DESC LIMIT 10";

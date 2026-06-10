@@ -75,10 +75,17 @@ class DocumentController extends AdminController
                     mkdir($uploadDir, 0755, true);
                 }
 
-                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $safeTitle = preg_replace('/[^a-zA-Z0-9_-]/', '', $title);
-                $fileName = time() . '_' . ($safeTitle ?: 'document') . '.' . $ext;
-                $filePath = $uploadDir . $fileName;
+                // Validate upload before processing
+                $validation = UploadValidator::validate($file, ['types' => 'documents', 'max_size' => 25]);
+                if (!$validation['valid']) {
+                    $_SESSION['flash_message'] = 'Upload rejected: ' . $validation['error'];
+                    $_SESSION['flash_type'] = 'danger';
+                    header('Location: ' . BASE_URL . '/admin/documents');
+                    exit;
+                }
+
+                $safeName = $validation['sanitized_name'];
+                $filePath = $uploadDir . $safeName;
 
                 if (move_uploaded_file($file['tmp_name'], $filePath)) {
                     $stmt = $db->prepare("INSERT INTO documents (title, type, description, file_path, file_size, related_type, related_id, category_id, doc_type_id, uploaded_by, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())");

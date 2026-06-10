@@ -7,6 +7,7 @@ use App\Core\Database;
 use App\Services\AgentAssignmentService;
 use App\Services\ReferralService;
 use Exception;
+use UploadValidator;
 
 /**
  * Enhanced Property Workflow Controller
@@ -632,26 +633,34 @@ class PropertyWorkflowController extends BaseController
         if (isset($_FILES['images']) && is_array($_FILES['images']['name'])) {
             foreach ($_FILES['images']['name'] as $key => $name) {
                 if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
-                    $tmpName = $_FILES['images']['tmp_name'][$key];
-                    $fileName = time() . '_' . $name;
-                    $uploadPath = 'uploads/properties/' . $fileName;
-
-                    if (move_uploaded_file($tmpName, $uploadPath)) {
-                        \App\Core\ImageOptimizer::optimizeStatic($uploadPath);
-                        // Mirror to StorageManager (S3 or local fallback).
-                        try {
-                            \App\Services\Storage\StorageManager::getInstance()->put(
-                                $uploadPath,
-                                file_get_contents($uploadPath),
-                                [
-                                    'ContentType'   => mime_content_type($uploadPath) ?: 'image/jpeg',
-                                    'Cache-Control' => 'public, max-age=31536000, immutable',
-                                ]
-                            );
-                        } catch (\Throwable $e) {
-                            error_log('PropertyWorkflowController::handlePropertyImages storage mirror: ' . $e->getMessage());
+                    $fileData = [
+                        'name'     => $name,
+                        'type'     => $_FILES['images']['type'][$key],
+                        'tmp_name' => $_FILES['images']['tmp_name'][$key],
+                        'size'     => $_FILES['images']['size'][$key],
+                        'error'    => $_FILES['images']['error'][$key],
+                    ];
+                    $v = UploadValidator::validate($fileData, ['types' => 'images', 'max_size' => 10]);
+                    if ($v['valid']) {
+                        $safeName = UploadValidator::safeFilename($name);
+                        $fileName = time() . '_' . $safeName;
+                        $uploadPath = 'uploads/properties/' . $fileName;
+                        if (move_uploaded_file($fileData['tmp_name'], $uploadPath)) {
+                            \App\Core\ImageOptimizer::optimizeStatic($uploadPath);
+                            try {
+                                \App\Services\Storage\StorageManager::getInstance()->put(
+                                    $uploadPath,
+                                    file_get_contents($uploadPath),
+                                    [
+                                        'ContentType'   => mime_content_type($uploadPath) ?: 'image/jpeg',
+                                        'Cache-Control' => 'public, max-age=31536000, immutable',
+                                    ]
+                                );
+                            } catch (\Throwable $e) {
+                                error_log('PropertyWorkflowController::handlePropertyImages storage mirror: ' . $e->getMessage());
+                            }
+                            $images[] = $uploadPath;
                         }
-                        $images[] = $uploadPath;
                     }
                 }
             }

@@ -41,17 +41,10 @@ class LeadSource extends Model
      */
     public function leads()
     {
-        $db = \App\Core\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM leads WHERE source = :source");
-        $stmt->execute(['source' => $this->name]);
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        $leads = [];
-        foreach ($results as $result) {
-            $leads[] = new Lead($result);
-        }
-
-        return $leads;
+        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $stmt = $db->prepare("SELECT * FROM leads WHERE source = ?");
+        $stmt->execute([$this->name ?? $this->data['name'] ?? '']);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
     }
 
     /**
@@ -59,17 +52,18 @@ class LeadSource extends Model
      */
     public static function active()
     {
-        $db = \App\Core\Database::getInstance();
+        $db = \App\Core\Database\Database::getInstance()->getConnection();
         $stmt = $db->prepare("SELECT * FROM lead_sources WHERE is_active = 1 ORDER BY sort_order ASC");
         $stmt->execute();
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+    }
 
-        $sources = [];
-        foreach ($results as $result) {
-            $sources[] = new LeadSource($result);
-        }
-
-        return $sources;
+    /**
+     * Get active sources as id/name pairs for dropdowns.
+     */
+    public static function getActiveNames()
+    {
+        return static::active();
     }
 
     /**
