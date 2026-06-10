@@ -582,10 +582,21 @@ try {
     .premium-header .navbar-nav .nav-link {
         font-weight: 500;
         font-size: 14px;
-        padding: 24px 12px !important;
+        padding: 20px 9px !important;
         color: #1e293b;
         position: relative;
         transition: color 0.2s;
+    }
+    /* Keep the desktop header on a single row (logo left, menu right). Without
+       this the dense menu overflows the container width and Bootstrap's default
+       flex-wrap pushes it onto a second line, doubling the header height and
+       leaving a large empty band under the fixed header. */
+    @media (min-width: 1200px) {
+        .premium-header .navbar { flex-wrap: nowrap; }
+        .premium-header .navbar-nav .nav-link { padding: 20px 7px !important; font-size: 13.5px; }
+    }
+    @media (min-width: 1200px) and (max-width: 1399.98px) {
+        .premium-header .navbar-nav .nav-link { padding: 18px 5px !important; font-size: 13px; }
     }
     .premium-header .navbar-nav .nav-link::after {
         content: '';

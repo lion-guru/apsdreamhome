@@ -9,7 +9,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-7 text-white">
-                <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);"><?= __('trusted_by') ?> <?= __('home_families_count') ?></span>
+                <span class="badge text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);"><?= __('trusted_by') ?> <?= __('home_families_count') ?></span>
                 <h1 id="hero-title" class="fw-bold"><?= __('hero_title') ?></h1>
                 <p class="lead mb-4"><?= __('hero_subtitle') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
@@ -179,7 +179,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 <section class="py-5 emi-section" aria-labelledby="emi-title">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.08);"><?= __('home_free_tool') ?></span>
+            <span class="badge text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);"><?= __('home_free_tool') ?></span>
             <h2 id="emi-title" class="fw-bold text-white"><?= __('emi_calculator') ?></h2>
             <p class="text-white-50" style="font-size:1.05rem;"><?= __('emi_subtitle') ?></p>
         </div>
@@ -1637,7 +1637,7 @@ function mCalcVal() {
 <!-- CTA -->
 <section class="py-5 text-white text-center cta-gradient">
     <div class="container">
-        <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);"><?= __('home_get_in_touch') ?></span>
+        <span class="badge text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);"><?= __('home_get_in_touch') ?></span>
         <h2 class="fw-bold mb-3"><?= __('cta_title') ?></h2>
         <p class="mb-4" style="font-size:1.1rem;opacity:0.9;"><?= __('cta_subtitle') ?></p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
