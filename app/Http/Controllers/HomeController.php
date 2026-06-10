@@ -13,14 +13,18 @@ class HomeController extends BaseController
             try {
                 $this->db = new \PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome", "root", "");
                 $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            } catch(\PDOException $e) {
+            } catch (\PDOException $e) {
                 $this->db = null;
             }
         }
     }
-    
+
     public function index()
     {
+        // Use regular header (not premium) for home page
+        $this->data['premium_layout'] = false;
+        $this->data['admin_layout'] = false;
+
         // Load all required data for home page
         $data = [
             'page_title' => 'Welcome to APS Dream Home',
@@ -247,7 +251,7 @@ class HomeController extends BaseController
                 'image_path' => '/assets/img/property3.jpg'
             ]
         ];
-        
+
         if ($this->db) {
             try {
                 // Check if properties table exists and has data
@@ -261,16 +265,16 @@ class HomeController extends BaseController
                               LIMIT 4";
                     $stmt = $this->db->query($query);
                     $properties = $stmt->fetchAll(\PDO::FETCH_OBJ);
-                    
+
                     if (!empty($properties)) {
                         return $properties;
                     }
                 }
-            } catch(\PDOException $e) {
+            } catch (\PDOException $e) {
                 // Fall back to defaults
             }
         }
-        
+
         return $defaults;
     }
 
@@ -309,7 +313,7 @@ class HomeController extends BaseController
             'years_experience' => '15+',
             'projects_completed' => '50+'
         ];
-        
+
         if ($this->db) {
             try {
                 // Get property count
@@ -318,25 +322,25 @@ class HomeController extends BaseController
                 if ($propertyCount > 0) {
                     $stats['properties_sold'] = $propertyCount . '+';
                 }
-                
+
                 // Get user/customer count
                 $stmt = $this->db->query("SELECT COUNT(*) FROM users");
                 $userCount = (int)$stmt->fetchColumn();
                 if ($userCount > 0) {
                     $stats['happy_clients'] = ($userCount > 1000 ? '1000+' : $userCount . '+');
                 }
-                
+
                 // Get projects/sites count
                 $stmt = $this->db->query("SELECT COUNT(*) FROM sites WHERE status IN ('active', 'completed')");
                 $siteCount = (int)$stmt->fetchColumn();
                 if ($siteCount > 0) {
                     $stats['projects_completed'] = $siteCount . '+';
                 }
-            } catch(\PDOException $e) {
+            } catch (\PDOException $e) {
                 // Keep defaults on error
             }
         }
-        
+
         return $stats;
     }
 
@@ -415,7 +419,7 @@ class HomeController extends BaseController
                 'rating' => 4
             ]
         ];
-        
+
         if ($this->db) {
             try {
                 // Check if testimonials table exists
@@ -428,16 +432,16 @@ class HomeController extends BaseController
                               LIMIT 3";
                     $stmt = $this->db->query($query);
                     $testimonials = $stmt->fetchAll(\PDO::FETCH_OBJ);
-                    
+
                     if (!empty($testimonials)) {
                         return $testimonials;
                     }
                 }
-            } catch(\PDOException $e) {
+            } catch (\PDOException $e) {
                 // Fall back to defaults
             }
         }
-        
+
         return $defaults;
     }
 

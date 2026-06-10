@@ -247,21 +247,21 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
                 <!-- Price range -->
                 <div class="col-md-2">
-                    <label for="min_price" class="form-label small fw-semibold"><?= __('min_price') ?> (₹)</label>
+                    <label for="min_price" class="form-label small fw-semibold"><?= __('min_price') ?> (&#8377;)</label>
                     <select class="form-select form-select-sm" id="min_price" name="min_price">
                         <option value="">No Min</option>
                         <?php foreach ([100000=>'1L', 500000=>'5L', 1000000=>'10L', 2000000=>'20L', 5000000=>'50L', 10000000=>'1Cr', 20000000=>'2Cr'] as $val => $label): ?>
-                            <option value="<?= $val ?>" <?= ($_GET['min_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>₹<?= $label ?></option>
+                            <option value="<?= $val ?>" <?= ($_GET['min_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>&#8377;<?= $label ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-md-2">
-                    <label for="max_price" class="form-label small fw-semibold"><?= __('max_price') ?> (₹)</label>
+                    <label for="max_price" class="form-label small fw-semibold"><?= __('max_price') ?> (&#8377;)</label>
                     <select class="form-select form-select-sm" id="max_price" name="max_price">
                         <option value="">No Max</option>
                         <?php foreach ([500000=>'5L', 1000000=>'10L', 2000000=>'20L', 5000000=>'50L', 10000000=>'1Cr', 20000000=>'2Cr', 50000000=>'5Cr'] as $val => $label): ?>
-                            <option value="<?= $val ?>" <?= ($_GET['max_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>₹<?= $label ?></option>
+                            <option value="<?= $val ?>" <?= ($_GET['max_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>&#8377;<?= $label ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -347,7 +347,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <span class="text-success fw-bold fs-5">₹<?= number_format((float)($property['price'] ?? 0)) ?></span>
+                                    <span class="text-success fw-bold fs-5">&#8377;<?= number_format((float)($property['price'] ?? 0)) ?></span>
                                     <?php if (($property['listing_type'] ?? 'sell') === 'rent'): ?>
                                         <span class="text-muted">/month</span>
                                     <?php endif; ?>

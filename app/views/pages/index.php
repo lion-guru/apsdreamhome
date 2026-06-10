@@ -104,11 +104,11 @@
                                 <label class="form-label">Price Range</label>
                                 <select class="form-select" name="price_range">
                                     <option value="">Any Price</option>
-                                    <option value="0-1000000">Under ₹10L</option>
-                                    <option value="1000000-5000000">₹10L - ₹50L</option>
-                                    <option value="5000000-10000000">₹50L - ₹1Cr</option>
-                                    <option value="10000000-50000000">₹1Cr - ₹5Cr</option>
-                                    <option value="50000000+">Above ₹5Cr</option>
+                                    <option value="0-1000000">Under &#8377;10L</option>
+                                    <option value="1000000-5000000">&#8377;10L - &#8377;50L</option>
+                                    <option value="5000000-10000000">&#8377;50L - &#8377;1Cr</option>
+                                    <option value="10000000-50000000">&#8377;1Cr - &#8377;5Cr</option>
+                                    <option value="50000000+">Above &#8377;5Cr</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -151,7 +151,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Suyoday Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">Starting ₹7.5 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting &#8377;7.5 Lakhs</p>
                             <p class="small">Premium residential plots with modern infrastructure</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Ongoing</span>
@@ -166,7 +166,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">Starting ₹8.5 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting &#8377;8.5 Lakhs</p>
                             <p class="small">Premium residential plots in developing area</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Ongoing</span>
@@ -181,7 +181,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">Starting ₹6.5 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting &#8377;6.5 Lakhs</p>
                             <p class="small">Affordable residential plots with amenities</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-warning">Planned</span>
@@ -196,7 +196,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Budh Bihar Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Kushinagar</p>
-                            <p class="text-primary fw-bold">Starting ₹5.5 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting &#8377;5.5 Lakhs</p>
                             <p class="small">Integrated township at Premwaliya</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Ongoing</span>
@@ -211,7 +211,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Awadhpuri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Lucknow</p>
-                            <p class="text-primary fw-bold">Starting ₹12 Lakhs</p>
+                            <p class="text-primary fw-bold">Starting &#8377;12 Lakhs</p>
                             <p class="small">20 bigha premium project at Safadarganj</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-info">Coming Soon</span>
@@ -250,7 +250,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Suyoday Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">₹7.5 Lakhs</p>
+                            <p class="text-primary fw-bold">&#8377;7.5 Lakhs</p>
                             <p class="small">Premium residential plots with modern infrastructure</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Available</span>
@@ -265,7 +265,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">₹8.5 Lakhs</p>
+                            <p class="text-primary fw-bold">&#8377;8.5 Lakhs</p>
                             <p class="small">Premium residential plots in developing area</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-success">Available</span>
@@ -280,7 +280,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
-                            <p class="text-primary fw-bold">₹6.5 Lakhs</p>
+                            <p class="text-primary fw-bold">&#8377;6.5 Lakhs</p>
                             <p class="small">Affordable residential plots with amenities</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-warning">Planned</span>

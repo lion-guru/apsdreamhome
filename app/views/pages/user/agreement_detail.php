@@ -138,7 +138,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label text-muted small">Agreement Value</label>
-                            <div class="fw-semibold" style="font-size:1.1em;color:#4f46e5;">₹<?= $totalValue ?></div>
+                            <div class="fw-semibold" style="font-size:1.1em;color:#4f46e5;">&#8377;<?= $totalValue ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">

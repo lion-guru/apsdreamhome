@@ -131,13 +131,13 @@ $statusColors = [
                     <div class="col-sm-6 col-md-3">
                         <div class="text-center">
                             <div class="text-muted small">Token Paid</div>
-                            <div class="fw-bold text-success">₹<?= number_format((float)($booking['booking_amount'] ?? 0)) ?></div>
+                            <div class="fw-bold text-success">&#8377;<?= number_format((float)($booking['booking_amount'] ?? 0)) ?></div>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
                         <div class="text-center">
                             <div class="text-muted small">Total Amount</div>
-                            <div class="fw-bold text-primary">₹<?= number_format((float)($booking['total_plot_value'] ?? 0)) ?></div>
+                            <div class="fw-bold text-primary">&#8377;<?= number_format((float)($booking['total_plot_value'] ?? 0)) ?></div>
                         </div>
                     </div>
                 </div>
@@ -156,7 +156,7 @@ $statusColors = [
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="mb-1">Pay Token Amount</h6>
-                            <p class="text-muted small mb-2">Complete your token payment of ₹25,000 to confirm the booking.</p>
+                            <p class="text-muted small mb-2">Complete your token payment of &#8377;25,000 to confirm the booking.</p>
                             <button class="btn btn-primary btn-sm" onclick="showToast('Payment gateway coming soon', 'info')">
                                 <i class="fas fa-rupee-sign me-1"></i>Pay Now (Razorpay)
                             </button>

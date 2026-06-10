@@ -18,18 +18,18 @@
                         <div class="mb-4">
                             <label class="form-label fw-bold d-flex justify-content-between">
                                 <span>Monthly Income</span>
-                                <span class="text-primary" id="incomeDisplay">₹50,000</span>
+                                <span class="text-primary" id="incomeDisplay">&#8377;50,000</span>
                             </label>
                             <input type="range" class="form-range" id="monthlyIncome" min="10000" max="500000" step="5000" value="50000" oninput="calculateAll()">
                             <div class="d-flex justify-content-between">
-                                <small class="text-muted">₹10K</small>
-                                <small class="text-muted">₹5L</small>
+                                <small class="text-muted">&#8377;10K</small>
+                                <small class="text-muted">&#8377;5L</small>
                             </div>
                         </div>
 
                         <!-- Existing EMI -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Existing Monthly Obligations (₹)</label>
+                            <label class="form-label fw-bold">Existing Monthly Obligations (&#8377;)</label>
                             <input type="number" class="form-control" id="existingEMI" value="0" min="0" step="1000" oninput="calculateAll()" placeholder="e.g. 5000">
                             <small class="text-muted">Car loan, personal loan, credit card EMI, etc.</small>
                         </div>
@@ -62,7 +62,7 @@
 
                         <!-- Property Value -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Property Value (₹) <small class="text-muted fw-normal">(optional)</small></label>
+                            <label class="form-label fw-bold">Property Value (&#8377;) <small class="text-muted fw-normal">(optional)</small></label>
                             <input type="number" class="form-control" id="propertyValue" value="0" min="0" step="100000" oninput="calculateAll()" placeholder="e.g. 5000000">
                             <small class="text-muted">Used for LTV (Loan-to-Value) ratio check</small>
                         </div>
@@ -83,7 +83,7 @@
                         <div class="card border-0 shadow h-100" style="border-radius: 12px;background:linear-gradient(135deg,#667eea,#764ba2);">
                             <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
                                 <small class="text-white-50">Eligible Loan Amount</small>
-                                <h3 class="text-white fw-bold mb-0 mt-2 fs-4" id="eligibleLoan">₹21,67,781</h3>
+                                <h3 class="text-white fw-bold mb-0 mt-2 fs-4" id="eligibleLoan">&#8377;21,67,781</h3>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                         <div class="card border-0 shadow h-100" style="border-radius: 12px;background:linear-gradient(135deg,#f093fb,#f5576c);">
                             <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
                                 <small class="text-white-50">Maximum EMI</small>
-                                <h3 class="text-white fw-bold mb-0 mt-2 fs-4" id="maxEmiDisplay">₹25,000</h3>
+                                <h3 class="text-white fw-bold mb-0 mt-2 fs-4" id="maxEmiDisplay">&#8377;25,000</h3>
                             </div>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                         <div class="card border-0 shadow h-100" style="border-radius: 12px;background:linear-gradient(135deg,#4facfe,#00f2fe);">
                             <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
                                 <small class="text-white-50">Max Property @80% LTV</small>
-                                <h3 class="text-white fw-bold mb-0 mt-2 fs-4" id="propertyPrice">₹27,09,726</h3>
+                                <h3 class="text-white fw-bold mb-0 mt-2 fs-4" id="propertyPrice">&#8377;27,09,726</h3>
                             </div>
                         </div>
                     </div>
@@ -129,8 +129,8 @@
                                 <h6 class="fw-bold mb-3"><i class="fas fa-chart-pie me-2"></i>Total Payment Breakdown</h6>
                                 <canvas id="emiPieChart" height="180"></canvas>
                                 <div class="text-center mt-2 small" id="pieLabels">
-                                    <span class="text-primary me-2"><i class="fas fa-square me-1" style="color:#667eea;"></i>Principal: <strong id="principalAmount">₹0</strong></span>
-                                    <span class="text-danger"><i class="fas fa-square me-1" style="color:#f5576c;"></i>Interest: <strong id="interestAmount">₹0</strong></span>
+                                    <span class="text-primary me-2"><i class="fas fa-square me-1" style="color:#667eea;"></i>Principal: <strong id="principalAmount">&#8377;0</strong></span>
+                                    <span class="text-danger"><i class="fas fa-square me-1" style="color:#f5576c;"></i>Interest: <strong id="interestAmount">&#8377;0</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -140,13 +140,13 @@
                             <div class="card-body p-3">
                                 <h6 class="fw-bold mb-3"><i class="fas fa-exchange-alt me-2"></i>EMI Calculator</h6>
                                 <div class="mb-2">
-                                    <label class="small fw-bold">Loan Amount (₹)</label>
+                                    <label class="small fw-bold">Loan Amount (&#8377;)</label>
                                     <input type="number" class="form-control form-control-sm" id="emiLoanAmount" oninput="syncEMIFromLoan()" min="0" step="10000">
                                 </div>
                                 <div class="mb-2">
                                     <label class="small fw-bold">Monthly EMI</label>
-                                    <h3 class="text-primary fw-bold mb-0" id="emiResult">₹0</h3>
-                                    <small class="text-muted" id="emiTotalPayment">Total Payable: ₹0 | Interest: ₹0</small>
+                                    <h3 class="text-primary fw-bold mb-0" id="emiResult">&#8377;0</h3>
+                                    <small class="text-muted" id="emiTotalPayment">Total Payable: &#8377;0 | Interest: &#8377;0</small>
                                 </div>
                                 <div class="d-grid gap-2 d-md-flex">
                                     <button class="btn btn-outline-primary btn-sm flex-fill" onclick="setLoanToEligible()"><i class="fas fa-magic me-1"></i>Use Eligible Amount</button>
@@ -406,8 +406,8 @@
     };
 
     function formatINR(num) {
-        if (isNaN(num) || num < 0) return '₹0';
-        return '₹' + Math.round(num).toLocaleString('en-IN');
+        if (isNaN(num) || num < 0) return '&#8377;0';
+        return '&#8377;' + Math.round(num).toLocaleString('en-IN');
     }
 
     function calculateEMI(P, R, N) {
@@ -447,14 +447,14 @@
 
         // Update result cards
         if (maxEMI <= 0 || income <= 0) {
-            el.eligibleLoan.textContent = '₹0';
-            el.maxEmiDisplay.textContent = '₹0';
-            el.propertyPrice.textContent = '₹0';
+            el.eligibleLoan.textContent = '&#8377;0';
+            el.maxEmiDisplay.textContent = '&#8377;0';
+            el.propertyPrice.textContent = '&#8377;0';
             updateAffordability(0);
             updateEMIPieAndTable(0, rate, years);
             el.emiLoanAmount.value = 0;
-            el.emiResult.textContent = '₹0';
-            el.emiTotalPayment.textContent = 'Total Payable: ₹0 | Interest: ₹0';
+            el.emiResult.textContent = '&#8377;0';
+            el.emiTotalPayment.textContent = 'Total Payable: &#8377;0 | Interest: &#8377;0';
             updateAmortTable(0, rate, years);
             return;
         }
@@ -500,8 +500,8 @@
 
     function updateEMIPieAndTable(loanAmount, rate, years) {
         if (loanAmount <= 0 || rate <= 0 || years <= 0) {
-            el.principalAmount.textContent = '₹0';
-            el.interestAmount.textContent = '₹0';
+            el.principalAmount.textContent = '&#8377;0';
+            el.interestAmount.textContent = '&#8377;0';
             updateAmortTable(0, rate, years);
             destroyPieChart();
             return;
@@ -606,8 +606,8 @@
 
     function updateEMIFromLoan(amount, rate, years) {
         if (amount <= 0) {
-            el.emiResult.textContent = '₹0';
-            el.emiTotalPayment.textContent = 'Total Payable: ₹0 | Interest: ₹0';
+            el.emiResult.textContent = '&#8377;0';
+            el.emiTotalPayment.textContent = 'Total Payable: &#8377;0 | Interest: &#8377;0';
             return;
         }
         const emi = calculateEMI(amount, rate, years);
@@ -633,14 +633,14 @@
     }
 
     function setLoanToEligible() {
-        const val = el.eligibleLoan.textContent.replace(/[₹,\s]/g, '');
+        const val = el.eligibleLoan.textContent.replace(/[&#8377;,\s]/g, '');
         const num = parseFloat(val) || 0;
         el.emiLoanAmount.value = Math.round(num);
         syncEMIFromLoan();
     }
 
     function setLoanToMaxProperty() {
-        const val = el.propertyPrice.textContent.replace(/[₹,\s]/g, '');
+        const val = el.propertyPrice.textContent.replace(/[&#8377;,\s]/g, '');
         const num = parseFloat(val) || 0;
         el.emiLoanAmount.value = Math.round(num);
         syncEMIFromLoan();

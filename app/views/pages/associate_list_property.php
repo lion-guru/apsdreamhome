@@ -96,9 +96,9 @@
                     <!-- Price & Area -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="price" class="form-label fw-bold">Expected Price (₹) *</label>
+                            <label for="price" class="form-label fw-bold">Expected Price (&#8377;) *</label>
                             <div class="input-group">
-                                <span class="input-group-text">₹</span>
+                                <span class="input-group-text">&#8377;</span>
                                 <input type="text" name="price" id="price" class="form-control" placeholder="e.g. 25 Lakh" required>
                             </div>
                         </div>

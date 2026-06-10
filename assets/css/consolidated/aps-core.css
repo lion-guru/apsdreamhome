@@ -2325,3 +2325,40 @@ main {
         font-size: 0.8rem !important;
     }
 }
+
+/* Fix header-hero gap issue */
+.premium-header {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.premium-header .navbar {
+    padding: 0.5rem 0 !important;
+    margin: 0 !important;
+}
+
+/* Ensure hero section connects to header without gap */
+.hero-section {
+    margin-top: 0 !important;
+    padding-top: 70px !important;
+}
+
+/* Remove any unwanted gaps */
+main {
+    margin-top: 0 !important;
+}
+
+#main-content {
+    padding-top: 70px !important;
+    margin-top: 0 !important;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding-top: 60px !important;
+    }
+    
+    #main-content {
+        padding-top: 60px !important;
+    }
+}

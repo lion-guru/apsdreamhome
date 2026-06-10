@@ -21,10 +21,10 @@
                             <table class="table table-sm">
                                 <tr><th>Booking #</th><td>#<?= $booking['id'] ?></td></tr>
                                 <tr><th>Plot</th><td>#<?= htmlspecialchars($booking['plot_number'] ?? '') ?> - <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
-                                <tr><th>Total Price</th><td><strong>₹<?= number_format((float)$booking['total_amount'], 2) ?></strong></td></tr>
-                                <tr><th>Token Required (25%)</th><td><strong class="text-primary">₹<?= number_format($requiredToken, 2) ?></strong></td></tr>
-                                <tr><th>Already Paid</th><td>₹<?= number_format((float)$booking['amount'], 2) ?></td></tr>
-                                <tr><th>Token Due</th><td><span class="text-danger">₹<?= number_format($tokenDue, 2) ?></span></td></tr>
+                                <tr><th>Total Price</th><td><strong>&#8377;<?= number_format((float)$booking['total_amount'], 2) ?></strong></td></tr>
+                                <tr><th>Token Required (25%)</th><td><strong class="text-primary">&#8377;<?= number_format($requiredToken, 2) ?></strong></td></tr>
+                                <tr><th>Already Paid</th><td>&#8377;<?= number_format((float)$booking['amount'], 2) ?></td></tr>
+                                <tr><th>Token Due</th><td><span class="text-danger">&#8377;<?= number_format($tokenDue, 2) ?></span></td></tr>
                             </table>
                             <div class="progress mb-3" style="height:10px;">
                                 <div class="progress-bar bg-success" style="width:<?= $tokenPercent ?>%"><?= $tokenPercent ?>%</div>
@@ -35,16 +35,16 @@
                             <form method="POST" action="<?= BASE_URL ?>/booking/pay/<?= $booking['id'] ?>">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-3">
-                                    <label class="form-label">Amount (₹)</label>
+                                    <label class="form-label">Amount (&#8377;)</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">₹</span>
+                                        <span class="input-group-text">&#8377;</span>
                                         <input type="number" step="0.01" name="amount" id="payAmount" class="form-control form-control-lg" 
                                             value="<?= number_format($tokenDue > 0 ? $tokenDue : $requiredToken, 2) ?>" 
                                             min="1" max="<?= $requiredToken ?>" required>
                                     </div>
                                     <div class="mt-2">
-                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('payAmount').value='<?= number_format($requiredToken / 2, 2) ?>'">50% (₹<?= number_format($requiredToken / 2) ?>)</button>
-                                        <button type="button" class="btn btn-outline-success btn-sm" onclick="document.getElementById('payAmount').value='<?= number_format($requiredToken, 2) ?>'">Full Token (₹<?= number_format($requiredToken) ?>)</button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('payAmount').value='<?= number_format($requiredToken / 2, 2) ?>'">50% (&#8377;<?= number_format($requiredToken / 2) ?>)</button>
+                                        <button type="button" class="btn btn-outline-success btn-sm" onclick="document.getElementById('payAmount').value='<?= number_format($requiredToken, 2) ?>'">Full Token (&#8377;<?= number_format($requiredToken) ?>)</button>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -67,7 +67,7 @@
                                     </label>
                                 </div>
                                 <button type="submit" class="btn btn-success btn-lg w-100">
-                                    <i class="fas fa-check-circle me-2"></i>Pay ₹<span id="payDisplay"><?= number_format($tokenDue > 0 ? $tokenDue : $requiredToken) ?></span>
+                                    <i class="fas fa-check-circle me-2"></i>Pay &#8377;<span id="payDisplay"><?= number_format($tokenDue > 0 ? $tokenDue : $requiredToken) ?></span>
                                 </button>
                             </form>
                         </div>

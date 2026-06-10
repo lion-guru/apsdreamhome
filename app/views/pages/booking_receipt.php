@@ -66,11 +66,11 @@
             <div class="row">
                 <div class="col-6">
                     <div class="label">Total Plot Price</div>
-                    <div class="value">₹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></div>
+                    <div class="value">&#8377;<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></div>
                 </div>
                 <div class="col-6 text-end">
                     <div class="label">Amount Paid</div>
-                    <div class="value">₹<?= number_format(intval($booking['amount'] ?? 0)) ?></div>
+                    <div class="value">&#8377;<?= number_format(intval($booking['amount'] ?? 0)) ?></div>
                 </div>
             </div>
             <?php if (!empty($emis)): ?>
@@ -83,8 +83,8 @@
                     <tr>
                         <td><?= $emi['installment_no'] ?></td>
                         <td><?= date('d M Y', strtotime($emi['due_date'])) ?></td>
-                        <td>₹<?= number_format(intval($emi['amount'])) ?></td>
-                        <td>₹<?= number_format(intval($emi['paid_amount'] ?? 0)) ?></td>
+                        <td>&#8377;<?= number_format(intval($emi['amount'])) ?></td>
+                        <td>&#8377;<?= number_format(intval($emi['paid_amount'] ?? 0)) ?></td>
                         <td><span class="badge bg-<?= $emi['status'] === 'paid' ? 'success' : 'warning' ?>"><?= ucfirst($emi['status']) ?></span></td>
                     </tr>
                     <?php endforeach; ?>
