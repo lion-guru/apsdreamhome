@@ -32,7 +32,7 @@ class HomeController extends BaseController
             'testimonials' => $this->loadTestimonials()
         ];
 
-        // Render homepage with centralized base layout and fragments
+        // Use regular header (not premium) for home page\r\n        ->data[\ premium_layout\] = false;\r\n        ->data[\admin_layout\] = false;\r\n\r\n        // Render homepage with centralized base layout and fragments
         $this->render('pages/index', $data);
     }
 
