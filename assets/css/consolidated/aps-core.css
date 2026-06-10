@@ -2186,3 +2186,53 @@ textarea:focus-visible {
 }
 
 
+
+
+/* Premium Header Alignment Fixes */
+.premium-header .navbar {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap;
+    padding: 0.5rem 0 !important;
+}
+
+.premium-header .container {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.premium-header .navbar-brand {
+    flex: 0 0 auto;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.premium-header .navbar-brand img {
+    height: 32px !important;
+    max-width: 110px !important;
+}
+
+.premium-header .navbar-collapse {
+    flex: 0 0 auto;
+}
+
+.premium-header .navbar-nav {
+    flex: 0 0 auto;
+}
+
+/* Main content padding to account for fixed header */
+#main-content {
+    padding-top: 80px !important;
+}
+
+@media (max-width: 768px) {
+    #main-content {
+        padding-top: 70px !important;
+    }
+    .premium-header .navbar-brand img {
+        height: 28px !important;
+        max-width: 100px !important;
+    }
+}
