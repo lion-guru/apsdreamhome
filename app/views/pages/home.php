@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }
 $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112'));
 $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
@@ -9,19 +9,19 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-7 text-white">
-                <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);"><?= __('trusted_by') ?> <?= __('home_families_count') ?></span>
+                <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.3);"><?= __('trusted_by') ?> <?= __('home_families_count') ?></span>
                 <h1 id="hero-title" class="fw-bold"><?= __('hero_title') ?></h1>
                 <p class="lead mb-4"><?= __('hero_subtitle') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
                     <?php
-                        // A/B test: homepage_cta — variant-aware hero CTA copy
+                        // A/B test: homepage_cta � variant-aware hero CTA copy
                         $heroVariant = $_SESSION['experiments']['homepage_cta'] ?? null;
                         $heroCtaText = match ($heroVariant) {
-                            'urgent'   => 'Book Your Plot Now — Limited Inventory!',
+                            'urgent'   => 'Book Your Plot Now � Limited Inventory!',
                             'family'   => 'Find Your Family\'s Dream Home Today',
                             default    => __('hero_cta'),
                         };
-                        // A/B test: cta_button_color — variant-aware hero CTA color
+                        // A/B test: cta_button_color � variant-aware hero CTA color
                         $ctaColorVariant = $_SESSION['experiments']['cta_button_color'] ?? 'blue';
                         $ctaColorClass = match ($ctaColorVariant) {
                             'green'  => 'ab-btn-green',
@@ -190,7 +190,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         <div class="row g-4">
                             <div class="col-md-7">
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span id="loanAmtDisplay" class="text-primary">₹50,00,000</span></label>
+                                    <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span id="loanAmtDisplay" class="text-primary">?50,00,000</span></label>
                                     <input type="range" class="form-range" id="loanAmount" min="100000" max="50000000" step="100000" value="5000000" oninput="calcEMI()">
                                     <div class="d-flex justify-content-between small text-muted">
                                         <span><?= __('home_emi_min_label') ?></span>
@@ -217,15 +217,15 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             <div class="col-md-5">
                                 <div class="result-card bg-dark text-white">
                                     <p class="text-white-50 mb-1 small text-uppercase" style="letter-spacing:0.08em;"><?= __('home_your_monthly_emi') ?></p>
-                                    <p class="display-4 fw-bold mb-0" id="emiResult" style="color:#818cf8;">₹42,426</p>
+                                    <p class="display-4 fw-bold mb-0" id="emiResult" style="color:#818cf8;">?42,426</p>
                                     <hr class="border-secondary my-3">
                                     <div class="d-flex justify-content-between">
                                         <span class="text-white-50"><?= __('home_total_interest') ?></span>
-                                        <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
+                                        <span class="fw-bold text-white" id="totalInterest">?51,82,240</span>
                                     </div>
                                     <div class="d-flex justify-content-between mt-2">
                                         <span class="text-white-50"><?= __('home_total_payment') ?></span>
-                                        <span class="fw-bold text-white" id="totalPayment">₹1,01,82,240</span>
+                                        <span class="fw-bold text-white" id="totalPayment">?1,01,82,240</span>
                                     </div>
                                 </div>
                             </div>
@@ -244,19 +244,19 @@ function calcEMI() {
     const R = parseFloat(document.getElementById('interestRate').value) / 12 / 100;
     const N = parseFloat(document.getElementById('loanTenure').value) * 12;
 
-    document.getElementById('loanAmtDisplay').textContent = '₹' + P.toLocaleString('en-IN');
+    document.getElementById('loanAmtDisplay').textContent = '?' + P.toLocaleString('en-IN');
     document.getElementById('rateDisplay').textContent = document.getElementById('interestRate').value + '%';
     document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' Years';
 
     if (R === 0) {
-        document.getElementById('emiResult').textContent = '₹' + Math.round(P / N).toLocaleString('en-IN');
+        document.getElementById('emiResult').textContent = '?' + Math.round(P / N).toLocaleString('en-IN');
     } else {
         const emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
         const totalPay = emi * N;
         const totalInt = totalPay - P;
-        document.getElementById('emiResult').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
-        document.getElementById('totalInterest').textContent = '₹' + Math.round(totalInt).toLocaleString('en-IN');
-        document.getElementById('totalPayment').textContent = '₹' + Math.round(totalPay).toLocaleString('en-IN');
+        document.getElementById('emiResult').textContent = '?' + Math.round(emi).toLocaleString('en-IN');
+        document.getElementById('totalInterest').textContent = '?' + Math.round(totalInt).toLocaleString('en-IN');
+        document.getElementById('totalPayment').textContent = '?' + Math.round(totalPay).toLocaleString('en-IN');
     }
 }
 calcEMI();
@@ -757,7 +757,7 @@ function openServiceModal(service) {
                     <div class="progress mb-2" style="height:6px;">
                         <div class="progress-bar" style="width:85%;background:#10b981;"></div>
                     </div>
-                    <span class="badge" style="background:#10b981;color:#fff;">â­ <?= __('home_best_investment') ?></span>
+                    <span class="badge" style="background:#10b981;color:#fff;">⭐ <?= __('home_best_investment') ?></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
@@ -895,27 +895,27 @@ function openServiceModal(service) {
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-white-50 small">&nbsp;</label>
-                                <div class="fw-bold h4 mb-0 pt-1" id="growthResult">₹40,45,558</div>
+                                <div class="fw-bold h4 mb-0 pt-1" id="growthResult">?40,45,558</div>
                             </div>
                         </div>
                         <div class="mt-3">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="small text-white-50"><?= __('home_re_cagr') ?></span>
-                                <span class="small fw-bold text-success" id="reValue">₹52,33,855</span>
+                                <span class="small fw-bold text-success" id="reValue">?52,33,855</span>
                             </div>
                             <div class="progress mb-2" style="height: 6px;">
                                 <div class="progress-bar bg-success" id="reBar" style="width: 100%"></div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="small text-white-50"><?= __('home_fd_cagr') ?></span>
-                                <span class="small fw-bold text-warning" id="fdValue">₹17,90,848</span>
+                                <span class="small fw-bold text-warning" id="fdValue">?17,90,848</span>
                             </div>
                             <div class="progress mb-2" style="height: 6px;">
                                 <div class="progress-bar bg-warning" id="fdBar" style="width: 34%"></div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="small text-white-50"><?= __('home_gold_cagr') ?></span>
-                                <span class="small fw-bold text-primary" id="goldValue">₹23,67,364</span>
+                                <span class="small fw-bold text-primary" id="goldValue">?23,67,364</span>
                             </div>
                             <div class="progress mb-0" style="height: 6px;">
                                 <div class="progress-bar bg-primary" id="goldBar" style="width: 45%"></div>
@@ -950,10 +950,10 @@ function calcGrowth() {
 
     const maxVal = Math.max(re, fd, gold);
 
-    document.getElementById('reValue').textContent = '₹' + Math.round(re).toLocaleString('en-IN');
-    document.getElementById('fdValue').textContent = '₹' + Math.round(fd).toLocaleString('en-IN');
-    document.getElementById('goldValue').textContent = '₹' + Math.round(gold).toLocaleString('en-IN');
-    document.getElementById('growthResult').textContent = '₹' + Math.round(re).toLocaleString('en-IN');
+    document.getElementById('reValue').textContent = '?' + Math.round(re).toLocaleString('en-IN');
+    document.getElementById('fdValue').textContent = '?' + Math.round(fd).toLocaleString('en-IN');
+    document.getElementById('goldValue').textContent = '?' + Math.round(gold).toLocaleString('en-IN');
+    document.getElementById('growthResult').textContent = '?' + Math.round(re).toLocaleString('en-IN');
 
     document.getElementById('reBar').style.width = (re / maxVal * 100) + '%';
     document.getElementById('fdBar').style.width = (fd / maxVal * 100) + '%';
@@ -1214,7 +1214,7 @@ function openToolModal(tool) {
 function getEMICalculator() {
     return '<div class="row g-4">' +
         '<div class="col-md-7">' +
-            '<div class="mb-3"><label class="form-label fw-bold">' + T.loanAmt + ' <span class="text-primary" id="mEmiAmt">₹50,00,000</span></label>' +
+            '<div class="mb-3"><label class="form-label fw-bold">' + T.loanAmt + ' <span class="text-primary" id="mEmiAmt">?50,00,000</span></label>' +
             '<input type="range" class="form-range" min="100000" max="50000000" step="100000" value="5000000" oninput="mCalcEMI()"></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.intRate + ' <span class="text-primary" id="mEmiRate">8.5%</span></label>' +
             '<input type="range" class="form-range" min="5" max="20" step="0.1" value="8.5" oninput="mCalcEMI()"></div>' +
@@ -1222,9 +1222,9 @@ function getEMICalculator() {
             '<input type="range" class="form-range" min="1" max="30" step="1" value="20" oninput="mCalcEMI()"></div></div>' +
         '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">' + T.monthlyEmi + '</p>' +
-            '<p class="display-5 fw-bold mb-0 text-warning" id="mEmiResult">₹42,426</p><hr class="border-secondary my-3">' +
-            '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.totalInt + '</span><span class="fw-bold" id="mEmiInterest">₹51,82,240</span></div>' +
-            '<div class="d-flex justify-content-between mt-2"><span class="text-white-50">' + T.totalPay + '</span><span class="fw-bold" id="mEmiTotal">₹1,01,82,240</span></div>' +
+            '<p class="display-5 fw-bold mb-0 text-warning" id="mEmiResult">?42,426</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.totalInt + '</span><span class="fw-bold" id="mEmiInterest">?51,82,240</span></div>' +
+            '<div class="d-flex justify-content-between mt-2"><span class="text-white-50">' + T.totalPay + '</span><span class="fw-bold" id="mEmiTotal">?1,01,82,240</span></div>' +
         '</div></div></div>';
 }
 
@@ -1240,11 +1240,11 @@ function getInvestmentCalculator() {
                 '<option value="5">' + '<?= __("home_years_5") ?>' + '</option><option value="10" selected>' + '<?= __("home_years_10") ?>' + '</option>' +
                 '<option value="15">' + '<?= __("home_years_15") ?>' + '</option><option value="20">' + '<?= __("home_years_20") ?>' + '</option></select></div>' +
             '<div class="mt-3">' +
-            '<div class="d-flex justify-content-between mb-1"><span>' + T.reEstate + ' <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">₹52,33,855</span></div>' +
+            '<div class="d-flex justify-content-between mb-1"><span>' + T.reEstate + ' <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">?52,33,855</span></div>' +
             '<div class="progress mb-2" style="height:6px"><div class="progress-bar bg-success" id="mInvREBar" style="width:100%"></div></div>' +
-            '<div class="d-flex justify-content-between mb-1"><span>' + T.fd + ' <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">₹17,90,848</span></div>' +
+            '<div class="d-flex justify-content-between mb-1"><span>' + T.fd + ' <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">?17,90,848</span></div>' +
             '<div class="progress mb-2" style="height:6px"><div class="progress-bar bg-warning" id="mInvFDBar" style="width:34%"></div></div>' +
-            '<div class="d-flex justify-content-between"><span>' + T.gold + ' <span class="text-primary">(9%)</span></span><span class="fw-bold text-primary" id="mInvGold">₹23,67,364</span></div>' +
+            '<div class="d-flex justify-content-between"><span>' + T.gold + ' <span class="text-primary">(9%)</span></span><span class="fw-bold text-primary" id="mInvGold">?23,67,364</span></div>' +
             '<div class="progress" style="height:6px"><div class="progress-bar bg-primary" id="mInvGoldBar" style="width:45%"></div></div></div></div>' +
         '<div class="col-md-5 text-center d-flex flex-column justify-content-center">' +
             '<div class="bg-success bg-opacity-10 rounded-4 p-4"><i class="fas fa-trophy fa-3x text-success mb-3"></i>' +
@@ -1269,11 +1269,11 @@ function getStampDutyCalculator() {
                 '<option value="male">' + T.male + '</option><option value="female">' + T.female + '</option>' +
                 '<option value="joint">' + T.joint + '</option></select></div></div>' +
         '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.propPrice + '</span><span class="fw-bold" id="mStampBase">₹50,00,000</span></div>' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.stampDuty + '</span><span class="fw-bold text-warning" id="mStampDuty">₹2,50,000</span></div>' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.regFee + '</span><span class="fw-bold text-info" id="mStampReg">₹50,000</span></div>' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.propPrice + '</span><span class="fw-bold" id="mStampBase">?50,00,000</span></div>' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.stampDuty + '</span><span class="fw-bold text-warning" id="mStampDuty">?2,50,000</span></div>' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.regFee + '</span><span class="fw-bold text-info" id="mStampReg">?50,000</span></div>' +
             '<hr class="border-secondary my-2">' +
-            '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.totalCost + '</span><span class="fw-bold text-success fs-5" id="mStampTotal">₹53,00,000</span></div>' +
+            '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.totalCost + '</span><span class="fw-bold text-success fs-5" id="mStampTotal">?53,00,000</span></div>' +
         '</div></div></div>';
 }
 
@@ -1311,8 +1311,8 @@ function getLoanEligibility() {
                 '<option value="5">' + '<?= __("home_years_5") ?>' + '</option><option value="10">' + '<?= __("home_years_10") ?>' + '</option><option value="15">' + '<?= __("home_years_15") ?>' + '</option><option value="20" selected>' + '<?= __("home_years_20") ?>' + '</option><option value="25">25 ' + T.years + '</option><option value="30">30 ' + T.years + '</option></select></div></div></div>' +
         '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">' + T.eligFor + '</p>' +
-            '<p class="display-5 fw-bold mb-0 text-success" id="mEligResult">₹27,23,250</p><hr class="border-secondary my-3">' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.maxEmi + '</span><span class="fw-bold" id="mEligMaxEmi">₹27,000</span></div>' +
+            '<p class="display-5 fw-bold mb-0 text-success" id="mEligResult">?27,23,250</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.maxEmi + '</span><span class="fw-bold" id="mEligMaxEmi">?27,000</span></div>' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.foir + '</span><span class="fw-bold" id="mEligFoir">45%</span></div>' +
         '</div></div></div>';
 }
@@ -1336,8 +1336,8 @@ function getPropertyValuation() {
             '<select class="form-select" id="mValFurn" onchange="mCalcVal()"><option value="0.9">' + T.unfurnished + '</option><option value="1" selected>' + T.semiFurn + '</option><option value="1.2">' + T.fullFurn + '</option></select></div></div></div>' +
         '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">' + T.estValue + '</p>' +
-            '<p class="display-5 fw-bold mb-0 text-warning" id="mValResult">₹22,50,000</p><hr class="border-secondary my-3">' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.perSqft + '</span><span class="fw-bold" id="mValPsf">₹1,500</span></div>' +
+            '<p class="display-5 fw-bold mb-0 text-warning" id="mValResult">?22,50,000</p><hr class="border-secondary my-3">' +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.perSqft + '</span><span class="fw-bold" id="mValPsf">?1,500</span></div>' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.confidence + '</span><span class="fw-bold text-success" id="mValConf">' + T.high + '</span></div>' +
         '</div></div></div>';
 }
@@ -1519,11 +1519,11 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_fixed_salary') ?></h5>
                         <p class="text-muted small"><?= __('home_fixed_salary_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3">
-                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_starter') ?>: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹15L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_basic') ?>: <strong>₹5,000/mo</strong></span><span class="small text-muted">₹30L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_professional') ?>: <strong>₹8,000/mo</strong></span><span class="small text-muted">₹50L target</span></div>
-                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_executive') ?>: <strong>₹12,000/mo</strong></span><span class="small text-muted">₹75L target</span></div>
-                            <div class="d-flex justify-content-between"><span class="small"><?= __('rank_elite') ?>: <strong>₹20,000/mo</strong></span><span class="small text-muted">₹1Cr target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_starter') ?>: <strong>?5,000/mo</strong></span><span class="small text-muted">?15L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_basic') ?>: <strong>?5,000/mo</strong></span><span class="small text-muted">?30L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_professional') ?>: <strong>?8,000/mo</strong></span><span class="small text-muted">?50L target</span></div>
+                            <div class="d-flex justify-content-between mb-1"><span class="small"><?= __('rank_executive') ?>: <strong>?12,000/mo</strong></span><span class="small text-muted">?75L target</span></div>
+                            <div class="d-flex justify-content-between"><span class="small"><?= __('rank_elite') ?>: <strong>?20,000/mo</strong></span><span class="small text-muted">?1Cr target</span></div>
                         </div>
                     </div>
                 </div>
@@ -1537,9 +1537,9 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_free_insurance') ?></h5>
                         <p class="text-muted small"><?= __('home_free_insurance_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3 text-start">
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_health') ?>: <strong>₹5 Lakh</strong></span>
-                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_life') ?>: <strong>₹10 Lakh</strong></span>
-                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_accidental') ?>: <strong>₹5 Lakh</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_health') ?>: <strong>?5 Lakh</strong></span>
+                            <span class="small d-block mb-1"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_life') ?>: <strong>?10 Lakh</strong></span>
+                            <span class="small d-block"><i class="fas fa-check-circle text-success me-1"></i><?= __('insurance_accidental') ?>: <strong>?5 Lakh</strong></span>
                         </div>
                     </div>
                 </div>
@@ -1587,16 +1587,16 @@ function mCalcVal() {
                         <h5 class="fw-bold mb-2"><?= __('home_mlm_benefits') ?></h5>
                         <p class="text-muted small"><?= __('home_mlm_benefits_desc') ?></p>
                         <div class="bg-light rounded-3 p-3 mt-3" style="max-height:160px;overflow-y:auto;">
-                            <div class="small mb-1"><span class="text-warning me-1">ðŸ‘‘</span><?= __("rank_associate") ?>: <strong>5%</strong></div>
-                            <div class="small mb-1"><span class="text-secondary me-1">ðŸ‘‘</span><?= __("rank_bronze") ?>: <strong>7%</strong></div>
-                            <div class="small mb-1"><span class="text-secondary me-1">ðŸ‘‘</span><?= __("rank_silver") ?>: <strong>10%</strong></div>
-                            <div class="small mb-1"><span class="text-warning me-1">ðŸ‘‘</span><?= __("rank_gold") ?>: <strong>12.5%</strong></div>
-                            <div class="small mb-1"><span class="text-info me-1">ðŸ‘‘</span><?= __("rank_platinum") ?>: <strong>15%</strong></div>
-                            <div class="small mb-1"><span class="text-primary me-1">ðŸ‘‘</span><?= __("rank_diamond") ?>: <strong>18%</strong></div>
-                            <div class="small mb-1"><span class="text-success me-1">ðŸ‘‘</span><?= __("rank_executive") ?>: <strong>20%</strong></div>
-                            <div class="small mb-1"><span class="text-success me-1">ðŸ‘‘</span><?= __("rank_sr_executive") ?>: <strong>22%</strong></div>
-                            <div class="small mb-1"><span class="text-danger me-1">ðŸ‘‘</span><?= __("rank_director") ?>: <strong>25%</strong></div>
-                            <div class="small"><span class="text-danger me-1">ðŸ‘‘</span><?= __("rank_global_director") ?>: <strong>30%</strong></div>
+                            <div class="small mb-1"><span class="text-warning me-1">👑</span><?= __("rank_associate") ?>: <strong>5%</strong></div>
+                            <div class="small mb-1"><span class="text-secondary me-1">👑</span><?= __("rank_bronze") ?>: <strong>7%</strong></div>
+                            <div class="small mb-1"><span class="text-secondary me-1">👑</span><?= __("rank_silver") ?>: <strong>10%</strong></div>
+                            <div class="small mb-1"><span class="text-warning me-1">👑</span><?= __("rank_gold") ?>: <strong>12.5%</strong></div>
+                            <div class="small mb-1"><span class="text-info me-1">👑</span><?= __("rank_platinum") ?>: <strong>15%</strong></div>
+                            <div class="small mb-1"><span class="text-primary me-1">👑</span><?= __("rank_diamond") ?>: <strong>18%</strong></div>
+                            <div class="small mb-1"><span class="text-success me-1">👑</span><?= __("rank_executive") ?>: <strong>20%</strong></div>
+                            <div class="small mb-1"><span class="text-success me-1">👑</span><?= __("rank_sr_executive") ?>: <strong>22%</strong></div>
+                            <div class="small mb-1"><span class="text-danger me-1">👑</span><?= __("rank_director") ?>: <strong>25%</strong></div>
+                            <div class="small"><span class="text-danger me-1">👑</span><?= __("rank_global_director") ?>: <strong>30%</strong></div>
                         </div>
                     </div>
                 </div>
@@ -1637,7 +1637,7 @@ function mCalcVal() {
 <!-- CTA -->
 <section class="py-5 text-white text-center cta-gradient">
     <div class="container">
-        <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.12);"><?= __('home_get_in_touch') ?></span>
+        <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3" style="background:rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.3);"><?= __('home_get_in_touch') ?></span>
         <h2 class="fw-bold mb-3"><?= __('cta_title') ?></h2>
         <p class="mb-4" style="font-size:1.1rem;opacity:0.9;"><?= __('cta_subtitle') ?></p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
