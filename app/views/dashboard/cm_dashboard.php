@@ -385,7 +385,7 @@ $admin_role = $_SESSION['admin_role'] ?? 'cm';
     }
 
     function scheduleMeeting() {
-        alert('Meeting scheduler coming soon!');
+        showToast('Meeting scheduler coming soon', 'info');
     }
 
     function viewFullTeam() {

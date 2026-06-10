@@ -510,7 +510,7 @@ function updateCompareBadge(count) {
 
 function setView(view) {
     if (view === 'map') {
-        alert('Map view is coming soon! In the meantime, use the grid view to browse properties.');
+        showToast('Map view coming soon — use grid view to browse', 'info');
         return;
     }
     document.getElementById('gridViewBtn').classList.add('active');

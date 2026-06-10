@@ -69,7 +69,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Payout Requests</h5>
-                <button class="btn btn-sm btn-success" onclick="alert('Process payouts feature coming soon')">
+                <button class="btn btn-sm btn-success" onclick="showToast('Process payouts coming soon', 'info')">
                     <i class="fas fa-sync me-2"></i>Process Batch
                 </button>
             </div>

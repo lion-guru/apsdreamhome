@@ -40,7 +40,7 @@
                         <small class="text-muted"><i class="fas fa-clock me-1"></i><?= ($course['duration'] ?? 'N/A') ?></small>
                         <small class="text-muted"><i class="fas fa-user me-1"></i><?= number_format($course['enrolled'] ?? 0) ?> enrolled</small>
                     </div>
-                    <button class="btn btn-outline-primary w-100 mt-3" onclick="alert('Course enrollment coming soon')"><i class="fas fa-play me-2"></i>Start Course</button>
+                    <button class="btn btn-outline-primary w-100 mt-3" onclick="showToast('Course enrollment coming soon', 'info')"><i class="fas fa-play me-2"></i>Start Course</button>
                 </div>
             </div>
         </div>

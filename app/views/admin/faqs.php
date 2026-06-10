@@ -1,7 +1,7 @@
 <div class="container-fluid p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold"><i class="fas fa-question-circle me-2"></i>FAQ Management</h4>
-        <button class="btn btn-primary" onclick="alert('Coming soon!')"><i class="fas fa-plus me-1"></i>Add FAQ</button>
+        <button class="btn btn-primary" onclick="showToast('FAQ creation coming soon', 'info')"><i class="fas fa-plus me-1"></i>Add FAQ</button>
     </div>
     <div class="card">
         <div class="card-body">

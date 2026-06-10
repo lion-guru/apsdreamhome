@@ -157,7 +157,7 @@ $statusColors = [
                         <div class="flex-grow-1">
                             <h6 class="mb-1">Pay Token Amount</h6>
                             <p class="text-muted small mb-2">Complete your token payment of ₹25,000 to confirm the booking.</p>
-                            <button class="btn btn-primary btn-sm" onclick="alert('Payment gateway integration coming soon!')">
+                            <button class="btn btn-primary btn-sm" onclick="showToast('Payment gateway coming soon', 'info')">
                                 <i class="fas fa-rupee-sign me-1"></i>Pay Now (Razorpay)
                             </button>
                         </div>
@@ -170,7 +170,7 @@ $statusColors = [
                         <div class="flex-grow-1">
                             <h6 class="mb-1">Download Booking Receipt</h6>
                             <p class="text-muted small mb-2">Save a copy of your booking confirmation for your records.</p>
-                            <button class="btn btn-outline-success btn-sm" onclick="alert('Receipt download coming soon!')">
+                            <button class="btn btn-outline-success btn-sm" onclick="showToast('Receipt download coming soon', 'info')">
                                 <i class="fas fa-download me-1"></i>Download Receipt
                             </button>
                         </div>
