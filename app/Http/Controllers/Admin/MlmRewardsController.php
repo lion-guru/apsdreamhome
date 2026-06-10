@@ -17,9 +17,14 @@ class MlmRewardsController extends AdminController
     public function rankCriteria()
     {
         $this->requireAdmin();
-        $criteria = $this->db->fetchAll("SELECT * FROM mlm_rank_criteria ORDER BY FIELD(rank, 'bronze','silver','gold','platinum','diamond','crown')") ?: [];
+        $criteria = [];
+        try {
+            $criteria = $this->db->fetchAll("SELECT * FROM mlm_rank_criteria ORDER BY FIELD(rank, 'bronze','silver','gold','platinum','diamond','crown')") ?: [];
+        } catch (\Exception $e) {
+            // Table may not exist
+        }
 
-        $this->render('admin/mlm-rewards/rank-criteria', [
+        return $this->render('admin/mlm-rewards/rank-criteria', [
             'page_title' => 'MLM Rank Criteria',
             'criteria' => $criteria
         ]);
@@ -55,14 +60,19 @@ class MlmRewardsController extends AdminController
     public function upgrades()
     {
         $this->requireAdmin();
-        $upgrades = $this->db->fetchAll("
-            SELECT ru.*, u.name as associate_name
-            FROM mlm_rank_upgrades ru
-            JOIN users u ON u.id = ru.associate_id
-            ORDER BY ru.upgrade_date DESC
-        ") ?: [];
+        $upgrades = [];
+        try {
+            $upgrades = $this->db->fetchAll("
+                SELECT ru.*, u.name as associate_name
+                FROM mlm_rank_upgrades ru
+                JOIN users u ON u.id = ru.associate_id
+                ORDER BY ru.upgrade_date DESC
+            ") ?: [];
+        } catch (\Exception $e) {
+            // Table may not exist
+        }
 
-        $this->render('admin/mlm-rewards/upgrades', [
+        return $this->render('admin/mlm-rewards/upgrades', [
             'page_title' => 'Rank Upgrades',
             'upgrades' => $upgrades
         ]);
@@ -72,31 +82,29 @@ class MlmRewardsController extends AdminController
     {
         $this->requireAdmin();
 
-        $requests = $this->db->fetchAll("
-            SELECT wr.*, u.name as associate_name, u.email as associate_email
-            FROM mlm_withdrawal_requests wr
-            JOIN users u ON u.id = wr.associate_id
-            ORDER BY wr.request_date DESC
-        ") ?: [];
+        $requests = [];
+        $stats = ['total' => 0, 'approved' => 0, 'rejected' => 0, 'pending' => 0, 'processed' => 0];
+        try {
+            $requests = $this->db->fetchAll("
+                SELECT wr.*, u.name as associate_name, u.email as associate_email
+                FROM mlm_withdrawal_requests wr
+                JOIN users u ON u.id = wr.associate_id
+                ORDER BY wr.request_date DESC
+            ") ?: [];
 
-        $stats = [
-            'total' => 0,
-            'approved' => 0,
-            'rejected' => 0,
-            'pending' => 0,
-            'processed' => 0
-        ];
-
-        $counts = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM mlm_withdrawal_requests GROUP BY status") ?: [];
-        foreach ($counts as $row) {
-            $key = strtolower($row['status']);
-            if (isset($stats[$key])) {
-                $stats[$key] = intval($row['cnt']);
+            $counts = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM mlm_withdrawal_requests GROUP BY status") ?: [];
+            foreach ($counts as $row) {
+                $key = strtolower($row['status']);
+                if (isset($stats[$key])) {
+                    $stats[$key] = intval($row['cnt']);
+                }
+                $stats['total'] += intval($row['cnt']);
             }
-            $stats['total'] += intval($row['cnt']);
+        } catch (\Exception $e) {
+            // Table may not exist
         }
 
-        $this->render('admin/mlm-rewards/withdrawals', [
+        return $this->render('admin/mlm-rewards/withdrawals', [
             'page_title' => 'Withdrawal Requests',
             'requests' => $requests,
             'stats' => $stats
