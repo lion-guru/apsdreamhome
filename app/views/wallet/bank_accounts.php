@@ -355,17 +355,11 @@ function addBankAccount() {
 }
 
 function setPrimary(bankAccountId) {
-    if (confirm('Are you sure you want to set this bank account as primary?')) {
-        // This would need a separate endpoint, for now just reload
-        alert('Feature coming soon: Set primary account');
-    }
+    showToast('Set primary account feature coming soon', 'info');
 }
 
 function deleteBank(bankAccountId) {
-    if (confirm('Are you sure you want to delete this bank account? This action cannot be undone.')) {
-        // This would need a separate endpoint, for now just show message
-        alert('Feature coming soon: Delete bank account');
-    }
+    showToast('Delete bank account feature coming soon', 'info');
 }
 
 // Close modal when clicking outside

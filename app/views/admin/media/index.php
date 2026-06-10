@@ -12,7 +12,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <p class="text-muted mb-0">Manage all media files</p>
             </div>
             <div>
-                <button class="btn btn-primary me-2" onclick="alert('Upload feature coming soon')">
+                <button class="btn btn-primary me-2" onclick="showToast('Upload feature coming soon', 'info')">
                     <i class="fas fa-upload me-2"></i>Upload New
                 </button>
                 <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
@@ -68,7 +68,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="text-center py-5">
                         <i class="fas fa-images fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No media files found</p>
-                        <button class="btn btn-primary" onclick="alert('Upload feature coming soon')">
+                        <button class="btn btn-primary" onclick="showToast('Upload feature coming soon', 'info')">
                             <i class="fas fa-upload me-2"></i>Upload First File
                         </button>
                     </div>

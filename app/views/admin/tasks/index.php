@@ -14,7 +14,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <p class="text-muted mb-0">Manage team tasks and assignments</p>
             </div>
             <div>
-                <button class="btn btn-primary me-2" onclick="alert('Create task feature coming soon')">
+                <button class="btn btn-primary me-2" onclick="showToast('Create task feature coming soon', 'info')">
                     <i class="fas fa-plus me-2"></i>New Task
                 </button>
                 <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
@@ -101,7 +101,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="text-center py-5">
                         <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No tasks found</p>
-                        <button class="btn btn-primary" onclick="alert('Create task feature coming soon')">
+                        <button class="btn btn-primary" onclick="showToast('Create task feature coming soon', 'info')">
                             <i class="fas fa-plus me-2"></i>Create First Task
                         </button>
                     </div>

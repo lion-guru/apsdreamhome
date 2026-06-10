@@ -229,7 +229,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
 <script>
     function contactOwner(propertyId) {
         // Implement contact functionality
-        alert('Contact feature coming soon!');
+        showToast('Contact feature coming soon', 'info');
     }
 </script>
 
