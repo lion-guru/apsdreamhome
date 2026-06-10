@@ -1057,6 +1057,7 @@ return array (
   'nav_my_properties' => 'My Properties',
   'nav_our_team' => 'Our Team',
   'nav_plot_land' => 'Plot / Land',
+  'nav_plots' => 'Plots',
   'nav_post_property' => 'Post Property FREE',
   'nav_rent_properties' => 'Rent Properties',
   'nav_resell_property' => 'Resell Property',
