@@ -832,3 +832,49 @@
         transform: translateX(100%);
     }
 }
+
+/* Desktop (=992px): Ensure navbar stays in single row */
+@media (min-width: 992px) {
+    .navbar {
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .navbar-brand {
+        flex-shrink: 0;
+    }
+
+    .navbar-collapse {
+        flex-grow: 1;
+        flex-basis: auto;
+    }
+
+    .navbar-nav {
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+}
+
+/* Desktop large (=1200px): Enhanced spacing and layout */
+@media (min-width: 1200px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        margin-right: 2rem;
+    }
+
+    .navbar-nav {
+        gap: 0.5rem;
+    }
+
+    .nav-link {
+        padding: 0.5rem 1rem !important;
+    }
+
+    /* Quick search bar styling */
+    .quick-search-form {
+        max-width: 400px;
+    }
+}
