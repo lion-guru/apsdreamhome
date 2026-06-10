@@ -18,7 +18,7 @@ class AdminAuthController extends BaseController
     {
         @session_start();
 
-        if (isset($_GET['test_login'])) {
+        if (isset($_GET['test_login']) && (APP_ENV === 'development' || APP_ENV === 'testing')) {
             $db = Database::getInstance();
             $admin = null;
 

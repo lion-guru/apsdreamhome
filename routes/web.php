@@ -2971,9 +2971,9 @@ $router->get('/admin/associate-extensions', 'App\\Http\\Controllers\\Admin\\Asso
 $router->get('/admin/associate-extensions/show/{id}', 'App\\Http\\Controllers\\Admin\\AssociateExtensionController@show');
 $router->post('/admin/associate-extensions/update-points/{id}', 'App\\Http\\Controllers\\Admin\\AssociateExtensionController@updatePoints');
 
-// Marketing section
-$router->get('/admin/marketing/strategies', 'App\\Http\\Controllers\\Admin\\AdminController@marketingStrategies');
-$router->get('/admin/marketing/marketplace', 'App\\Http\\Controllers\\Admin\\AdminController@marketingMarketplace');
+// Marketing section (redirect stubs to MarketingController)
+$router->get('/admin/marketing/strategies', 'App\\Http\\Controllers\\Admin\\MarketingController@strategies');
+$router->get('/admin/marketing/marketplace', 'App\\Http\\Controllers\\Admin\\MarketingController@marketplace');
 
 // Admin Marketing Controller (Admin\MarketingController)
 $router->get('/admin/marketing/manage/strategies', 'App\\Http\\Controllers\\Admin\\MarketingController@strategies');
@@ -2985,23 +2985,23 @@ $router->post('/admin/marketing/manage/strategies/toggle/{id}', 'App\\Http\\Cont
 $router->get('/admin/marketing/manage/marketplace', 'App\\Http\\Controllers\\Admin\\MarketingController@marketplace');
 $router->post('/admin/marketing/manage/marketplace/store', 'App\\Http\\Controllers\\Admin\\MarketingController@storeMarketplace');
 
-// Commission section (MLM)
-$router->get('/admin/commission/agent-rates', 'App\\Http\\Controllers\\Admin\\AdminController@agentCommissionRates');
-$router->get('/admin/commission/associate/structure', 'App\\Http\\Controllers\\Admin\\AdminController@associateCommissionStructure');
-$router->get('/admin/commission/associate/calculations', 'App\\Http\\Controllers\\Admin\\AdminController@associateCommissionCalculations');
-$router->get('/admin/commission/bonuses', 'App\\Http\\Controllers\\Admin\\AdminController@commissionBonuses');
-$router->get('/admin/commission/mlm/levels', 'App\\Http\\Controllers\\Admin\\AdminController@mlmCommissionLevels');
-$router->get('/admin/commission/mlm/records', 'App\\Http\\Controllers\\Admin\\AdminController@mlmCommissionRecords');
-$router->get('/admin/commission/mlm/analytics', 'App\\Http\\Controllers\\Admin\\AdminController@mlmCommissionAnalytics');
-$router->get('/admin/commission/revenue/daily', 'App\\Http\\Controllers\\Admin\\AdminController@dailyRevenue');
-$router->get('/admin/commission/telecaller/rules', 'App\\Http\\Controllers\\Admin\\AdminController@telecallerCommissionRules');
-$router->get('/admin/commission/telecaller/commissions', 'App\\Http\\Controllers\\Admin\\AdminController@telecallerCommissions');
+// Commission section (redirect stubs to CommissionAdminController)
+$router->get('/admin/commission/agent-rates', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@agentRates');
+$router->get('/admin/commission/associate/structure', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@associateStructure');
+$router->get('/admin/commission/associate/calculations', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@associateCalculations');
+$router->get('/admin/commission/bonuses', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@bonuses');
+$router->get('/admin/commission/mlm/levels', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmLevels');
+$router->get('/admin/commission/mlm/records', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmRecords');
+$router->get('/admin/commission/mlm/analytics', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmAnalytics');
+$router->get('/admin/commission/revenue/daily', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@revenueDaily');
+$router->get('/admin/commission/telecaller/rules', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerRules');
+$router->get('/admin/commission/telecaller/commissions', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerCommissions');
 
-// MLM section
-$router->get('/admin/mlm/rank-criteria', 'App\\Http\\Controllers\\Admin\\AdminController@mlmRankCriteria');
-$router->get('/admin/mlm/upgrades', 'App\\Http\\Controllers\\Admin\\AdminController@mlmUpgrades');
-$router->get('/admin/mlm/withdrawals', 'App\\Http\\Controllers\\Admin\\AdminController@mlmWithdrawals');
-$router->get('/admin/mlm/rewards', 'App\\Http\\Controllers\\Admin\\AdminController@mlmRewards');
+// MLM section (redirect stubs to MlmRewardsController)
+$router->get('/admin/mlm/rank-criteria', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rankCriteria');
+$router->get('/admin/mlm/upgrades', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@upgrades');
+$router->get('/admin/mlm/withdrawals', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@withdrawals');
+$router->get('/admin/mlm/rewards', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rewards');
 
 // Settings section (API)
 $router->get('/admin/api/integrations', 'App\\Http\\Controllers\\Admin\\AdminController@apiIntegrations');
