@@ -333,7 +333,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
     <!-- Chatbot JS -->
     <script>
-        window.chatbotApiUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/api/ai/chat';
+        window.chatbotApiUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/api/gemini/chat';
         window.chatbotUserContext = {
             role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? $_SESSION['role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>',
             userId: '<?php echo $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? ''; ?>',

@@ -5,7 +5,7 @@
 // Global utility functions
 window.apsUtils = {
     // Format currency
-    formatCurrency: function(amount, currency = '₹') {
+    formatCurrency: function(amount, currency = 'Rs') {
         return currency + parseFloat(amount).toLocaleString('en-IN');
     },
     

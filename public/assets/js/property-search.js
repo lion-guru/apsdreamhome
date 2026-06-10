@@ -209,7 +209,7 @@ class PropertySearchManager {
                             <i class="fas fa-map-marker-alt me-1"></i>
                             ${property.location}
                         </p>
-                        <p class="text-primary fw-bold mb-2">₹${this.formatPrice(property.price)}</p>
+                        <p class="text-primary fw-bold mb-2">Rs${this.formatPrice(property.price)}</p>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="small text-muted">
                                 <i class="fas fa-bed me-1"></i>${property.bedrooms} BHK
