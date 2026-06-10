@@ -3006,3 +3006,86 @@ body.lightbox-open { overflow: hidden; }
         border-radius: 12px;
     }
 }
+
+/* Ensure all sections display properly */
+section {
+    padding: 60px 0 !important;
+    min-height: auto !important;
+    position: relative !important;
+}
+
+section.py-5 {
+    padding: 60px 0 !important;
+}
+
+section.py-4 {
+    padding: 48px 0 !important;
+}
+
+/* Container fixes */
+.container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 15px !important;
+}
+
+/* Card visibility */
+.card {
+    background: #fff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    overflow: hidden !important;
+}
+
+/* Image fixes */
+img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+}
+
+/* Button visibility */
+.btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Form fixes */
+.form-control, .form-select {
+    background: #fff !important;
+    border: 1px solid #d1d5db !important;
+    color: #1a1a1a !important;
+}
+
+/* Section headings */
+section h2, section h3, section h4 {
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+}
+
+section .lead {
+    color: #666 !important;
+}
+
+/* Responsive section spacing */
+@media (max-width: 768px) {
+    section {
+        padding: 40px 0 !important;
+    }
+    
+    section.py-5 {
+        padding: 40px 0 !important;
+    }
+    
+    section.py-4 {
+        padding: 32px 0 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    section {
+        padding: 30px 0 !important;
+    }
+}

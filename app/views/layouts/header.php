@@ -123,8 +123,12 @@ if (!defined('BASE_URL')) {
 $projectLocations = [];
 $allProjects = [];
 
+// Icon constants
+const ICON_TH_LARGE = 'fas fa-th-large';
+
 // Load from hot-path cache (Redis first, file fallback) — 10 minute TTL
-$cachedProjects = \App\Services\Cache\HotPathCacheService::getHeaderProjects(function () {
+$hotPathCacheService = 'App\\Services\\Cache\\HotPathCacheService';
+$loadHeaderProjects = function () {
     try {
         $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -164,7 +168,13 @@ $cachedProjects = \App\Services\Cache\HotPathCacheService::getHeaderProjects(fun
     } catch (PDOException $e) {
         return ['locations' => [], 'projects' => []];
     }
-});
+};
+
+if (class_exists($hotPathCacheService)) {
+    $cachedProjects = $hotPathCacheService::getHeaderProjects($loadHeaderProjects);
+} else {
+    $cachedProjects = $loadHeaderProjects();
+}
 
 if (is_array($cachedProjects) && isset($cachedProjects['locations'], $cachedProjects['projects'])) {
     $projectLocations = $cachedProjects['locations'];
@@ -239,7 +249,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                 </a>
 
                 <!-- Quick Search Bar (Typeahead) -->
-                <form class="d-none d-lg-flex align-items-center ms-3 me-2 quick-search-form" role="search" id="quickSearchForm" onsubmit="return quickSearchSubmit(event)" autocomplete="off" style="position: relative; min-width: 240px; max-width: 360px; flex: 1;">
+                <form class="d-none d-lg-flex align-items-center ms-3 me-2 quick-search-form" role="search" id="quickSearchForm" onsubmit="return quickSearchSubmit(event)" autocomplete="off" style="position: relative; min-width: 200px; max-width: 280px; flex: 0 0 auto;">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
                         <input type="search" class="form-control border-start-0" id="quickSearchInput" placeholder="Search properties, locations..." aria-label="Quick search" style="border-left: 0;">
@@ -252,7 +262,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav align-items-center" style="margin-left: auto;">
+                    <ul class="navbar-nav align-items-center" style="margin-left: 0;">
                         <?php
                         $current_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                         $base_path = (string) parse_url(BASE_URL, PHP_URL_PATH);
@@ -274,7 +284,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 ]
                             ],
                             [
-                                'label' => __('nav_plots'),
+                                'label' => __('plots'),
                                 'icon' => 'fas fa-vector-square',
                                 'submenu' => $plotsSubmenu ?? [
                                     ['label' => __('nav_all_plots'), 'url' => '/plots', 'icon' => 'fas fa-th-large'],
