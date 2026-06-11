@@ -1855,6 +1855,7 @@ return array(
   'home_service_tax_badge' => 'Online Pay',
   'home_why_us' => 'Why Us',
   'home_whatsapp' => 'WhatsApp',
+  'home_call_label' => 'Call:',
   'home_why_real_estate' => 'Why Real Estate?',
   'home_why_real_estate_title' => 'Why Invest in Land, Plot or Property?',
   'home_why_real_estate_subtitle' => 'Compare real estate with other investment options — results speak louder than words!',

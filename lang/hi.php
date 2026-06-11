@@ -1855,6 +1855,7 @@ return array(
   'home_service_tax_badge' => 'ऑनलाइन भुगतान',
   'home_why_us' => 'हम क्यों',
   'home_whatsapp' => 'व्हाट्सएप',
+  'home_call_label' => 'कॉल करें:',
   'home_why_real_estate' => 'रियल एस्टेट क्यों?',
   'home_why_real_estate_title' => 'भूमि, प्लॉट या संपत्ति में पैसा क्यों लगाएं?',
   'home_why_real_estate_subtitle' => 'रियल एस्टेट की अन्य निवेश विकल्पों से तुलना करें — परिणाम शब्दों से ज़्यादा बोलते हैं!',

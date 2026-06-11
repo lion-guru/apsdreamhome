@@ -75,11 +75,11 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                 <div class="mb-3">
                                     <select name="location" class="form-select">
                                         <option value=""><?= __('home_select_location') ?></option>
-                                        <option value="Gorakhpur">Gorakhpur</option>
-                                        <option value="Lucknow">Lucknow</option>
-                                        <option value="Kushinagar">Kushinagar</option>
-                                        <option value="Varanasi">Varanasi</option>
-                                        <option value="Ayodhya">Ayodhya</option>
+                                        <option value="Gorakhpur"><?= __('loc_gorakhpur') ?></option>
+                                        <option value="Lucknow"><?= __('loc_lucknow') ?></option>
+                                        <option value="Kushinagar"><?= __('loc_kushinagar') ?></option>
+                                        <option value="Varanasi"><?= __('loc_varanasi') ?></option>
+                                        <option value="Ayodhya"><?= __('loc_ayodhya') ?></option>
                                         <option value="Other"><?= __('home_other') ?></option>
                                     </select>
                                 </div>
@@ -211,7 +211,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                         <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span
                                                 id="loanAmtDisplay" class="text-primary">₹50,00,000</span></label>
                                         <input type="range" class="form-range" id="loanAmount" min="100000"
-                                            max="50000000" step="100000" value="5000000" oninput="calcEMI()" title="Loan Amount">
+                                            max="50000000" step="100000" value="5000000" oninput="calcEMI()" title="<?= __('home_loan_amount') ?>">
                                         <div class="d-flex justify-content-between small text-muted">
                                             <span><?= __('home_emi_min_label') ?></span>
                                             <span><?= __('home_emi_max_label') ?></span>
@@ -610,7 +610,8 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         per_sqft: <?= json_encode(__('tool_js_per_sqft')) ?>,
         confidence: <?= json_encode(__('tool_js_confidence')) ?>,
         quick_ref: <?= json_encode(__('tool_js_quick_ref')) ?>,
-        result_label: <?= json_encode(__('tool_js_result')) ?>
+        result_label: <?= json_encode(__('tool_js_result')) ?>,
+        call_label: <?= json_encode(__('home_call_label')) ?>
     };
 
     function openServiceModal(service) {
@@ -768,7 +769,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 ';return false;"><i class="fas fa-calculator me-2"></i>' + svc.ctaBtn + '</a>';
         }
         if (svc.phone) {
-            featuresHtml += '<hr class="my-3"><p class="small text-muted mb-1">\uD83D\uDCDE Call: ' + svc.phone +
+            featuresHtml += '<hr class="my-3"><p class="small text-muted mb-1">\uD83D\uDCDE ' + t.call_label + ' ' + svc.phone +
                 '</p>';
         }
         if (svc.whatsapp) {
@@ -992,7 +993,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                 <div class="col-md-4">
                                     <label
                                         class="form-label text-white-50 small"><?= __('home_investment_amount') ?></label>
-                                    <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()" title="Investment Amount">
+                                    <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()" title="<?= __('home_investment_amount') ?>">
                                         <option value="500000"><?= __('home_amount_5l') ?></option>
                                         <option value="1000000" selected><?= __('home_amount_10l') ?></option>
                                         <option value="2500000"><?= __('home_amount_25l') ?></option>
@@ -1002,7 +1003,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-white-50 small"><?= __('home_time_period') ?></label>
-                                    <select class="form-select form-select-sm" id="invYears" onchange="calcGrowth()" title="Time Period Years">
+                                    <select class="form-select form-select-sm" id="invYears" onchange="calcGrowth()" title="<?= __('home_time_period') ?>">
                                         <option value="5"><?= __('home_years_5') ?></option>
                                         <option value="10" selected><?= __('home_years_10') ?></option>
                                         <option value="15"><?= __('home_years_15') ?></option>
@@ -1534,8 +1535,8 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             '<option value="plot">' + '<?= __("home_prop_plot") ?>' + '</option><option value="house">' + '<?= __("home_prop_house") ?>' + '</option><option value="flat">' + '<?= __("home_prop_flat") ?>' + '</option><option value="commercial">' + '<?= __("home_prop_commercial") ?>' + '</option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.location + '</label>' +
             '<select class="form-select" id="mValLoc" onchange="mCalcVal()">' +
-            '<option value="gorakhpur">Gorakhpur</option><option value="lucknow">Lucknow</option>' +
-            '<option value="kushinagar">Kushinagar</option><option value="varanasi">Varanasi</option></select></div>' +
+            '<option value="gorakhpur"><?= __("loc_gorakhpur") ?></option><option value="lucknow"><?= __("loc_lucknow") ?></option>' +
+            '<option value="kushinagar"><?= __("loc_kushinagar") ?></option><option value="varanasi"><?= __("loc_varanasi") ?></option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.areaSqft + '</label>' +
             '<input type="number" class="form-control form-control-lg" id="mValArea" value="1500" oninput="mCalcVal()" step="10"></div>' +
             '<div class="d-flex gap-2"><div class="flex-fill"><label class="form-label small">' + T.bedrooms +
