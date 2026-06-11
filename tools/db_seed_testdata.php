@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Safe seed script for test admin and customer data
 $dsn = 'mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4';
 $user = 'root';

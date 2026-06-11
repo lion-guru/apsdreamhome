@@ -231,3 +231,7 @@ $router->get('/api/docs', 'App\Http\Controllers\Api\DocsController@index');
 $router->get('/api/docs/spec', 'App\Http\Controllers\Api\DocsController@spec');
 $router->get('/api/docs/list', 'App\Http\Controllers\Api\DocsController@list');
 $router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gather');
+
+// API v1 Routes
+$router->get('/api/v1/search/properties', 'Api\SearchController@searchProperties');
+$router->post('/api/v1/finance/emi-calculate', 'Api\NewFeaturesApiController@calculateEmi');

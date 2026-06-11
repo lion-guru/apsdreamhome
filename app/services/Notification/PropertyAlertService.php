@@ -26,13 +26,13 @@ class PropertyAlertService
         $pdo = $this->database->getConnection();
         
         // Property alerts table
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Alert matches log
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Notification queue
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
     }
     
     /**

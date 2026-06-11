@@ -26,19 +26,19 @@ class WishlistService
         $pdo = $this->database->getConnection();
         
         // Wishlist table
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Wishlist collections/folders
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Collection items
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Price alerts
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Recently viewed properties
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
     }
     
     /**

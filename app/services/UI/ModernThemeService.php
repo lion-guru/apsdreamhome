@@ -86,13 +86,13 @@ class ModernThemeService
         $pdo = $this->database->getConnection();
         
         // User preferences table
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Quick actions table
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Dashboard widgets
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
     }
     
     /**

@@ -29,13 +29,13 @@ class MapService
         $pdo = $this->database->getConnection();
         
         // Property coordinates
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Nearby places of interest
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Map cache
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
     }
     
     /**

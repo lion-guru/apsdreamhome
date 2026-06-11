@@ -400,4 +400,16 @@ class NewFeaturesApiController extends BaseController
 
         return $this->jsonResponse(['insights' => $insights]);
     }
+
+    public function calculateEmi()
+    {
+        $principal = (float)($_POST['principal'] ?? $_GET['principal'] ?? 0);
+        $rate = (float)($_POST['rate'] ?? $_GET['rate'] ?? 0);
+        $years = (int)($_POST['years'] ?? $_GET['years'] ?? 0);
+        
+        $emiService = new \App\Services\Finance\EMICalculatorService();
+        $result = $emiService->calculateEMI($principal, $rate, $years);
+        
+        return $this->jsonResponse($result);
+    }
 }

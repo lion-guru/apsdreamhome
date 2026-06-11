@@ -28,16 +28,16 @@ class SEOManagementService
         $pdo = $this->database->getConnection();
         
         // SEO meta tags table
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // URL redirects
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Broken links
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // SEO analytics
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
     }
     
     /**

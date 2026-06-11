@@ -58,7 +58,7 @@
                     $rating = is_object($testimonial) ? $testimonial->rating : $testimonial['rating'];
                     $message = is_object($testimonial) ? $testimonial->message : $testimonial['message'];
                     $date = is_object($testimonial) ? $testimonial->created_at : $testimonial['created_at'];
-                    $designation = is_object($testimonial) ? ($testimonial->designation ?? 'Client') : ($testimonial['designation'] ?? 'Client');
+                    $designation = is_object($testimonial) ? ($testimonial->designation ?? __('testi_designation_default')) : ($testimonial['designation'] ?? __('testi_designation_default'));
                     ?>
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm">
@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('testi_lbl_location', null, 'Location') ?></label>
-                                    <input type="text" name="location" class="form-control" placeholder="e.g., Gorakhpur">
+                                    <input type="text" name="location" class="form-control" placeholder="<?= __('testi_ph_location') ?>">
                                 </div>
                             </div>
                             <div class="row">
@@ -164,11 +164,11 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('testi_lbl_review_title', null, 'Review Title') ?> *</label>
-                                <input type="text" name="title" class="form-control" placeholder="e.g., Best Investment Decision!" required>
+                                <input type="text" name="title" class="form-control" placeholder="<?= __('testi_ph_review_title') ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('testi_lbl_experience', null, 'Your Experience') ?> *</label>
-                                <textarea name="testimonial" class="form-control" rows="4" placeholder="Share your experience with APS Dream Homes..." required></textarea>
+                                <textarea name="testimonial" class="form-control" rows="4" placeholder="<?= __('testi_ph_experience') ?>" required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('testi_lbl_photo', null, 'Photo (Optional)') ?></label>

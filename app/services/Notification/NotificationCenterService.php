@@ -34,16 +34,16 @@ class NotificationCenterService
         $pdo = $this->database->getConnection();
         
         // Notifications table
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Notification preferences
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Notification templates
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Notification delivery logs
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Seed default templates
         $this->seedTemplates();
@@ -158,16 +158,35 @@ class NotificationCenterService
         ];
         
         try {
-            $sql = "INSERT IGNORE INTO notification_templates 
-                (type, name, description, title_template, message_template, data_schema, default_channels, default_priority, is_system)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+            $sql = "INSERT INTO notification_templates 
+                (template_code, template_name, channel, subject, body, variables, is_active)
+                VALUES (?, ?, ?, ?, ?, ?, 1)
+                ON DUPLICATE KEY UPDATE 
+                template_name = VALUES(template_name),
+                subject = VALUES(subject),
+                body = VALUES(body),
+                variables = VALUES(variables)";
+            $stmt = $this->database->prepare($sql);
+            foreach ($templates as $t) {
+                $channels = json_decode($t[6], true) ?: [];
+                $channel = 'email';
+                foreach ($channels as $c) {
+                    if (in_array($c, ['email', 'sms', 'whatsapp', 'push', 'in_app'])) {
+                        $channel = $c;
+                        break;
+                    }
+                }
+                $stmt->execute([
+                    $t[0], // template_code
+                    $t[1], // template_name
+                    $channel, // channel
+                    $t[3], // subject (title_template)
+                    $t[4], // body (message_template)
+                    $t[5], // variables
+                ]);
+            }
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        
-        $stmt = $this->database->prepare($sql);
-        foreach ($templates as $template) {
-            $stmt->execute($template);
+            // Gracefully handle dropped table ref or schema mismatch
         }
     }
     
@@ -437,13 +456,28 @@ class NotificationCenterService
     private function getTemplate(string $type): ?array
     {
         try {
-            $sql = "SELECT * FROM notification_templates WHERE type = ? AND is_active = 1";
+            $sql = "SELECT * FROM notification_templates WHERE template_code = ? AND is_active = 1";
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([$type]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($row) {
+                return [
+                    'type' => $row['template_code'],
+                    'name' => $row['template_name'],
+                    'description' => $row['template_name'],
+                    'title_template' => $row['subject'],
+                    'message_template' => $row['body'],
+                    'data_schema' => $row['variables'],
+                    'default_channels' => json_encode([$row['channel'], 'database']),
+                    'default_priority' => 'normal',
+                    'is_system' => 1,
+                    'is_active' => $row['is_active']
+                ];
+            }
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            // Gracefully handle errors
         }
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([$type]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+        return null;
     }
     
     /**

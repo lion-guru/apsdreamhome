@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'My Dashboard';
+$page_title = $page_title ?? __('dash_page_title', null, 'My Dashboard');
 $current_page = 'dashboard';
 
 $stats = $stats ?? ['total_properties' => 0, 'active_inquiries' => 0, 'total_bookings' => 0, 'total_inquiries' => 0, 'total_tickets' => 0, 'open_tickets' => 0];
@@ -127,42 +127,42 @@ $dashBookingCount = count($dashBookings);
     <div class="col-12">
         <div class="aps-cp-card" style="background: linear-gradient(135deg, #fff 0%, #ede9fe 100%);">
             <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(79, 70, 229, 0.15);">
-                <h5><i class="fas fa-file-invoice-dollar" style="color:#4f46e5;"></i> My Bookings</h5>
-                <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary">View All</a>
+                <h5><i class="fas fa-file-invoice-dollar" style="color:#4f46e5;"></i> <?= __('dash_my_bookings', null, 'My Bookings') ?></h5>
+                <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="aps-cp-card-body">
                 <div class="row g-3 text-center">
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
                             <div class="fw-bold fs-4 text-primary" data-aps-count="<?= $dashBookingCount ?>">0</div>
-                            <small class="text-muted">Total Bookings</small>
+                            <small class="text-muted"><?= __('dash_total_bookings', null, 'Total Bookings') ?></small>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
                             <div class="fw-bold fs-4 text-amber" style="color:#f59e0b;" data-aps-count="<?= $dashActiveEmis ?>">0</div>
-                            <small class="text-muted">Active EMIs</small>
+                            <small class="text-muted"><?= __('dash_active_emis', null, 'Active EMIs') ?></small>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
                             <div class="fw-bold fs-4 text-success">₹<?= number_format($dashTotalPaid) ?></div>
-                            <small class="text-muted">Total Paid</small>
+                            <small class="text-muted"><?= __('dash_total_paid', null, 'Total Paid') ?></small>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
                             <div class="fw-bold fs-4 text-danger">₹<?= number_format($dashTotalPending > 0 ? $dashTotalPending : 0) ?></div>
-                            <small class="text-muted">Pending Amount</small>
+                            <small class="text-muted"><?= __('dash_pending_amount', null, 'Pending Amount') ?></small>
                         </div>
                     </div>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-3">
                     <a href="<?= BASE_URL ?>/user/bookings/new" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus me-1"></i>Book a Plot
+                        <i class="fas fa-plus me-1"></i><?= __('dash_btn_book_plot', null, 'Book a Plot') ?>
                     </a>
                     <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-arrow-right me-1"></i>View All Bookings
+                        <i class="fas fa-arrow-right me-1"></i><?= __('dash_btn_view_all_bookings', null, 'View All Bookings') ?>
                     </a>
                 </div>
             </div>
@@ -360,12 +360,12 @@ $dashBookingCount = count($dashBookings);
             </div>
             <div class="aps-cp-card-body text-center">
                 <div class="display-5 fw-bold mb-1" style="color: var(--aps-cp-<?= $lvlColor ?>);"><?= htmlspecialchars($lvl) ?></div>
-                <small class="text-muted d-block mb-3">Total Invested: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
+                <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
                 <div class="aps-cp-progress" style="height:12px;">
                     <div class="aps-cp-progress-bar" style="width:<?= (float)($invStats['progress_pct'] ?? 0) ?>%; background: linear-gradient(90deg, #4f46e5, #8b5cf6);"></div>
                 </div>
-                <p class="text-muted small mt-2 mb-0">Invest ₹<?= number_format((float)($invStats['next_threshold'] ?? 50000)) ?> more to reach <strong><?= htmlspecialchars($invStats['next_level'] ?? 'Silver') ?></strong></p>
-                <a href="<?= BASE_URL ?>/user/investment-plans" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary mt-3"><i class="fas fa-arrow-up"></i> Upgrade</a>
+                <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest ₹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></strong></p>
+                <a href="<?= BASE_URL ?>/user/investment-plans" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary mt-3"><i class="fas fa-arrow-up"></i> <?= __('dash_btn_upgrade', null, 'Upgrade') ?></a>
             </div>
         </div>
 
@@ -373,7 +373,7 @@ $dashBookingCount = count($dashBookings);
         <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);">
             <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(245, 158, 11, 0.2);">
                 <h5><i class="fas fa-gift text-warning"></i> <?= __('dash_refer_earn_title', null, 'Refer & Earn') ?></h5>
-                <a href="<?= BASE_URL ?>/user/referral" class="btn btn-sm btn-outline-warning">View All</a>
+                <a href="<?= BASE_URL ?>/user/referral" class="btn btn-sm btn-outline-warning"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="aps-cp-card-body">
                 <div class="text-center mb-3">
@@ -500,25 +500,25 @@ $dashBookingCount = count($dashBookings);
         ?>
         <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #ecfdf5 100%);">
             <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(16, 185, 129, 0.15);">
-                <h5><i class="fas fa-headset" style="color:#10b981;"></i> Need Help?</h5>
+                <h5><i class="fas fa-headset" style="color:#10b981;"></i> <?= __('dash_need_help', null, 'Need Help?') ?></h5>
             </div>
             <div class="aps-cp-card-body text-center">
                 <div class="d-flex justify-content-center gap-4 mb-3">
                     <div>
                         <div class="fw-bold fs-4" style="color: <?= $dashOpenTickets > 0 ? '#ef4444' : '#10b981' ?>;" data-aps-count="<?= $dashOpenTickets ?>">0</div>
-                        <small class="text-muted">Open Tickets</small>
+                        <small class="text-muted"><?= __('dash_stat_open_tickets', null, 'Open Tickets') ?></small>
                     </div>
                     <div>
                         <div class="fw-bold fs-4 text-primary" data-aps-count="<?= $dashTotalTickets ?>">0</div>
-                        <small class="text-muted">Total Tickets</small>
+                        <small class="text-muted"><?= __('dash_total_tickets_help', null, 'Total Tickets') ?></small>
                     </div>
                 </div>
                 <a href="<?= BASE_URL ?>/user/support/create" class="btn btn-success btn-sm w-100">
-                    <i class="fas fa-plus me-1"></i>Create Support Ticket
+                    <i class="fas fa-plus me-1"></i><?= __('dash_btn_create_ticket', null, 'Create Support Ticket') ?>
                 </a>
                 <?php if ($dashTotalTickets > 0): ?>
                 <a href="<?= BASE_URL ?>/user/support" class="btn btn-outline-success btn-sm w-100 mt-2">
-                    <i class="fas fa-list me-1"></i>View All Tickets
+                    <i class="fas fa-list me-1"></i><?= __('dash_btn_view_tickets', null, 'View All Tickets') ?>
                 </a>
                 <?php endif; ?>
             </div>
@@ -653,16 +653,16 @@ $dashBookingCount = count($dashBookings);
             default => 'primary'
         };
         $kycLabel = match($kycStatus) {
-            'approved' => 'KYC Verified',
-            'pending' => 'KYC Under Review',
-            'rejected' => 'KYC Rejected',
-            default => 'KYC Not Completed'
+            'approved' => __('dash_kyc_verified', null, 'KYC Verified'),
+            'pending' => __('dash_kyc_under_review', null, 'KYC Under Review'),
+            'rejected' => __('dash_kyc_rejected', null, 'KYC Rejected'),
+            default => __('dash_kyc_not_completed', null, 'KYC Not Completed')
         };
         $kycDesc = match($kycStatus) {
-            'approved' => 'Your identity is verified. All features are unlocked.',
-            'pending' => 'Your documents are being reviewed. This usually takes 1-2 business days.',
-            'rejected' => 'Your KYC was rejected. Please re-submit with correct documents.',
-            default => 'Complete your KYC to unlock property bookings, loans, and payouts.'
+            'approved' => __('dash_kyc_verified_desc', null, 'Your identity is verified. All features are unlocked.'),
+            'pending' => __('dash_kyc_pending_desc', null, 'Your documents are being reviewed. This usually takes 1-2 business days.'),
+            'rejected' => __('dash_kyc_rejected_desc', null, 'Your KYC was rejected. Please re-submit with correct documents.'),
+            default => __('dash_kyc_not_completed_desc', null, 'Complete your KYC to unlock property bookings, loans, and payouts.')
         };
         ?>
         <div class="aps-cp-card mt-4" style="background: <?= $kycBg ?>;">
@@ -680,7 +680,7 @@ $dashBookingCount = count($dashBookings);
                 <?php if ($kycStatus !== 'approved'): ?>
                 <a href="<?= BASE_URL ?>/user/kyc" class="btn btn-sm btn-<?= $kycStatus === 'rejected' ? 'warning' : 'primary' ?> w-100">
                     <i class="fas fa-<?= $kycStatus === 'rejected' ? 'redo' : 'upload' ?> me-1"></i>
-                    <?= $kycStatus === 'rejected' ? 'Re-submit KYC' : 'Complete KYC' ?>
+                    <?= $kycStatus === 'rejected' ? __('dash_btn_resubmit_kyc', null, 'Re-submit KYC') : __('dash_btn_complete_kyc', null, 'Complete KYC') ?>
                 </a>
                 <?php endif; ?>
             </div>

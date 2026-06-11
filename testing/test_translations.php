@@ -100,6 +100,7 @@ $allowedIdentical = [
     'google_login', 'facebook_login', 'linkedin_login',
     'upi_id', 'phone_ph', 'email_ph', 'name_ph', 'password_ph',
     'british_english', 'american_english', 'english_lang', 'hindi_lang',
+    'admin_hash_label',
 ];
 $identicalFound = [];
 foreach ($enFlat as $k => $v) {

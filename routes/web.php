@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Web Routes - APS Dream Home
 // Clean, deduplicated route definitions
 
@@ -1011,6 +1011,7 @@ $router->post('/admin/plots/bulk-price-update', 'App\\Http\\Controllers\\Admin\\
 $router->get('/admin/plots/layout', 'Front\\PageController@plotMap');
 $router->get('/admin/plots/availability', 'App\\Http\\Controllers\\Admin\\PlotManagementController@availability');
 $router->get('/admin/plots/availability-data', 'App\\Http\\Controllers\\Admin\\PlotManagementController@availabilityData');
+$router->get('/admin/plots/map', 'App\\Http\\Controllers\\Admin\\PlotManagementController@map');
 $router->get('/admin/plots/{id}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@show');
 $router->get('/admin/plots/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotManagementController@edit');
 $router->post('/admin/plots/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@update');
@@ -2750,6 +2751,13 @@ $router->post('/admin/legal/disputes/{id}/update', 'App\\Http\\Controllers\\Admi
 $router->get('/admin/legal/deadlines', 'App\\Http\\Controllers\\Admin\\LegalController@deadlines');
 $router->post('/admin/legal/deadlines/store', 'App\\Http\\Controllers\\Admin\\LegalController@storeDeadline');
 
+// NOC / REGISTRY ELIGIBILITY CHECKS (Admin)
+$router->get('/admin/legal/noc-index', 'App\\Http\\Controllers\\Admin\\NocController@index');
+$router->get('/admin/legal/noc-eligibility', 'App\\Http\\Controllers\\Admin\\NocController@eligibility');
+$router->post('/admin/legal/noc-check', 'App\\Http\\Controllers\\Admin\\NocController@check');
+$router->get('/admin/legal/registry-show/{id}', 'App\\Http\\Controllers\\Admin\\NocController@showRegistry');
+$router->get('/admin/legal/noc-show/{id}', 'App\\Http\\Controllers\\Admin\\NocController@showNoc');
+
 // ═══════════════════════════════════════════════════
 // TELECALLER MANAGEMENT (Admin)
 // ═══════════════════════════════════════════════════
@@ -3723,7 +3731,7 @@ $router->post('/admin/mlm/payouts/{id}/mark-paid',                'App\\Http\\Co
 $router->get('/admin/mlm/associate-ranks',                        'App\\Http\\Controllers\\Admin\\MLMCommissionController@associateRanks');
 $router->post('/admin/mlm/associate-ranks/promote-all',          'App\\Http\\Controllers\\Admin\\MLMCommissionController@promoteAll');
 $router->get('/admin/mlm/associate-ranks/{id}',                   'App\\Http\\Controllers\\Admin\\MLMCommissionController@associateRankView');
-$router->post('/admin/mlm/associate-ranks/{id}/promote',          'App\\Http\\Controllers\\Admin\\MLMCommissionController@manualPromote');
+$router->post('/admin/mlm/associate-ranks/{id}/promote',          'App\\Http\\Controllers\\Admin\\MLMCommissionController@rankPromoteManual');
 $router->get('/admin/mlm/rank-benefits',                          'App\\Http\\Controllers\\Admin\\MLMCommissionController@rankBenefits');
 $router->get('/admin/mlm/clawbacks',                              'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbacks');
 $router->get('/admin/mlm/clawbacks/{id}',                         'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbackView');
@@ -3807,6 +3815,19 @@ $router->get('/admin/cash-collections/reconciliations',                    'Admi
 $router->get('/admin/cash-collections/reconciliations/create',             'Admin\\CashCollectionController@reconciliationForm');
 $router->post('/admin/cash-collections/reconciliations/create',            'Admin\\CashCollectionController@reconciliationCreate');
 $router->post('/admin/cash-collections/reconciliations/close',             'Admin\\CashCollectionController@reconciliationClose');
+
+// ============================================================
+// FINANCE ROUTE ALIASES — point to CashCollectionController (full-featured)
+// Merging two parallel systems: /admin/cash-collections/* and /admin/finance/collections/*
+// URL prefix: /admin/finance/cash-collections/*
+// ============================================================
+$router->get('/admin/finance/cash-collections',                                    'Admin\\CashCollectionController@index');
+$router->get('/admin/finance/cash-collections/create',                             'Admin\\CashCollectionController@create');
+$router->post('/admin/finance/cash-collections/store',                             'Admin\\CashCollectionController@store');
+$router->get('/admin/finance/cash-collections/show/{id}',                          'Admin\\CashCollectionController@show');
+$router->get('/admin/finance/cash-collections/reconciliation',                     'Admin\\CashCollectionController@reconciliations');
+$router->post('/admin/finance/cash-collections/reconcile/{id}',                    'Admin\\CashCollectionController@reconcile');
+$router->get('/admin/finance/reconciliation',                                      'Admin\\CashCollectionController@reconciliations');
 
 // ============================================================
 // NOC & REGISTRY PIPE

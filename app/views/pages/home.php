@@ -274,7 +274,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 
         document.getElementById('loanAmtDisplay').textContent = '₹' + P.toLocaleString('en-IN');
         document.getElementById('rateDisplay').textContent = document.getElementById('interestRate').value + '%';
-        document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' Years';
+        document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' ' + T.years;
 
         if (R === 0) {
             document.getElementById('emiResult').textContent = '₹' + Math.round(P / N).toLocaleString('en-IN');
@@ -318,7 +318,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             <img loading="lazy"
                                 src="<?php echo BASE_URL; ?>/assets/images/projects/<?= $project['img'] ?>"
                                 class="w-100" style="height:190px;object-fit:cover;"
-                                alt="<?= htmlspecialchars($project['title'] ?? 'Property image') ?>"
+                                alt="<?= htmlspecialchars($project['title'] ?? __('home_property_image')) ?>"
                                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <span
                                 class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?= $project['status'] ?></span>
@@ -356,7 +356,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         <div class="position-relative overflow-hidden">
                             <img loading="lazy" src="<?php echo BASE_URL . $imgPath; ?>" class="w-100"
                                 style="height:190px;object-fit:cover;"
-                                alt="<?php echo htmlspecialchars($project['title'] ?? 'Property image'); ?>"
+                                alt="<?php echo htmlspecialchars($project['title'] ?? __('home_property_image')); ?>"
                                 onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <span
                                 class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?php echo $project['status']; ?></span>
@@ -1310,7 +1310,21 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         perSqft: <?= json_encode(__('calc_per_sqft')) ?>,
         confidence: <?= json_encode(__('calc_confidence')) ?>,
         high: <?= json_encode(__('calc_high')) ?>,
-        years: <?= json_encode(__('home_years')) ?>
+        years: <?= json_encode(__('home_years')) ?>,
+        sqft: <?= json_encode(__('home_sqft')) ?>,
+        sqm: <?= json_encode(__('home_sqm')) ?>,
+        acre: <?= json_encode(__('home_unit_acre')) ?>,
+        hectare: <?= json_encode(__('home_hectare')) ?>,
+        bigha: <?= json_encode(__('home_bigha')) ?>,
+        gaj: <?= json_encode(__('home_gaj')) ?>,
+        sqYd: <?= json_encode(__('home_sq_yd')) ?>,
+        katha: <?= json_encode(__('home_katha')) ?>,
+        marla: <?= json_encode(__('home_marla')) ?>,
+        medium: <?= json_encode(__('home_medium')) ?>,
+        calculating: <?= json_encode(__('home_calculating')) ?>,
+        valFailed: <?= json_encode(__('home_valuation_failed')) ?>,
+        valError: <?= json_encode(__('home_valuation_error')) ?>,
+        na: <?= json_encode(__('home_na')) ?>
     };
 
     function openToolModal(tool) {
@@ -1466,9 +1480,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     }
 
     function getPlotConverter() {
-        var units = ['Square Feet', 'Square Meter', 'Acre', 'Hectare', 'Bigha (UP)', 'Gaj', 'Square Yard', 'Katha (UP)',
-            'Marla'
-        ];
+        var units = [T.sqft, T.sqm, T.acre, T.hectare, T.bigha, T.gaj, T.sqYd, T.katha, T.marla];
         var unitOptions = '';
         for (var i = 0; i < units.length; i++) unitOptions += '<option value="' + i + '">' + units[i] + '</option>';
         return '<div class="row g-4">' +
@@ -1478,12 +1490,12 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small">' + T.from + '</label>' +
             '<select class="form-select" id="mConvFrom" onchange="mCalcConv()">' + unitOptions + '</select></div>' +
             '<div class="col-6"><label class="form-label small">' + T.to + '</label>' +
-            '<select class="form-select" id="mConvTo" onchange="mCalcConv()"><option value="0" selected>Square Feet</option><option value="1">Square Meter</option><option value="2">Acre</option><option value="3">Hectare</option><option value="4">Bigha (UP)</option><option value="5">Gaj</option><option value="6">Square Yard</option><option value="7">Katha (UP)</option><option value="8">Marla</option></select></div></div>' +
+            '<select class="form-select" id="mConvTo" onchange="mCalcConv()"><option value="0" selected>'+T.sqft+'</option><option value="1">'+T.sqm+'</option><option value="2">'+T.acre+'</option><option value="3">'+T.hectare+'</option><option value="4">'+T.bigha+'</option><option value="5">'+T.gaj+'</option><option value="6">'+T.sqYd+'</option><option value="7">'+T.katha+'</option><option value="8">'+T.marla+'</option></select></div></div>' +
             '<div class="alert alert-success mb-0"><i class="fas fa-exchange-alt me-2"></i>' + T.result +
             ' <strong id="mConvResult">0.0913 Acre</strong></div></div>' +
             '<div class="col-md-5"><div class="bg-light rounded-4 p-4 h-100">' +
             '<h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2 text-info"></i>' + T.quickRef + '</h6>' +
-            '<div class="small"><strong>1 Bigha (UP)</strong> = 27,000 Sq Ft<br><strong>1 Gaj</strong> = 9 Sq Ft<br><strong>1 Acre</strong> = 43,560 Sq Ft<br><strong>1 Hectare</strong> = 2.47 Acre<br><strong>1 Katha (UP)</strong> = 1,361 Sq Ft<br><strong>1 Marla</strong> = 272 Sq Ft</div>' +
+            '<div class="small"><strong>1 '+T.bigha+'</strong> = 27,000 '+T.sqft+'<br><strong>1 '+T.gaj+'</strong> = 9 '+T.sqft+'<br><strong>1 '+T.acre+'</strong> = 43,560 '+T.sqft+'<br><strong>1 '+T.hectare+'</strong> = 2.47 '+T.acre+'<br><strong>1 '+T.katha+'</strong> = 1,361 '+T.sqft+'<br><strong>1 '+T.marla+'</strong> = 272 '+T.sqft+'</div>' +
             '</div></div></div>';
     }
 
@@ -1602,7 +1614,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         var to = parseInt(document.getElementById('mConvTo').value);
         var sqft = val / convFactors[from];
         var result = sqft * convFactors[to];
-        var unitNames = ['Sq Ft', 'Sq M', 'Acre', 'Ha', 'Bigha', 'Gaj', 'Sq Yd', 'Katha', 'Marla'];
+        var unitNames = [T.sqft, T.sqm, T.acre, T.hectare, T.bigha, T.gaj, T.sqYd, T.katha, T.marla];
         document.getElementById('mConvResult').textContent = result.toFixed(4) + ' ' + unitNames[to];
     }
 
@@ -1659,7 +1671,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         document.getElementById('mValResult').textContent = '\u20B9' + Math.round(value).toLocaleString('en-IN');
         document.getElementById('mValPsf').textContent = '\u20B9' + Math.round(baseRate * bhkFactor * furn)
             .toLocaleString('en-IN');
-        document.getElementById('mValConf').textContent = loc === 'kushinagar' ? 'Medium' : 'High';
+        document.getElementById('mValConf').textContent = loc === 'kushinagar' ? T.medium : T.high;
         async function mCalcVal() {
             const type = document.getElementById('mValType').value;
             const loc = document.getElementById('mValLoc').value;
@@ -1669,7 +1681,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             const furn = furnSelect.options[furnSelect.selectedIndex].text;
 
             // Show loading state
-            document.getElementById('mValResult').textContent = 'Calculating...';
+            document.getElementById('mValResult').textContent = T.calculating;
             document.getElementById('mValPsf').textContent = '-';
             document.getElementById('mValConf').textContent = '-';
 
@@ -1693,16 +1705,16 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 
                 if (result.success && result.data) {
                     document.getElementById('mValResult').textContent = '₹' + (result.data
-                        .estimated_value_formatted || 'N/A');
+                        .estimated_value_formatted || T.na);
                     document.getElementById('mValPsf').textContent = '₹' + (result.data.price_per_sqft_formatted ||
-                        'N/A');
-                    document.getElementById('mValConf').textContent = result.data.confidence || 'Medium';
+                        T.na);
+                    document.getElementById('mValConf').textContent = result.data.confidence || T.medium;
                 } else {
-                    throw new Error(result.error || 'Failed to get valuation');
+                    throw new Error(result.error || T.valFailed);
                 }
             } catch (error) {
                 console.error('Valuation Error:', error);
-                document.getElementById('mValResult').textContent = 'Error';
+                document.getElementById('mValResult').textContent = T.valError;
             }
         }
     </script>

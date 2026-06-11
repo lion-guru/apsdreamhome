@@ -32,7 +32,7 @@ class LocalizationService
         $pdo = $this->database->getConnection();
         
         // Supported locales
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Translations
         $pdo->exec("CREATE TABLE IF NOT EXISTS translations (
@@ -50,7 +50,7 @@ class LocalizationService
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // User preferences
-        $pdo->exec("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
         
         // Seed default locales
         $this->seedLocales();

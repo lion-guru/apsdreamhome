@@ -373,7 +373,7 @@ document.getElementById('serviceInterestForm')?.addEventListener('submit', funct
     const messageDiv = document.getElementById('serviceFormMessage');
     
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><?php echo __('services_sending'); ?>';
     
     const formData = new FormData(form);
     

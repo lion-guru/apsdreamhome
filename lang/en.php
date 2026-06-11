@@ -3864,6 +3864,27 @@ return array(
   'calc_confidence' => 'Confidence',
   'calc_high' => 'High',
 
+  // Home Page - Image Alt
+  'home_property_image' => 'Property image',
+
+  // Home Page - Unit Names
+  'home_sqft' => 'Sq. Ft.',
+  'home_sqm' => 'Sq. M.',
+  'home_unit_acre' => 'Acre',
+  'home_hectare' => 'Hectare',
+  'home_bigha' => 'Bigha (UP)',
+  'home_gaj' => 'Gaj',
+  'home_sq_yd' => 'Sq. Yd.',
+  'home_katha' => 'Katha (UP)',
+  'home_marla' => 'Marla',
+
+  // Home Page - Valuation UI
+  'home_medium' => 'Medium',
+  'home_calculating' => 'Calculating...',
+  'home_valuation_failed' => 'Failed to get valuation',
+  'home_valuation_error' => 'Error',
+  'home_na' => 'N/A',
+
   // Home Page - Testimonials
   'home_testimonial_1_name' => 'Rajesh Kumar',
   'home_testimonial_1_location' => 'Gorakhpur',
@@ -3871,5 +3892,40 @@ return array(
   'home_testimonial_2_location' => 'Kushinagar',
   'home_testimonial_3_name' => 'Amit Verma',
   'home_testimonial_3_location' => 'Lucknow',
+
+  // Services page
+  'services_sending' => 'Sending...',
+
+  // Testimonials page
+  'testi_designation_default' => 'Client',
+  'testi_ph_location' => 'e.g., Gorakhpur',
+  'testi_ph_review_title' => 'e.g., Best Investment Decision!',
+   'testi_ph_experience' => 'Share your experience with APS Dream Homes...',
+
+  // User Dashboard (continued)
+  'dash_page_title' => 'My Dashboard',
+  'dash_my_bookings' => 'My Bookings',
+  'dash_total_bookings' => 'Total Bookings',
+  'dash_active_emis' => 'Active EMIs',
+  'dash_total_paid' => 'Total Paid',
+  'dash_pending_amount' => 'Pending Amount',
+  'dash_btn_view_all_bookings' => 'View All Bookings',
+  'dash_total_invested' => 'Total Invested',
+  'dash_invest_more_format' => 'Invest ₹%s more to reach %s',
+  'dash_btn_upgrade' => 'Upgrade',
+  'dash_need_help' => 'Need Help?',
+  'dash_total_tickets_help' => 'Total Tickets',
+  'dash_btn_create_ticket' => 'Create Support Ticket',
+  'dash_btn_view_tickets' => 'View All Tickets',
+  'dash_kyc_verified' => 'KYC Verified',
+  'dash_kyc_under_review' => 'KYC Under Review',
+  'dash_kyc_rejected' => 'KYC Rejected',
+  'dash_kyc_not_completed' => 'KYC Not Completed',
+  'dash_kyc_verified_desc' => 'Your identity is verified. All features are unlocked.',
+  'dash_kyc_pending_desc' => 'Your documents are being reviewed. This usually takes 1-2 business days.',
+  'dash_kyc_rejected_desc' => 'Your KYC was rejected. Please re-submit with correct documents.',
+  'dash_kyc_not_completed_desc' => 'Complete your KYC to unlock property bookings, loans, and payouts.',
+  'dash_btn_resubmit_kyc' => 'Re-submit KYC',
+  'dash_btn_complete_kyc' => 'Complete KYC',
 
 );

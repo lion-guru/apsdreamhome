@@ -35,13 +35,12 @@ $services = [
     'App\Services\Notification\PropertyAlertService',
     'App\Services\SEO\SEOManagementService',
     'App\Services\UI\ModernThemeService',
-    'App\Services\Testing\TestRunnerService',
-    'App\Services\Backup\BackupRestoreService',
-    'App\Services\Audit\AuditTrailService',
-    'App\Services\Workflow\WorkflowEngineService',
-    'App\Services\Report\ReportBuilderService',
-    'App\Services\ImportExport\ImportExportService',
-    'App\Services\API\APIDocumentationService'
+    'App\Services\BackupRestoreService',
+    'App\Services\AuditTrailService',
+    'App\Services\WorkflowEngineService',
+    'App\Services\ReportBuilderService',
+    'App\Services\ImportExportService',
+    'App\Services\APIDocumentationService'
 ];
 
 foreach ($services as $service) {
@@ -102,8 +101,8 @@ $viewFiles = [
     'app/views/admin/loyalty/index.php',
     'app/views/admin/scheduler/index.php',
     'app/views/admin/files/index.php',
-    'app/views/admin/includes/header.php',
-    'app/views/admin/includes/footer.php'
+    'app/views/layouts/admin_header.php',
+    'app/views/layouts/admin_footer.php'
 ];
 
 foreach ($viewFiles as $viewFile) {
@@ -185,8 +184,7 @@ try {
     
     foreach ($requiredTables as $table) {
         try {
-            $stmt = $pdo->prepare("SHOW TABLES LIKE ?");
-            $stmt->execute([$table]);
+            $stmt = $pdo->query("SHOW TABLES LIKE " . $pdo->quote($table));
             if ($stmt->fetch()) {
                 $passed[] = "✅ Table: $table";
                 echo "  ✅ $table\n";

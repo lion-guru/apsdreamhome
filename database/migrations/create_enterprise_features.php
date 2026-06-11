@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Enterprise Features Migration - Final
@@ -124,7 +125,7 @@ try {
         attempts INT DEFAULT 0,
         max_attempts INT DEFAULT 3,
         reserved_at TIMESTAMP NULL,
-        available_at TIMESTAMP NOT NULL,
+        available_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX idx_queue_reserved (queue, reserved_at, available_at),
         INDEX idx_available (available_at),
@@ -308,7 +309,7 @@ try {
         id INT AUTO_INCREMENT PRIMARY KEY,
         cache_key VARCHAR(100) NOT NULL UNIQUE,
         response_data JSON NOT NULL,
-        expires_at TIMESTAMP NOT NULL,
+        expires_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX idx_expires (expires_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");

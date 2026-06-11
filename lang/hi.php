@@ -1884,7 +1884,7 @@ return array(
   'home_lowest_risk' => 'मूर्त संपत्ति के साथ सबसे कम जोखिम',
   'home_dual_benefit' => 'दोहरा लाभ: वृद्धि + किराया आय',
   'home_re_cagr' => 'रियल एस्टेट (18% CAGR)',
-  'home_fd_cagr' => 'FD (6% CAGR)',
+  'home_fd_cagr' => 'एफडी (6% सीएजीआर)',
   'home_gold_cagr' => 'सोना (9% CAGR)',
   'home_free_tools' => 'मुफ्त टूल',
   'home_free_tools_title' => 'रियल एस्टेट टूल — बिल्कुल मुफ्त!',
@@ -2120,7 +2120,7 @@ return array(
   'admin_user' => 'उपयोगकर्ता',
   'admin_details' => 'विवरण',
   'admin_time' => 'समय',
-  'admin_ip' => 'IP',
+  'admin_ip' => 'आईपी',
 
   // Admin i18n — Expenses (Hindi)
   'admin_expenses' => 'व्यय',
@@ -2181,7 +2181,7 @@ return array(
   'admin_created_label' => 'बनाया गया',
   'admin_period_label' => 'अवधि',
   'admin_basic_label' => 'मूल',
-  'admin_hra_label' => 'HRA',
+  'admin_hra_label' => 'एचआरए',
   'admin_gross_label' => 'सकल',
   'admin_deductions_label' => 'कटौती',
   'admin_net_label' => 'शुद्ध',
@@ -2194,14 +2194,14 @@ return array(
   'admin_check_in' => 'चेक इन',
   'admin_check_out' => 'चेक आउट',
   'admin_hours_label' => 'घंटे',
-  'admin_ot_label' => 'OT',
+  'admin_ot_label' => 'ओटी',
   'admin_late_min' => 'विलंब(मिनट)',
   'admin_mark_button' => 'चिन्हित',
   'admin_present' => 'उपस्थित',
   'admin_absent' => 'अनुपस्थित',
   'admin_half_day' => 'आधा दिन',
   'admin_on_leave' => 'छुट्टी पर',
-  'admin_wfh' => 'WFH',
+  'admin_wfh' => 'डब्ल्यूएफएच',
   'admin_generate_button' => 'उत्पन्न करें',
   'admin_month_label' => 'माह',
   'admin_year_label' => 'वर्ष',
@@ -2234,7 +2234,7 @@ return array(
   'admin_bank_transfer' => 'बैंक ट्रांसफर',
   'admin_cheque' => 'चेक',
   'admin_online_payment' => 'ऑनलाइन भुगतान',
-  'admin_upi' => 'UPI',
+  'admin_upi' => 'यूपीआई',
   'admin_enter_transaction_id' => 'लेनदेन आईडी दर्ज करें',
 
   // Admin i18n — Bookings (Hindi)
@@ -2880,7 +2880,7 @@ return array(
   'hr_document_request_approved' => 'स्वीकृत',
   'hr_document_request_rejected' => 'अस्वीकृत',
   'hr_document_request_pending' => 'लंबित',
-  'hr_approve_document_request' => 'Approve',
+  'hr_approve_document_request' => 'मंजूर करें',
   'hr_reject_document_request' => 'अस्वीकृत',
   'hr_no_document_requests' => 'कोई दस्तावेज़ अनुरोध नहीं मिला',
   'hr_grievances' => 'शिकायतें',
@@ -3097,7 +3097,7 @@ return array(
   'hr_hr_manager' => 'HR प्रबंधक',
   'hr_hr_director' => 'HR निदेशक',
   'hr_hr_head' => 'HR प्रमुख',
-  'hr_chro' => 'CHRO',
+  'hr_chro' => 'सीएचआरओ',
   'hr_manager' => 'प्रबंधक',
   'hr_director' => 'निदेशक',
   'hr_executive' => 'कार्यकारी',
@@ -3575,7 +3575,7 @@ return array(
   'finance_commission_5pct' => '194H (कमीशन 5%)',
   'finance_rent_10pct' => '194I (किराया 10%)',
   'finance_professional_10pct' => '194J (पेशेवर 10%)',
-  'finance_20l_plus' => '194M (>20L)',
+  'finance_20l_plus' => '194M (>20 लाख)',
   'finance_cash_1cr_plus' => '194N (नकद >1Cr)',
   'finance_deductee_type' => 'कटौतीकर्ता प्रकार',
   'finance_individual' => 'व्यक्ति',
@@ -3863,6 +3863,27 @@ return array(
   'calc_confidence' => 'विश्वास',
   'calc_high' => 'उच्च',
 
+  // Home Page - Image Alt
+  'home_property_image' => 'प्रॉपर्टी छवि',
+
+  // Home Page - Unit Names
+  'home_sqft' => 'वर्ग फीट',
+  'home_sqm' => 'वर्ग मीटर',
+  'home_unit_acre' => 'एकड़',
+  'home_hectare' => 'हेक्टेयर',
+  'home_bigha' => 'बीघा (UP)',
+  'home_gaj' => 'गज',
+  'home_sq_yd' => 'वर्ग गज',
+  'home_katha' => 'कठा (UP)',
+  'home_marla' => 'मारला',
+
+  // Home Page - Valuation UI
+  'home_medium' => 'मध्यम',
+  'home_calculating' => 'गणना कर रहा है...',
+  'home_valuation_failed' => 'मूल्यांकन प्राप्त करने में विफल',
+  'home_valuation_error' => 'त्रुटि',
+  'home_na' => 'उपलब्ध नहीं',
+
   // Home Page - Testimonials
   'home_testimonial_1_name' => 'राजेश कुमार',
   'home_testimonial_1_location' => 'गोरखपुर',
@@ -3870,5 +3891,40 @@ return array(
   'home_testimonial_2_location' => 'कुशीनगर',
   'home_testimonial_3_name' => 'अमित वर्मा',
   'home_testimonial_3_location' => 'लखनऊ',
+
+  // Services page
+  'services_sending' => 'भेजा जा रहा है...',
+
+  // Testimonials page
+  'testi_designation_default' => 'ग्राहक',
+  'testi_ph_location' => 'जैसे, गोरखपुर',
+  'testi_ph_review_title' => 'जैसे, सबसे अच्छा निवेश निर्णय!',
+   'testi_ph_experience' => 'एपीएस ड्रीम होम्स के साथ अपना अनुभव साझा करें...',
+
+  // User Dashboard (continued)
+  'dash_page_title' => 'मेरा डैशबोर्ड',
+  'dash_my_bookings' => 'मेरी बुकिंग्स',
+  'dash_total_bookings' => 'कुल बुकिंग्स',
+  'dash_active_emis' => 'सक्रिय ईएमआई',
+  'dash_total_paid' => 'कुल भुगतान',
+  'dash_pending_amount' => 'लंबित राशि',
+  'dash_btn_view_all_bookings' => 'सभी बुकिंग्स देखें',
+  'dash_total_invested' => 'कुल निवेश',
+  'dash_invest_more_format' => '%s ₹ और निवेश करें %s तक पहुँचने के लिए',
+  'dash_btn_upgrade' => 'अपग्रेड करें',
+  'dash_need_help' => 'सहायता चाहिए?',
+  'dash_total_tickets_help' => 'कुल टिकट',
+  'dash_btn_create_ticket' => 'सहायता टिकट बनाएं',
+  'dash_btn_view_tickets' => 'सभी टिकट देखें',
+  'dash_kyc_verified' => 'KYC सत्यापित',
+  'dash_kyc_under_review' => 'KYC समीक्षाधीन',
+  'dash_kyc_rejected' => 'KYC अस्वीकृत',
+  'dash_kyc_not_completed' => 'KYC पूर्ण नहीं',
+  'dash_kyc_verified_desc' => 'आपकी पहचान सत्यापित है। सभी सुविधाएं अनलॉक हैं।',
+  'dash_kyc_pending_desc' => 'आपके दस्तावेज़ों की समीक्षा की जा रही है। इसमें आमतौर पर 1-2 कार्य दिवस लगते हैं।',
+  'dash_kyc_rejected_desc' => 'आपका KYC अस्वीकृत कर दिया गया। कृपया सही दस्तावेज़ों के साथ पुनः सबमिट करें।',
+  'dash_kyc_not_completed_desc' => 'प्रॉपर्टी बुकिंग, लोन और भुगतान अनलॉक करने के लिए अपना KYC पूरा करें।',
+  'dash_btn_resubmit_kyc' => 'KYC पुनः सबमिट करें',
+  'dash_btn_complete_kyc' => 'KYC पूरा करें',
 
 );

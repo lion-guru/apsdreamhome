@@ -4,7 +4,7 @@
  * Tests all major components and reports issues
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
 use App\Core\Database\Database;
 
@@ -112,8 +112,7 @@ class ComprehensiveTestRunner
         
         foreach ($criticalTables as $table) {
             try {
-                $stmt = $this->database->prepare("SHOW TABLES LIKE ?");
-                $stmt->execute([$table]);
+                $stmt = $this->database->query("SHOW TABLES LIKE " . $this->database->getConnection()->quote($table));
                 
                 if (!$stmt->fetch()) {
                     $missingTables[] = $table;
@@ -152,10 +151,10 @@ class ComprehensiveTestRunner
         echo "\n🔗 Testing Foreign Key Constraints...\n";
         
         $constraints = [
-            ['table' => 'properties', 'column' => 'user_id', 'references' => 'users'],
+            ['table' => 'properties', 'column' => 'created_by', 'references' => 'users'],
             ['table' => 'bookings', 'column' => 'property_id', 'references' => 'properties'],
-            ['table' => 'chat_messages', 'column' => 'conversation_id', 'references' => 'chat_conversations'],
-            ['table' => 'loyalty_transactions', 'column' => 'user_id', 'references' => 'loyalty_points']
+            ['table' => 'chat_messages', 'column' => 'session_id', 'references' => 'chat_sessions'],
+            ['table' => 'loyalty_transactions', 'column' => 'user_id', 'references' => 'users']
         ];
         
         $brokenConstraints = [];
@@ -335,7 +334,7 @@ class ComprehensiveTestRunner
         $criticalMiddleware = [
             'ApiAuthMiddleware',
             'RateLimitMiddleware',
-            'CorsMiddleware'
+            'Cors'
         ];
         
         $found = [];
@@ -564,7 +563,7 @@ class ComprehensiveTestRunner
             
             foreach ($templates as $template) {
                 // Check if template exists in database
-                $stmt = $this->database->prepare("SELECT 1 FROM notification_templates WHERE type = ?");
+                $stmt = $this->database->prepare("SELECT 1 FROM notification_templates WHERE template_code = ?");
                 $stmt->execute([$template]);
                 if ($stmt->fetch()) {
                     $found++;

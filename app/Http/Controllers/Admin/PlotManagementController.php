@@ -1364,4 +1364,25 @@ class PlotManagementController extends AdminController
         }
         exit;
     }
+
+    public function map()
+    {
+        try {
+            $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name") ?: [];
+            $all_plots = $this->db->fetchAll("SELECT p.id, p.plot_number, p.block, p.width_ft, p.length_ft,
+                p.area_sqft, p.total_price, p.status, p.facing, p.colony_id, c.name as colony_name
+                FROM plots p
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                ORDER BY c.name, p.plot_number") ?: [];
+
+            return $this->render('admin/plots/map', [
+                'colonies' => $colonies,
+                'all_plots' => $all_plots,
+                'page_title' => 'Plot Layout Map'
+            ]);
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Error loading plot map: ' . $e->getMessage());
+            $this->redirect('/admin/plots');
+        }
+    }
 }
