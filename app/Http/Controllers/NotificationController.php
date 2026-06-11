@@ -78,7 +78,7 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("SELECT * FROM notification_feed WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
+            $stmt = $this->db->prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
             $stmt->execute([$userId]);
             $notifications = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'notifications' => $notifications]);
@@ -103,9 +103,8 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("UPDATE notification_feed SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
+            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
             $stmt->execute([$id, $userId]);
-            // Invalidate the unread-count cache for this user
             \App\Services\CacheService::invalidateUnreadCount((int)$userId);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
@@ -124,7 +123,7 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM notification_feed WHERE user_id = ? AND is_read = 0");
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0");
             $stmt->execute([$userId]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'count' => (int)($row['count'] ?? 0)]);
@@ -144,7 +143,7 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("SELECT * FROM notification_feed WHERE user_id = ? AND is_important = 1 AND is_read = 0 ORDER BY created_at DESC LIMIT 10");
+            $stmt = $this->db->prepare("SELECT * FROM notifications WHERE user_id = ? AND is_important = 1 AND is_read = 0 ORDER BY created_at DESC LIMIT 10");
             $stmt->execute([$userId]);
             $popups = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'popups' => $popups]);
@@ -169,7 +168,7 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("UPDATE notification_feed SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
+            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
             $stmt->execute([$id, $userId]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
@@ -195,8 +194,8 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("INSERT INTO notification_feed (notification_id, user_id, type, title, message, is_read) VALUES (?, ?, ?, ?, ?, 0)");
-            $stmt->execute([uniqid('notif_'), $userId, $type, $title, $message]);
+            $stmt = $this->db->prepare("INSERT INTO notifications (user_id, type, title, message, status, is_read, created_at) VALUES (?, ?, ?, ?, 'delivered', 0, NOW())");
+            $stmt->execute([$userId, $type, $title, $message]);
             echo json_encode(['success' => true, 'message' => 'Notification created']);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -221,8 +220,8 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("INSERT INTO notification_feed (notification_id, user_id, type, title, message, is_important, is_read) VALUES (?, ?, ?, ?, ?, 1, 0)");
-            $stmt->execute([uniqid('popup_'), $userId, $type, $title, $message]);
+            $stmt = $this->db->prepare("INSERT INTO notifications (user_id, type, title, message, status, is_read, is_important, created_at) VALUES (?, ?, ?, ?, 'delivered', 0, 1, NOW())");
+            $stmt->execute([$userId, $type, $title, $message]);
             echo json_encode(['success' => true, 'message' => 'Popup created']);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);

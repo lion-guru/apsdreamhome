@@ -174,26 +174,34 @@ document.getElementById('pay-btn').addEventListener('click', function() {
         description: 'Token Payment — Plot <?= htmlspecialchars($booking["plot_number"] ?? "", ENT_QUOTES) ?> at <?= htmlspecialchars($booking["colony_name"] ?? "", ENT_QUOTES) ?>',
         order_id: <?= json_encode($order_id) ?>,
         handler: function(response) {
-            // POST verification to server
-            var form = document.createElement('form');
-            form.method = 'POST';
-            form.action = <?= json_encode(BASE_URL . '/user/bookings/' . (int)$booking['id'] . '/pay-token') ?>;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying payment...';
 
-            var fields = {
-                'razorpay_order_id': response.razorpay_order_id,
-                'razorpay_payment_id': response.razorpay_payment_id,
-                'razorpay_signature': response.razorpay_signature,
-                'csrf_token': <?= json_encode($_SESSION['csrf_token'] ?? '') ?>
-            };
-            for (var k in fields) {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = k;
-                input.value = fields[k];
-                form.appendChild(input);
-            }
-            document.body.appendChild(form);
-            form.submit();
+            var formData = new FormData();
+            formData.append('razorpay_order_id', response.razorpay_order_id);
+            formData.append('razorpay_payment_id', response.razorpay_payment_id);
+            formData.append('razorpay_signature', response.razorpay_signature);
+            formData.append('csrf_token', <?= json_encode($_SESSION['csrf_token'] ?? '') ?>);
+
+            fetch(<?= json_encode(BASE_URL . '/user/bookings/' . (int)$booking['id'] . '/pay-token') ?>, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(resp) { return resp.json(); })
+            .then(function(data) {
+                if (data.success && data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.error || 'Payment verification failed. Please contact support.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-lock me-2"></i>Pay <?= number_format($token_amount) ?> Now';
+                }
+            })
+            .catch(function() {
+                alert('Unable to verify payment. If you were charged, please contact support.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock me-2"></i>Pay <?= number_format($token_amount) ?> Now';
+            });
         },
         prefill: {
             name: <?= json_encode(htmlspecialchars($user['name'] ?? '')) ?>,

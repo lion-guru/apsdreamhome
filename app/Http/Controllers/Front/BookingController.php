@@ -239,6 +239,17 @@ class BookingController extends BaseController
                 $svc->generatePaymentSchedule($result['id'], 12, 10.0);
             }
 
+            // Send booking confirmation notification
+            try {
+                $notifSvc = new \App\Services\Communication\NotificationService();
+                $notifSvc->sendNotification($user['id'], 'in_app', 'Booking Confirmed',
+                    'Your booking for plot #' . $plot['plot_no'] . ' has been confirmed. Booking #' . $result['booking_number'] . '.',
+                    ['event_type' => 'booking', 'booking_id' => $result['id'], 'action_url' => '/booking/confirmation/' . $result['id']]
+                );
+            } catch (\Throwable $e) {
+                error_log('[BookingController] notification failed: ' . $e->getMessage());
+            }
+
             $this->redirect('/booking/confirmation/' . $result['id']);
         } catch (\Throwable $e) {
             error_log('[BookingController::submitBooking] ' . $e->getMessage());

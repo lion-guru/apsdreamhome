@@ -122,16 +122,20 @@ class NotificationService
         $feedType = $typeMap[$key] ?? 'info';
 
         try {
-            $this->db->insert('notification_feed', [
-                'notification_id' => $notificationId,
+            $this->db->insert('notifications', [
                 'user_id' => $userId,
                 'type' => $feedType,
                 'title' => $title,
                 'message' => $message,
-                'data' => !empty($data) ? json_encode($data) : null,
+                'status' => 'delivered',
                 'is_read' => 0,
-                'is_important' => ($data['priority'] ?? '') === 'high' ? 1 : 0,
+                'priority' => ($data['priority'] ?? '') === 'high' ? 'high' : 'normal',
+                'related_id' => $data['booking_id'] ?? null,
+                'related_type' => $data['event_type'] ?? null,
                 'action_url' => $data['action_url'] ?? null,
+                'template_key' => $data['template_key'] ?? null,
+                'template_data' => !empty($data) ? json_encode($data) : null,
+                'is_important' => ($data['priority'] ?? '') === 'high' ? 1 : 0,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         } catch (\Exception $e) {
@@ -370,7 +374,7 @@ class NotificationService
     {
         try {
             return $this->db->fetchAll(
-                "SELECT * FROM notification_feed WHERE user_id = ? ORDER BY created_at DESC LIMIT ?",
+                "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT ?",
                 [$userId, $limit]
             );
         } catch (\Exception $e) {
@@ -382,7 +386,7 @@ class NotificationService
     {
         try {
             $row = $this->db->fetchOne(
-                "SELECT COUNT(*) as cnt FROM notification_feed WHERE user_id = ? AND is_read = 0",
+                "SELECT COUNT(*) as cnt FROM notifications WHERE user_id = ? AND is_read = 0",
                 [$userId]
             );
             return (int)($row['cnt'] ?? 0);
@@ -395,7 +399,7 @@ class NotificationService
     {
         try {
             $this->db->query(
-                "UPDATE notification_feed SET is_read = 1, read_at = NOW() WHERE notification_id = ?",
+                "UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?",
                 [$notificationId]
             );
         } catch (\Exception $e) {
@@ -407,7 +411,7 @@ class NotificationService
     {
         try {
             $this->db->query(
-                "UPDATE notification_feed SET is_read = 1, read_at = NOW() WHERE user_id = ? AND is_read = 0",
+                "UPDATE notifications SET is_read = 1, read_at = NOW() WHERE user_id = ? AND is_read = 0",
                 [$userId]
             );
         } catch (\Exception $e) {

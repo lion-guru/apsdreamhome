@@ -55,6 +55,11 @@
 </style>
 
 <script>
+function getCsrfToken() {
+    var meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : '';
+}
+
 function markRead(btn) {
     var item = btn.closest('.notif-item');
     var id = item.dataset.id;
@@ -62,6 +67,7 @@ function markRead(btn) {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', BASE_URL + '/user/notifications/' + encodeURIComponent(id) + '/read', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('X-CSRF-TOKEN', getCsrfToken());
     xhr.onload = function() {
         if (xhr.status === 200) {
             item.classList.remove('notif-unread');
@@ -76,6 +82,7 @@ function markAllRead() {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', BASE_URL + '/user/notifications/read-all', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('X-CSRF-TOKEN', getCsrfToken());
     xhr.onload = function() {
         if (xhr.status === 200) {
             document.querySelectorAll('.notif-unread').forEach(function(el) {

@@ -98,6 +98,19 @@ class KycController extends AdminController
                 } catch (\Throwable $e) {
                     error_log("[KycController] approve email failed: " . $e->getMessage());
                 }
+                // Send in-app notification
+                try {
+                    $row2 = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
+                    if (!empty($row2['user_id'])) {
+                        $notifSvc = new \App\Services\Communication\NotificationService();
+                        $notifSvc->sendNotification((int)$row2['user_id'], 'in_app', 'KYC Approved',
+                            'Your KYC has been verified and approved. You can now access all features.',
+                            ['event_type' => 'kyc', 'action_url' => '/user/dashboard']
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    error_log("[KycController] approve notification failed: " . $e->getMessage());
+                }
             } else {
                 $this->setFlash('warning', 'KYC request was already processed');
             }
@@ -137,6 +150,19 @@ class KycController extends AdminController
                     }
                 } catch (\Throwable $e) {
                     error_log("[KycController] reject email failed: " . $e->getMessage());
+                }
+                // Send in-app notification
+                try {
+                    $row2 = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
+                    if (!empty($row2['user_id'])) {
+                        $notifSvc = new \App\Services\Communication\NotificationService();
+                        $notifSvc->sendNotification((int)$row2['user_id'], 'in_app', 'KYC Rejected',
+                            'Your KYC was not approved. Reason: ' . $reason . '. Please resubmit with correct documents.',
+                            ['event_type' => 'kyc', 'action_url' => '/user/kyc']
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    error_log("[KycController] reject notification failed: " . $e->getMessage());
                 }
             } else {
                 $this->setFlash('warning', 'KYC request was already processed');

@@ -735,6 +735,20 @@ class MoneyWorkflowService
             ? (float)$data['amount_inr']
             : round($gross * $fxRate, 2);
 
+        // Auto-fetch exchange rate for non-INR currencies if rate is missing or default
+        if ($currency !== 'INR' && ($fxRate <= 0 || $fxRate == 1.0)) {
+            try {
+                $fxService = new \App\Services\ExchangeRateService();
+                $rateResult = $fxService->getRate($currency, 'INR');
+                if ($rateResult['success'] && isset($rateResult['rate'])) {
+                    $fxRate    = (float)$rateResult['rate'];
+                    $amountInr = round($gross * $fxRate, 2);
+                }
+            } catch (Exception $e) {
+                // Keep manual rate on failure
+            }
+        }
+
         $this->db->beginTransaction();
         try {
             $vpId = (int)$this->db->insert('vendor_payments', [
@@ -1327,6 +1341,24 @@ class MoneyWorkflowService
                     'new_penalty'    => $newPenalty,
                     'total_accrued'  => $totalAccrued,
                 ];
+
+                // Notify customer of penalty
+                try {
+                    $userId = $this->db->fetchOne(
+                        "SELECT pb.user_id FROM plot_bookings pb WHERE pb.id = ?",
+                        [$row['booking_id']]
+                    );
+                    if (!empty($userId['user_id'])) {
+                        $notifSvc = new \App\Services\Communication\NotificationService();
+                        $notifSvc->sendNotification((int)$userId['user_id'], 'in_app',
+                            'EMI Penalty Applied',
+                            'Installment #' . $row['installment_no'] . ' is ' . $daysOverdue . ' days overdue. Penalty of ₹' . number_format($newPenalty, 2) . ' applied (total: ₹' . number_format($totalAccrued, 2) . ').',
+                            ['event_type' => 'payment', 'booking_id' => $row['booking_id'], 'action_url' => '/booking/confirmation/' . $row['booking_id']]
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    error_log('applyDailyPenalties notification failed: ' . $e->getMessage());
+                }
             }
         } catch (\Throwable $e) {
             error_log('applyDailyPenalties error: ' . $e->getMessage());
