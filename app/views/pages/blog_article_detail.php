@@ -1,4 +1,4 @@
-﻿<div class="container py-5">
+<div class="container py-5">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>

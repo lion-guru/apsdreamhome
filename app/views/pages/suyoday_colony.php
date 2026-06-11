@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Suyoday Colony Project Page - APS Dream Home

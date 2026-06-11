@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $plot = $plot ?? [];
 $customers = $customers ?? [];
 $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Installment (12 months)', 'Installment (24 months)', 'Construction Linked'];

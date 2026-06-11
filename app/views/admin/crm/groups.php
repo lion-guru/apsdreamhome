@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Lead Groups'; ?>
+<?php $page_title = 'Lead Groups'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-layer-group me-2"></i>Lead Groups</h2>
     <div class="row mb-4">

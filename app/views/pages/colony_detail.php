@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $colony = $colony ?? [];
 $availablePlots = $availablePlots ?? [];
 $highlights = !empty($colony['key_highlights']) ? (json_decode($colony['key_highlights'], true) ?? []) : [];

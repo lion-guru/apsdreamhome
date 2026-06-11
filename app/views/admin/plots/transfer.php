@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $plot = $plot ?? [];
 $customers = $customers ?? [];
 $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer', 'Resale', 'Company Transfer', 'Nominee Transfer', 'Legal Heir', 'Other'];

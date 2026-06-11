@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * KYC Upload View - APS Dream Homes
  * Migrated from resources/views/Views/kyc-upload.php

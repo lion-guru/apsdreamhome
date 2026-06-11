@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Admin View Testimonial Page
  * Review and approve/reject individual testimonials

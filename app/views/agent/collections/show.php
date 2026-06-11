@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Collection Detail - APS Dream Home';
 $collection = $collection ?? [];
 $base = defined('BASE_URL') ? BASE_URL : '';

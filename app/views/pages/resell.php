@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // app/views/pages/resell.php
 // Available variables: $properties, $cities, $property_types, $filters, $pagination
 ?>

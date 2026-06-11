@@ -1,4 +1,4 @@
-﻿<div class="container-fluid py-4">
+<div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="h3 mb-2"><?= htmlspecialchars($page_title ?? 'Compare Properties') ?></h1>

@@ -1,4 +1,4 @@
-﻿<!-- Gallery Header -->
+<!-- Gallery Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Gallery Management</h1>

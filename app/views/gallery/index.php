@@ -1,4 +1,4 @@
-﻿<style>
+<style>
         :root {
             --primary: #2c3e50;
             --secondary: #3498db;

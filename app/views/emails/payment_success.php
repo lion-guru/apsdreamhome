@@ -1,4 +1,4 @@
-﻿<?php $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome'; ?>
+<?php $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

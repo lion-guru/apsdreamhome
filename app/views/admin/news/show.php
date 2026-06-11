@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $pageTitle = $pageTitle ?? 'News Article';
 $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
 $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'publish_date' => '', 'status' => '', 'image' => '', 'excerpt' => '', 'category' => ''];

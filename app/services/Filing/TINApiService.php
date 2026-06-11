@@ -2,11 +2,14 @@
 namespace App\Services\Filing;
 
 use PDO;
+use App\Services\ServiceConfigService;
 
 /**
  * TINApiService — Tax Information Network API client
  * Handles TDS e-filing: Form 26Q/27Q submission, status, Form16A download
  * TEST_MODE=true by default — returns realistic mock responses
+ *
+ * Config resolution: constructor param → DB (service_configs) → env → hardcoded default.
  */
 class TINApiService
 {
@@ -21,10 +24,12 @@ class TINApiService
 
     public function __construct(array $config = [])
     {
-        $this->testMode = $config['test_mode'] ?? ($_ENV['TIN_TEST_MODE'] ?? 'true');
-        $this->tan = $config['tan'] ?? ($_ENV['TIN_TAN'] ?? '');
-        $this->username = $config['username'] ?? ($_ENV['TIN_USERNAME'] ?? '');
-        $this->password = $config['password'] ?? ($_ENV['TIN_PASSWORD'] ?? '');
+        // Fallback chain: constructor param → DB → env → hardcoded
+        $dbCfg = self::getDbConfig();
+        $this->testMode = $config['test_mode'] ?? $dbCfg['test_mode'] ?? ($_ENV['TIN_TEST_MODE'] ?? 'true');
+        $this->tan = $config['tan'] ?? ($dbCfg['tan'] ?? '') ?: ($_ENV['TIN_TAN'] ?? '');
+        $this->username = $config['username'] ?? $dbCfg['username'] ?? ($_ENV['TIN_USERNAME'] ?? '');
+        $this->password = $config['password'] ?? $dbCfg['password'] ?? ($_ENV['TIN_PASSWORD'] ?? '');
 
         try {
             $dbConfig = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
@@ -35,6 +40,15 @@ class TINApiService
             );
         } catch (\Exception $e) {
             error_log("[TINApiService] DB connection failed: " . $e->getMessage());
+        }
+    }
+
+    private static function getDbConfig(): array
+    {
+        try {
+            return ServiceConfigService::getApiConfig('tin');
+        } catch (\Throwable $e) {
+            return [];
         }
     }
 

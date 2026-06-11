@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = 'Add New Property';
 $active_page = 'properties';
 ?>

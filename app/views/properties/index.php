@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = 'Premium Properties - APS Dream Home';
 include __DIR__ . '/../layouts/base.php';
 ?>

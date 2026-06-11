@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Saved Search Results';
 $current_page = 'saved-searches';
 $user = $user ?? [];

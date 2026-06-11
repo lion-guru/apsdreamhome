@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Follow-ups'; ?>
+<?php $page_title = 'Follow-ups'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-phone-alt me-2"></i>Follow-ups</h2>
     <?php if (!empty($pending)): ?>

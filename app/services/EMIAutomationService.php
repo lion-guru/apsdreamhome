@@ -34,6 +34,7 @@ class EMIAutomationService
             'reminders'       => false,
             'dunning'         => false,
             'defaults_check'  => false,
+            'auto_payments'   => null,
         ];
 
         try {
@@ -44,6 +45,7 @@ class EMIAutomationService
             $results['reminders']      = $this->sendUpcomingPaymentReminders();
             $results['dunning']        = $this->sendDunningEmails();
             $results['defaults_check'] = $this->checkDefaultedBookings();
+            $results['auto_payments']  = $this->runAutoPaymentCron();
 
             $this->db->commit();
             return $results;
@@ -53,6 +55,23 @@ class EMIAutomationService
             }
             error_log("EMI Automation Error: " . $e->getMessage());
             return $results;
+        }
+    }
+
+    /**
+     * Run EMI auto-payment processing via mandates.
+     * Called from runAll() or standalone cron.
+     *
+     * @return array|null  Result from EMIAutoPaymentService::processDueEmiPayments()
+     */
+    public function runAutoPaymentCron(): ?array
+    {
+        try {
+            $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db);
+            return $autoPayService->processDueEmiPayments();
+        } catch (Exception $e) {
+            error_log("runAutoPaymentCron: " . $e->getMessage());
+            return null;
         }
     }
 

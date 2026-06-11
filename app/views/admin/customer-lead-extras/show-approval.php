@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Session started by controller
 $page_title = 'Approval Request Details';
 $page_description = 'Detailed view of lead assignment approval request';

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'SMS Campaigns - APS Dream Home';
 $page_heading = $page_heading ?? 'SMS Campaigns';
 

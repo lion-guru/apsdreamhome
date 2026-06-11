@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Property Auctions';
 $page_heading = $page_heading ?? 'Property Auctions';
 $content = $content ?? '';

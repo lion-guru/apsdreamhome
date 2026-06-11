@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Import Leads'; ?>
+<?php $page_title = 'Import Leads'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-file-import me-2"></i>Import Leads</h2>
     <div class="row">

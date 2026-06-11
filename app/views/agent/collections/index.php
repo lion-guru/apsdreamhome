@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'My Cash Collections - APS Dream Home';
 $stats = $stats ?? [];
 $collections = $collections ?? [];

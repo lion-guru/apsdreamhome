@@ -37,7 +37,18 @@ class ExchangeRateService
 
     public function __construct()
     {
-        $this->testMode = strtoupper(trim($_ENV['EXCHANGE_RATE_TEST_MODE'] ?? '')) === 'TRUE';
+        // Fallback chain: DB (service_configs) → env → hardcoded default
+        $dbTest = self::dbGet('exchange_rate', 'test_mode', '');
+        $this->testMode = strtoupper(trim($dbTest ?: ($_ENV['EXCHANGE_RATE_TEST_MODE'] ?? ''))) === 'TRUE';
+    }
+
+    private static function dbGet(string $service, string $key, mixed $default = null): mixed
+    {
+        try {
+            return ServiceConfigService::get($service, $key, $default);
+        } catch (\Throwable $e) {
+            return $default;
+        }
     }
 
     /**

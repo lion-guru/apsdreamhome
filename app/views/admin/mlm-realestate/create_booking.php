@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Create Booking - APS Dream Home';
 $page_heading = $page_heading ?? 'Create Booking';
 

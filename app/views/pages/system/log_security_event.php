@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Security Event Logger
  * Handles logging of security-related events from the application

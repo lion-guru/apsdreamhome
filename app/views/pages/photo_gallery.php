@@ -1,4 +1,4 @@
-﻿<div class="container mt-4">
+<div class="container mt-4">
     <h1 class="mb-4"><?php echo $page_title ?? 'Photo Gallery'; ?></h1>
     <?php if (!empty($images)): ?>
         <div class="row">

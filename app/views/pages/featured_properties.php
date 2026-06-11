@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Featured Properties Page - APS Dream Homes
 
 $featuredProperties = [

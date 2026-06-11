@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Lucknow Ram Nagri Project View - APS Dream Homes
  * Migrated from resources/views/Views/lucknow-ram-nagri.php

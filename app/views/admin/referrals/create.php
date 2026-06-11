@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Create Referral'; ?>
+<?php $page_title = 'Create Referral'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-plus-circle me-2"></i>Create Referral</h2>
     <div class="row">

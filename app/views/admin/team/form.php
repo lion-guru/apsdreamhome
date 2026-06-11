@@ -1,4 +1,4 @@
-﻿<?php $isEdit = !empty($member); ?>
+<?php $isEdit = !empty($member); ?>
 <?php if (isset($_SESSION['error'])): ?>
 <div class="alert alert-danger alert-dismissible fade show"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
 <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>

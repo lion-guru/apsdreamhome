@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Lead Analysis'; ?>
+<?php $page_title = 'Lead Analysis'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Lead Analysis</h2>
     <div class="row mb-4">

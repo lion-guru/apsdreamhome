@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Auction';
 $page_heading = $page_heading ?? 'Auction';
 $content = $content ?? '';

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * User Saved Properties View - APS Dream Home
  * Shows user's favorite properties

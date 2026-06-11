@@ -2,6 +2,8 @@
 
 namespace App\Services\Storage;
 
+use App\Services\ServiceConfigService;
+
 /**
  * S3Storage - AWS S3 adapter using the AWS Signature V4 algorithm.
  *
@@ -56,13 +58,24 @@ class S3Storage implements StorageInterface
 
     public function __construct(?array $config = null)
     {
-        $this->accessKey    = $config['access_key']    ?? (getenv('AWS_ACCESS_KEY_ID') ?: '');
-        $this->secretKey    = $config['secret_key']    ?? (getenv('AWS_SECRET_ACCESS_KEY') ?: '');
-        $this->region       = $config['region']        ?? (getenv('AWS_DEFAULT_REGION') ?: 'ap-south-1');
-        $this->bucket       = $config['bucket']        ?? (getenv('AWS_BUCKET') ?: '');
-        $this->endpoint     = $config['endpoint']      ?? (getenv('AWS_ENDPOINT') ?: null);
-        $this->pathStyle    = ($config['path_style']   ?? getenv('AWS_S3_USE_PATH_STYLE')) === 'true' || $this->endpoint !== null;
+        // Fallback chain: constructor param → DB (service_configs) → env → hardcoded default
+        $dbCfg = self::getDbConfig();
+        $this->accessKey     = $config['access_key']     ?? $dbCfg['access_key']     ?? (getenv('AWS_ACCESS_KEY_ID') ?: '');
+        $this->secretKey     = $config['secret_key']     ?? $dbCfg['secret_key']     ?? (getenv('AWS_SECRET_ACCESS_KEY') ?: '');
+        $this->region        = $config['region']         ?? $dbCfg['region']         ?? (getenv('AWS_DEFAULT_REGION') ?: 'ap-south-1');
+        $this->bucket        = $config['bucket']         ?? $dbCfg['bucket']         ?? (getenv('AWS_BUCKET') ?: '');
+        $this->endpoint      = $config['endpoint']       ?? $dbCfg['endpoint']       ?? (getenv('AWS_ENDPOINT') ?: null);
+        $this->pathStyle     = (($config['path_style']  ?? $dbCfg['use_path_style'] ?? getenv('AWS_S3_USE_PATH_STYLE')) === 'true') || $this->endpoint !== null;
         $this->defaultExpiry = (int) ($config['url_expiry'] ?? (getenv('AWS_URL_EXPIRY') ?: 60));
+    }
+
+    private static function getDbConfig(): array
+    {
+        try {
+            return ServiceConfigService::getApiConfig('aws_s3');
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function getDriver(): string

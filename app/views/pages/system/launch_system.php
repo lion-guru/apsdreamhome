@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * System Launch Validator
  */

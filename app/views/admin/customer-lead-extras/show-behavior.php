@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Session started by controller
 $page_title = 'Behavior Analysis Details';
 $page_description = 'Detailed view of customer behavior analysis';

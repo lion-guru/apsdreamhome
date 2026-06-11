@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $gallery = $media['gallery'] ?? [];
 $layoutMap = $media['layout_map'] ?? null;
 $virtualTour = $media['virtual_tour'] ?? null;

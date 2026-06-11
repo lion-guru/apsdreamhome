@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $pageTitle = $pageTitle ?? 'File Details';
 $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
 $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_bytes' => 0, 'file_category' => '', 'description' => '', 'created_at' => '', 'download_count' => 0, 'uuid' => '', 'uploaded_by' => '', 'mime_type' => ''];

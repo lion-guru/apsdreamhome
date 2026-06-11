@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Ganga Nagri Project View - APS Dream Homes
  */

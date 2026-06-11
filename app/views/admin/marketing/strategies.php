@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Marketing Strategies - APS Dream Home Admin

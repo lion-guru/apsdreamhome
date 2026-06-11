@@ -1,4 +1,4 @@
-﻿<!-- Portfolio Section -->
+<!-- Portfolio Section -->
 <section id="portfolio" class="portfolio-section">
     <div class="container">
         <div class="section-header text-center" data-aos="fade-up">

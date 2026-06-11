@@ -17,6 +17,7 @@
 namespace App\Services\Gateway;
 
 use App\Core\Database\Database;
+use App\Services\ServiceConfigService;
 use PDO;
 
 class RazorpayService
@@ -42,12 +43,26 @@ class RazorpayService
             $this->db = $pdo;
         }
 
-        $this->keyId        = $_ENV['RAZORPAY_KEY_ID']        ?? getenv('RAZORPAY_KEY_ID') ?: 'rzp_test_default';
-        $this->keySecret    = $_ENV['RAZORPAY_KEY_SECRET']    ?? getenv('RAZORPAY_KEY_SECRET') ?: 'secret_default';
-        $this->webhookSecret= $_ENV['RAZORPAY_WEBHOOK_SECRET']?? getenv('RAZORPAY_WEBHOOK_SECRET') ?: 'whsec_default';
-        $this->testMode     = filter_var($_ENV['RAZORPAY_TEST_MODE'] ?? getenv('RAZORPAY_TEST_MODE') ?: 'false', FILTER_VALIDATE_BOOLEAN);
-        $this->timeout      = (int)($_ENV['RAZORPAY_TIMEOUT'] ?? self::DEFAULT_TIMEOUT);
-        $this->logger       = $logger;
+        // Fallback chain: DB (service_configs) → env → hardcoded default
+        $dbCfg = self::getDbConfig();
+        $this->keyId         = $dbCfg['key_id']         ?? ($_ENV['RAZORPAY_KEY_ID']         ?? getenv('RAZORPAY_KEY_ID')         ?: 'rzp_test_default');
+        $this->keySecret     = $dbCfg['key_secret']     ?? ($_ENV['RAZORPAY_KEY_SECRET']     ?? getenv('RAZORPAY_KEY_SECRET')     ?: 'secret_default');
+        $this->webhookSecret = $dbCfg['webhook_secret'] ?? ($_ENV['RAZORPAY_WEBHOOK_SECRET'] ?? getenv('RAZORPAY_WEBHOOK_SECRET') ?: 'whsec_default');
+        $this->testMode      = filter_var(
+            $dbCfg['test_mode'] ?? ($_ENV['RAZORPAY_TEST_MODE'] ?? getenv('RAZORPAY_TEST_MODE') ?: 'false'),
+            FILTER_VALIDATE_BOOLEAN
+        );
+        $this->timeout       = (int)($_ENV['RAZORPAY_TIMEOUT'] ?? self::DEFAULT_TIMEOUT);
+        $this->logger        = $logger;
+    }
+
+    private static function getDbConfig(): array
+    {
+        try {
+            return ServiceConfigService::getApiConfig('razorpay');
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function isConfigured(): bool

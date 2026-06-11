@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Record Collection - APS Dream Home';
 $today = $today ?? date('Y-m-d');
 $base = defined('BASE_URL') ? BASE_URL : '';

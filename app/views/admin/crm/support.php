@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Support Tickets'; ?>
+<?php $page_title = 'Support Tickets'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-headset me-2"></i>Support Tickets</h2>
     <div class="row mb-4">

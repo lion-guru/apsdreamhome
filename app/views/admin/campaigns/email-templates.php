@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Email Templates - APS Dream Home';
 $page_heading = $page_heading ?? 'Email Templates';
 

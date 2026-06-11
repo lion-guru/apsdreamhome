@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Customer Dashboard - APS Dream Home
  */

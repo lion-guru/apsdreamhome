@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Helper function for HTML escaping if not defined
 if (!function_exists('h')) {
     function h($string)

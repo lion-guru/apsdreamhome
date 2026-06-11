@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Lead Status'; ?>
+<?php $page_title = 'Lead Status'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-chart-pie me-2"></i><?= __('admin_lead_status_overview') ?></h2>
     <div class="row mb-4">

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * AI Smart Recommendations View
  */

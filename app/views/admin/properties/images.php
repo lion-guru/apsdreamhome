@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Property Images Management Page

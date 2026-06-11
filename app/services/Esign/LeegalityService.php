@@ -3,6 +3,7 @@
 namespace App\Services\Esign;
 
 use App\Core\Database\Database;
+use App\Services\ServiceConfigService;
 
 /**
  * Leegality E-Signature Gateway
@@ -10,10 +11,12 @@ use App\Core\Database\Database;
  * Handles document creation, signing status, and signature verification
  * via the Leegality API (https://api.leegality.com/v2).
  *
+ * Config resolution: constructor param → DB (service_configs) → env → hardcoded default.
+ *
  * Contract:
  *  - NEVER throws. All public methods return ['success' => bool, ...].
  *  - Every call logged to `gateway_logs`.
- *  - Honors LEEGALITY_TEST_MODE env var for mock responses.
+ *  - Honors test_mode from DB/env for mock responses.
  */
 class LeegalityService
 {
@@ -31,13 +34,22 @@ class LeegalityService
 
     public function __construct(?string $apiKey = null)
     {
-        $this->apiKey = $apiKey
-            ?? ($_ENV['LEEGALITY_API_KEY'] ?? getenv('LEEGALITY_API_KEY') ?: '');
+        // Fallback chain: constructor param → DB → env → hardcoded
+        $this->apiKey = $apiKey ?? self::configValue('api_key', $_ENV['LEEGALITY_API_KEY'] ?? getenv('LEEGALITY_API_KEY') ?: '');
         $this->testMode = filter_var(
-            $_ENV['LEEGALITY_TEST_MODE'] ?? getenv('LEEGALITY_TEST_MODE') ?: 'true',
+            self::configValue('test_mode', $_ENV['LEEGALITY_TEST_MODE'] ?? getenv('LEEGALITY_TEST_MODE') ?: 'true'),
             FILTER_VALIDATE_BOOLEAN
         );
         $this->pdo = $this->resolvePdo();
+    }
+
+    private static function configValue(string $key, mixed $default): mixed
+    {
+        try {
+            return ServiceConfigService::get('leegality', $key, $default);
+        } catch (\Throwable $e) {
+            return $default;
+        }
     }
 
     /**

@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Lead Notes & Activities'; ?>
+<?php $page_title = 'Lead Notes & Activities'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-sticky-note me-2"></i>Lead Notes & Activities</h2>
     <?php if (!$lead): ?>

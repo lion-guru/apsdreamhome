@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Suryoday Colony Project View - APS Dream Homes
  */

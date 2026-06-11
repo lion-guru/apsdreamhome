@@ -1,4 +1,4 @@
-﻿<div class="container mt-4">
+<div class="container mt-4">
     <nav aria-label="breadcrumb"><ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
         <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/photo-gallery">Gallery</a></li>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Properties - APS Dream Home';
 $current_page = 'properties';
 

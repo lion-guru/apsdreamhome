@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Bulk Actions'; ?>
+<?php $page_title = 'Bulk Actions'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-tasks me-2"></i>Bulk Actions</h2>
     <div class="card border-0 shadow-sm mb-4">

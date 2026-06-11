@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $media = $media ?? [];
 $page = $page ?? 1;
 $total = $total ?? 0;

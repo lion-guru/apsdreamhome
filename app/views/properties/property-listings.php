@@ -1,4 +1,4 @@
-﻿/**
+/**
 * property-listings - APS Dream Home Component
 *
 * @package APS Dream Home

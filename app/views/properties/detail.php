@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $property = $data['property'] ?? null;
 $property_images = $data['property_images'] ?? [];
 $related = $data['related_properties'] ?? [];

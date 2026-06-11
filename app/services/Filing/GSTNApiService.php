@@ -2,11 +2,14 @@
 namespace App\Services\Filing;
 
 use PDO;
+use App\Services\ServiceConfigService;
 
 /**
  * GSTNApiService — GSTN portal API client
  * Handles authentication, GSTR-1/3B submission, status checks
  * TEST_MODE=true by default — returns realistic mock responses
+ *
+ * Config resolution: constructor param → DB (service_configs) → env → hardcoded default.
  */
 class GSTNApiService
 {
@@ -22,21 +25,32 @@ class GSTNApiService
 
     public function __construct(array $config = [])
     {
-        $this->testMode = $config['test_mode'] ?? ($_ENV['GSTN_TEST_MODE'] ?? 'true');
-        $this->gstin = $config['gstin'] ?? ($_ENV['GSTN_GSTIN'] ?? '');
-        $this->username = $config['username'] ?? ($_ENV['GSTN_USERNAME'] ?? '');
-        $this->password = $config['password'] ?? ($_ENV['GSTN_PASSWORD'] ?? '');
-        $this->apiKey = $config['api_key'] ?? ($_ENV['GSTN_API_KEY'] ?? '');
+        // Fallback chain: constructor param → DB → env → hardcoded
+        $dbConfig = self::getDbConfig();
+        $this->testMode = $config['test_mode'] ?? $dbConfig['test_mode'] ?? ($_ENV['GSTN_TEST_MODE'] ?? 'true');
+        $this->gstin = $config['gstin'] ?? $dbConfig['gstin'] ?? ($_ENV['GSTN_GSTIN'] ?? '');
+        $this->username = $config['username'] ?? $dbConfig['username'] ?? ($_ENV['GSTN_USERNAME'] ?? '');
+        $this->password = $config['password'] ?? $dbConfig['password'] ?? ($_ENV['GSTN_PASSWORD'] ?? '');
+        $this->apiKey = $config['api_key'] ?? $dbConfig['api_key'] ?? ($_ENV['GSTN_API_KEY'] ?? '');
 
         try {
-            $dbConfig = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
+            $dbCfg = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
             $this->pdo = new PDO(
-                "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['database']};charset=utf8mb4",
-                $dbConfig['username'], $dbConfig['password'],
+                "mysql:host={$dbCfg['host']};port={$dbCfg['port']};dbname={$dbCfg['database']};charset=utf8mb4",
+                $dbCfg['username'], $dbCfg['password'],
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
         } catch (\Exception $e) {
             error_log("[GSTNApiService] DB connection failed: " . $e->getMessage());
+        }
+    }
+
+    private static function getDbConfig(): array
+    {
+        try {
+            return ServiceConfigService::getApiConfig('gstn');
+        } catch (\Throwable $e) {
+            return [];
         }
     }
 

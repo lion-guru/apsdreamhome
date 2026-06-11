@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Departments - APS Dream Home';
 $page_heading = $page_heading ?? 'Departments';
 

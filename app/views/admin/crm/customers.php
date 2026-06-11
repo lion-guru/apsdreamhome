@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Customers'; ?>
+<?php $page_title = 'Customers'; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fas fa-users me-2"></i>Customers</h2>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Our Projects - APS Dream Home';
 $page_description = $page_description ?? 'Explore our ongoing and completed real estate projects';
 $projects = $projects ?? [];

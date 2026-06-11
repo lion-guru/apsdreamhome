@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Quick Register - APS Dream Home
  * Easy registration with multiple options

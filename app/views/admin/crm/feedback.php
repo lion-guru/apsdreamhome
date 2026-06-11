@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Customer Feedback'; ?>
+<?php $page_title = 'Customer Feedback'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-star me-2"></i>Customer Feedback</h2>
     <div class="row mb-4">

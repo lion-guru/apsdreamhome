@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'AI Calling Campaign - APS Dream Home';
 $page_heading = $page_heading ?? 'AI Calling Campaign';
 

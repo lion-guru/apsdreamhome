@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $extraHead = '<style>
     .property-card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: transform 0.2s; }
     .property-card:hover { transform: translateY(-3px); }

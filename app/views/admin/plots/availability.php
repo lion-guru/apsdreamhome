@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $colonies = $colonies ?? [];
 $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, 'total' => 0];
 ?>

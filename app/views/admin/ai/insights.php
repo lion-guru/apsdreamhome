@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'AI Insights - APS Dream Home';
 $page_heading = $page_heading ?? 'AI Insights';
 

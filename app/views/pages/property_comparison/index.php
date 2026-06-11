@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Property Comparison';
 $page_heading = $page_heading ?? 'Property Comparison';
 $content = $content ?? '';

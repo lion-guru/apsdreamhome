@@ -1,4 +1,4 @@
-﻿<?php $page_title = 'Referral Details'; ?>
+<?php $page_title = 'Referral Details'; ?>
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-share-alt me-2"></i>Referral Details</h2>
     <?php if (!$referral): ?>

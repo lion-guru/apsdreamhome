@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Reviews & Testimonials';
 $page_heading = $page_heading ?? 'Reviews & Testimonials';
 $content = $content ?? '';

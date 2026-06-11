@@ -1,4 +1,4 @@
-﻿<!-- Hero Section -->
+<!-- Hero Section -->
 <section class="legal-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
     <div class="container">
         <h1 class="display-4 fw-bold">Legal Services</h1>

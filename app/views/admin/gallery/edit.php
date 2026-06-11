@@ -1,4 +1,4 @@
-﻿<!-- Page Header -->
+<!-- Page Header -->
 <div class="mb-4">
     <a href="<?php echo BASE_URL; ?>/admin/gallery" class="text-decoration-none text-muted">
         <i class="fas fa-arrow-left me-2"></i>Back to Gallery

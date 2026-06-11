@@ -3,6 +3,7 @@
 namespace App\Services\Gateway;
 
 use App\Core\Database\Database;
+use App\Services\ServiceConfigService;
 
 /**
  * APS Dream Home - Unified Twilio Gateway
@@ -65,15 +66,28 @@ class TwilioService
 
     public function __construct()
     {
-        $this->accountSid     = $this->env('TWILIO_ACCOUNT_SID');
-        $this->authToken      = $this->env('TWILIO_AUTH_TOKEN');
-        $this->fromNumber     = $this->env('TWILIO_FROM_NUMBER');
-        $this->whatsappNumber = $this->env('TWILIO_WHATSAPP_NUMBER');
-        $this->testMode       = $this->env('TWILIO_TEST_MODE') === 'true'
+        // Fallback chain: DB (service_configs) → env → hardcoded default
+        $dbCfg = self::getDbConfig();
+        $this->accountSid     = $dbCfg['account_sid']     ?: $this->env('TWILIO_ACCOUNT_SID');
+        $this->authToken      = $dbCfg['auth_token']      ?: $this->env('TWILIO_AUTH_TOKEN');
+        $this->fromNumber     = $dbCfg['from_number']      ?: $this->env('TWILIO_FROM_NUMBER');
+        $this->whatsappNumber = $dbCfg['whatsapp_number']  ?: $this->env('TWILIO_WHATSAPP_NUMBER');
+        $this->testMode       = ($dbCfg['test_mode'] ?? '') === '1'
+                             || ($dbCfg['test_mode'] ?? '') === 'true'
+                             || $this->env('TWILIO_TEST_MODE') === 'true'
                              || $this->env('TWILIO_TEST_MODE') === '1'
                              || getenv('TWILIO_TEST_MODE') === 'true';
 
         $this->pdo = $this->resolvePdo();
+    }
+
+    private static function getDbConfig(): array
+    {
+        try {
+            return ServiceConfigService::getApiConfig('twilio');
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     /**

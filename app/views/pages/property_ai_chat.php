@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Property AI Assistant - APS Dream Home';
 $page_description = $page_description ?? 'AI Assistant for Property Information';
 $property = $property ?? null;

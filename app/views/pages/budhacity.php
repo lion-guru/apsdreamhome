@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Budha City Kushinagar Project View - APS Dream Homes
  */

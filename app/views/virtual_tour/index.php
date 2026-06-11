@@ -1,4 +1,4 @@
-﻿<div class="container-fluid py-4">
+<div class="container-fluid py-4">
     <?php $property = $property ?? []; $tour_data = $tour_data ?? []; $ar_enabled = $ar_enabled ?? false; ?>
     <div class="row mb-4">
         <div class="col-12">

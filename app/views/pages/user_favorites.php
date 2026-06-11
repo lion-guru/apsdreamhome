@@ -1,4 +1,4 @@
-﻿<div class="container py-4">
+<div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="fw-bold mb-1"><i class="fas fa-heart text-danger me-2"></i><?= __('user_favorites_heading') ?></h4>

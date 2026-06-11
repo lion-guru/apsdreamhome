@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Bank Details - APS Dream Home Component
  */

@@ -1,4 +1,4 @@
-﻿<?php $plot = $plot ?? []; $priceHistory = $priceHistory ?? []; $nearbyPlots = $nearbyPlots ?? []; ?>
+<?php $plot = $plot ?? []; $priceHistory = $priceHistory ?? []; $nearbyPlots = $nearbyPlots ?? []; ?>
 <style>
 .plot-gallery-img { width: 100%; height: 350px; object-fit: cover; border-radius: 12px; }
 .detail-card { border: 1px solid #e8e8e8; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
