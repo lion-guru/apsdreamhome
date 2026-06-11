@@ -213,7 +213,7 @@ class ServiceController extends AdminController
 
     public function updateStatus()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $id = $_POST['id'] ?? 0;
             $status = $_POST['status'] ?? 'new';
             $notes = $_POST['notes'] ?? '';

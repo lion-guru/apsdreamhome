@@ -116,7 +116,7 @@ class LiveChatController extends AdminController
 
     public function settings()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $allowed = ['widget_enabled','widget_position','widget_color','widget_title','widget_subtitle','business_hours_only','business_hours_start','business_hours_end','auto_assign','welcome_message','offline_message'];
             foreach ($allowed as $k) {
                 if (isset($_POST[$k])) {

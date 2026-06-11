@@ -26,7 +26,7 @@ if (!verifyCSRFToken($csrf_token)) {
 }
 
 try {
-    $db = \App\Core\App::database();
+    $db = $db ?? \App\Core\App::database();
     $status = [];
 
     // Check database connection

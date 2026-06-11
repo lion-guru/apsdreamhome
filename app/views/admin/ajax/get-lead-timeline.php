@@ -27,7 +27,7 @@ if ($lead_id <= 0) {
 }
 
 try {
-    $db = \App\Core\App::database();
+    $db = $db ?? \App\Core\App::database();
     // 1. Fetch Timeline
     $timeline = $db->fetchAll("SELECT a.*, adm.auser as admin_name
                            FROM lead_activities a

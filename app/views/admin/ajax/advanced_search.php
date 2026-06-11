@@ -34,7 +34,7 @@ try {
     $searchQuery = trim(Security::sanitize($_GET['q']) ?? '');
 
     // Establish database connection
-    $db = \App\Core\App::database();
+    $db = $db ?? \App\Core\App::database();
     $results = [];
 
     // RBAC Protection - Module specific restrictions

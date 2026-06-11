@@ -28,7 +28,7 @@ class ROICalculatorController extends \App\Http\Controllers\Admin\AdminControlle
         $calculations = [];
         
         // If form submitted
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $calculations = $this->calculateROI($_POST);
         }
         
@@ -208,7 +208,7 @@ class ROICalculatorController extends \App\Http\Controllers\Admin\AdminControlle
         
         $properties = [];
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['property_ids'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['property_ids'])) { $this->validateCsrfOrFail();
             $properties = $this->getPropertiesForComparison($_POST['property_ids']);
         }
         

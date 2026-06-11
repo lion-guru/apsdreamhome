@@ -488,7 +488,7 @@ class HRController extends AdminController
     public function assignShift()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $employeeId = (int)($_POST['employee_id'] ?? 0);
             $shiftTypeId = (int)($_POST['shift_type_id'] ?? 0);
             $shiftDate = $_POST['shift_date'] ?? date('Y-m-d');

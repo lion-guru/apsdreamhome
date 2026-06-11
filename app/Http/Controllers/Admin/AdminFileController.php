@@ -49,7 +49,7 @@ class AdminFileController extends AdminController
      */
     public function upload(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) { $this->validateCsrfOrFail();
             $options = [
                 'category' => $_POST['category'] ?? 'general',
                 'description' => $_POST['description'] ?? null,
@@ -150,7 +150,7 @@ class AdminFileController extends AdminController
      */
     public function uploadVersion(string $uuid): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) { $this->validateCsrfOrFail();
             $options = [
                 'uploaded_by' => $_SESSION['admin_id'] ?? 1,
                 'uploaded_by_type' => 'admin',

@@ -62,7 +62,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
     public function savePackage()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 $db = Database::getInstance()->getConnection();
                 $id = (int)($_POST['id'] ?? 0);
@@ -151,7 +151,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
     public function approveRERA()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $id = (int)($_POST['id'] ?? 0);
             $reraNumber = $_POST['rera_number'] ?? '';
             if ($id && $reraNumber) {
@@ -228,7 +228,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
     public function recordPayment()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $bookingId = (int)($_POST['booking_id'] ?? 0);
             $amount = (float)($_POST['amount'] ?? 0);
             $mode = $_POST['mode'] ?? 'cash';
@@ -271,7 +271,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
     public function registerNetworker()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $name = $_POST['name'] ?? '';
             $email = $_POST['email'] ?? '';
             $phone = $_POST['phone'] ?? '';
@@ -292,7 +292,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
     public function registerConsultant()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $name = $_POST['name'] ?? '';
             $email = $_POST['email'] ?? '';
             $phone = $_POST['phone'] ?? '';
@@ -311,7 +311,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
     public function processCommission()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $agentId = (int)($_POST['agent_id'] ?? 0);
             $bookingId = (int)($_POST['booking_id'] ?? 0);
             $saleAmount = (float)($_POST['sale_amount'] ?? 0);
@@ -382,7 +382,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
     public function storeBooking()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $bookingService = new BookingComplianceService();
             $result = $bookingService->createBooking([
                 'plot_id' => (int)$_POST['plot_id'],

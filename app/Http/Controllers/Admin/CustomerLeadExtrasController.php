@@ -162,7 +162,7 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $score = isset($_POST['score']) ? (int)$_POST['score'] : 0;
             $reason = isset($_POST['reason']) ? $_POST['reason'] : '';
             
@@ -290,7 +290,7 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $fieldName = isset($_POST['field_name']) ? $_POST['field_name'] : '';
             $fieldLabel = isset($_POST['field_label']) ? $_POST['field_label'] : '';
             $fieldType = isset($_POST['field_type']) ? $_POST['field_type'] : 'text';
@@ -341,7 +341,7 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $fieldName = isset($_POST['field_name']) ? $_POST['field_name'] : '';
             $fieldLabel = isset($_POST['field_label']) ? $_POST['field_label'] : '';
             $fieldType = isset($_POST['field_type']) ? $_POST['field_type'] : 'text';
@@ -401,7 +401,7 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             // Soft delete - set is_active to 0
             $this->db->query(
                 "UPDATE lead_custom_fields SET is_active = 0 WHERE id = ?",
@@ -497,7 +497,7 @@ class CustomerLeadExtrasController extends AdminController
     {
         $this->requireAdmin();
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $status = isset($_POST['status']) ? $_POST['status'] : '';
             $adminNotes = isset($_POST['admin_notes']) ? $_POST['admin_notes'] : '';
             $approvedBy = isset($_SESSION['admin_id']) ? $_SESSION['admin_id'] : 1;

@@ -110,7 +110,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function addPoints(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $userId = (int) ($_POST['user_id'] ?? 0);
             $points = (int) ($_POST['points'] ?? 0);
             $reason = $_POST['reason'] ?? 'Admin adjustment';
@@ -175,7 +175,7 @@ class AdminLoyaltyController extends AdminController
             $reward = $stmt->fetch(\PDO::FETCH_ASSOC);
         }
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $data = [
                 'name' => $_POST['name'] ?? '',
                 'description' => $_POST['description'] ?? '',
@@ -277,7 +277,7 @@ class AdminLoyaltyController extends AdminController
      */
     public function updateRedemptionStatus(int $id): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $status = $_POST['status'] ?? '';
             
             $db = \App\Core\Database\Database::getInstance();

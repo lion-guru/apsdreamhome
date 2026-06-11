@@ -31,7 +31,7 @@ $action = $_GET['action'] ?? Security::sanitize($_POST['action']) ?? '';
 $currentRole = $_SESSION['admin_role'] ?? '';
 
 try {
-    $db = \App\Core\App::getInstance()->db();
+    $db = $db ?? \App\Core\App::database();
 
     switch ($action) {
         case 'get_stats':

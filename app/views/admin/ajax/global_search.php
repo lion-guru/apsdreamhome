@@ -27,7 +27,7 @@ if (!verifyCSRFToken($csrf_token)) {
 }
 
 try {
-    $db = \App\Core\App::database();
+    $db = $db ?? \App\Core\App::database();
     $query = trim(Security::sanitize($_GET['q']) ?? '');
 
     if (strlen($query) < 2) {

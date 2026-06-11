@@ -43,7 +43,7 @@ class ProjectsAdminController extends AdminController
 
     public function store()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $fields = ['name', 'project_type', 'description', 'developer_name', 'developer_phone',
                 'address', 'state_id', 'district_id', 'colony_id',
                 'total_area', 'total_plots', 'available_plots', 'booked_plots', 'sold_plots',
@@ -112,7 +112,7 @@ class ProjectsAdminController extends AdminController
      */
     public function status($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $db = Database::getInstance();
             $status = $_POST['status'] ?? 'planning';
 
@@ -129,7 +129,7 @@ class ProjectsAdminController extends AdminController
      */
     public function update($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $db = Database::getInstance();
             $name = $_POST['name'] ?? '';
             $status = $_POST['status'] ?? 'planning';

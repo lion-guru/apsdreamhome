@@ -27,7 +27,7 @@ if ($lead_id <= 0) {
 }
 
 try {
-    $db = \App\Core\App::database();
+    $db = $db ?? \App\Core\App::database();
     // Fetch lead details
     $lead = $db->fetchOne("SELECT * FROM leads WHERE id = :lead_id", ['lead_id' => $lead_id]);
 

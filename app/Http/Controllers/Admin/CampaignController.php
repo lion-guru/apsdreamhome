@@ -502,7 +502,7 @@ class CampaignController extends AdminController
             $stats['leads'] = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE phone IS NOT NULL AND phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
             $stats['users'] = $db->query("SELECT COUNT(*) as cnt FROM mlm_associates ma JOIN users u ON ma.user_id = u.id WHERE u.phone IS NOT NULL AND u.phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
 
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
                 $audience = $_POST['audience'] ?? '';
                 $templateName = $_POST['template_name'] ?? '';
                 $message = $_POST['message'] ?? '';

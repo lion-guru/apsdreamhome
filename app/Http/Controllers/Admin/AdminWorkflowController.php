@@ -99,7 +99,7 @@ class AdminWorkflowController extends AdminController
     {
         $this->checkAdminAuth();
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $id = $this->workflowService->createWorkflow(
                 $_POST['code'],
                 $_POST['name'],
@@ -131,7 +131,7 @@ class AdminWorkflowController extends AdminController
         $workflow = $this->workflowService->getWorkflowByCode(''); // Need to fetch by ID
         $steps = $this->workflowService->getWorkflowSteps($workflowId);
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $this->workflowService->addWorkflowStep(
                 $workflowId,
                 (int)$_POST['step_order'],
@@ -388,7 +388,7 @@ class AdminWorkflowController extends AdminController
     {
         $this->checkAdminAuth();
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) { $this->validateCsrfOrFail();
             $type = $_POST['import_type'] ?? 'properties';
             $file = $_FILES['import_file']['tmp_name'];
             

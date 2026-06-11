@@ -37,7 +37,7 @@ class AdManagerController extends AdminController
     {
         $this->requireAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $this->adService->upsertSlot($_POST);
             $this->flashMessage('Ad slot saved', 'success');
             header('Location: ' . BASE_URL . '/admin/ads');
@@ -65,7 +65,7 @@ class AdManagerController extends AdminController
             exit;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $_POST['id'] = $id;
             $this->adService->upsertSlot($_POST);
             $this->flashMessage('Ad slot updated', 'success');

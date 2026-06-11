@@ -71,7 +71,7 @@ class AdminSchedulerController extends AdminController
      */
     public function create(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $name = $_POST['name'] ?? '';
             $command = $_POST['command'] ?? '';
             $schedule = $_POST['schedule'] ?? '';
@@ -122,7 +122,7 @@ class AdminSchedulerController extends AdminController
             exit;
         }
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $updateData = [
                 'name' => $_POST['name'] ?? $task['name'],
                 'description' => $_POST['description'] ?? $task['description'],

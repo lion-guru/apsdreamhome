@@ -300,7 +300,7 @@ class VoiceAgentAdminController extends AdminController
     {
         $this->requireAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 if (isset($_POST['agent_status'])) {
                     $this->db->execute("UPDATE ai_calling_agents SET status = ? WHERE agent_id = ?", [$_POST['agent_status'], $_POST['agent_id']]);

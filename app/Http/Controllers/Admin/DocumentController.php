@@ -58,7 +58,7 @@ class DocumentController extends AdminController
     {
         $this->requireAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['document_file'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['document_file'])) { $this->validateCsrfOrFail();
             try {
                 $db = $this->getDb();
                 $file = $_FILES['document_file'];
@@ -177,7 +177,7 @@ class DocumentController extends AdminController
     public function storeCategory()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 $db = $this->getDb();
                 $name = $_POST['name'] ?? '';
@@ -202,7 +202,7 @@ class DocumentController extends AdminController
     public function updateCategory($id)
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 $db = $this->getDb();
                 $name = $_POST['name'] ?? '';
@@ -263,7 +263,7 @@ class DocumentController extends AdminController
     public function storeType()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 $db = $this->getDb();
                 $name = $_POST['name'] ?? '';
@@ -287,7 +287,7 @@ class DocumentController extends AdminController
     public function updateType($id)
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 $db = $this->getDb();
                 $name = $_POST['name'] ?? '';
@@ -348,7 +348,7 @@ class DocumentController extends AdminController
     public function storeTemplate()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 $db = $this->getDb();
                 $name = $_POST['name'] ?? '';
@@ -389,7 +389,7 @@ class DocumentController extends AdminController
     public function updateTemplate($id)
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 $db = $this->getDb();
                 $name = $_POST['name'] ?? '';
@@ -464,7 +464,7 @@ class DocumentController extends AdminController
     public function storeReview()
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             try {
                 $db = $this->getDb();
                 try {

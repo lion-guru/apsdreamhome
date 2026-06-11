@@ -36,7 +36,7 @@ if (!in_array($currentRole, $allowedRoles)) {
 try {
     $format = Security::sanitize($_GET['format']) ?? 'csv';
     // Establish database connection
-    $db = \App\Core\App::database();
+    $db = $db ?? \App\Core\App::database();
 
     // Fetch data based on the selected format
     $data = [];

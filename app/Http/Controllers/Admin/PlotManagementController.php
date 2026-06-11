@@ -1030,7 +1030,7 @@ class PlotManagementController extends AdminController
     public function book($id)
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             return $this->storeBooking($id);
         }
         try {
@@ -1162,7 +1162,7 @@ class PlotManagementController extends AdminController
     public function transfer($id)
     {
         $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             return $this->transferPlot($id);
         }
         try {

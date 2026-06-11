@@ -24,7 +24,7 @@ class LocationAdminController extends AdminController
     {
         
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $name = trim($_POST['name']);
             $code = strtoupper(trim($_POST['code']));
 
@@ -65,7 +65,7 @@ class LocationAdminController extends AdminController
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $name = trim($_POST['name']);
             $code = strtoupper(trim($_POST['code']));
             $is_active = isset($_POST['is_active']) ? 1 : 0;
@@ -152,7 +152,7 @@ class LocationAdminController extends AdminController
 
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $state_id = $_POST['state_id'];
             $name = trim($_POST['name']);
             $code = strtoupper(trim($_POST['code']));
@@ -196,7 +196,7 @@ class LocationAdminController extends AdminController
 
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $state_id = $_POST['state_id'];
             $name = trim($_POST['name']);
             $code = strtoupper(trim($_POST['code']));
@@ -294,7 +294,7 @@ class LocationAdminController extends AdminController
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
         $districts = \App\Models\District::getWithStateName(['id', 'name', 'state_id'], true);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $district_id = $_POST['district_id'];
             $name = trim($_POST['name']);
             $description = trim($_POST['description']);
@@ -347,7 +347,7 @@ class LocationAdminController extends AdminController
         $states = \App\Models\State::getActive(['id', 'name', 'code']);
         $districts = \App\Models\District::getWithStateName(['id', 'name', 'state_id'], true);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $district_id = $_POST['district_id'];
             $name = trim($_POST['name']);
             $description = trim($_POST['description']);

@@ -10,6 +10,7 @@ class AjaxController extends AdminController
      */
     public function advancedSearch()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/advanced_search.php';
     }
 
@@ -19,6 +20,7 @@ class AjaxController extends AdminController
      */
     public function consolidatedDashboard()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/consolidated_dashboard_api.php';
     }
 
@@ -28,6 +30,7 @@ class AjaxController extends AdminController
      */
     public function exportDashboardData()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/export_dashboard_data.php';
     }
 
@@ -37,6 +40,7 @@ class AjaxController extends AdminController
      */
     public function generateFollowup()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/generate-followup.php';
     }
 
@@ -46,6 +50,7 @@ class AjaxController extends AdminController
      */
     public function getChartData()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/get-chart-data.php';
     }
 
@@ -64,6 +69,7 @@ class AjaxController extends AdminController
      */
     public function getLeadTimeline()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/get-lead-timeline.php';
     }
 
@@ -73,6 +79,7 @@ class AjaxController extends AdminController
      */
     public function getRecentActivity()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/get_recent_activity.php';
     }
 
@@ -82,6 +89,7 @@ class AjaxController extends AdminController
      */
     public function getSystemStatus()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/get_system_status.php';
     }
 
@@ -91,6 +99,7 @@ class AjaxController extends AdminController
      */
     public function globalSearch()
     {
+        $db = $this->db ?? \App\Core\Database\Database::getInstance();
         require APP_PATH . '/views/admin/ajax/global_search.php';
     }
 

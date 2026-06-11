@@ -524,6 +524,19 @@ class AdminController extends BaseController
     }
 
     /**
+     * Validate CSRF token or die with 403
+     */
+    protected function validateCsrfOrFail(): void
+    {
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+            exit;
+        }
+    }
+
+    /**
      * Update page content (AJAX)
      */
     public function updatePageContent($id, $content)

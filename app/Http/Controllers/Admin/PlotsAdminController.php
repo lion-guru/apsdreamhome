@@ -83,7 +83,7 @@ class PlotsAdminController extends AdminController
 
         $colonies = \App\Models\Colony::getWithDistrictAndStateName(['c.*', 'd.name as district_name', 's.name as state_name'], true);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $colony_id = $_POST['colony_id'];
             $plot_number = trim($_POST['plot_number']);
             $block = trim($_POST['block']);
@@ -149,7 +149,7 @@ class PlotsAdminController extends AdminController
 
         $colonies = \App\Models\Colony::getWithDistrictAndStateName(['c.*', 'd.name as district_name', 's.name as state_name'], true);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { $this->validateCsrfOrFail();
             $colony_id = $_POST['colony_id'];
             $plot_number = trim($_POST['plot_number']);
             $block = trim($_POST['block']);
