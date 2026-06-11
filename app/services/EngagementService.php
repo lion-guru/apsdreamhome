@@ -171,11 +171,11 @@ class EngagementService
      */
     public function getNotificationFeed(int $userId, int $limit = 20, int $offset = 0, ?string $category = null, bool $unreadOnly = false): array
     {
-        $sql = 'SELECT * FROM mlm_notification_feed WHERE user_id = ?';
+        $sql = 'SELECT * FROM notifications WHERE user_id = ?';
         $params = [$userId];
 
         if ($category) {
-            $sql .= ' AND category = ?';
+            $sql .= ' AND type = ?';
             $params[] = $category;
         }
 
@@ -217,7 +217,7 @@ class EngagementService
         }
 
         $stmt = $this->conn->prepare(
-            'UPDATE mlm_notification_feed SET read_at = NOW() WHERE id = ? AND user_id = ? AND read_at IS NULL'
+            'UPDATE notifications SET read_at = NOW() WHERE id = ? AND user_id = ? AND read_at IS NULL'
         );
 
         if (!$stmt->execute([$notificationId, $userId])) {
@@ -234,7 +234,7 @@ class EngagementService
         }
 
         $stmt = $this->conn->prepare(
-            'UPDATE mlm_notification_feed SET read_at = NOW() WHERE user_id = ? AND read_at IS NULL'
+            'UPDATE notifications SET read_at = NOW() WHERE user_id = ? AND read_at IS NULL'
         );
 
         if (!$stmt->execute([$userId])) {
