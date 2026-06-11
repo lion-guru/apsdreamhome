@@ -13,7 +13,7 @@
     </div>
     <div class="col-auto"><button class="btn btn-primary">Filter</button></div>
   </form>
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Approved By</th></tr></thead>

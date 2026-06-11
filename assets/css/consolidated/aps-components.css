@@ -227,6 +227,13 @@
 }
 .aps-cp-stat-trend.up { color: #047857; background: var(--aps-cp-success-light); }
 .aps-cp-stat-trend.down { color: #b91c1c; background: var(--aps-cp-danger-light); }
+.aps-cp-stat-meta {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--aps-cp-muted, #94a3b8);
+  margin-top: 0.15rem;
+  font-weight: 400;
+}
 
 /* Stat color variants */
 .aps-cp-stat--blue { --stat-color: #3b82f6; --stat-icon-bg: rgba(59, 130, 246, 0.1); }

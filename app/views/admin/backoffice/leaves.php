@@ -4,7 +4,7 @@
     <h1 class="h3"><?= __('admin_pending_leave_requests') ?></h1>
     <a href="<?= BASE_URL ?>/admin/backoffice/leaves/history" class="btn btn-outline-primary btn-sm"><i class="fas fa-history me-1"></i><?= __('admin_history_button') ?></a>
   </div>
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead><tr><th><?= __('admin_employee_label') ?></th><th><?= __('admin_type_label') ?></th><th><?= __('admin_from_label') ?></th><th><?= __('admin_to_label') ?></th><th><?= __('admin_days_label') ?></th><th><?= __('admin_reason_label') ?></th><th><?= __('admin_actions_label') ?></th></tr></thead>

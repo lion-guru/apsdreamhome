@@ -17,7 +17,7 @@ $month = $month ?? date('Y-m');
     </div>
   </form>
 
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead><tr><th>Employee</th><th>Date</th><th>Status</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>OT</th><th>Late</th></tr></thead>

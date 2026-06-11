@@ -5,7 +5,7 @@
     <a href="<?= BASE_URL ?>/admin/backoffice/reports" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
   </div>
 
-  <div class="card border-0 shadow-sm mb-4">
+  <div class="card aps-cp-card mb-4">
     <div class="card-header"><strong>Parameters</strong></div>
     <div class="card-body">
       <form method="post" class="row g-3 align-items-end">
@@ -25,7 +25,7 @@
     <?php if (isset($result['error'])): ?>
       <div class="alert alert-danger"><?= htmlspecialchars($result['error']) ?></div>
     <?php else: ?>
-      <div class="card border-0 shadow-sm">
+      <div class="card aps-cp-card">
         <div class="card-header"><strong>Results</strong> — <?= $result['row_count'] ?? 0 ?> rows</div>
         <div class="table-responsive">
           <?php if (!empty($result['rows'])): ?>

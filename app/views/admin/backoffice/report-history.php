@@ -7,7 +7,7 @@
       <a href="<?= BASE_URL ?>/admin/backoffice/reports" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
   </div>
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead><tr><th>#</th><th>Executed By</th><th>Start</th><th>End</th><th>Rows</th><th>Status</th><th>Error</th></tr></thead>

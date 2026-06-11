@@ -4,7 +4,7 @@
     <h1 class="h3">Payslip #<?= $payslip['id'] ?? '' ?></h1>
     <a href="<?= BASE_URL ?>/admin/backoffice/payslips" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
   </div>
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="card-body">
       <div class="row mb-4">
         <div class="col-md-6">

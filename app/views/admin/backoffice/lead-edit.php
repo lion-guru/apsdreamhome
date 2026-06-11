@@ -1,7 +1,7 @@
 <?php $lead = $lead ?? []; $employees = $employees ?? []; ?>
 <div class="container-fluid py-4">
   <h1 class="h3 mb-4">Edit Lead: <?= htmlspecialchars($lead['lead_number'] ?? '') ?></h1>
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="card-body">
       <form method="post" action="<?= BASE_URL ?>/admin/backoffice/leads/<?= $lead['id'] ?? '' ?>/update">
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">

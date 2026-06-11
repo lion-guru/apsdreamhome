@@ -9,7 +9,7 @@
     <div class="col-auto"><input type="number" name="year" placeholder="<?= __('admin_year_label') ?>" class="form-control" value="<?= $filter_year ?>"></div>
     <div class="col-auto"><button class="btn btn-primary"><?= __('admin_filter_btn') ?></button></div>
   </form>
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead><tr><th><?= __('admin_employee_label') ?></th><th><?= __('admin_period_label') ?></th><th><?= __('admin_basic_label') ?></th><th><?= __('admin_hra_label') ?></th><th><?= __('admin_gross_label') ?></th><th><?= __('admin_deductions_label') ?></th><th><?= __('admin_net_label') ?></th><th><?= __('admin_status_label') ?></th><th><?= __('admin_action_label') ?></th></tr></thead>

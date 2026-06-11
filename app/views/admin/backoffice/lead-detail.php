@@ -9,7 +9,7 @@
   </div>
   <div class="row g-4">
     <div class="col-md-8">
-      <div class="card border-0 shadow-sm mb-4">
+      <div class="card aps-cp-card mb-4">
         <div class="card-header"><strong>Lead Information</strong></div>
         <div class="card-body">
           <div class="row g-3">
@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="card border-0 shadow-sm">
+      <div class="card aps-cp-card">
         <div class="card-header"><strong>Advance Stage</strong></div>
         <div class="card-body">
           <form method="post" action="<?= BASE_URL ?>/admin/backoffice/leads/<?= $lead['id'] ?? '' ?>/advance" class="d-flex gap-2">
@@ -47,7 +47,7 @@
     </div>
 
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm mb-4">
+      <div class="card aps-cp-card mb-4">
         <div class="card-header"><strong>Add Activity</strong></div>
         <div class="card-body">
           <form method="post" action="<?= BASE_URL ?>/admin/backoffice/leads/<?= $lead['id'] ?? '' ?>/activity">
@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <div class="card border-0 shadow-sm">
+      <div class="card aps-cp-card">
         <div class="card-header"><strong>Timeline</strong></div>
         <div class="card-body" style="max-height:400px;overflow-y:auto">
           <?php if (empty($timeline)): ?>

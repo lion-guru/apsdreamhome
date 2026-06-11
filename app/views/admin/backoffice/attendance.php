@@ -9,7 +9,7 @@ $today = $today ?? date('Y-m-d');
     <a href="<?= BASE_URL ?>/admin/backoffice/attendance/monthly" class="btn btn-outline-primary btn-sm"><i class="fas fa-calendar me-1"></i><?= __('admin_monthly_view') ?></a>
   </div>
 
-  <div class="card border-0 shadow-sm mb-4">
+  <div class="card aps-cp-card mb-4">
     <div class="card-header"><strong><?= __('admin_mark_attendance') ?></strong></div>
     <div class="card-body">
       <form id="attendanceForm" class="row g-3">
@@ -49,7 +49,7 @@ $today = $today ?? date('Y-m-d');
     </div>
   </div>
 
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="card-header"><strong><?= __('admin_todays_records') ?></strong></div>
     <div class="table-responsive">
       <table class="table table-hover mb-0">

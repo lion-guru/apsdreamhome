@@ -20,7 +20,7 @@
     </select></div>
     <div class="col-auto"><button class="btn btn-primary"><?= __('admin_filter_btn') ?></button></div>
   </form>
-  <div class="card border-0 shadow-sm">
+  <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead><tr><th><?= __('admin_type_label') ?></th><th><?= __('admin_colony_label') ?></th><th><?= __('admin_description_label') ?></th><th>Amount</th><th>Party</th><th><?= __('admin_status_label') ?></th><th><?= __('admin_priority_label') ?></th><th><?= __('admin_date_label') ?></th></tr></thead>

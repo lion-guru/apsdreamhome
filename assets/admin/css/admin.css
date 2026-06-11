@@ -639,6 +639,13 @@ img {
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
+.aps-cp-stat-meta {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted, #94a3b8);
+  margin-top: 0.15rem;
+  font-weight: 400;
+}
 
 /* ===== PROGRESS ===== */
 .progress {

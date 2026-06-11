@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
-class CspReportController extends BaseController
+use App\Http\Controllers\Admin\AdminController;
+
+class CspReportController extends AdminController
 {
     protected function skipCsrfProtection(): bool
     {

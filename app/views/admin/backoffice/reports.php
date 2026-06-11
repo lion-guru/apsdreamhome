@@ -7,7 +7,7 @@
     <?php else: ?>
       <?php foreach ($reports as $r): ?>
         <div class="col-md-4">
-          <div class="card border-0 shadow-sm h-100">
+          <div class="card aps-cp-card h-100">
             <div class="card-body">
               <h5 class="card-title"><?= htmlspecialchars($r['report_name'] ?? '') ?></h5>
               <p class="text-muted small"><?= __('admin_type_colon') ?> <?= ucfirst($r['report_type'] ?? '') ?> | <?= __('admin_format_label') ?> <?= strtoupper($r['format'] ?? 'html') ?></p>
