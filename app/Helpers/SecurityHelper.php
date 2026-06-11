@@ -93,7 +93,7 @@ class SecurityHelper
         $csp .= "img-src 'self' data: blob: https:; ";
         $csp .= "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; ";
         $csp .= "frame-src 'self' https://www.google.com; ";
-        $csp .= "connect-src 'self' https:;";
+        $csp .= "connect-src 'self' https: ws: wss:;";
         $csp .= "report-uri " . (defined('BASE_URL') ? BASE_URL : '') . "/csp-report";
         $csp .= "report-to csp-endpoint";
 
