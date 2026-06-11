@@ -36,8 +36,8 @@ class HomeController extends BaseController
             'testimonials' => $this->loadTestimonials()
         ];
 
-        // Use regular header (not premium) for home page\r\n        ->data[\ premium_layout\] = false;\r\n        ->data[\admin_layout\] = false;\r\n\r\n        // Render homepage with centralized base layout and fragments
-        $this->render('pages/index', $data);
+        // Render homepage with centralized base layout and fragments
+        $this->render('pages/home', $data);
     }
 
     public function about()
@@ -308,10 +308,10 @@ class HomeController extends BaseController
     {
         // Try to get dynamic stats from database, fallback to defaults
         $stats = [
-            'properties_sold' => '500+',
-            'happy_clients' => '1000+',
-            'years_experience' => '15+',
-            'projects_completed' => '50+'
+            'years_experience' => '15',
+            'projects_completed' => '50',
+            'happy_customers' => '5000',
+            'awards_won' => '25'
         ];
 
         if ($this->db) {
@@ -320,21 +320,21 @@ class HomeController extends BaseController
                 $stmt = $this->db->query("SELECT COUNT(*) FROM properties WHERE status = 'active'");
                 $propertyCount = (int)$stmt->fetchColumn();
                 if ($propertyCount > 0) {
-                    $stats['properties_sold'] = $propertyCount . '+';
+                    $stats['projects_completed'] = $propertyCount . '+';
                 }
 
                 // Get user/customer count
                 $stmt = $this->db->query("SELECT COUNT(*) FROM users");
                 $userCount = (int)$stmt->fetchColumn();
                 if ($userCount > 0) {
-                    $stats['happy_clients'] = ($userCount > 1000 ? '1000+' : $userCount . '+');
+                    $stats['happy_customers'] = ($userCount > 1000 ? '1000+' : $userCount . '+');
                 }
 
                 // Get projects/sites count
                 $stmt = $this->db->query("SELECT COUNT(*) FROM sites WHERE status IN ('active', 'completed')");
                 $siteCount = (int)$stmt->fetchColumn();
                 if ($siteCount > 0) {
-                    $stats['projects_completed'] = $siteCount . '+';
+                    $stats['awards_won'] = $siteCount . '+';
                 }
             } catch (\PDOException $e) {
                 // Keep defaults on error
