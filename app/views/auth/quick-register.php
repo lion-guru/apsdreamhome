@@ -90,13 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 function getDB() {
-    $host = getenv('DB_HOST') ?: '127.0.0.1';
-    $port = getenv('DB_PORT') ?: '3307';
-    $dbname = getenv('DB_DATABASE') ?: 'apsdreamhome';
-    $user = getenv('DB_USERNAME') ?: 'root';
-    $pass = getenv('DB_PASSWORD') ?: '';
-    
-    return new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $user, $pass);
+    return \App\Core\Database\Database::getInstance()->getPdo();
 }
 
 function generateUserId() {

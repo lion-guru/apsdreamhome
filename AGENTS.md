@@ -1,4 +1,33 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-09)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-11)
+
+---
+
+## Session 2026-06-11: Commission POST Routes + Sidebar Full Audit
+
+### What Was Done
+1. **22 Missing Commission POST Routes** — All 6 commission forms (agent rates, associate structure, bonuses, MLM levels, revenue daily, telecaller rules) plus 16 delete/toggle/approve/pay routes now have POST handlers registered
+2. **CSRF on 9 Commission Handlers** — `CommissionAdminController` (6 store methods) + `CommissionController` (3 methods: processCalculation, processApproval, processPayout) all call `validateCsrfOrFail()`
+3. **Sidebar Section Display Names Fixed** — `rbac_sidebar.php` updated: `'financial'`→`'finance'`, added `'hrm'`, `'legal'`, `'sales'`; removed 5 orphaned entries (content, inventory, services, ai, notifications)
+4. **validateCsrfOrFail() Visibility Conflict Fixed** — Removed `private` duplicates from `MoneyWorkflowController` and `BookingLifecycleController` that were causing PHP 8.2 fatal errors on all Module 2/3 finance routes (9 routes were 500)
+5. **Full Sidebar URL Audit** — **185/185 sidebar URLs pass** (zero 500 errors)
+6. **E2E Test Suite** — **164/165 pass** (1 expected GodMode 403)
+
+### Commits
+- `d0ab06243` — Sidebar cleanup: orphaned sections, broken links, duplicates + CSRF visibility conflict
+- `d0f159fe7` — Fix: 22 missing commission POST routes + CSRF validation on 9 store/approve/payout handlers
+
+### Verification
+| Check | Result |
+|---|---|
+| Commission POST routes (6 form actions) | 6/6 HTTP 302→200 |
+| Sidebar URLs (all active) | **185/185 PASS** |
+| E2E master test | **164/165 PASS** (1 expected GodMode 403) |
+| PHP syntax (2 controllers) | 2/2 PASS |
+
+### Key Finding
+- `admin_menu_items`: 175 active items across 17 sections (cleaned from ~260 items / 28 sections)
+- Commission forms had GET routes (list pages) but NO POST routes (form submissions) — all 10 form actions were silently failing
+- Three form actions (`/admin/commission/calculate`, `/admin/commission/payout`, `/admin/commission/action`) pointed to `CommissionController` methods but under wrong URL prefix (`/admin/commission-manage/*`) — routed directly to the correct methods
 
 ---
 

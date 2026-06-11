@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 if (!isset($GLOBALS['_site_settings_cache'])) {
     $GLOBALS['_site_settings_cache'] = [];
     try {
-        $scPdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3]);
+        $scPdo = \App\Core\Database\Database::getInstance()->getPdo();
         $scRows = $scPdo->query("SELECT content_key, content_value FROM site_content WHERE section = 'settings' AND is_active = 1")->fetchAll(PDO::FETCH_KEY_PAIR);
         $GLOBALS['_site_settings_cache'] = $scRows;
     } catch (\Exception $e) { /* graceful fallback */
@@ -130,8 +130,7 @@ const ICON_TH_LARGE = 'fas fa-th-large';
 $hotPathCacheService = 'App\\Services\\Cache\\HotPathCacheService';
 $loadHeaderProjects = function () {
     try {
-        $db = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4", "root", "");
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $db = \App\Core\Database\Database::getInstance()->getPdo();
 
         $sql = "SELECT c.id, c.name, c.slug, d.name as district, s.name as state
                 FROM colonies c
