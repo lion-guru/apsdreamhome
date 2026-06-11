@@ -3930,3 +3930,11 @@ $router->get('/api/push/vapid-key',     'Api\\PushNotificationController@vapidPu
 // API DOCUMENTATION (Admin UI)
 // ============================================================
 $router->get('/admin/api-docs',          'Admin\\AdminController@apiDocs');
+
+// ============================================================
+// SERVICE CONFIGURATION (Centralized admin settings)
+// ============================================================
+$router->get('/admin/service-configs',                  'Admin\\ServiceConfigController@index');
+$router->post('/admin/service-configs/update',          'Admin\\ServiceConfigController@update');
+$router->post('/admin/service-configs/test/{service}',  'Admin\\ServiceConfigController@testConnection');
+$router->post('/admin/service-configs/reset/{service}', 'Admin\\ServiceConfigController@resetService');
