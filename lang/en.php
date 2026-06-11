@@ -3946,5 +3946,12 @@ return array(
   'dash_kyc_not_completed_desc' => 'Complete your KYC to unlock property bookings, loans, and payouts.',
   'dash_btn_resubmit_kyc' => 'Re-submit KYC',
   'dash_btn_complete_kyc' => 'Complete KYC',
+  'home_price_per_sqft' => '/sqft',
+  'home_bhk_1' => '1 BHK',
+  'home_bhk_2' => '2 BHK',
+  'home_bhk_3' => '3 BHK',
+  'home_bhk_4' => '4 BHK',
+  'home_salary_monthly' => '/mo',
+  'home_amount_lakh' => 'Lakh',
 
 );

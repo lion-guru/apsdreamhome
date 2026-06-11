@@ -675,13 +675,13 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 ],
                 prices: [{
                     tier: '<?= __("tier_basic") ?>',
-                    price: '\u20B9249/sqft'
+                    price: '\u20B9249<?= __("home_price_per_sqft") ?>'
                 }, {
                     tier: '<?= __("tier_standard") ?>',
-                    price: '\u20B9399/sqft'
+                    price: '\u20B9399<?= __("home_price_per_sqft") ?>'
                 }, {
                     tier: '<?= __("tier_premium") ?>',
-                    price: '\u20B9599/sqft'
+                    price: '\u20B9599<?= __("home_price_per_sqft") ?>'
                 }],
                 ctaHeading: t.free_estimate,
                 ctaDesc: t.free_estimate_desc,
@@ -1325,7 +1325,14 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         calculating: <?= json_encode(__('home_calculating')) ?>,
         valFailed: <?= json_encode(__('home_valuation_failed')) ?>,
         valError: <?= json_encode(__('home_valuation_error')) ?>,
-        na: <?= json_encode(__('home_na')) ?>
+        na: <?= json_encode(__('home_na')) ?>,
+        bhk1: <?= json_encode(__('home_bhk_1')) ?>,
+        bhk2: <?= json_encode(__('home_bhk_2')) ?>,
+        bhk3: <?= json_encode(__('home_bhk_3')) ?>,
+        bhk4: <?= json_encode(__('home_bhk_4')) ?>,
+        pricePerSqft: <?= json_encode(__('home_price_per_sqft')) ?>,
+        salaryMonthly: <?= json_encode(__('home_salary_monthly')) ?>,
+        amountLakh: <?= json_encode(__('home_amount_lakh')) ?>
     };
 
     function openToolModal(tool) {
@@ -1541,7 +1548,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             '<input type="number" class="form-control form-control-lg" id="mValArea" value="1500" oninput="mCalcVal()" step="10"></div>' +
             '<div class="d-flex gap-2"><div class="flex-fill"><label class="form-label small">' + T.bedrooms +
             '</label>' +
-            '<select class="form-select" id="mValBhk" onchange="mCalcVal()"><option value="1">1 BHK</option><option value="2" selected>2 BHK</option><option value="3">3 BHK</option><option value="4">4 BHK</option></select></div>' +
+            '<select class="form-select" id="mValBhk" onchange="mCalcVal()"><option value="1">' + T.bhk1 + '</option><option value="2" selected>' + T.bhk2 + '</option><option value="3">' + T.bhk3 + '</option><option value="4">' + T.bhk4 + '</option></select></div>' +
             '<div class="flex-fill"><label class="form-label small">' + T.furnishing + '</label>' +
             '<select class="form-select" id="mValFurn" onchange="mCalcVal()"><option value="0.9">' + T.unfurnished +
             '</option><option value="1" selected>' + T.semiFurn + '</option><option value="1.2">' + T.fullFurn +
@@ -1549,7 +1556,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">' + T.estValue + '</p>' +
             '<p class="display-5 fw-bold mb-0 text-warning" id="mValResult">₹22,50,000</p><hr class="border-secondary my-3">' +
-            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.perSqft +
+            '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.pricePerSqft +
             '</span><span class="fw-bold" id="mValPsf">₹1,500</span></div>' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.confidence +
             '</span><span class="fw-bold text-success" id="mValConf">' + T.high + '</span></div>' +
@@ -1819,19 +1826,19 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             <p class="text-muted small"><?= __('home_fixed_salary_desc') ?></p>
                             <div class="bg-light rounded-3 p-3 mt-3">
                                 <div class="d-flex justify-content-between mb-1"><span
-                                        class="small"><?= __('rank_starter') ?>: <strong>₹5,000/mo</strong></span><span
+                                        class="small"><?= __('rank_starter') ?>: <strong>₹5,000<?= __('home_salary_monthly') ?></strong></span><span
                                         class="small text-muted"><?= __('home_target_15l') ?></span></div>
                                 <div class="d-flex justify-content-between mb-1"><span
-                                        class="small"><?= __('rank_basic') ?>: <strong>₹5,000/mo</strong></span><span
+                                        class="small"><?= __('rank_basic') ?>: <strong>₹5,000<?= __('home_salary_monthly') ?></strong></span><span
                                         class="small text-muted"><?= __('home_target_30l') ?></span></div>
                                 <div class="d-flex justify-content-between mb-1"><span
                                         class="small"><?= __('rank_professional') ?>:
-                                        <strong>₹8,000/mo</strong></span><span class="small text-muted"><?= __('home_target_50l') ?></span></div>
+                                        <strong>₹8,000<?= __('home_salary_monthly') ?></strong></span><span class="small text-muted"><?= __('home_target_50l') ?></span></div>
                                 <div class="d-flex justify-content-between mb-1"><span
                                         class="small"><?= __('rank_executive') ?>:
-                                        <strong>₹12,000/mo</strong></span><span class="small text-muted"><?= __('home_target_75l') ?></span></div>
+                                        <strong>₹12,000<?= __('home_salary_monthly') ?></strong></span><span class="small text-muted"><?= __('home_target_75l') ?></span></div>
                                 <div class="d-flex justify-content-between"><span class="small"><?= __('rank_elite') ?>:
-                                        <strong>₹20,000/mo</strong></span><span class="small text-muted"><?= __('home_target_1cr') ?></span></div>
+                                        <strong>₹20,000<?= __('home_salary_monthly') ?></strong></span><span class="small text-muted"><?= __('home_target_1cr') ?></span></div>
                             </div>
                         </div>
                     </div>
@@ -1847,13 +1854,13 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             <div class="bg-light rounded-3 p-3 mt-3 text-start">
                                 <span class="small d-block mb-1"><i
                                         class="fas fa-check-circle text-success me-1"></i><?= __('insurance_health') ?>:
-                                    <strong>₹5 Lakh</strong></span>
+                                    <strong>₹5 <?= __('home_amount_lakh') ?></strong></span>
                                 <span class="small d-block mb-1"><i
                                         class="fas fa-check-circle text-success me-1"></i><?= __('insurance_life') ?>:
-                                    <strong>₹10 Lakh</strong></span>
+                                    <strong>₹10 <?= __('home_amount_lakh') ?></strong></span>
                                 <span class="small d-block"><i
                                         class="fas fa-check-circle text-success me-1"></i><?= __('insurance_accidental') ?>:
-                                    <strong>₹5 Lakh</strong></span>
+                                    <strong>₹5 <?= __('home_amount_lakh') ?></strong></span>
                             </div>
                         </div>
                     </div>

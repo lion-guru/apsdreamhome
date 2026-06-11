@@ -3945,5 +3945,12 @@ return array(
   'dash_kyc_not_completed_desc' => 'प्रॉपर्टी बुकिंग, लोन और भुगतान अनलॉक करने के लिए अपना KYC पूरा करें।',
   'dash_btn_resubmit_kyc' => 'KYC पुनः सबमिट करें',
   'dash_btn_complete_kyc' => 'KYC पूरा करें',
+  'home_price_per_sqft' => '/वर्गफुट',
+  'home_bhk_1' => '1 BHK',
+  'home_bhk_2' => '2 BHK',
+  'home_bhk_3' => '3 BHK',
+  'home_bhk_4' => '4 BHK',
+  'home_salary_monthly' => '/महीना',
+  'home_amount_lakh' => 'लाख',
 
 );
