@@ -775,12 +775,4 @@ class BookingLifecycleController extends AdminController
  return []; }
         }
     }
-
-    private function validateCsrfOrFail(): void
-    {
-        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-        if (!$this->validateCsrfToken($token)) {
-            $this->setFlash('error', 'Invalid CSRF token. Please retry.');
-        }
-    }
 }

@@ -1338,15 +1338,6 @@ class MoneyWorkflowController extends AdminController
         try { return $fn(); } catch (Exception $e) { return $fallback; }
     }
 
-    private function validateCsrfOrFail(): void
-    {
-        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-        if (!$this->validateCsrfToken($token)) {
-            $this->setFlash('error', 'Invalid CSRF token. Please retry.');
-            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
-        }
-    }
-
     private function getReceiptUploadDir(): string
     {
         $dir = __DIR__ . '/../../../../storage/uploads/receipts';

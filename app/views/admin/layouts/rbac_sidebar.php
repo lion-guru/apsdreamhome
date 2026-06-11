@@ -34,7 +34,7 @@ $sectionNames = [
     'crm' => '👥 CRM & Sales',
     'properties' => '🏠 Properties',
     'mlm' => '🔗 MLM Network',
-    'financial' => '💰 Financial',
+    'finance' => '💰 Finance',
     'bookings' => '📅 Bookings',
     'cms' => '📝 Content',
     'marketing' => '📢 Marketing',
@@ -43,12 +43,9 @@ $sectionNames = [
     'users' => '👤 Users & Team',
     'locations' => '📍 Locations',
     'settings' => '🔧 Settings',
-    'main' => '🏠 Main',
-    'content' => '📄 Content',
-    'inventory' => '📦 Inventory',
-    'services' => '💼 Services',
-    'ai' => '🤖 AI Features',
-    'notifications' => '🔔 Notifications',
+    'hrm' => '👔 HR & Payroll',
+    'legal' => '⚖️ Legal',
+    'sales' => '🏷️ Sales',
     'system' => '⚙️ System'
 ];
 ?>
