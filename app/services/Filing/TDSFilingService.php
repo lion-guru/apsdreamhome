@@ -302,22 +302,151 @@ class TDSFilingService
                 }, $tdsRecords),
             ];
 
-            // Save HTML for PDF generation
-            $dir = 'C:/xampp/htdocs/apsdreamhome/storage/efiling/form16a';
+            $dir = (defined('STORAGE_PATH') ? STORAGE_PATH : 'C:/xampp/htdocs/apsdreamhome/storage') . '/efiling/form16a';
             if (!is_dir($dir)) mkdir($dir, 0755, true);
-            $filename = "form_16a_{$cert['deductee_pan']}_{$cert['financial_year']}_{$cert['quarter']}.json";
-            $filepath = $dir . '/' . $filename;
-            file_put_contents($filepath, json_encode($form16a, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-            // Update certificate record
+            // Save JSON data alongside PDF
+            $jsonFile = $dir . "/form_16a_{$cert['deductee_pan']}_{$cert['financial_year']}_{$cert['quarter']}.json";
+            file_put_contents($jsonFile, json_encode($form16a, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+            // Generate actual PDF via TCPDF
+            $pdfFile = $dir . "/form_16a_{$cert['deductee_pan']}_{$cert['financial_year']}_{$cert['quarter']}.pdf";
+            $this->renderForm16APdf($form16a, $pdfFile);
+
             $pdo->prepare("UPDATE tds_certificates_issued SET form_16a_pdf_path = ? WHERE id = ?")
-                ->execute([$filepath, $certificateId]);
+                ->execute([$pdfFile, $certificateId]);
 
-            return ['success' => true, 'form_16a' => $form16a, 'file_path' => $filepath];
+            return ['success' => true, 'form_16a' => $form16a, 'file_path' => $pdfFile, 'json_path' => $jsonFile];
         } catch (\Exception $e) {
             error_log("[TDSFilingService] generateForm16A() exception: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
+    }
+
+    /**
+     * Render Form 16A as a printable PDF using TCPDF.
+     */
+    private function renderForm16APdf(array $data, string $filepath): void
+    {
+        if (!class_exists('TCPDF')) {
+            $vendorPath = (defined('ROOT_PATH') ? ROOT_PATH : dirname(__DIR__, 3)) . '/vendor/tcpdf/tcpdf.php';
+            if (file_exists($vendorPath)) {
+                require_once $vendorPath;
+            } else {
+                error_log("[TDSFilingService] TCPDF not available, skipping PDF generation");
+                return;
+            }
+        }
+
+        $pdf = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetCreator('APS Dream Home');
+        $pdf->SetTitle('Form 16A - TDS Certificate');
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->SetFont('helvetica', '', 10);
+        $pdf->AddPage();
+
+        $html = '
+        <style>
+            .form-header { text-align:center; border:2px solid #333; padding:10px; margin-bottom:15px; }
+            .form-header h2 { margin:0; font-size:16px; }
+            .form-header h3 { margin:2px 0 0; font-size:13px; font-weight:normal; }
+            table { width:100%; border-collapse:collapse; margin:10px 0; }
+            th, td { border:1px solid #999; padding:6px 8px; font-size:9px; text-align:left; }
+            th { background-color:#f0f0f0; font-weight:bold; }
+            .section-title { background-color:#e8e8e8; font-weight:bold; text-align:center; padding:4px; margin:10px 0 5px; font-size:10px; }
+            .amount { text-align:right; font-family:monospace; }
+            .sign-block { margin-top:30px; display:flex; justify-content:space-between; }
+            .sign-box { width:45%; text-align:center; border-top:1px solid #333; padding-top:5px; font-size:9px; }
+        </style>
+
+        <div class="form-header">
+            <h2>FORM No. 16A</h2>
+            <h3>[See section 203, Rule 31A(2)(b)]</h3>
+            <h3>Certificate for tax deducted at source</h3>
+        </div>
+
+        <table>
+            <tr>
+                <td width="50%"><strong>Name of the Deductor:</strong><br>' . htmlspecialchars($data['deductor']['name'] ?? '') . '</td>
+                <td width="50%"><strong>TAN:</strong> ' . htmlspecialchars($data['deductor']['tan'] ?? '') . '<br><strong>PAN:</strong> ' . htmlspecialchars($data['deductor']['pan'] ?? '') . '</td>
+            </tr>
+            <tr>
+                <td><strong>Name of the Deductee:</strong><br>' . htmlspecialchars($data['deductee']['name'] ?? '') . '</td>
+                <td><strong>PAN of Deductee:</strong> ' . htmlspecialchars($data['deductee']['pan'] ?? '') . '</td>
+            </tr>
+            <tr>
+                <td><strong>Financial Year:</strong> ' . htmlspecialchars($data['financial_year'] ?? '') . '</td>
+                <td><strong>Quarter:</strong> ' . htmlspecialchars($data['quarter'] ?? '') . '</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Certificate Number:</strong> ' . htmlspecialchars($data['certificate_number'] ?? '') . '</td>
+            </tr>
+        </table>
+
+        <div class="section-title">DETAILS OF TAX DEDUCTED AND DEPOSITED</div>
+
+        <table>
+            <tr>
+                <th>S.No.</th>
+                <th>Date of Payment/Credit</th>
+                <th>Section</th>
+                <th>Gross Amount (₹)</th>
+                <th>TDS Rate (%)</th>
+                <th>TDS Amount (₹)</th>
+            </tr>';
+
+        $sno = 0;
+        $totalGross = 0;
+        $totalTds = 0;
+        foreach ($data['records'] ?? [] as $rec) {
+            $sno++;
+            $totalGross += $rec['gross'];
+            $totalTds += $rec['tds'];
+            $html .= '
+            <tr>
+                <td>' . $sno . '</td>
+                <td>' . htmlspecialchars($rec['date'] ?? '') . '</td>
+                <td>' . htmlspecialchars($rec['section'] ?? '') . '</td>
+                <td class="amount">' . number_format($rec['gross'], 2) . '</td>
+                <td class="amount">' . number_format($rec['rate'], 1) . '%</td>
+                <td class="amount">' . number_format($rec['tds'], 2) . '</td>
+            </tr>';
+        }
+
+        $html .= '
+            <tr style="font-weight:bold; background-color:#f0f0f0;">
+                <td colspan="3">TOTAL</td>
+                <td class="amount">' . number_format($totalGross, 2) . '</td>
+                <td></td>
+                <td class="amount">' . number_format($totalTds, 2) . '</td>
+            </tr>
+        </table>
+
+        <div class="section-title">VERIFICATION</div>
+        <p style="font-size:9px; text-align:justify;">
+            I hereby certify that the tax has been deducted and deposited to the credit of the Central Government
+            for the quarter ending as mentioned above. The information given above is true and correct to the best
+            of my knowledge and belief.
+        </p>
+
+        <table style="border:none; margin-top:20px;">
+            <tr style="border:none;">
+                <td style="border:none; width:50%; text-align:center;">
+                    <br><br><br>
+                    <strong>Signature of Deductor</strong><br>
+                    ' . htmlspecialchars($data['deductor']['name'] ?? '') . '
+                </td>
+                <td style="border:none; width:50%; text-align:center;">
+                    <br><br><br>
+                    <strong>Date and Place</strong><br>
+                    ' . date('d-m-Y') . '
+                </td>
+            </tr>
+        </table>';
+
+        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->Output($filepath, 'F');
     }
 
     // ========== TDS Summary ==========
