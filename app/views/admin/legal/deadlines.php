@@ -171,15 +171,9 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                             <label class="form-label">Assigned To</label>
                             <select name="assigned_to" class="form-select">
                                 <option value="">Unassigned</option>
-                                <?php
-                                try {
-                                    $usersDb = \App\Core\Database\Database::getInstance();
-                                    $usersStmt = $usersDb->query("SELECT id, name FROM users WHERE role IN ('admin','employee','agent') ORDER BY name");
-                                    $users = $usersStmt->fetchAll(\PDO::FETCH_ASSOC);
-                                    foreach ($users as $u): ?>
+                                <?php $users = $users ?? []; foreach ($users as $u): ?>
                                     <option value="<?php echo $u['id']; ?>"><?php echo $u['name']; ?></option>
-                                <?php endforeach;
-                                } catch (\Exception $e) { error_log('legal/deadlines user dropdown: ' . $e->getMessage()); } ?>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="mb-3">

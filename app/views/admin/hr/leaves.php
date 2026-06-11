@@ -134,12 +134,6 @@ $page_title = $page_title ?? 'Leave Applications';
 </div>
 
 <?php
-// Pass users and leave_types for modal - fetch from controller if needed
-try {
-    $db = \App\Core\Database\Database::getInstance();
-    $GLOBALS['_hr_employees'] = $GLOBALS['_hr_employees'] ?? $db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
-    $GLOBALS['_hr_leave_types'] = $GLOBALS['_hr_leave_types'] ?? $db->fetchAll("SELECT id, name FROM leave_types WHERE status='active' ORDER BY name");
-} catch (\Exception $e) { $GLOBALS['_hr_employees'] = []; $GLOBALS['_hr_leave_types'] = []; }
-$users = $GLOBALS['_hr_employees'];
-$leave_types = $GLOBALS['_hr_leave_types'];
+$users = $users ?? [];
+$leave_types = $leave_types ?? [];
 ?>

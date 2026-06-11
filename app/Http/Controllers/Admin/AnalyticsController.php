@@ -564,14 +564,66 @@ class AnalyticsController extends AdminController
      */
     public function advanced()
     {
+        $totalBookings = $totalRevenue = $totalLeads = $convertedLeads = $totalProperties = $totalPayments = 0;
+        $monthlyRevenue = $leadSources = $propertyTypes = $bookingStatus = $leadStatus = [];
+        $conversionRate = 0;
+
+        try {
+            $totalBookings = (int)($this->db->query("SELECT COUNT(*) FROM plot_bookings")->fetchColumn());
+            $totalRevenue = (float)($this->db->query("SELECT COALESCE(SUM(total_plot_value),0) FROM plot_bookings WHERE status NOT IN ('cancelled')")->fetchColumn());
+            $totalLeads = (int)($this->db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL")->fetchColumn());
+            $convertedLeads = (int)($this->db->query("SELECT COUNT(*) FROM leads WHERE is_converted = 1 AND deleted_at IS NULL")->fetchColumn());
+            $totalProperties = (int)($this->db->query("SELECT COUNT(*) FROM user_properties")->fetchColumn());
+            $totalPayments = (int)($this->db->query("SELECT COUNT(*) FROM payment_transactions WHERE payment_status = 'completed'")->fetchColumn());
+            $monthlyRevenue = $this->db->query("SELECT DATE_FORMAT(booking_date, '%Y-%m') as month, SUM(total_plot_value) as revenue, COUNT(*) as cnt FROM plot_bookings WHERE status NOT IN ('cancelled') AND booking_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(\PDO::FETCH_ASSOC);
+            $leadSources = $this->db->query("SELECT source, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY source ORDER BY cnt DESC LIMIT 8")->fetchAll(\PDO::FETCH_ASSOC);
+            $propertyTypes = $this->db->query("SELECT property_type, COUNT(*) as cnt FROM user_properties GROUP BY property_type ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC);
+            $bookingStatus = $this->db->query("SELECT status, COUNT(*) as cnt FROM plot_bookings GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC);
+            $leadStatus = $this->db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC);
+            $conversionRate = $totalLeads > 0 ? round($convertedLeads / $totalLeads * 100, 1) : 0;
+        } catch (\Exception $e) {
+            error_log("AnalyticsController::advanced() DB error: " . $e->getMessage());
+        }
+
+        $monthLabels = array_column($monthlyRevenue, 'month');
+        $revenueData = array_column($monthlyRevenue, 'revenue');
+        $bookingCountData = array_column($monthlyRevenue, 'cnt');
+        $sourceLabels = array_column($leadSources, 'source');
+        $sourceData = array_column($leadSources, 'cnt');
+        $propLabels = array_column($propertyTypes, 'property_type');
+        $propData = array_column($propertyTypes, 'cnt');
+        $bookingLabels = array_column($bookingStatus, 'status');
+        $bookingData = array_column($bookingStatus, 'cnt');
+
         try {
             $data = [
                 'page_title' => 'Advanced Analytics - APS Dream Home',
                 'active_page' => 'advanced_analytics',
-                'page_heading' => 'Advanced Analytics'
+                'page_heading' => 'Advanced Analytics',
+                'totalBookings' => $totalBookings,
+                'totalRevenue' => $totalRevenue,
+                'totalLeads' => $totalLeads,
+                'convertedLeads' => $convertedLeads,
+                'totalProperties' => $totalProperties,
+                'totalPayments' => $totalPayments,
+                'monthlyRevenue' => $monthlyRevenue,
+                'leadSources' => $leadSources,
+                'propertyTypes' => $propertyTypes,
+                'bookingStatus' => $bookingStatus,
+                'leadStatus' => $leadStatus,
+                'conversionRate' => $conversionRate,
+                'monthLabels' => $monthLabels,
+                'revenueData' => $revenueData,
+                'bookingCountData' => $bookingCountData,
+                'sourceLabels' => $sourceLabels,
+                'sourceData' => $sourceData,
+                'propLabels' => $propLabels,
+                'propData' => $propData,
+                'bookingLabels' => $bookingLabels,
+                'bookingData' => $bookingData,
             ];
             return $this->render('admin/analytics/advanced', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Advanced Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load advanced analytics');
             return $this->redirect('admin/analytics');

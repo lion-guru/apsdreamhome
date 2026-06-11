@@ -1,24 +1,26 @@
-<?php $page_title = $page_title ?? 'Advanced Analytics';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $totalBookings = (int)($db->query("SELECT COUNT(*) FROM plot_bookings")->fetchColumn());
-    $totalRevenue = (float)($db->query("SELECT COALESCE(SUM(total_plot_value),0) FROM plot_bookings WHERE status NOT IN ('cancelled')")->fetchColumn());
-    $totalLeads = (int)($db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL")->fetchColumn());
-    $convertedLeads = (int)($db->query("SELECT COUNT(*) FROM leads WHERE is_converted = 1 AND deleted_at IS NULL")->fetchColumn());
-    $totalProperties = (int)($db->query("SELECT COUNT(*) FROM user_properties")->fetchColumn());
-    $totalPayments = (int)($db->query("SELECT COUNT(*) FROM payment_transactions WHERE payment_status = 'completed'")->fetchColumn());
-    $monthlyRevenue = $db->query("SELECT DATE_FORMAT(booking_date, '%Y-%m') as month, SUM(total_plot_value) as revenue, COUNT(*) as cnt FROM plot_bookings WHERE status NOT IN ('cancelled') AND booking_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
-    $leadSources = $db->query("SELECT source, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY source ORDER BY cnt DESC LIMIT 8")->fetchAll(PDO::FETCH_ASSOC);
-    $propertyTypes = $db->query("SELECT property_type, COUNT(*) as cnt FROM user_properties GROUP BY property_type ORDER BY cnt DESC")->fetchAll(PDO::FETCH_ASSOC);
-    $bookingStatus = $db->query("SELECT status, COUNT(*) as cnt FROM plot_bookings GROUP BY status ORDER BY cnt DESC")->fetchAll(PDO::FETCH_ASSOC);
-    $leadStatus = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY status ORDER BY cnt DESC")->fetchAll(PDO::FETCH_ASSOC);
-    $conversionRate = $totalLeads > 0 ? round($convertedLeads / $totalLeads * 100, 1) : 0;
-} catch (Exception $e) { $totalBookings = $totalRevenue = $totalLeads = $convertedLeads = $totalProperties = $totalPayments = 0; $monthlyRevenue = $leadSources = $propertyTypes = $bookingStatus = $leadStatus = []; $conversionRate = 0; }
-$monthLabels = array_column($monthlyRevenue, 'month'); $revenueData = array_column($monthlyRevenue, 'revenue'); $bookingCountData = array_column($monthlyRevenue, 'cnt');
-$sourceLabels = array_column($leadSources, 'source'); $sourceData = array_column($leadSources, 'cnt');
-$propLabels = array_column($propertyTypes, 'property_type'); $propData = array_column($propertyTypes, 'cnt');
-$bookingLabels = array_column($bookingStatus, 'status'); $bookingData = array_column($bookingStatus, 'cnt');
+<?php
+$page_title = $page_title ?? 'Advanced Analytics';
+$totalBookings = $totalBookings ?? 0;
+$totalRevenue = $totalRevenue ?? 0;
+$totalLeads = $totalLeads ?? 0;
+$convertedLeads = $convertedLeads ?? 0;
+$totalProperties = $totalProperties ?? 0;
+$totalPayments = $totalPayments ?? 0;
+$monthlyRevenue = $monthlyRevenue ?? [];
+$leadSources = $leadSources ?? [];
+$propertyTypes = $propertyTypes ?? [];
+$bookingStatus = $bookingStatus ?? [];
+$leadStatus = $leadStatus ?? [];
+$conversionRate = $conversionRate ?? 0;
+$monthLabels = $monthLabels ?? [];
+$revenueData = $revenueData ?? [];
+$bookingCountData = $bookingCountData ?? [];
+$sourceLabels = $sourceLabels ?? [];
+$sourceData = $sourceData ?? [];
+$propLabels = $propLabels ?? [];
+$propData = $propData ?? [];
+$bookingLabels = $bookingLabels ?? [];
+$bookingData = $bookingData ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

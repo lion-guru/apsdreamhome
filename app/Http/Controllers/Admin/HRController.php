@@ -312,12 +312,28 @@ class HRController extends AdminController
                 JOIN users u ON e.id=u.id
                 $where ORDER BY el.created_at DESC LIMIT $perPage OFFSET $offset", $params);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
- $total = 0; $leaves = []; }
+            error_log("[HRController] leaves() exception: " . $e->getMessage());
+            $total = 0;
+            $leaves = [];
+        }
+        try {
+            $users = $this->db->fetchAll("SELECT e.id, u.name FROM users e JOIN users u ON e.user_id=u.id WHERE e.status='active' ORDER BY u.name");
+        } catch (\Exception $e) {
+            error_log("[HRController] leaves() employees query: " . $e->getMessage());
+            $users = [];
+        }
+        try {
+            $leave_types = $this->db->fetchAll("SELECT id, name FROM leave_types WHERE status='active' ORDER BY name");
+        } catch (\Exception $e) {
+            error_log("[HRController] leaves() leave_types query: " . $e->getMessage());
+            $leave_types = [];
+        }
         $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
         return $this->render('admin/hr/leaves', [
             'page_title' => 'Leave Applications',
             'leaves' => $leaves,
+            'users' => $users,
+            'leave_types' => $leave_types,
             'status_filter' => $statusFilter,
             'page' => $page,
             'total_pages' => $totalPages,

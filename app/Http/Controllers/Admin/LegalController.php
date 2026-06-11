@@ -94,9 +94,16 @@ class LegalController extends AdminController
             $this->setFlash('error', 'Dispute not found');
             $this->redirect('/admin/legal/disputes');
         }
+        try {
+            $usersStmt = $this->db->query("SELECT id, name FROM users WHERE role IN ('admin','employee','agent') ORDER BY name");
+            $users = $usersStmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $users = [];
+        }
         return $this->render('admin/legal/dispute-show', [
             'page_title' => 'Dispute Details',
-            'dispute' => $dispute
+            'dispute' => $dispute,
+            'users' => $users
         ]);
     }
 
@@ -130,6 +137,12 @@ class LegalController extends AdminController
         } catch (Exception $e) {
             $deadlines = [];
         }
+        try {
+            $usersStmt = $this->db->query("SELECT id, name FROM users WHERE role IN ('admin','employee','agent') ORDER BY name");
+            $users = $usersStmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $users = [];
+        }
         $total = count($deadlines);
         $overdue = 0;
         $upcoming = 0;
@@ -143,6 +156,7 @@ class LegalController extends AdminController
         return $this->render('admin/legal/deadlines', [
             'page_title' => 'Legal Deadlines',
             'deadlines' => $deadlines,
+            'users' => $users,
             'total' => $total,
             'overdue' => $overdue,
             'upcoming' => $upcoming

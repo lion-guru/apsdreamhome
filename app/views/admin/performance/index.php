@@ -1,30 +1,26 @@
 <?php $page_title = $page_title ?? 'System Performance';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $phpVersion = phpversion();
-    $mysqlVersion = $db->query("SELECT VERSION()")->fetchColumn();
-    $memoryUsed = memory_get_usage(true);
-    $memoryPeak = memory_get_peak_usage(true);
-    $memoryLimit = ini_get('memory_limit');
-    $memoryLimitBytes = $memoryLimit === '-1' ? PHP_INT_MAX : (int)$memoryLimit * 1024 * 1024;
-    $diskFree = @disk_free_space('C:\\');
-    $diskTotal = @disk_total_space('C:\\');
-    $diskUsed = $diskTotal - $diskFree;
-    $uptime = @php_uname('s') . ' ' . @php_uname('r');
-    $serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown';
-    $activeConn = (int)($db->query("SELECT COUNT(*) FROM information_schema.PROCESSLIST WHERE db = DATABASE()")->fetchColumn());
-    $totalTables = (int)($db->query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()")->fetchColumn());
-    $totalRows = (int)($db->query("SELECT SUM(TABLE_ROWS) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_TYPE = 'BASE TABLE'")->fetchColumn());
-    $dbSize = (float)($db->query("SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()")->fetchColumn());
-    $extensions = ['pdo_mysql','mysqli','mbstring','openssl','curl','gd','zip','json','intl','sockets','redis','opcache'];
-    $loadedExtensions = get_loaded_extensions();
-    $opcacheEnabled = function_exists('opcache_get_status') ? @opcache_get_status()['opcache_enabled'] : false;
-    $opcacheHits = 0; $opcacheMisses = 0;
-    if ($opcacheEnabled) { $st = @opcache_get_status(); $opcacheHits = $st['opcache_statistics']['num_hits'] ?? 0; $opcacheMisses = $st['opcache_statistics']['num_misses'] ?? 0; }
-    $slowQueries = (int)($db->query("SHOW GLOBAL STATUS LIKE 'Slow_queries'")->fetchColumn());
-    $totalQueries = (int)($db->query("SHOW GLOBAL STATUS LIKE 'Queries'")->fetchColumn());
-} catch (Exception $e) { $phpVersion = phpversion(); $mysqlVersion = $memoryUsed = $memoryPeak = $memoryLimitBytes = $diskFree = $diskTotal = $diskUsed = 0; $uptime = $serverSoftware = ''; $activeConn = $totalTables = $totalRows = 0; $dbSize = 0; $extensions = []; $loadedExtensions = []; $opcacheEnabled = false; $opcacheHits = $opcacheMisses = $slowQueries = $totalQueries = 0; }
+$phpVersion = $phpVersion ?? phpversion();
+$mysqlVersion = $mysqlVersion ?? '';
+$memoryUsed = $memoryUsed ?? 0;
+$memoryPeak = $memoryPeak ?? 0;
+$memoryLimit = $memoryLimit ?? ini_get('memory_limit');
+$memoryLimitBytes = $memoryLimitBytes ?? 0;
+$diskFree = $diskFree ?? 0;
+$diskTotal = $diskTotal ?? 0;
+$diskUsed = $diskUsed ?? 0;
+$uptime = $uptime ?? '';
+$serverSoftware = $serverSoftware ?? '';
+$activeConn = $activeConn ?? 0;
+$totalTables = $totalTables ?? 0;
+$totalRows = $totalRows ?? 0;
+$dbSize = $dbSize ?? 0;
+$extensions = $extensions ?? [];
+$loadedExtensions = $loadedExtensions ?? [];
+$opcacheEnabled = $opcacheEnabled ?? false;
+$opcacheHits = $opcacheHits ?? 0;
+$opcacheMisses = $opcacheMisses ?? 0;
+$slowQueries = $slowQueries ?? 0;
+$totalQueries = $totalQueries ?? 0;
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

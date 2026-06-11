@@ -1,25 +1,22 @@
-<?php $page_title = $page_title ?? 'Financial Reports';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $totalReceipts = (float)($db->query("SELECT COALESCE(SUM(amount),0) FROM payment_transactions WHERE payment_status = 'completed'")->fetchColumn());
-    $totalBookings = (float)($db->query("SELECT COALESCE(SUM(booking_amount),0) FROM plot_bookings WHERE status != 'cancelled'")->fetchColumn());
-    $gstOutput = (float)($db->query("SELECT COALESCE(SUM(total_tax),0) FROM gst_transactions WHERE transaction_type = 'output'")->fetchColumn());
-    $gstInput = (float)($db->query("SELECT COALESCE(SUM(total_tax),0) FROM gst_transactions WHERE transaction_type = 'input'")->fetchColumn());
-    $gstPayable = max(0, $gstOutput - $gstInput);
-    $totalTds = (float)($db->query("SELECT COALESCE(SUM(total_tds),0) FROM tds_register")->fetchColumn());
-    $depositedTds = (float)($db->query("SELECT COALESCE(SUM(total_tds),0) FROM tds_register WHERE status IN ('deposited','verified')")->fetchColumn());
-    $pendingTds = $totalTds - $depositedTds;
-    $bankAccounts = $db->query("SELECT * FROM bank_accounts_master WHERE active = 1")->fetchAll(PDO::FETCH_ASSOC);
-    $totalBankBalance = array_sum(array_map(function($a) { return (float)$a['current_balance']; }, $bankAccounts));
-    $escrowBalance = array_sum(array_map(function($a) { return $a['is_escrow'] ? (float)$a['current_balance'] : 0; }, $bankAccounts));
-    $reconciliations = (int)($db->query("SELECT COUNT(*) FROM bank_reconciliation WHERE status = 'completed'")->fetchColumn());
-    $pendingRecon = (int)($db->query("SELECT COUNT(*) FROM bank_reconciliation WHERE status != 'completed'")->fetchColumn());
-    $monthlyData = $db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, SUM(amount) as revenue, payment_method FROM payment_transactions WHERE payment_status = 'completed' AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY month, payment_method ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
-    $methodBreakdown = $db->query("SELECT payment_method, COUNT(*) as cnt, SUM(amount) as total FROM payment_transactions WHERE payment_status = 'completed' GROUP BY payment_method ORDER BY total DESC")->fetchAll(PDO::FETCH_ASSOC);
-    $recentPayments = $db->query("SELECT pt.*, u.name FROM payment_transactions pt LEFT JOIN users u ON pt.user_id = u.id ORDER BY pt.created_at DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $totalReceipts = $totalBookings = $gstOutput = $gstInput = $gstPayable = $totalTds = $depositedTds = $pendingTds = $totalBankBalance = $escrowBalance = 0; $bankAccounts = $monthlyData = $methodBreakdown = $recentPayments = []; $reconciliations = $pendingRecon = 0; }
-$netIncome = $totalReceipts;
+<?php
+$page_title = $page_title ?? 'Financial Reports';
+$totalReceipts = $totalReceipts ?? 0;
+$totalBookings = $totalBookings ?? 0;
+$gstOutput = $gstOutput ?? 0;
+$gstInput = $gstInput ?? 0;
+$gstPayable = $gstPayable ?? 0;
+$totalTds = $totalTds ?? 0;
+$depositedTds = $depositedTds ?? 0;
+$pendingTds = $pendingTds ?? 0;
+$bankAccounts = $bankAccounts ?? [];
+$totalBankBalance = $totalBankBalance ?? 0;
+$escrowBalance = $escrowBalance ?? 0;
+$reconciliations = $reconciliations ?? 0;
+$pendingRecon = $pendingRecon ?? 0;
+$monthlyData = $monthlyData ?? [];
+$methodBreakdown = $methodBreakdown ?? [];
+$recentPayments = $recentPayments ?? [];
+$netIncome = $netIncome ?? $totalReceipts;
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

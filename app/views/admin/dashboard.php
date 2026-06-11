@@ -18,40 +18,12 @@ $currentUser = [
 $currentRole = $currentUser['role'];
 $roleName = ucwords(str_replace('_', ' ', $currentRole));
 
-// Get stats from database
-$db = \App\Core\Database\Database::getInstance();
-
-// Get basic stats
-$stats = [
-    'total_users' => 0,
-    'total_properties' => 0,
-    'total_leads' => 0,
-    'new_leads_today' => 0,
-    'total_associates' => 0,
-    'revenue_month' => 0,
-    'total_employees' => 0,
-    'pending_bookings' => 0
-];
-
-try {
-    $stats['total_users'] = $db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
-    $stats['total_properties'] = $db->fetch("SELECT COUNT(*) as count FROM properties")['count'] ?? 0;
-    $stats['total_leads'] = $db->fetch("SELECT COUNT(*) as count FROM leads")['count'] ?? 0;
-    $stats['new_leads_today'] = $db->fetch("SELECT COUNT(*) as count FROM leads WHERE DATE(created_at) = CURDATE()")['count'] ?? 0;
-    $stats['total_associates'] = $db->fetch("SELECT COUNT(*) as count FROM users WHERE role IN ('associate', 'agent')")['count'] ?? 0;
-    $stats['revenue_month'] = $db->fetch("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")['total'] ?? 0;
-    $stats['total_employees'] = $db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
-    $stats['pending_bookings'] = $db->fetch("SELECT COUNT(*) as count FROM bookings WHERE status = 'pending'")['count'] ?? 0;
-} catch (\Exception $e) {
-    // Silently handle database errors
-}
-
 // Page title - use data from controller or defaults
 $page_title = $page_title ?? 'Dashboard';
 $page_description = $page_description ?? 'Welcome to your admin dashboard';
 $active_page = $active_page ?? 'dashboard';
 
-// Get stats from data passed by controller
+// Stats passed from controller (enterpriseDashboard method)
 $stats = $stats ?? [
     'total_users' => 0,
     'total_properties' => 0,

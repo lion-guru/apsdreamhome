@@ -1,17 +1,13 @@
 <?php $page_title = $page_title ?? 'Developer Portal';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $totalApps = (int)($db->query("SELECT COUNT(*) FROM api_developers")->fetchColumn());
-    $activeApps = (int)($db->query("SELECT COUNT(*) FROM api_developers WHERE status = 'active'")->fetchColumn());
-    $totalKeys = (int)($db->query("SELECT COUNT(*) FROM api_keys")->fetchColumn());
-    $activeKeys = (int)($db->query("SELECT COUNT(*) FROM api_keys WHERE is_active = 1")->fetchColumn());
-    $totalWebhooks = (int)($db->query("SELECT COUNT(*) FROM webhook_endpoints")->fetchColumn());
-    $activeWebhooks = (int)($db->query("SELECT COUNT(*) FROM webhook_endpoints WHERE is_active = 1")->fetchColumn());
-    $recentCalls = $db->query("SELECT k.key_name, k.service_name, k.usage_count, k.last_used_at FROM api_keys k WHERE k.last_used_at IS NOT NULL ORDER BY k.last_used_at DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
-    $apps = $db->query("SELECT * FROM api_developers ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
-    $webhooks = $db->query("SELECT * FROM webhook_endpoints ORDER BY created_at DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $totalApps = $activeApps = $totalKeys = $activeKeys = $totalWebhooks = $activeWebhooks = 0; $recentCalls = $apps = $webhooks = []; }
+$totalApps = $totalApps ?? 0;
+$activeApps = $activeApps ?? 0;
+$totalKeys = $totalKeys ?? 0;
+$activeKeys = $activeKeys ?? 0;
+$totalWebhooks = $totalWebhooks ?? 0;
+$activeWebhooks = $activeWebhooks ?? 0;
+$recentCalls = $recentCalls ?? [];
+$apps = $apps ?? [];
+$webhooks = $webhooks ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

@@ -1,16 +1,13 @@
-<?php $page_title = $page_title ?? 'Marketplace - Resell Properties';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $activeListings = (int)($db->query("SELECT COUNT(*) FROM user_properties WHERE listing_type = 'sell' AND status = 'approved'")->fetchColumn());
-    $pendingApprovals = (int)($db->query("SELECT COUNT(*) FROM user_properties WHERE status = 'pending'")->fetchColumn());
-    $soldCount = (int)($db->query("SELECT COUNT(*) FROM user_properties WHERE status = 'sold'")->fetchColumn());
-    $avgPrice = (float)($db->query("SELECT COALESCE(AVG(price),0) FROM user_properties WHERE listing_type = 'sell' AND price > 0 AND status IN ('approved','sold')")->fetchColumn());
-    $totalViews = (int)($db->query("SELECT COALESCE(SUM(views),0) FROM user_properties")->fetchColumn());
-    $topLocations = $db->query("SELECT COALESCE(location, city_name, 'Unknown') as loc, COUNT(*) as cnt, AVG(price) as avg_price FROM user_properties WHERE listing_type = 'sell' AND status = 'approved' GROUP BY loc ORDER BY cnt DESC LIMIT 6")->fetchAll(PDO::FETCH_ASSOC);
-    $recentListings = $db->query("SELECT up.*, u.name as seller_name FROM user_properties up LEFT JOIN users u ON up.user_id = u.id WHERE up.listing_type = 'sell' ORDER BY up.created_at DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-    $typeDistribution = $db->query("SELECT property_type, COUNT(*) as cnt FROM user_properties WHERE listing_type = 'sell' AND status = 'approved' GROUP BY property_type ORDER BY cnt DESC")->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $activeListings = $pendingApprovals = $soldCount = $totalViews = 0; $avgPrice = 0; $topLocations = $recentListings = $typeDistribution = []; }
+<?php
+$page_title = $page_title ?? 'Marketplace - Resell Properties';
+$activeListings = $activeListings ?? 0;
+$pendingApprovals = $pendingApprovals ?? 0;
+$soldCount = $soldCount ?? 0;
+$avgPrice = $avgPrice ?? 0;
+$totalViews = $totalViews ?? 0;
+$topLocations = $topLocations ?? [];
+$recentListings = $recentListings ?? [];
+$typeDistribution = $typeDistribution ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

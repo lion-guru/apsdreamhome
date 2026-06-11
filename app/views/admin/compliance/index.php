@@ -1,21 +1,17 @@
 <?php $page_title = $page_title ?? 'Compliance Dashboard';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $reraFilings = $db->query("SELECT r.*, c.name as colony_name FROM rera_compliance_log r LEFT JOIN colonies c ON r.project_colony_id = c.id ORDER BY r.year DESC, r.quarter DESC")->fetchAll(PDO::FETCH_ASSOC);
-    $totalRera = count($reraFilings);
-    $pendingRera = (int)($db->query("SELECT COUNT(*) FROM rera_compliance_log WHERE status = 'pending'")->fetchColumn());
-    $acceptedRera = (int)($db->query("SELECT COUNT(*) FROM rera_compliance_log WHERE status = 'accepted'")->fetchColumn());
-    $pendingKyc = (int)($db->query("SELECT COUNT(*) FROM kyc_requests WHERE status = 'pending'")->fetchColumn());
-    $totalKyc = (int)($db->query("SELECT COUNT(*) FROM kyc_requests")->fetchColumn());
-    $verifiedKyc = (int)($db->query("SELECT COUNT(*) FROM kyc_requests WHERE status = 'approved'")->fetchColumn());
-    $gstReturns = $db->query("SELECT * FROM gst_returns ORDER BY return_period DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-    $totalGstFiled = (int)($db->query("SELECT COUNT(*) FROM gst_returns WHERE filing_status = 'filed'")->fetchColumn());
-    $pendingGst = (int)($db->query("SELECT COUNT(*) FROM gst_returns WHERE filing_status IN ('draft','pending')")->fetchColumn());
-    $tdsSummary = $db->query("SELECT status, COUNT(*) as cnt, COALESCE(SUM(total_tds),0) as total FROM tds_register GROUP BY status")->fetchAll(PDO::FETCH_ASSOC);
-    $totalTdsAmount = (float)($db->query("SELECT COALESCE(SUM(total_tds),0) FROM tds_register")->fetchColumn());
-    $pendingTds = (int)($db->query("SELECT COUNT(*) FROM tds_register WHERE status = 'pending'")->fetchColumn());
-} catch (Exception $e) { $reraFilings = $gstReturns = $tdsSummary = []; $totalRera = $pendingRera = $acceptedRera = $pendingKyc = $totalKyc = $verifiedKyc = $totalGstFiled = $pendingGst = $pendingTds = 0; $totalTdsAmount = 0; }
+$reraFilings = $reraFilings ?? [];
+$totalRera = $totalRera ?? 0;
+$pendingRera = $pendingRera ?? 0;
+$acceptedRera = $acceptedRera ?? 0;
+$pendingKyc = $pendingKyc ?? 0;
+$totalKyc = $totalKyc ?? 0;
+$verifiedKyc = $verifiedKyc ?? 0;
+$gstReturns = $gstReturns ?? [];
+$totalGstFiled = $totalGstFiled ?? 0;
+$pendingGst = $pendingGst ?? 0;
+$tdsSummary = $tdsSummary ?? [];
+$totalTdsAmount = $totalTdsAmount ?? 0;
+$pendingTds = $pendingTds ?? 0;
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

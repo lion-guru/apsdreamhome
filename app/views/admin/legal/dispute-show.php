@@ -91,14 +91,9 @@ $dispute = $dispute ?? [];
                             <label class="form-label">Assigned To</label>
                             <select name="assigned_to" class="form-select">
                                 <option value="">Unassigned</option>
-                                <?php
-                                try {
-                                    $usersStmt = $this->db->query("SELECT id, name FROM users WHERE role IN ('admin','employee','agent') ORDER BY name");
-                                    $users = $usersStmt->fetchAll(\PDO::FETCH_ASSOC);
-                                    foreach ($users as $u): ?>
+                                <?php $users = $users ?? []; foreach ($users as $u): ?>
                                     <option value="<?php echo $u['id']; ?>" <?php echo (($dispute['assigned_to'] ?? 0) == $u['id']) ? 'selected' : ''; ?>><?php echo $u['name']; ?></option>
-                                <?php endforeach;
-                                                                 } catch (\Exception $e) { error_log('legal/dispute-show user dropdown: ' . $e->getMessage()); } ?>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="mb-3">

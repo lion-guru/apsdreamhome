@@ -1,27 +1,15 @@
-<?php $page_title = $page_title ?? 'Call Sessions History';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $filterStatus = $_GET['status'] ?? '';
-    $filterAgent = $_GET['agent'] ?? '';
-    $filterFrom = $_GET['from'] ?? '';
-    $filterTo = $_GET['to'] ?? '';
-    $sql = "SELECT acs.*, l.name as lead_name FROM ai_call_sessions acs LEFT JOIN leads l ON acs.lead_id = l.id WHERE 1=1";
-    $params = [];
-    if ($filterStatus) { $sql .= " AND acs.status = ?"; $params[] = $filterStatus; }
-    if ($filterAgent) { $sql .= " AND acs.ai_agent_id = ?"; $params[] = $filterAgent; }
-    if ($filterFrom) { $sql .= " AND DATE(acs.created_at) >= ?"; $params[] = $filterFrom; }
-    if ($filterTo) { $sql .= " AND DATE(acs.created_at) <= ?"; $params[] = $filterTo; }
-    $sql .= " ORDER BY acs.created_at DESC LIMIT 50";
-    $stmt = $db->prepare($sql);
-    $stmt->execute($params);
-    $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $totalSessions = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions")->fetchColumn());
-    $totalCompleted = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status = 'completed'")->fetchColumn());
-    $totalFailed = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status = 'failed'")->fetchColumn());
-    $avgDuration = (float)($db->query("SELECT COALESCE(AVG(duration_seconds),0) FROM ai_call_sessions WHERE duration_seconds > 0")->fetchColumn());
-    $agents = $db->query("SELECT DISTINCT ai_agent_id FROM ai_call_sessions WHERE ai_agent_id IS NOT NULL ORDER BY ai_agent_id")->fetchAll(PDO::FETCH_COLUMN);
-} catch (Exception $e) { $sessions = $agents = []; $totalSessions = $totalCompleted = $totalFailed = 0; $avgDuration = 0; }
+<?php
+$page_title = $page_title ?? 'Call Sessions History';
+$sessions = $sessions ?? [];
+$agents = $agents ?? [];
+$totalSessions = $totalSessions ?? 0;
+$totalCompleted = $totalCompleted ?? 0;
+$totalFailed = $totalFailed ?? 0;
+$avgDuration = $avgDuration ?? 0;
+$filterStatus = $_GET['status'] ?? '';
+$filterAgent = $_GET['agent'] ?? '';
+$filterFrom = $_GET['from'] ?? '';
+$filterTo = $_GET['to'] ?? '';
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

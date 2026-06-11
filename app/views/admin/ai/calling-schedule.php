@@ -1,16 +1,13 @@
-<?php $page_title = $page_title ?? 'Call Scheduling';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $todayScheduled = $db->query("SELECT acs.*, l.name as lead_name FROM ai_calling_schedule acs LEFT JOIN leads l ON acs.lead_id = l.id WHERE acs.scheduled_date = CURDATE() ORDER BY acs.scheduled_time ASC")->fetchAll(PDO::FETCH_ASSOC);
-    $todayCount = count($todayScheduled);
-    $pendingToday = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule WHERE scheduled_date = CURDATE() AND status = 'pending'")->fetchColumn());
-    $completedToday = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule WHERE scheduled_date = CURDATE() AND status = 'completed'")->fetchColumn());
-    $upcoming = $db->query("SELECT acs.*, l.name as lead_name FROM ai_calling_schedule acs LEFT JOIN leads l ON acs.lead_id = l.id WHERE acs.scheduled_date > CURDATE() AND acs.status = 'pending' ORDER BY acs.scheduled_date, acs.scheduled_time ASC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-    $recentCompleted = $db->query("SELECT acs.*, l.name as lead_name, acs2.status as call_status, acs2.customer_response, acs2.duration_seconds FROM ai_calling_schedule acs LEFT JOIN leads l ON acs.lead_id = l.id LEFT JOIN ai_call_sessions acs2 ON acs.call_session_id = acs2.id WHERE acs.status = 'completed' ORDER BY acs.updated_at DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-    $totalScheduled = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule")->fetchColumn());
-    $totalPending = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule WHERE status = 'pending'")->fetchColumn());
-} catch (Exception $e) { $todayScheduled = $upcoming = $recentCompleted = []; $todayCount = $pendingToday = $completedToday = $totalScheduled = $totalPending = 0; }
+<?php
+$page_title = $page_title ?? 'Call Scheduling';
+$todayScheduled = $todayScheduled ?? [];
+$todayCount = $todayCount ?? 0;
+$pendingToday = $pendingToday ?? 0;
+$completedToday = $completedToday ?? 0;
+$upcoming = $upcoming ?? [];
+$recentCompleted = $recentCompleted ?? [];
+$totalScheduled = $totalScheduled ?? 0;
+$totalPending = $totalPending ?? 0;
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

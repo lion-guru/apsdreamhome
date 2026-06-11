@@ -1,21 +1,18 @@
-<?php $page_title = $page_title ?? 'AI Training Dashboard';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $intentCount = (int)($db->query("SELECT COUNT(*) FROM ai_intent_patterns WHERE is_active = 1")->fetchColumn());
-    $totalIntents = (int)($db->query("SELECT COUNT(*) FROM ai_intent_patterns")->fetchColumn());
-    $learningRecords = (int)($db->query("SELECT COUNT(*) FROM ai_learning_data")->fetchColumn());
-    $priceModels = (int)($db->query("SELECT COUNT(*) FROM ai_price_models WHERE is_active = 1")->fetchColumn());
-    $totalPriceModels = (int)($db->query("SELECT COUNT(*) FROM ai_price_models")->fetchColumn());
-    $avgAccuracy = (float)($db->query("SELECT COALESCE(AVG(r_squared),0) FROM ai_price_models WHERE is_active = 1")->fetchColumn());
-    $lastTrained = $db->query("SELECT MAX(trained_at) FROM ai_price_models")->fetchColumn();
-    $totalHits = (int)($db->query("SELECT COALESCE(SUM(hit_count),0) FROM ai_intent_patterns")->fetchColumn());
-    $totalSuccess = (int)($db->query("SELECT COALESCE(SUM(success_count),0) FROM ai_intent_patterns")->fetchColumn());
-    $intentAccuracy = $totalHits > 0 ? round($totalSuccess / $totalHits * 100, 1) : 0;
-    $topIntents = $db->query("SELECT intent_name, hit_count, success_count, pattern_type, language FROM ai_intent_patterns ORDER BY hit_count DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-    $models = $db->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-    $recentLearning = $db->query("SELECT action_type, COUNT(*) as cnt, AVG(feedback_score) as avg_score FROM ai_learning_data GROUP BY action_type ORDER BY cnt DESC")->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $intentCount = $totalIntents = $learningRecords = $priceModels = $totalPriceModels = 0; $avgAccuracy = $intentAccuracy = 0; $lastTrained = null; $totalHits = $totalSuccess = 0; $topIntents = $models = $recentLearning = []; }
+<?php
+$page_title = $page_title ?? 'AI Training Dashboard';
+$intentCount = $intentCount ?? 0;
+$totalIntents = $totalIntents ?? 0;
+$learningRecords = $learningRecords ?? 0;
+$priceModels = $priceModels ?? 0;
+$totalPriceModels = $totalPriceModels ?? 0;
+$avgAccuracy = $avgAccuracy ?? 0;
+$lastTrained = $lastTrained ?? null;
+$totalHits = $totalHits ?? 0;
+$totalSuccess = $totalSuccess ?? 0;
+$intentAccuracy = $intentAccuracy ?? 0;
+$topIntents = $topIntents ?? [];
+$models = $models ?? [];
+$recentLearning = $recentLearning ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

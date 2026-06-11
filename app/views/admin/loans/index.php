@@ -1,17 +1,14 @@
-<?php $page_title = $page_title ?? 'Loan Management';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $activeLoans = (int)($db->query("SELECT COUNT(*) FROM emi_plans WHERE status = 'active'")->fetchColumn());
-    $completedLoans = (int)($db->query("SELECT COUNT(*) FROM emi_plans WHERE status = 'completed'")->fetchColumn());
-    $defaultedLoans = (int)($db->query("SELECT COUNT(*) FROM emi_plans WHERE status = 'defaulted'")->fetchColumn());
-    $totalDisbursed = (float)($db->query("SELECT COALESCE(SUM(total_amount),0) FROM emi_plans")->fetchColumn());
-    $totalEmiAmount = (float)($db->query("SELECT COALESCE(SUM(emi_amount),0) FROM emi_plans WHERE status = 'active'")->fetchColumn());
-    $overdueCount = (int)($db->query("SELECT COUNT(*) FROM booking_payment_schedules WHERE status = 'overdue'")->fetchColumn());
-    $overdueAmount = (float)($db->query("SELECT COALESCE(SUM(amount - paid_amount),0) FROM booking_payment_schedules WHERE status = 'overdue'")->fetchColumn());
-    $penaltyAmount = (float)($db->query("SELECT COALESCE(SUM(accrued_penalty),0) FROM booking_payment_schedules WHERE accrued_penalty > 0")->fetchColumn());
-    $emiPlans = $db->query("SELECT ep.*, u.name as customer_name, p.plot_no, c.name as colony_name FROM emi_plans ep LEFT JOIN users u ON ep.customer_id = u.id LEFT JOIN plots p ON ep.property_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id ORDER BY ep.created_at DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $activeLoans = $completedLoans = $defaultedLoans = $overdueCount = 0; $totalDisbursed = $totalEmiAmount = $overdueAmount = $penaltyAmount = 0; $emiPlans = []; }
+<?php
+$page_title = $page_title ?? 'Loan Management';
+$activeLoans = $activeLoans ?? 0;
+$completedLoans = $completedLoans ?? 0;
+$defaultedLoans = $defaultedLoans ?? 0;
+$totalDisbursed = $totalDisbursed ?? 0;
+$totalEmiAmount = $totalEmiAmount ?? 0;
+$overdueCount = $overdueCount ?? 0;
+$overdueAmount = $overdueAmount ?? 0;
+$penaltyAmount = $penaltyAmount ?? 0;
+$emiPlans = $emiPlans ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

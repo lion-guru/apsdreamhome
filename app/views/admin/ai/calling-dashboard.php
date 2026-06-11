@@ -1,22 +1,18 @@
-<?php $page_title = $page_title ?? 'AI Calling Dashboard';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $totalCalls = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions")->fetchColumn());
-    $completedCalls = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status = 'completed'")->fetchColumn());
-    $failedCalls = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status = 'failed'")->fetchColumn());
-    $successRate = $totalCalls > 0 ? round($completedCalls / $totalCalls * 100, 1) : 0;
-    $avgDuration = (float)($db->query("SELECT COALESCE(AVG(duration_seconds),0) FROM ai_call_sessions WHERE duration_seconds > 0")->fetchColumn());
-    $totalExtracted = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads")->fetchColumn());
-    $callsToday = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE DATE(created_at) = CURDATE()")->fetchColumn());
-    $callsThisWeek = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)")->fetchColumn());
-    $interestedCount = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE customer_response = 'interested'")->fetchColumn());
-    $hotLeads = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads WHERE interest_level = 'hot'")->fetchColumn());
-    $weeklyData = $db->query("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM ai_call_sessions WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 14 DAY) GROUP BY day ORDER BY day ASC")->fetchAll(PDO::FETCH_ASSOC);
-    $recentCalls = $db->query("SELECT acs.*, l.name as lead_name FROM ai_call_sessions acs LEFT JOIN leads l ON acs.lead_id = l.id ORDER BY acs.created_at DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $totalCalls = $completedCalls = $failedCalls = $totalExtracted = $callsToday = $callsThisWeek = $interestedCount = $hotLeads = 0; $successRate = $avgDuration = 0; $weeklyData = $recentCalls = []; }
-$weekLabels = array_map(function($d) { return date('d M', strtotime($d['day'])); }, $weeklyData);
-$weekData = array_column($weeklyData, 'cnt');
+<?php
+$page_title = $page_title ?? 'AI Calling Dashboard';
+$totalCalls = $totalCalls ?? 0;
+$completedCalls = $completedCalls ?? 0;
+$failedCalls = $failedCalls ?? 0;
+$successRate = $successRate ?? 0;
+$avgDuration = $avgDuration ?? 0;
+$totalExtracted = $totalExtracted ?? 0;
+$callsToday = $callsToday ?? 0;
+$callsThisWeek = $callsThisWeek ?? 0;
+$interestedCount = $interestedCount ?? 0;
+$hotLeads = $hotLeads ?? 0;
+$weekLabels = $weekLabels ?? [];
+$weekData = $weekData ?? [];
+$recentCalls = $recentCalls ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

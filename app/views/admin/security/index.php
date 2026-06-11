@@ -1,17 +1,13 @@
 <?php $page_title = $page_title ?? 'Security Dashboard';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $blockedCount = (int)($db->query("SELECT COUNT(*) FROM blocked_ips")->fetchColumn());
-    $activeBlocks = (int)($db->query("SELECT COUNT(*) FROM blocked_ips WHERE (expires_at IS NULL OR expires_at > NOW()) AND unblocked_at IS NULL")->fetchColumn());
-    $failed24h = (int)($db->query("SELECT COUNT(*) FROM failed_login_attempts WHERE attempt_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")->fetchColumn());
-    $failed7d = (int)($db->query("SELECT COUNT(*) FROM failed_login_attempts WHERE attempt_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetchColumn());
-    $tfaEnabled = (int)($db->query("SELECT COUNT(*) FROM users WHERE two_factor_enabled = 1")->fetchColumn());
-    $totalUsers = (int)($db->query("SELECT COUNT(*) FROM users WHERE deleted_at IS NULL")->fetchColumn());
-    $recentEvents = $db->query("SELECT u.name, a.action, a.details, a.ip_address, a.created_at FROM audit_log a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-    $topIPs = $db->query("SELECT ip_address, COUNT(*) as cnt FROM failed_login_attempts WHERE attempt_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY ip_address ORDER BY cnt DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-    $recentBlocked = $db->query("SELECT * FROM blocked_ips ORDER BY created_at DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $blockedCount = $activeBlocks = $failed24h = $failed7d = $tfaEnabled = $totalUsers = 0; $recentEvents = $topIPs = $recentBlocked = []; }
+$blockedCount = $blockedCount ?? 0;
+$activeBlocks = $activeBlocks ?? 0;
+$failed24h = $failed24h ?? 0;
+$failed7d = $failed7d ?? 0;
+$tfaEnabled = $tfaEnabled ?? 0;
+$totalUsers = $totalUsers ?? 0;
+$recentEvents = $recentEvents ?? [];
+$topIPs = $topIPs ?? [];
+$recentBlocked = $recentBlocked ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

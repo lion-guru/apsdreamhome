@@ -1,14 +1,11 @@
-<?php $page_title = $page_title ?? 'Extracted Leads from Calls';
-try {
-    $db = $this->db ?? null;
-    if (!$db) { $config = require dirname(dirname(dirname(dirname(__DIR__)))) . '/config/database.php'; $db = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); }
-    $totalExtracted = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads")->fetchColumn());
-    $verifiedCount = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads WHERE is_verified = 1")->fetchColumn());
-    $pendingVerify = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads WHERE is_verified = 0")->fetchColumn());
-    $hotCount = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads WHERE interest_level = 'hot'")->fetchColumn());
-    $convertedCount = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads WHERE auto_created_lead_id IS NOT NULL")->fetchColumn());
-    $extracted = $db->query("SELECT aec.*, acs.phone as call_phone, acs.customer_response, acs.duration_seconds, l.name as linked_lead_name FROM ai_call_extracted_leads aec LEFT JOIN ai_call_sessions acs ON aec.call_session_id = acs.id LEFT JOIN leads l ON aec.auto_created_lead_id = l.id ORDER BY aec.created_at DESC LIMIT 30")->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $extracted = []; $totalExtracted = $verifiedCount = $pendingVerify = $hotCount = $convertedCount = 0; }
+<?php
+$page_title = $page_title ?? 'Extracted Leads from Calls';
+$extracted = $extracted ?? [];
+$totalExtracted = $totalExtracted ?? 0;
+$verifiedCount = $verifiedCount ?? 0;
+$pendingVerify = $pendingVerify ?? 0;
+$hotCount = $hotCount ?? 0;
+$convertedCount = $convertedCount ?? 0;
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
