@@ -424,25 +424,6 @@ class EmployeeController extends BaseController
         parent::middleware($name, $options);
     }
 
-    /**
-     * Send JSON response
-     */
-    public function jsonResponse($data, int $status = 200)
-    {
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * Redirect to URL
-     */
-    protected function redirect($url)
-    {
-        header("Location: " . BASE_URL . $url);
-        exit;
-    }
-
     // Missing page methods - each renders its view
     public function tasks()
     {

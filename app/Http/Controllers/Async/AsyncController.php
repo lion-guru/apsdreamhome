@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Async;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\Async\AsyncTaskService;
-use App\Services\Auth\AuthenticationService;
 
 /**
  * Async Task Controller - APS Dream Home
@@ -13,24 +12,11 @@ use App\Services\Auth\AuthenticationService;
 class AsyncController extends AdminController
 {
     private $taskService;
-    private $authService;
-    private $viewRenderer;
 
     public function __construct()
     {
         parent::__construct();
         $this->taskService = new AsyncTaskService();
-        $this->authService = new AuthenticationService();
-        $this->viewRenderer = new \App\Core\ViewRenderer();
-    }
-
-    /**
-     * This controller validates CSRF manually (via AuthenticationService)
-     * so skip the parent's automatic CSRF check on POST.
-     */
-    protected function skipCsrfProtection(): bool
-    {
-        return true;
     }
 
     /**
@@ -39,18 +25,14 @@ class AsyncController extends AdminController
     public function dashboard($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access task dashboard'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         // Get task statistics
         $statsResult = $this->taskService->getTaskStats();
 
         $data = [
             'title' => 'Task Dashboard - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'stats' => $statsResult['success'] ? $statsResult['data'] : [],
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
@@ -58,7 +40,7 @@ class AsyncController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('async/dashboard', $data);
+        $this->render('async/dashboard', $data);
     }
 
     /**
@@ -67,11 +49,7 @@ class AsyncController extends AdminController
     public function tasks($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access tasks'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $filters = [
             'status' => $_GET['status'] ?? null,
@@ -88,7 +66,7 @@ class AsyncController extends AdminController
 
         $data = [
             'title' => 'Tasks - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'tasks' => $result['success'] ? $result['data'] : [],
             'filters' => $filters,
             'success' => $_SESSION['success'] ?? '',
@@ -97,7 +75,7 @@ class AsyncController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('async/tasks', $data);
+        $this->render('async/tasks', $data);
     }
 
     /**
@@ -106,15 +84,11 @@ class AsyncController extends AdminController
     public function createTask($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to create tasks'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $data = [
             'title' => 'Create Task - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'priorities' => [
                 AsyncTaskService::PRIORITY_LOW => 'Low',
                 AsyncTaskService::PRIORITY_NORMAL => 'Normal',
@@ -129,7 +103,7 @@ class AsyncController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('async/create_task', $data);
+        $this->render('async/create_task', $data);
     }
 
     /**
@@ -138,12 +112,7 @@ class AsyncController extends AdminController
     public function handleCreateTask($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $taskName = trim($request['post']['task_name'] ?? '');
         $taskType = trim($request['post']['task_type'] ?? '');
@@ -219,11 +188,7 @@ class AsyncController extends AdminController
     public function taskDetails($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to view task details'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $taskId = $request['params']['id'] ?? null;
 
@@ -243,7 +208,7 @@ class AsyncController extends AdminController
 
         $data = [
             'title' => 'Task Details - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'task' => $result['data'],
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
@@ -251,7 +216,7 @@ class AsyncController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('async/task_details', $data);
+        $this->render('async/task_details', $data);
     }
 
     /**
@@ -260,12 +225,7 @@ class AsyncController extends AdminController
     public function cancelTask($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $taskId = $request['params']['id'] ?? null;
 
@@ -295,12 +255,7 @@ class AsyncController extends AdminController
     public function retryTask($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $taskId = $request['params']['id'] ?? null;
 
@@ -330,14 +285,9 @@ class AsyncController extends AdminController
     public function processNextTask($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
-        $workerName = $request['post']['worker_name'] ?? 'worker_' . $this->authService->getCurrentUser()['id'];
+        $workerName = $request['post']['worker_name'] ?? 'worker_' . ($_SESSION['user_id'] ?? 0);
         $queueName = $request['post']['queue_name'] ?? 'default';
 
         $result = $this->taskService->getNextTask($workerName, $queueName);
@@ -370,12 +320,7 @@ class AsyncController extends AdminController
     public function updateTaskProgress($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $taskId = $request['post']['task_id'] ?? null;
         $progress = intval($request['post']['progress'] ?? 0);
@@ -397,12 +342,7 @@ class AsyncController extends AdminController
     public function getTasks($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $filters = [
             'status' => $request['get']['status'] ?? null,
@@ -423,12 +363,7 @@ class AsyncController extends AdminController
     public function getTaskStatus($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $taskId = $request['get']['id'] ?? null;
 
@@ -448,12 +383,7 @@ class AsyncController extends AdminController
     public function getTaskStats($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         return $this->taskService->getTaskStats();
     }
@@ -464,12 +394,7 @@ class AsyncController extends AdminController
     public function createTaskAjax($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $taskName = trim($request['post']['task_name'] ?? '');
         $taskType = trim($request['post']['task_type'] ?? '');
@@ -486,12 +411,7 @@ class AsyncController extends AdminController
     public function cancelTaskAjax($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $taskId = $request['post']['task_id'] ?? null;
 
@@ -511,12 +431,7 @@ class AsyncController extends AdminController
     public function retryTaskAjax($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $taskId = $request['post']['task_id'] ?? null;
 
@@ -536,12 +451,7 @@ class AsyncController extends AdminController
     public function cleanupOldTasks($request = null)
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->checkUserIsAdmin($this->authService->getCurrentUser())) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $daysOld = intval($request['post']['days_old'] ?? 30);
 
@@ -554,14 +464,9 @@ class AsyncController extends AdminController
     public function worker($request = null)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
-        $workerName = $request['get']['worker'] ?? 'worker_' . $this->authService->getCurrentUser()['id'];
+        $workerName = $request['get']['worker'] ?? 'worker_' . ($_SESSION['user_id'] ?? 0);
         $queueName = $request['get']['queue'] ?? 'default';
         $continuous = isset($request['get']['continuous']) ? true : false;
 
@@ -620,17 +525,4 @@ class AsyncController extends AdminController
         return $user && ($user['role'] === 'admin' || $user['role'] === 'super_admin');
     }
 
-    /**
-     * Redirect helper
-     */
-    public function redirect($url)
-    {
-        if (!headers_sent()) {
-            header("Location: $url");
-            exit;
-        } else {
-            echo '<script>window.location.href = "' . $url . '";</script>';
-            exit;
-        }
-    }
 }

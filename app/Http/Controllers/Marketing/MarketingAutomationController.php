@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\Marketing\MarketingAutomationService;
-use App\Services\Auth\AuthenticationService;
-use App\Core\ViewRenderer;
 
 /**
  * Marketing Automation Controller - APS Dream Home
@@ -14,24 +12,11 @@ use App\Core\ViewRenderer;
 class MarketingAutomationController extends AdminController
 {
     private $marketingService;
-    private $authService;
-    private $viewRenderer;
 
     public function __construct()
     {
         parent::__construct();
         $this->marketingService = new MarketingAutomationService();
-        $this->authService = new AuthenticationService();
-        $this->viewRenderer = new ViewRenderer();
-    }
-
-    /**
-     * This controller validates CSRF manually (via AuthenticationService)
-     * so skip the parent's automatic CSRF check on POST.
-     */
-    protected function skipCsrfProtection(): bool
-    {
-        return true;
     }
 
     /**
@@ -40,18 +25,13 @@ class MarketingAutomationController extends AdminController
     public function dashboard($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access marketing dashboard'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         // Get dashboard data
         $dashboardResult = $this->marketingService->getDashboardData();
 
         $data = [
             'title' => 'Marketing Dashboard - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
             'dashboard' => $dashboardResult['success'] ? $dashboardResult['data'] : [],
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
@@ -59,7 +39,7 @@ class MarketingAutomationController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('marketing/dashboard', $data);
+        $this->render('marketing/dashboard', $data);
     }
 
     /**
@@ -68,11 +48,7 @@ class MarketingAutomationController extends AdminController
     public function leads($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access leads'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $filters = [
             'status' => $request['get']['status'] ?? null,
@@ -89,7 +65,6 @@ class MarketingAutomationController extends AdminController
 
         $data = [
             'title' => 'Marketing Leads - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
             'leads' => $result['success'] ? $result['data'] : [],
             'filters' => $filters,
             'success' => $_SESSION['success'] ?? '',
@@ -98,7 +73,7 @@ class MarketingAutomationController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('marketing/leads', $data);
+        $this->render('marketing/leads', $data);
     }
 
     /**
@@ -107,11 +82,7 @@ class MarketingAutomationController extends AdminController
     public function leadDetails($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to view lead details'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $leadId = $request['params']['id'] ?? null;
 
@@ -131,7 +102,6 @@ class MarketingAutomationController extends AdminController
 
         $data = [
             'title' => 'Lead Details - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
             'lead' => $lead,
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
@@ -139,7 +109,7 @@ class MarketingAutomationController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('marketing/lead_details', $data);
+        $this->render('marketing/lead_details', $data);
     }
 
     /**
@@ -149,7 +119,6 @@ class MarketingAutomationController extends AdminController
     {
         $data = [
             'title' => 'Capture Lead - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? [],
             'old_input' => $_SESSION['old_input'] ?? []
@@ -157,7 +126,7 @@ class MarketingAutomationController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('marketing/capture_lead', $data);
+        $this->render('marketing/capture_lead', $data);
     }
 
     /**
@@ -207,12 +176,7 @@ class MarketingAutomationController extends AdminController
     public function updateLeadStatus($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $leadId = $request['params']['id'] ?? null;
         $status = $request['post']['status'] ?? null;
@@ -243,12 +207,7 @@ class MarketingAutomationController extends AdminController
     public function assignLeadScore($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $leadId = $request['params']['id'] ?? null;
         $score = intval($request['post']['score'] ?? 0);
@@ -279,11 +238,7 @@ class MarketingAutomationController extends AdminController
     public function campaigns($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access campaigns'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $filters = [
             'type' => $request['get']['type'] ?? null,
@@ -298,7 +253,6 @@ class MarketingAutomationController extends AdminController
 
         $data = [
             'title' => 'Marketing Campaigns - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
             'campaigns' => $result['success'] ? $result['data'] : [],
             'filters' => $filters,
             'success' => $_SESSION['success'] ?? '',
@@ -307,7 +261,7 @@ class MarketingAutomationController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('marketing/campaigns', $data);
+        $this->render('marketing/campaigns', $data);
     }
 
     /**
@@ -316,15 +270,10 @@ class MarketingAutomationController extends AdminController
     public function createCampaign($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to create campaigns'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $data = [
             'title' => 'Create Campaign - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
             'campaign_types' => ['email', 'sms', 'social', 'google', 'facebook'],
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? [],
@@ -333,7 +282,7 @@ class MarketingAutomationController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('marketing/create_campaign', $data);
+        $this->render('marketing/create_campaign', $data);
     }
 
     /**
@@ -342,12 +291,7 @@ class MarketingAutomationController extends AdminController
     public function handleCreateCampaign($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $name = trim($request['post']['name'] ?? '');
         $subject = trim($request['post']['subject'] ?? '');
@@ -383,12 +327,7 @@ class MarketingAutomationController extends AdminController
     public function getLeads($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $filters = [
             'status' => $request['get']['status'] ?? null,
@@ -409,12 +348,7 @@ class MarketingAutomationController extends AdminController
     public function getLead($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $leadId = $request['get']['id'] ?? null;
 
@@ -446,12 +380,7 @@ class MarketingAutomationController extends AdminController
     public function getCampaigns($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $filters = [
             'type' => $request['get']['type'] ?? null,
@@ -470,12 +399,7 @@ class MarketingAutomationController extends AdminController
     public function getDashboardData($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         return $this->marketingService->getDashboardData();
     }
@@ -486,12 +410,7 @@ class MarketingAutomationController extends AdminController
     public function getLeadStats($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         return $this->marketingService->getLeadStats();
     }
@@ -532,12 +451,7 @@ class MarketingAutomationController extends AdminController
     public function updateLeadStatusAjax($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $leadId = $request['post']['lead_id'] ?? null;
         $status = $request['post']['status'] ?? null;
@@ -558,12 +472,7 @@ class MarketingAutomationController extends AdminController
     public function assignLeadScoreAjax($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $leadId = $request['post']['lead_id'] ?? null;
         $score = intval($request['post']['score'] ?? 0);
@@ -584,12 +493,7 @@ class MarketingAutomationController extends AdminController
     public function createCampaignAjax($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $name = trim($request['post']['name'] ?? '');
         $subject = trim($request['post']['subject'] ?? '');
@@ -614,12 +518,7 @@ class MarketingAutomationController extends AdminController
     public function triggerAutomation($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $triggerType = $request['post']['trigger_type'] ?? null;
         $leadId = $request['post']['lead_id'] ?? null;
@@ -634,17 +533,4 @@ class MarketingAutomationController extends AdminController
         return $this->marketingService->triggerAutomation($triggerType, $leadId);
     }
 
-    /**
-     * Redirect helper
-     */
-    public function redirect($url)
-    {
-        if (!headers_sent()) {
-            header("Location: $url");
-            exit;
-        } else {
-            echo '<script>window.location.href = "' . $url . '";</script>';
-            exit;
-        }
-    }
 }

@@ -1569,23 +1569,25 @@ class MoneyWorkflowService
             $today   = date('Ymd');
             $count   = (int)$this->db->fetchColumn(
                 "SELECT COUNT(*) FROM daily_operations_log
-                 WHERE operation_type = 'noc_generation'
-                   AND DATE(operation_date) = CURDATE()"
+                 WHERE log_type = 'other'
+                   AND description LIKE 'NOC generated%'
+                   AND log_date = CURDATE()"
             );
             $nocNumber = sprintf('APS-NOC-%s-%04d', $today, $count + 1);
 
             $nocId = (int)$this->db->insert('daily_operations_log', [
-                'operation_date' => date('Y-m-d H:i:s'),
-                'operation_type' => 'noc_generation',
-                'colony_id'      => $booking['colony_id'] ?? null,
-                'plot_id'        => $booking['plot_id'] ?? null,
-                'booking_id'     => $bookingId,
-                'description'    => 'NOC generated for ' . ($booking['customer_name'] ?? 'Customer') .
-                                    ' — Plot ' . ($booking['plot_number'] ?? '') .
-                                    ' (' . ($booking['colony_name'] ?? '') . ')',
-                'reference_number' => $nocNumber,
-                'status'         => 'completed',
-                'created_by'     => $generatedBy,
+                'log_date'    => date('Y-m-d'),
+                'log_type'    => 'other',
+                'colony_id'   => $booking['colony_id'] ?? null,
+                'plot_id'     => $booking['plot_id'] ?? null,
+                'description' => 'NOC generated for ' . ($booking['customer_name'] ?? 'Customer') .
+                                ' — Plot ' . ($booking['plot_number'] ?? '') .
+                                ' (' . ($booking['colony_name'] ?? '') . ')',
+                'party_name'  => $booking['customer_name'] ?? 'Customer',
+                'party_type'  => 'customer',
+                'priority'    => 'medium',
+                'status'      => 'completed',
+                'created_by'  => $generatedBy,
             ]);
 
             return [

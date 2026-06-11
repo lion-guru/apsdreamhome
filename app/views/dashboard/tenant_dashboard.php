@@ -5,14 +5,6 @@
  * Streamlined experience for APS Dream Homes Tenants
  */
 
-require_once __DIR__ . '/init.php';
-
-// Check if user is logged in as tenant
-if (!isset($_SESSION['uid']) || (isset($_SESSION['utype']) && $_SESSION['utype'] !== 'tenant')) {
-    header("Location: " . BASE_URL . "/login");
-    exit;
-}
-
 $db = \App\Core\App::database();
 $uid = $_SESSION['uid'];
 

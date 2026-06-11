@@ -118,9 +118,74 @@
             <p class="lead text-muted">Use our free tools to plan and estimate your interior design project</p>
         </div>
         <div class="row g-4">
-            <div class="col-md-4"><a href="<?= BASE_URL ?>/stamp-duty-calculator" class="text-decoration-none"><div class="tool-card"><i class="fas fa-calculator fa-3x text-primary mb-3"></i><h5>Cost Estimator</h5><p class="text-muted small mb-0">Estimate interior design costs per sq ft</p></div></a></div>
-            <div class="col-md-4"><a href="<?= BASE_URL ?>/plot-size-converter" class="text-decoration-none"><div class="tool-card"><i class="fas fa-ruler-combined fa-3x text-success mb-3"></i><h5>Room Size Planner</h5><p class="text-muted small mb-0">Convert and plan room dimensions</p></div></a></div>
-            <div class="col-md-4"><a href="<?= BASE_URL ?>/home-loan-eligibility" class="text-decoration-none"><div class="tool-card"><i class="fas fa-home fa-3x text-warning mb-3"></i><h5>Budget Planner</h5><p class="text-muted small mb-0">Plan your interior design budget</p></div></a></div>
+            <div class="col-md-4">
+                <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                    <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
+                    <h5>Cost Estimator</h5>
+                    <p class="text-muted small mb-2">Estimate interior design costs per sq ft</p>
+                    <div class="collapse">
+                        <div class="card card-body border-0 bg-light text-start mt-2">
+                            <div class="row g-2 mb-3">
+                                <div class="col-6"><label class="small text-muted">Room Type</label><select class="form-select form-select-sm" id="costRoomType"><option>Bedroom</option><option>Living Room</option><option>Kitchen</option><option selected>Full Home</option><option>Bathroom</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Area (sq ft)</label><input type="number" class="form-control form-control-sm" id="costArea" value="1000" min="100"></div>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6"><label class="small text-muted">Quality</label><select class="form-select form-select-sm" id="costQuality"><option value="basic">Basic</option><option value="standard" selected>Standard</option><option value="premium">Premium</option><option value="luxury">Luxury</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Material Grade</label><select class="form-select form-select-sm" id="costMaterial"><option value="local">Local</option><option value="mid" selected>Mid-Range</option><option value="imported">Imported</option></select></div>
+                            </div>
+                            <button class="btn btn-sm btn-primary" onclick="estimateCost()"><i class="fas fa-calculator me-1"></i>Estimate Cost</button>
+                            <div id="costResult" class="d-none mt-3 p-3 bg-white rounded-2 border">
+                                <h6 class="mb-2">Cost Breakdown</h6>
+                                <div id="costBreakdown"></div>
+                                <hr class="my-2">
+                                <div id="costTotal" class="fw-bold text-primary"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                    <i class="fas fa-ruler-combined fa-3x text-success mb-3"></i>
+                    <h5>Room Size Planner</h5>
+                    <p class="text-muted small mb-2">Convert and plan room dimensions</p>
+                    <div class="collapse">
+                        <div class="card card-body border-0 bg-light text-start mt-2">
+                            <div class="row g-2 mb-3">
+                                <div class="col-4"><label class="small text-muted">Width (ft)</label><input type="number" class="form-control form-control-sm" id="plannerW" value="12" min="4" max="50"></div>
+                                <div class="col-4"><label class="small text-muted">Length (ft)</label><input type="number" class="form-control form-control-sm" id="plannerL" value="14" min="4" max="50"></div>
+                                <div class="col-4"><label class="small text-muted">Convert to</label><select class="form-select form-select-sm" id="plannerUnit"><option value="sqft">Sq Ft</option><option value="sqm">Sq Meters</option><option value="sqyd">Sq Yards</option><option value="gaj">Gaj</option></select></div>
+                            </div>
+                            <button class="btn btn-sm btn-success" onclick="planRoom()"><i class="fas fa-arrows-alt me-1"></i>Calculate</button>
+                            <div id="plannerResult" class="d-none mt-3 p-3 bg-white rounded-2 border">
+                                <div id="plannerDetails"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                    <i class="fas fa-home fa-3x text-warning mb-3"></i>
+                    <h5>Budget Planner</h5>
+                    <p class="text-muted small mb-2">Plan your interior design budget</p>
+                    <div class="collapse">
+                        <div class="card card-body border-0 bg-light text-start mt-2">
+                            <div class="row g-2 mb-3">
+                                <div class="col-6"><label class="small text-muted">Total Budget (₹)</label><input type="number" class="form-control form-control-sm" id="budgetTotal" value="500000" min="5000" step="10000"></div>
+                                <div class="col-6"><label class="small text-muted">Home Type</label><select class="form-select form-select-sm" id="budgetType"><option value="1bhk">1 BHK</option><option value="2bhk" selected>2 BHK</option><option value="3bhk">3 BHK</option><option value="villa">Villa</option></select></div>
+                            </div>
+                            <button class="btn btn-sm btn-warning" onclick="planBudget()"><i class="fas fa-pie-chart me-1"></i>Plan Budget</button>
+                            <div id="budgetResult" class="d-none mt-3 p-3 bg-white rounded-2 border">
+                                <h6 class="mb-2">Recommended Allocation</h6>
+                                <div id="budgetBreakdown"></div>
+                                <hr class="my-2">
+                                <div id="budgetRemaining" class="small text-muted"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row g-4 mt-2">
             <div class="col-md-6">
@@ -236,6 +301,83 @@ function planFurniture() {
     html += `<p class="small text-muted mt-2 mb-0 text-center">Recommended layout for a ${w}ft x ${l}ft ${type}</p>`;
     document.getElementById('furnitureLayout').innerHTML = html;
     document.getElementById('furnitureResult').classList.remove('d-none');
+}
+function estimateCost() {
+    const rates = {
+        'Bedroom': { basic: 350, standard: 600, premium: 1000, luxury: 1600 },
+        'Living Room': { basic: 400, standard: 700, premium: 1200, luxury: 1800 },
+        'Kitchen': { basic: 500, standard: 900, premium: 1500, luxury: 2200 },
+        'Full Home': { basic: 300, standard: 550, premium: 950, luxury: 1400 },
+        'Bathroom': { basic: 450, standard: 800, premium: 1300, luxury: 2000 }
+    };
+    const materialMultiplier = { local: 0.85, mid: 1.0, imported: 1.4 };
+    const room = document.getElementById('costRoomType').value;
+    const area = parseFloat(document.getElementById('costArea').value) || 1000;
+    const quality = document.getElementById('costQuality').value;
+    const mat = document.getElementById('costMaterial').value;
+    const rate = (rates[room] || rates['Full Home'])[quality] || 550;
+    const baseCost = rate * area * materialMultiplier[mat];
+    const categories = [
+        { name: 'Flooring', pct: 20 }, { name: 'Paint & Walls', pct: 12 },
+        { name: 'Furniture', pct: 30 }, { name: 'Lighting', pct: 8 },
+        { name: 'Curtains & Blinds', pct: 5 }, { name: 'Modular Kitchen', pct: 10 },
+        { name: 'Bathroom Fittings', pct: 5 }, { name: 'Labor & Installation', pct: 10 }
+    ];
+    let html = '';
+    categories.forEach(c => {
+        const amt = baseCost * c.pct / 100;
+        html += `<div class="d-flex justify-content-between small"><span>${c.name}</span><span>₹${amt.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>`;
+    });
+    document.getElementById('costBreakdown').innerHTML = html;
+    document.getElementById('costTotal').textContent = 'Total Estimated Cost: ₹' + baseCost.toLocaleString('en-IN', {maximumFractionDigits:0});
+    document.getElementById('costResult').classList.remove('d-none');
+}
+function planRoom() {
+    const w = parseFloat(document.getElementById('plannerW').value) || 12;
+    const l = parseFloat(document.getElementById('plannerL').value) || 14;
+    const unit = document.getElementById('plannerUnit').value;
+    const sqft = w * l;
+    const conversions = {
+        sqft: sqft,
+        sqm: sqft / 10.764,
+        sqyd: sqft / 9,
+        gaj: sqft / 9
+    };
+    const labels = { sqft: 'Sq Ft', sqm: 'Sq Meters', sqyd: 'Sq Yards', gaj: 'Gaj' };
+    let html = `<table class="table table-sm mb-0"><tr><td>Room Size</td><td><strong>${w} ft × ${l} ft</strong></td></tr>`;
+    html += `<tr><td>Perimeter</td><td><strong>${2*(w+l)} ft</strong></td></tr>`;
+    html += `<tr><td>Wall Area (10ft ceiling)</td><td><strong>${2*(w+l)*10} sq ft</strong></td></tr>`;
+    Object.keys(conversions).forEach(k => {
+        html += `<tr><td>Area in ${labels[k]}</td><td><strong>${conversions[k].toFixed(k==='sqm'?2:0)}</strong></td></tr>`;
+    });
+    if (unit !== 'sqft') {
+        html += `<tr class="table-primary"><td>Your selected unit</td><td><strong>${conversions[unit].toFixed(unit==='sqm'?2:0)} ${labels[unit]}</strong></td></tr>`;
+    }
+    html += '</table>';
+    document.getElementById('plannerDetails').innerHTML = html;
+    document.getElementById('plannerResult').classList.remove('d-none');
+}
+function planBudget() {
+    const total = parseFloat(document.getElementById('budgetTotal').value) || 500000;
+    const type = document.getElementById('budgetType').value;
+    const splits = {
+        '1bhk': { 'Flooring': 15, 'Paint & Wallpaper': 12, 'Furniture': 25, 'Lighting & Fans': 10, 'Kitchen': 15, 'Bathroom': 8, 'Decor & Accessories': 8, 'Labor': 7 },
+        '2bhk': { 'Flooring': 15, 'Paint & Wallpaper': 12, 'Furniture': 25, 'Lighting & Fans': 10, 'Kitchen': 15, 'Bathroom': 8, 'Decor & Accessories': 8, 'Labor': 7 },
+        '3bhk': { 'Flooring': 15, 'Paint & Wallpaper': 12, 'Furniture': 25, 'Lighting & Fans': 10, 'Kitchen': 15, 'Bathroom': 8, 'Decor & Accessories': 8, 'Labor': 7 },
+        'villa': { 'Flooring': 18, 'Paint & Wallpaper': 12, 'Furniture': 20, 'Lighting & Fans': 10, 'Kitchen': 12, 'Bathroom': 10, 'Outdoor': 8, 'Labor': 10 }
+    };
+    const allocation = splits[type] || splits['2bhk'];
+    let html = '', used = 0;
+    Object.keys(allocation).forEach(k => {
+        const amt = total * allocation[k] / 100;
+        used += amt;
+        html += `<div class="d-flex justify-content-between small mb-1"><span>${k}</span><span class="fw-medium">₹${amt.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>`;
+        html += `<div class="progress mb-2" style="height:6px;"><div class="progress-bar" style="width:${allocation[k]}%"></div></div>`;
+    });
+    document.getElementById('budgetBreakdown').innerHTML = html;
+    const rem = total - used;
+    document.getElementById('budgetRemaining').textContent = 'Contingency Fund: ₹' + rem.toLocaleString('en-IN', {maximumFractionDigits:0}) + ' (' + (rem/total*100).toFixed(0) + '% of budget)';
+    document.getElementById('budgetResult').classList.remove('d-none');
 }
 </script>
 

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Hindi (Devanagari) Language File
  * APS Dream Home - Real Estate CRM
  */
-return array (
+return array(
   '10_20l' => 'Rs10 - 20 लाख',
   '20_50l' => 'Rs20 - 50 लाख',
   '5_10l' => 'Rs5 - 10 लाख',
@@ -848,9 +849,9 @@ return array (
   'leader_exp_1' => '15+ वर्षों का अनुभव',
   'leader_exp_2' => '10+ वर्षों का अनुभव',
   'leader_exp_3' => '12+ वर्षों का अनुभव',
-  'leader_name_1' => 'अमित कुमार सिंह',
-  'leader_name_2' => 'प्रिया सिंह',
-  'leader_name_3' => 'राहुल वर्मा',
+  'leader_name_1' => 'अभय कुमार सिंह',
+  'leader_name_2' => 'प्रवीन सिंह',
+  'leader_name_3' => 'विजय वर्मा',
   'leader_role_1' => 'प्रबंध निदेशक',
   'leader_role_2' => 'संचालन प्रमुख',
   'leader_role_3' => 'तकनीकी निदेशक',
@@ -1019,10 +1020,10 @@ return array (
   'my_purchases' => 'मेरी खरीदारी',
   'my_tickets' => 'मेरे टिकट',
   'name_label' => 'आपका नाम',
-  'nav' => 
-  array (
-    'menu' => 
-    array (
+  'nav' =>
+  array(
+    'menu' =>
+    array(
       'home' => 'होम',
       'properties' => 'प्रॉपर्टी',
       'projects' => 'प्रोजेक्ट्स',

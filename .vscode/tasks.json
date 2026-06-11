@@ -109,7 +109,9 @@
 				"focus": false,
 				"panel": "shared"
 			},
-			"problemMatcher": ["$eslint-compact"]
+			"problemMatcher": [
+				"$eslint-compact"
+			]
 		},
 		{
 			"type": "shell",
@@ -292,6 +294,22 @@
 				"panel": "dedicated"
 			},
 			"problemMatcher": []
+		},
+		{
+			"label": "sqlproj: Build aps",
+			"type": "process",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"c:/xampp/htdocs/apsdreamhome/aps/aps.sqlproj"
+			],
+			"problemMatcher": "$sqlproj-problem-matcher",
+			"isBackground": true,
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "Builds the aps SQL project"
 		}
 	]
 }

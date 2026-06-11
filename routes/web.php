@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Web Routes - APS Dream Home
 // Clean, deduplicated route definitions
 
@@ -705,6 +705,12 @@ $router->get('/agent/properties', 'Agent\\AgentDashboardController@properties');
 $router->get('/agent/commissions', 'Agent\\AgentDashboardController@commissions');
 $router->get('/agent/profile', 'Agent\\AgentDashboardController@profile');
 
+
+// Agent Cash Collections
+$router->get('/agent/collections', 'App\\Http\\Controllers\\FieldCollectionController@index');
+$router->get('/agent/collections/create', 'App\\Http\\Controllers\\FieldCollectionController@create');
+$router->post('/agent/collections/store', 'App\\Http\\Controllers\\FieldCollectionController@store');
+$router->get('/agent/collections/{id}', 'App\\Http\\Controllers\\FieldCollectionController@show');
 // Associate Auth
 $router->get('/associate/register', 'Auth\\AssociateAuthController@associateRegister');
 $router->post('/associate/register', 'Auth\\AssociateAuthController@handleAssociateRegister');
@@ -737,6 +743,12 @@ $router->get('/associate/team', 'App\\Http\\Controllers\\AssociateController@tea
 $router->get('/associate/team/add', 'App\\Http\\Controllers\\AssociateController@team');
 $router->get('/associate/team/performance', 'App\\Http\\Controllers\\AssociateController@team');
 
+
+// Associate Cash Collections
+$router->get('/associate/collections', 'App\\Http\\Controllers\\FieldCollectionController@index');
+$router->get('/associate/collections/create', 'App\\Http\\Controllers\\FieldCollectionController@create');
+$router->post('/associate/collections/store', 'App\\Http\\Controllers\\FieldCollectionController@store');
+$router->get('/associate/collections/{id}', 'App\\Http\\Controllers\\FieldCollectionController@show');
 // Associate Exports
 $router->get('/associate/export/my-earnings', 'Associate\ExportController@myEarnings');
 $router->get('/associate/export/active-team', 'Associate\ExportController@activeTeam');
@@ -3697,7 +3709,7 @@ $router->get('/admin/csp-violations',                'App\\Http\\Controllers\\Cs
 // MODULE 4: MLM COMMISSION ENGINE + RANK SYSTEM
 // All routes under /admin/mlm/* — require admin auth.
 // ============================================================
-$router->get('/admin/mlm/dashboard',                              'App\\Http\\Controllers\\Admin\\MLMCommissionController@dashboard');
+$router->get('/admin/mlm/dashboard',                              'App\\Http\\Controllers\\Admin\\MLMCommissionController@index');
 $router->get('/admin/mlm/commissions',                            'App\\Http\\Controllers\\Admin\\MLMCommissionController@commissions');
 $router->get('/admin/mlm/commissions/{id}',                       'App\\Http\\Controllers\\Admin\\MLMCommissionController@commissionDetail');
 $router->get('/admin/mlm/payouts',                                'App\\Http\\Controllers\\Admin\\MLMCommissionController@payouts');

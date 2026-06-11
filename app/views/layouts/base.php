@@ -263,66 +263,8 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     });
     </script>
 
-    <!-- AI Chatbot (Left Side) -->
-    <div id="ai-chatbot" class="ai-chatbot-container">
-        <!-- Chat Popup -->
-        <div class="ai-chat-popup" id="chatPopup">
-            <div class="ai-chat-header">
-                <div class="ai-avatar">
-                    <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="APS Assistant" onerror="this.style.display='none'" />
-                    <span class="online-indicator"></span>
-                </div>
-                <div class="ai-header-info">
-                    <h5>APS Property Assistant</h5>
-                    <span class="status-text">Online • Ready to Help</span>
-                </div>
-                <button class="ai-lang-btn" id="langToggle" onclick="toggleChatLanguage()" title="Switch Language">ðŸ‡®ðŸ‡³ HI</button>
-                <button class="ai-close-btn" onclick="toggleChat()">&times;</button>
-            </div>
-            <div class="ai-chat-body" id="chatBody">
-                <div class="ai-message bot">
-                    <div class="ai-message-content">
-                        Namaste! ðŸ™<br><br>
-                        Welcome to <strong>APS Dream Home</strong>! ðŸ <br><br>
-                        I'm your personal property assistant. Tell me what you're looking for!
-                    </div>
-                    <span class="ai-time">Just now</span>
-                </div>
-                <div class="quick-actions">
-                    <button class="quick-btn" onclick="sendQuickMessage('View Properties')">
-                        <i class="fas fa-home"></i> Properties
-                    </button>
-                    <button class="quick-btn" onclick="sendQuickMessage('Plot Prices')">
-                        <i class="fas fa-tag"></i> Prices
-                    </button>
-                    <button class="quick-btn" onclick="sendQuickMessage('Book Site Visit')">
-                        <i class="fas fa-calendar-check"></i> Book Visit
-                    </button>
-                    <button class="quick-btn" onclick="sendQuickMessage('Home Loan Help')">
-                        <i class="fas fa-university"></i> Home Loan
-                    </button>
-                    <button class="quick-btn" onclick="sendQuickMessage('RERA Info')">
-                        <i class="fas fa-shield-alt"></i> RERA Verified
-                    </button>
-                    <button class="quick-btn" onclick="sendQuickMessage('Contact Agent')">
-                        <i class="fas fa-phone"></i> Call Us
-                    </button>
-                </div>
-            </div>
-            <div class="ai-chat-footer">
-                <input type="text" id="chatInput" placeholder="Ask about properties..." onkeypress="handleChatKeypress(event)">
-                <button class="ai-send-btn" onclick="sendChatMessage()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Floating Button -->
-        <button class="ai-float-btn" id="aiFloatBtn" onclick="toggleChat()">
-            <i class="fas fa-comments"></i>
-            <span class="ai-pulse"></span>
-        </button>
-    </div>
+    <!-- Main AI Chatbot Integration -->
+    <?php include __DIR__ . '/chat_widget.php'; ?>
 
     <!-- WhatsApp Button (Right Side - Manual Chat) -->
     <?php if ($sc('whatsapp_enabled', '1') === '1' && $sc('contact_whatsapp')): ?>
@@ -330,18 +272,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         <i class="fab fa-whatsapp"></i>
     </a>
     <?php endif; ?>
-
-    <!-- Chatbot JS -->
-    <script>
-        window.chatbotApiUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/api/gemini/chat';
-        window.chatbotUserContext = {
-            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? $_SESSION['role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>',
-            userId: '<?php echo $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? ''; ?>',
-            userName: '<?php echo addslashes($_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? ''); ?>',
-            isLoggedIn: <?php echo (isset($_SESSION['user_id']) || isset($_SESSION['admin_id'])) ? 'true' : 'false'; ?>
-        };
-    </script>
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/chatbot.js"></script>
 
     <!-- Real-time WebSocket Notifications -->
     <script>

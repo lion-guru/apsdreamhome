@@ -26,79 +26,79 @@ class AgentDashboardController extends AdminController
      */
     public function index()
     {
-        try {
-            $user_id = $_SESSION['user_id'] ?? 1;
-
-            // Get agent statistics
-            $stats = $this->db->fetchOne(
-                "SELECT 
-                    COUNT(CASE WHEN status = 'paid' THEN 1 END) as total_sales,
-                    COALESCE(SUM(CASE WHEN status = 'paid' THEN amount END), 0) as total_commissions,
-                    COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_sales,
-                    COALESCE(SUM(CASE WHEN status = 'pending' THEN amount END), 0) as pending_commissions
-                FROM commissions 
-                WHERE user_id = ? 
-                AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
-                [$user_id]
-            );
-
-            // Get network statistics
-            $network = $this->db->fetchOne(
-                "SELECT 
-                    COUNT(*) as total_associates,
-                    COUNT(CASE WHEN u.status = 'active' THEN 1 END) as active_associates,
-                    COUNT(CASE WHEN u.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_associates
-                FROM users u 
-                WHERE u.sponsor_id = ?",
-                [$user_id]
-            );
-
-            // Get recent activities
-            $activities = $this->db->fetchAll(
-                "SELECT id, activity_type as description, created_at 
-                 FROM activity_logs_unified 
-                 WHERE user_id = ? 
-                 ORDER BY created_at DESC 
-                 LIMIT 10",
-                [$user_id]
-            );
-
-            // Get performance metrics
-            $performance = $this->db->fetchAll(
-                "SELECT 
-                    DATE(created_at) as date,
-                    COUNT(*) as sales_count,
-                    COALESCE(SUM(amount), 0) as daily_commission
-                FROM commissions 
-                WHERE user_id = ? 
-                AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-                GROUP BY DATE(created_at)
-                ORDER BY date DESC",
-                [$user_id]
-            );
-
-            $this->data = [
-                'page_title' => 'Agent Dashboard',
-                'stats' => $stats,
-                'network' => $network,
-                'activities' => $activities,
-                'performance' => $performance,
-                'my_commissions' => [
-                    'total' => number_format($stats['total_commissions'] ?? 0),
-                    'pending' => number_format($stats['pending_commissions'] ?? 0)
-                ],
-                'my_network' => [
-                    'total_associates' => $network['total_associates'] ?? 0,
-                    'active_associates' => $network['active_associates'] ?? 0
-                ]
-            ];
-
-            return $this->render('admin/dashboards/agent');
-        } catch (Exception $e) {
-            error_log("Agent Dashboard Error: " . $e->getMessage());
-            $this->setFlash('error', 'Dashboard loading failed');
-            return $this->redirect('admin/dashboard');
+        // For admin users, check admin_id; for regular users, check user_id
+        $user_id = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+        
+        if (!$user_id) {
+            $this->redirect(BASE_URL . '/admin/login');
+            return;
         }
+
+        // Get agent statistics
+        $stats = $this->db->fetchOne(
+            "SELECT 
+                COUNT(CASE WHEN status = 'paid' THEN 1 END) as total_sales,
+                COALESCE(SUM(CASE WHEN status = 'paid' THEN amount END), 0) as total_commissions,
+                COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_sales,
+                COALESCE(SUM(CASE WHEN status = 'pending' THEN amount END), 0) as pending_commissions
+            FROM commissions 
+            WHERE user_id = ? 
+            AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
+            [$user_id]
+        ) ?: ['total_sales' => 0, 'total_commissions' => 0, 'pending_sales' => 0, 'pending_commissions' => 0];
+
+        // Get network statistics
+        $network = $this->db->fetchOne(
+            "SELECT 
+                COUNT(*) as total_associates,
+                COUNT(CASE WHEN u.status = 'active' THEN 1 END) as active_associates,
+                COUNT(CASE WHEN u.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_associates
+            FROM users u 
+            WHERE u.sponsor_id = ?",
+            [$user_id]
+        ) ?: ['total_associates' => 0, 'active_associates' => 0, 'new_associates' => 0];
+
+        // Get recent activities (use correct column name 'action' instead of 'activity_type')
+        $activities = $this->db->fetchAll(
+            "SELECT id, action as description, created_at 
+             FROM activity_logs_unified 
+             WHERE user_id = ? 
+             ORDER BY created_at DESC 
+             LIMIT 10",
+            [$user_id]
+        ) ?: [];
+
+        // Get performance metrics
+        $performance = $this->db->fetchAll(
+            "SELECT 
+                DATE(created_at) as date,
+                COUNT(*) as sales_count,
+                COALESCE(SUM(amount), 0) as daily_commission
+            FROM commissions 
+            WHERE user_id = ? 
+            AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            GROUP BY DATE(created_at)
+            ORDER BY date DESC",
+            [$user_id]
+        ) ?: [];
+
+        $this->data = [
+            'page_title' => 'Agent Dashboard',
+            'stats' => $stats,
+            'network' => $network,
+            'activities' => $activities,
+            'performance' => $performance,
+            'my_commissions' => [
+                'total' => number_format($stats['total_commissions'] ?? 0),
+                'pending' => number_format($stats['pending_commissions'] ?? 0)
+            ],
+            'my_network' => [
+                'total_associates' => $network['total_associates'] ?? 0,
+                'active_associates' => $network['active_associates'] ?? 0
+            ]
+        ];
+
+        return $this->render('admin/dashboards/agent');
     }
 
     /**
@@ -106,9 +106,13 @@ class AgentDashboardController extends AdminController
      */
     public function getPerformanceData()
     {
-        try {
-            $user_id = $_SESSION['user_id'] ?? 1;
+        $user_id = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+        
+        if (!$user_id) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
 
+        try {
             $performance = $this->db->query(
                 "SELECT 
                     DATE(created_at) as date,

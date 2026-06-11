@@ -57,7 +57,7 @@ class NocRegistryService
         ];
 
         // 2. No overdue installments
-        $overdue = $pdo->prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(total_amount - paid_amount), 0) as balance
+        $overdue = $pdo->prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount - paid_amount), 0) as balance
             FROM booking_payment_schedules WHERE booking_id = ? AND status IN ('pending','overdue') AND due_date < CURDATE()");
         $overdue->execute([$bookingId]);
         $overdueData = $overdue->fetch(PDO::FETCH_ASSOC);
@@ -101,10 +101,10 @@ class NocRegistryService
         ];
 
         // 5. All commissions settled
-        $commCheck = $pdo->prepare("SELECT COALESCE(SUM(commission_amount), 0) as total,
-            (SELECT COALESCE(SUM(paid_amount), 0) FROM mlm_commission_ledger WHERE source_booking_id = ?) as paid
-            FROM mlm_commission_ledger WHERE source_booking_id = ?");
-        $commCheck->execute([$bookingId, $bookingId]);
+        $commCheck = $pdo->prepare("SELECT COALESCE(SUM(amount), 0) as total,
+            COALESCE(SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END), 0) as paid
+            FROM mlm_commission_ledger WHERE property_id = ?");
+        $commCheck->execute([$booking['plot_id']]);
         $commData = $commCheck->fetch(PDO::FETCH_ASSOC);
         $commBalance = (float)($commData['total'] ?? 0) - (float)($commData['paid'] ?? 0);
         $checks[] = [
@@ -441,7 +441,7 @@ class NocRegistryService
         }
         $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-        $stmt = $pdo->prepare("SELECT n.*, pb.booking_number, p.plot_no, c.name as colony_name, u.name as customer_name
+        $stmt = $pdo->prepare("SELECT n.*, pb.booking_number, p.plot_number, c.name as colony_name, u.name as customer_name
             FROM noc_requests n
             JOIN plot_bookings pb ON n.booking_id = pb.id
             JOIN plots p ON n.plot_id = p.id
@@ -466,7 +466,7 @@ class NocRegistryService
         }
         $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-        $stmt = $pdo->prepare("SELECT r.*, pb.booking_number, p.plot_no, c.name as colony_name, u.name as customer_name
+        $stmt = $pdo->prepare("SELECT r.*, pb.booking_number, p.plot_number, c.name as colony_name, u.name as customer_name
             FROM registries r
             JOIN plot_bookings pb ON r.booking_id = pb.id
             JOIN plots p ON r.plot_id = p.id

@@ -1060,7 +1060,7 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM interior_services WHERE status = 'active' ORDER BY sort_order ASC LIMIT 6");
             $services = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[" . __CLASS__ . "] " . __FUNCTION__ . "() exception: " . $e->getMessage());
 
             $services = [
                 ['id' => 1, 'title' => 'Residential Design', 'description' => 'Complete home interior design from concept to completion, including furniture, lighting, and decor selection.', 'icon' => 'fas fa-home', 'features' => json_encode(['Space Planning', 'Furniture Selection', 'Lighting Design', 'Color Consultation'])],
@@ -1076,7 +1076,7 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM interior_portfolio WHERE status = 'active' ORDER BY sort_order ASC LIMIT 6");
             $portfolio = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[" . __CLASS__ . "] " . __FUNCTION__ . "() exception: " . $e->getMessage());
 
             $portfolio = [];
         }
@@ -1085,7 +1085,7 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM interior_team WHERE status = 'active' ORDER BY sort_order ASC LIMIT 4");
             $team_members = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[" . __CLASS__ . "] " . __FUNCTION__ . "() exception: " . $e->getMessage());
 
             $team_members = [];
         }
@@ -1094,7 +1094,7 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM testimonials WHERE type = 'interior' AND status = 'active' ORDER BY sort_order ASC LIMIT 3");
             $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[" . __CLASS__ . "] " . __FUNCTION__ . "() exception: " . $e->getMessage());
 
             $testimonials = [];
         }
@@ -1260,6 +1260,7 @@ class PageController extends BaseController
     // System KYC Upload
     public function systemKycUpload()
     {
+        $this->requireLogin();
         $data = [
             'page_title' => 'KYC Upload - APS Dream Home',
             'page_description' => 'Know Your Customer verification system'
@@ -1768,6 +1769,7 @@ class PageController extends BaseController
     // User Edit Profile
     public function userEditProfile()
     {
+        $this->requireLogin();
         $data = [
             'page_title' => 'Edit Profile - APS Dream Home',
             'page_description' => 'Update your profile information'
@@ -2787,10 +2789,16 @@ class PageController extends BaseController
         $loggedInReferralCode = $isLoggedIn ? ($_SESSION['referral_code'] ?? '') : '';
         $userName = $isLoggedIn ? ($_SESSION['user_name'] ?? '') : '';
         $base = BASE_URL;
+
+        // Default company referral code - shown when no user is logged in
+        // so CTA links always have a value (new visitors can register without a sponsor)
+        $referral_code = $loggedInReferralCode ?: 'APS-COMPANY';
+
         $this->render('pages/become_associate', [
             'page_title' => 'Become an Associate',
             'isLoggedIn' => $isLoggedIn,
             'loggedInReferralCode' => $loggedInReferralCode,
+            'referral_code' => $referral_code,
             'userName' => $userName,
             'base' => $base
         ]);

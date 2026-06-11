@@ -18,12 +18,12 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Admin CSS -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
-    <!-- Consolidated APS CSS Bundles -->
+    <!-- Consolidated APS CSS Bundles (base styles, before custom admin.css) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
+    <!-- Admin CSS (loads after consolidated so it wins on admin pages) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
     <style>
         /* Only overrides that admin.css doesn't cover — NO duplication */
         * { margin: 0; padding: 0; box-sizing: border-box; }

@@ -533,23 +533,8 @@ class BlockchainController extends AdminController
      */
     private function getPendingVerifications()
     {
-        try {
-            if (!$this->db) {
-                return [];
-            }
-
-            $sql = "SELECT pv.*, p.title, p.city, u.name as requested_by
-                    FROM property_verifications pv
-                    LEFT JOIN properties p ON pv.property_id = p.id
-                    LEFT JOIN users u ON pv.requested_by = u.id
-                    WHERE pv.blockchain_status = 'pending'
-                    ORDER BY pv.requested_date ASC";
-
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll();
-        } catch (Exception $e) {
-            return [];
-        }
+        // property_verifications table does not exist yet
+        return [];
     }
 
     /**

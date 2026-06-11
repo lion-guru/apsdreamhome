@@ -586,16 +586,6 @@ class MLMCommissionController extends AdminController
         return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
     }
 
-    protected function redirect($url)
-    {
-        if (!headers_sent()) {
-            header('Location: ' . BASE_URL . $url);
-            exit;
-        }
-        echo '<script>window.location="' . htmlspecialchars(BASE_URL . $url, ENT_QUOTES) . '";</script>';
-        exit;
-    }
-
     /**
      * Local CSRF guard. Mirrors AdminController pattern.
      */

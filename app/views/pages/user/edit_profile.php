@@ -5,12 +5,6 @@
  * Allow users to update their personal information and password at APS Dream Homes
  */
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header("Location: " . BASE_URL . "/login");
-    exit;
-}
-
 $db = \App\Core\Database\Database::getInstance();
 $msg = '';
 $error = '';

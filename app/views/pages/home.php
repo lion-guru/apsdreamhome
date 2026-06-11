@@ -10,15 +10,15 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 <main id="main-content">
     <!-- Hero Section -->
     <section class="hero" aria-labelledby="hero-title"
-        style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+        style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
         <div class="container">
             <div class="row align-items-center g-5">
-                <div class="col-lg-7 text-white">
-                    <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3"
-                        style="background:rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.3);"><?= __('trusted_by') ?>
+                <div class="col-lg-7">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3"
+                        style="background:rgba(79,70,229,0.1); border: 1px solid rgba(79,70,229,0.2);"><?= __('trusted_by') ?>
                         <?= __('home_families_count') ?></span>
-                    <h1 id="hero-title" class="fw-bold"><?= __('hero_title') ?></h1>
-                    <p class="lead mb-4"><?= __('hero_subtitle') ?></p>
+                    <h1 id="hero-title" class="fw-bold" style="color:#1e293b;"><?= __('hero_title') ?></h1>
+                    <p class="lead mb-4" style="color:#475569;"><?= __('hero_subtitle') ?></p>
                     <div class="d-flex gap-3 flex-wrap">
                         <?php
                         // A/B test: homepage_cta - variant-aware hero CTA copy
@@ -43,13 +43,13 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             data-color-variant="<?php echo htmlspecialchars((string) $ctaColorVariant, ENT_QUOTES); ?>"
                             id="hero-cta"><?= htmlspecialchars($heroCtaText) ?></a>
                         <a href="<?php echo BASE_URL; ?>/list-property"
-                            class="btn btn-outline-light btn-lg"><?= __('nav_post_property') ?></a>
+                            class="btn btn-outline-primary btn-lg"><?= __('nav_post_property') ?></a>
                     </div>
                 </div>
                 <div class="col-lg-5">
                     <div class="card border-0">
-                        <div class="card-header text-white text-center py-3"
-                            style="background:linear-gradient(135deg,#4f46e5,#7c3aed);">
+                        <div class="card-header text-center py-3"
+                            style="background:#f1f5f9; border-bottom: 1px solid #e2e8f0;">
                             <h5 class="mb-0 fw-semibold"><i class="fas fa-search me-2"></i><?= __('search') ?>
                                 <?= __('properties') ?></h5>
                         </div>
@@ -211,7 +211,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                         <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span
                                                 id="loanAmtDisplay" class="text-primary">₹50,00,000</span></label>
                                         <input type="range" class="form-range" id="loanAmount" min="100000"
-                                            max="50000000" step="100000" value="5000000" oninput="calcEMI()">
+                                            max="50000000" step="100000" value="5000000" oninput="calcEMI()" title="Loan Amount">
                                         <div class="d-flex justify-content-between small text-muted">
                                             <span><?= __('home_emi_min_label') ?></span>
                                             <span><?= __('home_emi_max_label') ?></span>
@@ -992,7 +992,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                 <div class="col-md-4">
                                     <label
                                         class="form-label text-white-50 small"><?= __('home_investment_amount') ?></label>
-                                    <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()">
+                                    <select class="form-select form-select-sm" id="invAmount" onchange="calcGrowth()" title="Investment Amount">
                                         <option value="500000"><?= __('home_amount_5l') ?></option>
                                         <option value="1000000" selected><?= __('home_amount_10l') ?></option>
                                         <option value="2500000"><?= __('home_amount_25l') ?></option>
@@ -1002,7 +1002,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-white-50 small"><?= __('home_time_period') ?></label>
-                                    <select class="form-select form-select-sm" id="invYears" onchange="calcGrowth()">
+                                    <select class="form-select form-select-sm" id="invYears" onchange="calcGrowth()" title="Time Period Years">
                                         <option value="5"><?= __('home_years_5') ?></option>
                                         <option value="10" selected><?= __('home_years_10') ?></option>
                                         <option value="15"><?= __('home_years_15') ?></option>
@@ -1188,7 +1188,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
                 <div class="modal-header border-0 p-4" id="toolModalHeader"
-                    style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    style="background: linear-gradient(135deg, #f1f5f9, #e2e8f0);">
                     <div class="d-flex align-items-center gap-3">
                         <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center"
                             style="width: 50px; height: 50px; background: rgba(255,255,255,0.2);">

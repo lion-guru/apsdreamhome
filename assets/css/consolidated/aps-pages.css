@@ -2769,7 +2769,7 @@ body.lightbox-open { overflow: hidden; }
 
 /* Home page hero section fixes */
 .hero {
-    padding: 60px 0 !important;
+    padding: 100px 0 80px !important;
 }
 
 .hero .badge {
@@ -2779,15 +2779,15 @@ body.lightbox-open { overflow: hidden; }
 }
 
 .hero h1 {
-    font-size: 2.5rem !important;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
 }
 
 @media (max-width: 768px) {
     .hero h1 {
-        font-size: 1.8rem !important;
+        font-size: 1.8rem;
     }
     .hero {
-        padding: 40px 0 !important;
+        padding: 60px 0 50px !important;
     }
 }
 

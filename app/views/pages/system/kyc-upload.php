@@ -4,14 +4,6 @@
  * Migrated from resources/views/Views/kyc-upload.php
  */
 
-require_once __DIR__ . '/init.php';
-
-// Security checks
-if (!isset($_SESSION['uid']) || !isset($_SESSION['utype'])) {
-    header("Location: " . BASE_URL . "/login");
-    exit();
-}
-
 $db = \App\Core\App::database();
 $associate_id = $_SESSION['uid'];
 

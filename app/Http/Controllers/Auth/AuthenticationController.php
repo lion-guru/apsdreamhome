@@ -576,12 +576,6 @@ class AuthenticationController extends BaseController
 
     // Private helper methods
 
-    public function redirect($url)
-    {
-        header("Location: $url");
-        exit;
-    }
-
     private function getUserByResetToken($token)
     {
         $database = \App\Core\Database::getInstance();

@@ -5,14 +5,6 @@
  * Professional design for APS Dream Homes Investors
  */
 
-require_once __DIR__ . '/init.php';
-
-// Check if user is logged in as investor
-if (!isset($_SESSION['uid']) || (isset($_SESSION['utype']) && $_SESSION['utype'] !== 'investor')) {
-    header("Location: " . BASE_URL . "/login");
-    exit;
-}
-
 $db = \App\Core\App::database();
 $uid = $_SESSION['uid'];
 

@@ -100,15 +100,19 @@ class AssociateAuthController extends BaseController
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
-            // Create users extension record
-            $db->execute("INSERT INTO users (user_id, name, email, phone, password, level, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'bronze', 'active', ?, ?)", [
-                $newUserId,
-                $name,
-                $email,
-                $phone,
-                $hashed,
-                date('Y-m-d H:i:s'),
-                date('Y-m-d H:i:s')
+            // Create associates extension record
+            $db->insert('associates', [
+                'user_id' => $newUserId,
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'referral_code' => $referral_code,
+                'sponsor_id' => $referrer_id,
+                'level' => 'associate',
+                'status' => 'active',
+                'joining_date' => date('Y-m-d'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]);
 
             // Create mlm_profile for new associate

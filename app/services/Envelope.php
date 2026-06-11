@@ -24,10 +24,10 @@ namespace App\Services;
 final class Envelope
 {
     public function __construct(
-        public readonly bool $success,
-        public readonly mixed $data = null,
-        public readonly ?string $error = null,
-        public readonly array $meta = [],
+        public bool $success,
+        public mixed $data = null,
+        public ?string $error = null,
+        public array $meta = [],
     ) {
     }
 

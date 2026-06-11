@@ -49,16 +49,11 @@ if (!$dryRun) {
 // --- 1. Rank promotions ---
 fwrite(STDOUT, "=== Rank Promotions ===\n");
 try {
-    $promotions = $dryRun ? [] : $svc->runRankPromotions();
-    $result['rank_promotions'] = is_array($promotions) ? count($promotions) : (int)$promotions;
-    if (!empty($promotions)) {
-        foreach ($promotions as $p) {
-            $line = "  PROMOTED user #{$p['user_id']}: {$p['from_rank']} -> {$p['new_rank']}";
-            if (!$dryRun) { fwrite(STDOUT, $line . "\n"); }
-        }
-    } else {
-        fwrite(STDOUT, "  No promotions to process.\n");
-    }
+    $promoResult = $dryRun ? [] : $svc->runRankPromotions();
+    $promoted = (int)($promoResult['promoted'] ?? 0);
+    $unchanged = (int)($promoResult['unchanged'] ?? 0);
+    $result['rank_promotions'] = $promoted;
+    fwrite(STDOUT, "  Promoted: {$promoted}, Unchanged: {$unchanged}\n");
 } catch (\Throwable $e) {
     $result['errors'][] = 'runRankPromotions: ' . $e->getMessage();
     fwrite(STDERR, "  FAILED: " . $e->getMessage() . "\n");
@@ -118,7 +113,10 @@ fwrite(STDOUT, "Status: {$result['status']}\n");
 
 if (!$dryRun && $cronId !== null) {
     try {
-        $svc->finishCronLog($cronId, $result);
+        $items = $result['rank_promotions'] + $result['clawbacks'] + $result['payouts_processed'];
+        $errCount = count($result['errors']);
+        $errLog = implode("\n", $result['errors']);
+        $svc->finishCronLog($cronId, $result['status'], $items, $errCount, $errLog);
     } catch (\Throwable $e) {
         $result['errors'][] = 'finishCronLog: ' . $e->getMessage();
     }

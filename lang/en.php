@@ -1,9 +1,10 @@
 <?php
+
 /**
  * English Language File
  * APS Dream Home - Real Estate CRM
  */
-return array (
+return array(
   '10_20l' => 'Rs10 - 20 Lakh',
   '20_50l' => 'Rs20 - 50 Lakh',
   '5_10l' => 'Rs5 - 10 Lakh',
@@ -704,7 +705,7 @@ return array (
   'forgot_password_label_otp_instead' => 'Send OTP instead of reset link',
   'forgot_password_link_login' => 'Back to Login',
   'forgot_password_link_register' => 'Create New Account',
-  'forgot_password_page_description' => 'Reset your password with email or mobile number',
+  'forgot_password_page_description' => 'Reset your \password with email or mobile number',
   'forgot_password_page_title' => 'Forgot Password',
   'forgot_password_ph_email' => 'Enter your registered email address',
   'forgot_password_subtitle' => 'Choose your preferred reset method',
@@ -848,9 +849,9 @@ return array (
   'leader_exp_1' => '15+ Years Experience',
   'leader_exp_2' => '10+ Years Experience',
   'leader_exp_3' => '12+ Years Experience',
-  'leader_name_1' => 'Amit Kumar Singh',
-  'leader_name_2' => 'Priya Singh',
-  'leader_name_3' => 'Rahul Verma',
+  'leader_name_1' => 'Abhaay Kumar Singh',
+  'leader_name_2' => 'Praveen Singh',
+  'leader_name_3' => 'Vijay Verma',
   'leader_role_1' => 'Managing Director',
   'leader_role_2' => 'Operations Head',
   'leader_role_3' => 'Technical Director',
@@ -1019,10 +1020,10 @@ return array (
   'my_purchases' => 'My Purchases',
   'my_tickets' => 'My Tickets',
   'name_label' => 'Your Name',
-  'nav' => 
-  array (
-    'menu' => 
-    array (
+  'nav' =>
+  array(
+    'menu' =>
+    array(
       'home' => 'Home',
       'properties' => 'Properties',
       'projects' => 'Projects',
@@ -1119,7 +1120,7 @@ return array (
   'notif_page_title' => 'Notification Preferences',
   'notif_privacy_anytime' => 'You can change these preferences at any time.',
   'notif_privacy_inapp' => 'In-app notifications are always delivered regardless of these settings.',
-  'notif_privacy_security' => 'Critical security alerts (e.g. password changes) cannot be disabled.',
+  'notif_privacy_security' => 'Critical security alerts (e.g. \password changes) cannot be disabled.',
   'notif_privacy_share' => 'We never share your contact details with third parties.',
   'notif_privacy_title' => 'Your Privacy',
   'notif_th_type' => 'Notification Type',
@@ -1626,7 +1627,7 @@ return array (
   'user_edit_phone' => 'Phone Number',
   'user_edit_save_changes' => 'Save Changes',
   'user_edit_security_tip' => 'Security Tip',
-  'user_edit_security_tip_desc' => 'Use a strong password with at least 8 characters, including numbers and symbols, to keep your account secure.',
+  'user_edit_security_tip_desc' => 'Use a strong \password with at least 8 characters, including numbers and symbols, to keep your account secure.',
   'user_edit_subtitle' => 'Keep your account information up to date.',
   'user_edit_title' => 'Edit Profile',
   'user_edit_update_password' => 'Update Password',
@@ -1689,8 +1690,8 @@ return array (
   'user_profile_password_heading' => 'Change Password',
   'user_profile_password_hint' => 'Leave blank if you don\'t want to change your password',
   'user_profile_ph_confirm_password' => 'Confirm new password',
-  'user_profile_ph_new_password' => 'Enter new password (min 6 characters)',
-  'user_profile_security_desc' => 'Your account is secured with password protection.',
+  'user_profile_ph_new_password' => 'Enter new \password (min 6 characters)',
+  'user_profile_security_desc' => 'Your account is secured with \password protection.',
   'user_profile_security_heading' => 'Account Security',
   'user_profile_title' => 'My Profile',
   'user_profile_updated' => 'Profile updated successfully!',

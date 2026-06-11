@@ -990,6 +990,75 @@ class SustainableTechController extends AdminController
     }
 
     /**
+     * Get carbon footprint data
+     */
+    private function getCarbonFootprintData()
+    {
+        return [
+            'total_emissions' => 12500,
+            'unit' => 'tCO2e/year',
+            'scope1' => 3200,
+            'scope2' => 5800,
+            'scope3' => 3500,
+            'reduction_target' => '30% by 2025',
+            'current_reduction' => '12%',
+            'trend' => 'decreasing',
+            'last_updated' => date('Y-m-d'),
+            'key_sources' => [
+                'Construction materials' => '42%',
+                'Energy consumption' => '28%',
+                'Transportation' => '18%',
+                'Waste' => '12%'
+            ]
+        ];
+    }
+
+    /**
+     * Get energy efficiency metrics
+     */
+    private function getEnergyEfficiencyMetrics()
+    {
+        return [
+            'total_consumption' => 450000,
+            'unit' => 'kWh/month',
+            'renewable_share' => '22%',
+            'efficiency_score' => 72,
+            'benchmark' => 85,
+            'trend' => 'improving',
+            'top_consumers' => [
+                'HVAC systems' => '45%',
+                'Lighting' => '22%',
+                'Equipment' => '18%',
+                'Water heating' => '15%'
+            ],
+            'savings_potential' => '₹15 lakhs/year',
+            'last_audit' => '2024-11-15'
+        ];
+    }
+
+    /**
+     * Get green technology adoption data
+     */
+    private function getGreenTechnologyAdoption()
+    {
+        return [
+            'adoption_rate' => '38%',
+            'target' => '60% by 2026',
+            'technologies' => [
+                ['name' => 'Solar PV Systems', 'status' => 'active', 'adoption' => '45%', 'roi_months' => 48],
+                ['name' => 'Smart Building Management', 'status' => 'pilot', 'adoption' => '12%', 'roi_months' => 24],
+                ['name' => 'Energy Storage', 'status' => 'planned', 'adoption' => '0%', 'roi_months' => 36],
+                ['name' => 'Green Roofs', 'status' => 'active', 'adoption' => '28%', 'roi_months' => 60],
+                ['name' => 'Rainwater Harvesting', 'status' => 'active', 'adoption' => '55%', 'roi_months' => 30],
+                ['name' => 'EV Charging Stations', 'status' => 'expanding', 'adoption' => '18%', 'roi_months' => 42]
+            ],
+            'investment_committed' => '₹2.5 crores',
+            'annual_savings' => '₹85 lakhs',
+            'carbon_saved' => 450
+        ];
+    }
+
+    /**
      * Sustainability calculator
      */
     public function sustainabilityCalculator()

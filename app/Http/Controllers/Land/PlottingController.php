@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Land;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\Land\PlottingService;
-use App\Services\Auth\AuthenticationService;
-use App\Core\ViewRenderer;
 
 /**
  * Plotting Controller - APS Dream Home
@@ -14,24 +12,11 @@ use App\Core\ViewRenderer;
 class PlottingController extends AdminController
 {
     private $plottingService;
-    private $authService;
-    private $viewRenderer;
 
     public function __construct()
     {
         parent::__construct();
         $this->plottingService = new PlottingService();
-        $this->authService = new AuthenticationService();
-        $this->viewRenderer = new ViewRenderer();
-    }
-
-    /**
-     * This controller validates CSRF manually (via AuthenticationService)
-     * so skip the parent's automatic CSRF check on POST.
-     */
-    protected function skipCsrfProtection(): bool
-    {
-        return true;
     }
 
     /**
@@ -40,18 +25,14 @@ class PlottingController extends AdminController
     public function dashboard($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access plotting dashboard'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         // Get plotting statistics
         $statsResult = $this->plottingService->getPlottingStats();
 
         $data = [
             'title' => 'Plotting Dashboard - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'stats' => $statsResult['success'] ? $statsResult['data'] : [],
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
@@ -59,7 +40,7 @@ class PlottingController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('land/dashboard', $data);
+        $this->render('land/dashboard', $data);
     }
 
     /**
@@ -68,11 +49,7 @@ class PlottingController extends AdminController
     public function landAcquisitions($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access land acquisitions'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $filters = [
             'status' => $request['get']['status'] ?? null,
@@ -88,7 +65,7 @@ class PlottingController extends AdminController
 
         $data = [
             'title' => 'Land Acquisitions - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'acquisitions' => $result['success'] ? $result['data'] : [],
             'filters' => $filters,
             'success' => $_SESSION['success'] ?? '',
@@ -97,7 +74,7 @@ class PlottingController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('land/acquisitions', $data);
+        $this->render('land/acquisitions', $data);
     }
 
     /**
@@ -106,15 +83,11 @@ class PlottingController extends AdminController
     public function addLandAcquisition($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to add land acquisition'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $data = [
             'title' => 'Add Land Acquisition - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? [],
             'old_input' => $_SESSION['old_input'] ?? []
@@ -122,7 +95,7 @@ class PlottingController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('land/add_acquisition', $data);
+        $this->render('land/add_acquisition', $data);
     }
 
     /**
@@ -131,12 +104,7 @@ class PlottingController extends AdminController
     public function handleAddLandAcquisition($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'farmer_id' => intval($request['post']['farmer_id'] ?? 0),
@@ -158,7 +126,7 @@ class PlottingController extends AdminController
             'documents' => json_decode($request['post']['documents'] ?? '[]', true) ?? [],
             'remarks' => trim($request['post']['remarks'] ?? ''),
             'status' => trim($request['post']['status'] ?? 'active'),
-            'created_by' => $this->authService->getCurrentUser()['id']
+            'created_by' => ($_SESSION['user_id'] ?? 0)
         ];
 
         $result = $this->plottingService->addLandAcquisition($data);
@@ -181,11 +149,7 @@ class PlottingController extends AdminController
     public function plots($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access plots'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $filters = [
             'plot_status' => $request['get']['plot_status'] ?? null,
@@ -202,7 +166,7 @@ class PlottingController extends AdminController
 
         $data = [
             'title' => 'Plots - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'plots' => $result['success'] ? $result['data'] : [],
             'filters' => $filters,
             'success' => $_SESSION['success'] ?? '',
@@ -211,7 +175,7 @@ class PlottingController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('land/plots', $data);
+        $this->render('land/plots', $data);
     }
 
     /**
@@ -220,18 +184,14 @@ class PlottingController extends AdminController
     public function addPlot($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to add plot'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         // Get land acquisitions for dropdown
         $acquisitionsResult = $this->plottingService->getLandAcquisitions(['status' => 'active'], 1000, 0);
 
         $data = [
             'title' => 'Add Plot - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'acquisitions' => $acquisitionsResult['success'] ? $acquisitionsResult['data'] : [],
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? [],
@@ -240,7 +200,7 @@ class PlottingController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('land/add_plot', $data);
+        $this->render('land/add_plot', $data);
     }
 
     /**
@@ -249,12 +209,7 @@ class PlottingController extends AdminController
     public function handleAddPlot($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'land_acquisition_id' => intval($request['post']['land_acquisition_id'] ?? 0),
@@ -272,7 +227,7 @@ class PlottingController extends AdminController
             'other_charges' => floatval($request['post']['other_charges'] ?? 0),
             'total_price' => floatval($request['post']['total_price'] ?? 0) ?: null,
             'remarks' => trim($request['post']['remarks'] ?? ''),
-            'created_by' => $this->authService->getCurrentUser()['id']
+            'created_by' => ($_SESSION['user_id'] ?? 0)
         ];
 
         $result = $this->plottingService->addPlot($data);
@@ -295,11 +250,7 @@ class PlottingController extends AdminController
     public function bookings($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access bookings'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $filters = [
             'status' => $request['get']['status'] ?? null,
@@ -315,7 +266,7 @@ class PlottingController extends AdminController
 
         $data = [
             'title' => 'Plot Bookings - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'bookings' => $result['success'] ? $result['data'] : [],
             'filters' => $filters,
             'success' => $_SESSION['success'] ?? '',
@@ -324,7 +275,7 @@ class PlottingController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('land/bookings', $data);
+        $this->render('land/bookings', $data);
     }
 
     /**
@@ -333,11 +284,7 @@ class PlottingController extends AdminController
     public function bookPlot($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to book plot'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $plotId = $request['get']['plot_id'] ?? null;
 
@@ -346,7 +293,7 @@ class PlottingController extends AdminController
 
         $data = [
             'title' => 'Book Plot - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'plots' => $plotsResult['success'] ? $plotsResult['data'] : [],
             'selected_plot_id' => $plotId,
             'success' => $_SESSION['success'] ?? '',
@@ -356,7 +303,7 @@ class PlottingController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('land/book_plot', $data);
+        $this->render('land/book_plot', $data);
     }
 
     /**
@@ -365,12 +312,7 @@ class PlottingController extends AdminController
     public function handleBookPlot($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'plot_id' => intval($request['post']['plot_id'] ?? 0),
@@ -386,7 +328,7 @@ class PlottingController extends AdminController
             'transaction_id' => trim($request['post']['transaction_id'] ?? ''),
             'booking_date' => $request['post']['booking_date'] ?? date('Y-m-d'),
             'status' => trim($request['post']['status'] ?? 'pending'),
-            'created_by' => $this->authService->getCurrentUser()['id']
+            'created_by' => ($_SESSION['user_id'] ?? 0)
         ];
 
         $result = $this->plottingService->bookPlot($data);
@@ -409,17 +351,13 @@ class PlottingController extends AdminController
     public function addPayment($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to add payment'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $bookingId = $request['get']['booking_id'] ?? null;
 
         $data = [
             'title' => 'Add Payment - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
+            'user' => ['id' => ($_SESSION['user_id'] ?? 0), 'name' => ($_SESSION['user_name'] ?? ''), 'email' => ($_SESSION['user_email'] ?? ''), 'role' => ($_SESSION['role'] ?? '')],
             'booking_id' => $bookingId,
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? [],
@@ -428,7 +366,7 @@ class PlottingController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('land/add_payment', $data);
+        $this->render('land/add_payment', $data);
     }
 
     /**
@@ -437,12 +375,7 @@ class PlottingController extends AdminController
     public function handleAddPayment($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'booking_id' => intval($request['post']['booking_id'] ?? 0),
@@ -477,12 +410,7 @@ class PlottingController extends AdminController
     public function getLandAcquisitions($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $filters = [
             'status' => $request['get']['status'] ?? null,
@@ -502,12 +430,7 @@ class PlottingController extends AdminController
     public function getPlots($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $filters = [
             'plot_status' => $request['get']['plot_status'] ?? null,
@@ -528,12 +451,7 @@ class PlottingController extends AdminController
     public function getPlotBookings($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $filters = [
             'status' => $request['get']['status'] ?? null,
@@ -553,12 +471,7 @@ class PlottingController extends AdminController
     public function getPlottingStats($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         return $this->plottingService->getPlottingStats();
     }
@@ -569,12 +482,7 @@ class PlottingController extends AdminController
     public function addLandAcquisitionAjax($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'farmer_id' => intval($request['post']['farmer_id'] ?? 0),
@@ -596,7 +504,7 @@ class PlottingController extends AdminController
             'documents' => json_decode($request['post']['documents'] ?? '[]', true) ?? [],
             'remarks' => trim($request['post']['remarks'] ?? ''),
             'status' => trim($request['post']['status'] ?? 'active'),
-            'created_by' => $this->authService->getCurrentUser()['id']
+            'created_by' => ($_SESSION['user_id'] ?? 0)
         ];
 
         return $this->plottingService->addLandAcquisition($data);
@@ -608,12 +516,7 @@ class PlottingController extends AdminController
     public function addPlotAjax($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'land_acquisition_id' => intval($request['post']['land_acquisition_id'] ?? 0),
@@ -631,7 +534,7 @@ class PlottingController extends AdminController
             'other_charges' => floatval($request['post']['other_charges'] ?? 0),
             'total_price' => floatval($request['post']['total_price'] ?? 0) ?: null,
             'remarks' => trim($request['post']['remarks'] ?? ''),
-            'created_by' => $this->authService->getCurrentUser()['id']
+            'created_by' => ($_SESSION['user_id'] ?? 0)
         ];
 
         return $this->plottingService->addPlot($data);
@@ -643,12 +546,7 @@ class PlottingController extends AdminController
     public function bookPlotAjax($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'plot_id' => intval($request['post']['plot_id'] ?? 0),
@@ -664,7 +562,7 @@ class PlottingController extends AdminController
             'transaction_id' => trim($request['post']['transaction_id'] ?? ''),
             'booking_date' => $request['post']['booking_date'] ?? date('Y-m-d'),
             'status' => trim($request['post']['status'] ?? 'pending'),
-            'created_by' => $this->authService->getCurrentUser()['id']
+            'created_by' => ($_SESSION['user_id'] ?? 0)
         ];
 
         return $this->plottingService->bookPlot($data);
@@ -676,12 +574,7 @@ class PlottingController extends AdminController
     public function addPaymentAjax($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'booking_id' => intval($request['post']['booking_id'] ?? 0),
@@ -699,17 +592,4 @@ class PlottingController extends AdminController
         return $this->plottingService->addBookingPayment($data);
     }
 
-    /**
-     * Redirect helper
-     */
-    public function redirect($url)
-    {
-        if (!headers_sent()) {
-            header("Location: $url");
-            exit;
-        } else {
-            echo '<script>window.location.href = "' . $url . '";</script>';
-            exit;
-        }
-    }
 }

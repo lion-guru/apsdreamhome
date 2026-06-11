@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Business;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\Business\AssociateService;
-use App\Services\Auth\AuthenticationService;
 
 /**
  * Associate Controller - APS Dream Home
@@ -13,24 +12,11 @@ use App\Services\Auth\AuthenticationService;
 class AssociateController extends AdminController
 {
     private $associateService;
-    private $authService;
-    private $viewRenderer;
 
     public function __construct()
     {
         parent::__construct();
         $this->associateService = new AssociateService();
-        $this->authService = new AuthenticationService();
-        $this->viewRenderer = new \App\Core\ViewRenderer();
-    }
-
-    /**
-     * This controller validates CSRF manually (via AuthenticationService)
-     * so skip the parent's automatic CSRF check on POST.
-     */
-    protected function skipCsrfProtection(): bool
-    {
-        return true;
     }
 
     /**
@@ -56,125 +42,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_associates')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $page = max(1, intval($request['get']['page'] ?? 1));
-        $limit = 20;
-        $filters = [
-            'status' => $request['get']['status'] ?? '',
-            'search' => $request['get']['search'] ?? ''
-        ];
-
-        $result = $this->associateService->getAllAssociates($page, $limit, $filters);
-
-        $data = [
-            'title' => 'users - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
-            'users' => $result['data'],
-            'pagination' => [
-                'current_page' => $result['current_page'],
-                'last_page' => $result['last_page'],
-                'per_page' => $result['per_page'],
-                'total' => $result['total']
-            ],
-            'filters' => $filters,
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors']);
-
-        return $this->viewRenderer->render('business/users/index', $data);
-    }
-
-    /**
-     * Show associate details
-     */
-    public function show($request = null)
-    {
-        $request = $this->buildRequest($request);
-        // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_associates')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $id = $request['params']['id'] ?? null;
-
-        if (!$id) {
-            $_SESSION['errors'] = ['Associate ID is required'];
-            $this->redirect('/users');
-            return;
-        }
-
-        $result = $this->associateService->getAssociateDetails($id);
-
-        if (!$result['success']) {
-            $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/users');
-            return;
-        }
-
-        $data = [
-            'title' => 'Associate Details - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
-            'associate' => $result['data']['associate'],
-            'recent_sales' => $result['data']['recent_sales'],
-            'metrics' => $result['data']['metrics'],
-            'monthly_performance' => $result['data']['monthly_performance'],
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors']);
-
-        return $this->viewRenderer->render('business/users/show', $data);
-    }
-
-    /**
-     * Show create associate form
-     */
-    public function create($request = null)
-    {
-        $request = $this->buildRequest($request);
-        // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('create_associates')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $data = [
-            'title' => 'Create Associate - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? [],
-            'old_input' => $_SESSION['old_input'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
-
-        return $this->viewRenderer->render('business/users/create', $data);
-    }
-
-    /**
-     * Store new associate
-     */
-    public function store($request = null)
-    {
-        $request = $this->buildRequest($request);
-        // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('create_associates')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'name' => trim($request['post']['name'] ?? ''),
@@ -207,55 +75,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $id = $request['params']['id'] ?? null;
-
-        if (!$id) {
-            $_SESSION['errors'] = ['Associate ID is required'];
-            $this->redirect('/users');
-            return;
-        }
-
-        $result = $this->associateService->getAssociateDetails($id);
-
-        if (!$result['success']) {
-            $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/users');
-            return;
-        }
-
-        $data = [
-            'title' => 'Edit Associate - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
-            'associate' => $result['data']['associate'],
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? [],
-            'old_input' => $_SESSION['old_input'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
-
-        return $this->viewRenderer->render('business/users/edit', $data);
-    }
-
-    /**
-     * Update associate
-     */
-    public function update($request = null)
-    {
-        $request = $this->buildRequest($request);
-        // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
 
@@ -296,12 +116,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('delete_associates')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
 
@@ -332,12 +147,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['post']['associate_id'] ?? null;
         $rate = floatval($request['post']['commission_rate'] ?? 0);
@@ -359,53 +169,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_reports')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $filters = [
-            'start_date' => $request['get']['start_date'] ?? date('Y-m-01'),
-            'end_date' => $request['get']['end_date'] ?? date('Y-m-d')
-        ];
-
-        $result = $this->associateService->getPerformanceReport($filters);
-
-        if (!$result['success']) {
-            $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/users');
-            return;
-        }
-
-        $data = [
-            'title' => 'Associate Performance Report - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
-            'performance' => $result['data']['performance'],
-            'summary' => $result['data']['summary'],
-            'filters' => $filters,
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors']);
-
-        return $this->viewRenderer->render('business/users/performance', $data);
-    }
-
-    /**
-     * Get top performers (AJAX)
-     */
-    public function getTopPerformers($request = null)
-    {
-        $request = $this->buildRequest($request);
-        // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_reports')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $limit = intval($request['get']['limit'] ?? 10);
         $period = $request['get']['period'] ?? 'month';
@@ -420,12 +184,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('export_data')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $format = $request['post']['format'] ?? 'csv';
         $filters = [
@@ -442,12 +201,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('view_associates')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $query = trim($request['get']['q'] ?? '');
         $limit = intval($request['get']['limit'] ?? 20);
@@ -483,12 +237,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
 
@@ -519,12 +268,7 @@ class AssociateController extends AdminController
     {
         $request = $this->buildRequest($request);
         // Check authentication
-        if (!$this->authService->isAuthenticated() || !$this->authService->hasPermission('edit_associates')) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
 
@@ -548,17 +292,4 @@ class AssociateController extends AdminController
         return $result;
     }
 
-    /**
-     * Redirect helper
-     */
-    public function redirect($url)
-    {
-        if (!headers_sent()) {
-            header("Location: $url");
-            exit;
-        } else {
-            echo '<script>window.location.href = "' . $url . '";</script>';
-            exit;
-        }
-    }
 }

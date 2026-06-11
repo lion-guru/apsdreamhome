@@ -8,14 +8,6 @@
  * Migrated from Views/dashboards/user_dashboard.php
  */
 
-require_once __DIR__ . '/init.php';
-
-// Check if user is logged in
-if (!isset($_SESSION['uid']) || (isset($_SESSION['utype']) && $_SESSION['utype'] !== 'user' && $_SESSION['utype'] !== 'customer')) {
-    header("Location: " . BASE_URL . "/login");
-    exit;
-}
-
 $db = \App\Core\App::database();
 $uid = $_SESSION['uid'];
 $user_name = $_SESSION['name'] ?? 'User';

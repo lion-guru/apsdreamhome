@@ -4,34 +4,17 @@ namespace App\Http\Controllers\Media;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\Media\MediaLibraryService;
-use App\Services\Auth\AuthenticationService;
-use App\Core\ViewRenderer;
-
 /**
  * Media Library Controller - APS Dream Home
- * Custom MVC implementation without Laravel dependencies
  */
 class MediaLibraryController extends AdminController
 {
     private $mediaService;
-    private $authService;
-    private $viewRenderer;
 
     public function __construct()
     {
         parent::__construct();
         $this->mediaService = new MediaLibraryService();
-        $this->authService = new AuthenticationService();
-        $this->viewRenderer = new ViewRenderer();
-    }
-
-    /**
-     * This controller validates CSRF manually (via AuthenticationService)
-     * so skip the parent's automatic CSRF check on POST.
-     */
-    protected function skipCsrfProtection(): bool
-    {
-        return true;
     }
 
     /**
@@ -39,12 +22,7 @@ class MediaLibraryController extends AdminController
      */
     public function index($request = [])
     {
-        // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access media library'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $category = $request['get']['category'] ?? null;
         $search = $request['get']['search'] ?? null;
@@ -60,7 +38,6 @@ class MediaLibraryController extends AdminController
 
         $data = [
             'title' => 'Media Library - APS Dream Home',
-            'user' => $this->authService->getCurrentUser(),
             'files' => $result['success'] ? $result['data'] : [],
             'categories' => $categoriesResult['success'] ? $categoriesResult['data'] : [],
             'current_category' => $category,
@@ -71,7 +48,7 @@ class MediaLibraryController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('media/index', $data);
+        $this->render('media/index', $data);
     }
 
     /**
@@ -80,11 +57,7 @@ class MediaLibraryController extends AdminController
     public function upload($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to upload files'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         // Get categories for dropdown
         $categoriesResult = $this->mediaService->getCategories();
@@ -100,7 +73,7 @@ class MediaLibraryController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('media/upload', $data);
+        $this->render('media/upload', $data);
     }
 
     /**
@@ -109,12 +82,7 @@ class MediaLibraryController extends AdminController
     public function handleUpload($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'title' => trim($request['post']['title'] ?? ''),
@@ -145,11 +113,7 @@ class MediaLibraryController extends AdminController
     public function details($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to access media library'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
 
@@ -177,7 +141,7 @@ class MediaLibraryController extends AdminController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('media/details', $data);
+        $this->render('media/details', $data);
     }
 
     /**
@@ -186,12 +150,7 @@ class MediaLibraryController extends AdminController
     public function update($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
         $title = trim($request['post']['title'] ?? '');
@@ -225,12 +184,7 @@ class MediaLibraryController extends AdminController
     public function delete($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
 
@@ -260,12 +214,7 @@ class MediaLibraryController extends AdminController
     public function getMediaFiles($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $category = $request['get']['category'] ?? null;
         $search = $request['get']['search'] ?? null;
@@ -281,12 +230,7 @@ class MediaLibraryController extends AdminController
     public function getMediaFile($request)
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['get']['id'] ?? null;
 
@@ -306,12 +250,7 @@ class MediaLibraryController extends AdminController
     public function getCategories($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         return $this->mediaService->getCategories();
     }
@@ -322,12 +261,7 @@ class MediaLibraryController extends AdminController
     public function getMediaStats($request = [])
     {
         // Check authentication and admin access
-        if (!$this->authService->isAuthenticated() || !$this->checkUserIsAdmin($this->authService->getCurrentUser())) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         return $this->mediaService->getMediaStats();
     }
@@ -338,12 +272,7 @@ class MediaLibraryController extends AdminController
     public function uploadFile($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $data = [
             'title' => trim($request['post']['title'] ?? ''),
@@ -363,12 +292,7 @@ class MediaLibraryController extends AdminController
     public function updateFile($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['post']['id'] ?? null;
         $title = trim($request['post']['title'] ?? '');
@@ -392,12 +316,7 @@ class MediaLibraryController extends AdminController
     public function deleteFile($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['post']['id'] ?? null;
 
@@ -417,11 +336,7 @@ class MediaLibraryController extends AdminController
     public function download($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to download files'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
 
@@ -467,11 +382,7 @@ class MediaLibraryController extends AdminController
     public function preview($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Please login to view files'];
-            $this->redirect('/login');
-            return;
-        }
+        $this->requireAdmin();
 
         $id = $request['params']['id'] ?? null;
 
@@ -503,7 +414,7 @@ class MediaLibraryController extends AdminController
             'file' => $file
         ];
 
-        return $this->viewRenderer->render('media/preview', $data);
+        $this->render('media/preview', $data);
     }
 
     /**
@@ -512,12 +423,7 @@ class MediaLibraryController extends AdminController
     public function createThumbnail($request = [])
     {
         // Check authentication
-        if (!$this->authService->isAuthenticated()) {
-            return [
-                'success' => false,
-                'message' => 'Access denied'
-            ];
-        }
+        $this->requireAdmin();
 
         $id = $request['post']['id'] ?? null;
         $width = intval($request['post']['width'] ?? 300);

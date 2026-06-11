@@ -646,26 +646,4 @@ class SupportTicketController extends AdminController
             exit;
         }
     }
-
-    /**
-     * JSON response helper
-     */
-    public function jsonResponse($data, $status = 200)
-    {
-        http_response_code($status);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    protected function jsonError($message, $status = 400)
-    {
-        http_response_code($status);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
-    }
 }
