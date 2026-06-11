@@ -1,0 +1,297 @@
+<?php
+
+namespace App\Http\Controllers\Front;
+
+use App\Http\Controllers\BaseController;
+use App\Services\Sales\BookingLifecycleService;
+
+class BookingController extends BaseController
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    private function getUser()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Browse available plots with filters (colony, size, price range).
+     */
+    public function browse()
+    {
+        $where = "p.is_active = 1 AND p.status = 'available'";
+        $params = [];
+
+        $colonyId = intval($_GET['colony'] ?? 0);
+        if ($colonyId > 0) {
+            $where .= " AND p.colony_id = ?";
+            $params[] = $colonyId;
+        }
+
+        $minArea = floatval($_GET['min_area'] ?? 0);
+        if ($minArea > 0) {
+            $where .= " AND p.area_sqft >= ?";
+            $params[] = $minArea;
+        }
+
+        $maxArea = floatval($_GET['max_area'] ?? 0);
+        if ($maxArea > 0) {
+            $where .= " AND p.area_sqft <= ?";
+            $params[] = $maxArea;
+        }
+
+        $minPrice = floatval($_GET['min_price'] ?? 0);
+        if ($minPrice > 0) {
+            $where .= " AND p.total_price >= ?";
+            $params[] = $minPrice;
+        }
+
+        $maxPrice = floatval($_GET['max_price'] ?? 0);
+        if ($maxPrice > 0) {
+            $where .= " AND p.total_price <= ?";
+            $params[] = $maxPrice;
+        }
+
+        $sort = $_GET['sort'] ?? 'plot_number';
+        $allowedSorts = [
+            'plot_number'  => 'p.block, p.plot_number',
+            'price_asc'    => 'p.total_price ASC',
+            'price_desc'   => 'p.total_price DESC',
+            'area_asc'     => 'p.area_sqft ASC',
+            'area_desc'    => 'p.area_sqft DESC',
+        ];
+        $orderBy = $allowedSorts[$sort] ?? 'p.block, p.plot_number';
+
+        $sql = "SELECT p.*, c.name AS colony_name, c.slug AS colony_slug
+                FROM plots p
+                JOIN colonies c ON p.colony_id = c.id
+                WHERE {$where}
+                ORDER BY {$orderBy}";
+        $plots = $this->db->fetchAll($sql, $params);
+
+        $colonies = $this->db->fetchAll(
+            "SELECT c.id, c.name, c.slug,
+                    (SELECT COUNT(*) FROM plots p2 WHERE p2.colony_id = c.id AND p2.status = 'available' AND p2.is_active = 1) AS available_count
+             FROM colonies c WHERE c.is_active = 1 ORDER BY c.name"
+        );
+
+        $totalAvailable = $this->db->fetchRow("SELECT COUNT(*) AS cnt FROM plots p WHERE {$where}", $params);
+
+        $this->render('pages/booking/browse', [
+            'page_title'        => 'Browse Plots - APS Dream Home',
+            'meta_description'  => 'Browse available plots for sale across all APS Dream Home colonies. Filter by colony, size, and price.',
+            'plots'             => $plots,
+            'colonies'          => $colonies,
+            'total'             => (int)($totalAvailable['cnt'] ?? 0),
+            'current_colony'    => $colonyId,
+            'current_min_area'  => $minArea,
+            'current_max_area'  => $maxArea,
+            'current_min_price' => $minPrice,
+            'current_max_price' => $maxPrice,
+            'current_sort'      => $sort,
+        ]);
+    }
+
+    /**
+     * Show full plot detail page with dimensions, colony info, photos, price breakdown.
+     */
+    public function detail($id)
+    {
+        $id = intval($id);
+        $plot = $this->db->fetchRow("
+            SELECT p.*, c.name AS colony_name, c.slug AS colony_slug,
+                   c.description AS colony_description, c.amenities, c.gallery_images,
+                   d.name AS district_name, s.name AS state_name
+            FROM plots p
+            JOIN colonies c ON p.colony_id = c.id
+            LEFT JOIN districts d ON c.district_id = d.id
+            LEFT JOIN states s ON d.state_id = s.id
+            WHERE p.id = ? AND p.is_active = 1
+        ", [$id]);
+
+        if (!$plot) {
+            $this->setFlash('error', 'Plot not found.');
+            return $this->redirect('/plots/browse');
+        }
+
+        $pricePerSqft = $plot['area_sqft'] > 0 ? round($plot['total_price'] / $plot['area_sqft'], 2) : 0;
+        $tokenAmount = round($plot['total_price'] * 0.25, 2);
+        $stampDuty = round($plot['total_price'] * 0.05, 2);
+
+        $nearbyPlots = $this->db->fetchAll("
+            SELECT id, plot_number, area_sqft, total_price, dimension_label, status
+            FROM plots
+            WHERE colony_id = ? AND id != ? AND status = 'available' AND is_active = 1
+            LIMIT 4
+        ", [$plot['colony_id'], $id]);
+
+        $this->render('pages/booking/detail', [
+            'page_title'       => $plot['plot_number'] . ' - ' . $plot['colony_name'] . ' - APS Dream Home',
+            'meta_description' => "Plot {$plot['plot_number']} in {$plot['colony_name']}. {$plot['dimension_label']}, {$plot['area_sqft']} sqft, ₹" . number_format($plot['total_price']) . ".",
+            'plot'             => $plot,
+            'pricePerSqft'     => $pricePerSqft,
+            'tokenAmount'      => $tokenAmount,
+            'stampDuty'        => $stampDuty,
+            'nearbyPlots'      => $nearbyPlots,
+        ]);
+    }
+
+    /**
+     * Booking form — customer fills details, selects payment plan.
+     * Requires login.
+     */
+    public function bookForm($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+        $id = intval($id);
+
+        $plot = $this->db->fetchRow("
+            SELECT p.*, c.name AS colony_name, c.slug AS colony_slug,
+                   d.name AS district_name, s.name AS state_name
+            FROM plots p
+            JOIN colonies c ON p.colony_id = c.id
+            LEFT JOIN districts d ON c.district_id = d.id
+            LEFT JOIN states s ON d.state_id = s.id
+            WHERE p.id = ? AND p.is_active = 1
+        ", [$id]);
+
+        if (!$plot || $plot['status'] !== 'available') {
+            $this->setFlash('error', 'This plot is no longer available.');
+            return $this->redirect('/plots/browse');
+        }
+
+        $tokenAmount = round($plot['total_price'] * 0.25, 2);
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/booking/form', [
+            'page_title'    => 'Book Plot ' . $plot['plot_number'] . ' - APS Dream Home',
+            'plot'          => $plot,
+            'user'          => $user,
+            'tokenAmount'   => $tokenAmount,
+        ]);
+    }
+
+    /**
+     * POST handler — creates the booking via BookingLifecycleService.
+     * Requires login + CSRF.
+     */
+    public function submitBooking($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+        $id = intval($id);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->redirect('/plots/browse');
+        }
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+            return;
+        }
+
+        $plot = $this->db->fetchRow(
+            "SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available'",
+            [$id]
+        );
+        if (!$plot) {
+            $this->setFlash('error', 'Plot is no longer available.');
+            return $this->redirect('/plots/browse');
+        }
+
+        $paymentPlan = $_POST['payment_plan'] ?? 'emi';
+        $notes = trim($_POST['notes'] ?? '');
+
+        try {
+            $svc = new BookingLifecycleService();
+            $result = $svc->createBooking([
+                'plot_id'          => $plot['id'],
+                'customer_id'      => $user['id'],
+                'total_plot_value' => (float)$plot['total_price'],
+                'booking_amount'   => round($plot['total_price'] * 0.25, 2),
+                'channel'          => 'direct',
+                'notes'            => $notes,
+            ]);
+
+            if (!$result['success']) {
+                $this->setFlash('error', 'Booking failed: ' . ($result['error'] ?? 'Unknown error'));
+                return $this->redirect('/plots/' . $id . '/book');
+            }
+
+            if ($paymentPlan === 'emi') {
+                $svc->generatePaymentSchedule($result['id'], 12, 10.0);
+            }
+
+            $this->redirect('/booking/confirmation/' . $result['id']);
+        } catch (\Throwable $e) {
+            error_log('[BookingController::submitBooking] ' . $e->getMessage());
+            $this->setFlash('error', 'Something went wrong. Please try again.');
+            return $this->redirect('/plots/' . $id . '/book');
+        }
+    }
+
+    /**
+     * Show booking confirmation with booking number, plot details, payment schedule.
+     * Requires login.
+     */
+    public function confirmation($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+        $id = intval($id);
+
+        $booking = $this->db->fetchRow("
+            SELECT pb.*, p.plot_number, p.block, p.area_sqft, p.dimension_label,
+                   p.total_price AS plot_price, p.corner_plot, p.park_facing,
+                   c.name AS colony_name, c.slug AS colony_slug,
+                   u.name AS customer_name, u.email AS customer_email
+            FROM plot_bookings pb
+            LEFT JOIN plots p ON pb.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            LEFT JOIN users u ON pb.customer_id = u.id
+            WHERE pb.id = ? AND pb.customer_id = ?
+        ", [$id, $user['id']]);
+
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found.');
+            return $this->redirect('/user/dashboard');
+        }
+
+        $schedule = [];
+        try {
+            $schedule = $this->db->fetchAll(
+                "SELECT * FROM booking_payment_schedules WHERE booking_id = ? ORDER BY installment_no",
+                [$id]
+            );
+        } catch (\Throwable $e) {
+            // table may not exist yet
+        }
+
+        $totalPaid = 0;
+        $totalPending = 0;
+        foreach ($schedule as $inst) {
+            if ($inst['status'] === 'paid') {
+                $totalPaid += (float)$inst['amount'];
+            } else {
+                $totalPending += (float)$inst['amount'];
+            }
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/booking/confirmation', [
+            'page_title' => 'Booking Confirmed #' . htmlspecialchars($booking['booking_number'] ?? ''),
+            'booking'    => $booking,
+            'schedule'   => $schedule,
+            'totalPaid'  => $totalPaid,
+            'totalPending' => $totalPending,
+            'user'       => $user,
+        ]);
+    }
+}

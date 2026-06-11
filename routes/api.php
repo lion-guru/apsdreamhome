@@ -107,6 +107,20 @@ $router->get('/api/mobile/properties', 'Api\MobileApiController@mobileProperties
 $router->get('/api/mobile/dashboard', 'Api\MobileApiController@dashboardV2');
 $router->post('/api/mobile/notifications/register', 'Api\MobileApiController@registerPushTokenV2');
 
+// ============================================================
+// MOBILE API V2 EXTENDED — Properties, Bookings, Inquiries, Profile
+// ============================================================
+$router->get('/api/mobile/v2/properties', 'Api\MobileApiController@browseProperties');
+$router->get('/api/mobile/v2/properties/search', 'Api\MobileApiController@searchProperties');
+$router->get('/api/mobile/v2/properties/{id}', 'Api\MobileApiController@propertyDetail');
+$router->get('/api/mobile/v2/bookings', 'Api\MobileApiController@listBookings');
+$router->get('/api/mobile/v2/bookings/{id}', 'Api\MobileApiController@bookingDetail');
+$router->post('/api/mobile/v2/bookings/{id}/pay', 'Api\MobileApiController@recordBookingPayment');
+$router->post('/api/mobile/v2/inquiries', 'Api\MobileApiController@submitInquiryV2');
+$router->get('/api/mobile/v2/inquiries', 'Api\MobileApiController@listInquiries');
+$router->put('/api/mobile/v2/profile', 'Api\MobileApiController@updateProfileV2');
+$router->get('/api/mobile/v2/dashboard', 'Api\MobileApiController@dashboardV3');
+
 // AI Dashboard API Routes
 $router->post('/api/ai-dashboard/training', 'App\\Http\\Controllers\\AIDashboardController@startTraining');
 $router->post('/api/ai-dashboard/reset', 'App\\Http\\Controllers\\AIDashboardController@resetMemory');

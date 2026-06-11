@@ -80,4 +80,34 @@ class SiteSettingsController extends AdminController
 
         $this->redirect('/admin/site-settings?tab=' . urlencode($tab));
     }
+
+    public function edit()
+    {
+        $this->requireAdmin();
+        return $this->jsonResponse(['success' => true]);
+    }
+
+    public function reset()
+    {
+        $this->requireAdmin();
+        return $this->jsonResponse(['success' => true]);
+    }
+
+    public function getStats()
+    {
+        $this->requireAdmin();
+        return $this->jsonResponse(['success' => true]);
+    }
+
+    public function export()
+    {
+        $this->requireAdmin();
+        return $this->jsonResponse(['success' => true]);
+    }
+
+    public function getCategory()
+    {
+        $this->requireAdmin();
+        return $this->jsonResponse(['success' => true]);
+    }
 }

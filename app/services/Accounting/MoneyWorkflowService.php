@@ -550,22 +550,198 @@ class MoneyWorkflowService
     }
 
     // ============================================================
+    //  VENDOR MANAGEMENT + KYC
+    // ============================================================
+
+    /**
+     * Create a new vendor with KYC fields and auto-detect TDS section.
+     *
+     * TDS auto-detection rules (194C — payments to contractors):
+     *   individual     → 194C @ 1% (single-person contractor)
+     *   company        → 194C @ 2% (corporate vendor)
+     *   partnership    → 194C @ 2% (partnership firm)
+     *   proprietorship → 194C @ 1% (sole-proprietor, treated like individual)
+     *
+     * Falls back to vendor_type mapping when entity_type is not set:
+     *   contractor, transport → treated as individual (1%)
+     *   supplier, service_provider, consultant, other → treated as company (2%)
+     */
+    public function createVendor(array $data): int
+    {
+        $entityType = $data['entity_type'] ?? null;
+        if (!$entityType) {
+            // Map legacy vendor_type to entity_type for TDS
+            $vt = strtolower($data['vendor_type'] ?? 'other');
+            $entityType = in_array($vt, ['contractor', 'transport']) ? 'individual' : 'company';
+        }
+
+        $tdsSection = $this->autoDetectTdsSection($entityType);
+        $tdsRate    = $this->getTdsRateForSection($tdsSection, $entityType);
+
+        $payload = [
+            'vendor_name'       => trim($data['vendor_name'] ?? ''),
+            'vendor_type'       => $data['vendor_type'] ?? 'other',
+            'contact_person'    => $data['contact_person'] ?? null,
+            'email'             => $data['email'] ?? null,
+            'phone'             => $data['phone'] ?? null,
+            'address'           => $data['address'] ?? null,
+            'city'              => $data['city'] ?? null,
+            'state'             => $data['state'] ?? null,
+            'gst_number'        => strtoupper($data['gst_number'] ?? $data['gstin'] ?? ''),
+            'gstin'             => strtoupper($data['gstin'] ?? $data['gst_number'] ?? ''),
+            'pan_number'        => strtoupper($data['pan_number'] ?? ''),
+            'entity_type'       => $entityType,
+            'tds_section'       => $tdsSection,
+            'is_tds_applicable' => isset($data['is_tds_applicable']) ? (int)$data['is_tds_applicable'] : 1,
+            'kyc_status'        => $data['kyc_status'] ?? 'pending',
+            'kyc_verified_at'   => null,
+            'bank_name'         => $data['bank_name'] ?? null,
+            'bank_account'      => $data['bank_account'] ?? null,
+            'ifsc_code'         => strtoupper($data['ifsc_code'] ?? ''),
+            'payment_terms'     => $data['payment_terms'] ?? '30_days',
+            'contract_start'    => !empty($data['contract_start']) ? $data['contract_start'] : null,
+            'contract_end'      => !empty($data['contract_end']) ? $data['contract_end'] : null,
+            'status'            => $data['status'] ?? 'active',
+            'notes'             => $data['notes'] ?? null,
+            'created_by'        => $data['created_by'] ?? ($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null),
+        ];
+
+        $this->db->insert('vendors', $payload);
+        return (int)$this->db->lastInsertId();
+    }
+
+    /**
+     * Auto-detect TDS section based on entity_type.
+     * All 194C rates per Income Tax Act:
+     *   individual / proprietorship → 194C (1% for single-person entities)
+     *   company / partnership       → 194C (2% for corporate/partnership entities)
+     */
+    public function autoDetectTdsSection(string $entityType): string
+    {
+        // All entity types fall under 194C; the rate differs by entity classification
+        $validTypes = ['individual', 'company', 'partnership', 'proprietorship'];
+        return in_array(strtolower($entityType), $validTypes) ? '194C' : '194C';
+    }
+
+    /**
+     * Get the TDS rate for a section + entity_type combination.
+     * 194C rates:
+     *   individual / proprietorship → 1%
+     *   company / partnership       → 2%
+     */
+    public function getTdsRateForSection(string $section, string $entityType): float
+    {
+        if ($section === '194C') {
+            $entity = strtolower($entityType);
+            return in_array($entity, ['individual', 'proprietorship']) ? 1.0 : 2.0;
+        }
+
+        // Other TDS sections with fixed rates
+        $rates = [
+            '194IA' => 1.0,
+            '194IB' => 5.0,
+            '194H'  => 5.0,
+            '194I'  => 10.0,
+            '194J'  => 10.0,
+            '194M'  => 5.0,
+            '194N'  => 2.0,
+        ];
+        return $rates[$section] ?? 0.0;
+    }
+
+    /**
+     * Mark a vendor's KYC as verified.
+     */
+    public function verifyVendorKyc(int $vendorId): bool
+    {
+        $this->db->execute(
+            "UPDATE vendors SET kyc_status = 'verified', kyc_verified_at = NOW() WHERE id = ?",
+            [$vendorId]
+        );
+        return true;
+    }
+
+    /**
+     * Mark a vendor's KYC as rejected.
+     */
+    public function rejectVendorKyc(int $vendorId, string $reason = ''): bool
+    {
+        $this->db->execute(
+            "UPDATE vendors SET kyc_status = 'rejected', notes = CONCAT(COALESCE(notes,''), '\nKYC Rejected: ', ?) WHERE id = ?",
+            [$reason, $vendorId]
+        );
+        return true;
+    }
+
+    /**
+     * Get a single vendor by ID.
+     */
+    public function getVendor(int $id): ?array
+    {
+        $row = $this->db->fetchOne("SELECT * FROM vendors WHERE id = ?", [$id]);
+        return $row ?: null;
+    }
+
+    /**
+     * List vendors with optional filters.
+     */
+    public function listVendors(array $filters = []): array
+    {
+        $sql = "SELECT * FROM vendors WHERE 1=1";
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $sql .= " AND status = ?";
+            $params[] = $filters['status'];
+        }
+        if (!empty($filters['entity_type'])) {
+            $sql .= " AND entity_type = ?";
+            $params[] = $filters['entity_type'];
+        }
+        if (!empty($filters['kyc_status'])) {
+            $sql .= " AND kyc_status = ?";
+            $params[] = $filters['kyc_status'];
+        }
+        if (!empty($filters['search'])) {
+            $sql .= " AND (vendor_name LIKE ? OR contact_person LIKE ? OR pan_number LIKE ?)";
+            $term = '%' . $filters['search'] . '%';
+            $params[] = $term;
+            $params[] = $term;
+            $params[] = $term;
+        }
+
+        $sql .= " ORDER BY created_at DESC";
+        if (!empty($filters['limit'])) {
+            $sql .= " LIMIT " . (int)$filters['limit'];
+        }
+
+        return $this->db->fetchAll($sql, $params) ?: [];
+    }
+
+    // ============================================================
     //  VENDOR PAYMENTS
     // ============================================================
 
     public function payVendor(array $data): int
     {
-        $gross  = (float)($data['gross_amount'] ?? 0);
-        $tds    = (float)($data['tds_amount'] ?? 0);
+        $gross  = (float)($data['gross_amount'] ?? $data['amount'] ?? 0);
+        $tds    = (float)($data['tds_amount'] ?? $data['tds_deducted'] ?? 0);
         $gst    = (float)($data['gst_amount'] ?? 0);
         $net    = $gross - $tds;
+
+        $currency   = strtoupper(trim($data['currency'] ?? 'INR'));
+        $fxRate     = (float)($data['exchange_rate'] ?? 1.0);
+        $amountInr  = !empty($data['amount_inr'])
+            ? (float)$data['amount_inr']
+            : round($gross * $fxRate, 2);
 
         $this->db->beginTransaction();
         try {
             $vpId = (int)$this->db->insert('vendor_payments', [
                 'vendor_id'      => !empty($data['vendor_id']) ? (int)$data['vendor_id'] : null,
-                'vendor_name'    => $data['vendor_name'],
+                'vendor_name'    => $data['vendor_name'] ?? '',
                 'vendor_gstin'   => strtoupper($data['vendor_gstin'] ?? ''),
+                'vendor_type'    => $data['vendor_type'] ?? null,
                 'bill_id'        => !empty($data['bill_id']) ? (int)$data['bill_id'] : null,
                 'bill_number'    => $data['bill_number'] ?? null,
                 'bill_date'      => $data['bill_date'] ?? null,
@@ -575,6 +751,9 @@ class MoneyWorkflowService
                 'gst_amount'     => $gst,
                 'net_payable'    => $net,
                 'paid_amount'    => (float)($data['paid_amount'] ?? $net),
+                'currency'       => $currency,
+                'exchange_rate'  => $fxRate,
+                'amount_inr'     => $amountInr,
                 'payment_date'   => $data['payment_date'] ?? date('Y-m-d'),
                 'payment_mode'   => $data['payment_mode'] ?? 'rtgs',
                 'bank_account_id'=> !empty($data['bank_account_id']) ? (int)$data['bank_account_id'] : null,
@@ -1745,6 +1924,18 @@ class MoneyWorkflowService
         return $this->db->fetchAll($sql, $params) ?: [];
     }
 
+    public function getChequeById(int $id): ?array
+    {
+        $row = $this->db->fetchOne(
+            "SELECT c.*, b.account_name, b.account_number, b.ifsc_code, b.bank_name, b.branch, b.signatory_name
+             FROM cheque_register c
+             LEFT JOIN bank_accounts_master b ON c.bank_account_id = b.id
+             WHERE c.id = ?",
+            [$id]
+        );
+        return $row ?: null;
+    }
+
     public function createReconciliation(int $bankAccountId, array $data): int
     {
         return $this->startBankReconciliation($bankAccountId, $data);
@@ -2148,8 +2339,8 @@ class MoneyWorkflowService
     {
         return $this->db->fetchAll(
             "SELECT vendor_id, vendor_name, vendor_type,
-                    SUM(amount) total_payable,
-                    SUM(tds_deducted) total_tds,
+                    SUM(gross_amount) total_payable,
+                    SUM(tds_amount) total_tds,
                     SUM(gst_amount) total_gst,
                     COUNT(*) bills
              FROM vendor_payments

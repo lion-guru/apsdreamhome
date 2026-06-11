@@ -2283,4 +2283,821 @@ class MobileApiController extends BaseController
             'message' => $ok ? 'Push token registered' : 'Failed to register push token',
         ]);
     }
+
+    // ============================================================
+    // PROPERTY BROWSING ENDPOINTS (Approved properties for customers)
+    // ============================================================
+
+    /**
+     * GET /api/mobile/v2/properties
+     * List approved properties with filters (type, location, price range, pagination)
+     */
+    public function browseProperties()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $perPage = min(max(1, (int) ($_GET['per_page'] ?? 20)), 50);
+        $offset = ($page - 1) * $perPage;
+
+        $type = $_GET['type'] ?? null;
+        $location = $_GET['location'] ?? null;
+        $minPrice = isset($_GET['min_price']) ? (float) $_GET['min_price'] : null;
+        $maxPrice = isset($_GET['max_price']) ? (float) $_GET['max_price'] : null;
+        $bedrooms = isset($_GET['bedrooms']) ? (int) $_GET['bedrooms'] : null;
+        $sort = $_GET['sort'] ?? 'newest';
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $where = "WHERE p.status = 'active'";
+            $params = [];
+
+            if ($type) {
+                $where .= " AND p.type = ?";
+                $params[] = $type;
+            }
+            if ($location) {
+                $where .= " AND (p.location LIKE ? OR p.city LIKE ?)";
+                $params[] = '%' . $location . '%';
+                $params[] = '%' . $location . '%';
+            }
+            if ($minPrice !== null) {
+                $where .= " AND p.price >= ?";
+                $params[] = $minPrice;
+            }
+            if ($maxPrice !== null) {
+                $where .= " AND p.price <= ?";
+                $params[] = $maxPrice;
+            }
+            if ($bedrooms !== null) {
+                $where .= " AND p.bedrooms >= ?";
+                $params[] = $bedrooms;
+            }
+
+            $orderMap = [
+                'newest' => 'p.created_at DESC',
+                'price_low' => 'p.price ASC',
+                'price_high' => 'p.price DESC',
+                'popular' => 'p.featured DESC, p.created_at DESC',
+            ];
+            $orderBy = $orderMap[$sort] ?? 'p.created_at DESC';
+
+            $countSql = "SELECT COUNT(*) FROM properties p {$where}";
+            $countStmt = $pdo->prepare($countSql);
+            $countStmt->execute($params);
+            $total = (int) $countStmt->fetchColumn();
+
+            $sql = "
+                SELECT p.id, p.title, p.price, p.type, p.location, p.city, p.state,
+                       p.bedrooms, p.bathrooms, p.area_sqft, p.featured, p.created_at,
+                       (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, id ASC LIMIT 1) as main_image
+                FROM properties p
+                {$where}
+                ORDER BY {$orderBy}
+                LIMIT {$perPage} OFFSET {$offset}
+            ";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'properties' => $properties,
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $perPage,
+                        'total' => $total,
+                        'total_pages' => (int) ceil($total / $perPage),
+                    ],
+                    'filters' => [
+                        'type' => $type,
+                        'location' => $location,
+                        'min_price' => $minPrice,
+                        'max_price' => $maxPrice,
+                        'bedrooms' => $bedrooms,
+                        'sort' => $sort,
+                    ],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::browseProperties() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch properties', 'code' => 500]);
+        }
+    }
+
+    /**
+     * GET /api/mobile/v2/properties/{id}
+     * Property detail with images, features, nearby facilities
+     */
+    public function propertyDetail($id)
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $id = (int) $id;
+
+            $stmt = $pdo->prepare("
+                SELECT p.*, pt.name as property_type_name
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                WHERE p.id = ? AND p.status = 'active'
+            ");
+            $stmt->execute([$id]);
+            $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$property) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Property not found', 'code' => 404]);
+                return;
+            }
+
+            // Get images
+            $imgStmt = $pdo->prepare("
+                SELECT id, image_path, is_primary, sort_order
+                FROM property_images
+                WHERE property_id = ?
+                ORDER BY is_primary DESC, sort_order ASC
+            ");
+            $imgStmt->execute([$id]);
+            $property['images'] = $imgStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get features
+            $featStmt = $pdo->prepare("
+                SELECT feature_name, feature_value, feature_category
+                FROM property_features
+                WHERE property_id = ?
+                ORDER BY feature_category, feature_name
+            ");
+            $featStmt->execute([$id]);
+            $property['features'] = $featStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get similar properties (same type, excluding self)
+            $similarStmt = $pdo->prepare("
+                SELECT p.id, p.title, p.price, p.type, p.city, p.area_sqft,
+                       (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC LIMIT 1) as main_image
+                FROM properties p
+                WHERE p.type = ? AND p.status = 'active' AND p.id != ?
+                ORDER BY RAND()
+                LIMIT 4
+            ");
+            $similarStmt->execute([$property['type'], $id]);
+            $property['similar_properties'] = $similarStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => $property,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::propertyDetail() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch property details', 'code' => 500]);
+        }
+    }
+
+    /**
+     * GET /api/mobile/v2/properties/search?q=
+     * Search properties by keyword
+     */
+    public function searchProperties()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        $query = trim($_GET['q'] ?? '');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $perPage = min(max(1, (int) ($_GET['per_page'] ?? 20)), 50);
+        $offset = ($page - 1) * $perPage;
+
+        if (strlen($query) < 2) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Search query must be at least 2 characters', 'code' => 400]);
+            return;
+        }
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $like = '%' . $query . '%';
+
+            $countStmt = $pdo->prepare("
+                SELECT COUNT(*) FROM properties p
+                WHERE p.status = 'active'
+                  AND (p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ? OR p.type LIKE ?)
+            ");
+            $countStmt->execute([$like, $like, $like, $like, $like]);
+            $total = (int) $countStmt->fetchColumn();
+
+            $stmt = $pdo->prepare("
+                SELECT p.id, p.title, p.price, p.type, p.location, p.city, p.state,
+                       p.bedrooms, p.bathrooms, p.area_sqft, p.featured, p.created_at,
+                       (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, id ASC LIMIT 1) as main_image
+                FROM properties p
+                WHERE p.status = 'active'
+                  AND (p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ? OR p.type LIKE ?)
+                ORDER BY p.featured DESC, p.created_at DESC
+                LIMIT {$perPage} OFFSET {$offset}
+            ");
+            $stmt->execute([$like, $like, $like, $like, $like]);
+            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'query' => $query,
+                    'properties' => $properties,
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $perPage,
+                        'total' => $total,
+                        'total_pages' => (int) ceil($total / $perPage),
+                    ],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::searchProperties() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Search failed', 'code' => 500]);
+        }
+    }
+
+    // ============================================================
+    // BOOKING ENDPOINTS (Customer bookings with EMI)
+    // ============================================================
+
+    /**
+     * GET /api/mobile/v2/bookings
+     * User's bookings list
+     */
+    public function listBookings()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM plot_bookings WHERE customer_id = ?");
+            $countStmt->execute([$userId]);
+            $total = (int) $countStmt->fetchColumn();
+
+            $stmt = $pdo->prepare("
+                SELECT pb.id, pb.booking_number, pb.booking_date, pb.total_plot_value,
+                       pb.booking_amount, pb.status, pb.channel, pb.created_at,
+                       p.title as plot_title, p.price as plot_price
+                FROM plot_bookings pb
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                WHERE pb.customer_id = ?
+                ORDER BY pb.created_at DESC
+                LIMIT {$perPage} OFFSET {$offset}
+            ");
+            $stmt->execute([$userId]);
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'bookings' => $bookings,
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $perPage,
+                        'total' => $total,
+                        'total_pages' => (int) ceil($total / $perPage),
+                    ],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::listBookings() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch bookings', 'code' => 500]);
+        }
+    }
+
+    /**
+     * GET /api/mobile/v2/bookings/{id}
+     * Booking detail with EMI schedule
+     */
+    public function bookingDetail($id)
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+        $id = (int) $id;
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $stmt = $pdo->prepare("
+                SELECT pb.*,
+                       p.title as plot_title, p.price as plot_price, p.location as plot_location
+                FROM plot_bookings pb
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                WHERE pb.id = ? AND pb.customer_id = ?
+            ");
+            $stmt->execute([$id, $userId]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$booking) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Booking not found', 'code' => 404]);
+                return;
+            }
+
+            // Get EMI schedule
+            $emiStmt = $pdo->prepare("
+                SELECT id, installment_no, due_date, amount, principal, interest,
+                       opening_balance, closing_balance, status, paid_date, paid_amount, late_fee
+                FROM booking_payment_schedules
+                WHERE booking_id = ?
+                ORDER BY installment_no ASC
+            ");
+            $emiStmt->execute([$id]);
+            $booking['emi_schedule'] = $emiStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get payment receipts
+            $receiptStmt = $pdo->prepare("
+                SELECT id, receipt_number, receipt_date, amount, payment_mode, status, transaction_ref
+                FROM booking_payment_receipts
+                WHERE booking_id = ?
+                ORDER BY created_at DESC
+            ");
+            $receiptStmt->execute([$id]);
+            $booking['receipts'] = $receiptStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Calculate totals
+            $totalPaid = 0;
+            $totalPending = 0;
+            foreach ($booking['emi_schedule'] as $emi) {
+                $totalPaid += (float) ($emi['paid_amount'] ?? 0);
+                if ($emi['status'] === 'pending' || $emi['status'] === 'overdue') {
+                    $totalPending += (float) $emi['amount'];
+                }
+            }
+            $booking['summary'] = [
+                'total_value' => (float) $booking['total_plot_value'],
+                'total_paid' => $totalPaid,
+                'total_pending' => $totalPending,
+                'completion_pct' => $booking['total_plot_value'] > 0
+                    ? round(($totalPaid / $booking['total_plot_value']) * 100, 1)
+                    : 0,
+            ];
+
+            echo json_encode([
+                'success' => true,
+                'data' => $booking,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::bookingDetail() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch booking details', 'code' => 500]);
+        }
+    }
+
+    /**
+     * POST /api/mobile/v2/bookings/{id}/pay
+     * Record a payment for a booking installment
+     * Body: { "installment_id": N, "amount": N, "method": "upi|cash|neft|card|cheque", "transaction_ref": "..." }
+     */
+    public function recordBookingPayment($id)
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+        $id = (int) $id;
+
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $installmentId = (int) ($data['installment_id'] ?? 0);
+        $amount = (float) ($data['amount'] ?? 0);
+        $method = strtolower(trim((string) ($data['method'] ?? 'cash')));
+        $transactionRef = trim((string) ($data['transaction_ref'] ?? ''));
+
+        if ($installmentId <= 0 || $amount <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'installment_id and positive amount required', 'code' => 400]);
+            return;
+        }
+
+        $validMethods = ['cash', 'cheque', 'dd', 'neft', 'rtgs', 'upi', 'card', 'bank_transfer'];
+        if (!in_array($method, $validMethods, true)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Invalid payment method. Allowed: ' . implode(', ', $validMethods), 'code' => 400]);
+            return;
+        }
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $pdo->beginTransaction();
+
+            // Verify booking ownership and get installment details
+            $stmt = $pdo->prepare("
+                SELECT bps.*, pb.id as booking_id
+                FROM booking_payment_schedules bps
+                JOIN plot_bookings pb ON bps.booking_id = pb.id
+                WHERE bps.id = ? AND pb.id = ? AND pb.customer_id = ?
+                FOR UPDATE
+            ");
+            $stmt->execute([$installmentId, $id, $userId]);
+            $installment = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$installment) {
+                $pdo->rollBack();
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Booking or installment not found', 'code' => 404]);
+                return;
+            }
+
+            if ($installment['status'] === 'paid') {
+                $pdo->rollBack();
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Installment already paid', 'code' => 400]);
+                return;
+            }
+
+            if ($amount > (float) $installment['amount']) {
+                $pdo->rollBack();
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Payment amount exceeds installment amount of ₹' . $installment['amount'], 'code' => 400]);
+                return;
+            }
+
+            // Generate receipt number
+            $receiptNumber = 'APS-RCP-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(4)));
+
+            // Insert receipt
+            $receiptStmt = $pdo->prepare("
+                INSERT INTO booking_payment_receipts
+                    (booking_id, installment_id, receipt_number, receipt_date, amount, payment_mode, transaction_ref, status, created_at)
+                VALUES (?, ?, ?, CURDATE(), ?, ?, ?, 'cleared', NOW())
+            ");
+            $receiptStmt->execute([
+                $installment['booking_id'],
+                $installmentId,
+                $receiptNumber,
+                $amount,
+                $method,
+                $transactionRef ?: null,
+            ]);
+
+            // Update installment
+            $newPaidAmount = (float) $installment['paid_amount'] + $amount;
+            $newStatus = $newPaidAmount >= (float) $installment['amount'] ? 'paid' : 'partial';
+            $paidDate = $newStatus === 'paid' ? date('Y-m-d') : null;
+
+            $updateStmt = $pdo->prepare("
+                UPDATE booking_payment_schedules
+                SET paid_amount = ?, paid_date = COALESCE(?, paid_date), status = ?, updated_at = NOW()
+                WHERE id = ?
+            ");
+            $updateStmt->execute([$newPaidAmount, $paidDate, $newStatus, $installmentId]);
+
+            // Check if all installments are paid → advance booking status
+            $checkStmt = $pdo->prepare("
+                SELECT COUNT(*) as total,
+                       SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid_count
+                FROM booking_payment_schedules
+                WHERE booking_id = ?
+            ");
+            $checkStmt->execute([$installment['booking_id']]);
+            $check = $checkStmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($check && $check['total'] == $check['paid_count']) {
+                $pdo->prepare("UPDATE plot_bookings SET status = 'fully_paid', updated_at = NOW() WHERE id = ?")
+                    ->execute([$installment['booking_id']]);
+            } elseif ($newPaidAmount > 0) {
+                $pdo->prepare("UPDATE plot_bookings SET status = 'partially_paid', updated_at = NOW() WHERE id = ? AND status = 'emi_active'")
+                    ->execute([$installment['booking_id']]);
+            }
+
+            $pdo->commit();
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'receipt_number' => $receiptNumber,
+                    'amount_paid' => $amount,
+                    'payment_method' => $method,
+                    'installment_status' => $newStatus,
+                    'total_paid_on_installment' => $newPaidAmount,
+                ],
+                'message' => 'Payment recorded successfully',
+            ]);
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log('MobileApiController::recordBookingPayment() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Payment recording failed', 'code' => 500]);
+        }
+    }
+
+    // ============================================================
+    // INQUIRY ENDPOINTS
+    // ============================================================
+
+    /**
+     * POST /api/mobile/v2/inquiries
+     * Submit a property inquiry
+     * Body: { "property_id": N, "name": "...", "email": "...", "phone": "...", "message": "...", "type": "property|project|general" }
+     */
+    public function submitInquiryV2()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+
+        $name = trim((string) ($data['name'] ?? ''));
+        $email = trim((string) ($data['email'] ?? ''));
+        $phone = trim((string) ($data['phone'] ?? ''));
+        $message = trim((string) ($data['message'] ?? ''));
+        $propertyId = isset($data['property_id']) ? (int) $data['property_id'] : null;
+        $projectId = isset($data['project_id']) ? (int) $data['project_id'] : null;
+        $type = strtolower(trim((string) ($data['type'] ?? 'property')));
+
+        if ($name === '' || $phone === '' || $message === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'name, phone, and message are required', 'code' => 400]);
+            return;
+        }
+
+        if (!in_array($type, ['property', 'project', 'general'], true)) {
+            $type = 'general';
+        }
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // Auto-fill email from user profile if not provided
+            if ($email === '') {
+                $uStmt = $pdo->prepare("SELECT email FROM users WHERE id = ?");
+                $uStmt->execute([$userId]);
+                $email = $uStmt->fetchColumn() ?? '';
+            }
+
+            $stmt = $pdo->prepare("
+                INSERT INTO inquiries (user_id, name, email, phone, message, property_id, project_id, type, status, priority, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'medium', NOW())
+            ");
+            $stmt->execute([$userId, $name, $email, $phone, $message, $propertyId, $projectId, $type]);
+            $inquiryId = (int) $pdo->lastInsertId();
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'inquiry_id' => $inquiryId,
+                    'type' => $type,
+                    'status' => 'pending',
+                ],
+                'message' => 'Inquiry submitted successfully',
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::submitInquiryV2() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to submit inquiry', 'code' => 500]);
+        }
+    }
+
+    /**
+     * GET /api/mobile/v2/inquiries
+     * User's inquiries list
+     */
+    public function listInquiries()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM inquiries WHERE user_id = ?");
+            $countStmt->execute([$userId]);
+            $total = (int) $countStmt->fetchColumn();
+
+            $stmt = $pdo->prepare("
+                SELECT i.id, i.name, i.email, i.phone, i.message, i.type, i.status,
+                       i.priority, i.created_at, i.updated_at,
+                       p.title as property_title
+                FROM inquiries i
+                LEFT JOIN properties p ON i.property_id = p.id
+                WHERE i.user_id = ?
+                ORDER BY i.created_at DESC
+                LIMIT {$perPage} OFFSET {$offset}
+            ");
+            $stmt->execute([$userId]);
+            $inquiries = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'inquiries' => $inquiries,
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $perPage,
+                        'total' => $total,
+                        'total_pages' => (int) ceil($total / $perPage),
+                    ],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::listInquiries() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch inquiries', 'code' => 500]);
+        }
+    }
+
+    // ============================================================
+    // USER PROFILE ENDPOINTS
+    // ============================================================
+
+    /**
+     * PUT /api/mobile/v2/profile
+     * Update user profile
+     * Body: { "name": "...", "phone": "...", "email": "..." }
+     */
+    public function updateProfileV2()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+
+        $name = trim((string) ($data['name'] ?? ''));
+        $phone = trim((string) ($data['phone'] ?? ''));
+        $email = trim((string) ($data['email'] ?? ''));
+
+        if ($name === '' && $phone === '' && $email === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'At least one field (name, phone, email) is required', 'code' => 400]);
+            return;
+        }
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // Check email uniqueness if changing
+            if ($email !== '') {
+                $check = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ? LIMIT 1");
+                $check->execute([$email, $userId]);
+                if ($check->fetch()) {
+                    http_response_code(409);
+                    echo json_encode(['success' => false, 'error' => 'Email already in use', 'code' => 409]);
+                    return;
+                }
+            }
+
+            $updates = [];
+            $params = [];
+            if ($name !== '') {
+                $updates[] = "name = ?";
+                $params[] = $name;
+            }
+            if ($phone !== '') {
+                $updates[] = "phone = ?";
+                $params[] = $phone;
+            }
+            if ($email !== '') {
+                $updates[] = "email = ?";
+                $params[] = $email;
+            }
+
+            if (empty($updates)) {
+                echo json_encode(['success' => true, 'message' => 'No changes to update']);
+                return;
+            }
+
+            $updates[] = "updated_at = NOW()";
+            $params[] = $userId;
+
+            $sql = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+
+            // Return updated profile
+            $fetchStmt = $pdo->prepare("SELECT id, name, email, phone, role, created_at, updated_at FROM users WHERE id = ?");
+            $fetchStmt->execute([$userId]);
+            $user = $fetchStmt->fetch(\PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => $user,
+                'message' => 'Profile updated successfully',
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::updateProfileV2() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Profile update failed', 'code' => 500]);
+        }
+    }
+
+    /**
+     * GET /api/mobile/v2/dashboard
+     * Enhanced dashboard stats (properties, bookings, inquiries, wallet)
+     */
+    public function dashboardV3()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+
+        $stats = [
+            'properties' => ['total' => 0, 'active' => 0],
+            'bookings' => ['total' => 0, 'active' => 0, 'total_value' => 0],
+            'inquiries' => ['total' => 0, 'pending' => 0],
+            'wallet' => ['balance' => 0, 'mlm_points' => 0],
+            'notifications' => ['unread' => 0],
+        ];
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // User properties
+            try {
+                $stmt = $pdo->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active FROM user_properties WHERE user_id = ?");
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['properties'] = [
+                    'total' => (int) ($row['total'] ?? 0),
+                    'active' => (int) ($row['active'] ?? 0),
+                ];
+            } catch (\Throwable $e) { /* table may not exist */ }
+
+            // Bookings
+            try {
+                $stmt = $pdo->prepare("
+                    SELECT COUNT(*) as total,
+                           SUM(CASE WHEN status IN ('token_paid','agreement_signed','emi_active','partially_paid') THEN 1 ELSE 0 END) as active,
+                           COALESCE(SUM(total_plot_value), 0) as total_value
+                    FROM plot_bookings WHERE customer_id = ?
+                ");
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['bookings'] = [
+                    'total' => (int) ($row['total'] ?? 0),
+                    'active' => (int) ($row['active'] ?? 0),
+                    'total_value' => (float) ($row['total_value'] ?? 0),
+                ];
+            } catch (\Throwable $e) { /* table may not exist */ }
+
+            // Inquiries
+            try {
+                $stmt = $pdo->prepare("
+                    SELECT COUNT(*) as total,
+                           SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending
+                    FROM inquiries WHERE user_id = ?
+                ");
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['inquiries'] = [
+                    'total' => (int) ($row['total'] ?? 0),
+                    'pending' => (int) ($row['pending'] ?? 0),
+                ];
+            } catch (\Throwable $e) { /* table may not exist */ }
+
+            // Wallet
+            try {
+                $stmt = $pdo->prepare("SELECT wallet_balance, mlm_points FROM users WHERE id = ?");
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                if ($row) {
+                    $stats['wallet'] = [
+                        'balance' => (float) ($row['wallet_balance'] ?? 0),
+                        'mlm_points' => (int) ($row['mlm_points'] ?? 0),
+                    ];
+                }
+            } catch (\Throwable $e) { /* column may not exist */ }
+
+            // Notifications
+            try {
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0");
+                $stmt->execute([$userId]);
+                $stats['notifications'] = ['unread' => (int) $stmt->fetchColumn()];
+            } catch (\Throwable $e) { /* table may not exist */ }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $stats,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::dashboardV3() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Dashboard fetch failed', 'code' => 500]);
+        }
+    }
 }

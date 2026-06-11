@@ -33,20 +33,45 @@
         <div class="aps-cp-card-body p-0">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th><?php echo __('finance_date'); ?></th><th><?php echo __('finance_vendor'); ?></th><th><?php echo __('finance_type'); ?></th><th><?php echo __('finance_bill_hash'); ?></th><th class="text-end"><?php echo __('finance_amount'); ?></th><th class="text-end"><?php echo __('finance_tds'); ?></th><th class="text-end"><?php echo __('finance_gst'); ?></th><th><?php echo __('finance_status'); ?></th></tr>
+                    <tr>
+                        <th><?php echo __('finance_date'); ?></th>
+                        <th><?php echo __('finance_vendor'); ?></th>
+                        <th><?php echo __('finance_type'); ?></th>
+                        <th><?php echo __('finance_bill_hash'); ?></th>
+                        <th>Cur.</th>
+                        <th class="text-end"><?php echo __('finance_amount'); ?></th>
+                        <th class="text-end"><?php echo __('finance_tds'); ?></th>
+                        <th class="text-end"><?php echo __('finance_gst'); ?></th>
+                        <th class="text-end">Amount (₹ INR)</th>
+                        <th><?php echo __('finance_status'); ?></th>
+                    </tr>
                 </thead>
                 <tbody>
                 <?php if (empty($payments)): ?>
-                    <tr><td colspan="8" class="text-center text-muted py-4"><?php echo __('finance_no_vendor_payments_recorded'); ?></td></tr>
-                <?php else: foreach ($payments as $p): ?>
+                    <tr><td colspan="10" class="text-center text-muted py-4"><?php echo __('finance_no_vendor_payments_recorded'); ?></td></tr>
+                <?php else: foreach ($payments as $p):
+                    $cur = strtoupper($p['currency'] ?? 'INR');
+                    $fx  = (float)($p['exchange_rate'] ?? 1.0);
+                    $sym = ['INR'=>'₹','USD'=>'$','EUR'=>'€','GBP'=>'£','AED'=>'د.إ'][$cur] ?? '₹';
+                ?>
                     <tr>
                         <td><?= htmlspecialchars($p['payment_date'] ?? '-') ?></td>
                         <td><?= htmlspecialchars($p['vendor_name'] ?? '-') ?></td>
                         <td><span class="badge bg-secondary"><?= htmlspecialchars($p['vendor_type'] ?? '-') ?></span></td>
                         <td><code><?= htmlspecialchars($p['bill_number'] ?? '-') ?></code></td>
-                        <td class="text-end fw-bold">₹<?= number_format((float)($p['amount'] ?? 0), 2) ?></td>
-                        <td class="text-end">₹<?= number_format((float)($p['tds_deducted'] ?? 0), 2) ?></td>
-                        <td class="text-end">₹<?= number_format((float)($p['gst_amount'] ?? 0), 2) ?></td>
+                        <td><span class="badge bg-info"><?= $cur ?></span></td>
+                        <td class="text-end fw-bold"><?= $sym ?><?= number_format((float)($p['gross_amount'] ?? 0), 2) ?></td>
+                        <td class="text-end"><?= $sym ?><?= number_format((float)($p['tds_amount'] ?? 0), 2) ?></td>
+                        <td class="text-end"><?= $sym ?><?= number_format((float)($p['gst_amount'] ?? 0), 2) ?></td>
+                        <td class="text-end">
+                            <?php if (!empty($p['amount_inr'])): ?>
+                                ₹<?= number_format((float)$p['amount_inr'], 2) ?>
+                            <?php elseif ($cur !== 'INR'): ?>
+                                <span class="text-muted">—</span>
+                            <?php else: ?>
+                                ₹<?= number_format((float)($p['gross_amount'] ?? 0), 2) ?>
+                            <?php endif; ?>
+                        </td>
                         <td><span class="badge bg-<?= ($p['status'] ?? '') === 'paid' ? 'success' : 'warning' ?>"><?= htmlspecialchars($p['status'] ?? 'pending') ?></span></td>
                     </tr>
                 <?php endforeach; endif; ?>

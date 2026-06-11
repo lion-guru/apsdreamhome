@@ -85,16 +85,46 @@
                         </div>
 
                         <hr class="my-4">
-                        <h5 class="mb-3">Tax & Compliance</h5>
+                        <h5 class="mb-3"><i class="fas fa-id-card me-2 text-primary"></i>KYC & Tax Classification</h5>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="gst_number" class="form-label fw-semibold">GST Number</label>
-                                <input type="text" class="form-control" id="gst_number" name="gst_number" placeholder="22AAAAA0000A1Z5">
+                            <div class="col-md-4 mb-3">
+                                <label for="entity_type" class="form-label fw-semibold">Entity Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="entity_type" name="entity_type" onchange="updateTdsSection()">
+                                    <option value="individual">Individual (TDS 1%)</option>
+                                    <option value="company">Company (TDS 2%)</option>
+                                    <option value="partnership">Partnership (TDS 2%)</option>
+                                    <option value="proprietorship">Proprietorship (TDS 1%)</option>
+                                </select>
+                                <div class="form-text">Determines 194C TDS rate automatically</div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="pan_number" class="form-label fw-semibold">PAN Number</label>
-                                <input type="text" class="form-control" id="pan_number" name="pan_number" placeholder="AAAAA0000A">
+                                <input type="text" class="form-control" id="pan_number" name="pan_number" placeholder="AAAAA0000A" maxlength="10" style="text-transform:uppercase">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="gstin" class="form-label fw-semibold">GSTIN</label>
+                                <input type="text" class="form-control" id="gstin" name="gstin" placeholder="22AAAAA0000A1Z5" maxlength="15" style="text-transform:uppercase">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold">TDS Section</label>
+                                <input type="text" class="form-control" id="tds_section_display" value="194C" readonly style="background:#f8f9fa">
+                                <div class="form-text">Auto-detected from Entity Type</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold">TDS Rate</label>
+                                <input type="text" class="form-control" id="tds_rate_display" value="1%" readonly style="background:#f8f9fa">
+                                <div class="form-text" id="tds_rate_hint">Individual/Proprietorship = 1%, Company/Partnership = 2%</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold">TDS Applicable</label>
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" id="is_tds_applicable" name="is_tds_applicable" value="1" checked>
+                                    <label class="form-check-label" for="is_tds_applicable">Deduct TDS on payments</label>
+                                </div>
                             </div>
                         </div>
 
@@ -161,3 +191,19 @@
         </div>
     </div>
 </div>
+
+<script>
+function updateTdsSection() {
+    var entityType = document.getElementById('entity_type').value;
+    var tdsSectionEl = document.getElementById('tds_section_display');
+    var tdsRateEl = document.getElementById('tds_rate_display');
+
+    tdsSectionEl.value = '194C';
+
+    if (entityType === 'individual' || entityType === 'proprietorship') {
+        tdsRateEl.value = '1%';
+    } else {
+        tdsRateEl.value = '2%';
+    }
+}
+</script>

@@ -79,25 +79,28 @@ class VendorController extends AdminController
 
         try {
             $data = [
-                'vendor_name' => $_POST['vendor_name'] ?? '',
-                'vendor_type' => $_POST['vendor_type'] ?? 'other',
-                'contact_person' => $_POST['contact_person'] ?? null,
-                'email' => $_POST['email'] ?? null,
-                'phone' => $_POST['phone'] ?? null,
-                'address' => $_POST['address'] ?? null,
-                'city' => $_POST['city'] ?? null,
-                'state' => $_POST['state'] ?? null,
-                'gst_number' => $_POST['gst_number'] ?? null,
-                'pan_number' => $_POST['pan_number'] ?? null,
-                'bank_name' => $_POST['bank_name'] ?? null,
-                'bank_account' => $_POST['bank_account'] ?? null,
-                'ifsc_code' => $_POST['ifsc_code'] ?? null,
-                'payment_terms' => $_POST['payment_terms'] ?? '30_days',
-                'contract_start' => !empty($_POST['contract_start']) ? $_POST['contract_start'] : null,
-                'contract_end' => !empty($_POST['contract_end']) ? $_POST['contract_end'] : null,
-                'status' => $_POST['status'] ?? 'active',
-                'notes' => $_POST['notes'] ?? null,
-                'created_by' => $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null,
+                'vendor_name'       => $_POST['vendor_name'] ?? '',
+                'vendor_type'       => $_POST['vendor_type'] ?? 'other',
+                'entity_type'       => $_POST['entity_type'] ?? 'individual',
+                'contact_person'    => $_POST['contact_person'] ?? null,
+                'email'             => $_POST['email'] ?? null,
+                'phone'             => $_POST['phone'] ?? null,
+                'address'           => $_POST['address'] ?? null,
+                'city'              => $_POST['city'] ?? null,
+                'state'             => $_POST['state'] ?? null,
+                'gst_number'        => $_POST['gst_number'] ?? null,
+                'gstin'             => $_POST['gstin'] ?? $_POST['gst_number'] ?? null,
+                'pan_number'        => $_POST['pan_number'] ?? null,
+                'is_tds_applicable' => isset($_POST['is_tds_applicable']) ? 1 : 1,
+                'bank_name'         => $_POST['bank_name'] ?? null,
+                'bank_account'      => $_POST['bank_account'] ?? null,
+                'ifsc_code'         => $_POST['ifsc_code'] ?? null,
+                'payment_terms'     => $_POST['payment_terms'] ?? '30_days',
+                'contract_start'    => !empty($_POST['contract_start']) ? $_POST['contract_start'] : null,
+                'contract_end'      => !empty($_POST['contract_end']) ? $_POST['contract_end'] : null,
+                'status'            => $_POST['status'] ?? 'active',
+                'notes'             => $_POST['notes'] ?? null,
+                'created_by'        => $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null,
             ];
 
             if (empty($data['vendor_name'])) {
@@ -105,8 +108,19 @@ class VendorController extends AdminController
                 $this->redirect('/admin/vendors/create');
             }
 
-            $this->db->insert('vendors', $data);
-            $this->setFlash('success', 'Vendor created successfully');
+            // Use MoneyWorkflowService for TDS auto-detection
+            try {
+                $svc = new \App\Services\Accounting\MoneyWorkflowService();
+                $vendorId = $svc->createVendor($data);
+            } catch (\Throwable $e) {
+                // Fallback: direct insert without auto-detection
+                $data['tds_section'] = '194C';
+                $data['kyc_status'] = 'pending';
+                $this->db->insert('vendors', $data);
+                $vendorId = (int)$this->db->lastInsertId();
+            }
+
+            $this->setFlash('success', 'Vendor created successfully (TDS: ' . ($data['tds_section'] ?? '194C') . ')');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Error creating vendor: ' . $e->getMessage());
         }
@@ -168,31 +182,45 @@ class VendorController extends AdminController
 
         try {
             $data = [
-                'vendor_name' => $_POST['vendor_name'] ?? '',
-                'vendor_type' => $_POST['vendor_type'] ?? 'other',
-                'contact_person' => $_POST['contact_person'] ?? null,
-                'email' => $_POST['email'] ?? null,
-                'phone' => $_POST['phone'] ?? null,
-                'address' => $_POST['address'] ?? null,
-                'city' => $_POST['city'] ?? null,
-                'state' => $_POST['state'] ?? null,
-                'gst_number' => $_POST['gst_number'] ?? null,
-                'pan_number' => $_POST['pan_number'] ?? null,
-                'bank_name' => $_POST['bank_name'] ?? null,
-                'bank_account' => $_POST['bank_account'] ?? null,
-                'ifsc_code' => $_POST['ifsc_code'] ?? null,
-                'payment_terms' => $_POST['payment_terms'] ?? '30_days',
-                'contract_start' => !empty($_POST['contract_start']) ? $_POST['contract_start'] : null,
-                'contract_end' => !empty($_POST['contract_end']) ? $_POST['contract_end'] : null,
-                'status' => $_POST['status'] ?? 'active',
-                'rating' => $_POST['rating'] ?? 0,
-                'notes' => $_POST['notes'] ?? null,
+                'vendor_name'       => $_POST['vendor_name'] ?? '',
+                'vendor_type'       => $_POST['vendor_type'] ?? 'other',
+                'entity_type'       => $_POST['entity_type'] ?? 'individual',
+                'contact_person'    => $_POST['contact_person'] ?? null,
+                'email'             => $_POST['email'] ?? null,
+                'phone'             => $_POST['phone'] ?? null,
+                'address'           => $_POST['address'] ?? null,
+                'city'              => $_POST['city'] ?? null,
+                'state'             => $_POST['state'] ?? null,
+                'gst_number'        => $_POST['gst_number'] ?? null,
+                'gstin'             => $_POST['gstin'] ?? $_POST['gst_number'] ?? null,
+                'pan_number'        => $_POST['pan_number'] ?? null,
+                'tds_section'       => $_POST['tds_section'] ?? '194C',
+                'is_tds_applicable' => isset($_POST['is_tds_applicable']) ? 1 : 1,
+                'bank_name'         => $_POST['bank_name'] ?? null,
+                'bank_account'      => $_POST['bank_account'] ?? null,
+                'ifsc_code'         => $_POST['ifsc_code'] ?? null,
+                'payment_terms'     => $_POST['payment_terms'] ?? '30_days',
+                'contract_start'    => !empty($_POST['contract_start']) ? $_POST['contract_start'] : null,
+                'contract_end'      => !empty($_POST['contract_end']) ? $_POST['contract_end'] : null,
+                'status'            => $_POST['status'] ?? 'active',
+                'rating'            => $_POST['rating'] ?? 0,
+                'notes'             => $_POST['notes'] ?? null,
             ];
 
             if (empty($data['vendor_name'])) {
                 $this->setFlash('error', 'Vendor name is required');
                 $this->redirect('/admin/vendors/edit/' . $id);
             }
+
+            // Auto-detect TDS section if entity_type changed
+            $entityType = $data['entity_type'] ?? 'individual';
+            $validEntityTypes = ['individual', 'company', 'partnership', 'proprietorship'];
+            if (!in_array($entityType, $validEntityTypes)) {
+                $vt = strtolower($data['vendor_type'] ?? 'other');
+                $entityType = in_array($vt, ['contractor', 'transport']) ? 'individual' : 'company';
+                $data['entity_type'] = $entityType;
+            }
+            $data['tds_section'] = '194C';
 
             $this->db->update('vendors', $data, ['id' => $id]);
             $this->setFlash('success', 'Vendor updated successfully');

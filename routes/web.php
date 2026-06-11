@@ -317,6 +317,14 @@ $router->get('/projects/{location}', 'Front\\PageController@projectsByLocation')
 // Dynamic Colony Pages (single-template, DB-driven)
 $router->get('/colony/{slug}', 'Front\\PageController@colonyDetail');
 $router->get('/plots', 'Front\\PlotController@index');
+
+// ── Customer Booking Portal ──────────────────────────────────────
+$router->get('/plots/browse', 'Front\\BookingController@browse');
+$router->get('/plots/{id}/detail', 'Front\\BookingController@detail');
+$router->get('/plots/{id}/book', 'Front\\BookingController@bookForm');
+$router->post('/plots/{id}/book', 'Front\\BookingController@submitBooking');
+$router->get('/booking/confirmation/{id}', 'Front\\BookingController@confirmation');
+
 $router->get('/plot/{id}', 'Front\\PlotController@show');
 $router->get('/plot/{id}/book', 'Front\\PlotController@bookPlot');
 $router->post('/plot/book', 'Front\\PlotController@storeBooking');
@@ -885,6 +893,11 @@ $router->get('/admin', function() {
 $router->get('/admin/dashboard', 'App\\Http\\Controllers\\RoleBasedDashboardController@index');
 $router->get('/admin/erp', 'App\\Http\\Controllers\\Admin\\AdminController@erpOverview');
 $router->get('/admin/enterprise_dashboard', 'App\\Http\\Controllers\\RoleBasedDashboardController@enterpriseDashboard');
+
+// Real-Time Analytics Dashboard
+$router->get('/admin/analytics/realtime', 'App\\Http\\Controllers\\Admin\\RealtimeAnalyticsController@dashboard');
+$router->get('/admin/analytics/realtime/metrics', 'App\\Http\\Controllers\\Admin\\RealtimeAnalyticsController@apiMetrics');
+$router->get('/admin/analytics/realtime/chart-data', 'App\\Http\\Controllers\\Admin\\RealtimeAnalyticsController@apiChartData');
 
 // Admin root route fix
 $router->get('/admin/', function() {
@@ -1483,13 +1496,7 @@ $router->get('/admin/accounts', 'App\\Http\\Controllers\\Admin\\FinanceControlle
 // Developer Tools
 $router->get('/admin/dev-tools', 'App\\Http\\Controllers\\Admin\\AdminController@devTools');
 
-// Legacy FinanceController stubs (unique routes only — /admin/finance and /admin/finance/expenses handled by MoneyWorkflowController)
-$router->get('/admin/finance/invoices', 'App\\Http\\Controllers\\Admin\\FinanceController@invoices');
-$router->get('/admin/finance/create-invoice', 'App\\Http\\Controllers\\Admin\\FinanceController@createInvoice');
-$router->get('/admin/finance/create-expense', 'App\\Http\\Controllers\\Admin\\FinanceController@createExpense');
-$router->get('/admin/finance/payments', 'App\\Http\\Controllers\\Admin\\FinanceController@payments');
-$router->get('/admin/finance/calculator', 'App\\Http\\Controllers\\Admin\\FinanceController@calculator');
-$router->get('/admin/finance/reports', 'App\\Http\\Controllers\\Admin\\FinanceController@reports');
+// /admin/invoices routes kept — unique invoice CRUD (view/download/delete) not covered by MoneyWorkflowController
 $router->get('/admin/invoices', 'App\\Http\\Controllers\\Admin\\FinanceController@invoices');
 $router->get('/admin/invoices/view/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@viewInvoice');
 $router->get('/admin/invoices/download/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@downloadInvoice');

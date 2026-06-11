@@ -100,18 +100,21 @@
                             <tr>
                                 <th>Vendor Name</th>
                                 <th>Type</th>
-                                <th>Contact Person</th>
-                                <th>Phone</th>
-                                <th>Email</th>
+                                <th>PAN</th>
+                                <th>Entity</th>
+                                <th>TDS</th>
+                                <th>KYC</th>
                                 <th>Status</th>
-                                <th>Rating</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($vendors as $v): ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($v['vendor_name'] ?? '') ?></strong></td>
+                                <td>
+                                    <strong><?= htmlspecialchars($v['vendor_name'] ?? '') ?></strong>
+                                    <br><small class="text-muted"><?= htmlspecialchars($v['contact_person'] ?? $v['phone'] ?? '-') ?></small>
+                                </td>
                                 <td>
                                     <?php
                                     $typeLabels = [
@@ -126,9 +129,38 @@
                                     ?>
                                     <span class="badge bg-<?= $t['badge'] ?>"><?= $t['label'] ?></span>
                                 </td>
-                                <td><?= htmlspecialchars($v['contact_person'] ?? '-') ?></td>
-                                <td><?= htmlspecialchars($v['phone'] ?? '-') ?></td>
-                                <td><?= htmlspecialchars($v['email'] ?? '-') ?></td>
+                                <td><code><?= htmlspecialchars($v['pan_number'] ?? '-') ?></code></td>
+                                <td>
+                                    <?php
+                                    $entityLabels = [
+                                        'individual' => ['badge' => 'info', 'label' => 'Individual', 'tds' => '1%'],
+                                        'company' => ['badge' => 'primary', 'label' => 'Company', 'tds' => '2%'],
+                                        'partnership' => ['badge' => 'warning', 'label' => 'Partnership', 'tds' => '2%'],
+                                        'proprietorship' => ['badge' => 'secondary', 'label' => 'Proprietorship', 'tds' => '1%'],
+                                    ];
+                                    $e = $entityLabels[$v['entity_type'] ?? 'individual'] ?? ['badge' => 'info', 'label' => '-', 'tds' => '1%'];
+                                    ?>
+                                    <span class="badge bg-<?= $e['badge'] ?>"><?= $e['label'] ?></span>
+                                </td>
+                                <td>
+                                    <?php if (($v['is_tds_applicable'] ?? 1) == 1): ?>
+                                        <span class="badge bg-dark"><?= htmlspecialchars($v['tds_section'] ?? '194C') ?></span>
+                                        <small class="text-muted"><?= $e['tds'] ?? '1%' ?></small>
+                                    <?php else: ?>
+                                        <span class="badge bg-light text-dark">N/A</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $kycColors = [
+                                        'verified' => 'success',
+                                        'pending'  => 'warning',
+                                        'rejected' => 'danger',
+                                    ];
+                                    $kycColor = $kycColors[$v['kyc_status'] ?? 'pending'] ?? 'secondary';
+                                    ?>
+                                    <span class="badge bg-<?= $kycColor ?>"><?= ucfirst($v['kyc_status'] ?? 'pending') ?></span>
+                                </td>
                                 <td>
                                     <?php if (($v['status'] ?? '') === 'active'): ?>
                                         <span class="badge bg-success">Active</span>
@@ -139,12 +171,6 @@
                                     <?php else: ?>
                                         <span class="badge bg-secondary"><?= ucfirst($v['status'] ?? 'Unknown') ?></span>
                                     <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php $rating = floatval($v['rating'] ?? 0); ?>
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <i class="fas fa-star<?= $i <= $rating ? '' : ' text-muted' ?>" style="color: <?= $i <= $rating ? '#ffc107' : '#dee2e6' ?>; font-size: 12px;"></i>
-                                    <?php endfor; ?>
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">

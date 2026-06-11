@@ -143,4 +143,37 @@ class MLMIncentiveService
         $sql = "SELECT * FROM mlm_monthly_incentives WHERE user_id = ? ORDER BY year DESC, month DESC LIMIT 12";
         return $this->db->select($sql, [$userId]);
     }
+
+    /**
+     * Trigger commission clawback for a specific installment or booking.
+     * Delegates to MLMCommissionEngine.
+     */
+    public function triggerClawback($bookingId, $reason = 'EMI Default')
+    {
+        try {
+            $engine = new \App\Services\MLM\MLMCommissionEngine();
+            return $engine->processClawbacks(30);
+        } catch (\Throwable $e) {
+            return ['success' => false, 'processed' => 0, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Auto-promote associates based on team sales volume.
+     * Delegates to MLMCommissionEngine.
+     */
+    public function autoPromote()
+    {
+        try {
+            $engine = new \App\Services\MLM\MLMCommissionEngine();
+            $result = $engine->runRankPromotions();
+            return [
+                'success' => true,
+                'promoted' => (int)($result['promoted'] ?? 0),
+                'unchanged' => (int)($result['unchanged'] ?? 0),
+            ];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'promoted' => 0, 'error' => $e->getMessage()];
+        }
+    }
 }

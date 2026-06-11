@@ -211,6 +211,7 @@ if (!empty($allProjects)) {
 
 // Build Plots submenu dynamically from colonies
 $plotsSubmenu = [
+    ['label' => 'Browse Plots', 'url' => '/plots/browse', 'icon' => 'fas fa-search'],
     ['label' => __('nav_all_plots'), 'url' => '/plots', 'icon' => 'fas fa-th-large']
 ];
 
@@ -294,6 +295,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 'label' => __('plots'),
                                 'icon' => 'fas fa-vector-square',
                                 'submenu' => $plotsSubmenu ?? [
+                                    ['label' => 'Browse Plots', 'url' => '/plots/browse', 'icon' => 'fas fa-search'],
                                     ['label' => __('nav_all_plots'), 'url' => '/plots', 'icon' => 'fas fa-th-large'],
                                     ['label' => __('nav_by_colony'), 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
                                     ['label' => 'Suryoday Colony', 'url' => '/colony/suryoday-colony/plots', 'icon' => 'fas fa-home', 'badge' => '287'],

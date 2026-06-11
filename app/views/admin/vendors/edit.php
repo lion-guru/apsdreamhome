@@ -94,16 +94,61 @@
                         </div>
 
                         <hr class="my-4">
-                        <h5 class="mb-3">Tax & Compliance</h5>
+                        <h5 class="mb-3"><i class="fas fa-id-card me-2 text-primary"></i>KYC & Tax Classification</h5>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="gst_number" class="form-label fw-semibold">GST Number</label>
-                                <input type="text" class="form-control" id="gst_number" name="gst_number" value="<?= htmlspecialchars($vendor['gst_number'] ?? '') ?>">
+                            <div class="col-md-4 mb-3">
+                                <label for="entity_type" class="form-label fw-semibold">Entity Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="entity_type" name="entity_type" onchange="updateTdsSection()">
+                                    <option value="individual" <?= ($vendor['entity_type'] ?? '') === 'individual' ? 'selected' : '' ?>>Individual (TDS 1%)</option>
+                                    <option value="company" <?= ($vendor['entity_type'] ?? '') === 'company' ? 'selected' : '' ?>>Company (TDS 2%)</option>
+                                    <option value="partnership" <?= ($vendor['entity_type'] ?? '') === 'partnership' ? 'selected' : '' ?>>Partnership (TDS 2%)</option>
+                                    <option value="proprietorship" <?= ($vendor['entity_type'] ?? '') === 'proprietorship' ? 'selected' : '' ?>>Proprietorship (TDS 1%)</option>
+                                </select>
+                                <div class="form-text">Determines 194C TDS rate automatically</div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="pan_number" class="form-label fw-semibold">PAN Number</label>
-                                <input type="text" class="form-control" id="pan_number" name="pan_number" value="<?= htmlspecialchars($vendor['pan_number'] ?? '') ?>">
+                                <input type="text" class="form-control" id="pan_number" name="pan_number" value="<?= htmlspecialchars($vendor['pan_number'] ?? '') ?>" maxlength="10" style="text-transform:uppercase">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="gstin" class="form-label fw-semibold">GSTIN</label>
+                                <input type="text" class="form-control" id="gstin" name="gstin" value="<?= htmlspecialchars($vendor['gstin'] ?? $vendor['gst_number'] ?? '') ?>" maxlength="15" style="text-transform:uppercase">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-semibold">TDS Section</label>
+                                <input type="text" class="form-control" id="tds_section_display" value="<?= htmlspecialchars($vendor['tds_section'] ?? '194C') ?>" readonly style="background:#f8f9fa">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-semibold">TDS Rate</label>
+                                <?php
+                                $et = $vendor['entity_type'] ?? 'individual';
+                                $tdsRate = in_array($et, ['individual', 'proprietorship']) ? '1%' : '2%';
+                                ?>
+                                <input type="text" class="form-control" id="tds_rate_display" value="<?= $tdsRate ?>" readonly style="background:#f8f9fa">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-semibold">TDS Applicable</label>
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" id="is_tds_applicable" name="is_tds_applicable" value="1" <?= ($vendor['is_tds_applicable'] ?? 1) == 1 ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="is_tds_applicable">Deduct TDS</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-semibold">KYC Status</label>
+                                <?php
+                                $kycColors = ['verified' => 'success', 'pending' => 'warning', 'rejected' => 'danger'];
+                                $kycColor = $kycColors[$vendor['kyc_status'] ?? 'pending'] ?? 'secondary';
+                                ?>
+                                <div class="mt-2">
+                                    <span class="badge bg-<?= $kycColor ?> fs-6"><?= ucfirst($vendor['kyc_status'] ?? 'pending') ?></span>
+                                    <?php if (!empty($vendor['kyc_verified_at'])): ?>
+                                        <br><small class="text-muted">Verified: <?= htmlspecialchars($vendor['kyc_verified_at']) ?></small>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
 
@@ -170,3 +215,16 @@
         </div>
     </div>
 </div>
+
+<script>
+function updateTdsSection() {
+    var entityType = document.getElementById('entity_type').value;
+    var tdsRateEl = document.getElementById('tds_rate_display');
+
+    if (entityType === 'individual' || entityType === 'proprietorship') {
+        tdsRateEl.value = '1%';
+    } else {
+        tdsRateEl.value = '2%';
+    }
+}
+</script>

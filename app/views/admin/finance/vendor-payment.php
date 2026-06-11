@@ -1,4 +1,6 @@
-<?php $page_title = $page_title ?? 'New Vendor Payment'; $page_heading = $page_heading ?? 'Record Vendor Payment'; ?>
+<?php $page_title = $page_title ?? 'New Vendor Payment'; $page_heading = $page_heading ?? 'Record Vendor Payment';
+ $currencies = $currencies ?? ['INR' => ['symbol' => '₹', 'name' => 'Indian Rupee', 'rate' => 1.0]];
+?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fas fa-truck me-2 text-primary"></i>Record Vendor Payment</h2>
@@ -8,9 +10,14 @@
         <div class="aps-cp-card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/finance/vendor-payment-store">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+
                 <div class="row g-3">
-                    <div class="col-md-3"><label class="form-label">Payment Date <span class="text-danger">*</span></label><input type="date" name="payment_date" required class="form-control" value="<?= date('Y-m-d') ?>"></div>
-                    <div class="col-md-3"><label class="form-label">Vendor Type <span class="text-danger">*</span></label>
+                    <div class="col-md-3">
+                        <label class="form-label">Payment Date <span class="text-danger">*</span></label>
+                        <input type="date" name="payment_date" required class="form-control" value="<?= date('Y-m-d') ?>">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Vendor Type <span class="text-danger">*</span></label>
                         <select name="vendor_type" required class="form-select">
                             <option value="contractor">Contractor</option>
                             <option value="broker">Broker</option>
@@ -24,11 +31,52 @@
                     <div class="col-md-3"><label class="form-label">Vendor Name <span class="text-danger">*</span></label><input type="text" name="vendor_name" required class="form-control"></div>
                     <div class="col-md-3"><label class="form-label">Vendor PAN</label><input type="text" name="vendor_pan" class="form-control text-uppercase" maxlength="10"></div>
                     <div class="col-md-3"><label class="form-label">Bill / Invoice #</label><input type="text" name="bill_number" class="form-control"></div>
-                    <div class="col-md-3"><label class="form-label">Amount (₹) <span class="text-danger">*</span></label><input type="number" name="amount" step="0.01" min="1" required class="form-control" id="vAmt" oninput="vCalc()"></div>
-                    <div class="col-md-3"><label class="form-label">TDS Deducted (₹)</label><input type="number" name="tds_deducted" step="0.01" class="form-control" id="vTds" oninput="vCalc()"></div>
-                    <div class="col-md-3"><label class="form-label">GST Amount (₹)</label><input type="number" name="gst_amount" step="0.01" class="form-control" id="vGst" oninput="vCalc()"></div>
-                    <div class="col-md-3"><label class="form-label">Net Payable (₹)</label><input type="number" step="0.01" class="form-control" id="vNet" readonly></div>
-                    <div class="col-md-3"><label class="form-label">Payment Mode</label>
+
+                    <!-- Currency selector -->
+                    <div class="col-md-3">
+                        <label class="form-label">Currency <span class="text-danger">*</span></label>
+                        <select name="currency" id="vCurrency" class="form-select" onchange="vUpdateFx()">
+                            <?php foreach ($currencies as $code => $c): ?>
+                                <option value="<?= $code ?>" data-rate="<?= $c['rate'] ?>" data-symbol="<?= $c['symbol'] ?>">
+                                    <?= $code ?> — <?= $c['name'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- Exchange rate (auto-filled, editable) -->
+                    <div class="col-md-3">
+                        <label class="form-label">Exchange Rate (to INR)</label>
+                        <input type="number" name="exchange_rate" id="vFxRate" class="form-control" step="0.0001" min="0" value="1.0000" oninput="vCalc()">
+                        <small class="text-muted">1 unit of foreign currency = ₹X INR</small>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label" id="vAmtLabel">Amount (₹) <span class="text-danger">*</span></label>
+                        <input type="number" name="gross_amount" step="0.01" min="1" required class="form-control" id="vAmt" oninput="vCalc()">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">TDS Deducted</label>
+                        <input type="number" name="tds_amount" step="0.01" class="form-control" id="vTds" oninput="vCalc()">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">GST Amount</label>
+                        <input type="number" name="gst_amount" step="0.01" class="form-control" id="vGst" oninput="vCalc()">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Net Payable</label>
+                        <input type="number" step="0.01" class="form-control" id="vNet" readonly>
+                    </div>
+
+                    <!-- Amount in INR (auto-calculated, hidden if INR) -->
+                    <div class="col-md-3" id="vInrWrap">
+                        <label class="form-label">Amount in INR (₹)</label>
+                        <input type="number" name="amount_inr" step="0.01" class="form-control bg-light" id="vInr" readonly>
+                        <small class="text-muted">Auto-calculated</small>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Payment Mode</label>
                         <select name="payment_mode" class="form-select">
                             <option value="bank">Bank Transfer</option>
                             <option value="cheque">Cheque</option>
@@ -36,7 +84,8 @@
                             <option value="upi">UPI</option>
                         </select>
                     </div>
-                    <div class="col-md-3"><label class="form-label">Bank Account</label>
+                    <div class="col-md-3">
+                        <label class="form-label">Bank Account</label>
                         <select name="bank_account_id" class="form-select">
                             <option value="">— Select —</option>
                             <?php foreach (($banks ?? []) as $b): ?>
@@ -54,11 +103,37 @@
         </div>
     </div>
 </div>
+
 <script>
-function vCalc(){
-    const a = parseFloat(document.getElementById('vAmt').value)||0;
-    const t = parseFloat(document.getElementById('vTds').value)||0;
-    const g = parseFloat(document.getElementById('vGst').value)||0;
-    document.getElementById('vNet').value = (a - t + (g > 0 ? 0 : 0)).toFixed(2);
+const FX_RATES = <?= json_encode($currencies, JSON_HEX_TAG) ?>;
+
+function vUpdateFx() {
+    const sel  = document.getElementById('vCurrency');
+    const code = sel.value;
+    const opt  = sel.options[sel.selectedIndex];
+    const rate = parseFloat(opt.getAttribute('data-rate')) || 1;
+    document.getElementById('vFxRate').value = rate.toFixed(4);
+    document.getElementById('vAmtLabel').innerHTML = 'Amount (' + (FX_RATES[code]?.symbol || '₹') + ') <span class="text-danger">*</span>';
+    // Show/hide INR conversion row
+    document.getElementById('vInrWrap').style.display = code === 'INR' ? 'none' : '';
+    vCalc();
 }
+
+function vCalc() {
+    const amt  = parseFloat(document.getElementById('vAmt').value)  || 0;
+    const tds  = parseFloat(document.getElementById('vTds').value)  || 0;
+    const gst  = parseFloat(document.getElementById('vGst').value)  || 0;
+    const rate = parseFloat(document.getElementById('vFxRate').value) || 1;
+    const code = document.getElementById('vCurrency').value;
+    const net  = amt - tds;
+    document.getElementById('vNet').value = net.toFixed(2);
+    // INR equivalent
+    const inr = amt * rate;
+    document.getElementById('vInr').value = inr.toFixed(2);
+}
+
+// init on load
+document.addEventListener('DOMContentLoaded', function () {
+    vUpdateFx();
+});
 </script>

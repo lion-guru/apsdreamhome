@@ -609,10 +609,18 @@ class MoneyWorkflowController extends AdminController
     {
         $this->requireAdmin();
         $banks = $this->safe(fn() => $this->service->getBankAccounts(true), []);
+        $currencies = [
+            'INR' => ['symbol' => '₹',  'name' => 'Indian Rupee',   'rate' => 1.0],
+            'USD' => ['symbol' => '$',  'name' => 'US Dollar',       'rate' => 83.50],
+            'EUR' => ['symbol' => '€',  'name' => 'Euro',            'rate' => 90.25],
+            'GBP' => ['symbol' => '£',  'name' => 'British Pound',   'rate' => 105.80],
+            'AED' => ['symbol' => 'د.إ', 'name' => 'UAE Dirham',     'rate' => 22.73],
+        ];
         return $this->render('admin/finance/vendor-payment', [
             'page_title' => 'New Vendor Payment',
             'page_heading' => 'Record Vendor Payment',
             'banks' => $banks,
+            'currencies' => $currencies,
         ]);
     }
 
