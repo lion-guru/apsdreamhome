@@ -103,6 +103,20 @@ class DocsController extends BaseController
     }
 
     /**
+     * GET /api/docs/spec/{version}
+     * Returns versioned OpenAPI 3.0 JSON spec (v1 or v2).
+     */
+    public function specVersion($version = 'v2')
+    {
+        $version = in_array($version, ['v1', 'v2']) ? $version : 'v2';
+        $docService = new \App\Services\ApiDocService();
+        $spec = $docService->generateSpec($version);
+        header('Content-Type: application/json');
+        echo json_encode($spec, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        exit;
+    }
+
+    /**
      * GET /api/docs/list
      * Lightweight route catalog (no schema, smaller payload).
      */
