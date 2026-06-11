@@ -1571,6 +1571,8 @@ return array(
   'tier_executive' => 'Executive',
   'tier_professional' => 'Professional',
   'tier_starter' => 'Starter',
+  'tier_standard' => 'Standard',
+  'tier_premium' => 'Premium',
   'time' => 'Time',
   'time_period' => 'Time Period',
   'time_remaining' => 'Time Remaining',
@@ -1925,6 +1927,10 @@ return array(
   'home_call_now' => 'Call Now',
   'home_get_in_touch' => 'Get In Touch',
 
+  // Home page - A/B test hero CTA variants
+  'hero_cta_urgent' => 'Book Your Plot Now - Limited Inventory!',
+  'hero_cta_family' => 'Find Your Family\'s Dream Home Today',
+
   // Home page - Career section sub-items
   'rank_starter' => 'Starter',
   'rank_basic' => 'Basic',
@@ -1940,6 +1946,12 @@ return array(
   'rank_sr_executive' => 'Sr. Executive',
   'rank_director' => 'Director',
   'rank_global_director' => 'Global Director',
+  'home_target_15l' => '₹15L target',
+  'home_target_30l' => '₹30L target',
+  'home_target_50l' => '₹50L target',
+  'home_target_75l' => '₹75L target',
+  'home_target_1cr' => '₹1Cr target',
+  'home_target_2cr' => '₹2Cr target',
   'insurance_health' => 'Health Insurance',
   'insurance_life' => 'Life Cover',
   'insurance_accidental' => 'Accidental Cover',
@@ -3791,6 +3803,8 @@ return array(
   'home_years_10' => '10 Years',
   'home_years_15' => '15 Years',
   'home_years_20' => '20 Years',
+  'home_years_25' => '25 Years',
+  'home_years_30' => '30 Years',
 
   // Home Page - Tool Modal
   'home_tool' => 'Tool',
@@ -3884,6 +3898,10 @@ return array(
   'home_valuation_failed' => 'Failed to get valuation',
   'home_valuation_error' => 'Error',
   'home_na' => 'N/A',
+  'home_prop_plot' => 'Plot/Land',
+  'home_prop_house' => 'House/Villa',
+  'home_prop_flat' => 'Flat/Apartment',
+  'home_prop_commercial' => 'Commercial',
 
   // Home Page - Testimonials
   'home_testimonial_1_name' => 'Rajesh Kumar',

@@ -939,6 +939,170 @@ class MoneyWorkflowController extends AdminController
     }
 
     /* =========================================================
+     *  LEGACY ACCOUNTS & INVOICES (migrated from FinanceController)
+     * ========================================================= */
+    public function adminAccounts()
+    {
+        $this->requireAdmin();
+        return $this->redirect('/admin/finance/bank-accounts');
+    }
+
+    public function invoices()
+    {
+        $this->requireAdmin();
+        $status = $_GET['status'] ?? '';
+        $search = $_GET['search'] ?? '';
+        try {
+            $sql = "SELECT i.* FROM invoices i WHERE 1=1";
+            $params = [];
+            if ($status !== '') {
+                $sql .= " AND i.status = ?";
+                $params[] = $status;
+            }
+            if ($search !== '') {
+                $sql .= " AND (i.invoice_number LIKE ? OR i.client_name LIKE ?)";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            }
+            $sql .= " ORDER BY i.created_at DESC LIMIT 200";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $invoices = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $invoices = [];
+        }
+        return $this->render('admin/finance/invoices', [
+            'page_title' => 'Invoices',
+            'page_heading' => 'Invoice Register',
+            'invoices' => $invoices,
+            'status' => $status,
+            'search' => $search,
+        ]);
+    }
+
+    public function viewInvoice(int $id)
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM invoices WHERE id = ?");
+            $stmt->execute([$id]);
+            $invoice = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($invoice) {
+                $invoice['paid_amount'] = 0;
+                try {
+                    $payStmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM invoice_payments WHERE invoice_id = ?");
+                    $payStmt->execute([$id]);
+                    $invoice['paid_amount'] = $payStmt->fetchColumn() ?: 0;
+                } catch (Exception $e) {
+                    // invoice_payments table may not exist
+                }
+
+                $itemsStmt = $this->db->prepare("SELECT * FROM invoice_items WHERE invoice_id = ? ORDER BY sort_order");
+                $itemsStmt->execute([$id]);
+                $invoice['items'] = $itemsStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+                try {
+                    $paymentsStmt = $this->db->prepare("SELECT * FROM invoice_payments WHERE invoice_id = ? ORDER BY payment_date DESC");
+                    $paymentsStmt->execute([$id]);
+                    $invoice['payments'] = $paymentsStmt->fetchAll(\PDO::FETCH_ASSOC);
+                } catch (Exception $e) {
+                    $invoice['payments'] = [];
+                }
+            }
+        } catch (Exception $e) {
+            $invoice = null;
+        }
+
+        if (!$invoice) {
+            $this->setFlash('error', 'Invoice not found');
+            return $this->redirect('/admin/finance/invoices');
+        }
+
+        return $this->render('admin/invoices/view', [
+            'page_title' => 'Invoice #' . $invoice['invoice_number'],
+            'page_heading' => 'Invoice #' . $invoice['invoice_number'],
+            'invoice' => $invoice,
+        ]);
+    }
+
+    public function downloadInvoice(int $id)
+    {
+        $this->requireAdmin();
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM invoices WHERE id = ?");
+            $stmt->execute([$id]);
+            $invoice = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$invoice) {
+                $this->setFlash('error', 'Invoice not found');
+                return $this->redirect('/admin/finance/invoices');
+            }
+
+            $itemsStmt = $this->db->prepare("SELECT * FROM invoice_items WHERE invoice_id = ? ORDER BY sort_order");
+            $itemsStmt->execute([$id]);
+            $items = $itemsStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $html = $this->buildInvoiceHtml($invoice, $items);
+
+            header('Content-Type: text/html; charset=utf-8');
+            header('Content-Disposition: attachment; filename="invoice_' . htmlspecialchars($invoice['invoice_number']) . '.html"');
+            echo $html;
+            exit;
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Download failed: ' . $e->getMessage());
+            return $this->redirect('/admin/finance/invoices');
+        }
+    }
+
+    public function deleteInvoice(int $id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        try {
+            $stmt = $this->db->prepare("UPDATE invoices SET status = 'cancelled' WHERE id = ?");
+            $stmt->execute([$id]);
+            $this->setFlash('success', 'Invoice cancelled');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/finance/invoices');
+    }
+
+    private function buildInvoiceHtml(array $invoice, array $items): string
+    {
+        $ob = ob_start();
+        ?>
+        <!DOCTYPE html>
+        <html><head><meta charset="utf-8"><title>Invoice <?= htmlspecialchars($invoice['invoice_number']) ?></title>
+        <style>body{font-family:Arial,sans-serif;margin:40px;color:#333}table{width:100%;border-collapse:collapse;margin:20px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f5f5f5}.text-right{text-align:right}.total{font-size:1.2em;font-weight:bold}</style>
+        </head><body>
+        <h1>Invoice #<?= htmlspecialchars($invoice['invoice_number']) ?></h1>
+        <p><strong>Date:</strong> <?= htmlspecialchars($invoice['invoice_date']) ?> | <strong>Due:</strong> <?= htmlspecialchars($invoice['due_date']) ?></p>
+        <p><strong>Client:</strong> <?= htmlspecialchars($invoice['client_name']) ?></p>
+        <?php if (!empty($invoice['client_email'])): ?><p>Email: <?= htmlspecialchars($invoice['client_email']) ?></p><?php endif; ?>
+        <?php if (!empty($invoice['client_phone'])): ?><p>Phone: <?= htmlspecialchars($invoice['client_phone']) ?></p><?php endif; ?>
+        <table><thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Discount</th><th>Tax</th><th>Total</th></tr></thead><tbody>
+        <?php foreach ($items as $item): ?>
+        <tr>
+            <td><?= htmlspecialchars($item['item_name']) ?></td>
+            <td><?= (int)$item['quantity'] ?></td>
+            <td>₹<?= number_format($item['unit_price'], 2) ?></td>
+            <td><?= $item['discount_percent'] > 0 ? $item['discount_percent'] . '%' : '-' ?></td>
+            <td><?= $item['tax_percent'] > 0 ? $item['tax_percent'] . '%' : '-' ?></td>
+            <td>₹<?= number_format($item['line_total'] ?? ($item['unit_price'] * $item['quantity']), 2) ?></td>
+        </tr>
+        <?php endforeach; ?>
+        </tbody></table>
+        <p class="total">Total: ₹<?= number_format($invoice['total_amount'] ?? 0, 2) ?></p>
+        <p>Status: <?= strtoupper(htmlspecialchars($invoice['status'])) ?></p>
+        </body></html>
+        <?php
+        $html = ob_get_clean();
+        return $html;
+    }
+
+    /* =========================================================
      *  HELPERS
      * ========================================================= */
     private function currentFy(): string

@@ -24,8 +24,8 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         // A/B test: homepage_cta - variant-aware hero CTA copy
                         $heroVariant = $_SESSION['experiments']['homepage_cta'] ?? null;
                         $heroCtaText = match ($heroVariant) {
-                            'urgent'   => 'Book Your Plot Now - Limited Inventory!',
-                            'family'   => 'Find Your Family\'s Dream Home Today',
+                            'urgent'   => __('hero_cta_urgent'),
+                            'family'   => __('hero_cta_family'),
                             default    => __('hero_cta'),
                         };
                         // A/B test: cta_button_color - variant-aware hero CTA color
@@ -673,13 +673,13 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     .home_furnishing
                 ],
                 prices: [{
-                    tier: 'Basic',
+                    tier: '<?= __("tier_basic") ?>',
                     price: '\u20B9249/sqft'
                 }, {
-                    tier: 'Standard',
+                    tier: '<?= __("tier_standard") ?>',
                     price: '\u20B9399/sqft'
                 }, {
-                    tier: 'Premium',
+                    tier: '<?= __("tier_premium") ?>',
                     price: '\u20B9599/sqft'
                 }],
                 ctaHeading: t.free_estimate,
@@ -773,7 +773,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         }
         if (svc.whatsapp) {
             featuresHtml += '<p class="small text-muted mb-0">\uD83D\uDCAC <a href="' + svc.whatsapp +
-                '" target="_blank">WhatsApp</a></p>';
+                '" target="_blank"><?= __("home_whatsapp") ?></a></p>';
         }
         featuresHtml += '</div></div></div>';
 
@@ -1513,8 +1513,8 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             '<select class="form-select" id="mEligTenure" onchange="mCalcElig()">' +
             '<option value="5">' + '<?= __("home_years_5") ?>' + '</option><option value="10">' +
             '<?= __("home_years_10") ?>' + '</option><option value="15">' + '<?= __("home_years_15") ?>' +
-            '</option><option value="20" selected>' + '<?= __("home_years_20") ?>' + '</option><option value="25">25 ' +
-            T.years + '</option><option value="30">30 ' + T.years + '</option></select></div></div></div>' +
+            '</option><option value="20" selected>' + '<?= __("home_years_20") ?>' + '</option><option value="25">' + '<?= __("home_years_25") ?>' +
+            '</option><option value="30">' + '<?= __("home_years_30") ?>' + '</option></select></div></div></div>' +
             '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">' + T.eligFor + '</p>' +
             '<p class="display-5 fw-bold mb-0 text-success" id="mEligResult">₹27,23,250</p><hr class="border-secondary my-3">' +
@@ -1531,7 +1531,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.propType + '</label>' +
             '<select class="form-select" id="mValType" onchange="mCalcVal()">' +
-            '<option value="plot">Plot/Land</option><option value="house">House/Villa</option><option value="flat">Flat/Apartment</option><option value="commercial">Commercial</option></select></div>' +
+            '<option value="plot">' + '<?= __("home_prop_plot") ?>' + '</option><option value="house">' + '<?= __("home_prop_house") ?>' + '</option><option value="flat">' + '<?= __("home_prop_flat") ?>' + '</option><option value="commercial">' + '<?= __("home_prop_commercial") ?>' + '</option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.location + '</label>' +
             '<select class="form-select" id="mValLoc" onchange="mCalcVal()">' +
             '<option value="gorakhpur">Gorakhpur</option><option value="lucknow">Lucknow</option>' +
@@ -1819,21 +1819,18 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             <div class="bg-light rounded-3 p-3 mt-3">
                                 <div class="d-flex justify-content-between mb-1"><span
                                         class="small"><?= __('rank_starter') ?>: <strong>₹5,000/mo</strong></span><span
-                                        class="small text-muted">₹15L target</span></div>
+                                        class="small text-muted"><?= __('home_target_15l') ?></span></div>
                                 <div class="d-flex justify-content-between mb-1"><span
                                         class="small"><?= __('rank_basic') ?>: <strong>₹5,000/mo</strong></span><span
-                                        class="small text-muted">₹30L target</span></div>
+                                        class="small text-muted"><?= __('home_target_30l') ?></span></div>
                                 <div class="d-flex justify-content-between mb-1"><span
                                         class="small"><?= __('rank_professional') ?>:
-                                        <strong>₹8,000/mo</strong></span><span class="small text-muted">₹50L
-                                        target</span></div>
+                                        <strong>₹8,000/mo</strong></span><span class="small text-muted"><?= __('home_target_50l') ?></span></div>
                                 <div class="d-flex justify-content-between mb-1"><span
                                         class="small"><?= __('rank_executive') ?>:
-                                        <strong>₹12,000/mo</strong></span><span class="small text-muted">₹75L
-                                        target</span></div>
+                                        <strong>₹12,000/mo</strong></span><span class="small text-muted"><?= __('home_target_75l') ?></span></div>
                                 <div class="d-flex justify-content-between"><span class="small"><?= __('rank_elite') ?>:
-                                        <strong>₹20,000/mo</strong></span><span class="small text-muted">₹1Cr
-                                        target</span></div>
+                                        <strong>₹20,000/mo</strong></span><span class="small text-muted"><?= __('home_target_1cr') ?></span></div>
                             </div>
                         </div>
                     </div>

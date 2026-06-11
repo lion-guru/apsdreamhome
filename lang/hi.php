@@ -1571,6 +1571,8 @@ return array(
   'tier_executive' => 'एक्ज़ीक्यूटिव',
   'tier_professional' => 'प्रोफेशनल',
   'tier_starter' => 'स्टार्टर',
+  'tier_standard' => 'स्टैंडर्ड',
+  'tier_premium' => 'प्रीमियम',
   'time' => 'समय',
   'time_period' => 'समय अवधि',
   'time_remaining' => 'शेष समय',
@@ -1925,6 +1927,10 @@ return array(
   'home_call_now' => 'अभी कॉल करें',
   'home_get_in_touch' => 'संपर्क करें',
 
+  // Home page - A/B test hero CTA variants
+  'hero_cta_urgent' => 'अभी अपना प्लॉट बुक करें - सीमित इन्वेंटरी!',
+  'hero_cta_family' => 'आज ही अपने परिवार का सपनों का घर खोजें',
+
   // Home page - Career section sub-items
   'rank_starter' => 'शुरुआती',
   'rank_basic' => 'बेसिक',
@@ -1940,6 +1946,12 @@ return array(
   'rank_sr_executive' => 'सीनियर एग्ज़ीक्यूटिव',
   'rank_director' => 'डायरेक्टर',
   'rank_global_director' => 'ग्लोबल डायरेक्टर',
+  'home_target_15l' => '₹15L लक्ष्य',
+  'home_target_30l' => '₹30L लक्ष्य',
+  'home_target_50l' => '₹50L लक्ष्य',
+  'home_target_75l' => '₹75L लक्ष्य',
+  'home_target_1cr' => '₹1Cr लक्ष्य',
+  'home_target_2cr' => '₹2Cr लक्ष्य',
   'insurance_health' => 'स्वास्थ्य बीमा',
   'insurance_life' => 'लाइफ कवर',
   'insurance_accidental' => 'दुर्घटना कवर',
@@ -3790,6 +3802,8 @@ return array(
   'home_years_10' => '10 साल',
   'home_years_15' => '15 साल',
   'home_years_20' => '20 साल',
+  'home_years_25' => '25 साल',
+  'home_years_30' => '30 साल',
 
   // Home Page - Tool Modal
   'home_tool' => 'उपकरण',
@@ -3883,6 +3897,10 @@ return array(
   'home_valuation_failed' => 'मूल्यांकन प्राप्त करने में विफल',
   'home_valuation_error' => 'त्रुटि',
   'home_na' => 'उपलब्ध नहीं',
+  'home_prop_plot' => 'प्लॉट/ज़मीन',
+  'home_prop_house' => 'घर/विला',
+  'home_prop_flat' => 'फ्लैट/अपार्टमेंट',
+  'home_prop_commercial' => 'कमर्शियल',
 
   // Home Page - Testimonials
   'home_testimonial_1_name' => 'राजेश कुमार',
