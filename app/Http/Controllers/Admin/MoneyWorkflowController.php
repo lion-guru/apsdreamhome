@@ -609,13 +609,35 @@ class MoneyWorkflowController extends AdminController
     {
         $this->requireAdmin();
         $banks = $this->safe(fn() => $this->service->getBankAccounts(true), []);
+
+        // Fetch live exchange rates via ExchangeRateService
         $currencies = [
             'INR' => ['symbol' => '₹',  'name' => 'Indian Rupee',   'rate' => 1.0],
-            'USD' => ['symbol' => '$',  'name' => 'US Dollar',       'rate' => 83.50],
-            'EUR' => ['symbol' => '€',  'name' => 'Euro',            'rate' => 90.25],
-            'GBP' => ['symbol' => '£',  'name' => 'British Pound',   'rate' => 105.80],
-            'AED' => ['symbol' => 'د.إ', 'name' => 'UAE Dirham',     'rate' => 22.73],
         ];
+        try {
+            $fxService = new \App\Services\ExchangeRateService();
+            $fxResult = $fxService->getAllRates('INR');
+            $supported = $fxService->getSupportedCurrencies();
+            $symbols = ['USD' => '$', 'EUR' => '€', 'GBP' => '£', 'AED' => 'د.إ', 'SGD' => 'S$', 'JPY' => '¥', 'CAD' => 'C$', 'AUD' => 'A$'];
+            $names = ['USD' => 'US Dollar', 'EUR' => 'Euro', 'GBP' => 'British Pound', 'AED' => 'UAE Dirham', 'SGD' => 'Singapore Dollar', 'JPY' => 'Japanese Yen', 'CAD' => 'Canadian Dollar', 'AUD' => 'Australian Dollar'];
+            foreach ($supported as $code) {
+                if ($code === 'INR') continue;
+                $currencies[$code] = [
+                    'symbol' => $symbols[$code] ?? $code,
+                    'name'   => $names[$code] ?? $code,
+                    'rate'   => ($fxResult['success'] && isset($fxResult['rates'][$code]))
+                        ? (float)$fxResult['rates'][$code]
+                        : 1.0,
+                ];
+            }
+        } catch (Exception $e) {
+            // Fallback to hardcoded rates
+            $currencies['USD'] = ['symbol' => '$',  'name' => 'US Dollar',       'rate' => 83.50];
+            $currencies['EUR'] = ['symbol' => '€',  'name' => 'Euro',            'rate' => 90.25];
+            $currencies['GBP'] = ['symbol' => '£',  'name' => 'British Pound',   'rate' => 105.80];
+            $currencies['AED'] = ['symbol' => 'د.إ', 'name' => 'UAE Dirham',     'rate' => 22.73];
+        }
+
         return $this->render('admin/finance/vendor-payment', [
             'page_title' => 'New Vendor Payment',
             'page_heading' => 'Record Vendor Payment',
@@ -1100,6 +1122,202 @@ class MoneyWorkflowController extends AdminController
         <?php
         $html = ob_get_clean();
         return $html;
+    }
+
+    /* =========================================================
+     *  EXCHANGE RATE API
+     * ========================================================= */
+    public function getExchangeRate()
+    {
+        $this->requireAdmin();
+        $from = strtoupper(trim($_GET['from'] ?? 'USD'));
+        $to   = strtoupper(trim($_GET['to'] ?? 'INR'));
+
+        try {
+            $fxService = new \App\Services\ExchangeRateService();
+            $result = $fxService->getRate($from, $to);
+        } catch (Exception $e) {
+            $result = ['success' => false, 'error' => $e->getMessage()];
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit;
+    }
+
+    public function getAllRates()
+    {
+        $this->requireAdmin();
+        $base = strtoupper(trim($_GET['base'] ?? 'INR'));
+
+        try {
+            $fxService = new \App\Services\ExchangeRateService();
+            $result = $fxService->getAllRates($base);
+        } catch (Exception $e) {
+            $result = ['success' => false, 'error' => $e->getMessage()];
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit;
+    }
+
+    /* =========================================================
+     *  PDF DOWNLOADS
+     * ========================================================= */
+    public function downloadAgreement($bookingId = null)
+    {
+        $this->requireAdmin();
+        $bookingId = (int)($bookingId ?? 0);
+        if ($bookingId <= 0) {
+            $this->setFlash('error', 'Invalid booking ID.');
+            $this->redirect('/admin/sales/bookings');
+        }
+        try {
+            $pdfService = new \App\Services\PDF\AgreementPDFService($this->db instanceof \PDO ? $this->db : null);
+            $result = $pdfService->generateBookingAgreement($bookingId);
+            if (!empty($result['success']) && !empty($result['pdf_path']) && file_exists($result['pdf_path'])) {
+                $filename = $result['filename'] ?? basename($result['pdf_path']);
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: attachment; filename="' . $filename . '"');
+                header('Content-Length: ' . filesize($result['pdf_path']));
+                header('Cache-Control: no-cache, must-revalidate');
+                readfile($result['pdf_path']);
+                exit;
+            }
+            $this->setFlash('error', $result['error'] ?? 'Failed to generate agreement PDF.');
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'PDF generation failed: ' . $e->getMessage());
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
+        }
+    }
+
+    public function downloadDemandLetter($installmentId = null)
+    {
+        $this->requireAdmin();
+        $installmentId = (int)($installmentId ?? 0);
+        if ($installmentId <= 0) {
+            $this->setFlash('error', 'Invalid installment ID.');
+            $this->redirect('/admin/finance/dashboard');
+        }
+        try {
+            $pdfService = new \App\Services\PDF\AgreementPDFService($this->db instanceof \PDO ? $this->db : null);
+            $result = $pdfService->generateDemandLetter($installmentId);
+            if (!empty($result['success']) && !empty($result['pdf_path']) && file_exists($result['pdf_path'])) {
+                $filename = $result['filename'] ?? basename($result['pdf_path']);
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: attachment; filename="' . $filename . '"');
+                header('Content-Length: ' . filesize($result['pdf_path']));
+                header('Cache-Control: no-cache, must-revalidate');
+                readfile($result['pdf_path']);
+                exit;
+            }
+            $this->setFlash('error', $result['error'] ?? 'Failed to generate demand letter PDF.');
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'PDF generation failed: ' . $e->getMessage());
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
+        }
+    }
+
+    public function downloadAllotmentLetter($bookingId = null)
+    {
+        $this->requireAdmin();
+        $bookingId = (int)($bookingId ?? 0);
+        if ($bookingId <= 0) {
+            $this->setFlash('error', 'Invalid booking ID.');
+            $this->redirect('/admin/sales/bookings');
+        }
+        try {
+            $pdfService = new \App\Services\PDF\AgreementPDFService($this->db instanceof \PDO ? $this->db : null);
+            $result = $pdfService->generateAllotmentLetter($bookingId);
+            if (!empty($result['success']) && !empty($result['pdf_path']) && file_exists($result['pdf_path'])) {
+                $filename = $result['filename'] ?? basename($result['pdf_path']);
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: attachment; filename="' . $filename . '"');
+                header('Content-Length: ' . filesize($result['pdf_path']));
+                header('Cache-Control: no-cache, must-revalidate');
+                readfile($result['pdf_path']);
+                exit;
+            }
+            $this->setFlash('error', $result['error'] ?? 'Failed to generate allotment letter PDF.');
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'PDF generation failed: ' . $e->getMessage());
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
+        }
+    }
+
+    public function downloadRefundVoucher($refundId = null)
+    {
+        $this->requireAdmin();
+        $refundId = (int)($refundId ?? 0);
+        if ($refundId <= 0) {
+            $this->setFlash('error', 'Invalid refund ID.');
+            $this->redirect('/admin/finance/dashboard');
+        }
+        try {
+            $pdfService = new \App\Services\PDF\AgreementPDFService($this->db instanceof \PDO ? $this->db : null);
+            $result = $pdfService->generateRefundVoucher($refundId);
+            if (!empty($result['success']) && !empty($result['pdf_path']) && file_exists($result['pdf_path'])) {
+                $filename = $result['filename'] ?? basename($result['pdf_path']);
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: attachment; filename="' . $filename . '"');
+                header('Content-Length: ' . filesize($result['pdf_path']));
+                header('Cache-Control: no-cache, must-revalidate');
+                readfile($result['pdf_path']);
+                exit;
+            }
+            $this->setFlash('error', $result['error'] ?? 'Failed to generate refund voucher PDF.');
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'PDF generation failed: ' . $e->getMessage());
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
+        }
+    }
+
+    /* =========================================================
+     *  EMI AUTO-PAYMENT
+     * ========================================================= */
+    public function emiAutoPayDashboard()
+    {
+        $this->requireAdmin();
+        try {
+            $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db);
+            $stats = $autoPayService->getDashboardStats();
+            $mandates = $autoPayService->listMandates();
+            $failedPayments = $autoPayService->getFailedPayments(50);
+        } catch (Exception $e) {
+            $stats = [];
+            $mandates = [];
+            $failedPayments = [];
+        }
+        return $this->render('admin/finance/emi-auto-pay', [
+            'page_title'    => 'EMI Auto-Pay',
+            'page_heading'  => 'EMI Auto-Payment Dashboard',
+            'stats'         => $stats,
+            'mandates'      => $mandates,
+            'failedPayments'=> $failedPayments,
+            'isTestMode'    => ($_ENV['RAZORPAY_TEST_MODE'] ?? 'true') === 'true',
+        ]);
+    }
+
+    public function runAutoPaymentCron()
+    {
+        $this->requireAdmin();
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+            return;
+        }
+        try {
+            $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db);
+            $result = $autoPayService->processDueEmiPayments();
+            $this->json($result);
+        } catch (Exception $e) {
+            $this->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
     }
 
     /* =========================================================

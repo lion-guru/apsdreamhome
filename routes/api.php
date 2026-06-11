@@ -243,6 +243,7 @@ $router->post('/api/twilio/voice/recording', 'Api\TwilioVoiceWebhookController@r
 // CSRF is bypassed for these GET endpoints (read-only, no state mutation).
 $router->get('/api/docs', 'App\Http\Controllers\Api\DocsController@index');
 $router->get('/api/docs/spec', 'App\Http\Controllers\Api\DocsController@spec');
+$router->get('/api/docs/spec/{version}', 'App\Http\Controllers\Api\DocsController@specVersion');
 $router->get('/api/docs/list', 'App\Http\Controllers\Api\DocsController@list');
 $router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gather');
 

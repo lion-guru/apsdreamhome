@@ -325,6 +325,11 @@ $router->get('/plots/{id}/book', 'Front\\BookingController@bookForm');
 $router->post('/plots/{id}/book', 'Front\\BookingController@submitBooking');
 $router->get('/booking/confirmation/{id}', 'Front\\BookingController@confirmation');
 
+// ── E-Sign (Leegality) ───────────────────────────────────────────
+$router->get('/user/bookings/{id}/esign',          'Front\\BookingController@esign');
+$router->post('/user/bookings/{id}/esign/initiate', 'Front\\BookingController@initiateEsign');
+$router->post('/webhook/esign',                    'Front\\BookingController@esignWebhook');
+
 $router->get('/plot/{id}', 'Front\\PlotController@show');
 $router->get('/plot/{id}/book', 'Front\\PlotController@bookPlot');
 $router->post('/plot/book', 'Front\\PlotController@storeBooking');
@@ -1490,17 +1495,17 @@ $router->get('/admin/employees', 'App\\Http\\Controllers\\Admin\\HRMController@e
 // Commissions Management
 $router->get('/admin/commissions', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@commissionsList');
 
-// Accounts/Financial Management
-$router->get('/admin/accounts', 'App\\Http\\Controllers\\Admin\\FinanceController@adminAccounts');
+// Accounts/Financial Management (merged into MoneyWorkflowController)
+$router->get('/admin/accounts', 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@adminAccounts');
 
 // Developer Tools
 $router->get('/admin/dev-tools', 'App\\Http\\Controllers\\Admin\\AdminController@devTools');
 
-// /admin/invoices routes kept — unique invoice CRUD (view/download/delete) not covered by MoneyWorkflowController
-$router->get('/admin/invoices', 'App\\Http\\Controllers\\Admin\\FinanceController@invoices');
-$router->get('/admin/invoices/view/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@viewInvoice');
-$router->get('/admin/invoices/download/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@downloadInvoice');
-$router->post('/admin/invoices/delete/{id}', 'App\\Http\\Controllers\\Admin\\FinanceController@deleteInvoice');
+// Invoices (merged into MoneyWorkflowController)
+$router->get('/admin/invoices', 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@invoices');
+$router->get('/admin/invoices/view/{id}', 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@viewInvoice');
+$router->get('/admin/invoices/download/{id}', 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@downloadInvoice');
+$router->post('/admin/invoices/delete/{id}', 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@deleteInvoice');
 $router->get('/admin/roles', 'App\\Http\\Controllers\\RoleBasedDashboardController@roles');
 $router->get('/admin/hrm/users', 'App\\Http\\Controllers\\Admin\\HRMController@users');
 
@@ -1931,6 +1936,10 @@ $router->get('/admin/finance/vendors',                                          
 $router->get('/admin/finance/vendor-payment',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@vendorPayment');
 $router->post('/admin/finance/vendor-payment-store',                              'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@vendorPaymentStore');
 
+// Exchange Rate API (auto-fetch for multi-currency)
+$router->get('/admin/finance/exchange-rate',                                       'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@getExchangeRate');
+$router->get('/admin/finance/all-rates',                                           'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@getAllRates');
+
 // Cash flow forecast
 $router->get('/admin/finance/forecast',                                           'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@forecast');
 
@@ -1948,6 +1957,10 @@ $router->get('/admin/finance/voucher-log',                                      
 $router->get('/admin/finance/penalties',                                          'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@penaltySummary');
 $router->post('/admin/finance/penalties/apply',                                   'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@applyPenalties');
 
+// EMI Auto-Payment (Razorpay mandates)
+$router->get('/admin/finance/emi-auto-pay',                                        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@emiAutoPayDashboard');
+$router->post('/admin/finance/emi-auto-pay/run',                                   'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@runAutoPaymentCron');
+
 // On-Field Cash Collection & Reconciliation
 $router->get('/admin/finance/collections',                                        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@collections');
 $router->get('/admin/finance/collection-form',                                    'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@collectionForm');
@@ -1957,6 +1970,12 @@ $router->post('/admin/finance/collections/reject',                              
 $router->get('/admin/finance/reconciliation-collections',                         'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationCollections');
 $router->post('/admin/finance/reconciliation-collections/start',                  'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationCollectionsStart');
 $router->post('/admin/finance/reconciliation-collections/close',                  'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliationCollectionsClose');
+
+// PDF Downloads (Agreement, Demand Letter, Allotment, Refund Voucher)
+$router->get('/admin/finance/agreement/{id}',             'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@downloadAgreement');
+$router->get('/admin/finance/demand-letter/{id}',         'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@downloadDemandLetter');
+$router->get('/admin/finance/allotment/{id}',             'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@downloadAllotmentLetter');
+$router->get('/admin/finance/refund-voucher/{id}',        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@downloadRefundVoucher');
 
 // ============================================================
 // ADMIN E-FILING (TDS/GST)
@@ -1981,6 +2000,14 @@ $router->post('/admin/efiling/submissions/{id}/update-status',                  
 $router->get('/admin/efiling/tds/certificate/{id}/download',                          'App\\Http\\Controllers\\Admin\\EFilingController@downloadForm16A');
 $router->get('/admin/efiling/gst/export/gstr1',                                       'App\\Http\\Controllers\\Admin\\EFilingController@exportGstr1');
 $router->get('/admin/efiling/gst/export/gstr3b',                                      'App\\Http\\Controllers\\Admin\\EFilingController@exportGstr3b');
+
+// E-Filing Portal Integration (GSTN + TIN)
+$router->get('/admin/efiling/gstn-portal',                                           'App\\Http\\Controllers\\Admin\\EFilingController@gstnPortal');
+$router->post('/admin/efiling/gstn/submit',                                          'App\\Http\\Controllers\\Admin\\EFilingController@submitGstn');
+$router->get('/admin/efiling/gstn/status/{gstin}',                                   'App\\Http\\Controllers\\Admin\\EFilingController@gstnStatus');
+$router->get('/admin/efiling/tin-portal',                                            'App\\Http\\Controllers\\Admin\\EFilingController@tinPortal');
+$router->post('/admin/efiling/tin/submit',                                           'App\\Http\\Controllers\\Admin\\EFilingController@submitTin');
+$router->get('/admin/efiling/tin/status/{token}',                                    'App\\Http\\Controllers\\Admin\\EFilingController@tinStatus');
 
 // ============================================================
 // ADMIN LAND MANAGEMENT
@@ -3155,6 +3182,10 @@ $router->get('/team/messages', 'App\\Http\\Controllers\\TeamManagementController
 $router->get('/system/cron/daily', 'App\\Http\\Controllers\\System\\CronController@daily');
 $router->get('/system/cron/hourly', 'App\\Http\\Controllers\\System\\CronController@hourly');
 $router->get('/system/cron/weekly', 'App\\Http\\Controllers\\System\\CronController@weekly');
+$router->get('/cron/emi-auto-payment', function () {
+    // Key auth handled inside the script
+    require dirname(__DIR__) . '/scripts/emi_auto_payment_cron.php';
+});
 
 // ============================================================
 // LOCALIZATION API (LocalizationController)
@@ -3894,3 +3925,8 @@ $router->get('/admin/bank-import/search-internal',                    'Admin\\Ba
 $router->post('/api/push/subscribe',    'Api\\PushNotificationController@subscribe');
 $router->post('/api/push/unsubscribe',  'Api\\PushNotificationController@unsubscribe');
 $router->get('/api/push/vapid-key',     'Api\\PushNotificationController@vapidPublicKey');
+
+// ============================================================
+// API DOCUMENTATION (Admin UI)
+// ============================================================
+$router->get('/admin/api-docs',          'Admin\\AdminController@apiDocs');

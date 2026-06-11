@@ -4,12 +4,22 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\Sales\BookingLifecycleService;
+use App\Services\Esign\ESignManager;
 
 class BookingController extends BaseController
 {
     public function __construct()
     {
         parent::__construct();
+    }
+
+    /**
+     * Skip CSRF only for the e-sign webhook endpoint.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        return strpos($uri, '/webhook/esign') !== false;
     }
 
     private function getUser()
@@ -293,5 +303,136 @@ class BookingController extends BaseController
             'totalPending' => $totalPending,
             'user'       => $user,
         ]);
+    }
+
+    /* ────────────────────────────────────────────────────────────── */
+    /*  E-SIGN (Leegality)                                           */
+    /* ────────────────────────────────────────────────────────────── */
+
+    /**
+     * Show the e-sign page for a booking.
+     * GET /user/bookings/{id}/esign
+     */
+    public function esign($id)
+    {
+        $this->requireLogin();
+        $user  = $this->getUser();
+        $id    = intval($id);
+
+        $booking = $this->db->fetchRow("
+            SELECT pb.*, p.plot_number, p.block, p.area_sqft, p.dimension_label,
+                   p.total_price AS plot_price, c.name AS colony_name
+            FROM plot_bookings pb
+            LEFT JOIN plots p ON pb.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE pb.id = ? AND pb.customer_id = ?
+        ", [$id, $user['id']]);
+
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found.');
+            return $this->redirect('/user/dashboard');
+        }
+
+        try {
+            $mgr   = new ESignManager();
+            $esign = $mgr->getStatus($id);
+        } catch (\Throwable $e) {
+            error_log('[BookingController::esign] ' . $e->getMessage());
+            $esign = ['success' => true, 'status' => 'pending', 'error' => null];
+        }
+
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            return $this->jsonResponse([
+                'success'      => true,
+                'status'       => $esign['status'] ?? 'pending',
+                'verified'     => ($esign['status'] ?? '') === 'signed',
+                'signed_at'    => $esign['signed_at'] ?? null,
+                'signing_url'  => $esign['signing_url'] ?? null,
+            ]);
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/booking/esign', [
+            'page_title' => 'E-Sign Agreement - APS Dream Home',
+            'booking'    => $booking,
+            'esign'      => $esign,
+            'user'       => $user,
+        ]);
+    }
+
+    /**
+     * Initiate e-sign process for a booking.
+     * POST /user/bookings/{id}/esign/initiate
+     */
+    public function initiateEsign($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+        $id   = intval($id);
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid CSRF token.'], 403);
+        }
+
+        $booking = $this->db->fetchRow(
+            "SELECT * FROM plot_bookings WHERE id = ? AND customer_id = ?",
+            [$id, $user['id']]
+        );
+        if (!$booking) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Booking not found.']);
+        }
+
+        // Build agreement path — in production this would be a generated PDF
+        $agreementPath = (defined('BASE_URL') ? BASE_URL : '')
+            . '/uploads/agreements/booking-' . $id . '.pdf';
+
+        try {
+            $mgr = new ESignManager();
+            $result = $mgr->initiateEsign($id, $agreementPath);
+
+            return $this->jsonResponse($result, $result['success'] ? 200 : 400);
+        } catch (\Throwable $e) {
+            error_log('[BookingController::initiateEsign] ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'E-sign service unavailable. Please try again later.'], 500);
+        }
+    }
+
+    /**
+     * Webhook callback for Leegality e-sign events.
+     * POST /webhook/esign — CSRF skipped via router exclusion for /webhook/.
+     */
+    public function esignWebhook()
+    {
+        // CSRF is skipped for /webhook/ paths in routes/router.php
+
+        $payload = json_decode(file_get_contents('php://input'), true);
+        if (!$payload) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid payload']);
+            return;
+        }
+
+        $documentId = $payload['document_id'] ?? $payload['id'] ?? '';
+        $status     = $payload['status'] ?? $payload['event'] ?? '';
+
+        if (empty($documentId) || empty($status)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Missing document_id or status']);
+            return;
+        }
+
+        try {
+            $mgr    = new ESignManager();
+            $result = $mgr->callback($documentId, $status);
+
+            http_response_code(200);
+            echo json_encode($result);
+        } catch (\Throwable $e) {
+            error_log('[BookingController::esignWebhook] ' . $e->getMessage());
+            http_response_code(200);
+            echo json_encode(['success' => false, 'error' => 'Internal error']);
+        }
     }
 }

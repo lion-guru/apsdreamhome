@@ -764,4 +764,34 @@ class AdminController extends BaseController
         $this->requireAdmin();
         return $this->render('admin/stub_page', ['page_title' => 'API Integrations', 'page_message' => 'Manage third-party API integrations and webhooks.']);
     }
+
+    /**
+     * GET /admin/api-docs
+     * Swagger UI rendered within the admin layout.
+     */
+    public function apiDocs()
+    {
+        $this->requireAdmin();
+        try {
+            $docService = new \App\Services\ApiDocService();
+            $groups = $docService->getEndpoints();
+            $total  = array_sum(array_map('count', $groups));
+            $base   = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+
+            return $this->render('admin/api-docs', [
+                'page_title'    => 'API Documentation',
+                'page_heading'  => 'API Documentation',
+                'groups'        => $groups,
+                'total'         => $total,
+                'specUrl'       => $base . '/api/docs/spec',
+                'activeVersion' => 'v2',
+            ]);
+        } catch (\Exception $e) {
+            error_log('ApiDocs error: ' . $e->getMessage());
+            return $this->render('admin/stub_page', [
+                'page_title'   => 'API Documentation',
+                'page_message' => 'Error generating API docs: ' . $e->getMessage(),
+            ]);
+        }
+    }
 }

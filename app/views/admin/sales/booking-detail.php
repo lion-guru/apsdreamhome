@@ -42,9 +42,11 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
             <i class="fas fa-bookmark me-2"></i>Booking — <?= htmlspecialchars((string)($booking['booking_number'] ?? '')) ?>
             <span class="badge ms-2 <?= $statusBadge($booking['status'] ?? '') ?>"><?= htmlspecialchars((string)($booking['status'] ?? '')) ?></span>
         </h5>
-        <div>
+        <div class="d-flex gap-1 flex-wrap">
             <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit me-1"></i>Edit</a>
             <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/schedule" class="btn btn-sm btn-outline-info"><i class="fas fa-calendar me-1"></i>Schedule</a>
+            <a href="<?= htmlspecialchars($base) ?>/admin/finance/agreement/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-file-pdf me-1"></i>Agreement</a>
+            <a href="<?= htmlspecialchars($base) ?>/admin/finance/allotment/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-file-pdf me-1"></i>Allotment</a>
             <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal"><i class="fas fa-ban me-1"></i>Cancel</button>
             <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#transferModal"><i class="fas fa-exchange-alt me-1"></i>Transfer</button>
         </div>
@@ -128,10 +130,11 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                                     ?>
                                     <span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st) ?></span>
                                 </td>
-                                <td>
+                                <td class="text-nowrap">
                                     <?php if ($st !== 'paid'): ?>
                                         <a href="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/pay" class="btn btn-sm btn-success"><i class="fas fa-indian-rupee-sign"></i> Pay</a>
                                         <a href="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/demand-letter" class="btn btn-sm btn-outline-warning"><i class="fas fa-envelope"></i></a>
+                                        <a href="<?= htmlspecialchars($base) ?>/admin/finance/demand-letter/<?= (int)($s['id'] ?? 0) ?>" class="btn btn-sm btn-outline-danger" title="Download Demand Letter PDF"><i class="fas fa-file-pdf"></i></a>
                                     <?php endif; ?>
                                 </td>
                             </tr>

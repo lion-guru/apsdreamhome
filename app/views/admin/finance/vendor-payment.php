@@ -47,8 +47,13 @@
                     <!-- Exchange rate (auto-filled, editable) -->
                     <div class="col-md-3">
                         <label class="form-label">Exchange Rate (to INR)</label>
-                        <input type="number" name="exchange_rate" id="vFxRate" class="form-control" step="0.0001" min="0" value="1.0000" oninput="vCalc()">
-                        <small class="text-muted">1 unit of foreign currency = ₹X INR</small>
+                        <div class="input-group">
+                            <input type="number" name="exchange_rate" id="vFxRate" class="form-control" step="0.0001" min="0" value="1.0000" oninput="vCalc()">
+                            <button type="button" class="btn btn-outline-primary" id="vFetchFx" title="Fetch live rate from RBI/exchange API" onclick="vFetchLiveRate()">
+                                <i class="fas fa-sync-alt" id="vFxIcon"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">1 unit of foreign currency = ₹X INR <span id="vFxStatus" class="badge bg-secondary ms-1" style="display:none"></span></small>
                     </div>
 
                     <div class="col-md-3">
@@ -136,4 +141,43 @@ function vCalc() {
 document.addEventListener('DOMContentLoaded', function () {
     vUpdateFx();
 });
+
+function vFetchLiveRate() {
+    const code = document.getElementById('vCurrency').value;
+    if (code === 'INR') {
+        document.getElementById('vFxRate').value = '1.0000';
+        vCalc();
+        return;
+    }
+    const btn = document.getElementById('vFetchFx');
+    const icon = document.getElementById('vFxIcon');
+    const status = document.getElementById('vFxStatus');
+    btn.disabled = true;
+    icon.className = 'fas fa-spinner fa-spin';
+    status.style.display = 'inline';
+    status.className = 'badge bg-warning ms-1';
+    status.textContent = 'Fetching...';
+
+    fetch('<?= BASE_URL ?>/admin/finance/exchange-rate?from=' + encodeURIComponent(code))
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            icon.className = 'fas fa-sync-alt';
+            if (data.success && data.rate) {
+                document.getElementById('vFxRate').value = parseFloat(data.rate).toFixed(4);
+                status.className = 'badge bg-success ms-1';
+                status.textContent = (data.cached ? 'Cached' : 'Live') + ' — ' + data.fetched_at;
+                vCalc();
+            } else {
+                status.className = 'badge bg-danger ms-1';
+                status.textContent = data.error || 'Failed';
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            icon.className = 'fas fa-sync-alt';
+            status.className = 'badge bg-danger ms-1';
+            status.textContent = 'Network error';
+        });
+}
 </script>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 use App\Services\Filing\EFilingService;
 use App\Services\Filing\TDSFilingService;
 use App\Services\Filing\GSTFilingService;
+use App\Services\Filing\GSTNApiService;
+use App\Services\Filing\TINApiService;
 
 /**
  * EFilingController — TDS/GST e-filing admin dashboard
@@ -517,6 +519,181 @@ th { background: #f0f0f0; font-weight: bold; }
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Cache-Control: no-cache, must-revalidate');
         echo json_encode($result['gstr3b'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    // ========== GSTN Portal ==========
+
+    public function gstnPortal()
+    {
+        $this->requireAdmin();
+        $gstn = new GSTNApiService();
+        $tin = new TINApiService();
+        $fy = $this->efiling->getCurrentFinancialYear();
+        $submissions = $this->efiling->listSubmissions([
+            'submission_type' => ['gstr1', 'gstr3b'],
+            'financial_year' => $fy,
+            'limit' => 20,
+        ]);
+
+        $this->render('admin/efiling/gstn-portal', [
+            'page_title' => 'GSTN Portal',
+            'gstn_status' => $gstn->getConnectionStatus(),
+            'tin_status' => $tin->getConnectionStatus(),
+            'fy' => $fy,
+            'fy_list' => $this->getFyList(),
+            'months' => $this->getMonthList(),
+            'submissions' => $submissions,
+        ]);
+    }
+
+    public function submitGstn()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail($_POST['csrf_token'] ?? '');
+
+        $returnType = $_POST['return_type'] ?? 'gstr1';
+        $month = (int)($_POST['month'] ?? date('m'));
+        $year = (int)($_POST['year'] ?? date('Y'));
+        $fy = $_POST['fy'] ?? $this->efiling->getCurrentFinancialYear();
+        $period = sprintf('%02d%04d', $month, $year);
+
+        $gstn = new GSTNApiService();
+
+        // Generate JSON data first
+        if ($returnType === 'gstr1') {
+            $genResult = $this->gstFiling->generateGSTR1($month, $year, $fy);
+            $data = $genResult['gstr1'] ?? [];
+        } else {
+            $genResult = $this->gstFiling->generateGSTR3B($month, $year, $fy);
+            $data = $genResult['gstr3b'] ?? [];
+        }
+
+        if (!isset($data['gstin'])) {
+            $data['fp'] = $period;
+        }
+
+        // Submit via API
+        $result = $returnType === 'gstr1'
+            ? $gstn->submitGstr1($data)
+            : $gstn->submitGstr3b($data);
+
+        if (!empty($result['success'])) {
+            $mode = $gstn->isTestMode() ? ' [TEST MODE]' : '';
+            $_SESSION['flash_success'] = ucfirst($returnType) . " submitted{$mode}: " .
+                ($result['reference_number'] ?? $result['acknowledgment_number'] ?? 'OK');
+
+            // Update submission status
+            if (!empty($genResult['submission_id'])) {
+                $this->efiling->updateSubmissionStatus($genResult['submission_id'], 'submitted', [
+                    'portal_reference' => $result['reference_number'] ?? $result['acknowledgment_number'] ?? null,
+                    'portal_response_json' => json_encode($result),
+                ]);
+            }
+        } else {
+            $_SESSION['flash_error'] = "Submission failed: " . ($result['error'] ?? 'Unknown error');
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit;
+    }
+
+    public function gstnStatus()
+    {
+        $this->requireAdmin();
+        $gstin = $this->getRouteParam('gstin') ?? $_GET['gstin'] ?? '';
+        $period = $_GET['period'] ?? sprintf('%02d%04d', (int)date('m'), (int)date('Y'));
+
+        $gstn = new GSTNApiService();
+        $result = $gstn->getStatus($gstin, $period);
+
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit;
+    }
+
+    // ========== TIN Portal ==========
+
+    public function tinPortal()
+    {
+        $this->requireAdmin();
+        $tin = new TINApiService();
+        $fy = $this->efiling->getCurrentFinancialYear();
+        $quarter = $this->efiling->getCurrentQuarter();
+        $submissions = $this->efiling->listSubmissions([
+            'submission_type' => 'tds_return',
+            'financial_year' => $fy,
+            'limit' => 20,
+        ]);
+
+        $this->render('admin/efiling/tin-portal', [
+            'page_title' => 'TIN Portal',
+            'tin_status' => $tin->getConnectionStatus(),
+            'fy' => $fy,
+            'quarter' => $quarter,
+            'fy_list' => $this->getFyList(),
+            'submissions' => $submissions,
+        ]);
+    }
+
+    public function submitTin()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail($_POST['csrf_token'] ?? '');
+
+        $formType = $_POST['form_type'] ?? '26Q';
+        $fy = $_POST['fy'] ?? $this->efiling->getCurrentFinancialYear();
+        $quarter = $_POST['quarter'] ?? $this->efiling->getCurrentQuarter();
+
+        $tin = new TINApiService();
+
+        // Generate Form 26Q data first
+        $genResult = $this->tdsFiling->generateForm26Q($fy, $quarter);
+        if (!$genResult['success']) {
+            $_SESSION['flash_error'] = "Error: " . ($genResult['error'] ?? 'No TDS records found');
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => $genResult['error'] ?? 'No data']);
+            exit;
+        }
+
+        $formData = $genResult['form_26q'] ?? [];
+
+        // Submit via API
+        $result = $formType === '27Q'
+            ? $tin->submitForm27Q($formData)
+            : $tin->submitForm26Q($formData);
+
+        if (!empty($result['success'])) {
+            $mode = $tin->isTestMode() ? ' [TEST MODE]' : '';
+            $_SESSION['flash_success'] = "Form {$formType} submitted{$mode}: " .
+                ($result['data']['acknowledgment_number'] ?? $result['data']['token_number'] ?? 'OK');
+
+            if (!empty($genResult['submission_id'])) {
+                $this->efiling->updateSubmissionStatus($genResult['submission_id'], 'submitted', [
+                    'portal_reference' => $result['data']['token_number'] ?? $result['data']['acknowledgment_number'] ?? null,
+                    'portal_response_json' => json_encode($result),
+                ]);
+            }
+        } else {
+            $_SESSION['flash_error'] = "Submission failed: " . ($result['error'] ?? 'Unknown error');
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit;
+    }
+
+    public function tinStatus()
+    {
+        $this->requireAdmin();
+        $tokenNumber = $this->getRouteParam('token') ?? $_GET['token'] ?? '';
+
+        $tin = new TINApiService();
+        $result = $tin->getStatus($tokenNumber);
+
+        header('Content-Type: application/json');
+        echo json_encode($result);
         exit;
     }
 
