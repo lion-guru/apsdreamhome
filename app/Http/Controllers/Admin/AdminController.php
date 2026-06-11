@@ -67,10 +67,19 @@ class AdminController extends BaseController
             // Get charts data
             $chartsData = $this->getChartsData();
 
+            // Get recent leads for dashboard widget
+            $recentLeads = [];
+            try {
+                $recentLeads = $this->db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?: [];
+            } catch (\Exception $e) {
+                $recentLeads = [];
+            }
+
             $this->data = array_merge($this->data, [
                 'stats' => $stats,
                 'recent_activities' => $recentActivities,
                 'charts_data' => $chartsData,
+                'recent_leads' => $recentLeads,
                 'page_title' => 'Enterprise Dashboard - ' . $this->getConfig('app_name'),
                 'page_description' => 'SuperAdmin Control Center'
             ]);

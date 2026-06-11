@@ -60,6 +60,7 @@ class CompanyController extends AdminController
     public function users()
     {
         $this->requireAdmin();
+        $users = [];
         try {
             $users = $this->db->fetchAll("
                 SELECT ce.*, u.name as user_name, u.email as user_email, u.phone as user_phone
@@ -72,9 +73,17 @@ class CompanyController extends AdminController
             // Gracefully handle dropped table ref
         }
 
+        $employeeUsers = [];
+        try {
+            $employeeUsers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'employee' ORDER BY name") ?: [];
+        } catch (\Throwable $e) {
+            // Gracefully handle missing table
+        }
+
         $this->render('admin/company/users', [
             'page_title' => 'Company users',
-            'users' => $users
+            'users' => $users,
+            'employeeUsers' => $employeeUsers,
         ]);
     }
 

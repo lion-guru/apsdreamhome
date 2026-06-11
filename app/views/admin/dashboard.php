@@ -192,9 +192,8 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 </div>
                 <div class="card-body p-0">
                     <?php
-                    try {
-                        $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5");
-                        if (!empty($recentLeads)):
+                    $recentLeads = $recent_leads ?? [];
+                    if (!empty($recentLeads)):
                     ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($recentLeads as $lead): ?>
@@ -217,13 +216,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                                 <i class="fas fa-user-plus fa-3x" aria-hidden="true"></i>
                                 <p class="mb-0"><?= __('admin_no_leads_found', null, 'No leads found') ?></p>
                             </div>
-                        <?php endif;
-                    } catch (\Exception $e) { ?>
-                        <div class="aps-empty-state">
-                            <i class="fas fa-exclamation-triangle fa-3x text-warning" aria-hidden="true"></i>
-                            <p class="mb-0"><?= __('admin_unable_to_load_leads', null, 'Unable to load leads') ?></p>
-                        </div>
-                    <?php } ?>
+                        <?php endif; ?>
                 </div>
             </div>
         </div>

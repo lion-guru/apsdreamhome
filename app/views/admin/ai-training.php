@@ -6,6 +6,7 @@
  */
 
 // Auth handled by controller (AdminAIController@training calls requireAdmin())
+// Data passed from AdminAIController::training() — knowledgeBase, analytics, categories
 
 require_once __DIR__ . '/../../../app/Core/Database/Database.php';
 
@@ -111,50 +112,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Fetch all Q&A
-$knowledgeBase = [];
-try {
-    $knowledgeBase = $db->fetchAll(
-        "SELECT * FROM ai_knowledge_base ORDER BY category, usage_count DESC, created_at DESC"
-    );
-} catch (Exception $e) {
-    // Table might not exist
-}
+// Fetch all Q&A — passed from controller
+$knowledgeBase = $knowledgeBase ?? [];
 
-// Fetch analytics
-$analytics = [
-    'total_qa' => count($knowledgeBase),
+// Fetch analytics — passed from controller
+$analytics = $analytics ?? [
+    'total_qa' => 0,
     'categories' => [],
     'most_used' => [],
     'conversations_today' => 0,
     'total_conversations' => 0
 ];
-
-try {
-    // Categories count
-    $cats = $db->fetchAll("SELECT category, COUNT(*) as count FROM ai_knowledge_base GROUP BY category");
-    foreach ($cats as $cat) {
-        $analytics['categories'][$cat['category']] = $cat['count'];
-    }
-
-    // Most used Q&A
-    $analytics['most_used'] = $db->fetchAll(
-        "SELECT question_pattern, usage_count FROM ai_knowledge_base 
-         WHERE usage_count > 0 ORDER BY usage_count DESC LIMIT 5"
-    );
-
-    // Today's conversations
-    $today = $db->fetch(
-        "SELECT COUNT(*) as count FROM ai_conversations WHERE DATE(created_at) = CURDATE()"
-    );
-    $analytics['conversations_today'] = $today['count'] ?? 0;
-
-    // Total conversations
-    $total = $db->fetch("SELECT COUNT(*) as count FROM ai_conversations");
-    $analytics['total_conversations'] = $total['count'] ?? 0;
-} catch (Exception $e) {
-    // Ignore errors
-}
 
 // Categories for dropdown
 $categories = [

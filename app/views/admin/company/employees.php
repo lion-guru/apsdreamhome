@@ -1,7 +1,8 @@
 <?php
 
-$page_title = 'Company users';
+$page_title = $page_title ?? 'Company users';
 $users = $users ?? [];
+$employeeUsers = $employeeUsers ?? [];
 ?>
 
 <div class="container-fluid py-4">
@@ -85,10 +86,7 @@ $users = $users ?? [];
                         <label class="form-label">User <span class="text-danger">*</span></label>
                         <select name="user_id" class="form-select" required>
                             <option value="">Select User</option>
-                            <?php
-                            $users = \App\Core\Database\Database::getInstance()->fetchAll("SELECT id, name, email FROM users WHERE role = 'employee' ORDER BY name");
-                            foreach (($users ?: []) as $u):
-                            ?>
+                            <?php foreach ($employeeUsers as $u): ?>
                             <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name']) ?> (<?= htmlspecialchars($u['email']) ?>)</option>
                             <?php endforeach; ?>
                         </select>

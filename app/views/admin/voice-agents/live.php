@@ -3,36 +3,16 @@
  * Live Voice Calls View
  * Real-time monitoring of in-progress and recent Twilio voice calls.
  * Polls /api/voice-agent/call-history every 5s for new status updates.
+ * Data passed from VoiceAgentAdminController::live()
  */
-$page_title = 'Live Voice Calls';
-$page_heading = 'Live Voice Calls Monitor';
-$activePage = 'voice-agents-live';
+$page_title = $page_title ?? 'Live Voice Calls';
+$page_heading = $page_heading ?? 'Live Voice Calls Monitor';
+$activePage = $activePage ?? 'voice-agents-live';
 
-// Auto-fetch recent sessions (last 50)
-try {
-    $pdo = \App\Core\Database\Database::getInstance()->getPdo();
-    $stmt = $pdo->query("
-        SELECT s.*, l.name as lead_name, l.phone as lead_phone
-        FROM ai_call_sessions s
-        LEFT JOIN leads l ON l.id = s.lead_id
-        ORDER BY s.id DESC
-        LIMIT 50
-    ");
-    $sessions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-} catch (\Throwable $e) {
-    $sessions = [];
-    error_log("live.php: session fetch failed: " . $e->getMessage());
-}
-
-$inProgress = array_filter($sessions, fn($s) => in_array($s['status'] ?? '', ['queued', 'ringing', 'in-progress'], true));
-$recent     = array_filter($sessions, fn($s) => in_array($s['status'] ?? '', ['completed', 'failed', 'busy', 'no-answer', 'canceled'], true));
-
-$stat = [
-    'in_progress'  => count($inProgress),
-    'completed'    => count(array_filter($recent, fn($s) => ($s['status'] ?? '') === 'completed')),
-    'failed'       => count(array_filter($recent, fn($s) => in_array($s['status'] ?? '', ['failed', 'busy', 'no-answer'], true))),
-    'with_recording' => count(array_filter($sessions, fn($s) => !empty($s['recording_url']))),
-];
+$sessions = $sessions ?? [];
+$inProgress = $inProgress ?? [];
+$recent = $recent ?? [];
+$stat = $stat ?? ['in_progress' => 0, 'completed' => 0, 'failed' => 0, 'with_recording' => 0];
 ?>
 
 <div class="container-fluid py-4">

@@ -32,6 +32,42 @@ class AdminAIController extends AdminController
             error_log("AdminAIController::training() DB error: " . $e->getMessage());
         }
 
+        // Knowledge base data for training view
+        $knowledgeBase = [];
+        $analytics = [
+            'total_qa' => 0,
+            'categories' => [],
+            'most_used' => [],
+            'conversations_today' => 0,
+            'total_conversations' => 0,
+        ];
+
+        try {
+            $knowledgeBase = $this->db->fetchAll(
+                "SELECT * FROM ai_knowledge_base ORDER BY category, usage_count DESC, created_at DESC"
+            ) ?: [];
+        } catch (\Exception $e) {
+            // Table might not exist
+        }
+
+        try {
+            $cats = $this->db->fetchAll("SELECT category, COUNT(*) as count FROM ai_knowledge_base GROUP BY category");
+            foreach ($cats as $cat) {
+                $analytics['categories'][$cat['category']] = $cat['count'];
+            }
+            $analytics['total_qa'] = count($knowledgeBase);
+            $analytics['most_used'] = $this->db->fetchAll(
+                "SELECT question_pattern, usage_count FROM ai_knowledge_base 
+                 WHERE usage_count > 0 ORDER BY usage_count DESC LIMIT 5"
+            ) ?: [];
+            $today = $this->db->fetch("SELECT COUNT(*) as count FROM ai_conversations WHERE DATE(created_at) = CURDATE()");
+            $analytics['conversations_today'] = $today['count'] ?? 0;
+            $total = $this->db->fetch("SELECT COUNT(*) as count FROM ai_conversations");
+            $analytics['total_conversations'] = $total['count'] ?? 0;
+        } catch (\Exception $e) {
+            // Ignore errors
+        }
+
         return $this->render('admin/ai/training', [
             'page_title' => 'AI Training - APS Dream Home',
             'page_heading' => 'AI Chatbot Training',
@@ -48,6 +84,8 @@ class AdminAIController extends AdminController
             'topIntents' => $topIntents,
             'models' => $models,
             'recentLearning' => $recentLearning,
+            'knowledgeBase' => $knowledgeBase,
+            'analytics' => $analytics,
         ]);
     }
 }

@@ -1,20 +1,13 @@
 <?php
-$root = dirname(__DIR__);
-require_once $root . '/vendor/autoload.php';
+// Data passed from route closure (routes/web.php /admin/ai/dashboard)
+$stats = $stats ?? [];
+$recentMessages = $recentMessages ?? [];
+$topIntents = $topIntents ?? [];
+$topScores = $topScores ?? [];
+$priceModels = $priceModels ?? [];
 
-$config = require $root . '/config/database.php';
-$pdo = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-    $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-
-$ai = new \App\Services\AI\AIManager($pdo);
-$stats = $ai->getStats();
-$recentMessages = $pdo->query("SELECT * FROM ai_chat_messages ORDER BY created_at DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-$topIntents = $pdo->query("SELECT detected_intent, COUNT(*) as cnt FROM ai_chat_messages WHERE detected_intent IS NOT NULL GROUP BY detected_intent ORDER BY cnt DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-$topScores = $pdo->query("SELECT ls.*, l.name, l.phone FROM ai_lead_scores ls LEFT JOIN leads l ON l.id = ls.lead_id ORDER BY ls.score DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-$priceModels = $pdo->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
-
-$page_title = 'AI Dashboard - APS Dream Home';
-$page_heading = 'Self-Learning AI';
+$page_title = $page_title ?? 'AI Dashboard - APS Dream Home';
+$page_heading = $page_heading ?? 'Self-Learning AI';
 $content = ob_start();
 ?>
 <div class="container-fluid py-4">

@@ -1,33 +1,16 @@
 <?php
 // Admin Layout Management Interface
 // Auth handled by LayoutController constructor (calls requireAdmin())
-require_once __DIR__ . '/../../Services/LayoutManager.php';
-require_once __DIR__ . '/../../Core/Database/Database.php';
-
-use App\Core\Database\Database;
-
-$database = Database::getInstance();
-$layoutManager = new LayoutManager($database);
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $settings = [
-        'premium_layout' => isset($_POST['premium_layout']),
-        'header_type' => $_POST['header_type'] ?? 'dynamic',
-        'footer_type' => $_POST['footer_type'] ?? 'dynamic',
-        'navigation_items' => json_decode($_POST['navigation_items'] ?? '[]', true),
-        'footer_content' => $_POST['footer_content'] ?? '',
-        'custom_css' => $_POST['custom_css'] ?? '',
-        'custom_js' => $_POST['custom_js'] ?? ''
-    ];
-
-    $layoutManager->updateLayoutSettings($settings);
-    $_SESSION['success'] = 'Layout settings updated successfully!';
-    header('Location: ' . BASE_URL . '/admin/layout-manager'); exit;
-}
-
-// Get current settings
-$settings = $layoutManager->getLayoutSettings();
+// Data passed from LayoutController::layoutManager() — settings already loaded
+$settings = $settings ?? [
+    'premium_layout' => false,
+    'header_type' => 'dynamic',
+    'footer_type' => 'dynamic',
+    'navigation_items' => [],
+    'footer_content' => '',
+    'custom_css' => '',
+    'custom_js' => '',
+];
 ?>
 
     

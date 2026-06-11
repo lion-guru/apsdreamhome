@@ -2587,13 +2587,22 @@ $router->get('/admin/ai/dashboard', function() {
     $root = dirname(__DIR__);
     require_once $root . '/vendor/autoload.php';
     $config = require $root . '/config/database.php';
-    $pdo = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-    $ai = new \App\Services\AI\AIManager($pdo);
-    $stats = $ai->getStats();
-    $recentMessages = $pdo->query("SELECT * FROM ai_chat_messages ORDER BY created_at DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-    $topIntents = $pdo->query("SELECT detected_intent, COUNT(*) as cnt FROM ai_chat_messages WHERE detected_intent IS NOT NULL GROUP BY detected_intent ORDER BY cnt DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-    $topScores = $pdo->query("SELECT ls.*, l.name, l.phone FROM ai_lead_scores ls LEFT JOIN leads l ON l.id = ls.lead_id ORDER BY ls.score DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-    $priceModels = $pdo->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        $pdo = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $ai = new \App\Services\AI\AIManager($pdo);
+        $stats = $ai->getStats();
+        $recentMessages = $pdo->query("SELECT * FROM ai_chat_messages ORDER BY created_at DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
+        $topIntents = $pdo->query("SELECT detected_intent, COUNT(*) as cnt FROM ai_chat_messages WHERE detected_intent IS NOT NULL GROUP BY detected_intent ORDER BY cnt DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
+        $topScores = $pdo->query("SELECT ls.*, l.name, l.phone FROM ai_lead_scores ls LEFT JOIN leads l ON l.id = ls.lead_id ORDER BY ls.score DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
+        $priceModels = $pdo->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
+    } catch (\Throwable $e) {
+        $stats = [];
+        $recentMessages = [];
+        $topIntents = [];
+        $topScores = [];
+        $priceModels = [];
+        error_log("ai/dashboard route: " . $e->getMessage());
+    }
     $page_title = 'AI Dashboard - APS Dream Home';
     $page_heading = 'Self-Learning AI';
     ob_start();
@@ -3938,3 +3947,12 @@ $router->get('/admin/service-configs',                  'Admin\\ServiceConfigCon
 $router->post('/admin/service-configs/update',          'Admin\\ServiceConfigController@update');
 $router->post('/admin/service-configs/test/{service}',  'Admin\\ServiceConfigController@testConnection');
 $router->post('/admin/service-configs/reset/{service}', 'Admin\\ServiceConfigController@resetService');
+
+// ============================================================
+// URL ALIASES (fix 404s from sidebar mismatches)
+// ============================================================
+$router->get('/admin/backoffice/dashboard',  function() { header('Location: ' . BASE_URL . '/admin/backoffice'); exit; });
+$router->get('/admin/legal/dashboard',       function() { header('Location: ' . BASE_URL . '/admin/legal/disputes'); exit; });
+$router->get('/admin/legal/noc',             function() { header('Location: ' . BASE_URL . '/admin/legal/noc-index'); exit; });
+$router->get('/admin/ai/training',           function() { header('Location: ' . BASE_URL . '/admin/ai-training'); exit; });
+$router->get('/admin/realtime-analytics',    function() { header('Location: ' . BASE_URL . '/admin/analytics/realtime'); exit; });
