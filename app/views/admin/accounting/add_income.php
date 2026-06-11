@@ -17,7 +17,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body aps-cp-card-body">
                     <form action="/admin/accounting/income/store" method="POST" class="needs-validation" novalidate>
-                        <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
+                        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
 
                         <div class="row mb-3">
                             <div class="col-md-6">

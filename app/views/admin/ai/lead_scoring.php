@@ -34,7 +34,7 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body aps-cp-card-body">
                     <form method="post" class="d-flex align-items-center gap-3">
-                        <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
+                        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                         <button type="submit" name="action" value="score_leads" class="btn btn-primary">
                             <i class="fas fa-magic me-2"></i> <?= h($mlSupport->translate('Score Unprocessed Leads')) ?>
                         </button>
