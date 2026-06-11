@@ -476,24 +476,26 @@ class BookingLifecycleService
             $this->maybeAdvanceBookingStatus((int)$inst['booking_id']);
             $this->db->commit();
 
-            // Send payment receipt email
+            // Send payment receipt (email + SMS) via BookingNotificationService
             try {
                 $booking = $this->getBookingById((int)$inst['booking_id']);
                 if (!empty($booking['customer_id'])) {
-                    $emailSvc = new \App\Services\EmailTemplateService();
-                    $emailSvc->sendPaymentReceipt((int)$booking['customer_id'], [
-                        'booking_number' => $booking['booking_number'] ?? '',
-                        'receipt_number' => $receiptNumber,
-                        'receipt_date' => $paidDate,
-                        'amount' => number_format($amount, 2),
-                        'payment_mode' => strtoupper($mode),
-                        'plot_number' => $booking['plot_number'] ?? '',
-                        'colony_name' => $booking['colony_name'] ?? '',
-                        'installment_number' => $inst['installment_number'] ?? '',
-                    ]);
+                    $user = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ?");
+                    $user->execute([(int)$booking['customer_id']]);
+                    $userData = $user->fetch(PDO::FETCH_ASSOC);
+
+                    if ($userData) {
+                        $notifSvc = new \App\Services\BookingNotificationService();
+                        $notifSvc->sendPaymentReceipt(
+                            $booking,
+                            $userData,
+                            $amount,
+                            $receiptNumber
+                        );
+                    }
                 }
             } catch (\Throwable $e) {
-                error_log("[BookingLifecycleService::recordPayment] email failed: " . $e->getMessage());
+                error_log("[BookingLifecycleService::recordPayment] notification failed: " . $e->getMessage());
             }
 
             return [
@@ -633,7 +635,7 @@ class BookingLifecycleService
             $refundId = (int)$this->db->lastInsertId();
             $this->db->commit();
 
-            // Send cancellation email
+            // Send cancellation notification (email + SMS)
             try {
                 $emailSvc = new \App\Services\EmailTemplateService();
                 $emailSvc->sendBookingCancellation((int)$booking['customer_id'], [
@@ -644,8 +646,16 @@ class BookingLifecycleService
                     'cancellation_charge' => number_format($cancellationCharge, 2),
                     'refund_amount' => number_format($refundAmt, 2),
                 ]);
+
+                $user = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ?");
+                $user->execute([(int)$booking['customer_id']]);
+                $userData = $user->fetch(PDO::FETCH_ASSOC);
+                if ($userData) {
+                    $notifSvc = new \App\Services\BookingNotificationService();
+                    $notifSvc->sendStatusChange($booking, $userData, $prevStatus, 'cancelled');
+                }
             } catch (\Throwable $e) {
-                error_log("[BookingLifecycleService] cancelBooking email failed: " . $e->getMessage());
+                error_log("[BookingLifecycleService] cancelBooking notification failed: " . $e->getMessage());
             }
 
             return [
