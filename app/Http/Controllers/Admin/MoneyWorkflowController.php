@@ -294,6 +294,18 @@ class MoneyWorkflowController extends AdminController
         return $this->redirect('/admin/finance/cheques');
     }
 
+    public function chequePrint(int $id)
+    {
+        $cheque = $this->safe(fn() => $this->service->getChequeById($id), null);
+        if (!$cheque) {
+            $this->setFlash('error', 'Cheque not found');
+            return $this->redirect('/admin/finance/cheques');
+        }
+        return $this->render('admin/finance/cheque-print', [
+            'cheque' => $cheque,
+        ]);
+    }
+
     /* =========================================================
      *  BANK RECONCILIATION
      * ========================================================= */

@@ -65,7 +65,10 @@ ob_start();
                             <td class="fw-bold">₹<?= number_format($c['tds_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $c['status'] === 'sent' ? 'success' : ($c['status'] === 'generated' ? 'info' : 'secondary') ?>"><?= ucfirst($c['status']) ?></span></td>
                             <td class="small"><?= $c['issued_date'] ? date('d M Y', strtotime($c['issued_date'])) : '-' ?></td>
-                            <td><a href="/admin/efiling/tds/certificates/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>
+                            <td class="text-nowrap">
+                                <a href="/admin/efiling/tds/certificates/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a>
+                                <a href="/admin/efiling/tds/certificate/<?= $c['id'] ?>/download" class="btn btn-sm btn-success" title="Download Form 16A"><i class="fas fa-download me-1"></i>Form 16A</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

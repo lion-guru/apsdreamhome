@@ -1889,6 +1889,7 @@ $router->get('/admin/finance/cheques',                                          
 $router->get('/admin/finance/cheque-issue',                                       'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@chequeIssue');
 $router->post('/admin/finance/cheque-store',                                      'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@chequeStore');
 $router->post('/admin/finance/cheque-status',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@chequeStatus');
+$router->get('/admin/finance/cheques/{id}/print',                                 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@chequePrint');
 
 // Bank reconciliation
 $router->get('/admin/finance/reconciliation',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@reconciliation');
@@ -1969,6 +1970,10 @@ $router->get('/admin/efiling/calendar',                                         
 $router->get('/admin/efiling/submissions',                                            'App\\Http\\Controllers\\Admin\\EFilingController@submissions');
 $router->get('/admin/efiling/submissions/{id}',                                       'App\\Http\\Controllers\\Admin\\EFilingController@showSubmission');
 $router->post('/admin/efiling/submissions/{id}/update-status',                        'App\\Http\\Controllers\\Admin\\EFilingController@updateSubmissionStatus');
+
+$router->get('/admin/efiling/tds/certificate/{id}/download',                          'App\\Http\\Controllers\\Admin\\EFilingController@downloadForm16A');
+$router->get('/admin/efiling/gst/export/gstr1',                                       'App\\Http\\Controllers\\Admin\\EFilingController@exportGstr1');
+$router->get('/admin/efiling/gst/export/gstr3b',                                      'App\\Http\\Controllers\\Admin\\EFilingController@exportGstr3b');
 
 // ============================================================
 // ADMIN LAND MANAGEMENT

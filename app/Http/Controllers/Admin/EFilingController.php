@@ -309,6 +309,217 @@ class EFilingController extends AdminController
         redirect("/admin/efiling/submissions/{$id}");
     }
 
+    // ========== Downloads / Exports ==========
+
+    public function downloadForm16A()
+    {
+        $this->requireAdmin();
+        $id = (int)($this->getRouteParam('id') ?? $_GET['id'] ?? 0);
+        if (!$id) { redirect('/admin/efiling/tds/certificates'); return; }
+
+        $pdo = $this->getPdo();
+        $stmt = $pdo->prepare("SELECT * FROM tds_certificates_issued WHERE id = ?");
+        $stmt->execute([$id]);
+        $cert = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if (!$cert) {
+            $_SESSION['flash_error'] = 'Certificate not found';
+            redirect('/admin/efiling/tds/certificates');
+            return;
+        }
+
+        // Get TDS records for this deductee
+        $tdsStmt = $pdo->prepare("SELECT * FROM tds_register
+            WHERE deductee_pan = ? AND financial_year = ? AND quarter = ?
+            ORDER BY transaction_date ASC");
+        $tdsStmt->execute([$cert['deductee_pan'], $cert['financial_year'], $cert['quarter']]);
+        $tdsRecords = $tdsStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $tan = '';
+        try {
+            $tanStmt = $pdo->prepare("SELECT credential_value FROM company_credentials
+                WHERE credential_type = 'tan' AND status = 'active' AND is_primary = 1 LIMIT 1");
+            $tanStmt->execute();
+            $tanRow = $tanStmt->fetch(\PDO::FETCH_ASSOC);
+            $tan = $tanRow['credential_value'] ?? '';
+        } catch (\Exception $e) { /* fallback */ }
+
+        $deductorName = htmlspecialchars($tdsRecords[0]['deductor_name'] ?? 'APS Dream Home');
+        $deductorPan = htmlspecialchars($tdsRecords[0]['deductor_pan'] ?? '');
+        $deducteeName = htmlspecialchars($cert['deductee_name'] ?? '');
+        $deducteePan = htmlspecialchars($cert['deductee_pan'] ?? '');
+        $fy = htmlspecialchars($cert['financial_year'] ?? '');
+        $quarter = htmlspecialchars($cert['quarter'] ?? '');
+        $certNo = htmlspecialchars($cert['certificate_number'] ?? '');
+        $totalTds = number_format((float)($cert['total_tds'] ?? 0), 2);
+        $issuedDate = $cert['issued_date'] ? date('d-m-Y', strtotime($cert['issued_date'])) : date('d-m-Y');
+        $ayStart = (int)substr($fy, 0, 4) + 1;
+        $ay = $ayStart . '-' . substr($ayStart + 1, -2);
+
+        $rows = '';
+        foreach ($tdsRecords as $i => $r) {
+            $rows .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . htmlspecialchars($r['transaction_date'] ?? '') . '</td>
+                <td>' . htmlspecialchars($r['tds_section'] ?? '') . '</td>
+                <td>' . htmlspecialchars($r['description'] ?? $r['nature_of_payment'] ?? '-') . '</td>
+                <td class="text-right">₹' . number_format((float)$r['gross_amount'], 2) . '</td>
+                <td class="text-right">' . (float)$r['tds_rate'] . '%</td>
+                <td class="text-right">₹' . number_format((float)$r['tds_amount'], 2) . '</td>
+                <td class="text-right">₹' . number_format((float)($r['surcharge'] ?? 0), 2) . '</td>
+                <td class="text-right">₹' . number_format((float)($r['cess'] ?? 0), 2) . '</td>
+            </tr>';
+        }
+
+        $html = '<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>Form 16A - Certificate for Tax Deducted at Source</title>
+<style>
+body { font-family: Arial, sans-serif; font-size: 13px; margin: 30px; color: #333; }
+h1 { text-align: center; font-size: 18px; margin-bottom: 5px; }
+h2 { text-align: center; font-size: 14px; font-weight: normal; margin-top: 0; color: #555; }
+.header-box { border: 2px solid #333; padding: 12px 20px; margin-bottom: 20px; }
+.header-box h1 { margin: 0; }
+.header-box h2 { margin: 5px 0 0 0; }
+.meta { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 12px; }
+.meta div { flex: 1; }
+.meta strong { display: inline-block; width: 140px; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+th, td { border: 1px solid #999; padding: 6px 8px; text-align: left; font-size: 12px; }
+th { background: #f0f0f0; font-weight: bold; }
+.text-right { text-align: right; }
+.total-row td { font-weight: bold; background: #f5f5f5; }
+.footer { margin-top: 30px; font-size: 11px; }
+.footer .signatures { display: flex; justify-content: space-between; margin-top: 40px; }
+.footer .sig-block { text-align: center; width: 200px; }
+.footer .sig-line { border-top: 1px solid #333; margin-top: 50px; padding-top: 5px; }
+.stamp { text-align: right; margin-top: 20px; font-size: 11px; color: #666; }
+</style></head><body>
+
+<div class="header-box">
+    <h1>FORM 16A</h1>
+    <h2>Certificate for Tax Deducted at Source under Section 203 of the Income Tax Act, 1961</h2>
+</div>
+
+<div class="meta">
+    <div><strong>Certificate No:</strong> ' . $certNo . '</div>
+    <div><strong>Issue Date:</strong> ' . $issuedDate . '</div>
+</div>
+
+<div class="meta">
+    <div><strong>Financial Year:</strong> ' . $fy . '</div>
+    <div><strong>Assessment Year:</strong> ' . $ay . '</div>
+    <div><strong>Quarter:</strong> ' . $quarter . '</div>
+</div>
+
+<hr style="border: 1px solid #ccc;">
+
+<div class="meta">
+    <div>
+        <strong>Deductor (TDS Payer):</strong><br>
+        Name: ' . $deductorName . '<br>
+        PAN: ' . $deductorPan . '<br>
+        TAN: ' . htmlspecialchars($tan) . '
+    </div>
+    <div>
+        <strong>Deductee (TDS Receiver):</strong><br>
+        Name: ' . $deducteeName . '<br>
+        PAN: ' . $deducteePan . '
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th><th>Date</th><th>Section</th><th>Nature of Payment</th>
+            <th class="text-right">Gross Amount</th><th class="text-right">TDS Rate</th>
+            <th class="text-right">TDS Amount</th><th class="text-right">Surcharge</th>
+            <th class="text-right">Health & Edu Cess</th>
+        </tr>
+    </thead>
+    <tbody>
+        ' . ($rows ?: '<tr><td colspan="9" style="text-align:center;">No TDS records found</td></tr>') . '
+        <tr class="total-row">
+            <td colspan="4">Total</td>
+            <td class="text-right">₹' . number_format(array_sum(array_column($tdsRecords, 'gross_amount')), 2) . '</td>
+            <td></td>
+            <td class="text-right">₹' . $totalTds . '</td>
+            <td class="text-right">₹' . number_format(array_sum(array_column($tdsRecords, 'surcharge')), 2) . '</td>
+            <td class="text-right">₹' . number_format(array_sum(array_column($tdsRecords, 'cess')), 2) . '</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="stamp">
+    I/We hereby certify that the tax has been deducted at source and deposited to the credit of the Central Government.
+</div>
+
+<div class="footer">
+    <div class="signatures">
+        <div class="sig-block">
+            <div class="sig-line">Deductor\'s Signature & Seal</div>
+        </div>
+        <div class="sig-block">
+            <div class="sig-line">Place & Date</div>
+        </div>
+    </div>
+</div>
+
+</body></html>';
+
+        $filename = "Form16A_{$cert['deductee_pan']}_{$fy}_{$quarter}.html";
+        header('Content-Type: text/html; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-cache, must-revalidate');
+        echo $html;
+        exit;
+    }
+
+    public function exportGstr1()
+    {
+        $this->requireAdmin();
+        $month = (int)($_GET['month'] ?? date('m'));
+        $year = (int)($_GET['year'] ?? date('Y'));
+        $fy = $_GET['fy'] ?? $this->efiling->getCurrentFinancialYear();
+
+        $result = $this->gstFiling->generateGSTR1($month, $year, $fy);
+        if (!$result['success']) {
+            $_SESSION['flash_error'] = "Export failed: " . ($result['error'] ?? 'No data found');
+            redirect('/admin/efiling/gst?fy=' . urlencode($fy));
+            return;
+        }
+
+        $period = $this->gstFiling->getReturnPeriod($month, $year);
+        $filename = "GSTR1_{$period}_" . date('Ymd') . '.json';
+        header('Content-Type: application/json; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-cache, must-revalidate');
+        echo json_encode($result['gstr1'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    public function exportGstr3b()
+    {
+        $this->requireAdmin();
+        $month = (int)($_GET['month'] ?? date('m'));
+        $year = (int)($_GET['year'] ?? date('Y'));
+        $fy = $_GET['fy'] ?? $this->efiling->getCurrentFinancialYear();
+
+        $result = $this->gstFiling->generateGSTR3B($month, $year, $fy);
+        if (!$result['success']) {
+            $_SESSION['flash_error'] = "Export failed: " . ($result['error'] ?? 'No data found');
+            redirect('/admin/efiling/gst?fy=' . urlencode($fy));
+            return;
+        }
+
+        $period = $this->gstFiling->getReturnPeriod($month, $year);
+        $filename = "GSTR3B_{$period}_" . date('Ymd') . '.json';
+        header('Content-Type: application/json; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-cache, must-revalidate');
+        echo json_encode($result['gstr3b'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     // ========== Helpers ==========
 
     private function getPdo(): \PDO

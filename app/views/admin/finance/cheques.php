@@ -64,6 +64,7 @@
                                 <input type="hidden" name="reason" value="">
                             </form>
                             <?php endif; ?>
+                            <a href="<?= BASE_URL ?>/admin/finance/cheques/<?= (int)$c['id'] ?>/print" target="_blank" class="btn btn-sm btn-outline-primary ms-1" title="Print Cheque"><i class="fas fa-print"></i></a>
                         </td>
                     </tr>
                 <?php endforeach; endif; ?>

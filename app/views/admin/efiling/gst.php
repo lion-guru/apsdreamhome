@@ -81,6 +81,7 @@ ob_start();
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-file-export me-1"></i>Generate GSTR-1 JSON</button>
+                    <a href="/admin/efiling/gst/export/gstr1?fy=<?= urlencode($fy) ?>&month=<?= (int)$month ?>&year=<?= (int)$year ?>" class="btn btn-sm btn-outline-success ms-2"><i class="fas fa-download me-1"></i>Export GSTR-1 JSON</a>
                 </form>
             </div>
         </div>
@@ -114,6 +115,7 @@ ob_start();
                         </div>
                     </div>
                     <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-file-export me-1"></i>Generate GSTR-3B JSON</button>
+                    <a href="/admin/efiling/gst/export/gstr3b?fy=<?= urlencode($fy) ?>&month=<?= (int)$month ?>&year=<?= (int)$year ?>" class="btn btn-sm btn-outline-success ms-2"><i class="fas fa-download me-1"></i>Export GSTR-3B JSON</a>
                 </form>
             </div>
         </div>
