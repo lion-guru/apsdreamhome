@@ -86,6 +86,7 @@ class CommissionAdminController extends AdminController
 
     public function agentRateStore()
     {
+        $this->validateCsrfOrFail();
         try {
             $this->db->query("INSERT INTO agent_commission_rates (min_sqft, max_sqft, commission_per_sqft, commission_percentage, status) VALUES (?, ?, ?, ?, ?)", [
                 (int)$_POST['min_sqft'], (int)$_POST['max_sqft'], (float)$_POST['commission_per_sqft'],
@@ -124,6 +125,7 @@ class CommissionAdminController extends AdminController
 
     public function associateStructureStore()
     {
+        $this->validateCsrfOrFail();
         try {
             $this->db->query("INSERT INTO associate_commission_structure (level_number, level_name, commission_percentage, min_property_value, max_property_value, status) VALUES (?, ?, ?, ?, ?, ?)", [
                 (int)$_POST['level_number'], $_POST['level_name'], (float)$_POST['commission_percentage'],
@@ -195,6 +197,7 @@ class CommissionAdminController extends AdminController
 
     public function bonusStore()
     {
+        $this->validateCsrfOrFail();
         try {
             $bonusAmount = (float)$_POST['bonus_amount'];
             $bonusPct = null;
@@ -253,6 +256,7 @@ class CommissionAdminController extends AdminController
 
     public function mlmLevelStore()
     {
+        $this->validateCsrfOrFail();
         try {
             $this->db->query("INSERT INTO mlm_commission_levels (plan_id, level, name, commission_rate, min_associates, direct_percentage, min_business, max_business) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
                 (int)$_POST['plan_id'], (int)$_POST['level'], $_POST['name'],
@@ -361,6 +365,7 @@ class CommissionAdminController extends AdminController
 
     public function revenueDailyStore()
     {
+        $this->validateCsrfOrFail();
         try {
             $this->db->query("INSERT INTO revenue_commission_daily (stat_date, agent_id, revenue, deals, commission) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE revenue = VALUES(revenue), deals = VALUES(deals), commission = VALUES(commission)", [
                 $_POST['stat_date'], (int)$_POST['agent_id'], (float)$_POST['revenue'],
@@ -399,6 +404,7 @@ class CommissionAdminController extends AdminController
 
     public function telecallerRuleStore()
     {
+        $this->validateCsrfOrFail();
         try {
             $this->db->query("INSERT INTO telecaller_commission_rules (rule_name, commission_type, amount, percentage, min_calls, target_type, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)", [
                 $_POST['rule_name'], $_POST['commission_type'], (float)$_POST['amount'],

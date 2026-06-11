@@ -70,6 +70,7 @@ class CommissionController extends AdminController
      */
     public function processCalculation()
     {
+        $this->validateCsrfOrFail();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 400);
         }
@@ -124,6 +125,7 @@ class CommissionController extends AdminController
      */
     public function processApproval()
     {
+        $this->validateCsrfOrFail();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 400);
         }
@@ -180,6 +182,7 @@ class CommissionController extends AdminController
      */
     public function processPayout()
     {
+        $this->validateCsrfOrFail();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 400);
         }

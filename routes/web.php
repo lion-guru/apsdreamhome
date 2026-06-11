@@ -3065,6 +3065,30 @@ $router->get('/admin/commission/revenue/daily', 'App\\Http\\Controllers\\Admin\\
 $router->get('/admin/commission/telecaller/rules', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerRules');
 $router->get('/admin/commission/telecaller/commissions', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerCommissions');
 
+// Commission POST routes (form submissions)
+$router->post('/admin/commission/agent-rates/store', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@agentRateStore');
+$router->post('/admin/commission/agent-rates/delete/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@agentRateDelete');
+$router->post('/admin/commission/associate/structure/store', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@associateStructureStore');
+$router->post('/admin/commission/associate/structure/delete/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@associateStructureDelete');
+$router->post('/admin/commission/associate/calc-status/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@associateCalcStatus');
+$router->post('/admin/commission/bonuses/store', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@bonusStore');
+$router->post('/admin/commission/bonuses/delete/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@bonusDelete');
+$router->post('/admin/commission/mlm/levels/store', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmLevelStore');
+$router->post('/admin/commission/mlm/levels/delete/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmLevelDelete');
+$router->post('/admin/commission/mlm/records/status/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmRecordStatus');
+$router->post('/admin/commission/revenue/daily/store', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@revenueDailyStore');
+$router->post('/admin/commission/revenue/daily/delete/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@revenueDailyDelete');
+$router->post('/admin/commission/telecaller/rules/store', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerRuleStore');
+$router->post('/admin/commission/telecaller/rules/toggle/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerRuleToggle');
+$router->post('/admin/commission/telecaller/rules/delete/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerRuleDelete');
+$router->post('/admin/commission/telecaller/commissions/approve/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerCommissionApprove');
+$router->post('/admin/commission/telecaller/commissions/pay/{id}', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerCommissionPay');
+// Commission calculate/payout/action (form actions without methods — route to CommissionController)
+$router->post('/admin/commission/calculate', 'App\\Http\\Controllers\\Admin\\CommissionController@processCalculation');
+$router->post('/admin/commission/payout', 'App\\Http\\Controllers\\Admin\\CommissionController@processPayout');
+$router->post('/admin/commission/action', 'App\\Http\\Controllers\\Admin\\CommissionController@processApproval');
+$router->post('/admin/commissions/processPayout', 'App\\Http\\Controllers\\Admin\\CommissionController@processPayout');
+
 // MLM section (redirect stubs to MlmRewardsController)
 $router->get('/admin/mlm/rank-criteria', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rankCriteria');
 $router->get('/admin/mlm/upgrades', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@upgrades');
